@@ -276,6 +276,42 @@ async function main() {
     }
   }
 
+  // === Partners ===
+  const owner = await prisma.user.findUnique({ where: { email: "owner@hairora.cz" } });
+  if (owner) {
+    await prisma.partner.upsert({
+      where: { userId: owner.id },
+      update: {},
+      create: {
+        name: "Admin Partner",
+        userId: owner.id,
+        share: 3333,
+      },
+    });
+  }
+
+  // === Customers (retail) ===
+  await prisma.customer.upsert({
+    where: { id: "customer-1" },
+    update: {},
+    create: {
+      id: "customer-1",
+      name: "Jana Novakova",
+      email: "jana@example.com",
+      phone: "+420111222333",
+    },
+  });
+
+  await prisma.customer.upsert({
+    where: { id: "customer-2" },
+    update: {},
+    create: {
+      id: "customer-2",
+      name: "Petra Svobodova",
+      email: "petra@example.com",
+    },
+  });
+
   console.log("Seed completed.");
 }
 

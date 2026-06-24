@@ -24,6 +24,9 @@ model User {
   updatedAt      DateTime  @updatedAt
 
   stockMovements StockMovement[]
+  sales          Sale[]
+  discountsGiven Discount[]
+  partner        Partner?
 
   @@map("users")
 }
@@ -42,6 +45,7 @@ model Salon {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   users     User[]
+  sales     Sale[]
 
   @@map("salons")
 }
@@ -115,6 +119,7 @@ model Variant {
   deliveries     Delivery[]
   stockMovements StockMovement[]
   reservations   Reservation[]
+  saleItems      SaleItem[]
 
   @@unique([productId, lengthCm, color])
   @@index([productId])
@@ -216,6 +221,7 @@ model Delivery {
   updatedAt               DateTime  @updatedAt
 
   stockMovements          StockMovement[]
+  saleItems               SaleItem[]
 
   @@index([variantId, stockedAt])
   @@index([supplierId])
@@ -278,4 +284,195 @@ model Reservation {
   @@index([variantId, active])
   @@index([orderId])
   @@map("reservations")
+}
+
+// ============================================================
+// SALES ENUMS
+// ============================================================
+
+enum CustomerType {
+  SALON
+  RETAIL
+}
+
+enum DiscountType {
+  STANDARD
+  MARKETING
+  PERSONAL
+}
+
+enum SaleStatus {
+  DRAFT
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================================
+// PARTNER -- spolecnik (1/3 podil)
+// ============================================================
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  share     Int      @default(3333)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  discountBearings DiscountBearer[]
+
+  @@map("partners")
+}
+
+// ============================================================
+// CUSTOMER -- koncovy zakaznik (maloobchod), e-shop ready
+// ============================================================
+
+model Customer {
+  id           String   @id @default(cuid())
+  name         String
+  email        String?
+  phone        String?
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  passwordHash String?
+  slug         String?  @unique
+
+  sales Sale[]
+
+  @@index([email])
+  @@index([name])
+  @@map("customers")
+}
+
+// ============================================================
+// SALE -- completed sale transaction
+// ============================================================
+
+model Sale {
+  id             String       @id @default(cuid())
+  saleNumber     String?
+
+  customerType   CustomerType
+  salonId        String?
+  salon          Salon?       @relation(fields: [salonId], references: [id])
+  customerId     String?
+  customer       Customer?    @relation(fields: [customerId], references: [id])
+
+  status         SaleStatus   @default(DRAFT)
+
+  subtotal       Int
+  discountAmount Int          @default(0)
+  totalBeforeVat Int
+  vatRate        Int          @default(2100)
+  vatAmount      Int
+  totalAmount    Int
+
+  totalCostOfGoods Int        @default(0)
+  grossMargin      Int        @default(0)
+
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+
+  orderId        String?      @unique
+
+  note           String?
+  completedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  items     SaleItem[]
+  discounts Discount[]
+
+  @@index([customerType])
+  @@index([salonId])
+  @@index([customerId])
+  @@index([userId])
+  @@index([status])
+  @@index([completedAt])
+  @@map("sales")
+}
+
+// ============================================================
+// SALE_ITEM -- individual line item, links to FIFO delivery
+// ============================================================
+
+model SaleItem {
+  id                      String   @id @default(cuid())
+  saleId                  String
+  sale                    Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  variantId               String
+  variant                 Variant  @relation(fields: [variantId], references: [id])
+
+  grams                   Int
+  pieces                  Int
+
+  pricePerGramUsed        Int
+
+  deliveryId              String
+  delivery                Delivery @relation(fields: [deliveryId], references: [id])
+
+  purchasePricePerGramCZK Int
+
+  lineTotal               Int
+
+  createdAt               DateTime @default(now())
+
+  @@index([saleId])
+  @@index([variantId])
+  @@index([deliveryId])
+  @@map("sale_items")
+}
+
+// ============================================================
+// DISCOUNT -- special discount applied to a sale
+// ============================================================
+
+model Discount {
+  id                     String       @id @default(cuid())
+  saleId                 String
+  sale                   Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  percent                Int
+  type                   DiscountType
+  amountHalere           Int
+
+  counterPerformanceNote String?
+
+  givenByUserId          String
+  givenByUser            User         @relation(fields: [givenByUserId], references: [id])
+
+  bearers                DiscountBearer[]
+
+  discountCodeId         String?
+
+  createdAt              DateTime     @default(now())
+
+  @@index([saleId])
+  @@index([type])
+  @@index([givenByUserId])
+  @@index([createdAt])
+  @@map("discounts")
+}
+
+// ============================================================
+// DISCOUNT_BEARER -- which partners bear a discount
+// ============================================================
+
+model DiscountBearer {
+  id          String   @id @default(cuid())
+  discountId  String
+  discount    Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  partnerId   String
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+
+  shareAmount Int
+
+  @@unique([discountId, partnerId])
+  @@index([partnerId])
+  @@map("discount_bearers")
 }
