@@ -43,3 +43,88 @@ model Salon {
 
   @@map("salons")
 }
+
+// ============================================================
+// PRODUCT ENUMS
+// ============================================================
+
+enum ProductCategory {
+  VIRGIN
+  PREMIUM
+  STANDARD
+  SALE
+}
+
+enum ProcessingType {
+  CLIP_IN
+  TAPE_IN
+  KERATIN
+  WEFT
+  MICRO_RING
+  OTHER
+}
+
+// ============================================================
+// PRODUCT -- template / type of hair. No stock, no purchase price.
+// ============================================================
+
+model Product {
+  id             String          @id @default(cuid())
+  name           String
+  nameUk         String?
+  nameRu         String?
+  description    String?
+  descriptionUk  String?
+  descriptionRu  String?
+  category       ProductCategory
+  processingType ProcessingType
+  photos         String[]
+  archived       Boolean         @default(false)
+  slug           String?         @unique
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  variants Variant[]
+
+  @@index([category])
+  @@index([processingType])
+  @@index([archived])
+  @@map("products")
+}
+
+// ============================================================
+// VARIANT -- price variant = combination of length + color
+// Prices in HALERE (integer, 1 CZK = 100 halere)
+// ============================================================
+
+model Variant {
+  id                    String   @id @default(cuid())
+  productId             String
+  product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  lengthCm              Int
+  color                 String
+  wholesalePricePerGram Int
+  retailPricePerGram    Int
+  retailManualOverride  Boolean  @default(false)
+  active                Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([productId, lengthCm, color])
+  @@index([productId])
+  @@map("variants")
+}
+
+// ============================================================
+// PRICE_SETTINGS -- retail markup percentage per product category
+// markupPercent is whole integer: 50 = 50%
+// ============================================================
+
+model PriceSettings {
+  id            String          @id @default(cuid())
+  category      ProductCategory @unique
+  markupPercent Int
+  updatedAt     DateTime        @updatedAt
+
+  @@map("price_settings")
+}
