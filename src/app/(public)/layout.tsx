@@ -1,4 +1,5 @@
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export default function PublicLayout({
@@ -6,6 +7,8 @@ export default function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const t = useTranslations("auth");
+
   return (
     <>
       <header className="bg-white border-b border-gray-200">
@@ -20,7 +23,7 @@ export default function PublicLayout({
                 href="/login"
                 className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
               >
-                Login
+                {t("login")}
               </Link>
             </div>
           </div>

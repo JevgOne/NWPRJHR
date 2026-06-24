@@ -38,7 +38,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="min-h-full flex flex-col bg-gray-50 font-[family-name:var(--font-geist)]">
         <NextIntlClientProvider messages={messages}>
