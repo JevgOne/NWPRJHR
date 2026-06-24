@@ -15,7 +15,7 @@ export async function GET() {
     orderBy: [{ isDefault: "desc" }, { name: "asc" }],
   });
 
-  return NextResponse.json(companies);
+  return NextResponse.json({ data: companies });
 }
 
 export async function POST(request: NextRequest) {

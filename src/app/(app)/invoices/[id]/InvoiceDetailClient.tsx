@@ -140,11 +140,18 @@ export function InvoiceDetailClient({
           </h1>
           <InvoiceStatusBadge status={invoice.status} />
         </div>
-        <Link href="/invoices">
-          <Button variant="secondary" size="sm">
-            {tCommon("back")}
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <a href={`/api/invoices/${id}/pdf`} download>
+            <Button variant="secondary" size="sm">
+              {t("downloadPdf")}
+            </Button>
+          </a>
+          <Link href="/invoices">
+            <Button variant="secondary" size="sm">
+              {tCommon("back")}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Supplier + Buyer */}

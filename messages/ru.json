@@ -140,7 +140,8 @@
     "overdue": "Просрочено",
     "cancelled": "Отменено",
     "issueDate": "Дата выставления",
-    "copyDetails": "Копировать реквизиты"
+    "copyDetails": "Копировать реквизиты",
+    "downloadPdf": "Скачать PDF"
   },
   "company": {
     "title": "Компании",

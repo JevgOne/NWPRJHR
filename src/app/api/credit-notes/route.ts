@@ -1,7 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { creditNoteSchema } from "@/lib/validations/invoice";
 import { createCreditNote } from "@/lib/invoicing";
+
+export async function GET(request: NextRequest) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { searchParams } = request.nextUrl;
+  const salonId = searchParams.get("salonId");
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+  const limit = Math.min(
+    100,
+    Math.max(1, parseInt(searchParams.get("limit") ?? "50", 10))
+  );
+
+  const where: Record<string, unknown> = { type: "CREDIT_NOTE" };
+
+  if (session.user.role === "SALON") {
+    where.salonId = session.user.salonId;
+    if (!session.user.salonId)
+      return NextResponse.json({
+        data: [],
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      });
+  }
+
+  if (salonId && session.user.role !== "SALON") where.salonId = salonId;
+
+  const [creditNotes, total] = await Promise.all([
+    prisma.invoice.findMany({
+      where,
+      include: {
+        company: { select: { name: true } },
+        originalInvoice: { select: { id: true, number: true } },
+        items: true,
+      },
+      orderBy: { issueDate: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.invoice.count({ where }),
+  ]);
+
+  return NextResponse.json({
+    data: creditNotes,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  });
+}
 
 export async function POST(request: NextRequest) {
   const session = await auth();

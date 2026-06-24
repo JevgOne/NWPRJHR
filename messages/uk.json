@@ -140,7 +140,8 @@
     "overdue": "Прострочено",
     "cancelled": "Скасовано",
     "issueDate": "Дата виставлення",
-    "copyDetails": "Копіювати реквізити"
+    "copyDetails": "Копіювати реквізити",
+    "downloadPdf": "Завантажити PDF"
   },
   "company": {
     "title": "Компанії",

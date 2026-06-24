@@ -33,7 +33,7 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const parsed = companySchema.safeParse(body);
+  const parsed = companySchema.partial().safeParse(body);
   if (!parsed.success)
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 

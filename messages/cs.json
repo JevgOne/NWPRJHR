@@ -140,7 +140,8 @@
     "overdue": "Po splatnosti",
     "cancelled": "Stornováno",
     "issueDate": "Datum vystavení",
-    "copyDetails": "Kopírovat údaje"
+    "copyDetails": "Kopírovat údaje",
+    "downloadPdf": "Stáhnout PDF"
   },
   "company": {
     "title": "Firmy",
