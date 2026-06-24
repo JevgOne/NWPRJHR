@@ -171,6 +171,118 @@ async function main() {
     }
   }
 
+  // === Suppliers ===
+  const supplier1 = await prisma.supplier.upsert({
+    where: { id: "supplier-ukraine-1" },
+    update: {},
+    create: {
+      id: "supplier-ukraine-1",
+      name: "Hair Factory Ukraine",
+      contactName: "Olena",
+      country: "UA",
+      email: "olena@hairfactory.ua",
+    },
+  });
+
+  const supplier2 = await prisma.supplier.upsert({
+    where: { id: "supplier-china-1" },
+    update: {},
+    create: {
+      id: "supplier-china-1",
+      name: "Premium Hair China",
+      contactName: "Li Wei",
+      country: "CN",
+      email: "liwei@premiumhair.cn",
+    },
+  });
+
+  // === Deliveries (stock-in) ===
+  // Find variants for deliveries
+  const allVariants = await prisma.variant.findMany({
+    include: { product: true },
+  });
+
+  const findVariant = (slug: string, lengthCm: number, color: string) => {
+    return allVariants.find(
+      (v) =>
+        v.product.slug === slug &&
+        v.lengthCm === lengthCm &&
+        v.color === color
+    );
+  };
+
+  const v1 = findVariant("panenske-clip-in", 50, "1B");
+  const v2 = findVariant("premium-tape-in", 40, "1B");
+
+  if (v1) {
+    const existing1 = await prisma.delivery.findUnique({
+      where: { barcode: "HR-20260601-A1B2" },
+    });
+    if (!existing1) {
+      const d1 = await prisma.delivery.create({
+        data: {
+          variantId: v1.id,
+          supplierId: supplier1.id,
+          purchasePricePerGramRaw: 500,
+          currency: "UAH",
+          exchangeRate: 6500,
+          purchasePricePerGramCZK: Math.round((500 * 6500) / 10000),
+          initialGrams: 500,
+          initialPieces: 0,
+          remainingGrams: 500,
+          remainingPieces: 0,
+          barcode: "HR-20260601-A1B2",
+          stockedAt: new Date("2026-06-01"),
+        },
+      });
+      await prisma.stockMovement.create({
+        data: {
+          deliveryId: d1.id,
+          variantId: v1.id,
+          type: "RECEIPT",
+          grams: 500,
+          pieces: 0,
+          userId: (await prisma.user.findUnique({ where: { email: "owner@hairora.cz" } }))!.id,
+        },
+      });
+    }
+  }
+
+  if (v2) {
+    const existing2 = await prisma.delivery.findUnique({
+      where: { barcode: "HR-20260615-C3D4" },
+    });
+    if (!existing2) {
+      const d2 = await prisma.delivery.create({
+        data: {
+          variantId: v2.id,
+          supplierId: supplier2.id,
+          purchasePricePerGramRaw: 200,
+          currency: "USD",
+          exchangeRate: 235000,
+          purchasePricePerGramCZK: Math.round((200 * 235000) / 10000),
+          initialGrams: 200,
+          initialPieces: 10,
+          pieceWeightGrams: 20,
+          remainingGrams: 200,
+          remainingPieces: 10,
+          barcode: "HR-20260615-C3D4",
+          stockedAt: new Date("2026-06-15"),
+        },
+      });
+      await prisma.stockMovement.create({
+        data: {
+          deliveryId: d2.id,
+          variantId: v2.id,
+          type: "RECEIPT",
+          grams: 200,
+          pieces: 10,
+          userId: (await prisma.user.findUnique({ where: { email: "owner@hairora.cz" } }))!.id,
+        },
+      });
+    }
+  }
+
   console.log("Seed completed.");
 }
 

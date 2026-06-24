@@ -23,6 +23,8 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
+  stockMovements StockMovement[]
+
   @@map("users")
 }
 
@@ -110,6 +112,10 @@ model Variant {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  deliveries     Delivery[]
+  stockMovements StockMovement[]
+  reservations   Reservation[]
+
   @@unique([productId, lengthCm, color])
   @@index([productId])
   @@map("variants")
@@ -127,4 +133,149 @@ model PriceSettings {
   updatedAt     DateTime        @updatedAt
 
   @@map("price_settings")
+}
+
+// ============================================================
+// INVENTORY ENUMS
+// ============================================================
+
+enum Currency {
+  CZK
+  USD
+  EUR
+  UAH
+}
+
+enum StockMovementType {
+  RECEIPT
+  ISSUE
+  RETURN
+  COMPLAINT
+  SAMPLE_OUT
+  SAMPLE_RETURN
+  ADJUSTMENT
+}
+
+// ============================================================
+// SUPPLIER -- sensitive, OWNER only
+// ============================================================
+
+model Supplier {
+  id          String     @id @default(cuid())
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  country     String?
+  note        String?
+  archived    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  deliveries  Delivery[]
+
+  @@index([archived])
+  @@map("suppliers")
+}
+
+// ============================================================
+// DELIVERY -- a physical batch/shipment that arrived at the warehouse
+// Linked to a specific Variant (product + length + color)
+// This is what FIFO operates on.
+// ============================================================
+
+model Delivery {
+  id                      String    @id @default(cuid())
+  variantId               String
+  variant                 Variant   @relation(fields: [variantId], references: [id])
+
+  supplierId              String
+  supplier                Supplier  @relation(fields: [supplierId], references: [id])
+
+  purchasePricePerGramRaw Int
+  currency                Currency
+  exchangeRate            Int
+
+  purchasePricePerGramCZK Int
+
+  initialGrams            Int
+  initialPieces           Int
+  pieceWeightGrams        Int?
+
+  remainingGrams          Int
+  remainingPieces         Int
+
+  barcode                 String?   @unique
+  batchCode               String?
+
+  receivedInvoiceFile     String?
+
+  stockedAt               DateTime  @default(now())
+  note                    String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  stockMovements          StockMovement[]
+
+  @@index([variantId, stockedAt])
+  @@index([supplierId])
+  @@index([barcode])
+  @@index([variantId, remainingGrams, stockedAt])
+  @@map("deliveries")
+}
+
+// ============================================================
+// STOCK_MOVEMENT -- every stock change is recorded here (audit trail)
+// ============================================================
+
+model StockMovement {
+  id          String            @id @default(cuid())
+  deliveryId  String
+  delivery    Delivery          @relation(fields: [deliveryId], references: [id])
+  variantId   String
+  variant     Variant           @relation(fields: [variantId], references: [id])
+
+  type        StockMovementType
+
+  grams       Int
+  pieces      Int
+
+  userId      String
+  user        User              @relation(fields: [userId], references: [id])
+  note        String?
+
+  saleItemId  String?
+  returnId    String?
+  complaintId String?
+
+  createdAt   DateTime          @default(now())
+
+  @@index([deliveryId])
+  @@index([variantId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([userId])
+  @@map("stock_movements")
+}
+
+// ============================================================
+// RESERVATION -- holds stock for unconfirmed online orders (Step 6)
+// ============================================================
+
+model Reservation {
+  id          String    @id @default(cuid())
+  orderId     String
+  variantId   String
+  variant     Variant   @relation(fields: [variantId], references: [id])
+
+  grams       Int
+  pieces      Int
+  active      Boolean   @default(true)
+
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+
+  @@index([variantId, active])
+  @@index([orderId])
+  @@map("reservations")
 }
