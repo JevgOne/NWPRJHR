@@ -192,7 +192,16 @@
     "notesSaved": "Poznámky uloženy",
     "revenueTotal": "Celkový obrat",
     "nextTier": "Do další úrovně",
-    "address": "Adresa"
+    "address": "Adresa",
+    "ico": "IČO",
+    "dic": "DIČ",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "city": "Město",
+    "language": "Jazyk",
+    "czech": "Čeština",
+    "ukrainian": "Ukrajinština",
+    "russian": "Ruština"
   },
   "orderManagement": {
     "title": "Objednávky",
@@ -216,7 +225,12 @@
     "inTransit": "Na cestě",
     "completed": "Dokončená",
     "cancelled": "Zrušená",
-    "addToOrder": "Přidat do objednávky"
+    "addToOrder": "Přidat do objednávky",
+    "note": "Poznámka",
+    "salon": "Salon",
+    "status": "Stav",
+    "quantity": "Množství",
+    "pricePerGram": "CZK/g"
   },
   "sampleManagement": {
     "title": "Vzorky",
@@ -380,5 +394,22 @@
     "cs": "Čeština",
     "uk": "Українська",
     "ru": "Русский"
+  },
+  "salonPortal": {
+    "catalog": "Katalog",
+    "myOrders": "Moje objednávky",
+    "myInvoices": "Moje faktury",
+    "profile": "Profil",
+    "mySamples": "Moje vzorky",
+    "yourDiscount": "Vaše sleva",
+    "yourTier": "Vaše úroveň",
+    "totalRevenue": "Celkový obrat",
+    "loyaltyPoints": "Věrnostní body",
+    "toNextTier": "Do další úrovně zbývá",
+    "available": "Dostupné",
+    "outOfStock": "Vyprodáno",
+    "pricePerGram": "CZK/g",
+    "noProducts": "Žádné produkty",
+    "orderFromCatalog": "Objednat"
   }
 }

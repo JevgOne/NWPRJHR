@@ -17,8 +17,9 @@ export async function updateOverdueInvoices(): Promise<number> {
 
 /**
  * After recording a payment, check if invoice is fully paid.
+ * Returns true if the invoice just transitioned to PAID status.
  */
-export async function checkInvoicePaid(invoiceId: string): Promise<void> {
+export async function checkInvoicePaid(invoiceId: string): Promise<boolean> {
   const invoice = await prisma.invoice.findUniqueOrThrow({
     where: { id: invoiceId },
     include: { payments: true },
@@ -31,10 +32,12 @@ export async function checkInvoicePaid(invoiceId: string): Promise<void> {
       where: { id: invoiceId },
       data: { status: "PAID" },
     });
+    return invoice.status !== "PAID";
   } else if (totalPaid > 0) {
     await prisma.invoice.update({
       where: { id: invoiceId },
       data: { status: "AWAITING" },
     });
   }
+  return false;
 }

@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { creditNoteSchema } from "@/lib/validations/invoice";
 import { createCreditNote } from "@/lib/invoicing";
+import { reduceSalonRevenue } from "@/lib/loyalty";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -74,6 +75,12 @@ export async function POST(request: NextRequest) {
     parsed.data.items,
     parsed.data.reason
   );
+
+  // Reduce salon loyalty revenue on credit note
+  if (creditNote.salonId) {
+    const returnAmount = Math.abs(creditNote.subtotal);
+    await reduceSalonRevenue(creditNote.salonId, returnAmount);
+  }
 
   return NextResponse.json(creditNote, { status: 201 });
 }

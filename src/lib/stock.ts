@@ -1,4 +1,7 @@
+import type { PrismaClient } from "@prisma/client";
 import { prisma } from "./db";
+
+type TransactionClient = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 
 export interface StockNumbers {
   physicalGrams: number;
@@ -14,11 +17,14 @@ export interface StockNumbers {
  * - Physical = SUM of remainingGrams across all deliveries
  * - Reserved = SUM of active reservations
  * - Available = physical - reserved
+ *
+ * Accepts optional tx client for use inside transactions.
  */
 export async function getStockNumbers(
-  variantId: string
+  variantId: string,
+  db: TransactionClient | typeof prisma = prisma
 ): Promise<StockNumbers> {
-  const physical = await prisma.delivery.aggregate({
+  const physical = await db.delivery.aggregate({
     where: { variantId },
     _sum: {
       remainingGrams: true,
@@ -26,7 +32,7 @@ export async function getStockNumbers(
     },
   });
 
-  const reserved = await prisma.reservation.aggregate({
+  const reserved = await db.reservation.aggregate({
     where: { variantId, active: true },
     _sum: {
       grams: true,

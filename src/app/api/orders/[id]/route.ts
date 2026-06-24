@@ -98,59 +98,65 @@ export async function POST(
         if (!["OWNER", "EMPLOYEE"].includes(session.user.role))
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-        // Release reservations
-        await prisma.reservation.updateMany({
-          where: { orderId: id, active: true },
-          data: { active: false },
-        });
+        const result = await prisma.$transaction(async (tx) => {
+          const order = await tx.order.findUniqueOrThrow({
+            where: { id },
+            include: { items: true, salon: true },
+          });
 
-        const order = await prisma.order.findUniqueOrThrow({
-          where: { id },
-          include: { items: true, salon: true },
-        });
+          if (
+            !["CONFIRMED", "READY", "IN_TRANSIT"].includes(order.status)
+          ) {
+            throw new Error(`Cannot complete order in status ${order.status}`);
+          }
 
-        if (
-          !["CONFIRMED", "READY", "IN_TRANSIT"].includes(order.status)
-        ) {
-          return NextResponse.json(
-            { error: `Cannot complete order in status ${order.status}` },
-            { status: 400 }
-          );
-        }
+          // Release reservations
+          await tx.reservation.updateMany({
+            where: { orderId: id, active: true },
+            data: { active: false },
+          });
 
-        // Create sale from order items
+          // Update order status
+          const updated = await tx.order.update({
+            where: { id },
+            data: {
+              status: "COMPLETED",
+              completedAt: new Date(),
+            },
+          });
+
+          return { order: updated, orderItems: order.items, salonId: order.salonId };
+        }, { timeout: 15000 });
+
+        // Create sale from order items (has its own transaction)
         const sale = await completeSale(
           {
             customerType: "SALON",
-            salonId: order.salonId,
-            items: order.items.map((item) => ({
+            salonId: result.salonId,
+            items: result.orderItems.map((item) => ({
               variantId: item.variantId,
               grams: item.grams,
               pieces: item.pieces,
             })),
-            orderId: order.id,
+            orderId: id,
           },
           session.user.id
         );
 
-        // Create invoice
+        // Link sale to order
+        await prisma.order.update({
+          where: { id },
+          data: { saleId: sale.id },
+        });
+
+        // Create invoice (has its own transaction)
         const invoice = await createInvoiceFromSale(
           sale.id,
           body.companyId
         );
 
-        // Update order
-        const updated = await prisma.order.update({
-          where: { id },
-          data: {
-            status: "COMPLETED",
-            completedAt: new Date(),
-            saleId: sale.id,
-          },
-        });
-
         return NextResponse.json({
-          order: updated,
+          order: result.order,
           sale: { id: sale.id, saleNumber: sale.saleNumber },
           invoice: { id: invoice.id, number: invoice.number },
         });

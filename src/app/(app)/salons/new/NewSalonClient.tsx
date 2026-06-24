@@ -64,12 +64,12 @@ export function NewSalonClient() {
           />
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="ICO"
+              label={t("ico")}
               value={form.ico}
               onChange={(e) => setField("ico", e.target.value)}
             />
             <Input
-              label="DIC"
+              label={t("dic")}
               value={form.dic}
               onChange={(e) => setField("dic", e.target.value)}
             />
@@ -81,13 +81,13 @@ export function NewSalonClient() {
           />
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="E-mail"
+              label={t("email")}
               type="email"
               value={form.email}
               onChange={(e) => setField("email", e.target.value)}
             />
             <Input
-              label="Telefon"
+              label={t("phone")}
               value={form.phone}
               onChange={(e) => setField("phone", e.target.value)}
             />
@@ -99,23 +99,23 @@ export function NewSalonClient() {
               onChange={(e) => setField("address", e.target.value)}
             />
             <Input
-              label="City"
+              label={t("city")}
               value={form.city}
               onChange={(e) => setField("city", e.target.value)}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Language
+              {t("language")}
             </label>
             <select
               value={form.language}
               onChange={(e) => setField("language", e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
-              <option value="cs">Cestina</option>
-              <option value="uk">Ukrainska</option>
-              <option value="ru">Russky</option>
+              <option value="cs">{t("czech")}</option>
+              <option value="uk">{t("ukrainian")}</option>
+              <option value="ru">{t("russian")}</option>
             </select>
           </div>
           <div className="flex gap-2 pt-2">

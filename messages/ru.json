@@ -192,7 +192,16 @@
     "notesSaved": "Заметки сохранены",
     "revenueTotal": "Общий оборот",
     "nextTier": "До следующего уровня",
-    "address": "Адрес"
+    "address": "Адрес",
+    "ico": "ИНН",
+    "dic": "НДС",
+    "email": "E-mail",
+    "phone": "Телефон",
+    "city": "Город",
+    "language": "Язык",
+    "czech": "Чешский",
+    "ukrainian": "Украинский",
+    "russian": "Русский"
   },
   "orderManagement": {
     "title": "Заказы",
@@ -216,7 +225,12 @@
     "inTransit": "В пути",
     "completed": "Завершённый",
     "cancelled": "Отменённый",
-    "addToOrder": "Добавить в заказ"
+    "addToOrder": "Добавить в заказ",
+    "note": "Примечание",
+    "salon": "Салон",
+    "status": "Статус",
+    "quantity": "Количество",
+    "pricePerGram": "CZK/г"
   },
   "sampleManagement": {
     "title": "Образцы",
@@ -380,5 +394,22 @@
     "cs": "Čeština",
     "uk": "Українська",
     "ru": "Русский"
+  },
+  "salonPortal": {
+    "catalog": "Каталог",
+    "myOrders": "Мои заказы",
+    "myInvoices": "Мои счета",
+    "profile": "Профиль",
+    "mySamples": "Мои образцы",
+    "yourDiscount": "Ваша скидка",
+    "yourTier": "Ваш уровень",
+    "totalRevenue": "Общий оборот",
+    "loyaltyPoints": "Баллы лояльности",
+    "toNextTier": "До следующего уровня осталось",
+    "available": "Доступно",
+    "outOfStock": "Нет в наличии",
+    "pricePerGram": "CZK/г",
+    "noProducts": "Нет товаров",
+    "orderFromCatalog": "Заказать"
   }
 }

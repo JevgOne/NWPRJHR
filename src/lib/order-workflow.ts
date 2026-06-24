@@ -59,7 +59,7 @@ export async function createOrder(
         where: { id: item.variantId },
       });
 
-      const stock = await getStockNumbers(item.variantId);
+      const stock = await getStockNumbers(item.variantId, tx);
       if (stock.availableGrams < item.grams) {
         throw new InsufficientStockError("grams", item.grams, stock.availableGrams);
       }

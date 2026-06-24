@@ -106,8 +106,8 @@ export function OrderDetailClient({
           <thead>
             <tr className="border-b text-left text-gray-500">
               <th className="py-1 pr-2">-</th>
-              <th className="py-1 pr-2 text-right">g/ks</th>
-              <th className="py-1 pr-2 text-right">CZK/g</th>
+              <th className="py-1 pr-2 text-right">{t("quantity")}</th>
+              <th className="py-1 pr-2 text-right">{t("pricePerGram")}</th>
               <th className="py-1 text-right">{t("estimatedTotal")}</th>
             </tr>
           </thead>
@@ -141,7 +141,7 @@ export function OrderDetailClient({
       {order.note && (
         <Card padding="sm">
           <div className="text-sm">
-            <span className="text-gray-500">Note: </span>
+            <span className="text-gray-500">{t("note")}: </span>
             {order.note}
           </div>
         </Card>

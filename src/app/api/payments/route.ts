@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { paymentSchema } from "@/lib/validations/invoice";
 import { checkInvoicePaid } from "@/lib/invoice-status";
+import { addSalonRevenue } from "@/lib/loyalty";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -59,7 +60,18 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  await checkInvoicePaid(parsed.data.invoiceId);
+  const wasPaid = await checkInvoicePaid(parsed.data.invoiceId);
+
+  // After invoice becomes PAID, update salon loyalty revenue/tier
+  if (wasPaid) {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: parsed.data.invoiceId },
+      select: { salonId: true, subtotal: true, type: true },
+    });
+    if (invoice?.salonId && invoice.type === "INVOICE") {
+      await addSalonRevenue(invoice.salonId, invoice.subtotal);
+    }
+  }
 
   return NextResponse.json(payment, { status: 201 });
 }
