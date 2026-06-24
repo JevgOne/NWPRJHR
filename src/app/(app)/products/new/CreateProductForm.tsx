@@ -53,7 +53,7 @@ export function CreateProductForm() {
 
       if (!res.ok) {
         const err = await res.json();
-        setError(err.error?.toString() || "Error creating product");
+        setError(err.error?.toString() || t("productForm.createError"));
         return;
       }
 
@@ -73,7 +73,7 @@ export function CreateProductForm() {
         <Input id="name" name="name" label={`${t("nav.products")} (CZ)`} required />
         <Input id="nameUk" name="nameUk" label={`${t("nav.products")} (UK)`} />
         <Input id="nameRu" name="nameRu" label={`${t("nav.products")} (RU)`} />
-        <Input id="description" name="description" label={`${t("nav.products")} — popis`} />
+        <Input id="description" name="description" label={`${t("nav.products")} — ${t("productForm.description")}`} />
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

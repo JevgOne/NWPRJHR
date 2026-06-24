@@ -30,42 +30,34 @@ export async function PUT(request: NextRequest) {
 
   const { category, markupPercent } = parsed.data;
 
-  // Update setting and recalculate all non-overridden variants in this category
-  const setting = await prisma.priceSettings.upsert({
-    where: { category },
-    update: { markupPercent },
-    create: { category, markupPercent },
-  });
+  const result = await prisma.$transaction(async (tx) => {
+    const setting = await tx.priceSettings.upsert({
+      where: { category },
+      update: { markupPercent },
+      create: { category, markupPercent },
+    });
 
-  // Find all variants in this category without manual override
-  const products = await prisma.product.findMany({
-    where: { category },
-    select: { id: true },
-  });
-  const productIds = products.map((p) => p.id);
-
-  const variants = await prisma.variant.findMany({
-    where: {
-      productId: { in: productIds },
-      retailManualOverride: false,
-    },
-  });
-
-  // Batch update retail prices
-  for (const variant of variants) {
-    await prisma.variant.update({
-      where: { id: variant.id },
-      data: {
-        retailPricePerGram: calculateRetailPrice(
-          variant.wholesalePricePerGram,
-          markupPercent
-        ),
+    const variants = await tx.variant.findMany({
+      where: {
+        product: { category },
+        retailManualOverride: false,
       },
     });
-  }
 
-  return NextResponse.json({
-    setting,
-    recalculated: variants.length,
+    for (const variant of variants) {
+      await tx.variant.update({
+        where: { id: variant.id },
+        data: {
+          retailPricePerGram: calculateRetailPrice(
+            variant.wholesalePricePerGram,
+            markupPercent
+          ),
+        },
+      });
+    }
+
+    return { setting, recalculated: variants.length };
   });
+
+  return NextResponse.json(result);
 }

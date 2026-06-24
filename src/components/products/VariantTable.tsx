@@ -191,7 +191,7 @@ export function VariantTable({
                           {formatCZK(variant.retailPricePerGram!)}
                           {variant.retailManualOverride && (
                             <span className="ml-1 text-[10px]">
-                              (manual)
+                              ({t("variant.manualOverride")})
                             </span>
                           )}
                         </span>
@@ -201,7 +201,7 @@ export function VariantTable({
                             className="ml-1 text-[10px] text-gray-400 hover:text-red-500"
                             disabled={isSaving}
                           >
-                            reset
+                            {t("variant.resetOverride")}
                           </button>
                         )}
                       </div>

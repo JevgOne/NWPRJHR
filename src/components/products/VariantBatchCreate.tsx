@@ -41,13 +41,13 @@ export function VariantBatchCreate({
     setError("");
 
     if (parsedLengths.length === 0 || parsedColors.length === 0) {
-      setError("Enter at least one length and one color");
+      setError(t("variant.enterLengthAndColor"));
       return;
     }
 
     const priceHalere = Math.round(parseFloat(defaultPrice) * 100);
     if (!priceHalere || priceHalere <= 0) {
-      setError("Enter a valid price");
+      setError(t("variant.enterValidPrice"));
       return;
     }
 
@@ -69,7 +69,7 @@ export function VariantBatchCreate({
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error?.toString() || "Failed to create variants");
+        setError(data.error?.toString() || t("variant.createFailed"));
         return;
       }
 
@@ -87,13 +87,13 @@ export function VariantBatchCreate({
       </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label={`${t("product.length")} (cm, comma-separated)`}
+          label={`${t("product.length")} (cm, ${t("variant.commaSeparated")})`}
           placeholder="30, 40, 50, 60"
           value={lengths}
           onChange={(e) => setLengths(e.target.value)}
         />
         <Input
-          label={`${t("product.color")} (comma-separated)`}
+          label={`${t("product.color")} (${t("variant.commaSeparated")})`}
           placeholder="1B, 613, 4, ombre 1B/613"
           value={colors}
           onChange={(e) => setColors(e.target.value)}
@@ -109,7 +109,7 @@ export function VariantBatchCreate({
 
         {previewCount > 0 && (
           <p className="text-sm text-gray-500">
-            {previewCount} variants will be created
+            {t("variant.willBeCreated", { count: previewCount })}
           </p>
         )}
 

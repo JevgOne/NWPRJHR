@@ -192,6 +192,19 @@
     "whyHairora": "Proč Hairora",
     "contact": "Kontakt"
   },
+  "variant": {
+    "enterLengthAndColor": "Zadejte alespoň jednu délku a jednu barvu",
+    "enterValidPrice": "Zadejte platnou cenu",
+    "createFailed": "Nepodařilo se vytvořit varianty",
+    "willBeCreated": "{count} variant bude vytvořeno",
+    "commaSeparated": "oddělené čárkou",
+    "manualOverride": "ruční",
+    "resetOverride": "obnovit"
+  },
+  "productForm": {
+    "description": "Popis",
+    "createError": "Chyba při vytváření produktu"
+  },
   "supplier": {
     "title": "Dodavatelé",
     "name": "Název",

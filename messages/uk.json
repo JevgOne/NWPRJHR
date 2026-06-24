@@ -192,6 +192,19 @@
     "whyHairora": "Чому Hairora",
     "contact": "Контакти"
   },
+  "variant": {
+    "enterLengthAndColor": "Введіть принаймні одну довжину та один колір",
+    "enterValidPrice": "Введіть дійсну ціну",
+    "createFailed": "Не вдалося створити варіанти",
+    "willBeCreated": "{count} варіантів буде створено",
+    "commaSeparated": "через кому",
+    "manualOverride": "ручна",
+    "resetOverride": "скинути"
+  },
+  "productForm": {
+    "description": "Опис",
+    "createError": "Помилка при створенні продукту"
+  },
   "supplier": {
     "title": "Постачальники",
     "name": "Назва",

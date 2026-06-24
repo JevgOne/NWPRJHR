@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ProductCategory } from "@prisma/client";
 
 const categoryStyles: Record<ProductCategory, string> = {
@@ -7,19 +10,21 @@ const categoryStyles: Record<ProductCategory, string> = {
   SALE: "bg-red-100 text-red-800",
 };
 
-const categoryLabels: Record<ProductCategory, string> = {
-  VIRGIN: "Virgin",
-  PREMIUM: "Premium",
-  STANDARD: "Standard",
-  SALE: "Sale",
+const categoryKeys: Record<ProductCategory, "virgin" | "premium" | "standard" | "sale"> = {
+  VIRGIN: "virgin",
+  PREMIUM: "premium",
+  STANDARD: "standard",
+  SALE: "sale",
 };
 
 export function CategoryBadge({ category }: { category: ProductCategory }) {
+  const t = useTranslations("category");
+
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryStyles[category]}`}
     >
-      {categoryLabels[category]}
+      {t(categoryKeys[category])}
     </span>
   );
 }

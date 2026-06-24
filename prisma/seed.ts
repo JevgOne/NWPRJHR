@@ -2,19 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { hash } from "bcryptjs";
 import dotenv from "dotenv";
+import { calculateRetailPrice } from "../src/lib/pricing";
 
 dotenv.config();
 
 const adapter = new PrismaPg(process.env.DATABASE_URL!);
 const prisma = new PrismaClient({ adapter });
-
-function calculateRetailPrice(
-  wholesaleHalere: number,
-  markupPercent: number
-): number {
-  const raw = wholesaleHalere * (1 + markupPercent / 100);
-  return Math.ceil(raw / 100) * 100;
-}
 
 async function main() {
   // === Users ===

@@ -192,6 +192,19 @@
     "whyHairora": "Почему Hairora",
     "contact": "Контакты"
   },
+  "variant": {
+    "enterLengthAndColor": "Введите хотя бы одну длину и один цвет",
+    "enterValidPrice": "Введите корректную цену",
+    "createFailed": "Не удалось создать варианты",
+    "willBeCreated": "{count} вариантов будет создано",
+    "commaSeparated": "через запятую",
+    "manualOverride": "ручная",
+    "resetOverride": "сбросить"
+  },
+  "productForm": {
+    "description": "Описание",
+    "createError": "Ошибка при создании продукта"
+  },
   "supplier": {
     "title": "Поставщики",
     "name": "Название",
