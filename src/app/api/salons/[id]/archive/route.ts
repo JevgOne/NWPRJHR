@@ -18,9 +18,13 @@ export async function POST(
   if (!salon)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  const newArchived = !salon.archived;
   const updated = await prisma.salon.update({
     where: { id },
-    data: { archived: !salon.archived },
+    data: {
+      archived: newArchived,
+      archivedAt: newArchived ? new Date() : null,
+    },
   });
 
   return NextResponse.json(updated);

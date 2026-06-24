@@ -53,7 +53,8 @@
     "samples": "Vzorky",
     "returns": "Vratky",
     "complaints": "Reklamace",
-    "payments": "Platby"
+    "payments": "Platby",
+    "export": "Export"
   },
   "dashboard": {
     "title": "Přehled",
@@ -328,12 +329,65 @@
     "counterPerformance": "Protiplnění"
   },
   "public": {
+    "nav": {
+      "home": "Domů",
+      "about": "O nás",
+      "products": "Nabídka",
+      "contact": "Kontakt",
+      "login": "Přihlásit se"
+    },
+    "hero": {
+      "title": "Prémiové vlasy k prodloužení pro profesionální salony",
+      "subtitle": "Přímý import, záruka kvality a osobní přístup. Trojjazyčná podpora pro salony po celé ČR.",
+      "cta": "Kontaktujte nás",
+      "viewOffer": "Zobrazit nabídku"
+    },
     "heroTitle": "Prémiové vlasy k prodloužení",
     "heroSubtitle": "Velkoobchod pro profesionální salony",
     "aboutUs": "O nás",
     "ourOffer": "Nabídka",
     "whyHairora": "Proč Hairora",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "usp": {
+      "directImport": "Přímý dovoz za lepší ceny",
+      "qualityGuarantee": "Záruka kvality",
+      "personalApproach": "Osobní přístup",
+      "trilingualSupport": "Trojjazyčná podpora (CZ/UK/RU)"
+    },
+    "ctaTitle": "Chcete se stát partnerským salonem?",
+    "ctaSubtitle": "Kontaktujte nás a domluvíme se na spolupráci.",
+    "about": {
+      "title": "O nás",
+      "missionTitle": "Naše mise",
+      "missionText": "Hairora je velkoobchod s prémiovými vlasy k prodloužení. Naším posláním je dodávat salonům kvalitní vlasy za férové ceny s osobním přístupem.",
+      "valuesTitle": "Naše hodnoty",
+      "valueQuality": "Kvalita",
+      "valueTrust": "Důvěra",
+      "valuePartnership": "Partnerství",
+      "valueTransparency": "Transparentnost"
+    },
+    "products": {
+      "title": "Naše nabídka",
+      "lengths": "Délky",
+      "colors": "Barvy",
+      "noProducts": "Žádné produkty"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "infoTitle": "Kontaktní údaje",
+      "form": {
+        "name": "Jméno",
+        "email": "E-mail",
+        "phone": "Telefon",
+        "salon": "Název salonu",
+        "message": "Zpráva",
+        "send": "Odeslat",
+        "success": "Zpráva odeslána. Ozveme se vám co nejdříve."
+      }
+    },
+    "footer": {
+      "copyright": "© 2026 Hairora.cz"
+    }
   },
   "variant": {
     "enterLengthAndColor": "Zadejte alespoň jednu délku a jednu barvu",
@@ -531,6 +585,25 @@
     "justNow": "Právě teď",
     "viewAll": "Zobrazit vše",
     "showing": "Zobrazeno"
+  },
+  "export": {
+    "title": "Export pro účetní",
+    "period": "Období",
+    "from": "Od",
+    "to": "Do",
+    "thisMonth": "Tento měsíc",
+    "lastMonth": "Minulý měsíc",
+    "thisQuarter": "Tento kvartál",
+    "thisYear": "Tento rok",
+    "excel": "Excel / CSV",
+    "excelDesc": "Vydané faktury, dobropisy, přijaté faktury, provozní náklady, přehled DPH",
+    "pohoda": "Pohoda XML",
+    "pohodaDesc": "Import do účetního systému Pohoda — faktury a dobropisy",
+    "pdfBundle": "PDF faktur (ZIP)",
+    "pdfBundleDesc": "Stáhnout všechny faktury a dobropisy jako PDF v jednom ZIP archivu",
+    "download": "Stáhnout",
+    "invoiceCount": "faktur",
+    "creditNoteCount": "dobropisů"
   },
   "paymentMorality": {
     "title": "Platební morálka",

@@ -58,6 +58,7 @@ model Salon {
 
   // Status
   archived        Boolean     @default(false)
+  archivedAt      DateTime?
   startDate       DateTime    @default(now())
   notes           String?
 
