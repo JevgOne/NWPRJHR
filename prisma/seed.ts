@@ -383,6 +383,50 @@ async function main() {
     },
   });
 
+  // === Operating Costs (sample) ===
+  if (owner) {
+    const sampleCosts = [
+      {
+        category: "RENT" as const,
+        amountHalere: 1_500_000,
+        date: new Date("2026-06-01"),
+        description: "Nájem sklad červen 2026",
+      },
+      {
+        category: "TRANSPORT" as const,
+        amountHalere: 350_000,
+        date: new Date("2026-06-05"),
+        description: "Doprava dodávka z Ukrajiny",
+      },
+      {
+        category: "ADVERTISING" as const,
+        amountHalere: 500_000,
+        date: new Date("2026-06-10"),
+        description: "Instagram reklama červen",
+      },
+      {
+        category: "FEES" as const,
+        amountHalere: 80_000,
+        date: new Date("2026-06-15"),
+        description: "Bankovní poplatky",
+      },
+    ];
+
+    for (const cost of sampleCosts) {
+      const existing = await prisma.operatingCost.findFirst({
+        where: { description: cost.description, date: cost.date },
+      });
+      if (!existing) {
+        await prisma.operatingCost.create({
+          data: {
+            ...cost,
+            createdByUserId: owner.id,
+          },
+        });
+      }
+    }
+  }
+
   console.log("Seed completed.");
 }
 

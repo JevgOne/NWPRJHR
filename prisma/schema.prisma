@@ -28,6 +28,9 @@ model User {
   discountsGiven Discount[]
   partner        Partner?
 
+  operatingCostsCreated  OperatingCost[]     @relation("OperatingCostsCreated")
+  withdrawalsCreated     PartnerWithdrawal[] @relation("WithdrawalsCreated")
+
   @@map("users")
 }
 
@@ -345,6 +348,7 @@ model Partner {
   createdAt DateTime @default(now())
 
   discountBearings DiscountBearer[]
+  withdrawals      PartnerWithdrawal[]
 
   @@map("partners")
 }
@@ -813,4 +817,81 @@ model SampleRequest {
   @@index([salonId])
   @@index([status])
   @@map("sample_requests")
+}
+
+// ============================================================
+// FINANCE ENUMS
+// ============================================================
+
+enum OperatingCostCategory {
+  ADVERTISING
+  MARKETING
+  TRANSPORT
+  RENT
+  FEES
+  OTHER
+}
+
+enum WithdrawalStatus {
+  PLANNED
+  COMPLETED
+}
+
+// ============================================================
+// OPERATING_COST -- provozni naklad
+// ============================================================
+
+model OperatingCost {
+  id              String                @id @default(cuid())
+
+  category        OperatingCostCategory
+  amountHalere    Int
+  date            DateTime
+  description     String?
+  note            String?
+
+  receiptFile     String?
+  receiptName     String?
+
+  createdByUserId String
+  createdByUser   User                  @relation("OperatingCostsCreated", fields: [createdByUserId], references: [id])
+
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([category])
+  @@index([date])
+  @@index([createdByUserId])
+  @@map("operating_costs")
+}
+
+// ============================================================
+// PARTNER_WITHDRAWAL -- mesicni vyber spolecnika
+// ============================================================
+
+model PartnerWithdrawal {
+  id              String           @id @default(cuid())
+
+  partnerId       String
+  partner         Partner          @relation(fields: [partnerId], references: [id])
+
+  year            Int
+  month           Int
+
+  amountHalere    Int
+
+  status          WithdrawalStatus @default(PLANNED)
+  date            DateTime
+  note            String?
+
+  createdByUserId String
+  createdByUser   User             @relation("WithdrawalsCreated", fields: [createdByUserId], references: [id])
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([partnerId, year, month])
+  @@index([partnerId])
+  @@index([year, month])
+  @@map("partner_withdrawals")
 }

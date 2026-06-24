@@ -1,0 +1,11 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { CostsClient } from "./CostsClient";
+
+export default async function CostsPage() {
+  const session = await auth();
+  if (!session) redirect("/login");
+  if (session.user.role !== "OWNER") redirect("/dashboard");
+
+  return <CostsClient />;
+}
