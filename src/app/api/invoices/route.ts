@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createInvoiceSchema } from "@/lib/validations/invoice";
 import { createInvoiceFromSale } from "@/lib/invoicing";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -77,6 +78,16 @@ export async function POST(request: NextRequest) {
     parsed.data.saleId,
     parsed.data.companyId
   );
+
+  await logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email,
+    action: "INVOICE_CREATED",
+    entity: "Invoice",
+    entityId: invoice.id,
+    detail: { number: invoice.number, total: invoice.total },
+    ipAddress: getClientIp(request),
+  });
 
   return NextResponse.json(invoice, { status: 201 });
 }

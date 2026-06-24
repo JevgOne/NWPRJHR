@@ -51,6 +51,14 @@ export function PublicFooter() {
                   {t("nav.contact")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="hover:text-white transition-colors"
+                >
+                  {t("nav.privacy")}
+                </Link>
+              </li>
             </ul>
           </div>
 

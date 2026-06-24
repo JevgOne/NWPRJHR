@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 enum Role {
@@ -117,7 +117,7 @@ model Product {
   descriptionRu  String?
   category       ProductCategory
   processingType ProcessingType
-  photos         String[]
+  photos         String          @default("[]")
   archived       Boolean         @default(false)
   slug           String?         @unique
   createdAt      DateTime        @default(now())
@@ -1073,6 +1073,32 @@ model Notification {
   @@index([recipientId, createdAt])
   @@index([type])
   @@map("notifications")
+}
+
+// ============================================================
+// AUDIT_LOG -- kdo co zadal / zmenil
+// ============================================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+
+  userId      String?
+  userEmail   String?
+
+  action      String
+  entity      String
+  entityId    String?
+
+  detail      Json?
+  ipAddress   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 // ============================================================

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { completeSaleSchema } from "@/lib/validations/sale";
 import { completeSale } from "@/lib/sales";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -31,6 +32,16 @@ export async function POST(request: NextRequest) {
       customer: true,
       user: true,
     },
+  });
+
+  await logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email,
+    action: "SALE_COMPLETED",
+    entity: "Sale",
+    entityId: sale.id,
+    detail: { saleNumber: sale.saleNumber, totalAmount: sale.totalAmount },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(

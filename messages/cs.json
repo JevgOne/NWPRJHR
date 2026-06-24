@@ -54,7 +54,8 @@
     "returns": "Vratky",
     "complaints": "Reklamace",
     "payments": "Platby",
-    "export": "Export"
+    "export": "Export",
+    "auditLog": "Audit log"
   },
   "dashboard": {
     "title": "Přehled",
@@ -334,7 +335,8 @@
       "about": "O nás",
       "products": "Nabídka",
       "contact": "Kontakt",
-      "login": "Přihlásit se"
+      "login": "Přihlásit se",
+      "privacy": "Ochrana osobních údajů"
     },
     "hero": {
       "title": "Prémiové vlasy k prodloužení pro profesionální salony",
@@ -616,5 +618,52 @@
     "currentlyOverdue": "Aktuálně po splatnosti",
     "averageDaysLate": "Průměr dní po splatnosti",
     "currentDebt": "Aktuální dluh"
+  },
+  "auditLog": {
+    "title": "Audit log",
+    "entity": "Entita",
+    "action": "Akce",
+    "user": "Uživatel",
+    "date": "Datum",
+    "detail": "Detail",
+    "noLogs": "Žádné záznamy",
+    "totalEntries": "{count} záznamů"
+  },
+  "privacy": {
+    "title": "Ochrana osobních údajů",
+    "dataCollected": {
+      "title": "Jaké údaje shromažďujeme",
+      "text": "Shromažďujeme údaje nezbytné pro poskytování našich služeb: jméno, e-mail, telefon, název salonu, adresu a fakturační údaje (IČO, DIČ). U zaměstnanců evidujeme přihlašovací údaje (e-mail a zahashované heslo)."
+    },
+    "purpose": {
+      "title": "Účel zpracování",
+      "text": "Vaše údaje zpracováváme za účelem správy objednávek, fakturace, věrnostního programu a komunikace ohledně vašich objednávek. Údaje nepoužíváme k marketingovým účelům bez vašeho souhlasu."
+    },
+    "storage": {
+      "title": "Uložení a zabezpečení",
+      "text": "Data jsou uložena v šifrované databázi. Hesla jsou ukládána pomocí silného hashování (bcrypt). Veškerá komunikace probíhá přes HTTPS. Pravidelně provádíme zálohy a data uchováváme po dobu nezbytně nutnou."
+    },
+    "rights": {
+      "title": "Vaše práva",
+      "text": "Máte právo na přístup ke svým údajům, jejich opravu, export a výmaz. Pro uplatnění těchto práv nás kontaktujte na info@hairora.cz nebo využijte funkci exportu/výmazu v nastavení vašeho účtu."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "text": "Používáme pouze nezbytné cookies pro přihlášení a funkčnost aplikace. Nepoužíváme sledovací ani marketingové cookies."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "text": "V případě dotazů ohledně ochrany osobních údajů nás kontaktujte na info@hairora.cz."
+    },
+    "lastUpdated": "Poslední aktualizace: červen 2026"
+  },
+  "gdpr": {
+    "exportData": "Exportovat moje data",
+    "deleteData": "Smazat moje data",
+    "exportSuccess": "Data byla exportována",
+    "deleteConfirm": "Opravdu chcete smazat svá osobní data? Tuto akci nelze vrátit zpět.",
+    "deleteSuccess": "Osobní data byla anonymizována. Finanční záznamy jsou uchovány pro zákonné účely.",
+    "deleteCustomer": "Smazat data zákazníka",
+    "deleteCustomerConfirm": "Opravdu chcete anonymizovat data tohoto zákazníka?"
   }
 }

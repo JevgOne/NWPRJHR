@@ -5,6 +5,7 @@ import { paymentSchema } from "@/lib/validations/invoice";
 import { checkInvoicePaidInTx } from "@/lib/invoice-status";
 import { addSalonRevenueInTx } from "@/lib/loyalty";
 import { createNotificationForRole, createSalonNotification } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -100,6 +101,16 @@ export async function POST(request: NextRequest) {
       });
     }
   }
+
+  await logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email,
+    action: "PAYMENT_RECORDED",
+    entity: "Payment",
+    entityId: result.payment.id,
+    detail: { invoiceId: parsed.data.invoiceId, amount: parsed.data.amount, wasPaid: result.wasPaid },
+    ipAddress: getClientIp(request),
+  });
 
   return NextResponse.json(result.payment, { status: 201 });
 }

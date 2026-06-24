@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { prisma } from "./db";
+import { logAudit } from "./audit";
 import type { Role } from "@prisma/client";
 
 declare module "next-auth" {
@@ -60,6 +61,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  events: {
+    async signIn({ user }) {
+      await logAudit({
+        userId: user.id ?? undefined,
+        userEmail: user.email ?? undefined,
+        action: "LOGIN",
+        entity: "User",
+        entityId: user.id ?? undefined,
+      });
+    },
+  },
   callbacks: {
     jwt({ token, user }) {
       if (user) {

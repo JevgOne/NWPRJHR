@@ -53,8 +53,16 @@ export async function POST(
   });
   const markupPercent = priceSetting?.markupPercent ?? 0;
 
-  const created = await prisma.variant.createMany({
-    data: parsed.data.variants.map((v) => ({
+  // Filter out variants that already exist (SQLite doesn't support skipDuplicates)
+  const existing = await prisma.variant.findMany({
+    where: { productId },
+    select: { lengthCm: true, color: true },
+  });
+  const existingSet = new Set(existing.map((e) => `${e.lengthCm}-${e.color}`));
+
+  const newVariants = parsed.data.variants
+    .filter((v) => !existingSet.has(`${v.lengthCm}-${v.color}`))
+    .map((v) => ({
       productId,
       lengthCm: v.lengthCm,
       color: v.color,
@@ -63,9 +71,11 @@ export async function POST(
         v.wholesalePricePerGram,
         markupPercent
       ),
-    })),
-    skipDuplicates: true,
-  });
+    }));
+
+  const created = newVariants.length > 0
+    ? await prisma.variant.createMany({ data: newVariants })
+    : { count: 0 };
 
   return NextResponse.json({ created: created.count }, { status: 201 });
 }

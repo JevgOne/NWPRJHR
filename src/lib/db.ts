@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
 export type TransactionClient = Parameters<
   Parameters<PrismaClient["$transaction"]>[0]
@@ -10,7 +10,10 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  const adapter = new PrismaPg(process.env.DATABASE_URL!);
+  const adapter = new PrismaLibSql({
+    url: process.env.TURSO_DATABASE_URL ?? process.env.DATABASE_URL ?? "file:./dev.db",
+    authToken: process.env.TURSO_AUTH_TOKEN,
+  });
   return new PrismaClient({ adapter });
 }
 

@@ -38,6 +38,7 @@ export function AppShell({ session, children }: AppShellProps) {
     { href: "/payments", label: t("payments"), roles: ["OWNER"] },
     { href: "/finance", label: t("finance"), roles: ["OWNER"] },
     { href: "/export", label: t("export"), roles: ["OWNER"] },
+    { href: "/audit-log", label: t("auditLog"), roles: ["OWNER"] },
     { href: "/settings", label: t("settings"), roles: ["OWNER"] },
   ].filter((item) => item.roles.includes(role));
 
