@@ -40,9 +40,13 @@ async function main() {
     update: {},
     create: {
       id: "test-salon-1",
-      name: "Salon Krasa",
+      name: "Salon Krasa Praha",
+      ico: "12345678",
       city: "Praha",
       language: "cs",
+      tier: "SILVER",
+      totalRevenue: 7_500_000,
+      points: 750,
     },
   });
 
@@ -331,6 +335,51 @@ async function main() {
       contactEmail: "info@hairora.cz",
       contactPhone: "+420123456789",
       isDefault: true,
+    },
+  });
+
+  // === Loyalty Settings ===
+  const loyaltyDefaults = [
+    { tier: "BRONZE" as const, revenueThreshold: 0, discountPercent: 0 },
+    { tier: "SILVER" as const, revenueThreshold: 5_000_000, discountPercent: 300 },
+    { tier: "GOLD" as const, revenueThreshold: 15_000_000, discountPercent: 600 },
+    { tier: "PLATINUM" as const, revenueThreshold: 40_000_000, discountPercent: 1000 },
+  ];
+
+  for (const ls of loyaltyDefaults) {
+    await prisma.loyaltySettings.upsert({
+      where: { tier: ls.tier },
+      update: {},
+      create: ls,
+    });
+  }
+
+  // === Additional Salons ===
+  await prisma.salon.upsert({
+    where: { id: "test-salon-2" },
+    update: {},
+    create: {
+      id: "test-salon-2",
+      name: "Salon Olena",
+      contactPerson: "Olena",
+      city: "Brno",
+      language: "uk",
+      tier: "BRONZE",
+    },
+  });
+
+  await prisma.salon.upsert({
+    where: { id: "test-salon-3" },
+    update: {},
+    create: {
+      id: "test-salon-3",
+      name: "Salon Natalia",
+      contactPerson: "Natalia",
+      city: "Ostrava",
+      language: "ru",
+      tier: "GOLD",
+      totalRevenue: 20_000_000,
+      points: 2000,
     },
   });
 

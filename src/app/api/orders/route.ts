@@ -1,0 +1,90 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { createOrderSchema } from "@/lib/validations/salon";
+import { createOrder } from "@/lib/order-workflow";
+
+export async function GET(request: NextRequest) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const sp = request.nextUrl.searchParams;
+  const status = sp.get("status");
+  const salonId = sp.get("salonId");
+  const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
+  const limit = Math.min(100, parseInt(sp.get("limit") ?? "20"));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {};
+  if (status) where.status = status;
+  if (salonId) where.salonId = salonId;
+
+  if (session.user.role === "SALON") {
+    where.salonId = session.user.salonId;
+  }
+
+  const [total, orders] = await Promise.all([
+    prisma.order.count({ where }),
+    prisma.order.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        salon: { select: { name: true } },
+        items: {
+          include: {
+            variant: {
+              select: {
+                lengthCm: true,
+                color: true,
+                product: { select: { name: true } },
+              },
+            },
+          },
+        },
+        _count: { select: { items: true } },
+      },
+    }),
+  ]);
+
+  return NextResponse.json({
+    data: orders,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  });
+}
+
+export async function POST(request: NextRequest) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json();
+  const parsed = createOrderSchema.safeParse(body);
+  if (!parsed.success)
+    return NextResponse.json(
+      { error: "Validation failed", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+
+  // SALON can only create orders for their own salon
+  let salonId = parsed.data.salonId;
+  if (session.user.role === "SALON") {
+    salonId = session.user.salonId!;
+  } else if (!["OWNER", "EMPLOYEE"].includes(session.user.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  try {
+    const order = await createOrder(salonId, parsed.data.items, parsed.data.note);
+    return NextResponse.json(order, { status: 201 });
+  } catch (e) {
+    if (e instanceof Error && e.message.startsWith("Insufficient stock")) {
+      return NextResponse.json({ error: e.message }, { status: 400 });
+    }
+    throw e;
+  }
+}

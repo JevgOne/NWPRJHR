@@ -32,22 +32,42 @@ model User {
 }
 
 model Salon {
-  id        String   @id @default(cuid())
-  name      String
-  ico       String?
-  dic       String?
-  contact   String?
-  email     String?
-  phone     String?
-  city      String?
-  language  String   @default("cs")
-  archived  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users     User[]
-  sales     Sale[]
-  invoices  Invoice[]
+  id              String      @id @default(cuid())
+  name            String
+  ico             String?
+  dic             String?
+  contactPerson   String?
+  email           String?
+  phone           String?
+  city            String?
+  address         String?
+  language        String      @default("cs")
 
+  // Loyalty
+  tier            LoyaltyTier @default(BRONZE)
+  points          Int         @default(0)
+  totalRevenue    Int         @default(0)
+
+  // Status
+  archived        Boolean     @default(false)
+  startDate       DateTime    @default(now())
+  notes           String?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  users           User[]
+  sales           Sale[]
+  invoices        Invoice[]
+  orders          Order[]
+  sampleRequests  SampleRequest[]
+
+  slug            String?     @unique
+
+  @@index([archived])
+  @@index([tier])
+  @@index([name])
+  @@index([city])
   @@map("salons")
 }
 
@@ -91,7 +111,8 @@ model Product {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  variants Variant[]
+  variants       Variant[]
+  sampleRequests SampleRequest[]
 
   @@index([category])
   @@index([processingType])
@@ -121,6 +142,7 @@ model Variant {
   stockMovements StockMovement[]
   reservations   Reservation[]
   saleItems      SaleItem[]
+  orderItems     OrderItem[]
 
   @@unique([productId, lengthCm, color])
   @@index([productId])
@@ -272,6 +294,7 @@ model StockMovement {
 model Reservation {
   id          String    @id @default(cuid())
   orderId     String
+  order       Order     @relation(fields: [orderId], references: [id])
   variantId   String
   variant     Variant   @relation(fields: [variantId], references: [id])
 
@@ -389,6 +412,7 @@ model Sale {
   items     SaleItem[]
   discounts Discount[]
   invoice   Invoice?
+  order     Order?
 
   @@index([customerType])
   @@index([salonId])
@@ -478,6 +502,39 @@ model DiscountBearer {
   @@unique([discountId, partnerId])
   @@index([partnerId])
   @@map("discount_bearers")
+}
+
+// ============================================================
+// INVOICING ENUMS
+// ============================================================
+
+// ============================================================
+// LOYALTY & ORDER ENUMS
+// ============================================================
+
+enum LoyaltyTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  REJECTED
+  READY
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+}
+
+enum SampleStatus {
+  REQUESTED
+  APPROVED
+  SENT
+  RETURNED
+  WRITTEN_OFF
 }
 
 // ============================================================
@@ -646,4 +703,114 @@ model Payment {
   @@index([invoiceId])
   @@index([matchedVS])
   @@map("payments")
+}
+
+// ============================================================
+// LOYALTY_SETTINGS -- configurable tier thresholds and discounts
+// ============================================================
+
+model LoyaltySettings {
+  id                String      @id @default(cuid())
+  tier              LoyaltyTier @unique
+  revenueThreshold  Int
+  discountPercent   Int
+  pointsThreshold   Int         @default(10000)
+
+  updatedAt         DateTime    @updatedAt
+
+  @@map("loyalty_settings")
+}
+
+// ============================================================
+// ORDER -- online order from salon
+// ============================================================
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String?
+  salonId        String
+  salon          Salon       @relation(fields: [salonId], references: [id])
+
+  status         OrderStatus @default(NEW)
+
+  estimatedTotal Int
+
+  confirmedAt    DateTime?
+  confirmedBy    String?
+  rejectedAt     DateTime?
+  rejectedReason String?
+  completedAt    DateTime?
+
+  saleId         String?     @unique
+  sale           Sale?       @relation(fields: [saleId], references: [id])
+
+  note           String?
+  internalNote   String?
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  items          OrderItem[]
+  reservations   Reservation[]
+
+  @@index([salonId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+// ============================================================
+// ORDER_ITEM -- line item in an order
+// ============================================================
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  variantId    String
+  variant      Variant  @relation(fields: [variantId], references: [id])
+
+  grams        Int
+  pieces       Int
+  pricePerGram Int
+  lineTotal    Int
+
+  createdAt    DateTime @default(now())
+
+  @@index([orderId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+// ============================================================
+// SAMPLE_REQUEST -- salon requests a sample of a product
+// ============================================================
+
+model SampleRequest {
+  id              String       @id @default(cuid())
+  salonId         String?
+  salon           Salon?       @relation(fields: [salonId], references: [id])
+  salonName       String?
+
+  productId       String
+  product         Product      @relation(fields: [productId], references: [id])
+
+  status          SampleStatus @default(REQUESTED)
+
+  grams           Int?
+  pieces          Int?
+
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  resolution      String?
+
+  stockMovementId String?
+  note            String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([salonId])
+  @@index([status])
+  @@map("sample_requests")
 }
