@@ -1,4 +1,4 @@
-import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, PDFFont, rgb, StandardFonts } from "pdf-lib";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateQRCodeDataUrl } from "./qr-code";
 import { generateSpayd } from "./spayd";
@@ -240,7 +240,6 @@ export async function generateInvoicePdf(
   const tableRight = width - margin;
   const colDesc = tableLeft;
   const colQty = tableRight - 200;
-  const colUnit = tableRight - 155;
   const colPrice = tableRight - 100;
   const colTotal = tableRight;
 

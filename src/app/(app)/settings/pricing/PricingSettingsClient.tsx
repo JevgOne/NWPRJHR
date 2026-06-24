@@ -50,7 +50,7 @@ export function PricingSettingsClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ category, markupPercent }),
       });
-      const data = await res.json();
+      const _data = await res.json();
       if (res.ok) {
         // Refresh settings
         const updated = await fetch("/api/price-settings").then((r) =>

@@ -1,6 +1,6 @@
 const CACHE_NAME = "hairora-v1";
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", (_event) => {
   self.skipWaiting();
 });
 

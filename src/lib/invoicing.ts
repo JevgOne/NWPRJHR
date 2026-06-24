@@ -1,4 +1,4 @@
-import type { Sale, SaleItem, Variant, Product, Salon, Customer, Company, Invoice } from "@prisma/client";
+import type { Sale, SaleItem, Variant, Product, Salon, Customer, Invoice } from "@prisma/client";
 import { prisma } from "./db";
 import { getNextInvoiceNumber } from "./invoice-number";
 import { roundHalereUp } from "./rounding";
@@ -15,7 +15,6 @@ function formatItemDescription(
   variant: Variant,
   lang: string
 ): string {
-  const t = getInvoiceTranslations(lang);
   const name =
     lang === "uk"
       ? product.nameUk || product.name

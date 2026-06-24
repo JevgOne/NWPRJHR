@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatCZK } from "@/lib/pricing";
-import { Button } from "@/components/ui/Button";
 
 interface VariantData {
   id: string;
@@ -24,7 +23,6 @@ interface VariantTableProps {
 }
 
 export function VariantTable({
-  productId,
   variants,
   isOwner,
 }: VariantTableProps) {
