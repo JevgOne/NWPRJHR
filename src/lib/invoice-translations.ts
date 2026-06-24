@@ -1,0 +1,124 @@
+/**
+ * PDF-specific translations for invoices.
+ * Used by invoice-pdf.ts to generate trilingual PDFs.
+ */
+
+interface InvoiceTranslations {
+  title: string;
+  creditNoteTitle: string;
+  number: string;
+  issueDate: string;
+  dueDate: string;
+  taxDate: string;
+  vs: string;
+  supplier: string;
+  buyer: string;
+  ico: string;
+  dic: string;
+  item: string;
+  quantity: string;
+  unit: string;
+  unitPrice: string;
+  lineTotal: string;
+  subtotal: string;
+  vat: string;
+  total: string;
+  rounding: string;
+  qrPayment: string;
+  gram: string;
+  piece: string;
+  bankAccount: string;
+  page: string;
+  referencesInvoice: string;
+}
+
+const translations: Record<string, InvoiceTranslations> = {
+  cs: {
+    title: "Faktura",
+    creditNoteTitle: "Dobropis",
+    number: "Cislo",
+    issueDate: "Datum vystaveni",
+    dueDate: "Datum splatnosti",
+    taxDate: "DUZP",
+    vs: "Variabilni symbol",
+    supplier: "Dodavatel",
+    buyer: "Odberatel",
+    ico: "ICO",
+    dic: "DIC",
+    item: "Polozka",
+    quantity: "Mnozstvi",
+    unit: "Jednotka",
+    unitPrice: "Cena za jednotku",
+    lineTotal: "Celkem",
+    subtotal: "Zaklad bez DPH",
+    vat: "DPH 21%",
+    total: "Celkem k uhrade",
+    rounding: "Zaokrouhleni",
+    qrPayment: "QR Platba",
+    gram: "g",
+    piece: "ks",
+    bankAccount: "Bankovni ucet",
+    page: "Strana",
+    referencesInvoice: "Opravny doklad k fakture",
+  },
+  uk: {
+    title: "Рахунок-фактура",
+    creditNoteTitle: "Коригувальний документ",
+    number: "Номер",
+    issueDate: "Дата виставлення",
+    dueDate: "Термін оплати",
+    taxDate: "Дата податкового зобов'язання",
+    vs: "Варіабільний символ (VS)",
+    supplier: "Постачальник",
+    buyer: "Покупець",
+    ico: "ICO",
+    dic: "DIC",
+    item: "Товар",
+    quantity: "Кількість",
+    unit: "Одиниця",
+    unitPrice: "Ціна за одиницю",
+    lineTotal: "Разом",
+    subtotal: "Без ПДВ",
+    vat: "ПДВ 21%",
+    total: "Разом до сплати",
+    rounding: "Округлення",
+    qrPayment: "QR-оплата",
+    gram: "г",
+    piece: "шт",
+    bankAccount: "Банківський рахунок",
+    page: "Сторінка",
+    referencesInvoice: "Коригування до рахунку",
+  },
+  ru: {
+    title: "Счёт-фактура",
+    creditNoteTitle: "Корректировочный документ",
+    number: "Номер",
+    issueDate: "Дата выставления",
+    dueDate: "Срок оплаты",
+    taxDate: "Дата налогового обязательства",
+    vs: "Вариабельный символ (VS)",
+    supplier: "Поставщик",
+    buyer: "Покупатель",
+    ico: "ICO",
+    dic: "DIC",
+    item: "Товар",
+    quantity: "Количество",
+    unit: "Единица",
+    unitPrice: "Цена за единицу",
+    lineTotal: "Итого",
+    subtotal: "Без НДС",
+    vat: "НДС 21%",
+    total: "Итого к оплате",
+    rounding: "Округление",
+    qrPayment: "QR-оплата",
+    gram: "г",
+    piece: "шт",
+    bankAccount: "Банковский счёт",
+    page: "Страница",
+    referencesInvoice: "Корректировка к счёту",
+  },
+};
+
+export function getInvoiceTranslations(lang: string): InvoiceTranslations {
+  return translations[lang] ?? translations.cs;
+}

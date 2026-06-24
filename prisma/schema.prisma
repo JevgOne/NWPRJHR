@@ -46,6 +46,7 @@ model Salon {
   updatedAt DateTime @updatedAt
   users     User[]
   sales     Sale[]
+  invoices  Invoice[]
 
   @@map("salons")
 }
@@ -341,7 +342,8 @@ model Customer {
   passwordHash String?
   slug         String?  @unique
 
-  sales Sale[]
+  sales    Sale[]
+  invoices Invoice[]
 
   @@index([email])
   @@index([name])
@@ -386,6 +388,7 @@ model Sale {
 
   items     SaleItem[]
   discounts Discount[]
+  invoice   Invoice?
 
   @@index([customerType])
   @@index([salonId])
@@ -475,4 +478,172 @@ model DiscountBearer {
   @@unique([discountId, partnerId])
   @@index([partnerId])
   @@map("discount_bearers")
+}
+
+// ============================================================
+// INVOICING ENUMS
+// ============================================================
+
+enum InvoiceStatus {
+  ISSUED
+  AWAITING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum InvoiceType {
+  INVOICE
+  CREDIT_NOTE
+}
+
+// ============================================================
+// COMPANY -- fakturujici firma (dodavatel na fakture)
+// ============================================================
+
+model Company {
+  id            String    @id @default(cuid())
+  name          String
+  ico           String
+  dic           String?
+  address       String
+  addressCity   String?
+  addressZip    String?
+  bankAccount   String
+  bankIban      String?
+  bankBic       String?
+  bankName      String?
+  contactEmail  String?
+  contactPhone  String?
+  isDefault     Boolean   @default(false)
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  invoices      Invoice[]
+
+  @@index([isDefault])
+  @@map("companies")
+}
+
+// ============================================================
+// INVOICE_COUNTER -- atomic sequential numbering per year
+// ============================================================
+
+model InvoiceCounter {
+  id          String  @id @default(cuid())
+  year        Int     @unique
+  lastNumber  Int     @default(0)
+
+  @@map("invoice_counters")
+}
+
+// ============================================================
+// INVOICE -- faktura or dobropis
+// ============================================================
+
+model Invoice {
+  id              String        @id @default(cuid())
+  type            InvoiceType   @default(INVOICE)
+
+  number          String        @unique
+
+  companyId       String
+  company         Company       @relation(fields: [companyId], references: [id])
+
+  salonId         String?
+  salon           Salon?        @relation(fields: [salonId], references: [id])
+  customerId      String?
+  customer        Customer?     @relation(fields: [customerId], references: [id])
+
+  buyerName       String
+  buyerIco        String?
+  buyerDic        String?
+  buyerAddress    String
+  buyerEmail      String?
+  buyerLanguage   String        @default("cs")
+
+  saleId          String?       @unique
+  sale            Sale?         @relation(fields: [saleId], references: [id])
+
+  originalInvoiceId String?
+  originalInvoice   Invoice?    @relation("CreditNoteOf", fields: [originalInvoiceId], references: [id])
+  creditNotes       Invoice[]   @relation("CreditNoteOf")
+
+  issueDate       DateTime      @default(now())
+  dueDate         DateTime
+  taxDate         DateTime?
+
+  variableSymbol  String
+
+  subtotal        Int
+  vatRate         Int           @default(2100)
+  vatAmount       Int
+  total           Int
+
+  roundingAmount  Int           @default(0)
+
+  status          InvoiceStatus @default(ISSUED)
+
+  pdfPath         String?
+  pdfGeneratedAt  DateTime?
+
+  note            String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items           InvoiceItem[]
+  payments        Payment[]
+
+  @@index([status])
+  @@index([salonId])
+  @@index([customerId])
+  @@index([companyId])
+  @@index([issueDate])
+  @@index([dueDate])
+  @@index([variableSymbol])
+  @@index([type])
+  @@map("invoices")
+}
+
+// ============================================================
+// INVOICE_ITEM -- line item on an invoice
+// ============================================================
+
+model InvoiceItem {
+  id            String    @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  description   String
+  quantity      Decimal
+  unit          String
+  pricePerUnit  Int
+  lineTotal     Int
+  vatRate       Int       @default(2100)
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+// ============================================================
+// PAYMENT -- payment record matched to invoice
+// ============================================================
+
+model Payment {
+  id            String    @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice   @relation(fields: [invoiceId], references: [id])
+
+  amount        Int
+  date          DateTime
+  matchedVS     String?
+  source        String    @default("MANUAL")
+  note          String?
+
+  createdAt     DateTime  @default(now())
+
+  @@index([invoiceId])
+  @@index([matchedVS])
+  @@map("payments")
 }

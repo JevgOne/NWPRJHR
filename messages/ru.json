@@ -137,7 +137,20 @@
     "awaitingPayment": "Ожидает оплаты",
     "paid": "Оплачено",
     "overdue": "Просрочено",
-    "cancelled": "Отменено"
+    "cancelled": "Отменено",
+    "issueDate": "Дата выставления",
+    "copyDetails": "Копировать реквизиты"
+  },
+  "company": {
+    "title": "Компании",
+    "name": "Название компании",
+    "ico": "ИНН",
+    "dic": "НДС",
+    "address": "Адрес",
+    "bankAccount": "Банковский счёт",
+    "default": "По умолчанию",
+    "setDefault": "Установить по умолчанию",
+    "noCompanies": "Нет компаний"
   },
   "loyalty": {
     "program": "Программа лояльности",

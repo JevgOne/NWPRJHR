@@ -137,7 +137,20 @@
     "awaitingPayment": "Čeká na platbu",
     "paid": "Uhrazeno",
     "overdue": "Po splatnosti",
-    "cancelled": "Stornováno"
+    "cancelled": "Stornováno",
+    "issueDate": "Datum vystavení",
+    "copyDetails": "Kopírovat údaje"
+  },
+  "company": {
+    "title": "Firmy",
+    "name": "Název firmy",
+    "ico": "IČO",
+    "dic": "DIČ",
+    "address": "Adresa",
+    "bankAccount": "Bankovní účet",
+    "default": "Výchozí",
+    "setDefault": "Nastavit jako výchozí",
+    "noCompanies": "Žádné firmy"
   },
   "loyalty": {
     "program": "Věrnostní režim",

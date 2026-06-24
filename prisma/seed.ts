@@ -312,6 +312,28 @@ async function main() {
     },
   });
 
+  // === Default Company ===
+  await prisma.company.upsert({
+    where: { id: "company-default" },
+    update: {},
+    create: {
+      id: "company-default",
+      name: "Hairora s.r.o.",
+      ico: "12345678",
+      dic: "CZ12345678",
+      address: "Na Příkopě 12, 110 00 Praha 1",
+      addressCity: "Praha",
+      addressZip: "11000",
+      bankAccount: "123456789/0100",
+      bankIban: "CZ6508000000000123456789",
+      bankBic: "KOMBCZPP",
+      bankName: "Komerční banka",
+      contactEmail: "info@hairora.cz",
+      contactPhone: "+420123456789",
+      isDefault: true,
+    },
+  });
+
   console.log("Seed completed.");
 }
 
