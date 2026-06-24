@@ -31,6 +31,11 @@ model User {
   operatingCostsCreated  OperatingCost[]     @relation("OperatingCostsCreated")
   withdrawalsCreated     PartnerWithdrawal[] @relation("WithdrawalsCreated")
 
+  returnsCreated         Return[]            @relation("ReturnsCreated")
+  returnsApproved        Return[]            @relation("ReturnsApproved")
+  complaintsCreated      Complaint[]         @relation("ComplaintsCreated")
+  notificationsReceived  Notification[]      @relation("NotificationsReceived")
+
   @@map("users")
 }
 
@@ -64,6 +69,9 @@ model Salon {
   invoices        Invoice[]
   orders          Order[]
   sampleRequests  SampleRequest[]
+  returns         Return[]
+  complaints      Complaint[]
+  paymentReminders PaymentReminder[]
 
   slug            String?     @unique
 
@@ -248,6 +256,8 @@ model Delivery {
 
   stockMovements          StockMovement[]
   saleItems               SaleItem[]
+  returns                 Return[]
+  complaints              Complaint[]
 
   @@index([variantId, stockedAt])
   @@index([supplierId])
@@ -417,6 +427,8 @@ model Sale {
   discounts Discount[]
   invoice   Invoice?
   order     Order?
+  returns   Return[]
+  complaints Complaint[]
 
   @@index([customerType])
   @@index([salonId])
@@ -452,6 +464,8 @@ model SaleItem {
   lineTotal               Int
 
   createdAt               DateTime @default(now())
+
+  returns                 Return[]
 
   @@index([saleId])
   @@index([variantId])
@@ -655,6 +669,9 @@ model Invoice {
 
   items           InvoiceItem[]
   payments        Payment[]
+  returnCreditNote  Return?     @relation("ReturnCreditNote")
+  complaintCreditNote Complaint? @relation("ComplaintCreditNote")
+  reminders       PaymentReminder[]
 
   @@index([status])
   @@index([salonId])
@@ -894,4 +911,190 @@ model PartnerWithdrawal {
   @@index([partnerId])
   @@index([year, month])
   @@map("partner_withdrawals")
+}
+
+// ============================================================
+// STEP 8 ENUMS
+// ============================================================
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ComplaintStatus {
+  OPEN
+  RESOLVED
+  SUPPLIER_CLAIM
+}
+
+enum PaymentSource {
+  MANUAL
+  BANK_API
+}
+
+enum NotificationType {
+  NEW_ORDER
+  SAMPLE_REQUEST
+  INCOMING_PAYMENT
+  RETURN_REQUEST
+  ORDER_CONFIRMED
+  ORDER_READY
+  ORDER_IN_TRANSIT
+  INVOICE_ISSUED
+  INVOICE_PAID
+  ORDER_REJECTED
+  PAYMENT_REMINDER
+}
+
+// ============================================================
+// RETURN -- vratka nepouzitych/nacatych vlasu
+// Manual only, owner initiates. Salon CANNOT request.
+// On approval: return to original delivery + credit note + deduct points.
+// ============================================================
+
+model Return {
+  id              String        @id @default(cuid())
+
+  saleId          String
+  sale            Sale          @relation(fields: [saleId], references: [id])
+  saleItemId      String
+  saleItem        SaleItem      @relation(fields: [saleItemId], references: [id])
+
+  salonId         String?
+  salon           Salon?        @relation(fields: [salonId], references: [id])
+
+  deliveryId      String
+  delivery        Delivery      @relation(fields: [deliveryId], references: [id])
+
+  grams           Int
+  pieces          Int
+
+  reason          String
+
+  status          ReturnStatus  @default(PENDING)
+
+  approvedByUserId String?
+  approvedByUser   User?        @relation("ReturnsApproved", fields: [approvedByUserId], references: [id])
+  approvedAt       DateTime?
+
+  creditNoteId    String?       @unique
+  creditNote      Invoice?      @relation("ReturnCreditNote", fields: [creditNoteId], references: [id])
+
+  pointsDeducted  Int?
+  revenueDeducted Int?
+
+  createdByUserId String
+  createdByUser   User          @relation("ReturnsCreated", fields: [createdByUserId], references: [id])
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([saleId])
+  @@index([salonId])
+  @@index([deliveryId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("returns")
+}
+
+// ============================================================
+// COMPLAINT -- reklamace kvality (vadne vlasy)
+// Defective goods tracked separately, NOT returned to sellable stock.
+// ============================================================
+
+model Complaint {
+  id              String            @id @default(cuid())
+
+  saleId          String?
+  sale            Sale?             @relation(fields: [saleId], references: [id])
+  salonId         String?
+  salon           Salon?            @relation(fields: [salonId], references: [id])
+
+  deliveryId      String
+  delivery        Delivery          @relation(fields: [deliveryId], references: [id])
+
+  grams           Int
+  pieces          Int
+
+  description     String
+
+  status          ComplaintStatus   @default(OPEN)
+
+  creditNoteId    String?           @unique
+  creditNote      Invoice?          @relation("ComplaintCreditNote", fields: [creditNoteId], references: [id])
+
+  supplierRefundHalere Int?
+  supplierRefundDate   DateTime?
+  supplierNote         String?
+
+  createdByUserId String
+  createdByUser   User              @relation("ComplaintsCreated", fields: [createdByUserId], references: [id])
+  resolvedAt      DateTime?
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([saleId])
+  @@index([salonId])
+  @@index([deliveryId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("complaints")
+}
+
+// ============================================================
+// NOTIFICATION -- in-app + email notification
+// ============================================================
+
+model Notification {
+  id              String            @id @default(cuid())
+
+  recipientId     String
+  recipient       User              @relation("NotificationsReceived", fields: [recipientId], references: [id])
+
+  type            NotificationType
+
+  title           String
+  message         String
+  data            Json?
+
+  read            Boolean           @default(false)
+  readAt          DateTime?
+
+  emailSent       Boolean           @default(false)
+  emailSentAt     DateTime?
+
+  createdAt       DateTime          @default(now())
+
+  @@index([recipientId, read])
+  @@index([recipientId, createdAt])
+  @@index([type])
+  @@map("notifications")
+}
+
+// ============================================================
+// PAYMENT_REMINDER -- upominka po splatnosti
+// ============================================================
+
+model PaymentReminder {
+  id              String    @id @default(cuid())
+
+  invoiceId       String
+  invoice         Invoice   @relation(fields: [invoiceId], references: [id])
+
+  salonId         String
+  salon           Salon     @relation(fields: [salonId], references: [id])
+
+  subject         String
+  body            String
+
+  sentAt          DateTime  @default(now())
+  notificationId  String?
+
+  @@index([invoiceId])
+  @@index([salonId])
+  @@index([sentAt])
+  @@map("payment_reminders")
 }

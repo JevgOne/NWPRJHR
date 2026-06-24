@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { paymentSchema } from "@/lib/validations/invoice";
 import { checkInvoicePaid } from "@/lib/invoice-status";
 import { addSalonRevenue } from "@/lib/loyalty";
+import { createNotificationForRole, createSalonNotification } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -62,14 +63,31 @@ export async function POST(request: NextRequest) {
 
   const wasPaid = await checkInvoicePaid(parsed.data.invoiceId);
 
-  // After invoice becomes PAID, update salon loyalty revenue/tier
+  // After invoice becomes PAID, update salon loyalty revenue/tier + notifications
   if (wasPaid) {
     const invoice = await prisma.invoice.findUnique({
       where: { id: parsed.data.invoiceId },
-      select: { salonId: true, subtotal: true, type: true },
+      select: { salonId: true, subtotal: true, type: true, number: true },
     });
     if (invoice?.salonId && invoice.type === "INVOICE") {
       await addSalonRevenue(invoice.salonId, invoice.subtotal);
+
+      // Notify owner: payment received
+      await createNotificationForRole({
+        role: "OWNER",
+        type: "INCOMING_PAYMENT",
+        title: "Platba prijata",
+        message: `Prijata platba k fakture ${invoice.number}`,
+        data: { invoiceId: parsed.data.invoiceId, amount: parsed.data.amount, invoiceNumber: invoice.number },
+        sendEmail: false,
+      });
+
+      // Notify salon: invoice paid
+      await createSalonNotification({
+        salonId: invoice.salonId,
+        type: "INVOICE_PAID",
+        data: { invoiceId: parsed.data.invoiceId, invoiceNumber: invoice.number },
+      });
     }
   }
 

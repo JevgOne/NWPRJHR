@@ -50,7 +50,10 @@
     "orders": "Заказы",
     "suppliers": "Поставщики",
     "discounts": "Скидки",
-    "samples": "Образцы"
+    "samples": "Образцы",
+    "returns": "Возвраты",
+    "complaints": "Рекламации",
+    "payments": "Платежи"
   },
   "dashboard": {
     "title": "Обзор",
@@ -465,5 +468,80 @@
     "pricePerGram": "CZK/г",
     "noProducts": "Нет товаров",
     "orderFromCatalog": "Заказать"
+  },
+  "returnsMgmt": {
+    "title": "Возвраты",
+    "pending": "Ожидают",
+    "approved": "Одобрены",
+    "rejected": "Отклонены",
+    "noReturns": "Нет возвратов",
+    "date": "Дата",
+    "saleNumber": "№ продажи",
+    "salon": "Салон",
+    "product": "Продукт",
+    "grams": "Граммы",
+    "reason": "Причина",
+    "status": "Статус",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "creditNote": "Корректировочный документ",
+    "initiateReturn": "Создать возврат"
+  },
+  "complaintsMgmt": {
+    "title": "Рекламации",
+    "open": "Открытые",
+    "resolved": "Решённые",
+    "supplierClaim": "У поставщика",
+    "noComplaints": "Нет рекламаций",
+    "date": "Дата",
+    "salon": "Салон",
+    "delivery": "Поставка",
+    "supplier": "Поставщик",
+    "grams": "Граммы",
+    "description": "Описание",
+    "status": "Статус",
+    "recordRefund": "Записать возврат",
+    "refundAmount": "Сумма возврата",
+    "refundNote": "Примечание",
+    "creditNote": "Корректировочный документ"
+  },
+  "paymentsMgmt": {
+    "title": "Платежи и дебиторская задолженность",
+    "totalReceivables": "Общая дебиторская задолженность",
+    "overdue": "Просрочено",
+    "invoiceCount": "Количество счетов",
+    "noReceivables": "Нет задолженности",
+    "invoiceNumber": "№ счёта",
+    "customer": "Клиент",
+    "paid": "Оплачено",
+    "remaining": "Остаток",
+    "dueDate": "Срок оплаты",
+    "daysOverdue": "Дней просрочено",
+    "recordPayment": "Записать платёж",
+    "sendReminder": "Отправить напоминание",
+    "amount": "Сумма",
+    "halere": "галерже",
+    "note": "Примечание"
+  },
+  "notificationsMgmt": {
+    "title": "Уведомления",
+    "unreadOnly": "Только непрочитанные",
+    "markAllRead": "Отметить все как прочитанные",
+    "noNotifications": "Нет уведомлений",
+    "justNow": "Только что",
+    "viewAll": "Показать все",
+    "showing": "Показано"
+  },
+  "paymentMorality": {
+    "title": "Платёжная дисциплина",
+    "riskLevel": "Риск",
+    "low": "Низкий",
+    "medium": "Средний",
+    "high": "Высокий",
+    "paidOnTime": "Оплачено вовремя",
+    "paidLate": "Оплачено с опозданием",
+    "currentlyOverdue": "Сейчас просрочено",
+    "averageDaysLate": "Среднее опоздание (дней)",
+    "currentDebt": "Текущий долг"
   }
 }

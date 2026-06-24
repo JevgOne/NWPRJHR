@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { signOut } from "next-auth/react";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { NotificationBell } from "./NotificationBell";
 import type { Session } from "next-auth";
 
 interface AppShellProps {
@@ -32,6 +33,9 @@ export function AppShell({ session, children }: AppShellProps) {
     { href: "/suppliers", label: t("suppliers"), roles: ["OWNER"] },
     { href: "/samples", label: t("samples"), roles: ["OWNER"] },
     { href: "/discounts", label: t("discounts"), roles: ["OWNER"] },
+    { href: "/returns", label: t("returns"), roles: ["OWNER"] },
+    { href: "/complaints", label: t("complaints"), roles: ["OWNER"] },
+    { href: "/payments", label: t("payments"), roles: ["OWNER"] },
     { href: "/finance", label: t("finance"), roles: ["OWNER"] },
     { href: "/settings", label: t("settings"), roles: ["OWNER"] },
   ].filter((item) => item.roles.includes(role));
@@ -113,6 +117,9 @@ export function AppShell({ session, children }: AppShellProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
+          <div className="ml-auto">
+            <NotificationBell />
+          </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">{children}</main>
       </div>

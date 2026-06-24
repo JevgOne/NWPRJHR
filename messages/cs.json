@@ -50,7 +50,10 @@
     "orders": "Objednávky",
     "suppliers": "Dodavatelé",
     "discounts": "Slevy",
-    "samples": "Vzorky"
+    "samples": "Vzorky",
+    "returns": "Vratky",
+    "complaints": "Reklamace",
+    "payments": "Platby"
   },
   "dashboard": {
     "title": "Přehled",
@@ -465,5 +468,80 @@
     "pricePerGram": "CZK/g",
     "noProducts": "Žádné produkty",
     "orderFromCatalog": "Objednat"
+  },
+  "returnsMgmt": {
+    "title": "Vratky",
+    "pending": "Čekající",
+    "approved": "Schválené",
+    "rejected": "Zamítnuté",
+    "noReturns": "Žádné vratky",
+    "date": "Datum",
+    "saleNumber": "Č. prodeje",
+    "salon": "Salon",
+    "product": "Produkt",
+    "grams": "Gramy",
+    "reason": "Důvod",
+    "status": "Stav",
+    "approve": "Schválit",
+    "reject": "Zamítnout",
+    "creditNote": "Dobropis",
+    "initiateReturn": "Vytvořit vratku"
+  },
+  "complaintsMgmt": {
+    "title": "Reklamace",
+    "open": "Otevřené",
+    "resolved": "Vyřešené",
+    "supplierClaim": "U dodavatele",
+    "noComplaints": "Žádné reklamace",
+    "date": "Datum",
+    "salon": "Salon",
+    "delivery": "Dodávka",
+    "supplier": "Dodavatel",
+    "grams": "Gramy",
+    "description": "Popis",
+    "status": "Stav",
+    "recordRefund": "Zaznamenat vrácení",
+    "refundAmount": "Částka vrácení",
+    "refundNote": "Poznámka",
+    "creditNote": "Dobropis"
+  },
+  "paymentsMgmt": {
+    "title": "Platby a pohledávky",
+    "totalReceivables": "Celkové pohledávky",
+    "overdue": "Po splatnosti",
+    "invoiceCount": "Počet faktur",
+    "noReceivables": "Žádné pohledávky",
+    "invoiceNumber": "Č. faktury",
+    "customer": "Zákazník",
+    "paid": "Uhrazeno",
+    "remaining": "Zbývá",
+    "dueDate": "Splatnost",
+    "daysOverdue": "Dní po splatnosti",
+    "recordPayment": "Zaznamenat platbu",
+    "sendReminder": "Odeslat upomínku",
+    "amount": "Částka",
+    "halere": "haléře",
+    "note": "Poznámka"
+  },
+  "notificationsMgmt": {
+    "title": "Oznámení",
+    "unreadOnly": "Jen nepřečtené",
+    "markAllRead": "Označit vše jako přečtené",
+    "noNotifications": "Žádná oznámení",
+    "justNow": "Právě teď",
+    "viewAll": "Zobrazit vše",
+    "showing": "Zobrazeno"
+  },
+  "paymentMorality": {
+    "title": "Platební morálka",
+    "riskLevel": "Rizikovost",
+    "low": "Nízká",
+    "medium": "Střední",
+    "high": "Vysoká",
+    "paidOnTime": "Zaplaceno včas",
+    "paidLate": "Zaplaceno pozdě",
+    "currentlyOverdue": "Aktuálně po splatnosti",
+    "averageDaysLate": "Průměr dní po splatnosti",
+    "currentDebt": "Aktuální dluh"
   }
 }

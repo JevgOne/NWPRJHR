@@ -50,7 +50,10 @@
     "orders": "Замовлення",
     "suppliers": "Постачальники",
     "discounts": "Знижки",
-    "samples": "Зразки"
+    "samples": "Зразки",
+    "returns": "Повернення",
+    "complaints": "Рекламації",
+    "payments": "Платежі"
   },
   "dashboard": {
     "title": "Огляд",
@@ -465,5 +468,80 @@
     "pricePerGram": "CZK/г",
     "noProducts": "Немає товарів",
     "orderFromCatalog": "Замовити"
+  },
+  "returnsMgmt": {
+    "title": "Повернення",
+    "pending": "Очікують",
+    "approved": "Схвалені",
+    "rejected": "Відхилені",
+    "noReturns": "Немає повернень",
+    "date": "Дата",
+    "saleNumber": "№ продажу",
+    "salon": "Салон",
+    "product": "Продукт",
+    "grams": "Грами",
+    "reason": "Причина",
+    "status": "Статус",
+    "approve": "Схвалити",
+    "reject": "Відхилити",
+    "creditNote": "Коригувальний документ",
+    "initiateReturn": "Створити повернення"
+  },
+  "complaintsMgmt": {
+    "title": "Рекламації",
+    "open": "Відкриті",
+    "resolved": "Вирішені",
+    "supplierClaim": "У постачальника",
+    "noComplaints": "Немає рекламацій",
+    "date": "Дата",
+    "salon": "Салон",
+    "delivery": "Постачання",
+    "supplier": "Постачальник",
+    "grams": "Грами",
+    "description": "Опис",
+    "status": "Статус",
+    "recordRefund": "Записати відшкодування",
+    "refundAmount": "Сума відшкодування",
+    "refundNote": "Примітка",
+    "creditNote": "Коригувальний документ"
+  },
+  "paymentsMgmt": {
+    "title": "Платежі та дебіторська заборгованість",
+    "totalReceivables": "Загальна дебіторська заборгованість",
+    "overdue": "Прострочено",
+    "invoiceCount": "Кількість рахунків",
+    "noReceivables": "Немає заборгованості",
+    "invoiceNumber": "№ рахунку",
+    "customer": "Клієнт",
+    "paid": "Сплачено",
+    "remaining": "Залишок",
+    "dueDate": "Термін оплати",
+    "daysOverdue": "Днів прострочено",
+    "recordPayment": "Записати платіж",
+    "sendReminder": "Надіслати нагадування",
+    "amount": "Сума",
+    "halere": "галержі",
+    "note": "Примітка"
+  },
+  "notificationsMgmt": {
+    "title": "Сповіщення",
+    "unreadOnly": "Тільки непрочитані",
+    "markAllRead": "Позначити все як прочитане",
+    "noNotifications": "Немає сповіщень",
+    "justNow": "Щойно",
+    "viewAll": "Переглянути все",
+    "showing": "Показано"
+  },
+  "paymentMorality": {
+    "title": "Платіжна дисципліна",
+    "riskLevel": "Ризик",
+    "low": "Низький",
+    "medium": "Середній",
+    "high": "Високий",
+    "paidOnTime": "Сплачено вчасно",
+    "paidLate": "Сплачено із запізненням",
+    "currentlyOverdue": "Зараз прострочено",
+    "averageDaysLate": "Середнє запізнення (днів)",
+    "currentDebt": "Поточний борг"
   }
 }
