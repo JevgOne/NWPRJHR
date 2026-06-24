@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
+export type TransactionClient = Parameters<
+  Parameters<PrismaClient["$transaction"]>[0]
+>[0];
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };

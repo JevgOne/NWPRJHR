@@ -1,4 +1,4 @@
-import { prisma } from "./db";
+import { prisma, type TransactionClient } from "./db";
 
 /**
  * Check for overdue invoices and update their status.
@@ -20,7 +20,17 @@ export async function updateOverdueInvoices(): Promise<number> {
  * Returns true if the invoice just transitioned to PAID status.
  */
 export async function checkInvoicePaid(invoiceId: string): Promise<boolean> {
-  const invoice = await prisma.invoice.findUniqueOrThrow({
+  return checkInvoicePaidInTx(invoiceId, prisma);
+}
+
+/**
+ * Transaction-aware variant of checkInvoicePaid.
+ */
+export async function checkInvoicePaidInTx(
+  invoiceId: string,
+  tx: TransactionClient
+): Promise<boolean> {
+  const invoice = await tx.invoice.findUniqueOrThrow({
     where: { id: invoiceId },
     include: { payments: true },
   });
@@ -28,13 +38,13 @@ export async function checkInvoicePaid(invoiceId: string): Promise<boolean> {
   const totalPaid = invoice.payments.reduce((sum, p) => sum + p.amount, 0);
 
   if (totalPaid >= invoice.total) {
-    await prisma.invoice.update({
+    await tx.invoice.update({
       where: { id: invoiceId },
       data: { status: "PAID" },
     });
     return invoice.status !== "PAID";
   } else if (totalPaid > 0) {
-    await prisma.invoice.update({
+    await tx.invoice.update({
       where: { id: invoiceId },
       data: { status: "AWAITING" },
     });

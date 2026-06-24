@@ -1,4 +1,4 @@
-import { prisma } from "./db";
+import { prisma, type TransactionClient } from "./db";
 import type { LoyaltyTier } from "@prisma/client";
 
 /**
@@ -53,9 +53,20 @@ export async function addSalonRevenue(
   salonId: string,
   amountBeforeVatHalere: number
 ): Promise<void> {
+  return addSalonRevenueInTx(salonId, amountBeforeVatHalere, prisma);
+}
+
+/**
+ * Transaction-aware variant of addSalonRevenue.
+ */
+export async function addSalonRevenueInTx(
+  salonId: string,
+  amountBeforeVatHalere: number,
+  tx: TransactionClient
+): Promise<void> {
   const points = await calculatePoints(amountBeforeVatHalere);
 
-  const salon = await prisma.salon.update({
+  const salon = await tx.salon.update({
     where: { id: salonId },
     data: {
       totalRevenue: { increment: amountBeforeVatHalere },
@@ -65,7 +76,7 @@ export async function addSalonRevenue(
 
   const newTier = await calculateTier(salon.totalRevenue);
   if (newTier !== salon.tier) {
-    await prisma.salon.update({
+    await tx.salon.update({
       where: { id: salonId },
       data: { tier: newTier },
     });

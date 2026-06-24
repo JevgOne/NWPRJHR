@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { paymentSchema } from "@/lib/validations/invoice";
-import { checkInvoicePaid } from "@/lib/invoice-status";
-import { addSalonRevenue } from "@/lib/loyalty";
+import { checkInvoicePaidInTx } from "@/lib/invoice-status";
+import { addSalonRevenueInTx } from "@/lib/loyalty";
 import { createNotificationForRole, createSalonNotification } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
@@ -50,29 +50,41 @@ export async function POST(request: NextRequest) {
   if (!parsed.success)
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  const payment = await prisma.payment.create({
-    data: {
-      invoiceId: parsed.data.invoiceId,
-      amount: parsed.data.amount,
-      date: new Date(parsed.data.date),
-      matchedVS: parsed.data.matchedVS,
-      source: parsed.data.source,
-      note: parsed.data.note,
-    },
-  });
+  const result = await prisma.$transaction(async (tx) => {
+    const payment = await tx.payment.create({
+      data: {
+        invoiceId: parsed.data.invoiceId,
+        amount: parsed.data.amount,
+        date: new Date(parsed.data.date),
+        matchedVS: parsed.data.matchedVS,
+        source: parsed.data.source,
+        note: parsed.data.note,
+      },
+    });
 
-  const wasPaid = await checkInvoicePaid(parsed.data.invoiceId);
+    const wasPaid = await checkInvoicePaidInTx(parsed.data.invoiceId, tx);
 
-  // After invoice becomes PAID, update salon loyalty revenue/tier + notifications
-  if (wasPaid) {
+    if (wasPaid) {
+      const invoice = await tx.invoice.findUnique({
+        where: { id: parsed.data.invoiceId },
+        // invoice.subtotal = revenue before VAT (set from sale.totalBeforeVat in invoicing)
+        select: { salonId: true, subtotal: true, type: true, number: true },
+      });
+      if (invoice?.salonId && invoice.type === "INVOICE") {
+        await addSalonRevenueInTx(invoice.salonId, invoice.subtotal, tx);
+      }
+    }
+
+    return { payment, wasPaid };
+  }, { timeout: 10000 });
+
+  // Notifications OUTSIDE transaction (non-critical, can fail independently)
+  if (result.wasPaid) {
     const invoice = await prisma.invoice.findUnique({
       where: { id: parsed.data.invoiceId },
-      select: { salonId: true, subtotal: true, type: true, number: true },
+      select: { salonId: true, number: true },
     });
-    if (invoice?.salonId && invoice.type === "INVOICE") {
-      await addSalonRevenue(invoice.salonId, invoice.subtotal);
-
-      // Notify owner: payment received
+    if (invoice?.salonId) {
       await createNotificationForRole({
         role: "OWNER",
         type: "INCOMING_PAYMENT",
@@ -81,8 +93,6 @@ export async function POST(request: NextRequest) {
         data: { invoiceId: parsed.data.invoiceId, amount: parsed.data.amount, invoiceNumber: invoice.number },
         sendEmail: false,
       });
-
-      // Notify salon: invoice paid
       await createSalonNotification({
         salonId: invoice.salonId,
         type: "INVOICE_PAID",
@@ -91,5 +101,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json(payment, { status: 201 });
+  return NextResponse.json(result.payment, { status: 201 });
 }

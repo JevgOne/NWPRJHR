@@ -1,9 +1,5 @@
-import type { PrismaClient, OperatingCostCategory } from "@prisma/client";
-import { prisma } from "./db";
-
-type TransactionClient = Parameters<
-  Parameters<PrismaClient["$transaction"]>[0]
->[0];
+import type { OperatingCostCategory } from "@prisma/client";
+import { prisma, type TransactionClient } from "./db";
 
 export interface FinancePeriod {
   from: Date;
