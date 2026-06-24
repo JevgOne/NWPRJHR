@@ -45,6 +45,8 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
 
     let cancelled = false;
     let animFrame: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let zxingReader: any = null;
 
     async function startScanning() {
       try {
@@ -63,6 +65,7 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
         setScanning(true);
 
         if ("BarcodeDetector" in window) {
+          // Native BarcodeDetector API (Chrome, Edge, Android)
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const detector = new (window as any).BarcodeDetector({
             formats: ["code_128", "ean_13", "ean_8", "qr_code"],
@@ -83,7 +86,31 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
           };
           detect();
         } else {
-          setError(t("scannerNotSupported"));
+          // Fallback: @zxing/library (Safari, iOS, Firefox)
+          try {
+            const { BrowserMultiFormatReader } = await import("@zxing/library");
+            zxingReader = new BrowserMultiFormatReader();
+
+            const deviceId = stream.getVideoTracks()[0]?.getSettings()?.deviceId;
+
+            zxingReader.decodeFromVideoDevice(
+              deviceId ?? null,
+              videoRef.current,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (result: any, err: any) => {
+                if (cancelled) return;
+                if (result) {
+                  handleScan(result.getText());
+                }
+                // err is expected when no barcode found in frame
+                if (err && err.name !== "NotFoundException") {
+                  // real error — ignore silently
+                }
+              }
+            );
+          } catch {
+            setError(t("scannerNotSupported"));
+          }
         }
       } catch {
         setError(t("cameraPermission"));
@@ -95,6 +122,9 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
     return () => {
       cancelled = true;
       cancelAnimationFrame(animFrame);
+      if (zxingReader) {
+        try { zxingReader.reset(); } catch { /* ignore */ }
+      }
       stopCamera();
     };
   }, [active, handleScan, stopCamera, t]);

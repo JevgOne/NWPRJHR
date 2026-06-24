@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/Input";
+import { roundHalereUp } from "@/lib/rounding";
 
 interface Partner {
   id: string;
@@ -66,7 +67,7 @@ export function DiscountForm({
 
   const discountAmount =
     current.percent > 0
-      ? Math.ceil((subtotal * current.percent) / 10000 / 100) * 100
+      ? roundHalereUp((subtotal * current.percent) / 10000)
       : 0;
 
   return (
