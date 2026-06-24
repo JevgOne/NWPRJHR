@@ -7,6 +7,6 @@ dotenv.config();
 export default defineConfig({
   schema: path.join(__dirname, "prisma", "schema.prisma"),
   datasource: {
-    url: process.env.DATABASE_URL!,
+    url: process.env.DATABASE_URL ?? "postgresql://placeholder:5432/hairora",
   },
 });
