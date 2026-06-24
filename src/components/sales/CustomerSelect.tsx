@@ -40,6 +40,7 @@ export function CustomerSelect({
 }: CustomerSelectProps) {
   const t = useTranslations("sale");
   const tCommon = useTranslations("common");
+  const tCustomer = useTranslations("customer");
   const [salons, setSalons] = useState<Salon[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState("");
@@ -154,13 +155,13 @@ export function CustomerSelect({
               <Input
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="email"
+                placeholder={tCustomer("email")}
                 type="email"
               />
               <Input
                 value={newPhone}
                 onChange={(e) => setNewPhone(e.target.value)}
-                placeholder="phone"
+                placeholder={tCustomer("phone")}
               />
               <div className="flex gap-2">
                 <Button
