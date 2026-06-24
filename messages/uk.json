@@ -1,0 +1,166 @@
+{
+  "common": {
+    "appName": "Hairora",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "delete": "Видалити",
+    "edit": "Редагувати",
+    "add": "Додати",
+    "search": "Пошук",
+    "confirm": "Підтвердити",
+    "print": "Друк / PDF",
+    "scanCode": "Сканувати код",
+    "loading": "Завантаження...",
+    "error": "Помилка",
+    "success": "Успіх",
+    "back": "Назад",
+    "next": "Далі",
+    "yes": "Так",
+    "no": "Ні"
+  },
+  "auth": {
+    "login": "Вхід",
+    "logout": "Вийти",
+    "email": "Електронна пошта",
+    "password": "Пароль",
+    "loginButton": "Увійти",
+    "invalidCredentials": "Невірні облікові дані",
+    "loginRequired": "Для доступу необхідно увійти"
+  },
+  "roles": {
+    "owner": "Власник",
+    "employee": "Співробітник",
+    "salon": "Салон"
+  },
+  "nav": {
+    "dashboard": "Огляд",
+    "products": "Продукти",
+    "inventory": "Склад",
+    "sales": "Продажі",
+    "invoices": "Рахунки-фактури",
+    "salons": "Салони",
+    "customers": "Клієнти",
+    "finance": "Фінанси",
+    "settings": "Налаштування",
+    "orders": "Замовлення"
+  },
+  "dashboard": {
+    "title": "Огляд",
+    "welcome": "Ласкаво просимо до системи Hairora"
+  },
+  "product": {
+    "hairExtensions": "Волосся для нарощування",
+    "strand": "Пасмо / хвіст",
+    "gram": "Грам",
+    "piece": "Штука",
+    "length": "Довжина",
+    "color": "Колір / відтінок"
+  },
+  "category": {
+    "virgin": "Незаймане волосся (Virgin)",
+    "premium": "Преміум",
+    "standard": "Стандарт",
+    "sale": "Розпродаж"
+  },
+  "stock": {
+    "warehouse": "Склад",
+    "inStock": "В наявності",
+    "available": "Доступно для замовлення",
+    "lowStock": "Низький запас",
+    "outOfStock": "Немає в наявності",
+    "stockIn": "Поповнення складу",
+    "delivery": "Постачання (партія)",
+    "reserved": "Зарезервовано",
+    "movement": "Рух на складі",
+    "receipt": "Надходження",
+    "issue": "Видача"
+  },
+  "order": {
+    "order": "Замовлення",
+    "new": "Нове замовлення",
+    "confirm": "Підтвердити замовлення",
+    "sale": "Продаж",
+    "sample": "Зразок",
+    "sampleRequest": "Запит на зразок",
+    "ready": "Готово",
+    "onTheWay": "В дорозі"
+  },
+  "invoice": {
+    "invoice": "Рахунок-фактура",
+    "taxDocument": "Податковий документ",
+    "creditNote": "Коригувальний документ",
+    "dueDate": "Термін оплати",
+    "variableSymbol": "Варіабільний символ (VS)",
+    "qrPayment": "QR-оплата",
+    "pricePerGram": "Ціна за грам",
+    "pricePerPiece": "Ціна за штуку",
+    "vat": "ПДВ",
+    "total": "Разом",
+    "withoutVat": "Без ПДВ",
+    "reminder": "Нагадування про оплату",
+    "issued": "Виставлено",
+    "awaitingPayment": "Очікує оплати",
+    "paid": "Оплачено",
+    "overdue": "Прострочено",
+    "cancelled": "Скасовано"
+  },
+  "loyalty": {
+    "program": "Програма лояльності",
+    "points": "Бонусні бали",
+    "tier": "Рівень",
+    "bronze": "Бронза",
+    "silver": "Срібло",
+    "gold": "Золото",
+    "platinum": "Платина",
+    "discount": "Знижка",
+    "turnover": "Оборот"
+  },
+  "returns": {
+    "return": "Повернення",
+    "complaint": "Рекламація",
+    "defective": "Бракований товар"
+  },
+  "salon": {
+    "salon": "Салон",
+    "endCustomer": "Кінцевий клієнт",
+    "retailPrice": "Роздрібна ціна",
+    "wholesalePrice": "Оптова ціна",
+    "priceVariant": "Ціновий варіант",
+    "processingType": "Тип обробки",
+    "markup": "Націнка",
+    "contactPerson": "Контактна особа"
+  },
+  "finance": {
+    "purchasePrice": "Закупівельна ціна",
+    "salePrice": "Ціна продажу",
+    "margin": "Маржа",
+    "profit": "Прибуток",
+    "costOfGoods": "Собівартість товару",
+    "operatingCosts": "Операційні витрати",
+    "advertising": "Реклама",
+    "transport": "Доставка",
+    "rent": "Оренда"
+  },
+  "partner": {
+    "partner": "Партнер (співвласник)",
+    "share": "Частка",
+    "monthlyWithdrawal": "Місячна виплата",
+    "standardDiscount": "Звичайна торгова знижка",
+    "marketingDiscount": "Маркетингова знижка",
+    "personalDiscount": "Особиста знижка",
+    "counterPerformance": "Зустрічне надання"
+  },
+  "public": {
+    "heroTitle": "Преміальне волосся для нарощування",
+    "heroSubtitle": "Оптовий продаж для професійних салонів",
+    "aboutUs": "Про нас",
+    "ourOffer": "Пропозиція",
+    "whyHairora": "Чому Hairora",
+    "contact": "Контакти"
+  },
+  "language": {
+    "cs": "Čeština",
+    "uk": "Українська",
+    "ru": "Русский"
+  }
+}

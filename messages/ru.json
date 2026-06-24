@@ -1,0 +1,166 @@
+{
+  "common": {
+    "appName": "Hairora",
+    "save": "Сохранить",
+    "cancel": "Отменить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "add": "Добавить",
+    "search": "Поиск",
+    "confirm": "Подтвердить",
+    "print": "Печать / PDF",
+    "scanCode": "Сканировать код",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успех",
+    "back": "Назад",
+    "next": "Далее",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "auth": {
+    "login": "Вход",
+    "logout": "Выйти",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "loginButton": "Войти",
+    "invalidCredentials": "Неверные учётные данные",
+    "loginRequired": "Для доступа необходимо войти"
+  },
+  "roles": {
+    "owner": "Владелец",
+    "employee": "Сотрудник",
+    "salon": "Салон"
+  },
+  "nav": {
+    "dashboard": "Обзор",
+    "products": "Продукты",
+    "inventory": "Склад",
+    "sales": "Продажи",
+    "invoices": "Счета-фактуры",
+    "salons": "Салоны",
+    "customers": "Клиенты",
+    "finance": "Финансы",
+    "settings": "Настройки",
+    "orders": "Заказы"
+  },
+  "dashboard": {
+    "title": "Обзор",
+    "welcome": "Добро пожаловать в систему Hairora"
+  },
+  "product": {
+    "hairExtensions": "Волосы для наращивания",
+    "strand": "Прядь / хвост",
+    "gram": "Грамм",
+    "piece": "Штука",
+    "length": "Длина",
+    "color": "Цвет / оттенок"
+  },
+  "category": {
+    "virgin": "Натуральные неокрашенные (Virgin)",
+    "premium": "Премиум",
+    "standard": "Стандарт",
+    "sale": "Распродажа"
+  },
+  "stock": {
+    "warehouse": "Склад",
+    "inStock": "В наличии",
+    "available": "Доступно для заказа",
+    "lowStock": "Низкий запас",
+    "outOfStock": "Нет в наличии",
+    "stockIn": "Поступление на склад",
+    "delivery": "Поставка (партия)",
+    "reserved": "Зарезервировано",
+    "movement": "Движение на складе",
+    "receipt": "Поступление",
+    "issue": "Выдача"
+  },
+  "order": {
+    "order": "Заказ",
+    "new": "Новый заказ",
+    "confirm": "Подтвердить заказ",
+    "sale": "Продажа",
+    "sample": "Образец",
+    "sampleRequest": "Запрос образца",
+    "ready": "Готово",
+    "onTheWay": "В пути"
+  },
+  "invoice": {
+    "invoice": "Счёт-фактура",
+    "taxDocument": "Налоговый документ",
+    "creditNote": "Корректировочный документ",
+    "dueDate": "Срок оплаты",
+    "variableSymbol": "Вариабельный символ (VS)",
+    "qrPayment": "QR-оплата",
+    "pricePerGram": "Цена за грамм",
+    "pricePerPiece": "Цена за штуку",
+    "vat": "НДС",
+    "total": "Итого",
+    "withoutVat": "Без НДС",
+    "reminder": "Напоминание об оплате",
+    "issued": "Выставлено",
+    "awaitingPayment": "Ожидает оплаты",
+    "paid": "Оплачено",
+    "overdue": "Просрочено",
+    "cancelled": "Отменено"
+  },
+  "loyalty": {
+    "program": "Программа лояльности",
+    "points": "Бонусные баллы",
+    "tier": "Уровень",
+    "bronze": "Бронза",
+    "silver": "Серебро",
+    "gold": "Золото",
+    "platinum": "Платина",
+    "discount": "Скидка",
+    "turnover": "Оборот"
+  },
+  "returns": {
+    "return": "Возврат",
+    "complaint": "Рекламация",
+    "defective": "Бракованный товар"
+  },
+  "salon": {
+    "salon": "Салон",
+    "endCustomer": "Конечный клиент",
+    "retailPrice": "Розничная цена",
+    "wholesalePrice": "Оптовая цена",
+    "priceVariant": "Ценовой вариант",
+    "processingType": "Тип обработки",
+    "markup": "Наценка",
+    "contactPerson": "Контактное лицо"
+  },
+  "finance": {
+    "purchasePrice": "Закупочная цена",
+    "salePrice": "Цена продажи",
+    "margin": "Маржа",
+    "profit": "Прибыль",
+    "costOfGoods": "Себестоимость товара",
+    "operatingCosts": "Операционные расходы",
+    "advertising": "Реклама",
+    "transport": "Доставка",
+    "rent": "Аренда"
+  },
+  "partner": {
+    "partner": "Партнёр (совладелец)",
+    "share": "Доля",
+    "monthlyWithdrawal": "Месячная выплата",
+    "standardDiscount": "Обычная торговая скидка",
+    "marketingDiscount": "Маркетинговая скидка",
+    "personalDiscount": "Личная скидка",
+    "counterPerformance": "Встречное предоставление"
+  },
+  "public": {
+    "heroTitle": "Премиальные волосы для наращивания",
+    "heroSubtitle": "Оптовая продажа для профессиональных салонов",
+    "aboutUs": "О нас",
+    "ourOffer": "Предложение",
+    "whyHairora": "Почему Hairora",
+    "contact": "Контакты"
+  },
+  "language": {
+    "cs": "Čeština",
+    "uk": "Українська",
+    "ru": "Русский"
+  }
+}

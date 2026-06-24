@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  OWNER
+  EMPLOYEE
+  SALON
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String    @unique
+  hashedPassword String
+  role           Role      @default(EMPLOYEE)
+  salonId        String?
+  salon          Salon?    @relation(fields: [salonId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Salon {
+  id        String   @id @default(cuid())
+  name      String
+  ico       String?
+  dic       String?
+  contact   String?
+  email     String?
+  phone     String?
+  city      String?
+  language  String   @default("cs")
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+
+  @@map("salons")
+}

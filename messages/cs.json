@@ -1,0 +1,166 @@
+{
+  "common": {
+    "appName": "Hairora",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "add": "Přidat",
+    "search": "Hledat",
+    "confirm": "Potvrdit",
+    "print": "Tisk / PDF",
+    "scanCode": "Naskenovat kód",
+    "loading": "Načítání...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "back": "Zpět",
+    "next": "Další",
+    "yes": "Ano",
+    "no": "Ne"
+  },
+  "auth": {
+    "login": "Přihlášení",
+    "logout": "Odhlásit se",
+    "email": "E-mail",
+    "password": "Heslo",
+    "loginButton": "Přihlásit se",
+    "invalidCredentials": "Neplatné přihlašovací údaje",
+    "loginRequired": "Pro přístup se musíte přihlásit"
+  },
+  "roles": {
+    "owner": "Majitel",
+    "employee": "Zaměstnanec",
+    "salon": "Salon"
+  },
+  "nav": {
+    "dashboard": "Přehled",
+    "products": "Produkty",
+    "inventory": "Sklad",
+    "sales": "Prodeje",
+    "invoices": "Faktury",
+    "salons": "Salony",
+    "customers": "Zákazníci",
+    "finance": "Finance",
+    "settings": "Nastavení",
+    "orders": "Objednávky"
+  },
+  "dashboard": {
+    "title": "Přehled",
+    "welcome": "Vítejte v systému Hairora"
+  },
+  "product": {
+    "hairExtensions": "Vlasy k prodloužení",
+    "strand": "Pramen / culík",
+    "gram": "Gram",
+    "piece": "Kus",
+    "length": "Délka",
+    "color": "Barva / odstín"
+  },
+  "category": {
+    "virgin": "Panenské vlasy",
+    "premium": "Premium",
+    "standard": "Standard",
+    "sale": "Výprodej"
+  },
+  "stock": {
+    "warehouse": "Sklad",
+    "inStock": "Skladem",
+    "available": "Dostupné k objednání",
+    "lowStock": "Nízký stav",
+    "outOfStock": "Vyprodáno",
+    "stockIn": "Naskladnění",
+    "delivery": "Dodávka (šarže)",
+    "reserved": "Rezervováno",
+    "movement": "Skladový pohyb",
+    "receipt": "Příjem",
+    "issue": "Výdej"
+  },
+  "order": {
+    "order": "Objednávka",
+    "new": "Nová objednávka",
+    "confirm": "Potvrdit objednávku",
+    "sale": "Prodej",
+    "sample": "Vzorek / ukázka",
+    "sampleRequest": "Žádost o vzorek",
+    "ready": "Připraveno",
+    "onTheWay": "Na cestě"
+  },
+  "invoice": {
+    "invoice": "Faktura",
+    "taxDocument": "Daňový doklad",
+    "creditNote": "Dobropis (opravný doklad)",
+    "dueDate": "Splatnost",
+    "variableSymbol": "Variabilní symbol",
+    "qrPayment": "QR platba",
+    "pricePerGram": "Cena za gram",
+    "pricePerPiece": "Cena za kus",
+    "vat": "DPH",
+    "total": "Celkem",
+    "withoutVat": "Bez DPH",
+    "reminder": "Upomínka",
+    "issued": "Vystavená",
+    "awaitingPayment": "Čeká na platbu",
+    "paid": "Uhrazeno",
+    "overdue": "Po splatnosti",
+    "cancelled": "Stornováno"
+  },
+  "loyalty": {
+    "program": "Věrnostní režim",
+    "points": "Věrnostní body",
+    "tier": "Úroveň",
+    "bronze": "Bronz",
+    "silver": "Stříbro",
+    "gold": "Zlato",
+    "platinum": "Platina",
+    "discount": "Sleva",
+    "turnover": "Obrat"
+  },
+  "returns": {
+    "return": "Vratka",
+    "complaint": "Reklamace",
+    "defective": "Vadné zboží"
+  },
+  "salon": {
+    "salon": "Salon",
+    "endCustomer": "Koncový zákazník",
+    "retailPrice": "Maloobchodní cena",
+    "wholesalePrice": "Velkoobchodní cena",
+    "priceVariant": "Cenová varianta",
+    "processingType": "Typ zpracování",
+    "markup": "Přirážka",
+    "contactPerson": "Kontaktní osoba"
+  },
+  "finance": {
+    "purchasePrice": "Nákupní cena",
+    "salePrice": "Prodejní cena",
+    "margin": "Marže",
+    "profit": "Zisk",
+    "costOfGoods": "Náklady na zboží",
+    "operatingCosts": "Provozní náklady",
+    "advertising": "Reklama",
+    "transport": "Doprava",
+    "rent": "Nájem"
+  },
+  "partner": {
+    "partner": "Společník",
+    "share": "Podíl",
+    "monthlyWithdrawal": "Měsíční výběr",
+    "standardDiscount": "Běžná obchodní sleva",
+    "marketingDiscount": "Marketingová sleva",
+    "personalDiscount": "Osobní sleva",
+    "counterPerformance": "Protiplnění"
+  },
+  "public": {
+    "heroTitle": "Prémiové vlasy k prodloužení",
+    "heroSubtitle": "Velkoobchod pro profesionální salony",
+    "aboutUs": "O nás",
+    "ourOffer": "Nabídka",
+    "whyHairora": "Proč Hairora",
+    "contact": "Kontakt"
+  },
+  "language": {
+    "cs": "Čeština",
+    "uk": "Українська",
+    "ru": "Русский"
+  }
+}
