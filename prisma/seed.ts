@@ -1,17 +1,15 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSQL } from "@prisma/adapter-libsql";
-import { createClient } from "@libsql/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { hash } from "bcryptjs";
 import dotenv from "dotenv";
 import { calculateRetailPrice } from "../src/lib/pricing";
 
 dotenv.config();
 
-const client = createClient({
+const adapter = new PrismaLibSql({
   url: process.env.TURSO_DATABASE_URL ?? process.env.DATABASE_URL ?? "file:./dev.db",
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
-const adapter = new PrismaLibSQL(client);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -145,7 +143,7 @@ async function main() {
       update: {},
       create: {
         ...productData,
-        photos: [],
+        photos: "[]",
       },
     });
 
