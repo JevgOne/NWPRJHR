@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Geist } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
+import { HreflangTags } from "@/components/HreflangTags";
 import "./globals.css";
 
 const geist = Geist({
@@ -40,6 +41,7 @@ export default async function RootLayout({
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <HreflangTags />
       </head>
       <body className="min-h-full flex flex-col bg-gray-50 font-[family-name:var(--font-geist)]">
         <NextIntlClientProvider messages={messages}>
