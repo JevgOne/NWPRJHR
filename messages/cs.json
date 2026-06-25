@@ -59,7 +59,18 @@
   },
   "dashboard": {
     "title": "Přehled",
-    "welcome": "Vítejte v systému Hairora"
+    "welcome": "Vítejte v systému Hairora",
+    "salesThisMonth": "Prodeje tento měsíc",
+    "stockValue": "Hodnota skladu",
+    "openInvoices": "Otevřené faktury",
+    "activeSalons": "Aktivní salony",
+    "recentSales": "Poslední prodeje",
+    "noRecentSales": "Žádné prodeje",
+    "lowStock": "Nízký stav zásob",
+    "noLowStock": "Všechny zásoby v pořádku",
+    "pendingReturns": "Čekající vratky",
+    "pendingOrders": "Nové objednávky",
+    "unreadNotifications": "Nepřečtená oznámení"
   },
   "product": {
     "hairExtensions": "Vlasy k prodloužení",

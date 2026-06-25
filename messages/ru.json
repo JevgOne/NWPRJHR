@@ -59,7 +59,18 @@
   },
   "dashboard": {
     "title": "Обзор",
-    "welcome": "Добро пожаловать в систему Hairora"
+    "welcome": "Добро пожаловать в систему Hairora",
+    "salesThisMonth": "Продажи за месяц",
+    "stockValue": "Стоимость склада",
+    "openInvoices": "Открытые счета",
+    "activeSalons": "Активные салоны",
+    "recentSales": "Последние продажи",
+    "noRecentSales": "Нет продаж",
+    "lowStock": "Низкий запас",
+    "noLowStock": "Все запасы в норме",
+    "pendingReturns": "Ожидающие возвраты",
+    "pendingOrders": "Новые заказы",
+    "unreadNotifications": "Непрочитанные уведомления"
   },
   "product": {
     "hairExtensions": "Волосы для наращивания",

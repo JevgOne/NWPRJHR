@@ -59,7 +59,18 @@
   },
   "dashboard": {
     "title": "Огляд",
-    "welcome": "Ласкаво просимо до системи Hairora"
+    "welcome": "Ласкаво просимо до системи Hairora",
+    "salesThisMonth": "Продажі цього місяця",
+    "stockValue": "Вартість складу",
+    "openInvoices": "Відкриті рахунки",
+    "activeSalons": "Активні салони",
+    "recentSales": "Останні продажі",
+    "noRecentSales": "Немає продажів",
+    "lowStock": "Низький запас",
+    "noLowStock": "Усі запаси в нормі",
+    "pendingReturns": "Очікують повернення",
+    "pendingOrders": "Нові замовлення",
+    "unreadNotifications": "Непрочитані сповіщення"
   },
   "product": {
     "hairExtensions": "Волосся для нарощування",
