@@ -26,50 +26,6 @@ export default async function ProductsPage() {
         </div>
       </div>
 
-      {/* Photo categories */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        <div className="relative overflow-hidden rounded-xl group">
-          <img
-            src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/volne-vlasy.jpg"
-            alt="Volné vlasy"
-            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-            <span className="text-white font-medium text-sm">Volné vlasy</span>
-          </div>
-        </div>
-        <div className="relative overflow-hidden rounded-xl group">
-          <img
-            src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/clip-in.jpg"
-            alt="Clip-in"
-            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-            <span className="text-white font-medium text-sm">Clip-in</span>
-          </div>
-        </div>
-        <div className="relative overflow-hidden rounded-xl group">
-          <img
-            src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/tape-in.jpg"
-            alt="Tape-in"
-            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-            <span className="text-white font-medium text-sm">Tape-in</span>
-          </div>
-        </div>
-        <div className="relative overflow-hidden rounded-xl group">
-          <img
-            src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/keratinove-vlasy.jpg"
-            alt="Keratinové vlasy"
-            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-            <span className="text-white font-medium text-sm">Keratinové</span>
-          </div>
-        </div>
-      </div>
-
       <ProductsShowcase />
     </div>
   );
