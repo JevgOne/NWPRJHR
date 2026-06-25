@@ -37,7 +37,12 @@ export async function GET(request: NextRequest) {
       orderBy: { name: "asc" },
     });
 
-    return NextResponse.json({ data: products });
+    const parsed = products.map((p) => ({
+      ...p,
+      photos: JSON.parse(p.photos || "[]"),
+    }));
+
+    return NextResponse.json({ data: parsed });
   } catch (error) {
     console.error("Public products API error:", error);
     return NextResponse.json(
