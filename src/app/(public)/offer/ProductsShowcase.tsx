@@ -128,9 +128,6 @@ export function ProductsShowcase() {
                   <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700">
                     {tCategory(p.category.toLowerCase())}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {p.processingType}
-                  </span>
                   {p.origin && (
                     <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
                       🌍 {p.origin}

@@ -7,7 +7,6 @@ interface SliderProduct {
   id: string;
   name: string;
   category: string;
-  processingType: string;
   origin: string | null;
   photos: string[];
   variants: { lengthCm: number; color: string }[];
