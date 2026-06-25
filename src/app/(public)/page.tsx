@@ -13,10 +13,14 @@ export default async function LandingPage() {
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
             Prémiové vlasy k prodloužení
           </h1>
+          <p className="text-gray-600 mb-4 max-w-xl mx-auto">
+            Výhradně východoevropské a evropské vlasy. Vše oficiálně fakturováno — kvalita doložená doklady.
+          </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600 mb-6">
             <span>✅ Vlasy skladem — vezmete si hned</span>
             <span>✂️ Clip-in a tape-in do 7 dnů</span>
             <span>🚗 Dovoz po Praze zdarma</span>
+            <span>🇪🇺 100% evropský původ</span>
           </div>
           <div className="flex gap-3 justify-center">
             <Link
@@ -191,6 +195,24 @@ export default async function LandingPage() {
                 <h3 className="font-semibold text-gray-900 mb-1">Vlasy na zakázku do 7 dnů</h3>
                 <p className="text-sm text-gray-600">
                   Clip-in i tape-in připravíme přesně podle vašich požadavků. Od objednávky po předání do 7 pracovních dnů.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-3xl flex-shrink-0">🇪🇺</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Výhradně evropské vlasy</h3>
+                <p className="text-sm text-gray-600">
+                  Prodáváme pouze východoevropské a evropské vlasy. Žádné příměsi, žádné pochybné zdroje.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-3xl flex-shrink-0">🧾</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Vše oficiálně fakturováno</h3>
+                <p className="text-sm text-gray-600">
+                  Ke každému nákupu vystavíme řádný doklad. Původ vlasů i kvalita jsou doložené — máme vše oficiální.
                 </p>
               </div>
             </div>
