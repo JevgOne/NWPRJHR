@@ -59,6 +59,14 @@ export function PublicFooter() {
                   {t("nav.privacy")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/obchodni-podminky"
+                  className="hover:text-white transition-colors"
+                >
+                  Obchodní podmínky
+                </Link>
+              </li>
             </ul>
           </div>
 
