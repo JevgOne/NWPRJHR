@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -31,6 +32,7 @@ export function InventoryClient({
   items: StockItem[];
   role: string;
 }) {
+  const router = useRouter();
   const t = useTranslations("stock");
   const tCat = useTranslations("category");
   const [search, setSearch] = useState("");
@@ -86,7 +88,8 @@ export function InventoryClient({
               filtered.map((item) => (
                 <tr
                   key={item.variantId}
-                  className="border-b border-gray-100 hover:bg-gray-50"
+                  className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => router.push(`/products/${item.product.id}`)}
                 >
                   <td className="py-3 px-2">
                     <div className="font-medium text-gray-900">
