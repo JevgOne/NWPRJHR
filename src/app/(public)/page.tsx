@@ -7,41 +7,30 @@ export default async function LandingPage() {
 
   return (
     <div>
-      {/* Hero — compact with benefits + photo */}
+      {/* Hero — compact with benefits */}
       <section className="bg-white pt-12 pb-6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                Prémiové vlasy k prodloužení
-              </h1>
-              <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-gray-600 mb-6">
-                <span>✅ Vlasy skladem — vezmete si hned</span>
-                <span>✂️ Clip-in a tape-in do 7 dnů</span>
-                <span>🚗 Dovoz po Praze zdarma</span>
-              </div>
-              <div className="flex gap-3 justify-center md:justify-start">
-                <Link
-                  href="/offer"
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                  Zobrazit nabídku
-                </Link>
-                <Link
-                  href="/contact"
-                  className="px-5 py-2.5 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors"
-                >
-                  Kontaktujte nás
-                </Link>
-              </div>
-            </div>
-            <div className="flex-shrink-0">
-              <img
-                src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/volne-vlasy-promo.jpg"
-                alt="Prémiové vlasy k prodloužení"
-                className="w-64 h-64 md:w-72 md:h-72 object-cover rounded-2xl shadow-lg"
-              />
-            </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+            Prémiové vlasy k prodloužení
+          </h1>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600 mb-6">
+            <span>✅ Vlasy skladem — vezmete si hned</span>
+            <span>✂️ Clip-in a tape-in do 7 dnů</span>
+            <span>🚗 Dovoz po Praze zdarma</span>
+          </div>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/offer"
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Zobrazit nabídku
+            </Link>
+            <Link
+              href="/contact"
+              className="px-5 py-2.5 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors"
+            >
+              Kontaktujte nás
+            </Link>
           </div>
         </div>
       </section>
