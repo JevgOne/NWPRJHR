@@ -30,6 +30,7 @@ export function AppShell({ session, children }: AppShellProps) {
     { href: "/invoices", label: t("invoices"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
     { href: "/salons", label: t("salons"), roles: ["OWNER", "EMPLOYEE"] },
     { href: "/customers", label: t("customers"), roles: ["OWNER", "EMPLOYEE"] },
+    { href: "/stylists", label: "Kadeřnice", roles: ["OWNER", "EMPLOYEE"] },
     { href: "/suppliers", label: t("suppliers"), roles: ["OWNER"] },
     { href: "/samples", label: t("samples"), roles: ["OWNER"] },
     { href: "/discounts", label: t("discounts"), roles: ["OWNER"] },
