@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const langFlags: Record<string, { flag: string; label: string }> = {
   cs: { flag: "🇨🇿", label: "Čeština" },
@@ -29,11 +30,11 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
       <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 pb-20 pt-12">
         <div className="max-w-lg mx-auto px-4 text-center">
           {/* Avatar */}
-          <div className="w-28 h-28 mx-auto rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center text-5xl shadow-2xl backdrop-blur-sm">
+          <div className="w-28 h-28 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden">
             {stylist.photo ? (
-              <img src={stylist.photo} alt={stylist.name} className="w-28 h-28 rounded-full object-cover" />
+              <Image src={stylist.photo} alt={stylist.name} width={112} height={112} className="w-full h-full object-cover" unoptimized />
             ) : (
-              "💇‍♀️"
+              <div className="w-full h-full flex items-center justify-center text-5xl">💇‍♀️</div>
             )}
           </div>
 
