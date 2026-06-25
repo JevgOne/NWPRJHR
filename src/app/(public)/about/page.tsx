@@ -12,7 +12,7 @@ export default function AboutPage() {
                 Kdo stojí za Hairora
               </h1>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Jsme tým, který rozumí vlasům. Dovážíme výhradně východoevropské a evropské vlasy k prodloužení přímo od výrobců a prodáváme je salonům i koncovým zákazníkům v České republice. Každý pramínek prochází naší kontrolou kvality.
+                Jsme tým, který rozumí vlasům. Dovážíme východoevropské, evropské i íránské vlasy k prodloužení přímo od výrobců. U každého produktu uvádíme přesný původ — žádné tajnosti, žádné vydávání jednoho za druhé.
               </p>
               <p className="text-gray-600 leading-relaxed">
                 Věříme, že kvalitní vlasy by měly být dostupné za férovou cenu — bez zbytečných mezičlánků. Proto pracujeme přímo s dodavateli a nabízíme osobní přístup ke každému zákazníkovi. Vše je oficiálně fakturováno — původ i kvalita vlasů jsou vždy doložené doklady.

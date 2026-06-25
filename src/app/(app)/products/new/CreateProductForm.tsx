@@ -36,6 +36,7 @@ export function CreateProductForm() {
       description: (form.get("description") as string) || undefined,
       category: form.get("category") as string,
       processingType: form.get("processingType") as string,
+      origin: (form.get("origin") as string) || undefined,
       slug:
         (form.get("slug") as string) ||
         (form.get("name") as string)
@@ -109,6 +110,7 @@ export function CreateProductForm() {
           </select>
         </div>
 
+        <Input id="origin" name="origin" label="Původ vlasů" placeholder="např. Východní Evropa, Irán, Rusko..." />
         <Input id="slug" name="slug" label="Slug (URL)" placeholder="auto-generated" />
 
         {error && <p className="text-sm text-red-600">{error}</p>}

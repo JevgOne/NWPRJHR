@@ -17,6 +17,7 @@ interface ProductDetail {
   description?: string | null;
   category: string;
   processingType: string;
+  origin?: string | null;
   variants?: Array<{
     id: string;
     lengthCm: number;
@@ -75,6 +76,11 @@ export function ProductDetailClient({
             <span className="text-sm text-gray-500">
               {product.processingType.replace(/_/g, "-")}
             </span>
+            {product.origin && (
+              <span className="text-sm text-gray-500">
+                🌍 {product.origin}
+              </span>
+            )}
           </div>
         </div>
       </Card>

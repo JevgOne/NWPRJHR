@@ -118,6 +118,7 @@ model Product {
   descriptionRu  String?
   category       ProductCategory
   processingType ProcessingType
+  origin         String?
   photos         String          @default("[]")
   archived       Boolean         @default(false)
   slug           String?         @unique

@@ -15,7 +15,7 @@ export default async function ProductsPage() {
         <div className="flex gap-4 items-start">
           <div className="text-3xl flex-shrink-0">✂️</div>
           <div>
-            <h2 className="font-semibold text-indigo-900 mb-1">Výhradně východoevropské a evropské vlasy</h2>
+            <h2 className="font-semibold text-indigo-900 mb-1">Východoevropské, evropské i íránské vlasy — vždy s přesným původem</h2>
             <p className="text-sm text-indigo-800 mb-2">
               Vlasy skladem si vezmete rovnou s sebou. Chcete clip-in nebo tape-in? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.
             </p>

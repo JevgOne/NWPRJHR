@@ -18,6 +18,7 @@ interface PublicProduct {
   descriptionRu: string | null;
   category: string;
   processingType: string;
+  origin: string | null;
   photos: string[];
   variants: PublicVariant[];
 }
@@ -130,6 +131,11 @@ export function ProductsShowcase() {
                   <span className="text-xs text-gray-500">
                     {p.processingType}
                   </span>
+                  {p.origin && (
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                      🌍 {p.origin}
+                    </span>
+                  )}
                 </div>
                 <h3 className="font-semibold text-gray-900">{p.name}</h3>
 

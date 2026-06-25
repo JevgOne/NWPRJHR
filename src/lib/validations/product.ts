@@ -16,6 +16,7 @@ export const createProductSchema = z.object({
     "MICRO_RING",
     "OTHER",
   ]),
+  origin: z.string().max(200).optional(),
   slug: z
     .string()
     .regex(/^[a-z0-9-]+$/)

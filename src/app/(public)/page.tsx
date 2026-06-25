@@ -16,7 +16,7 @@ export default async function LandingPage() {
               Prémiové vlasy k prodloužení
             </h1>
             <p className="text-gray-600 mb-4 max-w-xl mx-auto">
-              Výhradně východoevropské a evropské vlasy. Vše oficiálně fakturováno — kvalita doložená doklady.
+              Východoevropské, evropské i íránské vlasy. U každého produktu uvádíme přesný původ — vše oficiálně fakturováno.
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
               <span>✅ Vlasy skladem — vezmete si hned</span>
@@ -210,9 +210,9 @@ export default async function LandingPage() {
             <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
               <div className="text-3xl flex-shrink-0">🇪🇺</div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Výhradně evropské vlasy</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">Přesný původ u každého produktu</h3>
                 <p className="text-sm text-gray-600">
-                  Prodáváme pouze východoevropské a evropské vlasy. Žádné příměsi, žádné pochybné zdroje.
+                  Východoevropské, evropské i íránské vlasy — u každého produktu uvádíme přesný původ. Jako 90 % místních prodejců máme i íránské vlasy, ale vždy říkáme pravdu.
                 </p>
               </div>
             </div>

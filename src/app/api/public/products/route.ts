@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       descriptionRu: true,
       category: true,
       processingType: true,
+      origin: true,
       photos: true,
       variants: {
         where: { active: true },

@@ -8,6 +8,7 @@ interface SliderProduct {
   name: string;
   category: string;
   processingType: string;
+  origin: string | null;
   photos: string[];
   variants: { lengthCm: number; color: string }[];
 }
@@ -151,6 +152,11 @@ function ProductCard({ product }: { product: SliderProduct }) {
           <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-100 text-indigo-700">
             {categoryLabels[product.category] ?? product.category}
           </span>
+          {product.origin && (
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
+              {product.origin}
+            </span>
+          )}
         </div>
         <h3 className="font-semibold text-gray-900 text-sm truncate">{product.name}</h3>
         {lengths.length > 0 && (
