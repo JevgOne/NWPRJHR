@@ -17,7 +17,7 @@ export default async function ProductsPage() {
           <div>
             <h2 className="font-semibold text-indigo-900 mb-1">Prodáváme prémiové vlasy k prodloužení</h2>
             <p className="text-sm text-indigo-800 mb-2">
-              Vlasy skladem si vezmete rovnou s sebou. Na přání připravíme i hotové sady (clip-in, tape-in) na míru — <strong>do 7 dnů</strong>.
+              Vlasy skladem si vezmete rovnou s sebou. Chcete clip-in nebo tape-in? Připravíme na zakázku — <strong>do 7 dnů</strong>.
             </p>
             <p className="text-sm text-indigo-700">
               🤝 Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.

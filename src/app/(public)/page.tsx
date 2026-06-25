@@ -79,7 +79,7 @@ export default async function LandingPage() {
             Jak to funguje
           </h2>
           <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">
-            Prodáváme prémiové vlasy k prodloužení. Na přání připravíme i hotové sady do 7 dnů.
+            Prodáváme prémiové vlasy k prodloužení. Clip-in a tape-in připravíme na zakázku do 7 dnů.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
@@ -106,16 +106,16 @@ export default async function LandingPage() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-1 text-sm">Zaplaťte a vezmete si je</h3>
               <p className="text-xs text-gray-600">
-                Vlasy skladem si vezmete rovnou s sebou. Potřebujete hotovou sadu (clip-in, tape-in)? Zaplaťte a my ji připravíme na míru.
+                Vlasy skladem si vezmete rovnou s sebou. Chcete clip-in nebo tape-in? Zaplaťte a připravíme je na míru do 7 dnů.
               </p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
                 4️⃣
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1 text-sm">Sady do 7 dnů</h3>
+              <h3 className="font-semibold text-gray-900 mb-1 text-sm">Vlasy na zakázku do 7 dnů</h3>
               <p className="text-xs text-gray-600">
-                Hotové sady na zakázku připravíme do 7 pracovních dnů. Vyzvednete si je u nás nebo vám je dovezeme — po Praze zdarma.
+                Potřebujete clip-in nebo tape-in? Připravíme na míru do 7 pracovních dnů. Vyzvednete si je u nás nebo vám je dovezeme — po Praze zdarma.
               </p>
             </div>
           </div>
@@ -162,9 +162,9 @@ export default async function LandingPage() {
             <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
               <div className="text-3xl flex-shrink-0">⏰</div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Sady na zakázku do 7 dnů</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">Vlasy na zakázku do 7 dnů</h3>
                 <p className="text-sm text-gray-600">
-                  Chcete hotovou sadu (clip-in, tape-in)? Připravíme ji přesně podle vašich požadavků. Od objednávky po předání do 7 pracovních dnů.
+                  Clip-in i tape-in připravíme přesně podle vašich požadavků. Od objednávky po předání do 7 pracovních dnů.
                 </p>
               </div>
             </div>
