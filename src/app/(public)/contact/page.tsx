@@ -10,6 +10,19 @@ export default async function ContactPage() {
         {t("contact.title")}
       </h1>
 
+      {/* Trust banner */}
+      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-10">
+        <div className="flex gap-4 items-start">
+          <div className="text-3xl flex-shrink-0">🚗</div>
+          <div>
+            <h2 className="font-semibold text-emerald-900 mb-1">Osobní konzultace a dovoz zdarma</h2>
+            <p className="text-sm text-emerald-800">
+              Nejste si jistí výběrem? Napište nám a domluvíme osobní schůzku. Přijedeme s vlasy přímo za vámi nebo za vaší kadeřnicí — <strong>po Praze zcela zdarma</strong>. Ukážeme, poradíme a pomůžeme s výběrem. Žádný závazek.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Contact info */}
         <div>
@@ -32,6 +45,11 @@ export default async function ContactPage() {
                 />
               </svg>
               <span>info@hairora.cz</span>
+            </div>
+
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="font-medium text-gray-900 mb-1">🇨🇿 🇺🇦 🇷🇺 Mluvíme vaším jazykem</p>
+              <p className="text-xs text-gray-500">Kompletní servis v češtině, ukrajinštině i ruštině.</p>
             </div>
           </div>
         </div>

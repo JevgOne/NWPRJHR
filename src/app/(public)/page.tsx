@@ -72,60 +72,142 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* USPs */}
+      {/* How it works */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-            {t("whyHairora")}
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+            Jak to funguje
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {(
-              [
-                "usp.directImport",
-                "usp.qualityGuarantee",
-                "usp.personalApproach",
-                "usp.trilingualSupport",
-              ] as const
-            ).map((key) => (
-              <div
-                key={key}
-                className="p-6 bg-white rounded-xl border border-gray-200"
-              >
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">
-                  <svg
-                    className="w-5 h-5 text-green-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <p className="text-sm font-medium text-gray-900">{t(key)}</p>
+          <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">
+            Clip-in i tape-in vlasy připravujeme na míru. Celý proces je jednoduchý a bez rizika.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
+                1️⃣
               </div>
-            ))}
+              <h3 className="font-semibold text-gray-900 mb-1 text-sm">Vyberte si vlasy</h3>
+              <p className="text-xs text-gray-600">
+                Přijďte se podívat, osahat a vyzkoušet. Poradíme s barvou, délkou i metodou. Nejste si jistí? Přijedeme s ukázkami přímo za vámi — po Praze zdarma.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
+                2️⃣
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1 text-sm">Spojte nás s kadeřnicí</h3>
+              <p className="text-xs text-gray-600">
+                Máte svou kadeřnici? Super, spojíme se přímo s ní. Nemáte? Nevadí — vyberte si z našich ověřených specialistek na prodlužování.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
+                3️⃣
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1 text-sm">Zaplaťte a začneme</h3>
+              <p className="text-xs text-gray-600">
+                Vlasy skladem si vezmete hned. Clip-in a tape-in (páskové) vlasy vyrábíme na zakázku — zaplaťte a my začneme s přípravou.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
+                4️⃣
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1 text-sm">Do 7 dnů hotovo</h3>
+              <p className="text-xs text-gray-600">
+                Vlasy na zakázku připravíme do 7 pracovních dnů. Vyzvednete si je u nás nebo vám je dovezeme — po Praze zdarma.
+              </p>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* Trust section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+            Proč nám zákazníci důvěřují
+          </h2>
+          <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">
+            Žádné riziko. Osobní přístup. Kvalita, kterou uvidíte a osaháte si.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-3xl flex-shrink-0">🤝</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Osobní konzultace zdarma</h3>
+                <p className="text-sm text-gray-600">
+                  Nejste si jistí výběrem? Žádný problém. Kontaktujte nás a domluvíme osobní schůzku — přijedeme s ukázkami přímo za vámi nebo za vaší kadeřnicí. Po Praze zdarma.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-3xl flex-shrink-0">✋</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Vlasy si osaháte předem</h3>
+                <p className="text-sm text-gray-600">
+                  Nekupujete naslepo. Každý zákazník si může vlasy prohlédnout, porovnat barvy a délky. Teprve pak se rozhodnete.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-3xl flex-shrink-0">🚗</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Dovoz po Praze zdarma</h3>
+                <p className="text-sm text-gray-600">
+                  Přivezeme vlasy přímo k vám nebo do salonu. Ukážeme, zarezervujeme a prodáme. Bez starostí, bez čekání na poštu.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-3xl flex-shrink-0">⏰</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Hotovo do 7 dnů</h3>
+                <p className="text-sm text-gray-600">
+                  Clip-in i tape-in (páskové) vlasy vyrábíme na zakázku podle vašich požadavků. Od objednávky po předání do 7 pracovních dnů.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trilingual support */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex justify-center gap-3 text-4xl mb-4">
+            <span>🇨🇿</span><span>🇺🇦</span><span>🇷🇺</span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Mluvíme vaším jazykem</h3>
+          <p className="text-sm text-gray-600 max-w-lg mx-auto">
+            Kompletní servis v češtině, ukrajinštině i ruštině. Poradíme, vysvětlíme a pomůžeme — v jazyce, kterému rozumíte.
+          </p>
         </div>
       </section>
 
       {/* Contact CTA */}
       <section className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {t("ctaTitle")}
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            Chcete se přijít podívat?
           </h2>
-          <p className="text-gray-600 mb-6">{t("ctaSubtitle")}</p>
-          <Link
-            href="/contact"
-            className="inline-block px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
-          >
-            {t("hero.cta")}
-          </Link>
+          <p className="text-gray-600 mb-6 max-w-lg mx-auto">
+            Napište nám nebo zavolejte. Domluvíme schůzku, přijedeme s ukázkami a pomůžeme s výběrem. Žádný závazek, žádné riziko.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/contact"
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+            >
+              Napište nám
+            </Link>
+            <Link
+              href="/kadernice"
+              className="px-6 py-3 bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 font-medium rounded-lg transition-colors"
+            >
+              Naše kadeřnice
+            </Link>
+          </div>
         </div>
       </section>
     </div>

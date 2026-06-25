@@ -35,50 +35,46 @@ export default async function StylistsPublicPage() {
               href={`/kadernice/${s.slug}`}
               className="group flex flex-col bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-indigo-300 transition-all overflow-hidden"
             >
-              {/* Compact header */}
-              <div className="h-16 bg-gradient-to-r from-indigo-500 to-purple-500 relative flex-shrink-0">
+              {/* Photo + badge */}
+              <div className="flex justify-center pt-5 pb-2 relative">
                 {s.featured && (
-                  <span className="absolute top-2 right-2 bg-white/90 text-amber-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="absolute top-3 right-3 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
                     ⭐ Top
                   </span>
                 )}
-              </div>
-
-              {/* Avatar */}
-              <div className="flex justify-center -mt-8 flex-shrink-0">
-                <div className="w-16 h-16 rounded-full border-[3px] border-white bg-gray-200 shadow overflow-hidden">
+                <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden ring-2 ring-gray-200">
                   {s.photo ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img src={s.photo} alt={s.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-xl">💇‍♀️</div>
+                    <div className="w-full h-full bg-indigo-50 flex items-center justify-center text-3xl">💇‍♀️</div>
                   )}
                 </div>
               </div>
 
               {/* Content */}
-              <div className="flex flex-col flex-1 px-4 pb-3 pt-1.5 text-center">
+              <div className="flex flex-col flex-1 px-4 pb-4 text-center">
                 <h3 className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
                   {s.name}
                 </h3>
-                <p className="text-[11px] text-gray-500">
-                  📍 {s.city}{s.experience ? ` · ${s.experience} let` : ""}
+                <p className="text-[11px] text-gray-500 mt-0.5">
+                  📍 {s.city}{s.experience ? ` · ${s.experience} let praxe` : ""}
                 </p>
                 {s.salon && (
-                  <p className="text-[10px] text-indigo-600">{s.salon.name}</p>
+                  <p className="text-[10px] text-indigo-600 mt-0.5">{s.salon.name}</p>
                 )}
 
-                <div className="flex justify-center gap-1 mt-1.5">
+                <div className="flex justify-center gap-1 mt-2">
                   {langs.map((l) => (
                     <span key={l} className="text-sm">{langFlags[l] || l}</span>
                   ))}
                 </div>
 
-                <p className="text-[11px] text-gray-600 mt-1.5 line-clamp-2 min-h-[2rem]">
+                <p className="text-[11px] text-gray-600 mt-2 line-clamp-2 min-h-[2rem]">
                   {s.bio || ""}
                 </p>
 
-                <div className="mt-auto pt-1.5">
+                <div className="mt-auto pt-2">
                   {specs.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-1">
                       {specs.slice(0, 2).map((sp) => (
