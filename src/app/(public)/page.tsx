@@ -86,43 +86,57 @@ export default async function LandingPage() {
       </section>
 
       {/* Color palette */}
-      <section className="py-12 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                Široká škála odstínů
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Od platinové blond po tmavě černou. Najdeme přesný odstín, který se hodí k vašim vlasům — přijedeme s ukázkami a porovnáme naživo.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { color: "#FAF0DC", name: "Platinová" },
-                  { color: "#E8D5A8", name: "Světlá blond" },
-                  { color: "#D4B06A", name: "Zlatá blond" },
-                  { color: "#C49A48", name: "Medová" },
-                  { color: "#A07030", name: "Karamelová" },
-                  { color: "#7A5230", name: "Světle hnědá" },
-                  { color: "#5C3A1E", name: "Středně hnědá" },
-                  { color: "#3E2512", name: "Tmavě hnědá" },
-                  { color: "#2A1A0C", name: "Tmavá" },
-                  { color: "#0F0A06", name: "Černá" },
-                ].map(({ color, name }) => (
-                  <div key={color} className="flex flex-col items-center gap-1">
-                    <div className="w-10 h-10 rounded-full border border-gray-200 shadow-sm" style={{ backgroundColor: color }} />
-                    <span className="text-[10px] text-gray-500">{name}</span>
-                  </div>
-                ))}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">
+              Široká škála odstínů
+            </h2>
+            <p className="text-gray-600 max-w-xl mx-auto">
+              Od platinové blond po tmavě černou. Najdeme přesný odstín, který se hodí k vašim vlasům — přijedeme s ukázkami a porovnáme naživo.
+            </p>
+          </div>
+
+          {/* Gradient bar */}
+          <div className="relative mb-8">
+            <div
+              className="h-4 rounded-full shadow-inner"
+              style={{
+                background: "linear-gradient(to right, #FAF0DC, #E8D5A8, #D4B06A, #C49A48, #A07030, #7A5230, #5C3A1E, #3E2512, #2A1A0C, #0F0A06)",
+              }}
+            />
+          </div>
+
+          {/* Individual shades */}
+          <div className="grid grid-cols-5 sm:grid-cols-10 gap-3 mb-8">
+            {[
+              { color: "#FAF0DC", name: "Platinová" },
+              { color: "#E8D5A8", name: "Světlá blond" },
+              { color: "#D4B06A", name: "Zlatá blond" },
+              { color: "#C49A48", name: "Medová" },
+              { color: "#A07030", name: "Karamelová" },
+              { color: "#7A5230", name: "Světle hnědá" },
+              { color: "#5C3A1E", name: "Středně hnědá" },
+              { color: "#3E2512", name: "Tmavě hnědá" },
+              { color: "#2A1A0C", name: "Tmavá" },
+              { color: "#0F0A06", name: "Černá" },
+            ].map(({ color, name }) => (
+              <div key={color} className="flex flex-col items-center gap-2 group">
+                <div
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-gray-200"
+                  style={{ backgroundColor: color }}
+                />
+                <span className="text-[10px] sm:text-xs text-gray-500 font-medium text-center leading-tight">{name}</span>
               </div>
-            </div>
-            <div className="flex-shrink-0">
-              <img
-                src={`${BLOB}/odstiny-prehled.jpg`}
-                alt="Přehled odstínů vlasů"
-                className="w-72 h-48 md:w-80 md:h-52 object-cover rounded-xl shadow-md"
-              />
-            </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center">
+            <img
+              src={`${BLOB}/odstiny-prehled.jpg`}
+              alt="Přehled odstínů vlasů"
+              className="w-full max-w-2xl h-48 md:h-56 object-cover rounded-xl shadow-md"
+            />
           </div>
         </div>
       </section>

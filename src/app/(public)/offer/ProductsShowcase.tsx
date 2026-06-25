@@ -98,8 +98,8 @@ export function ProductsShowcase() {
                 setExpandedId(expandedId === p.id ? null : p.id)
               }
             >
-              {/* Product image placeholder */}
-              <div className="h-48 bg-gray-100 flex items-center justify-center">
+              {/* Product image */}
+              <div className="h-72 bg-gray-100 flex items-center justify-center">
                 {p.photos.length > 0 ? (
                   <img
                     src={p.photos[0]}

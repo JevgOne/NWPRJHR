@@ -134,7 +134,7 @@ function ProductCard({ product }: { product: SliderProduct }) {
       href="/offer"
       className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
     >
-      <div className="h-40 bg-gray-100 flex items-center justify-center">
+      <div className="h-64 bg-gray-100 flex items-center justify-center">
         {product.photos.length > 0 ? (
           <img
             src={product.photos[0]}
