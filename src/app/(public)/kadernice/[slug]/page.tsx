@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 const langFlags: Record<string, { flag: string; label: string }> = {
   cs: { flag: "🇨🇿", label: "Čeština" },
@@ -27,14 +26,15 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero header — Telegram-style */}
-      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 pb-20 pt-12">
-        <div className="max-w-lg mx-auto px-4 text-center">
+      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 pb-16 pt-10">
+        <div className="max-w-md mx-auto px-4 text-center">
           {/* Avatar */}
-          <div className="w-28 h-28 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden">
+          <div className="w-24 h-24 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden">
             {stylist.photo ? (
-              <Image src={stylist.photo} alt={stylist.name} width={112} height={112} className="w-full h-full object-cover" unoptimized />
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={stylist.photo} alt={stylist.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-5xl">💇‍♀️</div>
+              <div className="w-full h-full flex items-center justify-center text-4xl">💇‍♀️</div>
             )}
           </div>
 
@@ -76,7 +76,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
       </div>
 
       {/* Content cards — overlapping the header */}
-      <div className="max-w-lg mx-auto px-4 -mt-12 pb-12 space-y-4">
+      <div className="max-w-md mx-auto px-4 -mt-10 pb-10 space-y-3">
 
         {/* Bio card */}
         {stylist.bio && (
