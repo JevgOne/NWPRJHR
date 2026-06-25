@@ -7,30 +7,41 @@ export default async function LandingPage() {
 
   return (
     <div>
-      {/* Hero — compact with benefits */}
+      {/* Hero — compact with benefits + photo */}
       <section className="bg-white pt-12 pb-6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-            Prémiové vlasy k prodloužení
-          </h1>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600 mb-6">
-            <span>✅ Vlasy skladem — vezmete si hned</span>
-            <span>✂️ Clip-in a tape-in do 7 dnů</span>
-            <span>🚗 Dovoz po Praze zdarma</span>
-          </div>
-          <div className="flex gap-3 justify-center">
-            <Link
-              href="/offer"
-              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
-            >
-              Zobrazit nabídku
-            </Link>
-            <Link
-              href="/contact"
-              className="px-5 py-2.5 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors"
-            >
-              Kontaktujte nás
-            </Link>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                Prémiové vlasy k prodloužení
+              </h1>
+              <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-gray-600 mb-6">
+                <span>✅ Vlasy skladem — vezmete si hned</span>
+                <span>✂️ Clip-in a tape-in do 7 dnů</span>
+                <span>🚗 Dovoz po Praze zdarma</span>
+              </div>
+              <div className="flex gap-3 justify-center md:justify-start">
+                <Link
+                  href="/offer"
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  Zobrazit nabídku
+                </Link>
+                <Link
+                  href="/contact"
+                  className="px-5 py-2.5 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors"
+                >
+                  Kontaktujte nás
+                </Link>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <img
+                src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/volne-vlasy-promo.jpg"
+                alt="Prémiové vlasy k prodloužení"
+                className="w-64 h-64 md:w-72 md:h-72 object-cover rounded-2xl shadow-lg"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -44,24 +55,56 @@ export default async function LandingPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {(
               [
-                { key: "virgin" as const, emoji: "👑", desc: "Nejvyšší kvalita, neošetřené" },
-                { key: "premium" as const, emoji: "💎", desc: "Prémiová kvalita" },
-                { key: "standard" as const, emoji: "⭐", desc: "Skvělý poměr cena/kvalita" },
-                { key: "sale" as const, emoji: "🔥", desc: "Výhodné ceny" },
+                { key: "virgin" as const, img: "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/volne-vlasy.jpg", desc: "Nejvyšší kvalita, neošetřené" },
+                { key: "premium" as const, img: "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/odstiny-prehled.jpg", desc: "Prémiová kvalita" },
+                { key: "standard" as const, img: "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/extensions-techniky.jpg", desc: "Skvělý poměr cena/kvalita" },
+                { key: "sale" as const, img: "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/keratinove-vlasy.jpg", desc: "Výhodné ceny" },
               ]
-            ).map(({ key, emoji, desc }) => (
+            ).map(({ key, img, desc }) => (
               <Link
                 key={key}
                 href={`/offer?category=${key.toUpperCase()}`}
-                className="group block p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center"
+                className="group block overflow-hidden rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all"
               >
-                <div className="text-3xl mb-2">{emoji}</div>
-                <h3 className="font-semibold text-gray-900 text-sm">
-                  {tCategory(key)}
-                </h3>
-                <p className="text-[11px] text-gray-500 mt-1">{desc}</p>
+                <div className="relative h-32">
+                  <img src={img} alt={tCategory(key)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div className="p-3 bg-white text-center">
+                  <h3 className="font-semibold text-gray-900 text-sm">
+                    {tCategory(key)}
+                  </h3>
+                  <p className="text-[11px] text-gray-500 mt-0.5">{desc}</p>
+                </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Color palette */}
+      <section className="py-12 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Široká škála odstínů
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Od platinové blond po tmavě černou. Najdeme přesný odstín, který se hodí k vašim vlasům — přijedeme s ukázkami a porovnáme naživo.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {["#F5E6C8", "#D4A76A", "#C08040", "#8B6914", "#6B4226", "#4A2F1A", "#2C1810", "#1A0F0A"].map((color) => (
+                  <div key={color} className="w-8 h-8 rounded-full border border-gray-200 shadow-sm" style={{ backgroundColor: color }} />
+                ))}
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <img
+                src="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/odstiny-prehled.jpg"
+                alt="Přehled odstínů vlasů"
+                className="w-72 h-48 md:w-80 md:h-52 object-cover rounded-xl shadow-md"
+              />
+            </div>
           </div>
         </div>
       </section>

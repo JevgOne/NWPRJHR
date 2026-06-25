@@ -14,10 +14,10 @@ export function PublicNavbar() {
 
   const navLinks = [
     { href: "/", label: t("nav.home") },
-    { href: "/about", label: t("nav.about") },
     { href: "/offer", label: t("nav.products") },
     { href: "/kadernice", label: "Kadeřnice" },
     { href: "/contact", label: t("nav.contact") },
+    { href: "/about", label: t("nav.about") },
   ];
 
   return (
