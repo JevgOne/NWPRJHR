@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 
 export default async function LandingPage() {
   const t = await getTranslations("public");
@@ -7,27 +8,35 @@ export default async function LandingPage() {
 
   return (
     <div>
-      {/* Hero — compact with benefits */}
-      <section className="bg-white pt-12 pb-6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-            Prémiové vlasy k prodloužení
-          </h1>
-          <p className="text-gray-600 mb-4 max-w-xl mx-auto">
-            Výhradně východoevropské a evropské vlasy. Vše oficiálně fakturováno — kvalita doložená doklady.
-          </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600 mb-6">
-            <span>✅ Vlasy skladem — vezmete si hned</span>
-            <span>✂️ Clip-in a tape-in do 7 dnů</span>
-            <span>🚗 Dovoz po Praze zdarma</span>
-            <span>🇪🇺 100% evropský původ</span>
+      {/* Hero — text + product slider */}
+      <section className="bg-white pt-12 pb-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+              Prémiové vlasy k prodloužení
+            </h1>
+            <p className="text-gray-600 mb-4 max-w-xl mx-auto">
+              Výhradně východoevropské a evropské vlasy. Vše oficiálně fakturováno — kvalita doložená doklady.
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
+              <span>✅ Vlasy skladem — vezmete si hned</span>
+              <span>✂️ Clip-in a tape-in do 7 dnů</span>
+              <span>🚗 Dovoz po Praze zdarma</span>
+              <span>🇪🇺 100% evropský původ</span>
+            </div>
           </div>
-          <div className="flex gap-3 justify-center">
+
+          {/* Product slider */}
+          <div className="px-4">
+            <HeroProductSlider />
+          </div>
+
+          <div className="flex gap-3 justify-center mt-6">
             <Link
               href="/offer"
               className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
             >
-              Zobrazit nabídku
+              Zobrazit celou nabídku
             </Link>
             <Link
               href="/contact"
