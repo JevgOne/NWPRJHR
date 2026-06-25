@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
 
   const { name, email, phone, salonName, message, locale } = parsed.data;
 
-  const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairora.cz";
+  const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
 
   await sendNotificationEmail({
     to: contactTo,
-    subject: `[Hairora] Contact form: ${name}`,
+    subject: `[Hairland] Contact form: ${name}`,
     body: [
       `Name: ${name}`,
       `Email: ${email}`,

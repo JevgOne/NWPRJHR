@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Hairora",
+    "appName": "Hairland",
     "save": "Uložit",
     "cancel": "Zrušit",
     "delete": "Smazat",
@@ -59,7 +59,7 @@
   },
   "dashboard": {
     "title": "Přehled",
-    "welcome": "Vítejte v systému Hairora",
+    "welcome": "Vítejte v systému Hairland",
     "salesThisMonth": "Prodeje tento měsíc",
     "stockValue": "Hodnota skladu",
     "openInvoices": "Otevřené faktury",
@@ -359,7 +359,7 @@
     "heroSubtitle": "Velkoobchod pro profesionální salony",
     "aboutUs": "O nás",
     "ourOffer": "Nabídka",
-    "whyHairora": "Proč Hairora",
+    "whyHairora": "Proč Hairland",
     "contact": "Kontakt",
     "usp": {
       "directImport": "Přímý dovoz za lepší ceny",
@@ -372,7 +372,7 @@
     "about": {
       "title": "O nás",
       "missionTitle": "Naše mise",
-      "missionText": "Hairora je velkoobchod s prémiovými vlasy k prodloužení. Naším posláním je dodávat salonům kvalitní vlasy za férové ceny s osobním přístupem.",
+      "missionText": "Hairland je velkoobchod s prémiovými vlasy k prodloužení. Naším posláním je dodávat salonům kvalitní vlasy za férové ceny s osobním přístupem.",
       "valuesTitle": "Naše hodnoty",
       "valueQuality": "Kvalita",
       "valueTrust": "Důvěra",
@@ -399,7 +399,7 @@
       }
     },
     "footer": {
-      "copyright": "© 2026 Hairora.cz"
+      "copyright": "© 2026 Hairland.cz"
     }
   },
   "variant": {
@@ -656,7 +656,7 @@
     },
     "rights": {
       "title": "Vaše práva",
-      "text": "Máte právo na přístup ke svým údajům, jejich opravu, export a výmaz. Pro uplatnění těchto práv nás kontaktujte na info@hairora.cz nebo využijte funkci exportu/výmazu v nastavení vašeho účtu."
+      "text": "Máte právo na přístup ke svým údajům, jejich opravu, export a výmaz. Pro uplatnění těchto práv nás kontaktujte na info@hairland.cz nebo využijte funkci exportu/výmazu v nastavení vašeho účtu."
     },
     "cookies": {
       "title": "Cookies",
@@ -664,7 +664,7 @@
     },
     "contact": {
       "title": "Kontakt",
-      "text": "V případě dotazů ohledně ochrany osobních údajů nás kontaktujte na info@hairora.cz."
+      "text": "V případě dotazů ohledně ochrany osobních údajů nás kontaktujte na info@hairland.cz."
     },
     "lastUpdated": "Poslední aktualizace: červen 2026"
   },

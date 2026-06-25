@@ -12,13 +12,13 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Hairora",
+  title: "Hairland",
   description: "Interní systém pro velkoobchod s vlasy k prodloužení",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Hairora",
+    title: "Hairland",
   },
 };
 

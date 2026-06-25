@@ -22,7 +22,7 @@ export async function sendNotificationEmail(
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   await resend.emails.send({
-    from: process.env.EMAIL_FROM ?? "info@hairora.cz",
+    from: process.env.EMAIL_FROM ?? "info@hairland.cz",
     to: input.to,
     subject: input.subject,
     text: input.body,

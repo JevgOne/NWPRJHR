@@ -42,8 +42,8 @@ export async function generatePohodaXml(
       version: "2.0",
       id: `hairora-${formatDate(params.from)}-${formatDate(params.to)}`,
       ico: params.ico,
-      application: "Hairora",
-      note: "Export faktur z Hairora",
+      application: "Hairland",
+      note: "Export faktur z Hairland",
     });
 
   for (let idx = 0; idx < invoices.length; idx++) {

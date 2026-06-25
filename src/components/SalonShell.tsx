@@ -31,7 +31,7 @@ export function SalonShell({ session, children }: SalonShellProps) {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/salon/catalog" className="text-lg font-bold text-indigo-600">
-              Hairora
+              Hairland
             </Link>
             <div className="flex gap-1">
               {navItems.map((item) => (

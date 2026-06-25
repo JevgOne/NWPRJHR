@@ -62,7 +62,7 @@ export function AppShell({ session, children }: AppShellProps) {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 h-16 border-b border-gray-800">
             <Link href="/dashboard" className="text-xl font-bold">
-              Hairora
+              Hairland
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}

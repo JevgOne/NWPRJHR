@@ -54,7 +54,7 @@ export async function generateAccountingExport(
   ]);
 
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Hairora";
+  workbook.creator = "Hairland";
   workbook.created = new Date();
 
   // Sheet 1: Vydane faktury (Issued Invoices)

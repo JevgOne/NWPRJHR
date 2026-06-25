@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://hairora-rust.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://hairland.cz";
 
 const LOCALES = ["cs", "uk", "ru"] as const;
 

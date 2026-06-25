@@ -12,7 +12,7 @@ export function PublicFooter() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <span className="text-xl font-bold text-white">Hairora</span>
+            <span className="text-xl font-bold text-white">Hairland</span>
             <p className="mt-2 text-sm">{t("heroSubtitle")}</p>
           </div>
 
@@ -76,7 +76,7 @@ export function PublicFooter() {
               {t("nav.contact")}
             </h3>
             <ul className="space-y-2 text-sm">
-              <li>info@hairora.cz</li>
+              <li>info@hairland.cz</li>
               <li>
                 <Link
                   href="/login"

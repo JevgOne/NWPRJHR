@@ -42,7 +42,14 @@ export async function GET(request: NextRequest) {
       photos: JSON.parse(p.photos || "[]"),
     }));
 
-    return NextResponse.json({ data: parsed });
+    return NextResponse.json(
+      { data: parsed },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (error) {
     console.error("Public products API error:", error);
     return NextResponse.json(

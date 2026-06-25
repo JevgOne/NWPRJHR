@@ -4,13 +4,13 @@ export default function ObchodniPodminkyPage() {
   const sections = [
     {
       title: "1. Úvodní ustanovení",
-      text: `Tyto obchodní podmínky upravují vzájemná práva a povinnosti mezi provozovatelem internetového portálu hairora.cz a jeho zákazníky.
+      text: `Tyto obchodní podmínky upravují vzájemná práva a povinnosti mezi provozovatelem internetového portálu hairland.cz a jeho zákazníky.
 
 Provozovatel:
 Alvento Solutions s.r.o.
 IČO: 24111953
 Sídlo: Školská 660/3, Nové Město, 110 00 Praha
-E-mail: info@hairora.cz
+E-mail: info@hairland.cz
 
 Provozovatel se zabývá velkoobchodním prodejem vlasů k prodloužení pro profesionální kadeřnické salony.`,
     },
@@ -44,7 +44,7 @@ Zákazník je povinen zboží při převzetí zkontrolovat a případné nesrovn
       title: "5. Reklamace a vrácení zboží",
       text: `Zákazník má právo reklamovat zboží, pokud vykazuje vady kvality, které nebyly způsobeny nesprávným zacházením.
 
-Reklamaci je nutné uplatnit bez zbytečného odkladu po zjištění vady, a to e-mailem na info@hairora.cz s popisem vady a fotodokumentací.
+Reklamaci je nutné uplatnit bez zbytečného odkladu po zjištění vady, a to e-mailem na info@hairland.cz s popisem vady a fotodokumentací.
 
 Provozovatel posoudí reklamaci do 30 dnů od jejího uplatnění.
 
@@ -61,7 +61,7 @@ Podrobné informace o zpracování osobních údajů naleznete na stránce:`,
     },
     {
       title: "7. Závěrečná ustanovení",
-      text: `Tyto obchodní podmínky nabývají účinnosti dnem jejich zveřejnění na webových stránkách hairora.cz.
+      text: `Tyto obchodní podmínky nabývají účinnosti dnem jejich zveřejnění na webových stránkách hairland.cz.
 
 Provozovatel si vyhrazuje právo tyto obchodní podmínky kdykoli změnit. Změny jsou účinné okamžikem jejich zveřejnění na webu.
 
