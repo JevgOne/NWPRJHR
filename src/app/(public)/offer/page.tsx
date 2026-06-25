@@ -15,9 +15,9 @@ export default async function ProductsPage() {
         <div className="flex gap-4 items-start">
           <div className="text-3xl flex-shrink-0">✂️</div>
           <div>
-            <h2 className="font-semibold text-indigo-900 mb-1">Clip-in i tape-in vlasy na zakázku</h2>
+            <h2 className="font-semibold text-indigo-900 mb-1">Prodáváme prémiové vlasy k prodloužení</h2>
             <p className="text-sm text-indigo-800 mb-2">
-              Všechny vlasy připravujeme individuálně podle vašich požadavků — barva, délka, metoda. Přijďte si vybrat, zaplaťte a <strong>do 7 dnů máte hotovo</strong>.
+              Vlasy skladem si vezmete rovnou s sebou. Na přání připravíme i hotové sady (clip-in, tape-in) na míru — <strong>do 7 dnů</strong>.
             </p>
             <p className="text-sm text-indigo-700">
               🤝 Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.
