@@ -18,13 +18,13 @@ export default async function LandingPage() {
               Prémiové vlasy k prodloužení
             </h1>
             <p className="text-gray-600 mb-4 max-w-xl mx-auto">
-              Východoevropské, evropské i íránské vlasy. U každého produktu uvádíme přesný původ — vše oficiálně fakturováno.
+              Vlasy z celého světa — Evropa, Východní Evropa, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. U každého produktu uvádíme přesný původ — vše oficiálně fakturováno.
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
               <span>✅ Vlasy skladem — vezmete si hned</span>
               <span>✂️ Clip-in a tape-in do 7 dnů</span>
               <span>🚗 Dovoz po Praze zdarma</span>
-              <span>🇪🇺 100% evropský původ</span>
+              <span>🌍 U každého produktu přesný původ</span>
             </div>
           </div>
 
@@ -242,7 +242,7 @@ export default async function LandingPage() {
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Přesný původ u každého produktu</h3>
                 <p className="text-sm text-gray-600">
-                  Východoevropské, evropské i íránské vlasy — u každého produktu uvádíme přesný původ. Vše oficiálně fakturováno, kvalita doložená doklady.
+                  Vlasy z celého světa — u každého produktu uvádíme přesný původ. Vše oficiálně fakturováno, kvalita doložená doklady.
                 </p>
               </div>
             </div>

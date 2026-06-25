@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { getHairColor } from "@/lib/hair-colors";
 
 interface PublicVariant {
   lengthCm: number;
@@ -31,7 +33,6 @@ export function ProductsShowcase() {
   const [products, setProducts] = useState<PublicProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
 
@@ -91,12 +92,10 @@ export function ProductsShowcase() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((p) => (
-            <div
+            <Link
               key={p.id}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() =>
-                setExpandedId(expandedId === p.id ? null : p.id)
-              }
+              href={`/offer/${p.id}`}
+              className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
             >
               {/* Product image */}
               <div className="h-72 bg-gray-100 flex items-center justify-center">
@@ -130,14 +129,14 @@ export function ProductsShowcase() {
                   </span>
                   {p.origin && (
                     <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
-                      🌍 {p.origin}
+                      {p.origin}
                     </span>
                   )}
                 </div>
                 <h3 className="font-semibold text-gray-900">{p.name}</h3>
 
                 {/* Lengths & Colors summary */}
-                <div className="mt-2 text-xs text-gray-500 space-y-1">
+                <div className="mt-2 text-xs text-gray-500 space-y-2">
                   <div>
                     <span className="font-medium">{t("lengths")}:</span>{" "}
                     {lengths(p)
@@ -145,54 +144,24 @@ export function ProductsShowcase() {
                       .join(", ")}
                   </div>
                   <div>
-                    <span className="font-medium">{t("colors")}:</span>{" "}
-                    {colors(p).join(", ")}
-                  </div>
-                </div>
-
-                {/* Expanded detail */}
-                {expandedId === p.id && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    {p.description && (
-                      <p className="text-sm text-gray-600 mb-3">
-                        {p.description}
-                      </p>
-                    )}
-                    <div className="text-xs">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="text-gray-500">
-                            <th className="text-left py-1">
-                              {t("lengths")}
-                            </th>
-                            <th className="text-left py-1">
-                              {t("colors")}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {lengths(p).map((len) => {
-                            const variantColors = p.variants
-                              .filter((v) => v.lengthCm === len)
-                              .map((v) => v.color);
-                            return (
-                              <tr key={len} className="border-t border-gray-50">
-                                <td className="py-1 font-medium">
-                                  {len} cm
-                                </td>
-                                <td className="py-1 text-gray-500">
-                                  {variantColors.join(", ")}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                    <span className="font-medium">{t("colors")}:</span>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {colors(p).map((code) => {
+                        const { hex, name } = getHairColor(code);
+                        return (
+                          <span
+                            key={code}
+                            className="w-5 h-5 rounded-full border border-gray-300 inline-block"
+                            style={{ backgroundColor: hex }}
+                            title={`${code} - ${name}`}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

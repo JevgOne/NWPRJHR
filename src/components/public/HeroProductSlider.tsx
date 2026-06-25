@@ -130,7 +130,7 @@ function ProductCard({ product }: { product: SliderProduct }) {
 
   return (
     <Link
-      href="/offer"
+      href={`/offer/${product.id}`}
       className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
     >
       <div className="h-64 bg-gray-100 flex items-center justify-center">
