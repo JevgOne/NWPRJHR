@@ -74,22 +74,22 @@ interface RawReservationRow {
 export async function getAllStockNumbers(): Promise<
   Map<string, StockNumbers>
 > {
-  const physicalRows = await prisma.$queryRaw<RawStockRow[]>`
-    SELECT "variantId",
-           COALESCE(SUM("remainingGrams"), 0)::bigint as "physicalGrams",
-           COALESCE(SUM("remainingPieces"), 0)::bigint as "physicalPieces"
-    FROM "deliveries"
-    GROUP BY "variantId"
-  `;
+  const physicalRows = await prisma.$queryRawUnsafe<RawStockRow[]>(
+    `SELECT variantId,
+            COALESCE(SUM(remainingGrams), 0) as physicalGrams,
+            COALESCE(SUM(remainingPieces), 0) as physicalPieces
+     FROM deliveries
+     GROUP BY variantId`
+  );
 
-  const reservedRows = await prisma.$queryRaw<RawReservationRow[]>`
-    SELECT "variantId",
-           COALESCE(SUM("grams"), 0)::bigint as "reservedGrams",
-           COALESCE(SUM("pieces"), 0)::bigint as "reservedPieces"
-    FROM "reservations"
-    WHERE "active" = true
-    GROUP BY "variantId"
-  `;
+  const reservedRows = await prisma.$queryRawUnsafe<RawReservationRow[]>(
+    `SELECT variantId,
+            COALESCE(SUM(grams), 0) as reservedGrams,
+            COALESCE(SUM(pieces), 0) as reservedPieces
+     FROM reservations
+     WHERE active = 1
+     GROUP BY variantId`
+  );
 
   const map = new Map<string, StockNumbers>();
 

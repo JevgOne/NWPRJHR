@@ -1,12 +1,17 @@
 "use client";
 
 import { useTransition } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { setUserLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/config";
 
+const localeFlags: Record<Locale, { flag: string; label: string }> = {
+  cs: { flag: "🇨🇿", label: "Čeština" },
+  uk: { flag: "🇺🇦", label: "Українська" },
+  ru: { flag: "🇷🇺", label: "Русский" },
+};
+
 export function LocaleSwitcher() {
-  const t = useTranslations("language");
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
 
@@ -18,20 +23,24 @@ export function LocaleSwitcher() {
 
   return (
     <div className={`flex gap-1 ${isPending ? "opacity-50" : ""}`}>
-      {(["cs", "uk", "ru"] as const).map((loc) => (
-        <button
-          key={loc}
-          onClick={() => onChange(loc)}
-          className={`px-2 py-1 text-xs rounded transition-colors ${
-            locale === loc
-              ? "bg-indigo-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-          disabled={isPending}
-        >
-          {t(loc)}
-        </button>
-      ))}
+      {(["cs", "uk", "ru"] as const).map((loc) => {
+        const { flag, label } = localeFlags[loc];
+        return (
+          <button
+            key={loc}
+            onClick={() => onChange(loc)}
+            className={`px-1.5 py-1 text-lg rounded transition-colors ${
+              locale === loc
+                ? "bg-indigo-100 ring-2 ring-indigo-500"
+                : "hover:bg-gray-100 opacity-60 hover:opacity-100"
+            }`}
+            disabled={isPending}
+            title={label}
+          >
+            {flag}
+          </button>
+        );
+      })}
     </div>
   );
 }
