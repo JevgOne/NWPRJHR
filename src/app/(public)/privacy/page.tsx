@@ -14,22 +14,22 @@ export default async function PrivacyPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">{t("title")}</h1>
+      <h1 className="text-3xl font-bold text-ink mb-8">{t("title")}</h1>
 
       <div className="space-y-8">
         {sections.map((section) => (
           <section key={section}>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-ink mb-3">
               {t(`${section}.title`)}
             </h2>
-            <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+            <p className="text-muted leading-relaxed whitespace-pre-line">
               {t(`${section}.text`)}
             </p>
           </section>
         ))}
       </div>
 
-      <p className="mt-12 text-sm text-gray-400">
+      <p className="mt-12 text-sm text-muted">
         {t("lastUpdated")}
       </p>
     </div>

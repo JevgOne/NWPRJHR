@@ -15,6 +15,7 @@ interface SalonRow {
   tier: string;
   totalRevenue: number;
   archived: boolean;
+  approved: boolean;
   _count: { orders: number; sales: number };
 }
 
@@ -126,6 +127,11 @@ export function SalonsClient({ role }: { role: Role }) {
                     {s.city && (
                       <span className="text-gray-400 ml-1 text-xs">
                         {s.city}
+                      </span>
+                    )}
+                    {!s.approved && (
+                      <span className="ml-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
+                        Čeká na schválení
                       </span>
                     )}
                   </td>

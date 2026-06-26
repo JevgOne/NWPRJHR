@@ -49,7 +49,12 @@ model Salon {
   phone           String?
   city            String?
   address         String?
+  website         String?
+  instagram       String?
   language        String      @default("cs")
+
+  // Approval
+  approved        Boolean     @default(true)
 
   // Loyalty
   tier            LoyaltyTier @default(BRONZE)
@@ -949,6 +954,71 @@ enum NotificationType {
   INVOICE_PAID
   ORDER_REJECTED
   PAYMENT_REMINDER
+  NEW_INQUIRY
+}
+
+// ============================================================
+// INQUIRY STATUS
+// ============================================================
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================================
+// INQUIRY -- public inquiry (poptávka) from website visitor
+// ============================================================
+
+model Inquiry {
+  id           String        @id @default(cuid())
+
+  name         String
+  email        String
+  phone        String?
+  salonName    String?
+  message      String?
+  locale       String        @default("cs")
+
+  status       InquiryStatus @default(NEW)
+
+  internalNote String?
+  contactedAt  DateTime?
+  completedAt  DateTime?
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  items        InquiryItem[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+  @@map("inquiries")
+}
+
+// ============================================================
+// INQUIRY_ITEM -- line item in an inquiry
+// ============================================================
+
+model InquiryItem {
+  id          String   @id @default(cuid())
+  inquiryId   String
+  inquiry     Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  productId   String
+  productName String
+  lengthCm    Int
+  color       String
+  quantity    Int
+  unit        String   @default("g")
+
+  createdAt   DateTime @default(now())
+
+  @@index([inquiryId])
+  @@map("inquiry_items")
 }
 
 // ============================================================
@@ -1114,6 +1184,46 @@ model Stylist {
   @@index([salonId])
   @@index([city])
   @@map("stylists")
+}
+
+// ============================================================
+// REVIEW -- recenze / reference od zakaznic a salonu
+// ============================================================
+
+enum ReviewSource {
+  MANUAL
+  GOOGLE
+  INSTAGRAM
+}
+
+model Review {
+  id            String       @id @default(cuid())
+
+  authorName    String
+  authorPhoto   String?
+  authorCity    String?
+  salonName     String?
+
+  rating        Int          @default(5)
+  text          String
+
+  source        ReviewSource @default(MANUAL)
+  sourceUrl     String?
+  instagramEmbed String?
+
+  featured      Boolean      @default(false)
+  active        Boolean      @default(true)
+
+  googlePlaceId String?
+  googleRating  Float?
+  googleTotal   Int?
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([active, featured])
+  @@index([source])
+  @@map("reviews")
 }
 
 // ============================================================

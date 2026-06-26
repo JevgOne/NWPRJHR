@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { getOriginFlag } from "@/lib/origin-flags";
 
 interface SliderProduct {
   id: string;
@@ -47,7 +48,7 @@ export function HeroProductSlider() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-56 bg-gray-100 rounded-xl animate-pulse" />
+          <div key={i} className="h-56 bg-nude-100 rounded-xl animate-pulse" />
         ))}
       </div>
     );
@@ -75,17 +76,17 @@ export function HeroProductSlider() {
         <>
           <button
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-8 h-8 bg-white border border-line rounded-full shadow-sm flex items-center justify-center hover:bg-nude-50 transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
             onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-8 h-8 bg-white border border-line rounded-full shadow-sm flex items-center justify-center hover:bg-nude-50 transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -100,7 +101,7 @@ export function HeroProductSlider() {
               key={i}
               onClick={() => setCurrent(i)}
               className={`w-2 h-2 rounded-full transition-colors ${
-                i === current ? "bg-indigo-600" : "bg-gray-300"
+                i === current ? "bg-rose" : "bg-line"
               }`}
             />
           ))}
@@ -131,9 +132,9 @@ function ProductCard({ product }: { product: SliderProduct }) {
   return (
     <Link
       href={`/offer/${product.id}`}
-      className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+      className="block bg-white rounded-xl border border-line overflow-hidden hover:shadow-md transition-shadow"
     >
-      <div className="h-64 bg-gray-100 flex items-center justify-center">
+      <div className="h-64 bg-nude-100 flex items-center justify-center">
         {product.photos.length > 0 ? (
           <img
             src={product.photos[0]}
@@ -141,25 +142,25 @@ function ProductCard({ product }: { product: SliderProduct }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <svg className="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-10 h-10 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         )}
       </div>
       <div className="p-3">
         <div className="flex items-center gap-2 mb-1">
-          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-100 text-indigo-700">
+          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-blush-100 text-rose-deep">
             {categoryLabels[product.category] ?? product.category}
           </span>
           {product.origin && (
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
-              {product.origin}
+              {getOriginFlag(product.origin)} {product.origin}
             </span>
           )}
         </div>
-        <h3 className="font-semibold text-gray-900 text-sm truncate">{product.name}</h3>
+        <h3 className="font-semibold text-ink text-sm truncate">{product.name}</h3>
         {lengths.length > 0 && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-muted mt-1">
             {lengths.map((l) => `${l} cm`).join(", ")}
           </p>
         )}

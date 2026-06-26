@@ -22,6 +22,9 @@ interface SalonDetail {
   points: number;
   totalRevenue: number;
   archived: boolean;
+  approved: boolean;
+  website?: string;
+  instagram?: string;
   notes?: string;
   startDate: string;
   orders: {
@@ -106,6 +109,15 @@ export function SalonDetailClient({
     load();
   };
 
+  const handleApprove = async () => {
+    await fetch(`/api/salons/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ approved: true }),
+    });
+    load();
+  };
+
   const handleSaveNotes = async () => {
     setNotesSaving(true);
     await fetch(`/api/salons/${id}/notes`, {
@@ -136,6 +148,11 @@ export function SalonDetailClient({
             {salon.city && (
               <span className="text-gray-400 text-sm">{salon.city}</span>
             )}
+            {!salon.approved && (
+              <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
+                Čeká na schválení
+              </span>
+            )}
             {salon.archived && (
               <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
                 {t("archived")}
@@ -144,6 +161,11 @@ export function SalonDetailClient({
           </div>
         </div>
         <div className="flex gap-2">
+          {isOwner && !salon.approved && (
+            <Button size="sm" onClick={handleApprove}>
+              Schválit salon
+            </Button>
+          )}
           {isOwner && (
             <Button size="sm" variant="secondary" onClick={handleArchive}>
               {salon.archived ? t("unarchive") : t("archive")}
@@ -188,6 +210,18 @@ export function SalonDetailClient({
             <>
               <span className="text-gray-500">{t("address")}</span>
               <span>{salon.address}</span>
+            </>
+          )}
+          {salon.website && (
+            <>
+              <span className="text-gray-500">Web</span>
+              <a href={salon.website} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{salon.website}</a>
+            </>
+          )}
+          {salon.instagram && (
+            <>
+              <span className="text-gray-500">Instagram</span>
+              <a href={salon.instagram.startsWith("http") ? salon.instagram : `https://instagram.com/${salon.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{salon.instagram}</a>
             </>
           )}
         </div>

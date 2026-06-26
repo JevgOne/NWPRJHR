@@ -381,8 +381,11 @@
     },
     "products": {
       "title": "Наше предложение",
+      "category": "Категория",
+      "origin": "Происхождение",
       "lengths": "Длины",
       "colors": "Цвета",
+      "variants": "Доступные варианты",
       "noProducts": "Нет продуктов"
     },
     "contact": {

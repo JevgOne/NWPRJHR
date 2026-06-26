@@ -15,7 +15,10 @@ export const createSalonSchema = z.object({
   email: z.string().email().optional(),
   city: z.string().max(100).optional(),
   address: z.string().max(500).optional(),
+  website: z.string().max(500).optional(),
+  instagram: z.string().max(200).optional(),
   language: z.enum(["cs", "uk", "ru"]).optional(),
+  approved: z.boolean().optional(),
 });
 
 export const updateSalonSchema = createSalonSchema.partial();

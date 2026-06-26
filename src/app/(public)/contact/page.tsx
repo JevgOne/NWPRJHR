@@ -6,7 +6,7 @@ export default async function ContactPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
+      <h1 className="text-3xl font-bold text-ink mb-8">
         {t("contact.title")}
       </h1>
 
@@ -26,13 +26,13 @@ export default async function ContactPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Contact info */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-ink mb-4">
             {t("contact.infoTitle")}
           </h2>
-          <div className="space-y-3 text-sm text-gray-600">
+          <div className="space-y-3 text-sm text-muted">
             <div className="flex items-center gap-3">
               <svg
-                className="w-5 h-5 text-gray-400 flex-shrink-0"
+                className="w-5 h-5 text-muted flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -47,9 +47,9 @@ export default async function ContactPage() {
               <span>info@hairland.cz</span>
             </div>
 
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="font-medium text-gray-900 mb-1">🇨🇿 🇺🇦 🇷🇺 Mluvíme vaším jazykem</p>
-              <p className="text-xs text-gray-500">Kompletní servis v češtině, ukrajinštině i ruštině.</p>
+            <div className="mt-6 p-4 bg-nude-50 rounded-lg border border-line">
+              <p className="font-medium text-ink mb-1">🇨🇿 🇺🇦 🇷🇺 Mluvíme vaším jazykem</p>
+              <p className="text-xs text-muted">Kompletní servis v češtině, ukrajinštině i ruštině.</p>
             </div>
           </div>
         </div>

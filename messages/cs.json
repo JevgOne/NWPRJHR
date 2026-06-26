@@ -381,8 +381,11 @@
     },
     "products": {
       "title": "Naše nabídka",
+      "category": "Kategorie",
+      "origin": "Původ",
       "lengths": "Délky",
       "colors": "Barvy",
+      "variants": "Dostupné varianty",
       "noProducts": "Žádné produkty"
     },
     "contact": {

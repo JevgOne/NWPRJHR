@@ -183,6 +183,10 @@ export function translateNotification(
         title: "Upominka",
         message: `Faktura ${data?.invoiceNumber ?? ""} je po splatnosti`,
       },
+      NEW_INQUIRY: {
+        title: "Nova poptavka",
+        message: `Prisla nova poptavka od ${data?.name ?? ""} (${data?.itemCount ?? 0} polozek)`,
+      },
     },
     uk: {
       NEW_ORDER: {
@@ -229,6 +233,10 @@ export function translateNotification(
         title: "\u041d\u0430\u0433\u0430\u0434\u0443\u0432\u0430\u043d\u043d\u044f",
         message: `\u0420\u0430\u0445\u0443\u043d\u043e\u043a ${data?.invoiceNumber ?? ""} \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u0438\u0439`,
       },
+      NEW_INQUIRY: {
+        title: "\u041d\u043e\u0432\u0438\u0439 \u0437\u0430\u043f\u0438\u0442",
+        message: `\u041d\u0430\u0434\u0456\u0439\u0448\u043e\u0432 \u043d\u043e\u0432\u0438\u0439 \u0437\u0430\u043f\u0438\u0442 \u0432\u0456\u0434 ${data?.name ?? ""} (${data?.itemCount ?? 0} \u043f\u043e\u0437\u0438\u0446\u0456\u0439)`,
+      },
     },
     ru: {
       NEW_ORDER: {
@@ -274,6 +282,10 @@ export function translateNotification(
       PAYMENT_REMINDER: {
         title: "\u041d\u0430\u043f\u043e\u043c\u0438\u043d\u0430\u043d\u0438\u0435",
         message: `\u0421\u0447\u0451\u0442 ${data?.invoiceNumber ?? ""} \u043f\u0440\u043e\u0441\u0440\u043e\u0447\u0435\u043d`,
+      },
+      NEW_INQUIRY: {
+        title: "\u041d\u043e\u0432\u044b\u0439 \u0437\u0430\u043f\u0440\u043e\u0441",
+        message: `\u041f\u043e\u0441\u0442\u0443\u043f\u0438\u043b \u043d\u043e\u0432\u044b\u0439 \u0437\u0430\u043f\u0440\u043e\u0441 \u043e\u0442 ${data?.name ?? ""} (${data?.itemCount ?? 0} \u043f\u043e\u0437\u0438\u0446\u0438\u0439)`,
       },
     },
   };

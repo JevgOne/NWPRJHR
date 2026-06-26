@@ -6,10 +6,36 @@ export async function GET(request: NextRequest) {
     const sp = request.nextUrl.searchParams;
     const category = sp.get("category");
 
+    const origin = sp.get("origin");
+    const color = sp.get("color");
+    const lengthCm = sp.get("lengthCm");
+    const search = sp.get("search");
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { archived: false };
     if (category) {
       where.category = category;
+    }
+    if (origin) {
+      where.origin = origin;
+    }
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { nameUk: { contains: search } },
+        { nameRu: { contains: search } },
+        { origin: { contains: search } },
+        { description: { contains: search } },
+      ];
+    }
+    if (color || lengthCm) {
+      where.variants = {
+        some: {
+          active: true,
+          ...(color ? { color } : {}),
+          ...(lengthCm ? { lengthCm: parseInt(lengthCm, 10) } : {}),
+        },
+      };
     }
 
     const products = await prisma.product.findMany({

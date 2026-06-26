@@ -24,9 +24,9 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
   const certs: string[] = JSON.parse(stylist.certifications || "[]");
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-nude-50">
       {/* Hero header — Telegram-style */}
-      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 pb-16 pt-10">
+      <div className="bg-gradient-to-br from-rose via-rose-deep to-pink-500 pb-16 pt-10">
         <div className="max-w-md mx-auto px-4 text-center">
           {/* Avatar */}
           <div className="w-24 h-24 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden">
@@ -80,11 +80,11 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
 
         {/* Bio card */}
         {stylist.bio && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+          <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
+            <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
               📝 O mně
             </h2>
-            <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-espresso text-sm leading-relaxed whitespace-pre-line">
               {stylist.bio}
             </p>
           </div>
@@ -92,15 +92,15 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
 
         {/* Specializations */}
         {specs.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+          <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
+            <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">
               💼 Specializace
             </h2>
             <div className="flex flex-wrap gap-2">
               {specs.map((sp) => (
                 <span
                   key={sp}
-                  className="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 text-sm rounded-xl font-medium"
+                  className="inline-flex items-center px-3 py-1.5 bg-blush-100 text-rose-deep text-sm rounded-xl font-medium"
                 >
                   ✂️ {sp}
                 </span>
@@ -111,13 +111,13 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
 
         {/* Certifications */}
         {certs.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+          <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
+            <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">
               🏅 Certifikáty
             </h2>
             <ul className="space-y-2">
               {certs.map((c) => (
-                <li key={c} className="flex items-center gap-2 text-sm text-gray-700">
+                <li key={c} className="flex items-center gap-2 text-sm text-espresso">
                   <span className="w-6 h-6 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xs">🏆</span>
                   {c}
                 </li>
@@ -127,53 +127,53 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
         )}
 
         {/* Contact card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+        <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
+          <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">
             📞 Kontakt
           </h2>
           <div className="space-y-3">
             {stylist.phone && (
-              <a href={`tel:${stylist.phone}`} className="flex items-center gap-3 text-sm text-gray-700 hover:text-indigo-600 transition-colors">
+              <a href={`tel:${stylist.phone}`} className="flex items-center gap-3 text-sm text-espresso hover:text-rose transition-colors">
                 <span className="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-lg">📱</span>
                 <div>
                   <div className="font-medium">{stylist.phone}</div>
-                  <div className="text-xs text-gray-400">Telefon</div>
+                  <div className="text-xs text-muted">Telefon</div>
                 </div>
               </a>
             )}
             {stylist.email && (
-              <a href={`mailto:${stylist.email}`} className="flex items-center gap-3 text-sm text-gray-700 hover:text-indigo-600 transition-colors">
+              <a href={`mailto:${stylist.email}`} className="flex items-center gap-3 text-sm text-espresso hover:text-rose transition-colors">
                 <span className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-lg">✉️</span>
                 <div>
                   <div className="font-medium">{stylist.email}</div>
-                  <div className="text-xs text-gray-400">E-mail</div>
+                  <div className="text-xs text-muted">E-mail</div>
                 </div>
               </a>
             )}
             {stylist.instagram && (
-              <a href={`https://instagram.com/${stylist.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-gray-700 hover:text-pink-600 transition-colors">
+              <a href={`https://instagram.com/${stylist.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-espresso hover:text-pink-600 transition-colors">
                 <span className="w-10 h-10 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center text-lg">📸</span>
                 <div>
                   <div className="font-medium">{stylist.instagram}</div>
-                  <div className="text-xs text-gray-400">Instagram</div>
+                  <div className="text-xs text-muted">Instagram</div>
                 </div>
               </a>
             )}
             {stylist.telegram && (
-              <a href={`https://t.me/${stylist.telegram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-gray-700 hover:text-blue-500 transition-colors">
+              <a href={`https://t.me/${stylist.telegram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-espresso hover:text-blue-500 transition-colors">
                 <span className="w-10 h-10 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-lg">✈️</span>
                 <div>
                   <div className="font-medium">{stylist.telegram}</div>
-                  <div className="text-xs text-gray-400">Telegram</div>
+                  <div className="text-xs text-muted">Telegram</div>
                 </div>
               </a>
             )}
             {stylist.whatsapp && (
-              <a href={`https://wa.me/${stylist.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-gray-700 hover:text-green-600 transition-colors">
+              <a href={`https://wa.me/${stylist.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-espresso hover:text-green-600 transition-colors">
                 <span className="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-lg">💬</span>
                 <div>
                   <div className="font-medium">{stylist.whatsapp}</div>
-                  <div className="text-xs text-gray-400">WhatsApp</div>
+                  <div className="text-xs text-muted">WhatsApp</div>
                 </div>
               </a>
             )}
@@ -184,7 +184,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
         <div className="text-center pt-4">
           <Link
             href="/kadernice"
-            className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+            className="inline-flex items-center gap-2 text-sm text-rose hover:text-rose-deep font-medium"
           >
             ← Všechny kadeřnice
           </Link>

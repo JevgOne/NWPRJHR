@@ -51,6 +51,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         );
         if (!isValid) return null;
 
+        // Block unapproved salons
+        if (user.role === "SALON" && user.salonId) {
+          const salon = await prisma.salon.findUnique({
+            where: { id: user.salonId },
+            select: { approved: true },
+          });
+          if (salon && !salon.approved) return null;
+        }
+
         return {
           id: user.id,
           email: user.email,

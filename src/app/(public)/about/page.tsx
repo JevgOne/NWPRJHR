@@ -5,23 +5,23 @@ export default async function AboutPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
+      <h1 className="text-3xl font-bold text-ink mb-8">
         {t("about.title")}
       </h1>
 
       {/* Mission */}
       <section className="mb-12">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-ink mb-4">
           {t("about.missionTitle")}
         </h2>
-        <p className="text-gray-600 leading-relaxed">
+        <p className="text-muted leading-relaxed">
           {t("about.missionText")}
         </p>
       </section>
 
       {/* Values */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-ink mb-4">
           {t("about.valuesTitle")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -35,12 +35,12 @@ export default async function AboutPage() {
           ).map((key) => (
             <div
               key={key}
-              className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+              className="p-4 bg-nude-50 rounded-lg border border-line"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-blush-100 rounded-full flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-4 h-4 text-indigo-600"
+                    className="w-4 h-4 text-rose"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -53,7 +53,7 @@ export default async function AboutPage() {
                     />
                   </svg>
                 </div>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-ink">
                   {t(key)}
                 </span>
               </div>

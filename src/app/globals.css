@@ -1,13 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
+  --background: #fdfaf7;
+  --foreground: #2a201f;
+  --nude-50: #fdfaf7;
+  --nude-100: #f7efe8;
+  --nude-200: #efe0d6;
+  --blush-100: #f6e3e0;
+  --blush-200: #ecc9c6;
+  --blush-300: #dba8a6;
+  --rose: #c98b88;
+  --rose-deep: #a96d6c;
+  --mauve: #7d5a5c;
+  --espresso: #3a2c2a;
+  --ink: #2a201f;
+  --muted: #9c8682;
+  --line: #ead9cf;
+  --gold: #c2a36b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-nude-50: var(--nude-50);
+  --color-nude-100: var(--nude-100);
+  --color-nude-200: var(--nude-200);
+  --color-blush-100: var(--blush-100);
+  --color-blush-200: var(--blush-200);
+  --color-blush-300: var(--blush-300);
+  --color-rose: var(--rose);
+  --color-rose-deep: var(--rose-deep);
+  --color-mauve: var(--mauve);
+  --color-espresso: var(--espresso);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
   --font-sans: var(--font-geist);
 }
 

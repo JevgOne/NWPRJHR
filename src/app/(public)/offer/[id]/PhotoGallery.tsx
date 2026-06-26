@@ -12,9 +12,9 @@ export function PhotoGallery({ photos, alt }: PhotoGalleryProps) {
 
   if (photos.length === 0) {
     return (
-      <div className="w-full aspect-[4/3] bg-gray-100 rounded-xl flex items-center justify-center">
+      <div className="w-full aspect-[4/3] bg-nude-100 rounded-xl flex items-center justify-center">
         <svg
-          className="w-16 h-16 text-gray-300"
+          className="w-16 h-16 text-muted"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -33,7 +33,7 @@ export function PhotoGallery({ photos, alt }: PhotoGalleryProps) {
   return (
     <div>
       {/* Main image */}
-      <div className="w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden">
+      <div className="w-full aspect-[4/3] bg-nude-100 rounded-xl overflow-hidden">
         <img
           src={photos[selected]}
           alt={`${alt} - ${selected + 1}`}
@@ -50,8 +50,8 @@ export function PhotoGallery({ photos, alt }: PhotoGalleryProps) {
               onClick={() => setSelected(i)}
               className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
                 i === selected
-                  ? "border-indigo-500"
-                  : "border-transparent hover:border-gray-300"
+                  ? "border-rose"
+                  : "border-transparent hover:border-line"
               }`}
             >
               <img

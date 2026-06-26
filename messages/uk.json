@@ -381,8 +381,11 @@
     },
     "products": {
       "title": "Наша пропозиція",
+      "category": "Категорія",
+      "origin": "Походження",
       "lengths": "Довжини",
       "colors": "Кольори",
+      "variants": "Доступні варіанти",
       "noProducts": "Немає продуктів"
     },
     "contact": {

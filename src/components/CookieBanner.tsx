@@ -23,13 +23,13 @@ export function CookieBanner() {
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-50 p-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <p className="text-sm text-gray-600 flex-1">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border border-line p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <p className="text-sm text-muted flex-1">
           Tento web používá cookies pro zajištění správné funkčnosti. Více
           informací naleznete v{" "}
           <a
             href="/privacy"
-            className="text-indigo-600 underline hover:text-indigo-700"
+            className="text-rose underline hover:text-rose-deep"
           >
             zásadách ochrany osobních údajů
           </a>
@@ -38,13 +38,13 @@ export function CookieBanner() {
         <div className="flex gap-3 shrink-0">
           <button
             onClick={() => accept("necessary")}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-espresso bg-nude-100 rounded-lg hover:bg-nude-200 transition-colors"
           >
             Pouze nezbytné
           </button>
           <button
             onClick={() => accept("all")}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white bg-rose rounded-lg hover:bg-rose-deep transition-colors"
           >
             Souhlasím
           </button>

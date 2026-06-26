@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -42,7 +43,7 @@ export function LoginForm() {
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("login")}</h2>
+      <h2 className="text-lg font-semibold text-ink mb-4">{t("login")}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="email"
@@ -67,7 +68,13 @@ export function LoginForm() {
           {loading ? "..." : t("loginButton")}
         </Button>
       </form>
-      <div className="mt-4 flex justify-center">
+      <div className="mt-4 text-center text-sm text-muted">
+        Nemáte účet?{" "}
+        <Link href="/registrace" className="text-rose font-medium hover:underline">
+          Zaregistrujte svůj salon
+        </Link>
+      </div>
+      <div className="mt-3 flex justify-center">
         <LocaleSwitcher />
       </div>
     </Card>

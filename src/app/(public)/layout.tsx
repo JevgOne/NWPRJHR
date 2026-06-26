@@ -1,5 +1,6 @@
 import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { InquiryCartProvider } from "@/lib/inquiry-cart";
 
 export default function PublicLayout({
   children,
@@ -7,10 +8,12 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen">
-      <PublicNavbar />
-      <main className="flex-1">{children}</main>
-      <PublicFooter />
-    </div>
+    <InquiryCartProvider>
+      <div className="flex flex-col min-h-screen">
+        <PublicNavbar />
+        <main className="flex-1">{children}</main>
+        <PublicFooter />
+      </div>
+    </InquiryCartProvider>
   );
 }
