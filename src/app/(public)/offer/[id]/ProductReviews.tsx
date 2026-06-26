@@ -41,8 +41,7 @@ function RatingBar({ label, avg, count }: { label: string; avg: number; count: n
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-xs font-semibold text-ink w-10 text-right">{pct}%</span>
-      <MiniStars rating={Math.round(avg)} />
+      <span className="text-xs font-semibold text-ink w-10 text-right">{avg.toFixed(1)}/5</span>
     </div>
   );
 }
@@ -185,10 +184,10 @@ export async function ProductReviews({ productId }: { productId: string }) {
               </div>
               <Stars rating={review.rating} />
               {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-muted">
-                  {review.ratingQuality && <span className="inline-flex items-center gap-1">✨ <MiniStars rating={review.ratingQuality} /></span>}
-                  {review.ratingCommunication && <span className="inline-flex items-center gap-1">💬 <MiniStars rating={review.ratingCommunication} /></span>}
-                  {review.ratingSpeed && <span className="inline-flex items-center gap-1">📦 <MiniStars rating={review.ratingSpeed} /></span>}
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-xs text-muted">
+                  {review.ratingQuality && <span>✨ {review.ratingQuality}/5</span>}
+                  {review.ratingCommunication && <span>💬 {review.ratingCommunication}/5</span>}
+                  {review.ratingSpeed && <span>📦 {review.ratingSpeed}/5</span>}
                 </div>
               )}
               <p className="text-sm text-espresso mt-1.5 leading-relaxed line-clamp-3">

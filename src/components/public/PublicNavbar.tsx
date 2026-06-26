@@ -5,7 +5,44 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { useLocale } from "next-intl";
+import { useTransition } from "react";
+import { setUserLocale } from "@/i18n/locale";
+import type { Locale } from "@/i18n/config";
 import { useInquiryCart } from "@/lib/inquiry-cart";
+
+const LOCALES = [
+  { code: "cs" as Locale, flag: "🇨🇿", label: "CZ" },
+  { code: "uk" as Locale, flag: "🇺🇦", label: "UA" },
+  { code: "ru" as Locale, flag: "🇷🇺", label: "RU" },
+];
+
+function MobileLocaleSwitcher() {
+  const locale = useLocale() as Locale;
+  const [isPending, startTransition] = useTransition();
+
+  return (
+    <div className={`flex gap-1 ${isPending ? "opacity-50" : ""}`}>
+      {LOCALES.map(({ code, flag, label }) => (
+        <button
+          key={code}
+          onClick={() => {
+            if (code !== locale) startTransition(() => setUserLocale(code));
+          }}
+          disabled={isPending}
+          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+            locale === code
+              ? "bg-blush-100 text-rose-deep font-medium"
+              : "text-muted hover:bg-nude-50"
+          }`}
+        >
+          <span className="text-base">{flag}</span>
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function PublicNavbar() {
   const t = useTranslations("public");
@@ -120,8 +157,8 @@ export function PublicNavbar() {
             >
               {t("navbar.inquiry")} {itemCount > 0 && <span className="bg-rose text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{itemCount}</span>}
             </Link>
-            <div className="px-3 py-2">
-              <LocaleSwitcher />
+            <div className="flex items-center gap-2 px-3 py-2">
+              <MobileLocaleSwitcher />
             </div>
             <Link
               href="/login"
