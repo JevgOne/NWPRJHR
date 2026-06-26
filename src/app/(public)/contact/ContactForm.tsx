@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import confetti from "canvas-confetti";
 
 export function ContactForm() {
   const t = useTranslations("public.contact");
@@ -41,6 +42,14 @@ export function ContactForm() {
       setSubmitting(false);
     }
   }
+
+  useEffect(() => {
+    if (result === "success") {
+      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
+      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.7, y: 0.5 } }), 600);
+    }
+  }, [result]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import confetti from "canvas-confetti";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 
 export function InquiryCartClient() {
+  const t = useTranslations("public.inquiry");
   const { items, removeItem, updateQuantity, clearCart, itemCount } = useInquiryCart();
   const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -29,31 +32,39 @@ export function InquiryCartClient() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Chyba při odesílání");
+        throw new Error(data.error || t("submitError"));
       }
 
       clearCart();
       setSubmitted(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Chyba při odesílání");
+      setError(err instanceof Error ? err.message : t("submitError"));
     } finally {
       setSubmitting(false);
     }
   };
 
+  useEffect(() => {
+    if (submitted) {
+      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
+      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.7, y: 0.5 } }), 600);
+    }
+  }, [submitted]);
+
   if (submitted) {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">✅</div>
-        <h1 className="text-2xl font-bold text-ink mb-2">Poptávka odeslána!</h1>
+        <h1 className="text-2xl font-bold text-ink mb-2">{t("successTitle")}</h1>
         <p className="text-muted mb-6">
-          Děkujeme za vaši poptávku. Ozveme se vám co nejdříve — domluvíme schůzku kde si vlasy prohlédnete osobně.
+          {t("successText")}
         </p>
         <Link
           href="/offer"
           className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
         >
-          Zpět na nabídku
+          {t("backToOffer")}
         </Link>
       </div>
     );
@@ -63,15 +74,15 @@ export function InquiryCartClient() {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">🛒</div>
-        <h1 className="text-2xl font-bold text-ink mb-2">Poptávkový košík je prázdný</h1>
+        <h1 className="text-2xl font-bold text-ink mb-2">{t("emptyTitle")}</h1>
         <p className="text-muted mb-6">
-          Prohlédněte si naši nabídku a přidejte vlasy do poptávky.
+          {t("emptyText")}
         </p>
         <Link
           href="/offer"
           className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
         >
-          Zobrazit nabídku
+          {t("viewOffer")}
         </Link>
       </div>
     );
@@ -79,7 +90,7 @@ export function InquiryCartClient() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-ink mb-6">Poptávkový košík</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">{t("cartTitle")}</h1>
 
       {/* Cart items */}
       <div className="space-y-3 mb-8">
@@ -95,11 +106,11 @@ export function InquiryCartClient() {
 
       {/* Submission form */}
       <div className="bg-nude-50 rounded-2xl p-5">
-        <h2 className="font-semibold text-ink mb-4">Vaše kontaktní údaje</h2>
+        <h2 className="font-semibold text-ink mb-4">{t("contactInfo")}</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">Jméno *</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t("nameLabel")}</label>
               <input
                 type="text"
                 required
@@ -109,7 +120,7 @@ export function InquiryCartClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">E-mail *</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t("emailLabel")}</label>
               <input
                 type="email"
                 required
@@ -119,7 +130,7 @@ export function InquiryCartClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">Telefon</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t("phoneLabel")}</label>
               <input
                 type="tel"
                 value={form.phone}
@@ -128,24 +139,24 @@ export function InquiryCartClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">Název salonu</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t("salonLabel")}</label>
               <input
                 type="text"
                 value={form.salonName}
                 onChange={(e) => setField("salonName", e.target.value)}
                 className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
-                placeholder="Volitelné"
+                placeholder={t("salonPlaceholder")}
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-muted mb-1">Poznámka</label>
+            <label className="block text-xs font-medium text-muted mb-1">{t("noteLabel")}</label>
             <textarea
               value={form.message}
               onChange={(e) => setField("message", e.target.value)}
               rows={3}
               className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose resize-none"
-              placeholder="Např. preferovaný termín schůzky, speciální požadavky..."
+              placeholder={t("notePlaceholder")}
             />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
@@ -154,10 +165,10 @@ export function InquiryCartClient() {
             disabled={submitting}
             className="w-full py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors disabled:opacity-50"
           >
-            {submitting ? "Odesílám..." : `Odeslat poptávku (${itemCount} položek)`}
+            {submitting ? t("submitting") : t("submitButton", { count: itemCount })}
           </button>
           <p className="text-[11px] text-muted text-center">
-            Neplatíte nic online. Domluvíme schůzku kde si vlasy prohlédnete osobně.
+            {t("disclaimer")}
           </p>
         </form>
       </div>

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
+import confetti from "canvas-confetti";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 
@@ -16,6 +18,7 @@ interface AddToInquiryFormProps {
 }
 
 export function AddToInquiryForm({ productId, productName, variants }: AddToInquiryFormProps) {
+  const t = useTranslations("public");
   const { addItem } = useInquiryCart();
   const [selectedLength, setSelectedLength] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -26,6 +29,8 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
   const availableColors = selectedLength
     ? [...new Set(variants.filter((v) => v.lengthCm === selectedLength).map((v) => v.color))]
     : [...new Set(variants.map((v) => v.color))];
+
+  const colorName = (nameKey: string) => t(`colors.${nameKey}`);
 
   const handleAdd = () => {
     if (!selectedLength || !selectedColor) return;
@@ -38,18 +43,19 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
       unit: "g",
     });
     setAdded(true);
+    confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
     setTimeout(() => setAdded(false), 2000);
   };
 
   return (
     <div className="bg-blush-100 rounded-2xl p-4 space-y-3">
       <h2 className="font-semibold text-rose-deep text-sm">
-        Přidat do poptávky
+        {t("inquiry.addToInquiry")}
       </h2>
 
       {/* Length selection */}
       <div>
-        <div className="text-xs text-muted mb-1.5">Délka</div>
+        <div className="text-xs text-muted mb-1.5">{t("inquiry.lengthLabel")}</div>
         <div className="flex flex-wrap gap-1.5">
           {lengths.map((len) => (
             <button
@@ -76,7 +82,7 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
 
       {/* Color selection */}
       <div>
-        <div className="text-xs text-muted mb-1.5">Barva</div>
+        <div className="text-xs text-muted mb-1.5">{t("inquiry.colorLabel")}</div>
         <div className="flex flex-wrap gap-2">
           {availableColors.map((code) => {
             const { hex, nameKey } = getHairColor(code);
@@ -89,7 +95,7 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
                     ? "border-rose bg-blush-100"
                     : "border-line bg-white hover:border-line"
                 }`}
-                title={nameKey}
+                title={colorName(nameKey)}
               >
                 <span
                   className="w-4 h-4 rounded-full border border-line flex-shrink-0"
@@ -104,7 +110,7 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
 
       {/* Quantity */}
       <div>
-        <div className="text-xs text-muted mb-1.5">Množství (gramy)</div>
+        <div className="text-xs text-muted mb-1.5">{t("inquiry.quantityLabel")}</div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setQuantity(Math.max(50, quantity - 50))}
@@ -140,12 +146,12 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
               : "bg-rose text-white hover:bg-rose-deep"
         }`}
       >
-        {added ? "✓ Přidáno do poptávky!" : "Přidat do poptávky"}
+        {added ? `✓ ${t("inquiry.addedButton")}` : t("inquiry.addButton")}
       </button>
 
       {(!selectedLength || !selectedColor) && (
         <p className="text-[11px] text-muted text-center">
-          Vyberte délku a barvu
+          {t("inquiry.selectLengthAndColor")}
         </p>
       )}
     </div>

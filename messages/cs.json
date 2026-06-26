@@ -682,6 +682,26 @@
       "googleReviews": "Google recenze",
       "followOnInstagram": "Sledujte na Instagramu"
     },
+    "reviewForm": {
+      "writeReview": "✍️ Napsat recenzi",
+      "formTitle": "Napsat recenzi",
+      "nameLabel": "Jméno *",
+      "namePlaceholder": "Vaše jméno",
+      "cityLabel": "Město",
+      "cityPlaceholder": "Praha",
+      "overallRating": "Celkové hodnocení *",
+      "qualityLabel": "✨ Kvalita",
+      "communicationLabel": "💬 Komunikace",
+      "speedLabel": "📦 Dodání",
+      "experienceLabel": "Vaše zkušenost *",
+      "experiencePlaceholder": "Popište vaši zkušenost s nákupem...",
+      "sending": "Odesílám...",
+      "submit": "Odeslat recenzi",
+      "cancel": "Zrušit",
+      "thankYou": "Děkujeme za vaši recenzi!",
+      "pendingApproval": "Recenze bude zveřejněna po schválení.",
+      "adminNote": "Recenze bude zveřejněna po schválení administrátorem."
+    },
     "cookie": {
       "message": "Tento web používá cookies pro zajištění správné funkčnosti. Více informací naleznete v",
       "privacyLink": "zásadách ochrany osobních údajů",

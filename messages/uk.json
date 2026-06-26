@@ -682,6 +682,26 @@
       "googleReviews": "Відгуки Google",
       "followOnInstagram": "Стежте в Instagram"
     },
+    "reviewForm": {
+      "writeReview": "✍️ Написати відгук",
+      "formTitle": "Написати відгук",
+      "nameLabel": "Ім'я *",
+      "namePlaceholder": "Ваше ім'я",
+      "cityLabel": "Місто",
+      "cityPlaceholder": "Прага",
+      "overallRating": "Загальна оцінка *",
+      "qualityLabel": "✨ Якість",
+      "communicationLabel": "💬 Комунікація",
+      "speedLabel": "📦 Доставка",
+      "experienceLabel": "Ваш досвід *",
+      "experiencePlaceholder": "Опишіть ваш досвід покупки...",
+      "sending": "Надсилаємо...",
+      "submit": "Надіслати відгук",
+      "cancel": "Скасувати",
+      "thankYou": "Дякуємо за ваш відгук!",
+      "pendingApproval": "Відгук буде опублікований після перевірки.",
+      "adminNote": "Відгук буде опублікований після перевірки адміністратором."
+    },
     "cookie": {
       "message": "Цей сайт використовує cookies для забезпечення коректної роботи. Детальніше в",
       "privacyLink": "політиці конфіденційності",
