@@ -707,6 +707,23 @@
       "privacyLink": "политике конфиденциальности",
       "necessaryOnly": "Только необходимые",
       "acceptAll": "Принимаю"
+    },
+    "origins": {
+      "Ukrajina": "Украина",
+      "Bělorusko": "Беларусь",
+      "Moldavsko": "Молдавия",
+      "Rusko": "Россия",
+      "Kazachstán": "Казахстан",
+      "Uzbekistán": "Узбекистан",
+      "Turecko": "Турция",
+      "Írán": "Иран",
+      "Indie": "Индия",
+      "Vietnam": "Вьетнам",
+      "Sýrie": "Сирия",
+      "Čína": "Китай",
+      "Mongolsko": "Монголия",
+      "Gruzie": "Грузия",
+      "Mix": "Микс"
     }
   },
   "variant": {

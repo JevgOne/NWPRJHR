@@ -707,6 +707,23 @@
       "privacyLink": "zásadách ochrany osobních údajů",
       "necessaryOnly": "Pouze nezbytné",
       "acceptAll": "Souhlasím"
+    },
+    "origins": {
+      "Ukrajina": "Ukrajina",
+      "Bělorusko": "Bělorusko",
+      "Moldavsko": "Moldavsko",
+      "Rusko": "Rusko",
+      "Kazachstán": "Kazachstán",
+      "Uzbekistán": "Uzbekistán",
+      "Turecko": "Turecko",
+      "Írán": "Írán",
+      "Indie": "Indie",
+      "Vietnam": "Vietnam",
+      "Sýrie": "Sýrie",
+      "Čína": "Čína",
+      "Mongolsko": "Mongolsko",
+      "Gruzie": "Gruzie",
+      "Mix": "Mix"
     }
   },
   "variant": {

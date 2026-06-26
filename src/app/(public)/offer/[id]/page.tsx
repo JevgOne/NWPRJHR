@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { ProductReviews } from "./ProductReviews";
 import { getHairColor } from "@/lib/hair-colors";
@@ -71,8 +71,28 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const t = await getTranslations("public");
   const tCategory = await getTranslations("category");
+  const locale = await getLocale();
 
   const colorName = (nameKey: string) => t(`colors.${nameKey}`);
+
+  // Localized product name
+  const productName = locale === "ru" && product.nameRu
+    ? product.nameRu
+    : locale === "uk" && product.nameUk
+      ? product.nameUk
+      : product.name;
+
+  // Localized origin
+  const originName = (origin: string) => {
+    try { return t(`origins.${origin}`); } catch { return origin; }
+  };
+
+  // Localized description
+  const localizedDesc = locale === "ru" && product.descriptionRu
+    ? product.descriptionRu
+    : locale === "uk" && product.descriptionUk
+      ? product.descriptionUk
+      : product.description;
 
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort(
     (a, b) => a - b
@@ -90,7 +110,7 @@ export default async function ProductDetailPage({ params }: Props) {
     t(`categoryInfo.${catKey}Feature3`),
     t(`categoryInfo.${catKey}Feature4`),
   ];
-  const description = product.description || catDesc;
+  const description = localizedDesc || catDesc;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -100,19 +120,19 @@ export default async function ProductDetailPage({ params }: Props) {
         <span>/</span>
         <Link href="/offer" className="hover:text-rose transition-colors">{t("productDetail.offer")}</Link>
         <span>/</span>
-        <span className="text-espresso font-medium truncate max-w-[200px]">{product.name}</span>
+        <span className="text-espresso font-medium truncate max-w-[200px]">{productName}</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
         {/* Left: Photo gallery */}
-        <PhotoGallery photos={product.photos} alt={product.name} />
+        <PhotoGallery photos={product.photos} alt={productName} />
 
         {/* Right: Product info */}
         <div className="space-y-4">
           {/* Header: name + origin inline */}
           <div>
             <h1 className="text-2xl font-bold text-ink mb-1">
-              {product.name}
+              {productName}
             </h1>
             <div className="flex items-center gap-2 text-sm text-muted">
               <Link
@@ -126,7 +146,7 @@ export default async function ProductDetailPage({ params }: Props) {
                   href={`/offer?origin=${encodeURIComponent(product.origin)}`}
                   className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-medium text-xs hover:bg-emerald-100 transition-colors"
                 >
-                  {originFlag} {product.origin}
+                  {originFlag} {originName(product.origin)}
                 </Link>
               )}
             </div>
@@ -147,7 +167,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <span className="text-xl">{originFlag}</span>
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.originLabel")}</div>
-                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.origin}</div>
+                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{originName(product.origin)}</div>
                 </div>
               </Link>
             )}

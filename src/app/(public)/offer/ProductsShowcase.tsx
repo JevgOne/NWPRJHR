@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getHairColor } from "@/lib/hair-colors";
@@ -47,7 +47,13 @@ export function ProductsShowcase() {
 
   const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
 
+  const locale = useLocale();
   const colorName = (nameKey: string) => t(`colors.${nameKey}`);
+  const originName = (origin: string) => { try { return t(`origins.${origin}`); } catch { return origin; } };
+  const localizedName = (p: PublicProduct) =>
+    locale === "ru" && p.nameRu ? p.nameRu
+    : locale === "uk" && p.nameUk ? p.nameUk
+    : p.name;
 
   // Extract all available filter options from all products (unfiltered)
   const filterOptions = useMemo(() => {
@@ -217,7 +223,7 @@ export function ProductsShowcase() {
                       : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
                   }`}
                 >
-                  {getOriginFlag(origin)} {origin}
+                  {getOriginFlag(origin)} {originName(origin)}
                   <span className="text-muted ml-0.5">{count}</span>
                 </button>
               ))}
@@ -299,7 +305,7 @@ export function ProductsShowcase() {
               onClick={() => setFilter("origin", "")}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
             >
-              {getOriginFlag(activeOrigin)} {activeOrigin}
+              {getOriginFlag(activeOrigin)} {originName(activeOrigin)}
               <span className="ml-0.5">&times;</span>
             </button>
           )}
@@ -401,7 +407,7 @@ export function ProductsShowcase() {
                             : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
                         }`}
                       >
-                        {getOriginFlag(p.origin)} {p.origin}
+                        {getOriginFlag(p.origin)} {originName(p.origin)}
                       </button>
                     )}
                   </div>
@@ -409,7 +415,7 @@ export function ProductsShowcase() {
                   {/* Product name */}
                   <Link href={`/offer/${p.id}`}>
                     <h3 className="font-semibold text-ink hover:text-rose transition-colors">
-                      {p.name}
+                      {localizedName(p)}
                     </h3>
                   </Link>
 
