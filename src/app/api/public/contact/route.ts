@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/validations/export";
 import { sendNotificationEmail } from "@/lib/email";
+import { notifyContact } from "@/lib/telegram";
 
 // Simple in-memory rate limiter: IP -> timestamps[]
 const rateLimitMap = new Map<string, number[]>();
@@ -62,6 +63,16 @@ export async function POST(request: NextRequest) {
       .filter(Boolean)
       .join("\n"),
   });
+
+  // Telegram notification
+  notifyContact({
+    name,
+    email,
+    phone: phone || undefined,
+    salonName: salonName || undefined,
+    message,
+    locale: locale || undefined,
+  }).catch(() => {});
 
   return NextResponse.json({ success: true });
 }

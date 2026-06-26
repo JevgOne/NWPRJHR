@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
+import { notifyInquiry } from "@/lib/telegram";
 import { z } from "zod";
 
 const inquiryItemSchema = z.object({
@@ -105,6 +106,16 @@ export async function POST(request: NextRequest) {
       ]
         .filter(Boolean)
         .join("\n"),
+    }).catch(() => {});
+
+    // Telegram notification
+    notifyInquiry({
+      name,
+      email,
+      phone: phone || undefined,
+      salonName: salonName || undefined,
+      message: message || undefined,
+      items,
     }).catch(() => {});
 
     return NextResponse.json({ success: true, inquiryId: inquiry.id });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { sendNotificationEmail } from "@/lib/email";
+import { notifySalonRegistration } from "@/lib/telegram";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -123,6 +124,15 @@ export async function POST(request: NextRequest) {
       ]
         .filter(Boolean)
         .join("\n"),
+    }).catch(() => {});
+
+    // Telegram notification
+    notifySalonRegistration({
+      salonName,
+      contactName: contactPerson,
+      email,
+      phone: phone || undefined,
+      city: city || undefined,
     }).catch(() => {});
 
     return NextResponse.json({ success: true });
