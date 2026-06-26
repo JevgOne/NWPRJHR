@@ -128,7 +128,7 @@ export async function notifyInquiry(inquiryId: string, data: {
   items: { productName: string; lengthCm: number; color: string; quantity: number; unit: string }[];
 }): Promise<void> {
   const itemLines = data.items
-    .map((i) => `   ${esc(i.productName)}\n   ${i.lengthCm} cm · ${esc(i.color)} · ${i.quantity}${i.unit}`)
+    .map((i) => `   ${originFlag(esc(i.productName))}\n   ${i.lengthCm} cm · ${formatColor(i.color)} · ${i.quantity}${i.unit}`)
     .join("\n\n");
 
   const lines = [
@@ -240,6 +240,34 @@ export async function notifyLowStock(items: { productName: string; variant: stri
   ].join("\n");
 
   await sendTelegramMessage(lines);
+}
+
+/** Map color code to emoji + name */
+function formatColor(color: string): string {
+  const map: Record<string, [string, string]> = {
+    "1": ["⚪", "Platinová"], "2": ["🟡", "Světlá blond"], "3": ["🟡", "Zlatá blond"],
+    "4": ["🟠", "Medová"], "5": ["🟠", "Karamelová"], "6": ["🟤", "Světle hnědá"],
+    "7": ["🟤", "Středně hnědá"], "8": ["🟤", "Tmavě hnědá"],
+    "9": ["⚫", "Tmavá"], "10": ["⚫", "Černá"],
+  };
+  const entry = map[color];
+  return entry ? `${entry[0]} ${entry[1]} (${color})` : `🔘 Odstín ${color}`;
+}
+
+/** Map origin to flag emoji */
+function originFlag(origin: string): string {
+  const lower = origin.toLowerCase();
+  const flags: Record<string, string> = {
+    "ukrajina": "🇺🇦", "rusko": "🇷🇺", "kazachstán": "🇰🇿", "kazachstan": "🇰🇿",
+    "indie": "🇮🇳", "vietnam": "🇻🇳", "turecko": "🇹🇷", "írán": "🇮🇷", "iran": "🇮🇷",
+    "bělorusko": "🇧🇾", "belorusko": "🇧🇾", "moldavsko": "🇲🇩",
+    "uzbekistán": "🇺🇿", "uzbekistan": "🇺🇿", "čína": "🇨🇳", "cina": "🇨🇳",
+    "mongolsko": "🇲🇳", "gruzie": "🇬🇪",
+  };
+  for (const [key, flag] of Object.entries(flags)) {
+    if (lower.includes(key)) return `${flag} ${origin}`;
+  }
+  return origin;
 }
 
 /** Escape HTML special chars for Telegram */
