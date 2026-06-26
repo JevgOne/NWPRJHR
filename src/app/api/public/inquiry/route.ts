@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
 
     // Telegram notification
-    notifyInquiry({
+    notifyInquiry(inquiry.id, {
       name,
       email,
       phone: phone || undefined,

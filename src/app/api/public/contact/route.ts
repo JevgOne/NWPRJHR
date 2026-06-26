@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
 import { contactFormSchema } from "@/lib/validations/export";
 import { sendNotificationEmail } from "@/lib/email";
 import { notifyContact } from "@/lib/telegram";
@@ -46,6 +47,18 @@ export async function POST(request: NextRequest) {
 
   const { name, email, phone, salonName, message, locale } = parsed.data;
 
+  // Save to DB
+  const contactMsg = await prisma.contactMessage.create({
+    data: {
+      name,
+      email,
+      phone: phone || null,
+      salonName: salonName || null,
+      message,
+      locale: locale || "cs",
+    },
+  });
+
   const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
 
   await sendNotificationEmail({
@@ -62,10 +75,10 @@ export async function POST(request: NextRequest) {
     ]
       .filter(Boolean)
       .join("\n"),
-  });
+  }).catch(() => {});
 
   // Telegram notification
-  notifyContact({
+  notifyContact(contactMsg.id, {
     name,
     email,
     phone: phone || undefined,

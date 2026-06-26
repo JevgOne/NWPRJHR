@@ -984,6 +984,9 @@ model Inquiry {
 
   status       InquiryStatus @default(NEW)
 
+  assignedTo   String?
+  assignedAt   DateTime?
+
   internalNote String?
   contactedAt  DateTime?
   completedAt  DateTime?
@@ -1019,6 +1022,29 @@ model InquiryItem {
 
   @@index([inquiryId])
   @@map("inquiry_items")
+}
+
+// ============================================================
+// CONTACT MESSAGE -- zpráva z kontaktního formuláře
+// ============================================================
+
+model ContactMessage {
+  id          String   @id @default(cuid())
+
+  name        String
+  email       String
+  phone       String?
+  salonName   String?
+  message     String
+  locale      String   @default("cs")
+
+  assignedTo  String?
+  assignedAt  DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("contact_messages")
 }
 
 // ============================================================

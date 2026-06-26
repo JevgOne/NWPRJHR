@@ -2,6 +2,7 @@ import type { Sale, CustomerType, DiscountType } from "@prisma/client";
 import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
 import { fifoDeduct } from "./fifo";
+import { notifyLowStock } from "./telegram";
 
 export interface SaleItemInput {
   variantId: string;
@@ -34,7 +35,7 @@ export async function completeSale(
   input: CompleteSaleInput,
   userId: string
 ): Promise<Sale> {
-  return prisma.$transaction(
+  const sale = await prisma.$transaction(
     async (tx) => {
       // 1. DETERMINE PRICE PER GRAM for each item
       const pricedItems = await Promise.all(
@@ -118,7 +119,7 @@ export async function completeSale(
       }
 
       // 6. CREATE SALE
-      const sale = await tx.sale.create({
+      const s = await tx.sale.create({
         data: {
           customerType: input.customerType,
           salonId: input.salonId,
@@ -147,7 +148,7 @@ export async function completeSale(
       if (input.discount) {
         const discount = await tx.discount.create({
           data: {
-            saleId: sale.id,
+            saleId: s.id,
             percent: input.discount.percent,
             type: input.discount.type,
             amountHalere: discountAmount,
@@ -187,8 +188,33 @@ export async function completeSale(
         }
       }
 
-      return sale;
+      return s;
     },
     { timeout: 15000 }
   );
+
+  // Check for low stock after sale
+  const LOW_STOCK_THRESHOLD = 200; // grams
+  try {
+    const variantIds = [...new Set(input.items.map((i) => i.variantId))];
+    const variants = await prisma.variant.findMany({
+      where: { id: { in: variantIds } },
+      include: {
+        product: { select: { name: true } },
+        deliveries: { where: { remainingGrams: { gt: 0 } }, select: { remainingGrams: true } },
+      },
+    });
+    const lowItems = variants
+      .map((v) => {
+        const totalGrams = v.deliveries.reduce((sum, d) => sum + d.remainingGrams, 0);
+        return { productName: v.product.name, variant: `${v.lengthCm} cm · ${v.color}`, remainingGrams: totalGrams };
+      })
+      .filter((i) => i.remainingGrams > 0 && i.remainingGrams <= LOW_STOCK_THRESHOLD);
+
+    if (lowItems.length > 0) {
+      notifyLowStock(lowItems).catch(() => {});
+    }
+  } catch {}
+
+  return sale;
 }

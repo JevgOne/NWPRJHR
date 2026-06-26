@@ -1,15 +1,17 @@
+import { prisma } from "./db";
+
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 /**
  * Send a message with a single "Beru" claim button.
- * Whoever clicks it, their Telegram name is shown.
+ * callback_data format: "claim:<type>:<recordId>"
  */
-async function sendWithClaimButton(text: string, type: string): Promise<void> {
+async function sendWithClaimButton(text: string, type: string, recordId: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
 
   const keyboard = {
-    inline_keyboard: [[{ text: "👉  BERU  👈", callback_data: `claim:${type}` }]],
+    inline_keyboard: [[{ text: "👉  BERU  👈", callback_data: `claim:${type}:${recordId}` }]],
   };
 
   try {
@@ -29,7 +31,7 @@ async function sendWithClaimButton(text: string, type: string): Promise<void> {
 }
 
 /**
- * Handle Telegram callback query — update message to show who claimed it.
+ * Handle Telegram callback query — update message + save to DB who claimed it.
  */
 export async function handleTelegramCallback(callbackQuery: {
   id: string;
@@ -39,9 +41,32 @@ export async function handleTelegramCallback(callbackQuery: {
 }): Promise<void> {
   if (!BOT_TOKEN || !callbackQuery.data || !callbackQuery.message) return;
 
+  const parts = callbackQuery.data.split(":");
+  const type = parts[1];
+  const recordId = parts[2];
+
   const firstName = callbackQuery.from?.first_name ?? "Někdo";
   const lastName = callbackQuery.from?.last_name ?? "";
   const name = lastName ? `${firstName} ${lastName}` : firstName;
+
+  // Save assignment to DB
+  if (recordId) {
+    try {
+      if (type === "inquiry") {
+        await prisma.inquiry.update({
+          where: { id: recordId },
+          data: { assignedTo: name, assignedAt: new Date() },
+        });
+      } else if (type === "contact") {
+        await prisma.contactMessage.update({
+          where: { id: recordId },
+          data: { assignedTo: name, assignedAt: new Date() },
+        });
+      }
+    } catch {
+      // Record might not exist — continue with message update
+    }
+  }
 
   const chatId = callbackQuery.message.chat.id;
   const messageId = callbackQuery.message.message_id;
@@ -54,7 +79,7 @@ export async function handleTelegramCallback(callbackQuery: {
     body: JSON.stringify({
       chat_id: chatId,
       message_id: messageId,
-      text: `${originalText}\n\n✅ <b>Vyřizuje: ${esc(name)}</b>`,
+      text: `${originalText}\n\n✅ Vyřizuje: ${esc(name)}`,
       parse_mode: "HTML",
     }),
   });
@@ -71,9 +96,30 @@ export async function handleTelegramCallback(callbackQuery: {
 }
 
 /**
- * Format and send an inquiry notification to Telegram.
+ * Send a simple message without buttons (for stock alerts etc.)
  */
-export async function notifyInquiry(data: {
+export async function sendTelegramMessage(text: string): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text,
+        parse_mode: "HTML",
+      }),
+    });
+  } catch {
+    // silent
+  }
+}
+
+/**
+ * Notify about new inquiry.
+ */
+export async function notifyInquiry(inquiryId: string, data: {
   name: string;
   email: string;
   phone?: string;
@@ -101,13 +147,13 @@ export async function notifyInquiry(data: {
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButton(lines, "inquiry");
+  await sendWithClaimButton(lines, "inquiry", inquiryId);
 }
 
 /**
- * Format and send a contact form notification to Telegram.
+ * Notify about contact form submission.
  */
-export async function notifyContact(data: {
+export async function notifyContact(contactId: string, data: {
   name: string;
   email: string;
   phone?: string;
@@ -133,11 +179,11 @@ export async function notifyContact(data: {
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButton(lines, "contact");
+  await sendWithClaimButton(lines, "contact", contactId);
 }
 
 /**
- * Format and send a salon registration notification to Telegram.
+ * Notify about salon registration.
  */
 export async function notifySalonRegistration(data: {
   salonName: string;
@@ -161,7 +207,39 @@ export async function notifySalonRegistration(data: {
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButton(lines, "salon");
+  await sendWithClaimButton(lines, "salon", "none");
+}
+
+/**
+ * Notify about stock restock.
+ */
+export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number): Promise<void> {
+  const lines = [
+    `📥 <b>NASKLADNĚNÍ</b>`,
+    ``,
+    `${esc(productName)}`,
+    `${esc(variant)}`,
+    `+${addedQty}g → celkem ${newTotal}g`,
+  ].join("\n");
+
+  await sendTelegramMessage(lines);
+}
+
+/**
+ * Notify about low stock.
+ */
+export async function notifyLowStock(items: { productName: string; variant: string; remainingGrams: number }[]): Promise<void> {
+  const itemLines = items
+    .map((i) => `   ${esc(i.productName)} · ${esc(i.variant)} — zbývá ${i.remainingGrams}g`)
+    .join("\n");
+
+  const lines = [
+    `⚠️ <b>NÍZKÝ STAV SKLADU</b>`,
+    ``,
+    itemLines,
+  ].join("\n");
+
+  await sendTelegramMessage(lines);
 }
 
 /** Escape HTML special chars for Telegram */

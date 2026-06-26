@@ -1,5 +1,6 @@
 import type { Delivery, Currency } from "@prisma/client";
 import { prisma } from "./db";
+import { notifyRestock, notifyLowStock } from "./telegram";
 
 export interface StockInInput {
   variantId: string;
@@ -26,7 +27,7 @@ export async function stockIn(
   data: StockInInput,
   userId: string
 ): Promise<Delivery> {
-  return prisma.$transaction(async (tx) => {
+  const delivery = await prisma.$transaction(async (tx) => {
     const purchasePricePerGramCZK =
       data.currency === "CZK"
         ? data.purchasePricePerGramRaw
@@ -34,7 +35,7 @@ export async function stockIn(
             (data.purchasePricePerGramRaw * data.exchangeRate) / 10000
           );
 
-    const delivery = await tx.delivery.create({
+    const d = await tx.delivery.create({
       data: {
         variantId: data.variantId,
         supplierId: data.supplierId,
@@ -57,7 +58,7 @@ export async function stockIn(
 
     await tx.stockMovement.create({
       data: {
-        deliveryId: delivery.id,
+        deliveryId: d.id,
         variantId: data.variantId,
         type: "RECEIPT",
         grams: data.totalGrams,
@@ -66,6 +67,28 @@ export async function stockIn(
       },
     });
 
-    return delivery;
+    return d;
   });
+
+  // Telegram: notify about restock
+  try {
+    const variant = await prisma.variant.findUnique({
+      where: { id: data.variantId },
+      include: {
+        product: { select: { name: true } },
+        deliveries: { where: { remainingGrams: { gt: 0 } }, select: { remainingGrams: true } },
+      },
+    });
+    if (variant) {
+      const totalGrams = variant.deliveries.reduce((sum, d) => sum + d.remainingGrams, 0);
+      notifyRestock(
+        variant.product.name,
+        `${variant.lengthCm} cm · ${variant.color}`,
+        data.totalGrams,
+        totalGrams,
+      ).catch(() => {});
+    }
+  } catch {}
+
+  return delivery;
 }
