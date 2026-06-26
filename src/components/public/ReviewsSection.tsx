@@ -13,15 +13,23 @@ async function getReviews() {
   }
 }
 
-const RATING_EMOJIS = ["😕", "😐", "🙂", "😊", "😍"] as const;
+function MiniStars({ rating }: { rating: number }) {
+  return (
+    <span className="inline-flex gap-px">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <span key={s} className={`text-[10px] ${s <= rating ? "text-yellow-400" : "text-gray-300"}`}>★</span>
+      ))}
+    </span>
+  );
+}
 
 function SubRatings({ quality, communication, speed, labels }: { quality: number | null; communication: number | null; speed: number | null; labels: { quality: string; communication: string; speed: string } }) {
   if (!quality && !communication && !speed) return null;
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-xs text-muted">
-      {quality && <span>{labels.quality} {RATING_EMOJIS[quality - 1]}</span>}
-      {communication && <span>{labels.communication} {RATING_EMOJIS[communication - 1]}</span>}
-      {speed && <span>{labels.speed} {RATING_EMOJIS[speed - 1]}</span>}
+    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-muted">
+      {quality && <span className="inline-flex items-center gap-1">{labels.quality} <MiniStars rating={quality} /></span>}
+      {communication && <span className="inline-flex items-center gap-1">{labels.communication} <MiniStars rating={communication} /></span>}
+      {speed && <span className="inline-flex items-center gap-1">{labels.speed} <MiniStars rating={speed} /></span>}
     </div>
   );
 }

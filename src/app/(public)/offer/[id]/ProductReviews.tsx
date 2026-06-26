@@ -2,7 +2,15 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { WriteReviewForm } from "./WriteReviewForm";
 
-const RATING_EMOJIS = ["👎", "😕", "👌", "🔥", "💎"] as const;
+function MiniStars({ rating }: { rating: number }) {
+  return (
+    <span className="inline-flex gap-px">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <span key={s} className={`text-[10px] ${s <= rating ? "text-yellow-400" : "text-gray-300"}`}>★</span>
+      ))}
+    </span>
+  );
+}
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -34,7 +42,7 @@ function RatingBar({ label, avg, count }: { label: string; avg: number; count: n
         />
       </div>
       <span className="text-xs font-semibold text-ink w-10 text-right">{pct}%</span>
-      <span className="text-sm">{RATING_EMOJIS[Math.round(avg) - 1] ?? "🙂"}</span>
+      <MiniStars rating={Math.round(avg)} />
     </div>
   );
 }
@@ -177,10 +185,10 @@ export async function ProductReviews({ productId }: { productId: string }) {
               </div>
               <Stars rating={review.rating} />
               {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
-                <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-xs text-muted">
-                  {review.ratingQuality && <span>✨ {RATING_EMOJIS[review.ratingQuality - 1]}</span>}
-                  {review.ratingCommunication && <span>💬 {RATING_EMOJIS[review.ratingCommunication - 1]}</span>}
-                  {review.ratingSpeed && <span>📦 {RATING_EMOJIS[review.ratingSpeed - 1]}</span>}
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-muted">
+                  {review.ratingQuality && <span className="inline-flex items-center gap-1">✨ <MiniStars rating={review.ratingQuality} /></span>}
+                  {review.ratingCommunication && <span className="inline-flex items-center gap-1">💬 <MiniStars rating={review.ratingCommunication} /></span>}
+                  {review.ratingSpeed && <span className="inline-flex items-center gap-1">📦 <MiniStars rating={review.ratingSpeed} /></span>}
                 </div>
               )}
               <p className="text-sm text-espresso mt-1.5 leading-relaxed line-clamp-3">

@@ -4,24 +4,19 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import confetti from "canvas-confetti";
 
-const RATING_EMOJIS = ["👎", "😕", "👌", "🔥", "💎"] as const;
-
-function EmojiPicker({ value, onChange }: { value: number | null; onChange: (v: number) => void }) {
+function SubStarPicker({ value, onChange }: { value: number | null; onChange: (v: number) => void }) {
   return (
-    <div className="flex gap-1">
-      {RATING_EMOJIS.map((emoji, i) => {
-        const val = i + 1;
-        return (
-          <button
-            key={val}
-            type="button"
-            onClick={() => onChange(val)}
-            className={`text-lg w-7 h-7 rounded-lg transition-all ${value === val ? "bg-blush-100 scale-110" : "opacity-30 hover:opacity-60"}`}
-          >
-            {emoji}
-          </button>
-        );
-      })}
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          className={`text-base transition-colors ${star <= (value ?? 0) ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"}`}
+        >
+          ★
+        </button>
+      ))}
     </div>
   );
 }
@@ -146,15 +141,15 @@ export function WriteReviewForm({ productId }: { productId: string }) {
       <div className="grid grid-cols-3 gap-3">
         <div>
           <label className="block text-xs text-muted mb-1">{t("qualityLabel")}</label>
-          <EmojiPicker value={ratingQuality} onChange={setRatingQuality} />
+          <SubStarPicker value={ratingQuality} onChange={setRatingQuality} />
         </div>
         <div>
           <label className="block text-xs text-muted mb-1">{t("communicationLabel")}</label>
-          <EmojiPicker value={ratingCommunication} onChange={setRatingCommunication} />
+          <SubStarPicker value={ratingCommunication} onChange={setRatingCommunication} />
         </div>
         <div>
           <label className="block text-xs text-muted mb-1">{t("speedLabel")}</label>
-          <EmojiPicker value={ratingSpeed} onChange={setRatingSpeed} />
+          <SubStarPicker value={ratingSpeed} onChange={setRatingSpeed} />
         </div>
       </div>
 
