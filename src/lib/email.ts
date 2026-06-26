@@ -21,9 +21,11 @@ export async function sendNotificationEmail(
   const { Resend } = await import("resend");
   const resend = new Resend(process.env.RESEND_API_KEY);
 
+  const recipients = input.to.split(",").map((e) => e.trim()).filter(Boolean);
+
   await resend.emails.send({
     from: process.env.EMAIL_FROM ?? "info@hairland.cz",
-    to: input.to,
+    to: recipients,
     subject: input.subject,
     text: input.body,
     html: input.html,
