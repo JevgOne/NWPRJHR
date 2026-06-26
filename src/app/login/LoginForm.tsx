@@ -69,9 +69,9 @@ export function LoginForm() {
         </Button>
       </form>
       <div className="mt-4 text-center text-sm text-muted">
-        Nemáte účet?{" "}
+        {t("noAccount")}{" "}
         <Link href="/registrace" className="text-rose font-medium hover:underline">
-          Zaregistrujte svůj salon
+          {t("registerSalon")}
         </Link>
       </div>
       <div className="mt-3 flex justify-center">

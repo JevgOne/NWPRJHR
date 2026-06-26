@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const langFlags: Record<string, string> = {
   cs: "🇨🇿",
@@ -9,6 +10,7 @@ const langFlags: Record<string, string> = {
 };
 
 export default async function StylistsPublicPage() {
+  const t = await getTranslations("public.stylists");
   const stylists = await prisma.stylist.findMany({
     where: { active: true },
     orderBy: [{ featured: "desc" }, { name: "asc" }],
@@ -18,9 +20,9 @@ export default async function StylistsPublicPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-ink">Spolupracující kadeřnice</h1>
+        <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
         <p className="text-muted text-sm mt-1">
-          Ověřené kadeřnice, které s námi spolupracují a znají naše vlasy
+          {t("subtitle")}
         </p>
       </div>
 
@@ -58,7 +60,7 @@ export default async function StylistsPublicPage() {
                   {s.name}
                 </h3>
                 <p className="text-[11px] text-muted mt-0.5">
-                  📍 {s.city}{s.experience ? ` · ${s.experience} let praxe` : ""}
+                  📍 {s.city}{s.experience ? ` · ${s.experience} ${t("yearsExperience")}` : ""}
                 </p>
                 {s.salon && (
                   <p className="text-[10px] text-rose mt-0.5">{s.salon.name}</p>
@@ -88,7 +90,7 @@ export default async function StylistsPublicPage() {
                     </div>
                   )}
                   <div className="mt-2 text-[11px] text-rose font-medium group-hover:underline">
-                    Zobrazit profil →
+                    {t("viewProfile")}
                   </div>
                 </div>
               </div>

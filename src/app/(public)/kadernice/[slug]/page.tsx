@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const langFlags: Record<string, { flag: string; label: string }> = {
   cs: { flag: "🇨🇿", label: "Čeština" },
@@ -10,6 +11,7 @@ const langFlags: Record<string, { flag: string; label: string }> = {
 };
 
 export default async function StylistProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+  const t = await getTranslations("public.stylists");
   const { slug } = await params;
 
   const stylist = await prisma.stylist.findUnique({
@@ -46,8 +48,8 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
 
           {/* Location & experience */}
           <p className="text-white/80 text-sm mt-1">
-            📍 {stylist.city || "Česká republika"}
-            {stylist.experience && ` · ${stylist.experience} let praxe 🎓`}
+            📍 {stylist.city || t("defaultLocation")}
+            {stylist.experience && ` · ${stylist.experience} ${t("yearsExperience")} 🎓`}
           </p>
 
           {/* Languages */}
@@ -82,7 +84,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
         {stylist.bio && (
           <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
             <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
-              📝 O mně
+              📝 {t("aboutMe")}
             </h2>
             <p className="text-espresso text-sm leading-relaxed whitespace-pre-line">
               {stylist.bio}
@@ -94,7 +96,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
         {specs.length > 0 && (
           <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
             <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">
-              💼 Specializace
+              💼 {t("specializations")}
             </h2>
             <div className="flex flex-wrap gap-2">
               {specs.map((sp) => (
@@ -113,7 +115,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
         {certs.length > 0 && (
           <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
             <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">
-              🏅 Certifikáty
+              🏅 {t("certifications")}
             </h2>
             <ul className="space-y-2">
               {certs.map((c) => (
@@ -129,7 +131,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
         {/* Contact card */}
         <div className="bg-white rounded-2xl shadow-sm border border-line p-5">
           <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-3">
-            📞 Kontakt
+            📞 {t("contactSection")}
           </h2>
           <div className="space-y-3">
             {stylist.phone && (
@@ -137,7 +139,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
                 <span className="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-lg">📱</span>
                 <div>
                   <div className="font-medium">{stylist.phone}</div>
-                  <div className="text-xs text-muted">Telefon</div>
+                  <div className="text-xs text-muted">{t("phoneLabel")}</div>
                 </div>
               </a>
             )}
@@ -146,7 +148,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
                 <span className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-lg">✉️</span>
                 <div>
                   <div className="font-medium">{stylist.email}</div>
-                  <div className="text-xs text-muted">E-mail</div>
+                  <div className="text-xs text-muted">{t("emailLabel")}</div>
                 </div>
               </a>
             )}
@@ -186,7 +188,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
             href="/kadernice"
             className="inline-flex items-center gap-2 text-sm text-rose hover:text-rose-deep font-medium"
           >
-            ← Všechny kadeřnice
+            {t("allStylists")}
           </Link>
         </div>
       </div>

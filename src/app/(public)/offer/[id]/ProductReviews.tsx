@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { WriteReviewForm } from "./WriteReviewForm";
 
@@ -20,12 +21,12 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-function RatingBar({ label, emoji, avg, count }: { label: string; emoji: string; avg: number; count: number }) {
+function RatingBar({ label, avg, count }: { label: string; avg: number; count: number }) {
   if (count === 0) return null;
   const pct = Math.round((avg / 5) * 100);
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-muted w-28 flex-shrink-0">{emoji} {label}</span>
+      <span className="text-xs text-muted w-28 flex-shrink-0">{label}</span>
       <div className="flex-1 h-2 bg-nude-100 rounded-full overflow-hidden">
         <div
           className="h-full bg-yellow-400 rounded-full transition-all"
@@ -71,6 +72,8 @@ function SourceIcon({ source }: { source: string }) {
 }
 
 export async function ProductReviews({ productId }: { productId: string }) {
+  const t = await getTranslations("public.reviews");
+
   // Fetch product-specific reviews + global reviews as fallback
   const [productReviews, globalReviews] = await Promise.all([
     prisma.review.findMany({
@@ -114,7 +117,7 @@ export async function ProductReviews({ productId }: { productId: string }) {
   return (
     <div className="mt-10 border-t border-line pt-8">
       <h2 className="text-lg font-bold text-ink mb-5">
-        Hodnocení zákazníků
+        {t("title")}
       </h2>
 
       {/* Aggregate rating overview */}
@@ -126,15 +129,15 @@ export async function ProductReviews({ productId }: { productId: string }) {
               <div className="text-4xl font-bold text-ink">{avgRating.toFixed(1)}</div>
               <Stars rating={Math.round(avgRating)} />
               <div className="text-xs text-muted mt-1">
-                {totalCount} {totalCount === 1 ? "recenze" : totalCount < 5 ? "recenze" : "recenzí"}
+                {totalCount} {t("reviewCount", { count: totalCount })}
               </div>
             </div>
 
             {/* Right: category bars */}
             <div className="flex-1 space-y-2">
-              <RatingBar label="Kvalita vlasů" emoji="✨" avg={avgQuality} count={qualityRatings.length} />
-              <RatingBar label="Komunikace" emoji="💬" avg={avgComm} count={commRatings.length} />
-              <RatingBar label="Rychlost dodání" emoji="📦" avg={avgSpeed} count={speedRatings.length} />
+              <RatingBar label={t("qualityLabel")} avg={avgQuality} count={qualityRatings.length} />
+              <RatingBar label={t("communicationLabel")} avg={avgComm} count={commRatings.length} />
+              <RatingBar label={t("speedLabel")} avg={avgSpeed} count={speedRatings.length} />
             </div>
           </div>
         </div>

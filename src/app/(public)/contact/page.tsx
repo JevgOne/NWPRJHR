@@ -15,10 +15,8 @@ export default async function ContactPage() {
         <div className="flex gap-4 items-start">
           <div className="text-3xl flex-shrink-0">🚗</div>
           <div>
-            <h2 className="font-semibold text-emerald-900 mb-1">Osobní konzultace a dovoz zdarma</h2>
-            <p className="text-sm text-emerald-800">
-              Nejste si jistí výběrem? Napište nám a domluvíme osobní schůzku. Přijedeme s vlasy přímo za vámi nebo za vaší kadeřnicí — <strong>po Praze zcela zdarma</strong>. Ukážeme, poradíme a pomůžeme s výběrem. Žádný závazek.
-            </p>
+            <h2 className="font-semibold text-emerald-900 mb-1">{t("contact.trustTitle")}</h2>
+            <p className="text-sm text-emerald-800" dangerouslySetInnerHTML={{ __html: t("contact.trustText") }} />
           </div>
         </div>
       </div>
@@ -48,8 +46,8 @@ export default async function ContactPage() {
             </div>
 
             <div className="mt-6 p-4 bg-nude-50 rounded-lg border border-line">
-              <p className="font-medium text-ink mb-1">🇨🇿 🇺🇦 🇷🇺 Mluvíme vaším jazykem</p>
-              <p className="text-xs text-muted">Kompletní servis v češtině, ukrajinštině i ruštině.</p>
+              <p className="font-medium text-ink mb-1">🇨🇿 🇺🇦 🇷🇺 {t("contact.languageBanner")}</p>
+              <p className="text-xs text-muted">{t("contact.languageBannerText")}</p>
             </div>
           </div>
         </div>

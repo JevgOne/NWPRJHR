@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Geist } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
 import { HreflangTags } from "@/components/HreflangTags";
@@ -11,16 +11,19 @@ const geist = Geist({
   subsets: ["latin", "latin-ext"],
 });
 
-export const metadata: Metadata = {
-  title: "Hairland",
-  description: "Hairland — prodej prémiových vlasů. Přímý import, osobní přístup, trojjazyčná podpora.",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return {
     title: "Hairland",
-  },
-};
+    description: t("description"),
+    manifest: "/manifest.json",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: "Hairland",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#1a1a2e",

@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { RegisterForm } from "./RegisterForm";
 
-export const metadata: Metadata = {
-  title: "Registrace salonu | Hairland",
-  description: "Zaregistrujte svůj salon pro velkoobchodní nákup vlasů",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("public.register");
+  return {
+    title: t("pageTitle"),
+    description: t("pageDescription"),
+  };
+}
 
 export default function RegisterPage() {
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { getOriginFlag } from "@/lib/origin-flags";
 
@@ -120,14 +121,10 @@ function getVisibleProducts(products: SliderProduct[], start: number, count: num
 }
 
 function ProductCard({ product }: { product: SliderProduct }) {
+  const t = useTranslations("public.slider");
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
 
-  const categoryLabels: Record<string, string> = {
-    VIRGIN: "Virgin",
-    PREMIUM: "Premium",
-    STANDARD: "Standard",
-    SALE: "Akce",
-  };
+  const categoryLabel = t(product.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale");
 
   return (
     <Link
@@ -150,7 +147,7 @@ function ProductCard({ product }: { product: SliderProduct }) {
       <div className="p-3">
         <div className="flex items-center gap-2 mb-1">
           <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-blush-100 text-rose-deep">
-            {categoryLabels[product.category] ?? product.category}
+            {categoryLabel}
           </span>
           {product.origin && (
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
