@@ -1,12 +1,23 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
+const TEAM = ["Jevgen", "Inga", "Martin"];
+
 /**
- * Send a message to the configured Telegram channel.
- * Silently fails if credentials are missing — won't block the request.
+ * Send a message with inline "claim" buttons to the configured Telegram chat.
+ * Silently fails if credentials are missing.
  */
-export async function sendTelegramMessage(text: string): Promise<void> {
+async function sendWithClaimButtons(text: string, type: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
+
+  const keyboard = {
+    inline_keyboard: [
+      TEAM.map((name) => ({
+        text: `Beru — ${name}`,
+        callback_data: `claim:${type}:${name}`,
+      })),
+    ],
+  };
 
   try {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -16,11 +27,52 @@ export async function sendTelegramMessage(text: string): Promise<void> {
         chat_id: CHAT_ID,
         text,
         parse_mode: "HTML",
+        reply_markup: keyboard,
       }),
     });
   } catch {
     // Telegram failure should never block the main flow
   }
+}
+
+/**
+ * Handle Telegram callback query — update message to show who claimed it.
+ */
+export async function handleTelegramCallback(callbackQuery: {
+  id: string;
+  message?: { message_id: number; chat: { id: number }; text?: string };
+  data?: string;
+}): Promise<void> {
+  if (!BOT_TOKEN || !callbackQuery.data || !callbackQuery.message) return;
+
+  const name = callbackQuery.data.split(":")[2];
+  if (!name) return;
+
+  const chatId = callbackQuery.message.chat.id;
+  const messageId = callbackQuery.message.message_id;
+  const originalText = callbackQuery.message.text ?? "";
+
+  // Update message — append who claimed it, remove buttons
+  await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/editMessageText`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      message_id: messageId,
+      text: `${originalText}\n\n✅ <b>Vyřizuje: ${esc(name)}</b>`,
+      parse_mode: "HTML",
+    }),
+  });
+
+  // Answer callback to remove loading state
+  await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/answerCallbackQuery`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      callback_query_id: callbackQuery.id,
+      text: `Přijato — ${name}`,
+    }),
+  });
 }
 
 /**
@@ -35,25 +87,26 @@ export async function notifyInquiry(data: {
   items: { productName: string; lengthCm: number; color: string; quantity: number; unit: string }[];
 }): Promise<void> {
   const itemLines = data.items
-    .map((i) => `  • ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`)
-    .join("\n");
+    .map((i) => `   ${esc(i.productName)}\n   ${i.lengthCm} cm · ${esc(i.color)} · ${i.quantity}${i.unit}`)
+    .join("\n\n");
 
   const lines = [
-    `<b>📦 Nová poptávka</b>`,
+    `📦 <b>NOVÁ POPTÁVKA</b>`,
+    `Zákazník má zájem o konkrétní vlasy`,
     ``,
-    `<b>Jméno:</b> ${esc(data.name)}`,
-    `<b>Email:</b> ${esc(data.email)}`,
-    data.phone ? `<b>Telefon:</b> ${esc(data.phone)}` : null,
-    data.salonName ? `<b>Salon:</b> ${esc(data.salonName)}` : null,
+    `${esc(data.name)}`,
+    `${esc(data.email)}`,
+    data.phone ? `${esc(data.phone)}` : null,
+    data.salonName ? `Salon: ${esc(data.salonName)}` : null,
     ``,
-    `<b>Položky (${data.items.length}):</b>`,
-    esc(itemLines),
-    data.message ? `\n<b>Poznámka:</b> ${esc(data.message)}` : null,
+    `Položky (${data.items.length}):`,
+    itemLines,
+    data.message ? `\nPoznámka: ${esc(data.message)}` : null,
   ]
     .filter(Boolean)
     .join("\n");
 
-  await sendTelegramMessage(lines);
+  await sendWithClaimButtons(lines, "inquiry");
 }
 
 /**
@@ -67,21 +120,25 @@ export async function notifyContact(data: {
   message: string;
   locale?: string;
 }): Promise<void> {
+  const langMap: Record<string, string> = { cs: "🇨🇿 Čeština", uk: "🇺🇦 Ukrajinština", ru: "🇷🇺 Ruština" };
+  const lang = data.locale ? langMap[data.locale] ?? data.locale : null;
+
   const lines = [
-    `<b>✉️ Nová zpráva z kontaktního formuláře</b>`,
+    `✉️ <b>KONTAKTNÍ FORMULÁŘ</b>`,
+    `Zpráva z webu`,
     ``,
-    `<b>Jméno:</b> ${esc(data.name)}`,
-    `<b>Email:</b> ${esc(data.email)}`,
-    data.phone ? `<b>Telefon:</b> ${esc(data.phone)}` : null,
-    data.salonName ? `<b>Salon:</b> ${esc(data.salonName)}` : null,
-    data.locale ? `<b>Jazyk:</b> ${esc(data.locale)}` : null,
+    `${esc(data.name)}`,
+    `${esc(data.email)}`,
+    data.phone ? `${esc(data.phone)}` : null,
+    data.salonName ? `Salon: ${esc(data.salonName)}` : null,
+    lang ? `Jazyk: ${lang}` : null,
     ``,
-    esc(data.message),
+    `${esc(data.message)}`,
   ]
     .filter(Boolean)
     .join("\n");
 
-  await sendTelegramMessage(lines);
+  await sendWithClaimButtons(lines, "contact");
 }
 
 /**
@@ -95,18 +152,21 @@ export async function notifySalonRegistration(data: {
   city?: string;
 }): Promise<void> {
   const lines = [
-    `<b>💇 Nová registrace salonu</b>`,
+    `💇 <b>NOVÁ REGISTRACE SALONU</b>`,
+    `Salon žádá o B2B přístup`,
     ``,
-    `<b>Salon:</b> ${esc(data.salonName)}`,
-    `<b>Kontakt:</b> ${esc(data.contactName)}`,
-    `<b>Email:</b> ${esc(data.email)}`,
-    data.phone ? `<b>Telefon:</b> ${esc(data.phone)}` : null,
-    data.city ? `<b>Město:</b> ${esc(data.city)}` : null,
+    `${esc(data.salonName)}`,
+    `${esc(data.contactName)}`,
+    `${esc(data.email)}`,
+    data.phone ? `${esc(data.phone)}` : null,
+    data.city ? `${esc(data.city)}` : null,
+    ``,
+    `Čeká na schválení v administraci.`,
   ]
     .filter(Boolean)
     .join("\n");
 
-  await sendTelegramMessage(lines);
+  await sendWithClaimButtons(lines, "salon");
 }
 
 /** Escape HTML special chars for Telegram */
