@@ -9,7 +9,7 @@ async function sendWithClaimButton(text: string, type: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
 
   const keyboard = {
-    inline_keyboard: [[{ text: "✋ Beru", callback_data: `claim:${type}` }]],
+    inline_keyboard: [[{ text: "👉  BERU  👈", callback_data: `claim:${type}` }]],
   };
 
   try {
