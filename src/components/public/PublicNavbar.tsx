@@ -17,7 +17,7 @@ export function PublicNavbar() {
   const navLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/offer", label: t("nav.products") },
-    { href: "/kadernice", label: "Kadeřnice" },
+    { href: "/kadernice", label: t("navbar.hairdressers") },
     { href: "/contact", label: t("nav.contact") },
     { href: "/about", label: t("nav.about") },
   ];
@@ -118,7 +118,7 @@ export function PublicNavbar() {
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"
               onClick={() => setMenuOpen(false)}
             >
-              🛒 Poptávka {itemCount > 0 && <span className="bg-rose text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{itemCount}</span>}
+              {t("navbar.inquiry")} {itemCount > 0 && <span className="bg-rose text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{itemCount}</span>}
             </Link>
             <div className="px-3 py-2">
               <LocaleSwitcher />

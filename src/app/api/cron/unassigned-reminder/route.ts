@@ -45,12 +45,13 @@ export async function GET(request: NextRequest) {
   }
 
   const lines = [
-    `🔔 <b>NEVYŘÍZENÉ — čekají déle než ${REMINDER_HOURS}h</b>`,
+    `🔔 <b>NEVYŘÍZENÉ / НЕОБРАБОТАННЫЕ — ${REMINDER_HOURS}h+</b>`,
+    `Čekají déle než ${REMINDER_HOURS}h / Ожидают более ${REMINDER_HOURS}ч`,
     ``,
   ];
 
   if (inquiries.length > 0) {
-    lines.push(`<b>Poptávky (${inquiries.length}):</b>`);
+    lines.push(`<b>Poptávky/Запросы (${inquiries.length}):</b>`);
     for (const inq of inquiries) {
       const age = getAge(inq.createdAt);
       lines.push(`   ${inq.name} · ${inq.email} — ${age}`);
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (contacts.length > 0) {
-    lines.push(`<b>Zprávy (${contacts.length}):</b>`);
+    lines.push(`<b>Zprávy/Сообщения (${contacts.length}):</b>`);
     for (const msg of contacts) {
       const age = getAge(msg.createdAt);
       lines.push(`   ${msg.name} · ${msg.email} — ${age}`);

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 const CONSENT_KEY = "hairora_cookie_consent";
 
 export function CookieBanner() {
+  const t = useTranslations("public");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -25,13 +27,12 @@ export function CookieBanner() {
     <div className="fixed bottom-0 inset-x-0 z-50 p-4">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border border-line p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <p className="text-sm text-muted flex-1">
-          Tento web používá cookies pro zajištění správné funkčnosti. Více
-          informací naleznete v{" "}
+          {t("cookie.message")}{" "}
           <a
             href="/privacy"
             className="text-rose underline hover:text-rose-deep"
           >
-            zásadách ochrany osobních údajů
+            {t("cookie.privacyLink")}
           </a>
           .
         </p>
@@ -40,13 +41,13 @@ export function CookieBanner() {
             onClick={() => accept("necessary")}
             className="px-4 py-2 text-sm font-medium text-espresso bg-nude-100 rounded-lg hover:bg-nude-200 transition-colors"
           >
-            Pouze nezbytné
+            {t("cookie.necessaryOnly")}
           </button>
           <button
             onClick={() => accept("all")}
             className="px-4 py-2 text-sm font-medium text-white bg-rose rounded-lg hover:bg-rose-deep transition-colors"
           >
-            Souhlasím
+            {t("cookie.acceptAll")}
           </button>
         </div>
       </div>

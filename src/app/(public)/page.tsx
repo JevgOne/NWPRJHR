@@ -16,16 +16,16 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl lg:text-4xl font-bold text-ink mb-3">
-              Prémiové vlasy k prodloužení
+              {t("landing.heroTitle")}
             </h1>
             <p className="text-muted mb-4 max-w-xl mx-auto">
-              Vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. U každého produktu uvádíme přesný původ — vše oficiálně fakturováno.
+              {t("landing.heroSubtitle")}
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted">
-              <span>✅ Vlasy skladem — vezmete si hned</span>
-              <span>✂️ Clip-in, tape-in, micro ring do 7 dnů</span>
-              <span>🚗 Dovoz po Praze zdarma</span>
-              <span>🌍 U každého produktu přesný původ</span>
+              <span>{t("landing.badgeInStock")}</span>
+              <span>{t("landing.badgeCustom")}</span>
+              <span>{t("landing.badgeDelivery")}</span>
+              <span>{t("landing.badgeOrigin")}</span>
             </div>
           </div>
 
@@ -39,13 +39,13 @@ export default async function LandingPage() {
               href="/offer"
               className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
             >
-              Zobrazit celou nabídku
+              {t("landing.viewFullOffer")}
             </Link>
             <Link
               href="/contact"
               className="px-5 py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-sm font-medium rounded-lg transition-colors"
             >
-              Kontaktujte nás
+              {t("landing.contactUs")}
             </Link>
           </div>
         </div>
@@ -55,17 +55,17 @@ export default async function LandingPage() {
       <section className="py-10 bg-nude-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-lg font-bold text-ink text-center mb-6">
-            Vyberte si z naší nabídky
+            {t("landing.chooseFromOffer")}
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {(
               [
-                { key: "virgin" as const, img: `${BLOB}/volne-vlasy.jpg`, desc: "Nejvyšší kvalita, neošetřené" },
-                { key: "premium" as const, img: `${BLOB}/odstiny-prehled.jpg`, desc: "Prémiová kvalita" },
-                { key: "standard" as const, img: `${BLOB}/extensions-techniky.jpg`, desc: "Skvělý poměr cena/kvalita" },
-                { key: "sale" as const, img: `${BLOB}/keratinove-vlasy.jpg`, desc: "Výhodné ceny" },
+                { key: "virgin" as const, img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
+                { key: "premium" as const, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescPremium" as const },
+                { key: "standard" as const, img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
+                { key: "sale" as const, img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
               ]
-            ).map(({ key, img, desc }) => (
+            ).map(({ key, img, descKey }) => (
               <Link
                 key={key}
                 href={`/offer?category=${key.toUpperCase()}`}
@@ -78,7 +78,7 @@ export default async function LandingPage() {
                   <h3 className="font-semibold text-ink text-sm">
                     {tCategory(key)}
                   </h3>
-                  <p className="text-[11px] text-muted mt-0.5">{desc}</p>
+                  <p className="text-[11px] text-muted mt-0.5">{t(descKey)}</p>
                 </div>
               </Link>
             ))}
@@ -91,10 +91,10 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-ink mb-3">
-              Široká škála odstínů
+              {t("landing.colorPaletteTitle")}
             </h2>
             <p className="text-muted max-w-xl mx-auto">
-              Od platinové blond po tmavě černou. Najdeme přesný odstín, který se hodí k vašim vlasům — přijedeme s ukázkami a porovnáme naživo.
+              {t("landing.colorPaletteSubtitle")}
             </p>
           </div>
 
@@ -111,23 +111,23 @@ export default async function LandingPage() {
           {/* Individual shades */}
           <div className="grid grid-cols-5 sm:grid-cols-10 gap-3 mb-8">
             {[
-              { color: "#FAF0DC", name: "Platinová" },
-              { color: "#E8D5A8", name: "Světlá blond" },
-              { color: "#D4B06A", name: "Zlatá blond" },
-              { color: "#C49A48", name: "Medová" },
-              { color: "#A07030", name: "Karamelová" },
-              { color: "#7A5230", name: "Světle hnědá" },
-              { color: "#5C3A1E", name: "Středně hnědá" },
-              { color: "#3E2512", name: "Tmavě hnědá" },
-              { color: "#2A1A0C", name: "Tmavá" },
-              { color: "#0F0A06", name: "Černá" },
-            ].map(({ color, name }) => (
+              { color: "#FAF0DC", nameKey: "landing.colorPlatinum" as const },
+              { color: "#E8D5A8", nameKey: "landing.colorLightBlond" as const },
+              { color: "#D4B06A", nameKey: "landing.colorGoldenBlond" as const },
+              { color: "#C49A48", nameKey: "landing.colorHoney" as const },
+              { color: "#A07030", nameKey: "landing.colorCaramel" as const },
+              { color: "#7A5230", nameKey: "landing.colorLightBrown" as const },
+              { color: "#5C3A1E", nameKey: "landing.colorMediumBrown" as const },
+              { color: "#3E2512", nameKey: "landing.colorDarkBrown" as const },
+              { color: "#2A1A0C", nameKey: "landing.colorDark" as const },
+              { color: "#0F0A06", nameKey: "landing.colorBlack" as const },
+            ].map(({ color, nameKey }) => (
               <div key={color} className="flex flex-col items-center gap-2 group">
                 <div
                   className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line"
                   style={{ backgroundColor: color }}
                 />
-                <span className="text-[10px] sm:text-xs text-muted font-medium text-center leading-tight">{name}</span>
+                <span className="text-[10px] sm:text-xs text-muted font-medium text-center leading-tight">{t(nameKey)}</span>
               </div>
             ))}
           </div>
@@ -135,7 +135,7 @@ export default async function LandingPage() {
           <div className="flex justify-center">
             <img
               src={`${BLOB}/odstiny-prehled.jpg`}
-              alt="Přehled odstínů vlasů"
+              alt={t("landing.colorPaletteAlt")}
               className="w-full max-w-2xl h-48 md:h-56 object-cover rounded-xl shadow-md"
             />
           </div>
@@ -146,46 +146,46 @@ export default async function LandingPage() {
       <section className="py-16 bg-nude-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-ink text-center mb-3">
-            Jak to funguje
+            {t("landing.howItWorksTitle")}
           </h2>
           <p className="text-muted text-center mb-10 max-w-xl mx-auto">
-            Prodáváme prémiové vlasy k prodloužení. Clip-in a tape-in připravíme na zakázku do 7 dnů.
+            {t("landing.howItWorksSubtitle")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
                 1️⃣
               </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">Vyberte si vlasy</h3>
+              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step1Title")}</h3>
               <p className="text-xs text-muted">
-                Přijďte se podívat, osahat a porovnat. Poradíme s barvou i délkou. Nejste si jistí? Přijedeme s ukázkami přímo za vámi — po Praze zdarma.
+                {t("landing.step1Desc")}
               </p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
                 2️⃣
               </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">Spojte nás s kadeřnicí</h3>
+              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step2Title")}</h3>
               <p className="text-xs text-muted">
-                Máte svou kadeřnici? Super, spojíme se přímo s ní. Nemáte? Nevadí — vyberte si z našich ověřených specialistek na prodlužování.
+                {t("landing.step2Desc")}
               </p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
                 3️⃣
               </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">Zaplaťte a vezmete si je</h3>
+              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step3Title")}</h3>
               <p className="text-xs text-muted">
-                Vlasy skladem si vezmete rovnou s sebou. Chcete clip-in nebo tape-in? Zaplaťte a připravíme je na míru do 7 dnů.
+                {t("landing.step3Desc")}
               </p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
                 4️⃣
               </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">Vlasy na zakázku do 7 dnů</h3>
+              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step4Title")}</h3>
               <p className="text-xs text-muted">
-                Potřebujete clip-in nebo tape-in? Připravíme na míru do 7 pracovních dnů. Vyzvednete si je u nás nebo vám je dovezeme — po Praze zdarma.
+                {t("landing.step4Desc")}
               </p>
             </div>
           </div>
@@ -196,63 +196,63 @@ export default async function LandingPage() {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-ink text-center mb-3">
-            Proč nám zákazníci důvěřují
+            {t("landing.trustTitle")}
           </h2>
           <p className="text-muted text-center mb-10 max-w-xl mx-auto">
-            Žádné riziko. Osobní přístup. Kvalita, kterou uvidíte a osaháte si.
+            {t("landing.trustSubtitle")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
               <div className="text-3xl flex-shrink-0">🤝</div>
               <div>
-                <h3 className="font-semibold text-ink mb-1">Osobní konzultace zdarma</h3>
+                <h3 className="font-semibold text-ink mb-1">{t("landing.trust1Title")}</h3>
                 <p className="text-sm text-muted">
-                  Nejste si jistí výběrem? Žádný problém. Kontaktujte nás a domluvíme osobní schůzku — přijedeme s ukázkami přímo za vámi nebo za vaší kadeřnicí. Po Praze zdarma.
+                  {t("landing.trust1Desc")}
                 </p>
               </div>
             </div>
             <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
               <div className="text-3xl flex-shrink-0">✋</div>
               <div>
-                <h3 className="font-semibold text-ink mb-1">Vlasy si osaháte předem</h3>
+                <h3 className="font-semibold text-ink mb-1">{t("landing.trust2Title")}</h3>
                 <p className="text-sm text-muted">
-                  Nekupujete naslepo. Každý zákazník si může vlasy prohlédnout, porovnat barvy a délky. Teprve pak se rozhodnete.
+                  {t("landing.trust2Desc")}
                 </p>
               </div>
             </div>
             <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
               <div className="text-3xl flex-shrink-0">🚗</div>
               <div>
-                <h3 className="font-semibold text-ink mb-1">Dovoz po Praze zdarma</h3>
+                <h3 className="font-semibold text-ink mb-1">{t("landing.trust3Title")}</h3>
                 <p className="text-sm text-muted">
-                  Přivezeme vlasy přímo k vám nebo do salonu. Ukážeme, zarezervujeme a prodáme. Bez starostí, bez čekání na poštu.
+                  {t("landing.trust3Desc")}
                 </p>
               </div>
             </div>
             <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
               <div className="text-3xl flex-shrink-0">⏰</div>
               <div>
-                <h3 className="font-semibold text-ink mb-1">Vlasy na zakázku do 7 dnů</h3>
+                <h3 className="font-semibold text-ink mb-1">{t("landing.trust4Title")}</h3>
                 <p className="text-sm text-muted">
-                  Clip-in i tape-in připravíme přesně podle vašich požadavků. Od objednávky po předání do 7 pracovních dnů.
+                  {t("landing.trust4Desc")}
                 </p>
               </div>
             </div>
             <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
               <div className="text-3xl flex-shrink-0">🌍</div>
               <div>
-                <h3 className="font-semibold text-ink mb-1">Přesný původ u každého produktu</h3>
+                <h3 className="font-semibold text-ink mb-1">{t("landing.trust5Title")}</h3>
                 <p className="text-sm text-muted">
-                  Vlasy z celého světa — u každého produktu uvádíme přesný původ. Vše oficiálně fakturováno, kvalita doložená doklady.
+                  {t("landing.trust5Desc")}
                 </p>
               </div>
             </div>
             <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
               <div className="text-3xl flex-shrink-0">🧾</div>
               <div>
-                <h3 className="font-semibold text-ink mb-1">Vše oficiálně fakturováno</h3>
+                <h3 className="font-semibold text-ink mb-1">{t("landing.trust6Title")}</h3>
                 <p className="text-sm text-muted">
-                  Ke každému nákupu vystavíme řádný doklad. Původ vlasů i kvalita jsou doložené — máme vše oficiální.
+                  {t("landing.trust6Desc")}
                 </p>
               </div>
             </div>
@@ -269,9 +269,9 @@ export default async function LandingPage() {
           <div className="flex justify-center gap-3 text-4xl mb-4">
             <span>🇨🇿</span><span>🇺🇦</span><span>🇷🇺</span>
           </div>
-          <h3 className="text-lg font-semibold text-ink mb-2">Mluvíme vaším jazykem</h3>
+          <h3 className="text-lg font-semibold text-ink mb-2">{t("landing.langTitle")}</h3>
           <p className="text-sm text-muted max-w-lg mx-auto">
-            Kompletní servis v češtině, ukrajinštině i ruštině. Poradíme, vysvětlíme a pomůžeme — v jazyce, kterému rozumíte.
+            {t("landing.langDesc")}
           </p>
         </div>
       </section>
@@ -280,23 +280,23 @@ export default async function LandingPage() {
       <section className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-ink mb-3">
-            Chcete se přijít podívat?
+            {t("landing.ctaTitle")}
           </h2>
           <p className="text-muted mb-6 max-w-lg mx-auto">
-            Napište nám nebo zavolejte. Domluvíme schůzku, přijedeme s ukázkami a pomůžeme s výběrem. Žádný závazek, žádné riziko.
+            {t("landing.ctaDesc")}
           </p>
           <div className="flex gap-3 justify-center">
             <Link
               href="/contact"
               className="px-6 py-3 bg-rose hover:bg-rose-deep text-white font-medium rounded-lg transition-colors"
             >
-              Napište nám
+              {t("landing.ctaContact")}
             </Link>
             <Link
               href="/kadernice"
               className="px-6 py-3 bg-white text-rose border border-blush-200 hover:bg-blush-100 font-medium rounded-lg transition-colors"
             >
-              Naše kadeřnice
+              {t("landing.ctaHairdressers")}
             </Link>
           </div>
         </div>

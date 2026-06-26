@@ -11,7 +11,7 @@ async function sendWithClaimButton(text: string, type: string, recordId: string)
   if (!BOT_TOKEN || !CHAT_ID) return;
 
   const keyboard = {
-    inline_keyboard: [[{ text: "👉  BERU  👈", callback_data: `claim:${type}:${recordId}` }]],
+    inline_keyboard: [[{ text: "👉  BERU / БЕРУ  👈", callback_data: `claim:${type}:${recordId}` }]],
   };
 
   try {
@@ -79,7 +79,7 @@ export async function handleTelegramCallback(callbackQuery: {
     body: JSON.stringify({
       chat_id: chatId,
       message_id: messageId,
-      text: `${originalText}\n\n✅ Vyřizuje: ${esc(name)}`,
+      text: `${originalText}\n\n✅ Vyřizuje/Обрабатывает: ${esc(name)}`,
       parse_mode: "HTML",
     }),
   });
@@ -90,7 +90,7 @@ export async function handleTelegramCallback(callbackQuery: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       callback_query_id: callbackQuery.id,
-      text: `Přijato — ${name}`,
+      text: `Přijato/Принято — ${name}`,
     }),
   });
 }
@@ -132,17 +132,18 @@ export async function notifyInquiry(inquiryId: string, data: {
     .join("\n\n");
 
   const lines = [
-    `📦 <b>NOVÁ POPTÁVKA</b>`,
-    `Zákazník má zájem o konkrétní vlasy`,
+    `📦 <b>NOVÁ POPTÁVKA / НОВЫЙ ЗАПРОС</b>`,
+    `Zákazník má zájem o vlasy`,
+    `Клиент интересуется волосами`,
     ``,
     `${esc(data.name)}`,
     `${esc(data.email)}`,
     data.phone ? `${esc(data.phone)}` : null,
-    data.salonName ? `Salon: ${esc(data.salonName)}` : null,
+    data.salonName ? `Salon/Салон: ${esc(data.salonName)}` : null,
     ``,
-    `Položky (${data.items.length}):`,
+    `Položky/Позиции (${data.items.length}):`,
     itemLines,
-    data.message ? `\nPoznámka: ${esc(data.message)}` : null,
+    data.message ? `\nPoznámka/Примечание: ${esc(data.message)}` : null,
   ]
     .filter(Boolean)
     .join("\n");
@@ -165,14 +166,14 @@ export async function notifyContact(contactId: string, data: {
   const lang = data.locale ? langMap[data.locale] ?? data.locale : null;
 
   const lines = [
-    `✉️ <b>KONTAKTNÍ FORMULÁŘ</b>`,
-    `Zpráva z webu`,
+    `✉️ <b>KONTAKTNÍ FORMULÁŘ / КОНТАКТНАЯ ФОРМА</b>`,
+    `Zpráva z webu / Сообщение с сайта`,
     ``,
     `${esc(data.name)}`,
     `${esc(data.email)}`,
     data.phone ? `${esc(data.phone)}` : null,
-    data.salonName ? `Salon: ${esc(data.salonName)}` : null,
-    lang ? `Jazyk: ${lang}` : null,
+    data.salonName ? `Salon/Салон: ${esc(data.salonName)}` : null,
+    lang ? `Jazyk/Язык: ${lang}` : null,
     ``,
     `${esc(data.message)}`,
   ]
@@ -193,8 +194,8 @@ export async function notifySalonRegistration(data: {
   city?: string;
 }): Promise<void> {
   const lines = [
-    `💇 <b>NOVÁ REGISTRACE SALONU</b>`,
-    `Salon žádá o B2B přístup`,
+    `💇 <b>NOVÁ REGISTRACE SALONU / НОВАЯ РЕГИСТРАЦИЯ САЛОНА</b>`,
+    `Salon žádá o B2B přístup / Салон запрашивает B2B доступ`,
     ``,
     `${esc(data.salonName)}`,
     `${esc(data.contactName)}`,
@@ -202,7 +203,7 @@ export async function notifySalonRegistration(data: {
     data.phone ? `${esc(data.phone)}` : null,
     data.city ? `${esc(data.city)}` : null,
     ``,
-    `Čeká na schválení v administraci.`,
+    `Čeká na schválení. / Ожидает одобрения.`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -215,11 +216,11 @@ export async function notifySalonRegistration(data: {
  */
 export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number): Promise<void> {
   const lines = [
-    `📥 <b>NASKLADNĚNÍ</b>`,
+    `📥 <b>NASKLADNĚNÍ / ПОСТУПЛЕНИЕ</b>`,
     ``,
     `${esc(productName)}`,
     `${esc(variant)}`,
-    `+${addedQty}g → celkem ${newTotal}g`,
+    `+${addedQty}g → celkem/всего ${newTotal}g`,
   ].join("\n");
 
   await sendTelegramMessage(lines);
@@ -230,11 +231,11 @@ export async function notifyRestock(productName: string, variant: string, addedQ
  */
 export async function notifyLowStock(items: { productName: string; variant: string; remainingGrams: number }[]): Promise<void> {
   const itemLines = items
-    .map((i) => `   ${esc(i.productName)} · ${esc(i.variant)} — zbývá ${i.remainingGrams}g`)
+    .map((i) => `   ${esc(i.productName)} · ${esc(i.variant)} — zbývá/осталось ${i.remainingGrams}g`)
     .join("\n");
 
   const lines = [
-    `⚠️ <b>NÍZKÝ STAV SKLADU</b>`,
+    `⚠️ <b>NÍZKÝ STAV SKLADU / МАЛО НА СКЛАДЕ</b>`,
     ``,
     itemLines,
   ].join("\n");
@@ -242,16 +243,46 @@ export async function notifyLowStock(items: { productName: string; variant: stri
   await sendTelegramMessage(lines);
 }
 
-/** Map color code to emoji + name */
+/**
+ * Alert about negative review (rating <= 3).
+ */
+export async function notifyNegativeReview(data: {
+  authorName: string;
+  rating: number;
+  source: string;
+  text: string;
+  sourceUrl?: string | null;
+}): Promise<void> {
+  const sourceLabel: Record<string, string> = { GOOGLE: "Google", INSTAGRAM: "Instagram", MANUAL: "Web" };
+  const stars = "★".repeat(data.rating) + "☆".repeat(5 - data.rating);
+  const preview = data.text.length > 200 ? data.text.slice(0, 200) + "…" : data.text;
+
+  const lines = [
+    `🚨 <b>NEGATIVNÍ RECENZE / НЕГАТИВНЫЙ ОТЗЫВ</b>`,
+    `Vyžaduje okamžitou reakci! / Требуется немедленная реакция!`,
+    ``,
+    `${esc(data.authorName)} — ${sourceLabel[data.source] ?? data.source}`,
+    `${stars} (${data.rating}/5)`,
+    ``,
+    `${esc(preview)}`,
+    data.sourceUrl ? `\n🔗 ${data.sourceUrl}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  await sendTelegramMessage(lines);
+}
+
+/** Map color code to emoji + name (CZ/RU) */
 function formatColor(color: string): string {
-  const map: Record<string, [string, string]> = {
-    "1": ["⚪", "Platinová"], "2": ["🟡", "Světlá blond"], "3": ["🟡", "Zlatá blond"],
-    "4": ["🟠", "Medová"], "5": ["🟠", "Karamelová"], "6": ["🟤", "Světle hnědá"],
-    "7": ["🟤", "Středně hnědá"], "8": ["🟤", "Tmavě hnědá"],
-    "9": ["⚫", "Tmavá"], "10": ["⚫", "Černá"],
+  const map: Record<string, [string, string, string]> = {
+    "1": ["⚪", "Platinová", "Платина"], "2": ["🟡", "Světlá blond", "Светлый блонд"], "3": ["🟡", "Zlatá blond", "Золотой блонд"],
+    "4": ["🟠", "Medová", "Медовый"], "5": ["🟠", "Karamelová", "Карамель"], "6": ["🟤", "Světle hnědá", "Светло-коричн."],
+    "7": ["🟤", "Středně hnědá", "Средне-коричн."], "8": ["🟤", "Tmavě hnědá", "Тёмно-коричн."],
+    "9": ["⚫", "Tmavá", "Тёмный"], "10": ["⚫", "Černá", "Чёрный"],
   };
   const entry = map[color];
-  return entry ? `${entry[0]} ${entry[1]} (${color})` : `🔘 Odstín ${color}`;
+  return entry ? `${entry[0]} ${entry[1]}/${entry[2]} (${color})` : `🔘 Odstín/Оттенок ${color}`;
 }
 
 /** Map origin to flag emoji */

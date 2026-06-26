@@ -14,7 +14,7 @@ export function PublicFooter() {
           <div className="md:col-span-1">
             <span className="text-2xl font-bold text-white tracking-tight">Hairland</span>
             <p className="mt-3 text-sm text-nude-200/80 leading-relaxed">
-              Prémiové vlasy k prodloužení pro profesionální salony. Přímý import, osobní přístup.
+              {t("footer.brandDesc")}
             </p>
             <div className="flex gap-2 mt-4 text-2xl">
               <span>🇨🇿</span><span>🇺🇦</span><span>🇷🇺</span>
@@ -24,7 +24,7 @@ export function PublicFooter() {
           {/* Navigation */}
           <div>
             <h3 className="text-xs font-semibold text-gold uppercase tracking-wider mb-4">
-              Navigace
+              {t("footer.navTitle")}
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
@@ -39,7 +39,7 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link href="/kadernice" className="hover:text-white transition-colors">
-                  Kadeřnice
+                  {t("footer.hairdressers")}
                 </Link>
               </li>
               <li>
@@ -58,12 +58,12 @@ export function PublicFooter() {
           {/* Legal */}
           <div>
             <h3 className="text-xs font-semibold text-gold uppercase tracking-wider mb-4">
-              Informace
+              {t("footer.infoTitle")}
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
                 <Link href="/obchodni-podminky" className="hover:text-white transition-colors">
-                  Obchodní podmínky
+                  {t("footer.termsLink")}
                 </Link>
               </li>
               <li>
@@ -73,7 +73,7 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link href="/registrace" className="hover:text-white transition-colors">
-                  Registrace salonu
+                  {t("footer.salonRegLink")}
                 </Link>
               </li>
               <li>
@@ -98,7 +98,7 @@ export function PublicFooter() {
               </li>
               <li className="flex items-center gap-2">
                 <span>📍</span>
-                <span>Praha, Česká republika</span>
+                <span>{t("footer.locationCity")}</span>
               </li>
               <li className="flex items-center gap-2">
                 <span>🏢</span>
@@ -113,7 +113,7 @@ export function PublicFooter() {
             {t("footer.copyright")}
           </p>
           <p className="text-xs text-nude-200/40">
-            Prémiové vlasy k prodloužení — clip-in, tape-in, micro ring, keratin
+            {t("footer.tagline")}
           </p>
         </div>
       </div>

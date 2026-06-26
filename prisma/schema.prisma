@@ -132,6 +132,7 @@ model Product {
 
   variants       Variant[]
   sampleRequests SampleRequest[]
+  reviews        Review[]
 
   @@index([category])
   @@index([processingType])
@@ -1231,7 +1232,13 @@ model Review {
   salonName     String?
 
   rating        Int          @default(5)
+  ratingQuality       Int?
+  ratingCommunication Int?
+  ratingSpeed         Int?
   text          String
+
+  productId     String?
+  product       Product?     @relation(fields: [productId], references: [id])
 
   source        ReviewSource @default(MANUAL)
   sourceUrl     String?
@@ -1249,6 +1256,7 @@ model Review {
 
   @@index([active, featured])
   @@index([source])
+  @@index([productId, active])
   @@map("reviews")
 }
 

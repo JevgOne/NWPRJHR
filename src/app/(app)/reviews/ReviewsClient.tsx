@@ -12,6 +12,9 @@ interface Review {
   authorCity: string | null;
   salonName: string | null;
   rating: number;
+  ratingQuality: number | null;
+  ratingCommunication: number | null;
+  ratingSpeed: number | null;
   text: string;
   source: "MANUAL" | "GOOGLE" | "INSTAGRAM";
   sourceUrl: string | null;
@@ -19,6 +22,31 @@ interface Review {
   featured: boolean;
   active: boolean;
   createdAt: string;
+}
+
+const RATING_EMOJIS = ["😕", "😐", "🙂", "😊", "😍"] as const;
+
+function EmojiRatingPicker({ label, value, onChange }: { label: string; value: number | null; onChange: (v: number | null) => void }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <div className="flex items-center gap-1">
+        {RATING_EMOJIS.map((emoji, i) => {
+          const val = i + 1;
+          return (
+            <button
+              key={val}
+              type="button"
+              onClick={() => onChange(value === val ? null : val)}
+              className={`text-xl w-8 h-8 rounded-lg transition-all ${value === val ? "bg-blush-100 scale-110" : "opacity-40 hover:opacity-70"}`}
+            >
+              {emoji}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 const SOURCE_LABELS = {
@@ -46,6 +74,9 @@ export function ReviewsClient() {
     authorCity: string;
     salonName: string;
     rating: number;
+    ratingQuality: number | null;
+    ratingCommunication: number | null;
+    ratingSpeed: number | null;
     text: string;
     source: "MANUAL" | "GOOGLE" | "INSTAGRAM";
     sourceUrl: string;
@@ -60,6 +91,9 @@ export function ReviewsClient() {
     authorCity: "",
     salonName: "",
     rating: 5,
+    ratingQuality: null,
+    ratingCommunication: null,
+    ratingSpeed: null,
     text: "",
     source: "MANUAL",
     sourceUrl: "",
@@ -87,6 +121,9 @@ export function ReviewsClient() {
       authorCity: r.authorCity ?? "",
       salonName: r.salonName ?? "",
       rating: r.rating,
+      ratingQuality: r.ratingQuality,
+      ratingCommunication: r.ratingCommunication,
+      ratingSpeed: r.ratingSpeed,
       text: r.text,
       source: r.source,
       sourceUrl: r.sourceUrl ?? "",
@@ -224,6 +261,24 @@ export function ReviewsClient() {
               </div>
             </div>
 
+            <div className="grid grid-cols-3 gap-3">
+              <EmojiRatingPicker
+                label="✨ Kvalita vlasů"
+                value={form.ratingQuality}
+                onChange={(v) => setField("ratingQuality", v)}
+              />
+              <EmojiRatingPicker
+                label="💬 Komunikace"
+                value={form.ratingCommunication}
+                onChange={(v) => setField("ratingCommunication", v)}
+              />
+              <EmojiRatingPicker
+                label="📦 Rychlost dodání"
+                value={form.ratingSpeed}
+                onChange={(v) => setField("ratingSpeed", v)}
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Text recenze *</label>
               <textarea
@@ -327,6 +382,13 @@ export function ReviewsClient() {
                   <div className="text-yellow-400 text-sm mt-0.5">
                     {"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}
                   </div>
+                  {(r.ratingQuality || r.ratingCommunication || r.ratingSpeed) && (
+                    <div className="flex gap-3 mt-1 text-xs text-gray-500">
+                      {r.ratingQuality && <span>✨ {RATING_EMOJIS[r.ratingQuality - 1]}</span>}
+                      {r.ratingCommunication && <span>💬 {RATING_EMOJIS[r.ratingCommunication - 1]}</span>}
+                      {r.ratingSpeed && <span>📦 {RATING_EMOJIS[r.ratingSpeed - 1]}</span>}
+                    </div>
+                  )}
                   <p className="text-sm text-gray-700 mt-1 line-clamp-2">{r.text}</p>
                   {r.sourceUrl && (
                     <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline mt-1 inline-block">

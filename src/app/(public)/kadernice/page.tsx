@@ -18,9 +18,9 @@ export default async function StylistsPublicPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-ink">Naše kadeřnice</h1>
+        <h1 className="text-2xl font-bold text-ink">Spolupracující kadeřnice</h1>
         <p className="text-muted text-sm mt-1">
-          Profesionální specialistky na prodlužování vlasů
+          Ověřené kadeřnice, které s námi spolupracují a znají naše vlasy
         </p>
       </div>
 

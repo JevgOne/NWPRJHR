@@ -16,18 +16,14 @@ export default async function ProductsPage() {
         <div className="flex gap-4 items-start">
           <div className="text-3xl flex-shrink-0">✂️</div>
           <div>
-            <h2 className="font-semibold text-rose-deep mb-1">Vlasy z celého světa — vždy s přesným původem</h2>
-            <p className="text-sm text-espresso mb-2">
-              Vlasy skladem si vezmete rovnou s sebou. Chcete clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.
-            </p>
-            <p className="text-sm text-rose-deep">
-              🤝 Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.
-            </p>
+            <h2 className="font-semibold text-rose-deep mb-1">{t("offer.bannerTitle")}</h2>
+            <p className="text-sm text-espresso mb-2" dangerouslySetInnerHTML={{ __html: t.raw("offer.bannerText") as string }} />
+            <p className="text-sm text-rose-deep" dangerouslySetInnerHTML={{ __html: t.raw("offer.bannerCta") as string }} />
           </div>
         </div>
       </div>
 
-      <Suspense fallback={<p className="text-muted">Načítání...</p>}>
+      <Suspense fallback={<p className="text-muted">{t("offer.loadingProducts")}</p>}>
         <ProductsShowcase />
       </Suspense>
     </div>

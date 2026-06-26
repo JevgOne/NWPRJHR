@@ -28,7 +28,7 @@ interface PublicProduct {
 }
 
 export function ProductsShowcase() {
-  const t = useTranslations("public.products");
+  const t = useTranslations("public");
   const tCategory = useTranslations("category");
   const tCommon = useTranslations("common");
   const router = useRouter();
@@ -46,6 +46,8 @@ export function ProductsShowcase() {
   const activeSearch = searchParams.get("search") ?? "";
 
   const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
+
+  const colorName = (nameKey: string) => t(`colors.${nameKey}`);
 
   // Extract all available filter options from all products (unfiltered)
   const filterOptions = useMemo(() => {
@@ -157,7 +159,7 @@ export function ProductsShowcase() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Hledat vlasy — název, původ, barva..."
+            placeholder={t("offer.searchPlaceholder")}
             className="w-full pl-10 pr-20 py-2.5 border border-line rounded-xl text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           />
           {searchInput && (
@@ -203,7 +205,7 @@ export function ProductsShowcase() {
         {/* Origins */}
         {filterOptions.origins.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Původ</div>
+            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.originLabel")}</div>
             <div className="flex flex-wrap gap-1.5">
               {filterOptions.origins.map(([origin, count]) => (
                 <button
@@ -226,7 +228,7 @@ export function ProductsShowcase() {
         {/* Lengths */}
         {filterOptions.lengths.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Délka</div>
+            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.lengthLabel")}</div>
             <div className="flex flex-wrap gap-1.5">
               {filterOptions.lengths.map(([len, count]) => (
                 <button
@@ -249,10 +251,10 @@ export function ProductsShowcase() {
         {/* Colors */}
         {filterOptions.colors.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Barva</div>
+            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.colorLabel")}</div>
             <div className="flex flex-wrap gap-1.5">
               {filterOptions.colors.map(([code, count]) => {
-                const { hex, name } = getHairColor(code);
+                const { hex, nameKey } = getHairColor(code);
                 const isActive = activeColor === code;
                 return (
                   <button
@@ -263,13 +265,13 @@ export function ProductsShowcase() {
                         ? "border-rose bg-blush-100 text-rose-deep ring-1 ring-blush-300"
                         : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
                     }`}
-                    title={name}
+                    title={colorName(nameKey)}
                   >
                     <span
                       className="w-5 h-5 rounded-full border border-line flex-shrink-0"
                       style={{ backgroundColor: hex }}
                     />
-                    {name}
+                    {colorName(nameKey)}
                     <span className="text-muted">{count}</span>
                   </button>
                 );
@@ -282,7 +284,7 @@ export function ProductsShowcase() {
       {/* Active filters summary */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          <span className="text-xs text-muted font-medium">Aktivní filtry:</span>
+          <span className="text-xs text-muted font-medium">{t("offer.activeFilters")}</span>
           {activeSearch && (
             <button
               onClick={() => { setSearchInput(""); setFilter("search", ""); }}
@@ -310,7 +312,7 @@ export function ProductsShowcase() {
                 className="w-3 h-3 rounded-full border border-line"
                 style={{ backgroundColor: getHairColor(activeColor).hex }}
               />
-              {activeColor} — {getHairColor(activeColor).name}
+              {activeColor} — {colorName(getHairColor(activeColor).nameKey)}
               <span className="ml-0.5">&times;</span>
             </button>
           )}
@@ -327,7 +329,7 @@ export function ProductsShowcase() {
             onClick={clearFilters}
             className="text-xs text-muted hover:text-muted underline ml-1"
           >
-            Zrušit vše
+            {t("offer.clearAll")}
           </button>
         </div>
       )}
@@ -335,7 +337,7 @@ export function ProductsShowcase() {
       {/* Results count */}
       {!loading && (
         <div className="text-xs text-muted mb-3">
-          {products.length === 1 ? "1 produkt" : `${products.length} produktů`}
+          {t("offer.productCount", { count: products.length })}
         </div>
       )}
 
@@ -343,13 +345,13 @@ export function ProductsShowcase() {
         <p className="text-muted">{tCommon("loading")}</p>
       ) : products.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted mb-3">{t("noProducts")}</p>
+          <p className="text-muted mb-3">{t("products.noProducts")}</p>
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
               className="text-sm text-rose hover:underline"
             >
-              Zrušit filtry
+              {t("offer.clearFilters")}
             </button>
           )}
         </div>
@@ -434,7 +436,7 @@ export function ProductsShowcase() {
                   <div className="mt-2.5">
                     <div className="flex flex-wrap gap-1.5">
                       {pColors.map((code) => {
-                        const { hex, name } = getHairColor(code);
+                        const { hex, nameKey } = getHairColor(code);
                         const isActive = activeColor === code;
                         return (
                           <button
@@ -446,7 +448,7 @@ export function ProductsShowcase() {
                                 : "border-line hover:border-muted hover:scale-105"
                             }`}
                             style={{ backgroundColor: hex }}
-                            title={`${code} — ${name}`}
+                            title={`${code} — ${colorName(nameKey)}`}
                           />
                         );
                       })}

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { getTranslations } from "next-intl/server";
 
 async function getReviews() {
   try {
@@ -10,6 +11,19 @@ async function getReviews() {
   } catch {
     return [];
   }
+}
+
+const RATING_EMOJIS = ["😕", "😐", "🙂", "😊", "😍"] as const;
+
+function SubRatings({ quality, communication, speed, labels }: { quality: number | null; communication: number | null; speed: number | null; labels: { quality: string; communication: string; speed: string } }) {
+  if (!quality && !communication && !speed) return null;
+  return (
+    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-xs text-muted">
+      {quality && <span>{labels.quality} {RATING_EMOJIS[quality - 1]}</span>}
+      {communication && <span>{labels.communication} {RATING_EMOJIS[communication - 1]}</span>}
+      {speed && <span>{labels.speed} {RATING_EMOJIS[speed - 1]}</span>}
+    </div>
+  );
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -62,6 +76,7 @@ function SourceIcon({ source }: { source: string }) {
 }
 
 export async function ReviewsSection() {
+  const t = await getTranslations("public");
   const reviews = await getReviews();
 
   if (reviews.length === 0) return null;
@@ -81,13 +96,13 @@ export async function ReviewsSection() {
         {/* Header with aggregate rating */}
         <div className="text-center mb-10">
           <h2 className="text-2xl font-bold text-ink mb-2">
-            Co říkají naše zákaznice
+            {t("reviews.title")}
           </h2>
           <div className="flex items-center justify-center gap-2">
             <Stars rating={Math.round(Number(avgRating))} />
             <span className="text-lg font-bold text-ink">{avgRating}</span>
             <span className="text-sm text-muted">
-              ({reviews.length} {reviews.length === 1 ? "recenze" : reviews.length < 5 ? "recenze" : "recenzí"})
+              ({t("reviews.reviewCount", { count: reviews.length })})
             </span>
           </div>
         </div>
@@ -129,6 +144,16 @@ export async function ReviewsSection() {
 
               {/* Rating */}
               <Stars rating={review.rating} />
+              <SubRatings
+                quality={review.ratingQuality}
+                communication={review.ratingCommunication}
+                speed={review.ratingSpeed}
+                labels={{
+                  quality: t("reviews.qualityLabel"),
+                  communication: t("reviews.communicationLabel"),
+                  speed: t("reviews.speedLabel"),
+                }}
+              />
 
               {/* Text */}
               <p className="text-sm text-espresso mt-2 leading-relaxed line-clamp-4">
@@ -143,9 +168,9 @@ export async function ReviewsSection() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-xs text-rose hover:underline mt-2"
                 >
-                  {review.source === "GOOGLE" && "Zobrazit na Google"}
-                  {review.source === "INSTAGRAM" && "Zobrazit na Instagramu"}
-                  {review.source === "MANUAL" && "Ověřený nákup"}
+                  {review.source === "GOOGLE" && t("reviews.viewOnGoogle")}
+                  {review.source === "INSTAGRAM" && t("reviews.viewOnInstagram")}
+                  {review.source === "MANUAL" && t("reviews.verifiedPurchase")}
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
@@ -169,7 +194,7 @@ export async function ReviewsSection() {
                 <span className="font-bold text-sm text-ink">{avgRating}</span>
                 <Stars rating={Math.round(Number(avgRating))} />
               </div>
-              <div className="text-[10px] text-muted">Google recenze</div>
+              <div className="text-[10px] text-muted">{t("reviews.googleReviews")}</div>
             </div>
           </div>
 
@@ -195,7 +220,7 @@ export async function ReviewsSection() {
             </svg>
             <div>
               <div className="font-semibold text-sm text-ink">@hairland.cz</div>
-              <div className="text-[10px] text-muted">Sledujte na Instagramu</div>
+              <div className="text-[10px] text-muted">{t("reviews.followOnInstagram")}</div>
             </div>
           </a>
         </div>

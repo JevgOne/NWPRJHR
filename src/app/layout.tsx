@@ -13,7 +13,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "Hairland",
-  description: "Interní systém pro velkoobchod s vlasy k prodloužení",
+  description: "Hairland — prodej prémiových vlasů. Přímý import, osobní přístup, trojjazyčná podpora.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

@@ -1,4 +1,7 @@
 import { prisma } from "@/lib/db";
+import { WriteReviewForm } from "./WriteReviewForm";
+
+const RATING_EMOJIS = ["👎", "😕", "👌", "🔥", "💎"] as const;
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -13,6 +16,24 @@ function Stars({ rating }: { rating: number }) {
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
+    </div>
+  );
+}
+
+function RatingBar({ label, emoji, avg, count }: { label: string; emoji: string; avg: number; count: number }) {
+  if (count === 0) return null;
+  const pct = Math.round((avg / 5) * 100);
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xs text-muted w-28 flex-shrink-0">{emoji} {label}</span>
+      <div className="flex-1 h-2 bg-nude-100 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-yellow-400 rounded-full transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className="text-xs font-semibold text-ink w-10 text-right">{pct}%</span>
+      <span className="text-sm">{RATING_EMOJIS[Math.round(avg) - 1] ?? "🙂"}</span>
     </div>
   );
 }
@@ -49,57 +70,126 @@ function SourceIcon({ source }: { source: string }) {
   return null;
 }
 
-export async function ProductReviews() {
-  const reviews = await prisma.review.findMany({
-    where: { active: true },
-    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-    take: 4,
-  });
+export async function ProductReviews({ productId }: { productId: string }) {
+  // Fetch product-specific reviews + global reviews as fallback
+  const [productReviews, globalReviews] = await Promise.all([
+    prisma.review.findMany({
+      where: { active: true, productId },
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: 10,
+    }),
+    prisma.review.findMany({
+      where: { active: true, productId: null },
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: 4,
+    }),
+  ]);
 
-  if (reviews.length === 0) return null;
+  const reviews = productReviews.length > 0
+    ? productReviews
+    : globalReviews;
+
+  // Aggregate calculations
+  const allForStats = [...productReviews, ...globalReviews];
+  const totalCount = allForStats.length;
+
+  const avgRating = totalCount > 0
+    ? allForStats.reduce((s, r) => s + r.rating, 0) / totalCount
+    : 0;
+
+  const qualityRatings = allForStats.filter((r) => r.ratingQuality != null);
+  const commRatings = allForStats.filter((r) => r.ratingCommunication != null);
+  const speedRatings = allForStats.filter((r) => r.ratingSpeed != null);
+
+  const avgQuality = qualityRatings.length > 0
+    ? qualityRatings.reduce((s, r) => s + r.ratingQuality!, 0) / qualityRatings.length
+    : 0;
+  const avgComm = commRatings.length > 0
+    ? commRatings.reduce((s, r) => s + r.ratingCommunication!, 0) / commRatings.length
+    : 0;
+  const avgSpeed = speedRatings.length > 0
+    ? speedRatings.reduce((s, r) => s + r.ratingSpeed!, 0) / speedRatings.length
+    : 0;
 
   return (
     <div className="mt-10 border-t border-line pt-8">
-      <h2 className="text-lg font-bold text-ink mb-4">
-        Co říkají naše zákaznice
+      <h2 className="text-lg font-bold text-ink mb-5">
+        Hodnocení zákazníků
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            className="bg-nude-50 rounded-xl p-4 border border-line"
-          >
-            <div className="flex items-center gap-2.5 mb-2">
-              {review.authorPhoto ? (
-                <img
-                  src={review.authorPhoto}
-                  alt={review.authorName}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-blush-100 flex items-center justify-center text-rose font-bold text-xs">
-                  {review.authorName.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-sm text-ink truncate">
-                    {review.authorName}
-                  </span>
-                  <SourceIcon source={review.source} />
-                </div>
-                <div className="text-xs text-muted">
-                  {[review.salonName, review.authorCity].filter(Boolean).join(" • ")}
-                </div>
+
+      {/* Aggregate rating overview */}
+      {totalCount > 0 && (
+        <div className="bg-nude-50 rounded-2xl p-5 mb-6">
+          <div className="flex flex-col sm:flex-row gap-6">
+            {/* Left: big number */}
+            <div className="text-center sm:text-left flex-shrink-0">
+              <div className="text-4xl font-bold text-ink">{avgRating.toFixed(1)}</div>
+              <Stars rating={Math.round(avgRating)} />
+              <div className="text-xs text-muted mt-1">
+                {totalCount} {totalCount === 1 ? "recenze" : totalCount < 5 ? "recenze" : "recenzí"}
               </div>
             </div>
-            <Stars rating={review.rating} />
-            <p className="text-sm text-espresso mt-1.5 leading-relaxed line-clamp-3">
-              {review.text}
-            </p>
+
+            {/* Right: category bars */}
+            <div className="flex-1 space-y-2">
+              <RatingBar label="Kvalita vlasů" emoji="✨" avg={avgQuality} count={qualityRatings.length} />
+              <RatingBar label="Komunikace" emoji="💬" avg={avgComm} count={commRatings.length} />
+              <RatingBar label="Rychlost dodání" emoji="📦" avg={avgSpeed} count={speedRatings.length} />
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Review cards */}
+      {reviews.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {reviews.map((review) => (
+            <div
+              key={review.id}
+              className="bg-white rounded-xl p-4 border border-line"
+            >
+              <div className="flex items-center gap-2.5 mb-2">
+                {review.authorPhoto ? (
+                  <img
+                    src={review.authorPhoto}
+                    alt={review.authorName}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-blush-100 flex items-center justify-center text-rose font-bold text-xs">
+                    {review.authorName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-semibold text-sm text-ink truncate">
+                      {review.authorName}
+                    </span>
+                    <SourceIcon source={review.source} />
+                  </div>
+                  <div className="text-xs text-muted">
+                    {[review.salonName, review.authorCity].filter(Boolean).join(" • ")}
+                  </div>
+                </div>
+              </div>
+              <Stars rating={review.rating} />
+              {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-xs text-muted">
+                  {review.ratingQuality && <span>✨ {RATING_EMOJIS[review.ratingQuality - 1]}</span>}
+                  {review.ratingCommunication && <span>💬 {RATING_EMOJIS[review.ratingCommunication - 1]}</span>}
+                  {review.ratingSpeed && <span>📦 {RATING_EMOJIS[review.ratingSpeed - 1]}</span>}
+                </div>
+              )}
+              <p className="text-sm text-espresso mt-1.5 leading-relaxed line-clamp-3">
+                {review.text}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Write review form */}
+      <WriteReviewForm productId={productId} />
     </div>
   );
 }

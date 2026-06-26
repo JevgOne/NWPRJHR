@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { notifyNegativeReview } from "@/lib/telegram";
 import { z } from "zod";
 
 const reviewSchema = z.object({
@@ -9,6 +10,9 @@ const reviewSchema = z.object({
   authorCity: z.string().max(100).optional().default(""),
   salonName: z.string().max(200).optional().default(""),
   rating: z.number().int().min(1).max(5).default(5),
+  ratingQuality: z.number().int().min(1).max(5).optional(),
+  ratingCommunication: z.number().int().min(1).max(5).optional(),
+  ratingSpeed: z.number().int().min(1).max(5).optional(),
   text: z.string().min(1).max(5000),
   source: z.enum(["MANUAL", "GOOGLE", "INSTAGRAM"]).default("MANUAL"),
   sourceUrl: z.string().max(500).optional().default(""),
@@ -64,6 +68,9 @@ export async function POST(request: NextRequest) {
       authorCity: data.authorCity || null,
       salonName: data.salonName || null,
       rating: data.rating,
+      ratingQuality: data.ratingQuality ?? null,
+      ratingCommunication: data.ratingCommunication ?? null,
+      ratingSpeed: data.ratingSpeed ?? null,
       text: data.text,
       source: data.source,
       sourceUrl: data.sourceUrl || null,
@@ -72,6 +79,16 @@ export async function POST(request: NextRequest) {
       active: data.active,
     },
   });
+
+  if (data.rating <= 3) {
+    notifyNegativeReview({
+      authorName: data.authorName,
+      rating: data.rating,
+      source: data.source,
+      text: data.text,
+      sourceUrl: data.sourceUrl,
+    }).catch(() => {});
+  }
 
   return NextResponse.json(review);
 }
