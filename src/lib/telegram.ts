@@ -1,22 +1,15 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-const TEAM = ["Jevgen", "Inga", "Martin"];
-
 /**
- * Send a message with inline "claim" buttons to the configured Telegram chat.
- * Silently fails if credentials are missing.
+ * Send a message with a single "Beru" claim button.
+ * Whoever clicks it, their Telegram name is shown.
  */
-async function sendWithClaimButtons(text: string, type: string): Promise<void> {
+async function sendWithClaimButton(text: string, type: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
 
   const keyboard = {
-    inline_keyboard: [
-      TEAM.map((name) => ({
-        text: `Beru — ${name}`,
-        callback_data: `claim:${type}:${name}`,
-      })),
-    ],
+    inline_keyboard: [[{ text: "✋ Beru", callback_data: `claim:${type}` }]],
   };
 
   try {
@@ -40,13 +33,15 @@ async function sendWithClaimButtons(text: string, type: string): Promise<void> {
  */
 export async function handleTelegramCallback(callbackQuery: {
   id: string;
+  from?: { first_name?: string; last_name?: string };
   message?: { message_id: number; chat: { id: number }; text?: string };
   data?: string;
 }): Promise<void> {
   if (!BOT_TOKEN || !callbackQuery.data || !callbackQuery.message) return;
 
-  const name = callbackQuery.data.split(":")[2];
-  if (!name) return;
+  const firstName = callbackQuery.from?.first_name ?? "Někdo";
+  const lastName = callbackQuery.from?.last_name ?? "";
+  const name = lastName ? `${firstName} ${lastName}` : firstName;
 
   const chatId = callbackQuery.message.chat.id;
   const messageId = callbackQuery.message.message_id;
@@ -106,7 +101,7 @@ export async function notifyInquiry(data: {
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButtons(lines, "inquiry");
+  await sendWithClaimButton(lines, "inquiry");
 }
 
 /**
@@ -138,7 +133,7 @@ export async function notifyContact(data: {
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButtons(lines, "contact");
+  await sendWithClaimButton(lines, "contact");
 }
 
 /**
@@ -166,7 +161,7 @@ export async function notifySalonRegistration(data: {
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButtons(lines, "salon");
+  await sendWithClaimButton(lines, "salon");
 }
 
 /** Escape HTML special chars for Telegram */
