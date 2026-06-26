@@ -442,14 +442,18 @@ export function ProductsShowcase() {
                           <button
                             key={code}
                             onClick={() => toggleFilter("color", code)}
-                            className={`w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
+                            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] border transition-all cursor-pointer ${
                               isActive
-                                ? "border-rose ring-2 ring-blush-300 scale-110"
-                                : "border-line hover:border-muted hover:scale-105"
+                                ? "border-rose bg-blush-100 text-rose-deep"
+                                : "border-line bg-white text-muted hover:border-muted"
                             }`}
-                            style={{ backgroundColor: hex }}
-                            title={`${code} — ${colorName(nameKey)}`}
-                          />
+                          >
+                            <span
+                              className="w-3.5 h-3.5 rounded-full border border-line flex-shrink-0"
+                              style={{ backgroundColor: hex }}
+                            />
+                            {colorName(nameKey)}
+                          </button>
                         );
                       })}
                     </div>

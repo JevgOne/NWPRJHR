@@ -494,8 +494,8 @@
       "allStylists": "← Všechny kadeřnice"
     },
     "landing": {
-      "heroTitle": "Prémiové vlasy k prodloužení",
-      "heroSubtitle": "Vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. U každého produktu uvádíme přesný původ — vše oficiálně fakturováno.",
+      "heroTitle": "Prémiové vlasy na prodej i k prodloužení",
+      "heroSubtitle": "Prodáváme přírodní vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. Clip-in a tape-in připravíme na zakázku do 7 dnů.",
       "badgeInStock": "✅ Vlasy skladem — vezmete si hned",
       "badgeCustom": "✂️ Clip-in, tape-in, micro ring do 7 dnů",
       "badgeDelivery": "🚗 Dovoz po Praze zdarma",
@@ -521,7 +521,7 @@
       "colorBlack": "Černá",
       "colorPaletteAlt": "Přehled odstínů vlasů",
       "howItWorksTitle": "Jak to funguje",
-      "howItWorksSubtitle": "Prodáváme prémiové vlasy k prodloužení. Clip-in a tape-in připravíme na zakázku do 7 dnů.",
+      "howItWorksSubtitle": "Prodáváme prémiové vlasy. Clip-in a tape-in připravíme na zakázku do 7 dnů.",
       "step1Title": "Vyberte si vlasy",
       "step1Desc": "Přijďte se podívat, osahat a porovnat. Poradíme s barvou i délkou. Nejste si jistí? Přijedeme s ukázkami přímo za vámi — po Praze zdarma.",
       "step2Title": "Spojte nás s kadeřnicí",
@@ -584,7 +584,7 @@
       "deliveryCustom": "Clip-in/tape-in do 7 dnů",
       "deliveryInvoice": "Faktura",
       "notFound": "Produkt nenalezen",
-      "metaDesc": "{name} - {category} vlasy k prodloužení"
+      "metaDesc": "{name} - {category} prémiové vlasy na prodej"
     },
     "inquiry": {
       "addToInquiry": "Přidat do poptávky",
