@@ -85,7 +85,7 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
         <div className="text-xs text-muted mb-1.5">{t("inquiry.colorLabel")}</div>
         <div className="flex flex-wrap gap-2">
           {availableColors.map((code) => {
-            const { hex, nameKey } = getHairColor(code);
+            const { nameKey } = getHairColor(code);
             return (
               <button
                 key={code}
@@ -97,10 +97,9 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
                 }`}
                 title={colorName(nameKey)}
               >
-                <span
-                  className="w-4 h-4 rounded-full border border-line flex-shrink-0"
-                  style={{ backgroundColor: hex }}
-                />
+                <span className="w-4 h-4 rounded-full border border-line flex-shrink-0 overflow-hidden">
+                  <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
+                </span>
                 {code}
               </button>
             );
