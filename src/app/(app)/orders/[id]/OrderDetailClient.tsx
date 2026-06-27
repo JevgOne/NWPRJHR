@@ -93,7 +93,7 @@ export function OrderDetailClient({
             {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
           </div>
         </div>
-        <Link href="/orders">
+        <Link href={isStaff ? "/orders" : "/salon/orders"}>
           <Button variant="secondary" size="sm">
             {tCommon("back")}
           </Button>
@@ -105,7 +105,7 @@ export function OrderDetailClient({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-muted">
-              <th className="py-1 pr-2">-</th>
+              <th className="py-1 pr-2">{t("product")}</th>
               <th className="py-1 pr-2 text-right">{t("quantity")}</th>
               <th className="py-1 pr-2 text-right">{t("pricePerGram")}</th>
               <th className="py-1 text-right">{t("estimatedTotal")}</th>
@@ -231,8 +231,8 @@ export function OrderDetailClient({
         </Card>
       )}
 
-      {/* Sale link */}
-      {order.sale && (
+      {/* Sale link — only visible to staff */}
+      {isStaff && order.sale && (
         <Link
           href={`/sales/${order.sale.id}`}
           className="text-sm text-espresso hover:underline"

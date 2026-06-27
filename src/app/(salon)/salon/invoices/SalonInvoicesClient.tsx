@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { InvoiceStatusBadge } from "@/components/invoices/InvoiceStatusBadge";
@@ -46,7 +45,7 @@ export function SalonInvoicesClient() {
 
       {invoices.length === 0 ? (
         <Card>
-          <p className="text-muted text-center py-8">-</p>
+          <p className="text-muted text-center py-8">{t("noInvoicesYet")}</p>
         </Card>
       ) : (
         <div className="overflow-x-auto">
@@ -57,19 +56,15 @@ export function SalonInvoicesClient() {
                 <th className="py-2 pr-3">{tInvoice("issueDate")}</th>
                 <th className="py-2 pr-3">{tInvoice("dueDate")}</th>
                 <th className="py-2 pr-3 text-right">{tInvoice("total")}</th>
-                <th className="py-2 pr-3">-</th>
+                <th className="py-2 pr-3">{tInvoice("status")}</th>
+                <th className="py-2 pr-3"></th>
               </tr>
             </thead>
             <tbody>
               {invoices.map((inv) => (
                 <tr key={inv.id} className="border-b hover:bg-nude-50">
-                  <td className="py-2 pr-3">
-                    <Link
-                      href={`/salon/invoices/${inv.id}`}
-                      className="text-espresso hover:underline font-medium"
-                    >
-                      {inv.number}
-                    </Link>
+                  <td className="py-2 pr-3 font-medium">
+                    {inv.number}
                   </td>
                   <td className="py-2 pr-3">
                     {new Date(inv.issueDate).toLocaleDateString("cs-CZ")}
@@ -82,6 +77,16 @@ export function SalonInvoicesClient() {
                   </td>
                   <td className="py-2 pr-3">
                     <InvoiceStatusBadge status={inv.status} />
+                  </td>
+                  <td className="py-2 pr-3">
+                    <a
+                      href={`/api/invoices/${inv.id}/pdf`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-espresso hover:underline text-xs"
+                    >
+                      PDF
+                    </a>
                   </td>
                 </tr>
               ))}

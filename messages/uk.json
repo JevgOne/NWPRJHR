@@ -213,6 +213,7 @@
     "defective": "Бракований товар"
   },
   "salon": {
+    "name": "Ім'я",
     "salon": "Салон",
     "endCustomer": "Кінцевий клієнт",
     "retailPrice": "Роздрібна ціна",
@@ -912,7 +913,25 @@
     "welcomeBack": "Ласкаво просимо",
     "recentOrders": "Останні замовлення",
     "quickLinks": "Швидкі посилання",
-    "noInvoicesYet": "Поки немає рахунків"
+    "noInvoicesYet": "Поки немає рахунків",
+    "stylistProfile": "Профіль стиліста",
+    "bio": "Про мене",
+    "photoUrl": "URL фото",
+    "instagram": "Instagram",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "experience": "Досвід (роки)",
+    "languages": "Мови",
+    "specializations": "Спеціалізації",
+    "certifications": "Сертифікати",
+    "activeProfile": "Опублікувати на сайті",
+    "activeProfileHint": "Ваш профіль буде видимий на сторінці перукарів",
+    "saving": "Зберігаю...",
+    "saved": "Збережено",
+    "saveProfile": "Зберегти профіль",
+    "addTag": "Додати",
+    "newSpecialization": "Нова спеціалізація...",
+    "newCertification": "Новий сертифікат..."
   },
   "returnsMgmt": {
     "title": "Повернення",

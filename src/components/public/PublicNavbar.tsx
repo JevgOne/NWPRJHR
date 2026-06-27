@@ -11,6 +11,10 @@ import { setUserLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/config";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 
+interface NavSession {
+  user?: { name?: string; role?: string };
+}
+
 const LOCALES = [
   { code: "cs" as Locale, flag: "🇨🇿", label: "CZ" },
   { code: "uk" as Locale, flag: "🇺🇦", label: "UA" },
@@ -106,6 +110,23 @@ export function PublicNavbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount } = useInquiryCart();
+  const [session, setSession] = useState<NavSession | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.user) setSession(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const isLoggedIn = !!session?.user;
+  const isSalonOrHairdresser =
+    session?.user?.role === "SALON" || session?.user?.role === "HAIRDRESSER";
+  const isStaff =
+    session?.user?.role === "OWNER" || session?.user?.role === "EMPLOYEE";
+  const portalHref = isSalonOrHairdresser ? "/salon" : isStaff ? "/dashboard" : "/login";
 
   const mainLinks = [
     { href: "/", label: t("nav.home") },
@@ -204,12 +225,24 @@ export function PublicNavbar() {
               )}
             </Link>
             <LocaleSwitcher />
-            <Link
-              href="/login"
-              className="ml-2 px-4 py-2 text-sm font-medium text-white bg-rose rounded-lg hover:bg-rose-deep transition-colors"
-            >
-              {tAuth("loginButton")}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={portalHref}
+                className="ml-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-espresso bg-nude-100 rounded-lg hover:bg-nude-200 transition-colors"
+              >
+                <span>{session.user?.name ?? tAuth("loginButton")}</span>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="ml-2 px-4 py-2 text-sm font-medium text-white bg-rose rounded-lg hover:bg-rose-deep transition-colors"
+              >
+                {tAuth("loginButton")}
+              </Link>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -250,13 +283,23 @@ export function PublicNavbar() {
             <div className="flex items-center gap-2 px-3 py-2">
               <MobileLocaleSwitcher />
             </div>
-            <Link
-              href="/login"
-              className="block mx-3 px-4 py-2 text-sm font-medium text-center text-white bg-rose rounded-lg hover:bg-rose-deep"
-              onClick={() => setMenuOpen(false)}
-            >
-              {tAuth("loginButton")}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={portalHref}
+                className="block mx-3 px-4 py-2 text-sm font-medium text-center text-espresso bg-nude-100 rounded-lg hover:bg-nude-200"
+                onClick={() => setMenuOpen(false)}
+              >
+                {session.user?.name ?? tAuth("loginButton")}
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="block mx-3 px-4 py-2 text-sm font-medium text-center text-white bg-rose rounded-lg hover:bg-rose-deep"
+                onClick={() => setMenuOpen(false)}
+              >
+                {tAuth("loginButton")}
+              </Link>
+            )}
           </div>
         )}
       </div>

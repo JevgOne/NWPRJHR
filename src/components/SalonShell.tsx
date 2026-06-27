@@ -18,6 +18,7 @@ export function SalonShell({ session, children }: SalonShellProps) {
   const pathname = usePathname();
 
   const navItems = [
+    { href: "/salon", label: t("dashboard") },
     { href: "/salon/catalog", label: t("catalog") },
     { href: "/salon/orders", label: t("myOrders") },
     { href: "/salon/invoices", label: t("myInvoices") },
@@ -30,7 +31,7 @@ export function SalonShell({ session, children }: SalonShellProps) {
       <nav className="bg-white border-b border-line px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/salon/catalog" className="text-lg font-bold text-espresso">
+            <Link href="/salon" className="text-lg font-bold text-espresso">
               Hairland
             </Link>
             <div className="flex gap-1">
@@ -39,9 +40,9 @@ export function SalonShell({ session, children }: SalonShellProps) {
                   key={item.href}
                   href={item.href}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    pathname.startsWith(item.href)
+                    (item.href === "/salon" ? pathname === "/salon" : pathname.startsWith(item.href))
                       ? "bg-rose/10 text-espresso"
-                      : "text-gray-600 hover:bg-nude-100"
+                      : "text-muted hover:bg-nude-100"
                   }`}
                 >
                   {item.label}

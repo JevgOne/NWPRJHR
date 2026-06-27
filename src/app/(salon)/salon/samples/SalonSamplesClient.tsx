@@ -16,7 +16,7 @@ const statusColors: Record<string, string> = {
   REQUESTED: "bg-nude-100 text-espresso",
   APPROVED: "bg-rose/15 text-espresso",
   SENT: "bg-green-100 text-green-700",
-  RETURNED: "bg-nude-100 text-gray-600",
+  RETURNED: "bg-nude-100 text-muted",
   WRITTEN_OFF: "bg-red-100 text-red-700",
 };
 
@@ -54,7 +54,7 @@ export function SalonSamplesClient({ salonId }: { salonId: string }) {
               <tr className="border-b text-left text-muted">
                 <th className="py-2 pr-3">{tSample("title")}</th>
                 <th className="py-2 pr-3 text-right">{tSample("gramsLent")}</th>
-                <th className="py-2 pr-3">-</th>
+                <th className="py-2 pr-3">{tSample("status")}</th>
               </tr>
             </thead>
             <tbody>

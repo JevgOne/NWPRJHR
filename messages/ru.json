@@ -213,6 +213,7 @@
     "defective": "Бракованный товар"
   },
   "salon": {
+    "name": "Имя",
     "salon": "Салон",
     "endCustomer": "Конечный клиент",
     "retailPrice": "Розничная цена",
@@ -912,7 +913,25 @@
     "welcomeBack": "Добро пожаловать",
     "recentOrders": "Последние заказы",
     "quickLinks": "Быстрые ссылки",
-    "noInvoicesYet": "Пока нет счетов"
+    "noInvoicesYet": "Пока нет счетов",
+    "stylistProfile": "Профиль стилиста",
+    "bio": "О себе",
+    "photoUrl": "URL фото",
+    "instagram": "Instagram",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "experience": "Опыт (лет)",
+    "languages": "Языки",
+    "specializations": "Специализации",
+    "certifications": "Сертификаты",
+    "activeProfile": "Опубликовать на сайте",
+    "activeProfileHint": "Ваш профиль будет виден на странице парикмахеров",
+    "saving": "Сохраняю...",
+    "saved": "Сохранено",
+    "saveProfile": "Сохранить профиль",
+    "addTag": "Добавить",
+    "newSpecialization": "Новая специализация...",
+    "newCertification": "Новый сертификат..."
   },
   "returnsMgmt": {
     "title": "Возвраты",

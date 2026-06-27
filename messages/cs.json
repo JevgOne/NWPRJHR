@@ -213,6 +213,7 @@
     "defective": "Vadné zboží"
   },
   "salon": {
+    "name": "Jméno",
     "salon": "Salon",
     "endCustomer": "Koncový zákazník",
     "retailPrice": "Maloobchodní cena",
@@ -912,7 +913,25 @@
     "welcomeBack": "Vítejte zpět",
     "recentOrders": "Poslední objednávky",
     "quickLinks": "Rychlé odkazy",
-    "noInvoicesYet": "Zatím žádné faktury"
+    "noInvoicesYet": "Zatím žádné faktury",
+    "stylistProfile": "Profil kadeřnice",
+    "bio": "O mně",
+    "photoUrl": "URL fotky",
+    "instagram": "Instagram",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "experience": "Zkušenosti (roky)",
+    "languages": "Jazyky",
+    "specializations": "Specializace",
+    "certifications": "Certifikáty",
+    "activeProfile": "Zveřejnit na webu",
+    "activeProfileHint": "Váš profil bude viditelný na stránce kadeřnic",
+    "saving": "Ukládám...",
+    "saved": "Uloženo",
+    "saveProfile": "Uložit profil",
+    "addTag": "Přidat",
+    "newSpecialization": "Nová specializace...",
+    "newCertification": "Nový certifikát..."
   },
   "returnsMgmt": {
     "title": "Vratky",

@@ -6,5 +6,5 @@ export default async function SalonProfilePage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  return <ProfileClient />;
+  return <ProfileClient role={session.user.role} />;
 }
