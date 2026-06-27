@@ -12,6 +12,7 @@ import { TextureSwatch } from "@/components/TextureSwatch";
 interface PublicVariant {
   lengthCm: number;
   color: string;
+  retailPricePerGram: number;
 }
 
 interface PublicProduct {
@@ -409,10 +410,12 @@ export function ProductsShowcase() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {products.map((p) => {
             const pLengths = productLengths(p);
             const pColors = productColors(p);
+            const minPrice = Math.min(...p.variants.map((v) => v.retailPricePerGram));
+            const pricePerGram = minPrice > 0 ? (minPrice / 100).toFixed(0) : null;
 
             return (
               <div
@@ -421,7 +424,7 @@ export function ProductsShowcase() {
               >
                 {/* Product image */}
                 <Link href={`/offer/${p.id}`}>
-                  <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center">
+                  <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center relative">
                     {p.photos.length > 0 ? (
                       <img
                         src={p.photos[0]}
@@ -429,26 +432,27 @@ export function ProductsShowcase() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <svg className="w-12 h-12 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-8 h-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     )}
-                  </div>
-                </Link>
-
-                <div className="p-4">
-                  {/* Category + Origin */}
-                  <div className="flex items-center gap-2 mb-2">
+                    {/* Category badge overlay */}
                     <button
-                      onClick={() => setFilter("category", p.category)}
-                      className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-blush-100 text-rose-deep hover:bg-blush-200 transition-colors cursor-pointer"
+                      onClick={(e) => { e.preventDefault(); setFilter("category", p.category); }}
+                      className="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blush-100/90 text-rose-deep backdrop-blur-sm hover:bg-blush-200/90 cursor-pointer"
                     >
                       {tCategory(p.category.toLowerCase())}
                     </button>
+                  </div>
+                </Link>
+
+                <div className="p-2.5">
+                  {/* Badges: origin, texture */}
+                  <div className="flex flex-wrap items-center gap-1 mb-1">
                     {p.origin && (
                       <button
                         onClick={() => toggleFilter("origin", p.origin!)}
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors cursor-pointer ${
+                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
                           activeOrigin === p.origin
                             ? "bg-emerald-200 text-emerald-800 ring-1 ring-emerald-400"
                             : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
@@ -460,13 +464,13 @@ export function ProductsShowcase() {
                     {p.texture && (
                       <button
                         onClick={() => toggleFilter("texture", p.texture!)}
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors cursor-pointer ${
+                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
                           activeTexture === p.texture
                             ? "bg-violet-200 text-violet-800 ring-1 ring-violet-400"
                             : "bg-violet-100 text-violet-700 hover:bg-violet-200"
                         }`}
                       >
-                        <TextureSwatch texture={p.texture} size={18} />
+                        <TextureSwatch texture={p.texture} size={14} />
                         {p.texture}
                       </button>
                     )}
@@ -474,56 +478,56 @@ export function ProductsShowcase() {
 
                   {/* Product name */}
                   <Link href={`/offer/${p.id}`}>
-                    <h3 className="font-semibold text-ink hover:text-rose transition-colors">
+                    <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1.5">
                       {localizedName(p)}
                     </h3>
                   </Link>
 
                   {/* Length badges */}
-                  <div className="mt-3">
-                    <div className="flex flex-wrap gap-1.5">
-                      {pLengths.map((len) => (
-                        <button
-                          key={len}
-                          onClick={() => toggleFilter("lengthCm", String(len))}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
-                            activeLength === String(len)
-                              ? "border-rose bg-blush-100 text-rose-deep ring-1 ring-blush-300"
-                              : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
-                          }`}
-                        >
-                          {len} cm
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex flex-wrap gap-0.5 mb-1.5">
+                    {pLengths.map((len) => (
+                      <button
+                        key={len}
+                        onClick={() => toggleFilter("lengthCm", String(len))}
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-medium border transition-colors cursor-pointer ${
+                          activeLength === String(len)
+                            ? "border-rose bg-blush-100 text-rose-deep ring-1 ring-blush-300"
+                            : "border-line bg-nude-50 text-espresso hover:bg-nude-100"
+                        }`}
+                      >
+                        {len} cm
+                      </button>
+                    ))}
                   </div>
 
-                  {/* Color swatches — hair photo circles */}
-                  <div className="mt-2.5">
-                    <div className="flex flex-wrap gap-1">
-                      {pColors.map((code) => {
-                        const { nameKey } = getHairColor(code);
-                        const isActive = activeColor === code;
-                        return (
-                          <button
-                            key={code}
-                            onClick={() => toggleFilter("color", code)}
-                            className={`group relative w-7 h-7 rounded-full border-2 overflow-hidden transition-all cursor-pointer ${
-                              isActive
-                                ? "border-rose ring-1 ring-blush-300 scale-110 z-10"
-                                : "border-line hover:border-blush-300 hover:scale-110"
-                            }`}
-                            title={colorName(nameKey)}
-                          >
-                            <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
-                            <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-7 px-1.5 py-0.5 rounded bg-ink text-white text-[10px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                              {colorName(nameKey)}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
+                  {/* Color swatches */}
+                  <div className="flex flex-wrap gap-0.5 mb-1.5">
+                    {pColors.map((code) => {
+                      const { nameKey } = getHairColor(code);
+                      const isActive = activeColor === code;
+                      return (
+                        <button
+                          key={code}
+                          onClick={() => toggleFilter("color", code)}
+                          className={`w-5 h-5 rounded-full border overflow-hidden transition-all cursor-pointer ${
+                            isActive
+                              ? "border-rose ring-1 ring-blush-300 scale-110 z-10"
+                              : "border-line hover:scale-110"
+                          }`}
+                          title={colorName(nameKey)}
+                        >
+                          <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
+                        </button>
+                      );
+                    })}
                   </div>
+
+                  {/* Price */}
+                  {pricePerGram && (
+                    <div className="text-sm font-bold text-ink">
+                      {t("offer.priceFrom")} {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+                    </div>
+                  )}
                 </div>
               </div>
             );

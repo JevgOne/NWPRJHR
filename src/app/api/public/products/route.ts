@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
           select: {
             lengthCm: true,
             color: true,
+            retailPricePerGram: true,
           },
         },
       },

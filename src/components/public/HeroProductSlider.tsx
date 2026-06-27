@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { getOriginFlag } from "@/lib/origin-flags";
-import { getHairColor } from "@/lib/hair-colors";
-import { TextureSwatch } from "@/components/TextureSwatch";
 
-interface SliderProduct {
+interface GridProduct {
   id: string;
   name: string;
   nameUk: string | null;
@@ -16,43 +14,25 @@ interface SliderProduct {
   origin: string | null;
   texture: string | null;
   photos: string[];
-  variants: { lengthCm: number; color: string }[];
+  variants: { lengthCm: number; color: string; retailPricePerGram: number }[];
 }
 
 export function HeroProductSlider() {
-  const [products, setProducts] = useState<SliderProduct[]>([]);
-  const [current, setCurrent] = useState(0);
+  const [products, setProducts] = useState<GridProduct[]>([]);
 
   useEffect(() => {
     fetch("/api/public/products")
       .then((r) => r.json())
       .then((data) => {
-        const items = (data.data ?? []) as SliderProduct[];
-        setProducts(items);
+        const items = (data.data ?? []) as GridProduct[];
+        setProducts(items.slice(0, 4));
       })
       .catch(() => {});
   }, []);
 
-  const next = useCallback(() => {
-    if (products.length === 0) return;
-    setCurrent((c) => (c + 1) % products.length);
-  }, [products.length]);
-
-  const prev = useCallback(() => {
-    if (products.length === 0) return;
-    setCurrent((c) => (c - 1 + products.length) % products.length);
-  }, [products.length]);
-
-  // Auto-slide every 4s
-  useEffect(() => {
-    if (products.length <= 1) return;
-    const interval = setInterval(next, 4000);
-    return () => clearInterval(interval);
-  }, [next, products.length]);
-
   if (products.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="aspect-[3/4] bg-nude-100 rounded-xl animate-pulse" />
         ))}
@@ -60,68 +40,23 @@ export function HeroProductSlider() {
     );
   }
 
-  // Show 4 products at a time on desktop, 1 on mobile
-  const visible = getVisibleProducts(products, current, 4);
-
   return (
-    <div className="relative">
-      {/* Desktop: 4 cards */}
-      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {visible.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
-
-      {/* Mobile: 1 card */}
-      <div className="sm:hidden">
-        <ProductCard product={products[current]} />
-      </div>
-
-      {/* Navigation */}
-      {products.length > 1 && (
-        <>
-          <button
-            onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-8 h-8 bg-white border border-line rounded-full shadow-sm flex items-center justify-center hover:bg-nude-50 transition-colors"
-          >
-            <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-8 h-8 bg-white border border-line rounded-full shadow-sm flex items-center justify-center hover:bg-nude-50 transition-colors"
-          >
-            <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </>
-      )}
-
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {products.map((p) => (
+        <ProductCard key={p.id} product={p} />
+      ))}
     </div>
   );
 }
 
-function getVisibleProducts(products: SliderProduct[], start: number, count: number): SliderProduct[] {
-  const result: SliderProduct[] = [];
-  for (let i = 0; i < Math.min(count, products.length); i++) {
-    result.push(products[(start + i) % products.length]);
-  }
-  return result;
-}
-
-function ProductCard({ product }: { product: SliderProduct }) {
+function ProductCard({ product }: { product: GridProduct }) {
   const t = useTranslations("public");
   const locale = useLocale();
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
   const colors = [...new Set(product.variants.map((v) => v.color))];
 
-  const categoryLabel = t(`slider.${product.category.toLowerCase()}` as "slider.virgin" | "slider.premium" | "slider.standard" | "slider.sale");
-
-  const originName = (origin: string) => {
-    try { return t(`origins.${origin}`); } catch { return origin; }
-  };
+  const minPrice = Math.min(...product.variants.map((v) => v.retailPricePerGram));
+  const pricePerGram = minPrice > 0 ? (minPrice / 100).toFixed(0) : null;
 
   const localizedName = locale === "ru" && product.nameRu
     ? product.nameRu
@@ -129,12 +64,18 @@ function ProductCard({ product }: { product: SliderProduct }) {
       ? product.nameUk
       : product.name;
 
+  const categoryLabel = t(`slider.${product.category.toLowerCase()}` as "slider.virgin" | "slider.premium" | "slider.standard" | "slider.sale");
+
+  const originName = (origin: string) => {
+    try { return t(`origins.${origin}`); } catch { return origin; }
+  };
+
   return (
     <Link
       href={`/offer/${product.id}`}
       className="block bg-white rounded-xl border border-line overflow-hidden hover:shadow-md transition-shadow"
     >
-      <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center">
+      <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center relative">
         {product.photos.length > 0 ? (
           <img
             src={product.photos[0]}
@@ -142,64 +83,51 @@ function ProductCard({ product }: { product: SliderProduct }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <svg className="w-10 h-10 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-8 h-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         )}
+        {/* Category badge overlay */}
+        <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blush-100/90 text-rose-deep backdrop-blur-sm">
+          {categoryLabel}
+        </span>
       </div>
-      <div className="p-3">
-        {/* Badges: category, origin, texture */}
-        <div className="flex flex-wrap items-center gap-1 mb-1.5">
-          <span className="inline-block px-1.5 py-0.5 rounded text-[11px] font-medium bg-blush-100 text-rose-deep">
-            {categoryLabel}
-          </span>
-          {product.origin && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-700">
-              {getOriginFlag(product.origin)} {originName(product.origin)}
-            </span>
-          )}
-          {product.texture && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-medium bg-violet-100 text-violet-700">
-              <TextureSwatch texture={product.texture} size={16} />
-              {product.texture}
-            </span>
-          )}
-        </div>
+      <div className="p-2.5">
+        <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 mb-1.5">{localizedName}</h3>
 
-        {/* Product name */}
-        <h3 className="font-semibold text-ink text-sm truncate">{localizedName}</h3>
+        {/* Origin */}
+        {product.origin && (
+          <div className="text-[10px] text-muted mb-1">
+            {getOriginFlag(product.origin)} {originName(product.origin)}
+          </div>
+        )}
 
-        {/* Length badges */}
+        {/* Lengths */}
         {lengths.length > 0 && (
-          <div className="mt-1.5">
-            <div className="flex flex-wrap gap-1">
-              {lengths.map((len) => (
-                <span
-                  key={len}
-                  className="px-1.5 py-0.5 rounded-lg text-[11px] font-medium border border-line bg-white text-espresso"
-                >
-                  {len} cm
-                </span>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-0.5 mb-1.5">
+            {lengths.map((len) => (
+              <span key={len} className="px-1.5 py-0.5 rounded text-[10px] font-medium border border-line bg-nude-50 text-espresso">
+                {len} cm
+              </span>
+            ))}
           </div>
         )}
 
         {/* Color swatches */}
         {colors.length > 0 && (
-          <div className="mt-1.5">
-            <div className="flex flex-wrap gap-1">
-              {colors.map((code) => {
-                return (
-                  <span
-                    key={code}
-                    className="w-6 h-6 rounded-full border-2 border-line overflow-hidden"
-                  >
-                    <img src={`/swatches/color-${code}.png`} alt="" className="w-full h-full object-cover" />
-                  </span>
-                );
-              })}
-            </div>
+          <div className="flex flex-wrap gap-0.5 mb-1.5">
+            {colors.map((code) => (
+              <span key={code} className="w-5 h-5 rounded-full border border-line overflow-hidden">
+                <img src={`/swatches/color-${code}.png`} alt="" className="w-full h-full object-cover" />
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Price */}
+        {pricePerGram && (
+          <div className="text-sm font-bold text-ink">
+            {t("offer.priceFrom")} {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
           </div>
         )}
       </div>

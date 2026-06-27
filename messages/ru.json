@@ -584,6 +584,7 @@
       "activeFilters": "Активные фильтры:",
       "clearAll": "Сбросить все",
       "clearFilters": "Сбросить фильтры",
+      "priceFrom": "от",
       "productCount": "{count, plural, one {1 продукт} few {# продукта} other {# продуктов}}",
       "loadingProducts": "Загрузка..."
     },

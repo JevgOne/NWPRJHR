@@ -584,6 +584,7 @@
       "activeFilters": "Активні фільтри:",
       "clearAll": "Скинути все",
       "clearFilters": "Скинути фільтри",
+      "priceFrom": "від",
       "productCount": "{count, plural, one {1 продукт} few {# продукти} other {# продуктів}}",
       "loadingProducts": "Завантаження..."
     },

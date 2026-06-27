@@ -584,6 +584,7 @@
       "activeFilters": "Aktivní filtry:",
       "clearAll": "Zrušit vše",
       "clearFilters": "Zrušit filtry",
+      "priceFrom": "od",
       "productCount": "{count, plural, one {1 produkt} few {# produkty} other {# produktů}}",
       "loadingProducts": "Načítání..."
     },
