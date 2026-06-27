@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(body, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="hairora-export-${fromDate}-${toDate}.csv"`,
+        "Content-Disposition": `attachment; filename="hairland-export-${fromDate}-${toDate}.csv"`,
       },
     });
   }
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="hairora-export-${fromDate}-${toDate}.xlsx"`,
+      "Content-Disposition": `attachment; filename="hairland-export-${fromDate}-${toDate}.xlsx"`,
     },
   });
 }

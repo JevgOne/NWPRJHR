@@ -133,9 +133,9 @@ export default async function BuybackPage() {
                 ].map((row) => (
                   <tr key={row.len} className="hover:bg-nude-50/50">
                     <td className="px-4 py-3 font-medium text-ink">{row.len}</td>
-                    <td className="px-4 py-3 text-right text-ink">{row.blonde} Kc</td>
-                    <td className="px-4 py-3 text-right text-ink">{row.brown} Kc</td>
-                    <td className="px-4 py-3 text-right text-ink">{row.dark} Kc</td>
+                    <td className="px-4 py-3 text-right text-ink">{row.blonde} Kč</td>
+                    <td className="px-4 py-3 text-right text-ink">{row.brown} Kč</td>
+                    <td className="px-4 py-3 text-right text-ink">{row.dark} Kč</td>
                   </tr>
                 ))}
               </tbody>

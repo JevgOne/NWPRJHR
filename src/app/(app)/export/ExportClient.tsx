@@ -98,7 +98,7 @@ export function ExportClient() {
       a.href = URL.createObjectURL(blob);
       const disposition = res.headers.get("content-disposition");
       const filenameMatch = disposition?.match(/filename="(.+?)"/);
-      a.download = filenameMatch?.[1] ?? `hairora-export.${type}`;
+      a.download = filenameMatch?.[1] ?? `hairland-export.${type}`;
       a.click();
       URL.revokeObjectURL(a.href);
     } catch {
