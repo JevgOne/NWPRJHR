@@ -73,12 +73,12 @@ function ProductCard({ product }: { product: GridProduct }) {
   const categoryLabel = t(`slider.${product.category.toLowerCase()}` as "slider.virgin" | "slider.premium" | "slider.standard" | "slider.sale");
 
   const categoryBadgeColors: Record<string, string> = {
-    VIRGIN: "bg-amber-500 text-white",
-    PREMIUM: "bg-rose text-white",
+    VIRGIN: "bg-amber-600 text-white",
+    PREMIUM: "bg-mauve text-white",
     STANDARD: "bg-emerald-600 text-white",
-    SALE: "bg-rose text-white",
+    SALE: "bg-red-500 text-white",
   };
-  const badgeColor = categoryBadgeColors[product.category] ?? "bg-rose text-white";
+  const badgeColor = categoryBadgeColors[product.category] ?? "bg-mauve text-white";
 
   const originName = (origin: string) => {
     try { return t(`origins.${origin}`); } catch { return origin; }

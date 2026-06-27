@@ -61,10 +61,10 @@ export function ProductsShowcase() {
     : p.name;
 
   const categoryBadgeColors: Record<string, { base: string; hover: string }> = {
-    VIRGIN: { base: "bg-amber-500 text-white", hover: "hover:bg-amber-600" },
-    PREMIUM: { base: "bg-rose text-white", hover: "hover:bg-rose-deep" },
+    VIRGIN: { base: "bg-amber-600 text-white", hover: "hover:bg-amber-700" },
+    PREMIUM: { base: "bg-mauve text-white", hover: "hover:bg-espresso" },
     STANDARD: { base: "bg-emerald-600 text-white", hover: "hover:bg-emerald-700" },
-    SALE: { base: "bg-rose text-white", hover: "hover:bg-rose-deep" },
+    SALE: { base: "bg-red-500 text-white", hover: "hover:bg-red-600" },
   };
 
   // Extract all available filter options from all products (unfiltered)
