@@ -82,7 +82,9 @@ export async function GET() {
         nameRu: product.nameRu,
         category: product.category,
         processingType: product.processingType,
-        photos: product.photos,
+        origin: product.origin,
+        texture: product.texture,
+        photos: JSON.parse(product.photos || "[]") as string[],
         variants,
       };
     })
