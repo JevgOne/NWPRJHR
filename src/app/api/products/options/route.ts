@@ -6,21 +6,13 @@ export async function GET() {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [textures, tones] = await Promise.all([
-    prisma.product.findMany({
-      where: { texture: { not: null }, archived: false },
-      select: { texture: true },
-      distinct: ["texture"],
-    }),
-    prisma.product.findMany({
-      where: { tone: { not: null }, archived: false },
-      select: { tone: true },
-      distinct: ["tone"],
-    }),
-  ]);
+  const textures = await prisma.product.findMany({
+    where: { texture: { not: null }, archived: false },
+    select: { texture: true },
+    distinct: ["texture"],
+  });
 
   return NextResponse.json({
     textures: textures.map((p) => p.texture).filter(Boolean),
-    tones: tones.map((p) => p.tone).filter(Boolean),
   });
 }

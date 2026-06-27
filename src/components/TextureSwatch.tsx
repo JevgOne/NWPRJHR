@@ -13,14 +13,11 @@
 
 import { useId } from "react";
 import { getTextureInfo } from "@/lib/hair-textures";
-import { getToneInfo } from "@/lib/hair-tones";
 
 interface TextureSwatchProps {
   texture: string;
-  /** Hex color for the hair strands — falls back to tone hex or neutral brown */
+  /** Hex color for the hair strands — falls back to neutral brown */
   color?: string;
-  /** Tone name to derive color from if color not given */
-  tone?: string | null;
   /** Size in pixels (default 28) */
   size?: number;
   /** Additional className */
@@ -122,16 +119,14 @@ function getPathsForTexture(nameKey: string, w: number, h: number): string[] {
 export function TextureSwatch({
   texture,
   color,
-  tone,
   size = 28,
   className = "",
   showLabel = false,
 }: TextureSwatchProps) {
   const clipId = useId();
   const info = getTextureInfo(texture);
-  // Determine strand color: explicit color > tone hex > neutral brown
-  const strandColor =
-    color || (tone ? getToneInfo(tone).hex : "#7A5230");
+  // Determine strand color: explicit color > neutral brown
+  const strandColor = color || "#7A5230";
   const paths = getPathsForTexture(info.nameKey, size, size);
   const strokeW = Math.max(1.2, size * 0.06);
 

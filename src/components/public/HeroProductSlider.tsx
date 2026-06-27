@@ -5,7 +5,6 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { getOriginFlag } from "@/lib/origin-flags";
 import { getHairColor } from "@/lib/hair-colors";
-import { getToneInfo } from "@/lib/hair-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
 
 interface SliderProduct {
@@ -16,7 +15,6 @@ interface SliderProduct {
   category: string;
   origin: string | null;
   texture: string | null;
-  tone: string | null;
   photos: string[];
   variants: { lengthCm: number; color: string }[];
 }
@@ -176,14 +174,8 @@ function ProductCard({ product }: { product: SliderProduct }) {
           )}
           {product.texture && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
-              <TextureSwatch texture={product.texture} tone={product.tone} size={18} />
+              <TextureSwatch texture={product.texture} size={18} />
               {product.texture}
-            </span>
-          )}
-          {product.tone && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
-              <span className="w-3 h-3 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(product.tone).hex }} />
-              {product.tone}
             </span>
           )}
         </div>

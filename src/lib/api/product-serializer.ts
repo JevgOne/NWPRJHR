@@ -77,7 +77,6 @@ export function serializeProductForRole(
     processingType: product.processingType,
     origin: product.origin,
     texture: product.texture,
-    tone: product.tone,
     photos: product.photos,
     archived: product.archived,
     slug: product.slug,

@@ -9,7 +9,6 @@ import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
-import { getToneInfo } from "@/lib/hair-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
@@ -33,7 +32,6 @@ async function getProduct(id: string) {
       processingType: true,
       origin: true,
       texture: true,
-      tone: true,
       photos: true,
       variants: {
         where: { active: true },
@@ -87,8 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const maxLength = lengths[lengths.length - 1];
   const originPart = product.origin ? `Původ: ${product.origin}. ` : "";
   const texturePart = product.texture ? `Struktura: ${product.texture}. ` : "";
-  const tonePart = product.tone ? `Tón: ${product.tone}. ` : "";
-  const description = `${productName} ${processingLabel} — ${categoryLabel} vlasy k prodloužení. ${originPart}${texturePart}${tonePart}Délky ${minLength}–${maxLength} cm, ${colorCount} odstínů. Skladem v Praze | Hairland`;
+  const description = `${productName} ${processingLabel} — ${categoryLabel} vlasy k prodloužení. ${originPart}${texturePart}Délky ${minLength}–${maxLength} cm, ${colorCount} odstínů. Skladem v Praze | Hairland`;
   const firstPhoto = product.photos[0];
   return {
     title,
@@ -299,22 +296,10 @@ export default async function ProductDetailPage({ params }: Props) {
                 href={`/offer?texture=${encodeURIComponent(product.texture)}`}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
-                <TextureSwatch texture={product.texture} tone={product.tone} size={32} />
+                <TextureSwatch texture={product.texture} size={32} />
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.textureLabel")}</div>
                   <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.texture}</div>
-                </div>
-              </Link>
-            )}
-            {product.tone && (
-              <Link
-                href={`/offer?tone=${encodeURIComponent(product.tone)}`}
-                className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
-              >
-                <span className="w-5 h-5 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(product.tone).hex }} />
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.toneLabel")}</div>
-                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.tone}</div>
                 </div>
               </Link>
             )}

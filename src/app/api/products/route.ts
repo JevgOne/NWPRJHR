@@ -20,9 +20,7 @@ export async function GET(request: NextRequest) {
   if (archived !== null) where.archived = archived === "true";
   else where.archived = false;
   const texture = searchParams.get("texture");
-  const tone = searchParams.get("tone");
   if (texture) where.texture = texture;
-  if (tone) where.tone = tone;
   if (search) where.name = { contains: search, mode: "insensitive" };
 
   const products = await prisma.product.findMany({

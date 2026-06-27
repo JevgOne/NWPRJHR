@@ -45,13 +45,8 @@ export function ProductListClient({ products }: { products: ProductItem[] }) {
               </span>
               {typeof product.texture === "string" && product.texture && (
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
-                  <TextureSwatch texture={product.texture} tone={typeof product.tone === "string" ? product.tone : undefined} size={16} />
+                  <TextureSwatch texture={product.texture} size={16} />
                   {product.texture}
-                </span>
-              )}
-              {typeof product.tone === "string" && product.tone && (
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
-                  {product.tone}
                 </span>
               )}
             </div>

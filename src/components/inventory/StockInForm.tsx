@@ -12,7 +12,6 @@ interface ProductOption {
   id: string;
   name: string;
   texture?: string | null;
-  tone?: string | null;
   variants: { id: string; lengthCm: number; color: string }[];
 }
 
@@ -133,19 +132,12 @@ export function StockInForm({
                 </option>
               ))}
             </select>
-            {selectedProduct && (selectedProduct.texture || selectedProduct.tone) && (
+            {selectedProduct && selectedProduct.texture && (
               <div className="flex gap-2 mt-1">
-                {selectedProduct.texture && (
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
-                    <TextureSwatch texture={selectedProduct.texture} tone={selectedProduct.tone} size={16} />
-                    {selectedProduct.texture}
-                  </span>
-                )}
-                {selectedProduct.tone && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
-                    {selectedProduct.tone}
-                  </span>
-                )}
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
+                  <TextureSwatch texture={selectedProduct.texture} size={16} />
+                  {selectedProduct.texture}
+                </span>
               </div>
             )}
           </div>

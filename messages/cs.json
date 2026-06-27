@@ -88,23 +88,13 @@
     "origin": "Původ vlasů",
     "originPlaceholder": "Začněte psát název země...",
     "texture": "Struktura vlasu",
-    "texturePlaceholder": "Vyberte nebo zadejte strukturu...",
-    "tone": "Tón barvy",
-    "tonePlaceholder": "Vyberte nebo zadejte tón..."
+    "texturePlaceholder": "Vyberte nebo zadejte strukturu..."
   },
   "texture": {
     "straight": "Rovné",
     "slightlyWavy": "Mírně vlnité",
     "wavy": "Vlnité",
     "curly": "Kudrnaté",
-    "unknown": "Nespecifikováno",
-    "custom": "Vlastní"
-  },
-  "tone": {
-    "blond": "Blond",
-    "brown": "Hnědá",
-    "darkBrown": "Tmavě hnědá",
-    "red": "Zrzavá",
     "unknown": "Nespecifikováno",
     "custom": "Vlastní"
   },
@@ -591,7 +581,6 @@
       "lengthLabel": "Délka",
       "colorLabel": "Barva",
       "textureLabel": "Struktura",
-      "toneLabel": "Tón",
       "activeFilters": "Aktivní filtry:",
       "clearAll": "Zrušit vše",
       "clearFilters": "Zrušit filtry",
@@ -603,7 +592,6 @@
       "offer": "Nabídka",
       "originLabel": "Původ",
       "textureLabel": "Struktura",
-      "toneLabel": "Tón",
       "lengthsLabel": "Délky",
       "shadesLabel": "Odstíny",
       "shadesCount": "{count, plural, one {1 barva} few {# barvy} other {# barev}}",
