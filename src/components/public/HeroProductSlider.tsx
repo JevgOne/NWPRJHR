@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { getOriginFlag } from "@/lib/origin-flags";
+import { getHairColor } from "@/lib/hair-colors";
 import { getToneInfo } from "@/lib/hair-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
 
@@ -130,6 +131,7 @@ function ProductCard({ product }: { product: SliderProduct }) {
   const t = useTranslations("public");
   const locale = useLocale();
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
+  const colors = [...new Set(product.variants.map((v) => v.color))];
 
   const categoryLabel = t(`slider.${product.category.toLowerCase()}` as "slider.virgin" | "slider.premium" | "slider.standard" | "slider.sale");
 
@@ -161,34 +163,66 @@ function ProductCard({ product }: { product: SliderProduct }) {
           </svg>
         )}
       </div>
-      <div className="p-3">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-blush-100 text-rose-deep">
+      <div className="p-4">
+        {/* Badges: category, origin, texture, tone */}
+        <div className="flex flex-wrap items-center gap-1.5 mb-2">
+          <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-blush-100 text-rose-deep">
             {categoryLabel}
           </span>
           {product.origin && (
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
               {getOriginFlag(product.origin)} {originName(product.origin)}
             </span>
           )}
           {product.texture && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
-              <TextureSwatch texture={product.texture} tone={product.tone} size={16} />
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
+              <TextureSwatch texture={product.texture} tone={product.tone} size={18} />
               {product.texture}
             </span>
           )}
           {product.tone && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
-              <span className="w-2.5 h-2.5 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(product.tone).hex }} />
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
+              <span className="w-3 h-3 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(product.tone).hex }} />
               {product.tone}
             </span>
           )}
         </div>
+
+        {/* Product name */}
         <h3 className="font-semibold text-ink text-sm truncate">{localizedName}</h3>
+
+        {/* Length badges */}
         {lengths.length > 0 && (
-          <p className="text-xs text-muted mt-1">
-            {lengths.map((l) => `${l} cm`).join(", ")}
-          </p>
+          <div className="mt-2">
+            <div className="flex flex-wrap gap-1">
+              {lengths.map((len) => (
+                <span
+                  key={len}
+                  className="px-2 py-0.5 rounded-lg text-xs font-medium border border-line bg-white text-espresso"
+                >
+                  {len} cm
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Color swatches */}
+        {colors.length > 0 && (
+          <div className="mt-2">
+            <div className="flex flex-wrap gap-1">
+              {colors.map((code) => {
+                const { hex } = getHairColor(code);
+                return (
+                  <span
+                    key={code}
+                    className="w-6 h-6 rounded border-2 border-line"
+                    style={{ backgroundColor: hex }}
+                  />
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
     </Link>
