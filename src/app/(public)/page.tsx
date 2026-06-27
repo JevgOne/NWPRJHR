@@ -123,37 +123,26 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          {/* Gradient bar */}
-          <div className="relative mb-8">
-            <div
-              className="h-4 rounded-full shadow-inner"
-              style={{
-                background: "linear-gradient(to right, #FAF0DC, #E8D5A8, #D4B06A, #C49A48, #A07030, #7A5230, #5C3A1E, #3E2512, #2A1A0C, #0F0A06)",
-              }}
-            />
-          </div>
-
-          {/* Individual shades */}
+          {/* Individual shades — photo swatches */}
           <div className="grid grid-cols-5 sm:grid-cols-10 gap-3 mb-8">
             {[
-              { color: "#FAF0DC", nameKey: "landing.colorPlatinum" as const },
-              { color: "#E8D5A8", nameKey: "landing.colorLightBlond" as const },
-              { color: "#D4B06A", nameKey: "landing.colorGoldenBlond" as const },
-              { color: "#C49A48", nameKey: "landing.colorHoney" as const },
-              { color: "#A07030", nameKey: "landing.colorCaramel" as const },
-              { color: "#7A5230", nameKey: "landing.colorLightBrown" as const },
-              { color: "#5C3A1E", nameKey: "landing.colorMediumBrown" as const },
-              { color: "#3E2512", nameKey: "landing.colorDarkBrown" as const },
-              { color: "#2A1A0C", nameKey: "landing.colorDark" as const },
-              { color: "#0F0A06", nameKey: "landing.colorBlack" as const },
-            ].map(({ color, nameKey }) => (
-              <div key={color} className="flex flex-col items-center gap-2 group">
-                <div
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line"
-                  style={{ backgroundColor: color }}
-                />
+              { code: "1", nameKey: "colors.c1" as const },
+              { code: "2", nameKey: "colors.c2" as const },
+              { code: "3", nameKey: "colors.c3" as const },
+              { code: "4", nameKey: "colors.c4" as const },
+              { code: "5", nameKey: "colors.c5" as const },
+              { code: "6", nameKey: "colors.c6" as const },
+              { code: "7", nameKey: "colors.c7" as const },
+              { code: "8", nameKey: "colors.c8" as const },
+              { code: "9", nameKey: "colors.c9" as const },
+              { code: "10", nameKey: "colors.c10" as const },
+            ].map(({ code, nameKey }) => (
+              <Link key={code} href={`/offer?color=${code}`} className="flex flex-col items-center gap-2 group">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line overflow-hidden">
+                  <img src={`/swatches/color-${code}.png`} alt={t(nameKey)} className="w-full h-full object-cover" />
+                </div>
                 <span className="text-[10px] sm:text-xs text-muted font-medium text-center leading-tight">{t(nameKey)}</span>
-              </div>
+              </Link>
             ))}
           </div>
 
