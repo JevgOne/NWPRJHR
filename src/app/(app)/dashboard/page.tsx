@@ -90,7 +90,7 @@ export default async function DashboardPage() {
       _sum: { total: true },
     }),
 
-    prisma.salon.count({ where: { archived: false } }),
+    prisma.salon.count({ where: { approved: true, archived: false } }),
 
     prisma.sale.aggregate({
       where: { status: "COMPLETED" },
@@ -288,7 +288,7 @@ export default async function DashboardPage() {
       {/* ── ROW 4: Quick info badges ── */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <a href="/salons"><QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="indigo" /></a>
-        <a href="/salons"><QuickBadge label={t("pendingRegistrations")} value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
+        <a href="/registrations"><QuickBadge label={t("pendingRegistrations")} value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
         <a href="/orders"><QuickBadge label={t("pendingOrders")} value={newOrders} color={newOrders > 0 ? "blue" : "gray"} /></a>
         <a href="/returns"><QuickBadge label={t("pendingReturns")} value={pendingReturns} color={pendingReturns > 0 ? "orange" : "gray"} /></a>
         <a href="/notifications"><QuickBadge label={t("unreadNotifications")} value={unreadNotifications} color={unreadNotifications > 0 ? "rose" : "gray"} /></a>

@@ -116,6 +116,16 @@ export function PublicFooter() {
                 </a>
               </li>
               <li className="flex items-center gap-2">
+                <span>📱</span>
+                <a href="tel:+420728729666" className="hover:text-white transition-colors">
+                  +420 728 729 666
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>💬</span>
+                <span>WhatsApp · Telegram</span>
+              </li>
+              <li className="flex items-center gap-2">
                 <span>📍</span>
                 <span>{t("footer.locationCity")}</span>
               </li>
