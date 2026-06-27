@@ -40,7 +40,7 @@ export async function generatePohodaXml(
       "xmlns:inv": "http://www.stormware.cz/schema/version_2/invoice.xsd",
       "xmlns:typ": "http://www.stormware.cz/schema/version_2/type.xsd",
       version: "2.0",
-      id: `hairora-${formatDate(params.from)}-${formatDate(params.to)}`,
+      id: `hairland-${formatDate(params.from)}-${formatDate(params.to)}`,
       ico: params.ico,
       application: "Hairland",
       note: "Export faktur z Hairland",

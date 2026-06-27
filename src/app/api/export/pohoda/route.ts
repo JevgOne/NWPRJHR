@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/xml; charset=windows-1250",
-      "Content-Disposition": `attachment; filename="hairora-pohoda-${fromDate}-${toDate}.xml"`,
+      "Content-Disposition": `attachment; filename="hairland-pohoda-${fromDate}-${toDate}.xml"`,
     },
   });
 }

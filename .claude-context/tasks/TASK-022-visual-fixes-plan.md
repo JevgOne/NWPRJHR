@@ -1,183 +1,269 @@
-# TASK-022: Visual Fixes Plan — Brand Consistency
+# TASK-022: Admin Brand Color Fixes — ACTIONABLE REPLACEMENT LIST
 
-## Brand Color Palette (from `src/app/globals.css`)
+## Status: Zero indigo/blue-600/blue-500 remain in admin or components. Already fixed.
 
-| Token        | Hex       | Tailwind class    | Use for                    |
-|-------------|-----------|-------------------|----------------------------|
-| `rose`       | `#c98b88` | `bg-rose`, `text-rose` | Primary actions, active states |
-| `rose-deep`  | `#a96d6c` | `bg-rose-deep`    | Hover states               |
-| `espresso`   | `#3a2c2a` | `bg-espresso`, `text-espresso` | Text, headings, links |
-| `mauve`      | `#7d5a5c` | `text-mauve`      | Secondary accents          |
-| `gold`       | `#c2a36b` | `bg-gold`, `text-gold` | Premium/luxury accents |
-| `nude-50`    | `#fdfaf7` | `bg-nude-50`      | Page backgrounds           |
-| `nude-100`   | `#f7efe8` | `bg-nude-100`     | Card backgrounds, sidebar  |
-| `nude-200`   | `#efe0d6` | `border-nude-200` | Borders                    |
-| `blush-*`    | warm pinks | —                | Light accents              |
-| `line`       | `#ead9cf` | `border-line`     | Subtle borders             |
-| `ink`        | `#2a201f` | `text-ink`        | Body text                  |
+The real issue: generic Tailwind **gray** defaults everywhere instead of brand colors.
 
 ---
 
-## SECTION 1: Already Fixed (No Action Needed)
+## STEP 1: Fix 3 UI Components (cascades to ALL 50 pages)
 
-These items were identified in initial analysis but have already been corrected:
-
-| Component | Current State | Status |
-|-----------|--------------|--------|
-| `Button.tsx` primary variant | `bg-rose text-white hover:bg-rose-deep` | OK |
-| `AppShell.tsx` active sidebar item | `bg-rose text-white` | OK |
-| `SalonShell.tsx` header "Hairland" | `text-espresso` | OK |
-| `SalonShell.tsx` active nav | `bg-rose/10 text-espresso` | OK |
-| `NotificationBell.tsx` mark all read | `text-espresso hover:text-espresso` | OK |
-
----
-
-## SECTION 2: Blue/Indigo Buttons → Brand Colors
-
-### Finding: NO remaining blue/indigo action BUTTONS
-
-Grepped for `<button.*bg-(indigo|blue)` — **zero results**. All action buttons either use the `<Button>` component (which uses `bg-rose`) or use neutral `bg-white` secondary style. The original report of blue buttons has been resolved.
-
----
-
-## SECTION 3: Remaining Indigo Instances
-
-### 3a. Dashboard QuickBadge — Active Salons (CHANGE)
-
-**File**: `src/app/(app)/dashboard/page.tsx`
-**Lines**: 290, 311-312
-
-Current:
-```typescript
-// Line 290
-<QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="indigo" />
-
-// Lines 311-312
-const badgeColors: Record<string, string> = {
-  indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
+### File: `src/components/ui/Card.tsx` line 18
+```
+FIND:    border border-gray-200
+REPLACE: border border-line
 ```
 
-**Fix**: Replace `color="indigo"` with `color="espresso"` and add espresso color:
-```typescript
-// Line 290
-<QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="espresso" />
-
-// Add to badgeColors:
-espresso: "bg-nude-50 text-espresso border-line",
-// Remove unused "indigo" entry
+### File: `src/components/ui/Input.tsx` line 15
+```
+FIND:    text-gray-700
+REPLACE: text-espresso
 ```
 
-### 3b. PREMIUM Category Badges (KEEP AS-IS)
-
-These use `bg-indigo-500` / `bg-indigo-100` for the PREMIUM product category:
-
-| File | Line | Usage |
-|------|------|-------|
-| `dashboard/page.tsx` | 23 | `PREMIUM: { bg: "bg-indigo-100", text: "text-indigo-800", bar: "bg-indigo-500" }` |
-| `HeroProductSlider.tsx` | 77 | `PREMIUM: "bg-indigo-500 text-white"` |
-| `ProductsShowcase.tsx` | 65 | `PREMIUM: { base: "bg-indigo-500 text-white", hover: "hover:bg-indigo-600" }` |
-
-**Recommendation: KEEP**. These are semantic category colors used to distinguish PREMIUM from VIRGIN (amber), STANDARD (emerald), and SALE (rose). Changing to brand colors would:
-1. Make PREMIUM and SALE look too similar (both rosé-ish)
-2. Reduce visual distinction between categories
-3. Break the semantic color coding system
-
----
-
-## SECTION 4: "Hairora" Text Remnants (CHANGE)
-
-Found 7 instances of "hairora" in code:
-
-| File | Line | Current | Fix |
-|------|------|---------|-----|
-| `CookieBanner.tsx` | 6 | `"hairora_cookie_consent"` | Change to `"hairland_cookie_consent"` — **NOTE: will reset all users' cookie consent** |
-| `export-pohoda.ts` | 43 | `id: \`hairora-${formatDate(...)}\`` | Change to `hairland-...` |
-| `ExportClient.tsx` | 101 | `\`hairora-export.${type}\`` | Change to `hairland-export...` |
-| `cron/backup/route.ts` | 12 | `"/var/backups/hairora"` | Change to `"/var/backups/hairland"` — **NOTE: needs matching server directory** |
-| `export/pohoda/route.ts` | 40 | `"hairora-pohoda-..."` | Change to `"hairland-pohoda-..."` |
-| `export/excel/route.ts` | 43 | `"hairora-export-..."` | Change to `"hairland-export-..."` |
-| `export/excel/route.ts` | 52 | `"hairora-export-..."` | Change to `"hairland-export-..."` |
-
-**Priority**: LOW — these are internal identifiers and download filenames, not user-facing brand text. The cookie consent key change will reset consent for existing users.
-
----
-
-## SECTION 5: Grey/Neutral UI Elements Assessment
-
-### Header bar
-- `AppShell.tsx:201` — `bg-white border-b border-gray-200` — standard, OK
-- Hamburger icon uses `text-gray-600` — neutral icon, OK
-
-### Tables and cards
-- All admin tables use standard `bg-white`, `bg-gray-50` headers, `border-gray-200` — this is correct, standard admin UI. Brand colors should NOT be used for table backgrounds.
-
-### Status badges (blue-100 instances)
-All `bg-blue-100 text-blue-700` instances are semantic status indicators:
-- `CategoryBadge.tsx` — STANDARD category
-- `InvoiceStatusBadge.tsx` — ISSUED status  
-- `OrdersClient.tsx` — NEW order status
-- `SamplesClient.tsx` — REQUESTED status
-- Various others
-
-**Recommendation: KEEP**. Status colors follow UX conventions and should not be branded.
-
----
-
-## SECTION 6: Login Page Branding (CHANGE)
-
-**File**: `src/app/login/page.tsx`
-
-Current (line 8):
-```tsx
-<h1 className="text-3xl font-bold text-gray-900">Hairland</h1>
+### File: `src/components/ui/Input.tsx` line 23
+```
+FIND:    border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400
+REPLACE: border border-line px-3 py-2 text-ink placeholder-muted
 ```
 
-**Fix**:
-```tsx
-<img src="/icons/icon-192x192.png" alt="Hairland" className="w-12 h-12 rounded-lg mx-auto mb-2" />
-<h1 className="text-3xl font-bold text-espresso">Hairland</h1>
+### File: `src/components/ui/Button.tsx` line 14 (secondary variant)
+```
+FIND:    bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-rose
+REPLACE: bg-white text-espresso border border-line hover:bg-nude-50 focus:ring-rose
+```
+
+### File: `src/components/ui/Button.tsx` line 16 (ghost variant)
+```
+FIND:    text-gray-600 hover:bg-gray-100 focus:ring-gray-500
+REPLACE: text-muted hover:bg-nude-100 focus:ring-rose
 ```
 
 ---
 
-## SECTION 7: "Admin Hairora" in Sidebar (DB FIX)
+## STEP 2: Fix AppShell header (every page)
 
-**File**: `src/components/AppShell.tsx:186` — displays `session.user.name`
-**This is NOT a code change** — the admin user record in the database has `name = "Admin Hairora"`.
-
-**Fix**: Run SQL against Turso production DB:
-```sql
-UPDATE User SET name = 'Hairland Admin' WHERE role = 'OWNER' AND name LIKE '%Hairora%';
+### File: `src/components/AppShell.tsx` line 201
+```
+FIND:    border-b border-gray-200
+REPLACE: border-b border-line
 ```
 
-Or via Prisma script:
-```typescript
-await prisma.user.updateMany({
-  where: { role: 'OWNER', name: { contains: 'Hairora' } },
-  data: { name: 'Hairland Admin' }
-});
+### File: `src/components/AppShell.tsx` line 204
+```
+FIND:    text-gray-600 hover:text-gray-900
+REPLACE: text-muted hover:text-espresso
 ```
 
 ---
 
-## Implementation Summary
+## STEP 3: Bulk replace across all 50 admin pages in `src/app/(app)/`
 
-### Code Changes (3 files, ~10 lines):
+**IMPORTANT**: Do NOT replace in status badge strings like `"bg-gray-100 text-gray-600"` or `"bg-gray-100 text-gray-500"` when they represent COMPLETED/CANCELLED/disabled states. Those are intentional.
 
-| # | File | Change | Priority |
-|---|------|--------|----------|
-| 1 | `src/app/(app)/dashboard/page.tsx` | Replace `color="indigo"` → `color="espresso"`, add espresso to badgeColors, remove indigo | P2 |
-| 2 | `src/app/login/page.tsx` | Add logo, change `text-gray-900` → `text-espresso` | P3 |
-| 3 | 5 export/cookie files | Replace "hairora" → "hairland" in identifiers | P4 |
+### 3a. Table headers
+```
+FIND:    text-left text-gray-500
+REPLACE: text-left text-muted
+```
 
-### Database Change:
-| # | Action | Priority |
-|---|--------|----------|
-| 4 | UPDATE admin user name from "Hairora" to "Hairland Admin" | P3 |
+### 3b. Table row hover
+```
+FIND:    hover:bg-gray-50
+REPLACE: hover:bg-nude-50
+```
 
-### NOT Changed (intentional):
-- Category badge colors (indigo for PREMIUM) — semantic
-- Status badge colors (blue for various statuses) — semantic UX
-- Table/card backgrounds (gray/white) — standard admin patterns
-- Button component — already uses brand colors
-- Sidebar/nav — already uses brand colors
+### 3c. Table header backgrounds (in thead contexts)
+```
+FIND:    bg-gray-50
+REPLACE: bg-nude-50
+```
+Files: ReturnsClient, ComplaintsClient, PaymentsClient, AuditLogClient, DeliveryDetailClient
+
+### 3d. Loading/empty text
+```
+FIND:    text-gray-500">{tCommon("loading")}
+REPLACE: text-muted">{tCommon("loading")}
+```
+```
+FIND:    text-gray-500 text-center
+REPLACE: text-muted text-center
+```
+
+### 3e. Secondary/subtle text
+```
+FIND:    text-gray-400
+REPLACE: text-muted
+```
+
+### 3f. Select borders (inline selects)
+```
+FIND:    border border-gray-200 bg-white
+REPLACE: border border-line bg-white
+```
+
+### 3g. All remaining border-gray-200 (not in UI components, already fixed)
+```
+FIND:    border-gray-200
+REPLACE: border-line
+```
+
+### 3h. Table body dividers
+```
+FIND:    divide-gray-200
+REPLACE: divide-line
+```
+
+### 3i. Inactive tab backgrounds
+```
+FIND:    bg-gray-100 text-gray-700 hover:bg-gray-200
+REPLACE: bg-nude-100 text-espresso hover:bg-nude-200
+```
+```
+FIND:    bg-gray-100 text-gray-600 hover:bg-gray-200
+REPLACE: bg-nude-100 text-muted hover:bg-nude-200
+```
+
+### 3j. Strong text / headings
+```
+FIND:    text-gray-900
+REPLACE: text-ink
+```
+
+### 3k. Label/body text
+```
+FIND:    text-gray-700
+REPLACE: text-espresso
+```
+
+### 3l. Secondary text
+```
+FIND:    text-gray-600
+REPLACE: text-muted
+```
+
+### 3m. Subtle borders
+```
+FIND:    border-gray-300
+REPLACE: border-line
+```
+
+### 3n. Fine borders
+```
+FIND:    border-gray-100
+REPLACE: border-nude-100
+```
+
+---
+
+## STEP 4: Dashboard QuickBadge
+
+### File: `src/app/(app)/dashboard/page.tsx`
+
+Line 290:
+```
+FIND:    color="indigo"
+REPLACE: color="espresso"
+```
+
+Line 312:
+```
+FIND:    indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
+REPLACE: espresso: "bg-nude-50 text-espresso border-line",
+```
+
+---
+
+## STEP 5: Login page
+
+### File: `src/app/login/page.tsx`
+
+Line 5:
+```
+FIND:    bg-gray-50
+REPLACE: bg-nude-50
+```
+
+Line 8 — add logo above heading:
+```
+FIND:    <h1 className="text-3xl font-bold text-gray-900">Hairland</h1>
+REPLACE: <img src="/icons/icon-192x192.png" alt="Hairland" className="w-12 h-12 rounded-lg mx-auto mb-2" /><h1 className="text-3xl font-bold text-espresso">Hairland</h1>
+```
+
+---
+
+## STEP 6: "hairora" → "hairland" text
+
+| File | Find | Replace |
+|------|------|---------|
+| `src/components/CookieBanner.tsx:6` | `hairora_cookie_consent` | `hairland_cookie_consent` |
+| `src/lib/export-pohoda.ts:43` | `hairora-` | `hairland-` |
+| `src/app/(app)/export/ExportClient.tsx:101` | `hairora-export` | `hairland-export` |
+| `src/app/api/cron/backup/route.ts:12` | `/var/backups/hairora` | `/var/backups/hairland` |
+| `src/app/api/export/pohoda/route.ts:40` | `hairora-pohoda` | `hairland-pohoda` |
+| `src/app/api/export/excel/route.ts:43` | `hairora-export` | `hairland-export` |
+| `src/app/api/export/excel/route.ts:52` | `hairora-export` | `hairland-export` |
+
+---
+
+## DO NOT CHANGE (intentional semantic colors)
+
+- PREMIUM category badges: `bg-indigo-500`, `bg-indigo-100` (in dashboard, HeroProductSlider, ProductsShowcase)
+- Status badges: `bg-blue-100`, `bg-green-100`, `bg-red-100`, `bg-yellow-100`, `bg-amber-100`, `bg-purple-100`
+- COMPLETED/CANCELLED statuses: `bg-gray-100 text-gray-600` / `bg-gray-100 text-gray-500`
+- SILVER tier: `bg-gray-200 text-gray-700`
+- Error text: `text-red-600`
+
+---
+
+## All 50 admin files with gray:
+
+src/app/(app)/dashboard/page.tsx
+src/app/(app)/reviews/ReviewsClient.tsx
+src/app/(app)/registrations/RegistrationsClient.tsx
+src/app/(app)/notifications/NotificationsClient.tsx
+src/app/(app)/export/ExportClient.tsx
+src/app/(app)/orders/[id]/OrderDetailClient.tsx
+src/app/(app)/orders/OrdersClient.tsx
+src/app/(app)/returns/ReturnsClient.tsx
+src/app/(app)/finance/partners/[id]/PartnerDetailClient.tsx
+src/app/(app)/finance/partners/PartnersClient.tsx
+src/app/(app)/finance/FinanceOverviewClient.tsx
+src/app/(app)/finance/discounts/DiscountHistoryClient.tsx
+src/app/(app)/finance/costs/CostsClient.tsx
+src/app/(app)/inventory/deliveries/[id]/DeliveryDetailClient.tsx
+src/app/(app)/inventory/deliveries/[id]/page.tsx
+src/app/(app)/inventory/page.tsx
+src/app/(app)/inventory/InventoryClient.tsx
+src/app/(app)/inventory/movements/page.tsx
+src/app/(app)/inventory/movements/MovementsClient.tsx
+src/app/(app)/inventory/stock-in/page.tsx
+src/app/(app)/salons/[id]/SalonDetailClient.tsx
+src/app/(app)/salons/new/NewSalonClient.tsx
+src/app/(app)/salons/SalonsClient.tsx
+src/app/(app)/samples/SamplesClient.tsx
+src/app/(app)/audit-log/page.tsx
+src/app/(app)/audit-log/AuditLogClient.tsx
+src/app/(app)/discounts/DiscountsClient.tsx
+src/app/(app)/invoices/InvoicesClient.tsx
+src/app/(app)/invoices/[id]/InvoiceDetailClient.tsx
+src/app/(app)/sales/[id]/SaleDetailClient.tsx
+src/app/(app)/sales/SalesHistoryClient.tsx
+src/app/(app)/sales/new/NewSaleWizard.tsx
+src/app/(app)/suppliers/page.tsx
+src/app/(app)/suppliers/SuppliersClient.tsx
+src/app/(app)/stylists/page.tsx
+src/app/(app)/stylists/[id]/page.tsx
+src/app/(app)/stylists/StylistForm.tsx
+src/app/(app)/stylists/new/page.tsx
+src/app/(app)/products/page.tsx
+src/app/(app)/products/[id]/ProductDetailClient.tsx
+src/app/(app)/products/new/CreateProductForm.tsx
+src/app/(app)/products/ProductListClient.tsx
+src/app/(app)/complaints/ComplaintsClient.tsx
+src/app/(app)/payments/PaymentsClient.tsx
+src/app/(app)/settings/companies/CompaniesClient.tsx
+src/app/(app)/settings/pricing/PricingSettingsClient.tsx
+src/app/(app)/settings/b2b/B2BSettingsClient.tsx
+src/app/(app)/settings/loyalty/LoyaltySettingsClient.tsx
+src/app/(app)/customers/[id]/CustomerDetailClient.tsx
+src/app/(app)/customers/CustomersClient.tsx
