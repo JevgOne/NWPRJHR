@@ -285,43 +285,32 @@ export function CatalogClient({ role }: { role: Role }) {
                           {formatCZK(v.pricePerGram)} Kč/g
                         </td>
                         <td className="px-4 py-2 text-right whitespace-nowrap">
-                          {v.availableGrams > 0 ? (
-                            <span className="inline-flex items-center gap-1 text-emerald-700">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              {v.availableGrams} g
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-red-500">
-                              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                              {t("outOfStock")}
-                            </span>
-                          )}
+                          <span className="inline-flex items-center gap-1 text-emerald-700">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            {v.availableGrams} g
+                          </span>
                         </td>
                         <td className="px-4 py-2 text-right">
-                          {v.availableGrams > 0 ? (
-                            <div className="inline-flex items-center gap-1">
-                              <input
-                                type="number"
-                                min={0}
-                                max={v.availableGrams}
-                                value={inCart || ""}
-                                placeholder="g"
-                                onChange={(e) => {
-                                  const val = Math.min(parseInt(e.target.value) || 0, v.availableGrams);
-                                  updateCart(v.id, val, {
-                                    productName: product.name,
-                                    lengthCm: v.lengthCm,
-                                    color: v.color,
-                                    pricePerGram: v.pricePerGram,
-                                  });
-                                }}
-                                className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
-                              />
-                              <span className="text-xs text-muted">g</span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted">—</span>
-                          )}
+                          <div className="inline-flex items-center gap-1">
+                            <input
+                              type="number"
+                              min={0}
+                              max={v.availableGrams}
+                              value={inCart || ""}
+                              placeholder="g"
+                              onChange={(e) => {
+                                const val = Math.min(parseInt(e.target.value) || 0, v.availableGrams);
+                                updateCart(v.id, val, {
+                                  productName: product.name,
+                                  lengthCm: v.lengthCm,
+                                  color: v.color,
+                                  pricePerGram: v.pricePerGram,
+                                });
+                              }}
+                              className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
+                            />
+                            <span className="text-xs text-muted">g</span>
+                          </div>
                         </td>
                       </tr>
                     );

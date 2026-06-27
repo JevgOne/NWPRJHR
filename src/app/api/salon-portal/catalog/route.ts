@@ -42,10 +42,10 @@ export async function GET() {
     orderBy: { name: "asc" },
   });
 
-  // Add role-specific prices and stock availability
-  const result = await Promise.all(
+  // Add role-specific prices, filter to in-stock variants only
+  const allProducts = await Promise.all(
     products.map(async (product) => {
-      const variants = await Promise.all(
+      const allVariants = await Promise.all(
         product.variants.map(async (v) => {
           const stock = await getStockNumbers(v.id);
 
@@ -75,6 +75,10 @@ export async function GET() {
         })
       );
 
+      // Only show variants that are in stock
+      const variants = allVariants.filter((v) => v.availableGrams > 0);
+      if (variants.length === 0) return null;
+
       return {
         id: product.id,
         name: product.name,
@@ -89,6 +93,9 @@ export async function GET() {
       };
     })
   );
+
+  // Filter out products with no in-stock variants
+  const result = allProducts.filter(Boolean);
 
   return NextResponse.json(result);
 }
