@@ -13,6 +13,7 @@ interface PublicVariant {
   lengthCm: number;
   color: string;
   retailPricePerGram: number;
+  availableGrams: number;
 }
 
 interface PublicProduct {

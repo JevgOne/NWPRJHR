@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getStockNumbers } from "@/lib/stock";
 
 export async function GET(request: NextRequest) {
   try {
@@ -58,6 +59,7 @@ export async function GET(request: NextRequest) {
         variants: {
           where: { active: true },
           select: {
+            id: true,
             lengthCm: true,
             color: true,
             retailPricePerGram: true,
@@ -67,10 +69,42 @@ export async function GET(request: NextRequest) {
       orderBy: { name: "asc" },
     });
 
-    const parsed = products.map((p) => ({
-      ...p,
-      photos: JSON.parse(p.photos || "[]"),
-    }));
+    const withStock = await Promise.all(
+      products.map(async (p) => {
+        const variantsWithStock = await Promise.all(
+          p.variants.map(async (v) => {
+            const stock = await getStockNumbers(v.id);
+            return {
+              lengthCm: v.lengthCm,
+              color: v.color,
+              retailPricePerGram: v.retailPricePerGram,
+              availableGrams: stock.availableGrams,
+            };
+          })
+        );
+
+        const inStock = variantsWithStock.filter((v) => v.availableGrams > 0);
+        if (inStock.length === 0) return null;
+
+        return {
+          id: p.id,
+          name: p.name,
+          nameUk: p.nameUk,
+          nameRu: p.nameRu,
+          description: p.description,
+          descriptionUk: p.descriptionUk,
+          descriptionRu: p.descriptionRu,
+          category: p.category,
+          processingType: p.processingType,
+          origin: p.origin,
+          texture: p.texture,
+          photos: JSON.parse(p.photos || "[]"),
+          variants: inStock,
+        };
+      })
+    );
+
+    const parsed = withStock.filter(Boolean);
 
     return NextResponse.json(
       { data: parsed },
