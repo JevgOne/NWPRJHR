@@ -89,7 +89,7 @@ export function StockInForm({
     const body = {
       variantId,
       supplierId,
-      purchasePricePerGramRaw: parseInt(purchasePrice),
+      purchasePricePerGramRaw: Math.round(parseFloat(purchasePrice) * 100),
       currency: "CZK",
       exchangeRate: 10000,
       totalGrams: parseInt(totalGrams),
@@ -136,7 +136,7 @@ export function StockInForm({
             <option value="">--</option>
             {products.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name} ({tCat(p.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale")})
+                {p.name}
               </option>
             ))}
           </select>
@@ -233,15 +233,16 @@ export function StockInForm({
           </select>
         </div>
 
-        {/* Purchase price in CZK */}
+        {/* Purchase price in CZK per gram */}
         <Input
-          label={`${t("purchasePrice")} (CZK)`}
+          label={`${t("purchasePrice")} (Kč/g)`}
           type="number"
           value={purchasePrice}
           onChange={(e) => setPurchasePrice(e.target.value)}
           required
           min={1}
-          placeholder="haléře za gram"
+          step="0.01"
+          placeholder="např. 50"
         />
 
         {/* Total grams + date */}
