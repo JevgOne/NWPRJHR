@@ -931,7 +931,11 @@
     "saveProfile": "Зберегти профіль",
     "addTag": "Додати",
     "newSpecialization": "Нова спеціалізація...",
-    "newCertification": "Новий сертифікат..."
+    "newCertification": "Новий сертифікат...",
+    "uploadPhoto": "Завантажити фото",
+    "changePhoto": "Змінити фото",
+    "removePhoto": "Видалити",
+    "uploading": "Завантажую..."
   },
   "returnsMgmt": {
     "title": "Повернення",

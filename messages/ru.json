@@ -931,7 +931,11 @@
     "saveProfile": "Сохранить профиль",
     "addTag": "Добавить",
     "newSpecialization": "Новая специализация...",
-    "newCertification": "Новый сертификат..."
+    "newCertification": "Новый сертификат...",
+    "uploadPhoto": "Загрузить фото",
+    "changePhoto": "Изменить фото",
+    "removePhoto": "Удалить",
+    "uploading": "Загружаю..."
   },
   "returnsMgmt": {
     "title": "Возвраты",

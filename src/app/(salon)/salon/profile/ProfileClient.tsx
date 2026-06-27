@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -158,6 +158,8 @@ function StylistForm({ salonName }: { salonName: string }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/salon-portal/stylist-profile")
@@ -206,6 +208,26 @@ function StylistForm({ salonName }: { salonName: string }) {
       /* ignore */
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePhotoUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload/stylist-photo", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setForm((f) => ({ ...f, photo: data.url }));
+      }
+    } catch {
+      /* ignore */
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -259,12 +281,66 @@ function StylistForm({ salonName }: { salonName: string }) {
             />
           </div>
 
-          <Input
-            label={t("photoUrl")}
-            value={form.photo}
-            onChange={(e) => setForm((f) => ({ ...f, photo: e.target.value }))}
-            placeholder="https://..."
-          />
+          <div>
+            <label className="block text-sm font-medium text-espresso mb-1">
+              {t("uploadPhoto")}
+            </label>
+            <div className="flex items-center gap-3">
+              {form.photo ? (
+                <div className="relative group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={form.photo}
+                    alt=""
+                    className="w-16 h-16 rounded-full object-cover border border-line"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, photo: "" }))}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-nude-100 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              )}
+              <div>
+                <button
+                  type="button"
+                  disabled={uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1.5 text-sm font-medium text-espresso bg-nude-100 rounded-lg hover:bg-nude-200 transition-colors disabled:opacity-50"
+                >
+                  {uploading ? t("uploading") : form.photo ? t("changePhoto") : t("uploadPhoto")}
+                </button>
+                {form.photo && (
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, photo: "" }))}
+                    className="ml-2 text-xs text-muted hover:text-red-500"
+                  >
+                    {t("removePhoto")}
+                  </button>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handlePhotoUpload(file);
+                  e.target.value = "";
+                }}
+              />
+            </div>
+          </div>
         </div>
       </Card>
 

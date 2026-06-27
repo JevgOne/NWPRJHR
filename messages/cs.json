@@ -931,7 +931,11 @@
     "saveProfile": "Uložit profil",
     "addTag": "Přidat",
     "newSpecialization": "Nová specializace...",
-    "newCertification": "Nový certifikát..."
+    "newCertification": "Nový certifikát...",
+    "uploadPhoto": "Nahrát fotku",
+    "changePhoto": "Změnit fotku",
+    "removePhoto": "Odebrat",
+    "uploading": "Nahrávám..."
   },
   "returnsMgmt": {
     "title": "Vratky",
