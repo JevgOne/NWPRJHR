@@ -43,7 +43,7 @@ export async function GET(
   if (!order)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  if (session.user.role === "SALON" && order.salonId !== session.user.salonId)
+  if ((session.user.role === "SALON" || session.user.role === "HAIRDRESSER") && order.salonId !== session.user.salonId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   return NextResponse.json(order);
@@ -167,8 +167,8 @@ export async function POST(
           where: { id },
         });
 
-        // SALON can only cancel their own NEW orders
-        if (session.user.role === "SALON") {
+        // SALON/HAIRDRESSER can only cancel their own NEW orders
+        if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
           if (orderCheck.salonId !== session.user.salonId)
             return NextResponse.json(
               { error: "Forbidden" },

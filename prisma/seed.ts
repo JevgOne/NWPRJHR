@@ -79,6 +79,20 @@ async function main() {
   console.log("  Loyalty settings OK");
 
   // ========================================================================
+  // 2b. B2B SETTINGS
+  // ========================================================================
+  await prisma.b2BSettings.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      id: "default",
+      hairdresserDiscountPct: 2000, // 20%
+      salonDiscountPct: 3600, // 36%
+    },
+  });
+  console.log("  B2B settings OK");
+
+  // ========================================================================
   // 3. COMPANY
   // ========================================================================
   const company = await prisma.company.upsert({

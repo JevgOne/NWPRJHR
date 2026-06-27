@@ -65,7 +65,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">{t("title")}</h1>
-        {role !== "SALON" && (
+        {role !== "SALON" && role !== "HAIRDRESSER" && (
           <Link href="/sales/new">
             <Button>{t("newSale")}</Button>
           </Link>

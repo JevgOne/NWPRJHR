@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   if (status) where.status = status;
   if (salonId) where.salonId = salonId;
 
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;
   }
 
@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
 
-  // SALON can only create orders for their own salon
+  // SALON/HAIRDRESSER can only create orders for their own salon
   let salonId = parsed.data.salonId;
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     salonId = session.user.salonId!;
   } else if (!["OWNER", "EMPLOYEE"].includes(session.user.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

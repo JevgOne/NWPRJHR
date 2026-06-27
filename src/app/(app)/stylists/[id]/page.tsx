@@ -6,7 +6,7 @@ import { StylistForm } from "../StylistForm";
 export default async function StylistDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) redirect("/login");
-  if (session.user.role === "SALON") redirect("/dashboard");
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/dashboard");
 
   const { id } = await params;
   const stylist = await prisma.stylist.findUnique({ where: { id } });

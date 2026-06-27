@@ -13,7 +13,7 @@ const langFlags: Record<string, string> = {
 export default async function StylistsPage() {
   const session = await auth();
   if (!session) redirect("/login");
-  if (session.user.role === "SALON") redirect("/dashboard");
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/dashboard");
 
   const stylists = await prisma.stylist.findMany({
     orderBy: { name: "asc" },

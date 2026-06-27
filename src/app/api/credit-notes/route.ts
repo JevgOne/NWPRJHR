@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   const where: Record<string, unknown> = { type: "CREDIT_NOTE" };
 
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;
     if (!session.user.salonId)
       return NextResponse.json({
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       });
   }
 
-  if (salonId && session.user.role !== "SALON") where.salonId = salonId;
+  if (salonId && session.user.role !== "SALON" && session.user.role !== "HAIRDRESSER") where.salonId = salonId;
 
   const [creditNotes, total] = await Promise.all([
     prisma.invoice.findMany({

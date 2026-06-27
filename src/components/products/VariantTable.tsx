@@ -9,6 +9,7 @@ interface VariantData {
   id: string;
   lengthCm: number;
   color: string;
+  costPricePerGram?: number;
   wholesalePricePerGram?: number;
   retailPricePerGram?: number;
   retailManualOverride?: boolean;
@@ -41,13 +42,13 @@ export function VariantTable({
   const getVariant = (length: number, color: string) =>
     variants.find((v) => v.lengthCm === length && v.color === color);
 
-  async function handleSavePrice(variantId: string, newPriceHalere: number) {
+  async function handleSavePrice(variantId: string, field: string, newPriceHalere: number) {
     setSaving(variantId);
     try {
       await fetch(`/api/variants/${variantId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wholesalePricePerGram: newPriceHalere }),
+        body: JSON.stringify({ [field]: newPriceHalere }),
       });
       router.refresh();
     } finally {
@@ -115,7 +116,6 @@ export function VariantTable({
                   );
 
                 const cellKey = `${length}-${color}`;
-                const isEditing = editingCell === cellKey;
                 const isSaving = saving === variant.id;
 
                 return (
@@ -125,9 +125,55 @@ export function VariantTable({
                       !variant.active ? "opacity-40" : ""
                     }`}
                   >
+                    {isOwner && variant.costPricePerGram !== undefined && (
+                      <div>
+                        {editingCell === `cost-${cellKey}` ? (
+                          <input
+                            type="number"
+                            className="w-20 border rounded px-1 py-0.5 text-center text-sm"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onBlur={() => {
+                              const val = Math.round(
+                                parseFloat(editValue) * 100
+                              );
+                              if (val >= 0)
+                                handleSavePrice(variant.id, "costPricePerGram", val);
+                              else setEditingCell(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const val = Math.round(
+                                  parseFloat(editValue) * 100
+                                );
+                                if (val >= 0)
+                                  handleSavePrice(variant.id, "costPricePerGram", val);
+                              }
+                              if (e.key === "Escape") setEditingCell(null);
+                            }}
+                            autoFocus
+                            disabled={isSaving}
+                          />
+                        ) : (
+                          <button
+                            className="text-xs text-red-600 cursor-pointer hover:text-red-800"
+                            onClick={() => {
+                              setEditingCell(`cost-${cellKey}`);
+                              setEditValue(
+                                (variant.costPricePerGram! / 100).toString()
+                              );
+                            }}
+                            disabled={isSaving}
+                            title={t("variant.costPrice")}
+                          >
+                            {t("variant.costShort")}: {formatCZK(variant.costPricePerGram!)}
+                          </button>
+                        )}
+                      </div>
+                    )}
                     {variant.wholesalePricePerGram !== undefined && (
                       <div>
-                        {isOwner && isEditing ? (
+                        {isOwner && editingCell === cellKey ? (
                           <input
                             type="number"
                             className="w-20 border rounded px-1 py-0.5 text-center text-sm"
@@ -138,7 +184,7 @@ export function VariantTable({
                                 parseFloat(editValue) * 100
                               );
                               if (val > 0)
-                                handleSavePrice(variant.id, val);
+                                handleSavePrice(variant.id, "wholesalePricePerGram", val);
                               else setEditingCell(null);
                             }}
                             onKeyDown={(e) => {
@@ -147,7 +193,7 @@ export function VariantTable({
                                   parseFloat(editValue) * 100
                                 );
                                 if (val > 0)
-                                  handleSavePrice(variant.id, val);
+                                  handleSavePrice(variant.id, "wholesalePricePerGram", val);
                               }
                               if (e.key === "Escape") setEditingCell(null);
                             }}
@@ -202,6 +248,17 @@ export function VariantTable({
                             {t("variant.resetOverride")}
                           </button>
                         )}
+                      </div>
+                    )}
+                    {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && variant.wholesalePricePerGram !== undefined && (
+                      <div className="mt-0.5">
+                        <span className={`text-[10px] font-medium ${
+                          variant.wholesalePricePerGram - variant.costPricePerGram > 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}>
+                          {t("variant.margin")}: {formatCZK(variant.wholesalePricePerGram - variant.costPricePerGram)}
+                        </span>
                       </div>
                     )}
                     {variant.pricePerGram !== undefined && (

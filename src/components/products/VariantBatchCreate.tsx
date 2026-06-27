@@ -21,6 +21,7 @@ export function VariantBatchCreate({
   const [lengths, setLengths] = useState("");
   const [colors, setColors] = useState("");
   const [defaultPrice, setDefaultPrice] = useState("");
+  const [costPrice, setCostPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -53,11 +54,14 @@ export function VariantBatchCreate({
 
     setLoading(true);
     try {
+      const costHalere = costPrice ? Math.round(parseFloat(costPrice) * 100) : 0;
+
       const variants = parsedLengths.flatMap((lengthCm) =>
         parsedColors.map((color) => ({
           lengthCm,
           color,
           wholesalePricePerGram: priceHalere,
+          costPricePerGram: costHalere,
         }))
       );
 
@@ -97,6 +101,14 @@ export function VariantBatchCreate({
           placeholder="1B, 613, 4, ombre 1B/613"
           value={colors}
           onChange={(e) => setColors(e.target.value)}
+        />
+        <Input
+          label={`${t("variant.costPrice")} (CZK/g)`}
+          type="number"
+          step="0.01"
+          placeholder="8.00"
+          value={costPrice}
+          onChange={(e) => setCostPrice(e.target.value)}
         />
         <Input
           label={`${t("salon.wholesalePrice")} (CZK/g)`}

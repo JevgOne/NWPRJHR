@@ -11,6 +11,7 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [form, setForm] = useState({
+    type: "SALON" as "SALON" | "HAIRDRESSER",
     salonName: "",
     contactPerson: "",
     email: "",
@@ -52,11 +53,12 @@ export function RegisterForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        salonName: form.salonName,
+        type: form.type,
+        salonName: form.type === "HAIRDRESSER" ? form.contactPerson : form.salonName,
         contactPerson: form.contactPerson,
         email: form.email,
         phone: form.phone,
-        ico: form.ico,
+        ico: form.ico || undefined,
         city: form.city,
         address: form.address,
         website: form.website,
@@ -138,26 +140,61 @@ export function RegisterForm() {
         </p>
       </div>
 
+      {/* Type selector */}
+      <div className="bg-white rounded-2xl border border-line p-5 space-y-3">
+        <div className="text-xs font-semibold text-muted uppercase tracking-wider">{t("typeSection")}</div>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setField("type", "SALON")}
+            className={`p-3 rounded-xl border-2 text-sm font-medium transition-colors ${
+              form.type === "SALON"
+                ? "border-rose bg-rose/5 text-rose"
+                : "border-line text-muted hover:border-rose/30"
+            }`}
+          >
+            {t("typeSalon")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setField("type", "HAIRDRESSER")}
+            className={`p-3 rounded-xl border-2 text-sm font-medium transition-colors ${
+              form.type === "HAIRDRESSER"
+                ? "border-rose bg-rose/5 text-rose"
+                : "border-line text-muted hover:border-rose/30"
+            }`}
+          >
+            {t("typeHairdresser")}
+          </button>
+        </div>
+      </div>
+
       {/* Salon info */}
       <div className="bg-white rounded-2xl border border-line p-5 space-y-3">
-        <div className="text-xs font-semibold text-muted uppercase tracking-wider">{t("salonInfoSection")}</div>
-        <div>
-          <label className="block text-sm font-medium text-espresso mb-1">{t("salonNameLabel")}</label>
-          <input
-            type="text"
-            required
-            value={form.salonName}
-            onChange={(e) => setField("salonName", e.target.value)}
-            className="w-full border border-line rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"
-            placeholder={t("salonNamePlaceholder")}
-          />
+        <div className="text-xs font-semibold text-muted uppercase tracking-wider">
+          {form.type === "HAIRDRESSER" ? t("hairdresserInfoSection") : t("salonInfoSection")}
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        {form.type === "SALON" && (
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">{t("icoLabel")}</label>
+            <label className="block text-sm font-medium text-espresso mb-1">{t("salonNameLabel")}</label>
             <input
               type="text"
               required
+              value={form.salonName}
+              onChange={(e) => setField("salonName", e.target.value)}
+              className="w-full border border-line rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+              placeholder={t("salonNamePlaceholder")}
+            />
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-espresso mb-1">
+              {form.type === "HAIRDRESSER" ? t("icoLabelOptional") : t("icoLabel")}
+            </label>
+            <input
+              type="text"
+              required={form.type === "SALON"}
               value={form.ico}
               onChange={(e) => setField("ico", e.target.value)}
               className="w-full border border-line rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"

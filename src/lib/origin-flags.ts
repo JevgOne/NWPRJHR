@@ -49,3 +49,21 @@ const FLAGS: Record<string, string> = {
 export function getOriginFlag(origin: string): string {
   return FLAGS[origin] ?? "🌍";
 }
+
+export const ORIGIN_OPTIONS = [
+  { name: "Ukrajina", flag: "🇺🇦" },
+  { name: "Bělorusko", flag: "🇧🇾" },
+  { name: "Moldavsko", flag: "🇲🇩" },
+  { name: "Rusko", flag: "🇷🇺" },
+  { name: "Kazachstán", flag: "🇰🇿" },
+  { name: "Uzbekistán", flag: "🇺🇿" },
+  { name: "Turecko", flag: "🇹🇷" },
+  { name: "Írán", flag: "🇮🇷" },
+  { name: "Indie", flag: "🇮🇳" },
+  { name: "Vietnam", flag: "🇻🇳" },
+  { name: "Sýrie", flag: "🇸🇾" },
+  { name: "Čína", flag: "🇨🇳" },
+  { name: "Mongolsko", flag: "🇲🇳" },
+  { name: "Gruzie", flag: "🇬🇪" },
+  { name: "Mix", flag: "🌍" },
+];

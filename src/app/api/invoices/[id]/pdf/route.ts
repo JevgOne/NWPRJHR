@@ -26,7 +26,7 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   if (
-    session.user.role === "SALON" &&
+    (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") &&
     invoice.salonId !== session.user.salonId
   )
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

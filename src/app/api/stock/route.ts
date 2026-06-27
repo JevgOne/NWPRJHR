@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   if (variantId) {
     const stock = await getStockNumbers(variantId);
 
-    if (role === "SALON") {
+    if (role === "SALON" || role === "HAIRDRESSER") {
       return NextResponse.json({
         variantId,
         availableGrams: stock.availableGrams,
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
       color: v.color,
     };
 
-    if (role === "SALON") {
+    if (role === "SALON" || role === "HAIRDRESSER") {
       return {
         ...base,
         availableGrams: stock.availableGrams,

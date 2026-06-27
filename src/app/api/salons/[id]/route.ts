@@ -13,7 +13,7 @@ export async function GET(
 
   const { id } = await params;
 
-  if (session.user.role === "SALON" && session.user.salonId !== id)
+  if ((session.user.role === "SALON" || session.user.role === "HAIRDRESSER") && session.user.salonId !== id)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const salon = await prisma.salon.findUnique({

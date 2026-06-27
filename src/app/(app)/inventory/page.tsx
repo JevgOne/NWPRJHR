@@ -12,7 +12,7 @@ export default async function InventoryPage() {
   const t = await getTranslations();
   const role = session.user.role;
 
-  if (role === "SALON") redirect("/dashboard");
+  if (role === "SALON" || role === "HAIRDRESSER") redirect("/dashboard");
 
   const variants = await prisma.variant.findMany({
     where: { active: true },

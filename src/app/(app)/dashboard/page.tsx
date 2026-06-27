@@ -44,6 +44,7 @@ const movementTypeColors: Record<string, { bg: string; text: string; label: stri
 export default async function DashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/salon/catalog");
 
   const t = await getTranslations("dashboard");
   const now = new Date();

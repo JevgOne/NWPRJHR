@@ -22,14 +22,14 @@ export async function GET(request: NextRequest) {
 
   const where: Record<string, unknown> = {};
 
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;
     if (!session.user.salonId)
       return NextResponse.json({ data: [], total: 0, page, limit, totalPages: 0 });
   }
 
   if (status) where.status = status;
-  if (salonId && session.user.role !== "SALON") where.salonId = salonId;
+  if (salonId && session.user.role !== "SALON" && session.user.role !== "HAIRDRESSER") where.salonId = salonId;
   if (companyId) where.companyId = companyId;
   if (type) where.type = type;
   if (from || to) {
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (session.user.role === "SALON")
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();

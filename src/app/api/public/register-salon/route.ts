@@ -6,11 +6,12 @@ import { notifySalonRegistration } from "@/lib/telegram";
 import { z } from "zod";
 
 const registerSchema = z.object({
+  type: z.enum(["SALON", "HAIRDRESSER"]).default("SALON"),
   salonName: z.string().min(1).max(200),
   contactPerson: z.string().min(1).max(200),
   email: z.string().email().max(200),
   phone: z.string().min(1).max(30),
-  ico: z.string().min(1).max(20),
+  ico: z.string().max(20).optional().default(""),
   city: z.string().min(1).max(100),
   address: z.string().min(1).max(300),
   website: z.string().max(500).optional().default(""),
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { salonName, contactPerson, email, phone, ico, city, address, website, instagram, password, language } = parsed.data;
+  const { type, salonName, contactPerson, email, phone, ico, city, address, website, instagram, password, language } = parsed.data;
 
   // Check if email already exists
   const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
       const salon = await tx.salon.create({
         data: {
           name: salonName,
+          type: type,
           contactPerson: contactPerson || null,
           email,
           phone: phone || null,
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
           name: contactPerson,
           email,
           hashedPassword,
-          role: "SALON",
+          role: type === "HAIRDRESSER" ? "HAIRDRESSER" : "SALON",
           salonId: salon.id,
         },
       });
@@ -100,13 +102,15 @@ export async function POST(request: NextRequest) {
 
     // Notify owner
     const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
+    const typeLabel = type === "HAIRDRESSER" ? "Kadeřnice" : "Salon";
     await sendNotificationEmail({
       to: contactTo,
-      subject: `[Hairland] Nová žádost o registraci: ${salonName}`,
+      subject: `[Hairland] Nová žádost o registraci (${typeLabel}): ${salonName}`,
       body: [
-        `Nový salon žádá o B2B registraci:`,
+        `Nová ${typeLabel.toLowerCase()} žádá o B2B registraci:`,
         "",
-        `Salon: ${salonName}`,
+        `Typ: ${typeLabel}`,
+        `Název: ${salonName}`,
         `Kontakt: ${contactPerson}`,
         `Email: ${email}`,
         `Telefon: ${phone}`,

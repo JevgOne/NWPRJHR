@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   const tier = sp.get("tier");
   const city = sp.get("city");
   const search = sp.get("search");
+  const type = sp.get("type");
   const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
   const limit = Math.min(100, parseInt(sp.get("limit") ?? "50"));
 
@@ -23,10 +24,11 @@ export async function GET(request: NextRequest) {
   else where.archived = false; // default: active only
 
   if (tier) where.tier = tier;
+  if (type) where.type = type;
   if (city) where.city = { contains: city, mode: "insensitive" };
   if (search) where.name = { contains: search, mode: "insensitive" };
 
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.id = session.user.salonId;
   }
 

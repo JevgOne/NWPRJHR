@@ -3,6 +3,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
+import { roundHalereUp } from "@/lib/rounding";
+import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
@@ -33,6 +36,8 @@ async function getProduct(id: string) {
         select: {
           lengthCm: true,
           color: true,
+          retailPricePerGram: true,
+          wholesalePricePerGram: true,
         },
       },
     },
@@ -50,14 +55,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct(id);
   const t = await getTranslations("public.productDetail");
   const tCategory = await getTranslations("category");
+  const locale = await getLocale();
   if (!product) {
     return { title: t("notFound") };
   }
+  const productName = locale === "ru" && product.nameRu
+    ? product.nameRu
+    : locale === "uk" && product.nameUk
+      ? product.nameUk
+      : product.name;
   return {
-    title: product.name,
+    title: productName,
     description:
       product.description ??
-      t("metaDesc", { name: product.name, category: tCategory(product.category.toLowerCase()) }),
+      t("metaDesc", { name: productName, category: tCategory(product.category.toLowerCase()) }),
   };
 }
 
@@ -69,9 +80,47 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
+  const session = await auth();
   const t = await getTranslations("public");
   const tCategory = await getTranslations("category");
   const locale = await getLocale();
+
+  // Calculate per-gram price based on user tier
+  let pricePerGram: number | null = null;
+  let priceTip100g: number | null = null;
+  let tierBadge: string | null = null;
+  let retailPricePerGram: number | null = null;
+  const variantsWithPrices = product.variants.filter(
+    (v) => v.retailPricePerGram > 0
+  );
+
+  if (variantsWithPrices.length > 0) {
+    const role = session?.user?.role;
+    const retailPrices = variantsWithPrices.map((v) => v.retailPricePerGram);
+    const minRetail = Math.min(...retailPrices);
+
+    if (role === "HAIRDRESSER") {
+      const settings = await prisma.b2BSettings.findFirst();
+      const discountPct = settings?.hairdresserDiscountPct ?? 2000;
+      const prices = variantsWithPrices.map((v) =>
+        roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000)
+      );
+      pricePerGram = Math.min(...prices);
+      priceTip100g = pricePerGram * 100;
+      tierBadge = t("productDetail.yourPrice");
+      retailPricePerGram = minRetail;
+    } else if (role === "SALON") {
+      const prices = variantsWithPrices.map((v) => v.wholesalePricePerGram);
+      pricePerGram = Math.min(...prices);
+      priceTip100g = pricePerGram * 100;
+      tierBadge = t("productDetail.yourPrice");
+      retailPricePerGram = minRetail;
+    } else {
+      // Guest / OWNER / EMPLOYEE — show retail price
+      pricePerGram = minRetail;
+      priceTip100g = pricePerGram * 100;
+    }
+  }
 
   const colorName = (nameKey: string) => t(`colors.${nameKey}`);
 
@@ -151,6 +200,32 @@ export default async function ProductDetailPage({ params }: Props) {
               )}
             </div>
           </div>
+
+          {/* Price */}
+          {pricePerGram && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-ink">{formatCZK(pricePerGram)}/g</span>
+                {tierBadge && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-xs font-medium">
+                    {tierBadge}
+                  </span>
+                )}
+              </div>
+              {priceTip100g && (
+                <p className="text-sm text-muted">
+                  {t("productDetail.priceTip", { price: formatCZK(priceTip100g) })}
+                </p>
+              )}
+              {retailPricePerGram && (
+                <p className="text-xs text-muted">
+                  <span className="line-through">{formatCZK(retailPricePerGram)}/g</span>
+                  {" "}
+                  <span>({t("productDetail.regularPrice")})</span>
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Description */}
           <p className="text-sm text-muted leading-relaxed">

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   if (status) where.status = status;
   if (salonId) where.salonId = salonId;
 
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;
   }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     );
 
   let salonId = parsed.data.salonId;
-  if (session.user.role === "SALON") {
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     salonId = session.user.salonId!;
   }
 

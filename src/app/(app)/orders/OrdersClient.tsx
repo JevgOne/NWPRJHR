@@ -106,7 +106,7 @@ export function OrdersClient({ role }: { role: Role }) {
               <thead>
                 <tr className="border-b text-left text-gray-500">
                   <th className="py-2 pr-3">{t("title")}</th>
-                  <th className="py-2 pr-3">{role !== "SALON" ? t("salon") : ""}</th>
+                  <th className="py-2 pr-3">{role !== "SALON" && role !== "HAIRDRESSER" ? t("salon") : ""}</th>
                   <th className="py-2 pr-3 text-right">
                     {t("estimatedTotal")}
                   </th>

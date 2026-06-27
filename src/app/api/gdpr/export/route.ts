@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   const { role, id: userId, salonId } = session.user;
 
-  if (role === "SALON") {
+  if (role === "SALON" || role === "HAIRDRESSER") {
     if (!salonId) {
       return NextResponse.json({ error: "No salon linked" }, { status: 400 });
     }

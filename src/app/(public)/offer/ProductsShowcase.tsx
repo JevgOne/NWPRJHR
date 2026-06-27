@@ -254,11 +254,11 @@ export function ProductsShowcase() {
           </div>
         )}
 
-        {/* Colors */}
+        {/* Colors — visual swatch grid */}
         {filterOptions.colors.length > 0 && (
           <div>
             <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.colorLabel")}</div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="grid grid-cols-5 gap-1.5">
               {filterOptions.colors.map(([code, count]) => {
                 const { hex, nameKey } = getHairColor(code);
                 const isActive = activeColor === code;
@@ -266,19 +266,22 @@ export function ProductsShowcase() {
                   <button
                     key={code}
                     onClick={() => toggleFilter("color", code)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
+                    className={`group relative w-full aspect-square rounded-lg border-2 transition-all cursor-pointer ${
                       isActive
-                        ? "border-rose bg-blush-100 text-rose-deep ring-1 ring-blush-300"
-                        : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
+                        ? "border-rose ring-2 ring-blush-300 scale-110 z-10"
+                        : "border-line hover:border-blush-300 hover:scale-105"
                     }`}
-                    title={colorName(nameKey)}
+                    style={{ backgroundColor: hex }}
+                    title={`${colorName(nameKey)} (${count})`}
                   >
-                    <span
-                      className="w-5 h-5 rounded-full border border-line flex-shrink-0"
-                      style={{ backgroundColor: hex }}
-                    />
-                    {colorName(nameKey)}
-                    <span className="text-muted">{count}</span>
+                    {isActive && (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <span className={`text-xs font-bold ${parseInt(code) <= 5 ? "text-espresso" : "text-white"}`}>✓</span>
+                      </span>
+                    )}
+                    <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-0.5 rounded bg-ink text-white text-[10px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                      {colorName(nameKey)}
+                    </span>
                   </button>
                 );
               })}
@@ -438,9 +441,9 @@ export function ProductsShowcase() {
                     </div>
                   </div>
 
-                  {/* Color circles */}
+                  {/* Color swatches */}
                   <div className="mt-2.5">
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1">
                       {pColors.map((code) => {
                         const { hex, nameKey } = getHairColor(code);
                         const isActive = activeColor === code;
@@ -448,17 +451,17 @@ export function ProductsShowcase() {
                           <button
                             key={code}
                             onClick={() => toggleFilter("color", code)}
-                            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] border transition-all cursor-pointer ${
+                            className={`group relative w-6 h-6 rounded border-2 transition-all cursor-pointer ${
                               isActive
-                                ? "border-rose bg-blush-100 text-rose-deep"
-                                : "border-line bg-white text-muted hover:border-muted"
+                                ? "border-rose ring-1 ring-blush-300 scale-110 z-10"
+                                : "border-line hover:border-blush-300 hover:scale-110"
                             }`}
+                            style={{ backgroundColor: hex }}
+                            title={colorName(nameKey)}
                           >
-                            <span
-                              className="w-3.5 h-3.5 rounded-full border border-line flex-shrink-0"
-                              style={{ backgroundColor: hex }}
-                            />
-                            {colorName(nameKey)}
+                            <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-7 px-1.5 py-0.5 rounded bg-ink text-white text-[10px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                              {colorName(nameKey)}
+                            </span>
                           </button>
                         );
                       })}

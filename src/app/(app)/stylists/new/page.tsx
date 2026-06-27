@@ -6,7 +6,7 @@ import { StylistForm } from "../StylistForm";
 export default async function NewStylistPage() {
   const session = await auth();
   if (!session) redirect("/login");
-  if (session.user.role === "SALON") redirect("/dashboard");
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/dashboard");
 
   const salons = await prisma.salon.findMany({
     where: { archived: false },

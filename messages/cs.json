@@ -40,7 +40,8 @@
   "roles": {
     "owner": "Majitel",
     "employee": "Zaměstnanec",
-    "salon": "Salon"
+    "salon": "Salon",
+    "hairdresser": "Kadeřnice"
   },
   "nav": {
     "dashboard": "Přehled",
@@ -83,7 +84,9 @@
     "gram": "Gram",
     "piece": "Kus",
     "length": "Délka",
-    "color": "Barva / odstín"
+    "color": "Barva / odstín",
+    "origin": "Původ vlasů",
+    "originPlaceholder": "Začněte psát název země..."
   },
   "category": {
     "virgin": "Panenské vlasy",
@@ -227,7 +230,10 @@
     "language": "Jazyk",
     "czech": "Čeština",
     "ukrainian": "Ukrajinština",
-    "russian": "Ruština"
+    "russian": "Ruština",
+    "typeSalon": "Salon",
+    "typeHairdresser": "Kadeřnice",
+    "pendingApproval": "Čeká na schválení"
   },
   "orderManagement": {
     "title": "Objednávky",
@@ -411,11 +417,16 @@
       "languageBannerText": "Kompletní servis v češtině, ukrajinštině i ruštině."
     },
     "register": {
-      "title": "Registrace salonu",
-      "pageTitle": "Registrace salonu | Hairland",
-      "pageDescription": "Zaregistrujte svůj salon pro velkoobchodní nákup vlasů",
-      "subtitle": "B2B účet pro velkoobchodní nákup vlasů. Po ověření vašeho salonu aktivujeme přístup — obvykle do 24 hodin.",
+      "title": "B2B Registrace",
+      "pageTitle": "B2B Registrace | Hairland",
+      "pageDescription": "Zaregistrujte se jako salon nebo kadeřnice pro velkoobchodní nákup vlasů",
+      "subtitle": "B2B účet pro zvýhodněný nákup vlasů. Po ověření aktivujeme přístup — obvykle do 24 hodin.",
+      "typeSection": "Typ účtu",
+      "typeSalon": "Salon / Studio",
+      "typeHairdresser": "Kadeřnice (OSVČ)",
       "salonInfoSection": "Údaje o salonu",
+      "hairdresserInfoSection": "Vaše údaje",
+      "icoLabelOptional": "IČO (nepovinné)",
       "salonNameLabel": "Název salonu *",
       "salonNamePlaceholder": "např. Beauty Studio Praha",
       "icoLabel": "IČO *",
@@ -584,7 +595,10 @@
       "deliveryCustom": "Clip-in/tape-in do 7 dnů",
       "deliveryInvoice": "Faktura",
       "notFound": "Produkt nenalezen",
-      "metaDesc": "{name} - {category} prémiové vlasy na prodej"
+      "metaDesc": "{name} - {category} prémiové vlasy na prodej",
+      "yourPrice": "Vaše cena",
+      "priceTip": "\ud83d\udca1 100g \u2248 {price}",
+      "regularPrice": "běžná cena"
     },
     "inquiry": {
       "addToInquiry": "Přidat do poptávky",
@@ -668,6 +682,7 @@
     },
     "navbar": {
       "hairdressers": "Kadeřnice",
+      "pro": "Pro kadeřníky",
       "inquiry": "🛒 Poptávka"
     },
     "reviews": {
@@ -733,7 +748,17 @@
     "willBeCreated": "{count} variant bude vytvořeno",
     "commaSeparated": "oddělené čárkou",
     "manualOverride": "ruční",
-    "resetOverride": "obnovit"
+    "resetOverride": "obnovit",
+    "costPrice": "Nákupní cena za gram",
+    "costShort": "Nákup",
+    "margin": "Marže"
+  },
+  "photos": {
+    "title": "Fotografie produktu",
+    "photo": "Foto",
+    "uploading": "Nahrávání...",
+    "dragOrClick": "Přetáhněte fotky sem nebo klikněte pro výběr",
+    "formats": "JPG, PNG, WebP (max 5 MB)"
   },
   "productForm": {
     "description": "Popis",
@@ -1000,5 +1025,56 @@
     "deleteSuccess": "Osobní data byla anonymizována. Finanční záznamy jsou uchovány pro zákonné účely.",
     "deleteCustomer": "Smazat data zákazníka",
     "deleteCustomerConfirm": "Opravdu chcete anonymizovat data tohoto zákazníka?"
+  },
+  "b2b": {
+    "pageTitle": "Pro kadeřníky a salony | Hairland",
+    "pageDescription": "Spolupracujte s Hairland — zvýhodněné ceny na prémiové vlasy pro profesionály",
+    "heroTitle": "Spolupracujte s Hairland",
+    "heroSubtitle": "Získejte zvýhodněné ceny na prémiové vlasy. Program pro salony a samostatné kadeřnice.",
+    "salonCard": {
+      "title": "Pro salony",
+      "discount": "Až 36% sleva",
+      "benefit1": "Nejnižší velkoobchodní ceny",
+      "benefit2": "Věrnostní program s rostoucí slevou",
+      "benefit3": "Prioritní zpracování objednávek",
+      "benefit4": "Fakturace a individuální podmínky"
+    },
+    "hairdresserCard": {
+      "title": "Pro kadeřnice",
+      "discount": "20% sleva",
+      "benefit1": "Zvýhodněné ceny oproti maloobchodu",
+      "benefit2": "Přístup ke kompletnímu katalogu",
+      "benefit3": "Online objednávky a fakturace",
+      "benefit4": "Bez nutnosti IČO"
+    },
+    "howItWorks": {
+      "title": "Jak to funguje?",
+      "step1Title": "Zaregistrujte se",
+      "step1Text": "Vyplňte registrační formulář — zabere to 2 minuty.",
+      "step2Title": "Ověříme vás",
+      "step2Text": "Zkontrolujeme vaše údaje a schválíme účet — obvykle do 24 hodin.",
+      "step3Title": "Začněte nakupovat",
+      "step3Text": "Přihlaste se a objednávejte za zvýhodněné B2B ceny."
+    },
+    "ctaTitle": "Připraveni začít?",
+    "ctaText": "Zaregistrujte se ještě dnes a získejte přístup ke zvýhodněným cenám.",
+    "ctaRegister": "Zaregistrovat se",
+    "ctaLogin": "Přihlásit se"
+  },
+  "b2bSettings": {
+    "title": "B2B Nastavení",
+    "description": "Nastavení slev pro B2B partnery. Slevy se počítají z maloobchodní ceny.",
+    "hairdresserDiscount": "Sleva pro kadeřnice",
+    "hairdresserDiscountHelp": "Procentuální sleva z retailové ceny pro samostatné kadeřnice",
+    "salonDiscount": "Sleva pro salony",
+    "salonDiscountHelp": "Informační hodnota — salony používají velkoobchodní cenu z varianty",
+    "previewTitle": "Příklad cen",
+    "previewDescription": "Ukázka cen pro referenční cenu 500 CZK/g",
+    "tier": "Úroveň",
+    "discount": "Sleva",
+    "examplePrice": "Cena/g",
+    "tierCustomer": "Zákazník",
+    "tierHairdresser": "Kadeřnice",
+    "tierSalon": "Salon"
   }
 }

@@ -51,8 +51,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         );
         if (!isValid) return null;
 
-        // Block unapproved salons
-        if (user.role === "SALON" && user.salonId) {
+        // Block unapproved salons and hairdressers
+        if ((user.role === "SALON" || user.role === "HAIRDRESSER") && user.salonId) {
           const salon = await prisma.salon.findUnique({
             where: { id: user.salonId },
             select: { approved: true },
@@ -119,4 +119,12 @@ export function isEmployee(role: Role): boolean {
 
 export function isSalon(role: Role): boolean {
   return role === "SALON";
+}
+
+export function isHairdresser(role: Role): boolean {
+  return role === "HAIRDRESSER";
+}
+
+export function isB2B(role: Role): boolean {
+  return role === "SALON" || role === "HAIRDRESSER";
 }

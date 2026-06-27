@@ -17,6 +17,7 @@ export const createProductSchema = z.object({
     "OTHER",
   ]),
   origin: z.string().max(200).optional(),
+  photos: z.string().optional(),
   slug: z
     .string()
     .regex(/^[a-z0-9-]+$/)
@@ -32,6 +33,7 @@ export const createVariantsSchema = z.object({
         lengthCm: z.number().int().positive().max(150),
         color: z.string().min(1).max(100),
         wholesalePricePerGram: z.number().int().positive(),
+        costPricePerGram: z.number().int().min(0).optional(),
       })
     )
     .min(1)
@@ -39,6 +41,7 @@ export const createVariantsSchema = z.object({
 });
 
 export const updateVariantSchema = z.object({
+  costPricePerGram: z.number().int().min(0).optional(),
   wholesalePricePerGram: z.number().int().positive().optional(),
   retailPricePerGram: z.number().int().positive().optional(),
   retailManualOverride: z.boolean().optional(),

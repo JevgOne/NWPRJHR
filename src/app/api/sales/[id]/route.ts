@@ -31,7 +31,7 @@ export async function GET(
   if (!sale)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  if (session.user.role === "SALON" && sale.salonId !== session.user.salonId)
+  if ((session.user.role === "SALON" || session.user.role === "HAIRDRESSER") && sale.salonId !== session.user.salonId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const serialized = serializeSaleForRole(sale, session.user.role);

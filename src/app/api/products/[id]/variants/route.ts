@@ -66,6 +66,7 @@ export async function POST(
       productId,
       lengthCm: v.lengthCm,
       color: v.color,
+      costPricePerGram: v.costPricePerGram ?? 0,
       wholesalePricePerGram: v.wholesalePricePerGram,
       retailPricePerGram: calculateRetailPrice(
         v.wholesalePricePerGram,

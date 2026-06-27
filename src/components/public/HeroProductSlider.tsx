@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { getOriginFlag } from "@/lib/origin-flags";
 
 interface SliderProduct {
   id: string;
   name: string;
+  nameUk: string | null;
+  nameRu: string | null;
   category: string;
   origin: string | null;
   photos: string[];
@@ -121,10 +123,21 @@ function getVisibleProducts(products: SliderProduct[], start: number, count: num
 }
 
 function ProductCard({ product }: { product: SliderProduct }) {
-  const t = useTranslations("public.slider");
+  const t = useTranslations("public");
+  const locale = useLocale();
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
 
-  const categoryLabel = t(product.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale");
+  const categoryLabel = t(`slider.${product.category.toLowerCase()}` as "slider.virgin" | "slider.premium" | "slider.standard" | "slider.sale");
+
+  const originName = (origin: string) => {
+    try { return t(`origins.${origin}`); } catch { return origin; }
+  };
+
+  const localizedName = locale === "ru" && product.nameRu
+    ? product.nameRu
+    : locale === "uk" && product.nameUk
+      ? product.nameUk
+      : product.name;
 
   return (
     <Link
@@ -135,7 +148,7 @@ function ProductCard({ product }: { product: SliderProduct }) {
         {product.photos.length > 0 ? (
           <img
             src={product.photos[0]}
-            alt={product.name}
+            alt={localizedName}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -151,11 +164,11 @@ function ProductCard({ product }: { product: SliderProduct }) {
           </span>
           {product.origin && (
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
-              {getOriginFlag(product.origin)} {product.origin}
+              {getOriginFlag(product.origin)} {originName(product.origin)}
             </span>
           )}
         </div>
-        <h3 className="font-semibold text-ink text-sm truncate">{product.name}</h3>
+        <h3 className="font-semibold text-ink text-sm truncate">{localizedName}</h3>
         {lengths.length > 0 && (
           <p className="text-xs text-muted mt-1">
             {lengths.map((l) => `${l} cm`).join(", ")}

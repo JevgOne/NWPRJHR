@@ -11,7 +11,7 @@ export async function GET(
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (session.user.role === "SALON")
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { id } = await params;

@@ -55,6 +55,7 @@ export function PublicNavbar() {
     { href: "/", label: t("nav.home") },
     { href: "/offer", label: t("nav.products") },
     { href: "/kadernice", label: t("navbar.hairdressers") },
+    { href: "/pro", label: t("navbar.pro") },
     { href: "/contact", label: t("nav.contact") },
     { href: "/about", label: t("nav.about") },
   ];

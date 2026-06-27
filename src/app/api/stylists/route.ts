@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (!session || session.user.role === "SALON") {
+  if (!session || session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -10,6 +10,7 @@ import type { Role } from "@prisma/client";
 interface SalonDetail {
   id: string;
   name: string;
+  type?: string;
   ico?: string;
   dic?: string;
   contactPerson?: string;
@@ -145,12 +146,17 @@ export function SalonDetailClient({
             >
               {tLoyalty(salon.tier.toLowerCase())}
             </span>
+            {salon.type === "HAIRDRESSER" && (
+              <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+                {t("typeHairdresser")}
+              </span>
+            )}
             {salon.city && (
               <span className="text-gray-400 text-sm">{salon.city}</span>
             )}
             {!salon.approved && (
               <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
-                Čeká na schválení
+                {t("pendingApproval")}
               </span>
             )}
             {salon.archived && (

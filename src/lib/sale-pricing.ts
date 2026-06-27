@@ -5,6 +5,7 @@ import { roundHalereUp } from "./rounding";
 /**
  * Get effective price per gram for a sale.
  * SALON: wholesale price (loyalty discount applied in Step 6 when tiers are implemented).
+ * HAIRDRESSER: retail price minus hairdresser discount from B2BSettings.
  * RETAIL: retail price.
  */
 export async function getSalePrice(
@@ -18,6 +19,15 @@ export async function getSalePrice(
 
   if (customerType === "RETAIL") {
     return { pricePerGram: variant.retailPricePerGram };
+  }
+
+  if (customerType === "HAIRDRESSER") {
+    const settings = await prisma.b2BSettings.findFirst();
+    const discountPct = settings?.hairdresserDiscountPct ?? 2000;
+    const price = roundHalereUp(
+      (variant.retailPricePerGram * (10000 - discountPct)) / 10000
+    );
+    return { pricePerGram: price };
   }
 
   // SALON: wholesale price (loyalty discounts will be added in Step 6)

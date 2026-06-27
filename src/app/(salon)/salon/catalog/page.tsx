@@ -6,5 +6,5 @@ export default async function CatalogPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  return <CatalogClient />;
+  return <CatalogClient role={session.user.role} />;
 }

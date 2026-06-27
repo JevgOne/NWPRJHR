@@ -5,7 +5,7 @@ import { CustomersClient } from "./CustomersClient";
 export default async function CustomersPage() {
   const session = await auth();
   if (!session) redirect("/login");
-  if (session.user.role === "SALON") redirect("/dashboard");
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/dashboard");
 
   return <CustomersClient />;
 }

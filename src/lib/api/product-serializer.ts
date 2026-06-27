@@ -21,6 +21,7 @@ export function serializeVariantForRole(
     case "OWNER":
       return {
         ...base,
+        costPricePerGram: variant.costPricePerGram,
         wholesalePricePerGram: variant.wholesalePricePerGram,
         retailPricePerGram: variant.retailPricePerGram,
         retailManualOverride: variant.retailManualOverride,
@@ -42,6 +43,18 @@ export function serializeVariantForRole(
       return {
         ...base,
         pricePerGram: salonPrice,
+      };
+    }
+
+    case "HAIRDRESSER": {
+      const hairdresserPrice = salonDiscountPercent
+        ? roundHalereUp(
+            variant.retailPricePerGram * (1 - salonDiscountPercent / 100)
+          )
+        : roundHalereUp(variant.retailPricePerGram * 0.8);
+      return {
+        ...base,
+        pricePerGram: hairdresserPrice,
       };
     }
   }

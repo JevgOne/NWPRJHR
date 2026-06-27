@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
   // Only SALON users can request deletion of their salon data
   // OWNER can delete customer data via separate admin endpoint
-  if (role === "SALON") {
+  if (role === "SALON" || role === "HAIRDRESSER") {
     if (!salonId) {
       return NextResponse.json({ error: "No salon linked" }, { status: 400 });
     }

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (session.user.role === "SALON")
+  if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();

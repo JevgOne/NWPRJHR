@@ -11,6 +11,7 @@ import type { Role } from "@prisma/client";
 interface SalonRow {
   id: string;
   name: string;
+  type?: string;
   city?: string;
   tier: string;
   totalRevenue: number;
@@ -40,6 +41,7 @@ export function SalonsClient({ role }: { role: Role }) {
   const [salons, setSalons] = useState<SalonRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"active" | "archived">("active");
+  const [typeFilter, setTypeFilter] = useState<"" | "SALON" | "HAIRDRESSER">("");
   const [search, setSearch] = useState("");
 
   const isOwner = role === "OWNER";
@@ -49,13 +51,14 @@ export function SalonsClient({ role }: { role: Role }) {
     const params = new URLSearchParams();
     params.set("archived", tab === "archived" ? "true" : "false");
     if (search) params.set("search", search);
+    if (typeFilter) params.set("type", typeFilter);
 
     fetch(`/api/salons?${params}`)
       .then((r) => r.json())
       .then((data) => setSalons(data.data ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [tab, search]);
+  }, [tab, search, typeFilter]);
 
   return (
     <div className="space-y-4">
@@ -89,6 +92,15 @@ export function SalonsClient({ role }: { role: Role }) {
         >
           {t("archived")}
         </button>
+        <select
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value as "" | "SALON" | "HAIRDRESSER")}
+          className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-white"
+        >
+          <option value="">{tCommon("all")}</option>
+          <option value="SALON">{t("typeSalon")}</option>
+          <option value="HAIRDRESSER">{t("typeHairdresser")}</option>
+        </select>
         <Input
           placeholder={tCommon("search")}
           value={search}
@@ -129,9 +141,14 @@ export function SalonsClient({ role }: { role: Role }) {
                         {s.city}
                       </span>
                     )}
+                    {s.type === "HAIRDRESSER" && (
+                      <span className="ml-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                        {t("typeHairdresser")}
+                      </span>
+                    )}
                     {!s.approved && (
                       <span className="ml-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
-                        Čeká na schválení
+                        {t("pendingApproval")}
                       </span>
                     )}
                   </td>

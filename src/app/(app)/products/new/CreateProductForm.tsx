@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
+import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
+import { PhotoUpload } from "@/components/products/PhotoUpload";
 
 const CATEGORIES = ["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
 const PROCESSING_TYPES = [
@@ -22,6 +24,24 @@ export function CreateProductForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [originOpen, setOriginOpen] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const originRef = useRef<HTMLDivElement>(null);
+
+  const filteredOrigins = ORIGIN_OPTIONS.filter((o) =>
+    o.name.toLowerCase().includes(origin.toLowerCase())
+  );
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (originRef.current && !originRef.current.contains(e.target as Node)) {
+        setOriginOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -36,7 +56,8 @@ export function CreateProductForm() {
       description: (form.get("description") as string) || undefined,
       category: form.get("category") as string,
       processingType: form.get("processingType") as string,
-      origin: (form.get("origin") as string) || undefined,
+      origin: origin || undefined,
+      photos: photos.length > 0 ? JSON.stringify(photos) : undefined,
       slug:
         (form.get("slug") as string) ||
         (form.get("name") as string)
@@ -110,7 +131,46 @@ export function CreateProductForm() {
           </select>
         </div>
 
-        <Input id="origin" name="origin" label="Původ vlasů" placeholder="např. Východní Evropa, Irán, Rusko..." />
+        <div ref={originRef} className="relative">
+          <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-1">
+            {t("product.origin")}
+          </label>
+          <input
+            id="origin"
+            type="text"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            value={origin}
+            onChange={(e) => {
+              setOrigin(e.target.value);
+              setOriginOpen(true);
+            }}
+            onFocus={() => setOriginOpen(true)}
+            placeholder={t("product.originPlaceholder")}
+            autoComplete="off"
+          />
+          {originOpen && filteredOrigins.length > 0 && (
+            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+              {filteredOrigins.map((o) => (
+                <li key={o.name}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-indigo-50 text-left"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setOrigin(o.name);
+                      setOriginOpen(false);
+                    }}
+                  >
+                    <span>{o.flag}</span>
+                    <span>{o.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <PhotoUpload photos={photos} onChange={setPhotos} disabled={loading} />
+
         <Input id="slug" name="slug" label="Slug (URL)" placeholder="auto-generated" />
 
         {error && <p className="text-sm text-red-600">{error}</p>}

@@ -10,6 +10,7 @@ enum Role {
   OWNER
   EMPLOYEE
   SALON
+  HAIRDRESSER
 }
 
 model User {
@@ -39,9 +40,15 @@ model User {
   @@map("users")
 }
 
+enum SalonType {
+  SALON
+  HAIRDRESSER
+}
+
 model Salon {
   id              String      @id @default(cuid())
   name            String
+  type            SalonType   @default(SALON)
   ico             String?
   dic             String?
   contactPerson   String?
@@ -151,6 +158,7 @@ model Variant {
   product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   lengthCm              Int
   color                 String
+  costPricePerGram      Int      @default(0)
   wholesalePricePerGram Int
   retailPricePerGram    Int
   retailManualOverride  Boolean  @default(false)
@@ -181,6 +189,20 @@ model PriceSettings {
   updatedAt     DateTime        @updatedAt
 
   @@map("price_settings")
+}
+
+// ============================================================
+// B2B_SETTINGS -- configurable discount percentages per B2B tier
+// Values in basis points: 2000 = 20.00%
+// ============================================================
+
+model B2BSettings {
+  id                      String   @id @default(cuid())
+  hairdresserDiscountPct  Int      @default(2000)
+  salonDiscountPct        Int      @default(3600)
+  updatedAt               DateTime @updatedAt
+
+  @@map("b2b_settings")
 }
 
 // ============================================================
@@ -339,6 +361,7 @@ model Reservation {
 enum CustomerType {
   SALON
   RETAIL
+  HAIRDRESSER
 }
 
 enum DiscountType {
