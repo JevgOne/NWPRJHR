@@ -97,9 +97,9 @@ function ProductCard({ product }: { product: GridProduct }) {
 
         {/* Origin */}
         {product.origin && (
-          <div className="text-[10px] text-muted mb-1">
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700 mb-1">
             {getOriginFlag(product.origin)} {originName(product.origin)}
-          </div>
+          </span>
         )}
 
         {/* Lengths */}
