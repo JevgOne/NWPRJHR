@@ -60,6 +60,13 @@ export function ProductsShowcase() {
     : locale === "uk" && p.nameUk ? p.nameUk
     : p.name;
 
+  const categoryBadgeColors: Record<string, { base: string; hover: string }> = {
+    VIRGIN: { base: "bg-amber-500 text-white", hover: "hover:bg-amber-600" },
+    PREMIUM: { base: "bg-indigo-500 text-white", hover: "hover:bg-indigo-600" },
+    STANDARD: { base: "bg-emerald-600 text-white", hover: "hover:bg-emerald-700" },
+    SALE: { base: "bg-rose text-white", hover: "hover:bg-rose-deep" },
+  };
+
   // Extract all available filter options from all products (unfiltered)
   const filterOptions = useMemo(() => {
     const origins: Record<string, number> = {};
@@ -414,8 +421,14 @@ export function ProductsShowcase() {
           {products.map((p) => {
             const pLengths = productLengths(p);
             const pColors = productColors(p);
-            const minPrice = Math.min(...p.variants.map((v) => v.retailPricePerGram));
-            const pricePerGram = minPrice > 0 ? (minPrice / 100).toFixed(0) : null;
+            const prices = p.variants.map((v) => v.retailPricePerGram).filter((pr) => pr > 0);
+            const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+            const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+            const priceDisplay = minPrice > 0
+              ? minPrice === maxPrice
+                ? `${(minPrice / 100).toFixed(0)}`
+                : `${(minPrice / 100).toFixed(0)}–${(maxPrice / 100).toFixed(0)}`
+              : null;
 
             return (
               <div
@@ -439,7 +452,7 @@ export function ProductsShowcase() {
                     {/* Category badge overlay */}
                     <button
                       onClick={(e) => { e.preventDefault(); setFilter("category", p.category); }}
-                      className="absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold bg-rose text-white shadow-sm hover:bg-rose-deep cursor-pointer"
+                      className={`absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold shadow-sm cursor-pointer ${(categoryBadgeColors[p.category]?.base ?? "bg-rose text-white")} ${(categoryBadgeColors[p.category]?.hover ?? "hover:bg-rose-deep")}`}
                     >
                       {tCategory(p.category.toLowerCase())}
                     </button>
@@ -523,9 +536,9 @@ export function ProductsShowcase() {
                   </div>
 
                   {/* Price */}
-                  {pricePerGram && (
+                  {priceDisplay && (
                     <div className="text-sm font-bold text-ink">
-                      {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+                      {priceDisplay} Kč<span className="text-[10px] font-normal text-muted">/g</span>
                     </div>
                   )}
                 </div>

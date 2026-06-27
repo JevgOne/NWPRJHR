@@ -55,8 +55,14 @@ function ProductCard({ product }: { product: GridProduct }) {
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
   const colors = [...new Set(product.variants.map((v) => v.color))];
 
-  const minPrice = Math.min(...product.variants.map((v) => v.retailPricePerGram));
-  const pricePerGram = minPrice > 0 ? (minPrice / 100).toFixed(0) : null;
+  const prices = product.variants.map((v) => v.retailPricePerGram).filter((p) => p > 0);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+  const priceDisplay = minPrice > 0
+    ? minPrice === maxPrice
+      ? `${(minPrice / 100).toFixed(0)}`
+      : `${(minPrice / 100).toFixed(0)}–${(maxPrice / 100).toFixed(0)}`
+    : null;
 
   const localizedName = locale === "ru" && product.nameRu
     ? product.nameRu
@@ -65,6 +71,14 @@ function ProductCard({ product }: { product: GridProduct }) {
       : product.name;
 
   const categoryLabel = t(`slider.${product.category.toLowerCase()}` as "slider.virgin" | "slider.premium" | "slider.standard" | "slider.sale");
+
+  const categoryBadgeColors: Record<string, string> = {
+    VIRGIN: "bg-amber-500 text-white",
+    PREMIUM: "bg-indigo-500 text-white",
+    STANDARD: "bg-emerald-600 text-white",
+    SALE: "bg-rose text-white",
+  };
+  const badgeColor = categoryBadgeColors[product.category] ?? "bg-rose text-white";
 
   const originName = (origin: string) => {
     try { return t(`origins.${origin}`); } catch { return origin; }
@@ -88,7 +102,7 @@ function ProductCard({ product }: { product: GridProduct }) {
           </svg>
         )}
         {/* Category badge overlay */}
-        <span className="absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold bg-rose text-white shadow-sm">
+        <span className={`absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold shadow-sm ${badgeColor}`}>
           {categoryLabel}
         </span>
       </div>
@@ -125,9 +139,9 @@ function ProductCard({ product }: { product: GridProduct }) {
         )}
 
         {/* Price */}
-        {pricePerGram && (
+        {priceDisplay && (
           <div className="text-sm font-bold text-ink">
-            {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+            {priceDisplay} Kč<span className="text-[10px] font-normal text-muted">/g</span>
           </div>
         )}
       </div>

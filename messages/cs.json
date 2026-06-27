@@ -76,7 +76,8 @@
     "noLowStock": "Všechny zásoby v pořádku",
     "pendingReturns": "Čekající vratky",
     "pendingOrders": "Nové objednávky",
-    "unreadNotifications": "Nepřečtená oznámení"
+    "unreadNotifications": "Nepřečtená oznámení",
+    "pendingRegistrations": "Čekající registrace"
   },
   "product": {
     "hairExtensions": "Prémiové vlasy",
@@ -381,7 +382,23 @@
     "aboutUs": "O nás",
     "ourOffer": "Nabídka",
     "whyHairora": "Proč Hairland",
-    "contact": "Kontakt",
+    "contact": {
+      "title": "Kontakt",
+      "infoTitle": "Kontaktní údaje",
+      "form": {
+        "name": "Jméno",
+        "email": "E-mail",
+        "phone": "Telefon",
+        "salon": "Název salonu",
+        "message": "Zpráva",
+        "send": "Odeslat",
+        "success": "Zpráva odeslána. Ozveme se vám co nejdříve."
+      },
+      "trustTitle": "Osobní konzultace a dovoz zdarma",
+      "trustText": "Nejste si jistí výběrem? Napište nám a domluvíme osobní schůzku. Přijedeme s vlasy přímo za vámi nebo za vaší kadeřnicí — <strong>po Praze zcela zdarma</strong>. Ukážeme, poradíme a pomůžeme s výběrem. Žádný závazek.",
+      "languageBanner": "Mluvíme vaším jazykem",
+      "languageBannerText": "Kompletní servis v češtině, ukrajinštině i ruštině."
+    },
     "usp": {
       "directImport": "Přímý dovoz za lepší ceny",
       "qualityGuarantee": "Záruka kvality",
@@ -408,23 +425,6 @@
       "colors": "Barvy",
       "variants": "Dostupné varianty",
       "noProducts": "Žádné produkty"
-    },
-    "contact": {
-      "title": "Kontakt",
-      "infoTitle": "Kontaktní údaje",
-      "form": {
-        "name": "Jméno",
-        "email": "E-mail",
-        "phone": "Telefon",
-        "salon": "Název salonu",
-        "message": "Zpráva",
-        "send": "Odeslat",
-        "success": "Zpráva odeslána. Ozveme se vám co nejdříve."
-      },
-      "trustTitle": "Osobní konzultace a dovoz zdarma",
-      "trustText": "Nejste si jistí výběrem? Napište nám a domluvíme osobní schůzku. Přijedeme s vlasy přímo za vámi nebo za vaší kadeřnicí — <strong>po Praze zcela zdarma</strong>. Ukážeme, poradíme a pomůžeme s výběrem. Žádný závazek.",
-      "languageBanner": "Mluvíme vaším jazykem",
-      "languageBannerText": "Kompletní servis v češtině, ukrajinštině i ruštině."
     },
     "register": {
       "title": "B2B Registrace",
@@ -613,7 +613,7 @@
       "notFound": "Produkt nenalezen",
       "metaDesc": "{name} - {category} prémiové vlasy na prodej",
       "yourPrice": "Vaše cena",
-      "priceTip": "\ud83d\udca1 100g \u2248 {price}",
+      "priceTip": "💡 100g ≈ {price}",
       "regularPrice": "běžná cena"
     },
     "inquiry": {

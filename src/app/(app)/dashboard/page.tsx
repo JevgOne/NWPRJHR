@@ -56,6 +56,7 @@ export default async function DashboardPage() {
     openInvoices,
     activeSalonsCount,
     totalSalesEver,
+    totalGramsSoldAgg,
     lowStockVariants,
     recentMovements,
     pendingReturns,
@@ -95,6 +96,11 @@ export default async function DashboardPage() {
       where: { status: "COMPLETED" },
       _count: { id: true },
       _sum: { totalAmount: true, totalCostOfGoods: true },
+    }),
+
+    prisma.saleItem.aggregate({
+      where: { sale: { status: "COMPLETED" } },
+      _sum: { grams: true },
     }),
 
     prisma.$queryRawUnsafe<
@@ -146,6 +152,7 @@ export default async function DashboardPage() {
   const totalSold = totalSalesEver._sum.totalAmount ?? 0;
   const totalSoldCount = totalSalesEver._count.id ?? 0;
   const totalCOGS = totalSalesEver._sum.totalCostOfGoods ?? 0;
+  const totalGramsSold = totalGramsSoldAgg._sum.grams ?? 0;
 
   return (
     <div className="space-y-6">
@@ -168,7 +175,7 @@ export default async function DashboardPage() {
         <StatCard
           label="Prodáno celkem"
           value={fmtCZK(totalSold)}
-          sub1={`${fmtGrams(0)} · ${totalSoldCount} prodejů`}
+          sub1={`${fmtGrams(totalGramsSold)} · ${totalSoldCount} prodejů`}
           sub2={`Marže: ${fmtCZK(totalSold - totalCOGS)}`}
         />
         <StatCard
@@ -279,10 +286,11 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── ROW 4: Quick info badges ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <a href="/salons"><QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="indigo" /></a>
-        <a href="/salons"><QuickBadge label="Čekající registrace" value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
+        <a href="/salons"><QuickBadge label={t("pendingRegistrations")} value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
         <a href="/orders"><QuickBadge label={t("pendingOrders")} value={newOrders} color={newOrders > 0 ? "blue" : "gray"} /></a>
+        <a href="/returns"><QuickBadge label={t("pendingReturns")} value={pendingReturns} color={pendingReturns > 0 ? "orange" : "gray"} /></a>
         <a href="/notifications"><QuickBadge label={t("unreadNotifications")} value={unreadNotifications} color={unreadNotifications > 0 ? "rose" : "gray"} /></a>
       </div>
     </div>
@@ -304,6 +312,7 @@ const badgeColors: Record<string, string> = {
   indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
   amber: "bg-amber-50 text-amber-700 border-amber-200",
   blue: "bg-blue-50 text-blue-700 border-blue-200",
+  orange: "bg-orange-50 text-orange-700 border-orange-200",
   rose: "bg-rose-50 text-rose-700 border-rose-200",
   gray: "bg-gray-50 text-gray-600 border-gray-200",
 };
