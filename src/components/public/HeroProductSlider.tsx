@@ -216,7 +216,7 @@ function ProductCard({ product }: { product: SliderProduct }) {
                 return (
                   <span
                     key={code}
-                    className="w-6 h-6 rounded border-2 border-line"
+                    className="w-6 h-6 rounded-full border-2 border-line"
                     style={{ backgroundColor: hex }}
                   />
                 );

@@ -273,11 +273,11 @@ export function ProductsShowcase() {
           </div>
         )}
 
-        {/* Colors — visual swatch grid */}
+        {/* Colors — circular swatches */}
         {filterOptions.colors.length > 0 && (
           <div>
             <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.colorLabel")}</div>
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {filterOptions.colors.map(([code, count]) => {
                 const { hex, nameKey } = getHairColor(code);
                 const isActive = activeColor === code;
@@ -285,10 +285,10 @@ export function ProductsShowcase() {
                   <button
                     key={code}
                     onClick={() => toggleFilter("color", code)}
-                    className={`group relative w-full aspect-square rounded-lg border-2 transition-all cursor-pointer ${
+                    className={`group relative w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${
                       isActive
                         ? "border-rose ring-2 ring-blush-300 scale-110 z-10"
-                        : "border-line hover:border-blush-300 hover:scale-105"
+                        : "border-line hover:border-blush-300 hover:scale-110"
                     }`}
                     style={{ backgroundColor: hex }}
                     title={`${colorName(nameKey)} (${count})`}
@@ -559,7 +559,7 @@ export function ProductsShowcase() {
                     </div>
                   </div>
 
-                  {/* Color swatches */}
+                  {/* Color swatches — circles */}
                   <div className="mt-2.5">
                     <div className="flex flex-wrap gap-1">
                       {pColors.map((code) => {
@@ -569,7 +569,7 @@ export function ProductsShowcase() {
                           <button
                             key={code}
                             onClick={() => toggleFilter("color", code)}
-                            className={`group relative w-6 h-6 rounded border-2 transition-all cursor-pointer ${
+                            className={`group relative w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
                               isActive
                                 ? "border-rose ring-1 ring-blush-300 scale-110 z-10"
                                 : "border-line hover:border-blush-300 hover:scale-110"
