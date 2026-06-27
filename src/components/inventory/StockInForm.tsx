@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { TextureSwatch } from "@/components/TextureSwatch";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -11,7 +10,7 @@ import { Input } from "@/components/ui/Input";
 interface ProductOption {
   id: string;
   name: string;
-  texture?: string | null;
+  category: string;
   variants: { id: string; lengthCm: number; color: string }[];
 }
 
@@ -31,6 +30,7 @@ export function StockInForm({
 }) {
   const t = useTranslations("stock");
   const tCommon = useTranslations("common");
+  const tCat = useTranslations("category");
   const router = useRouter();
 
   const [productId, setProductId] = useState("");
@@ -40,10 +40,6 @@ export function StockInForm({
   const [currency, setCurrency] = useState<(typeof CURRENCIES)[number]>("CZK");
   const [exchangeRate, setExchangeRate] = useState("10000");
   const [totalGrams, setTotalGrams] = useState("");
-  const [totalPieces, setTotalPieces] = useState("0");
-  const [pieceWeight, setPieceWeight] = useState("");
-  const [barcode, setBarcode] = useState("");
-  const [batchCode, setBatchCode] = useState("");
   const [stockedAt, setStockedAt] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -62,18 +58,10 @@ export function StockInForm({
     return Math.round((price * rate) / 10000);
   }, [purchasePrice, exchangeRate, currency]);
 
-  async function handleGenerateBarcode() {
-    const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-    setBarcode(`HR-${date}-${random}`);
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setError("");
-
-    const pieces = parseInt(totalPieces) || 0;
 
     const body = {
       variantId,
@@ -82,10 +70,7 @@ export function StockInForm({
       currency,
       exchangeRate: parseInt(exchangeRate),
       totalGrams: parseInt(totalGrams),
-      totalPieces: pieces,
-      ...(pieces > 0 ? { pieceWeightGrams: parseInt(pieceWeight) } : {}),
-      ...(barcode ? { barcode } : {}),
-      ...(batchCode ? { batchCode } : {}),
+      totalPieces: 0,
       stockedAt: new Date(stockedAt).toISOString(),
       ...(note ? { note } : {}),
     };
@@ -128,18 +113,10 @@ export function StockInForm({
               <option value="">--</option>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}
+                  {p.name} ({tCat(p.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale")})
                 </option>
               ))}
             </select>
-            {selectedProduct && selectedProduct.texture && (
-              <div className="flex gap-2 mt-1">
-                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
-                  <TextureSwatch texture={selectedProduct.texture} size={16} />
-                  {selectedProduct.texture}
-                </span>
-              </div>
-            )}
           </div>
 
           <div>
@@ -156,7 +133,7 @@ export function StockInForm({
               <option value="">--</option>
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.lengthCm} cm / {v.color}
+                  {v.lengthCm} cm — barva {v.color}
                 </option>
               ))}
             </select>
@@ -183,8 +160,8 @@ export function StockInForm({
           </select>
         </div>
 
-        {/* Purchase price + currency + exchange rate */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Purchase price + currency (+ exchange rate only for non-CZK) */}
+        <div className={`grid grid-cols-1 gap-4 ${currency !== "CZK" ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
           <Input
             label={t("purchasePrice")}
             type="number"
@@ -216,21 +193,22 @@ export function StockInForm({
             </select>
           </div>
 
-          <Input
-            label={t("exchangeRate")}
-            type="number"
-            value={exchangeRate}
-            onChange={(e) => setExchangeRate(e.target.value)}
-            required
-            min={1}
-            disabled={currency === "CZK"}
-            placeholder="e.g. 254350"
-          />
+          {currency !== "CZK" && (
+            <Input
+              label={t("exchangeRate")}
+              type="number"
+              value={exchangeRate}
+              onChange={(e) => setExchangeRate(e.target.value)}
+              required
+              min={1}
+              placeholder="e.g. 254350"
+            />
+          )}
         </div>
 
         {/* Calculated CZK preview */}
-        {calculatedCZK !== null && (
-          <div className="text-sm text-gray-600">
+        {calculatedCZK !== null && currency !== "CZK" && (
+          <div className="text-sm text-muted">
             {t("calculatedCZK")}:{" "}
             <span className="font-semibold text-ink">
               {(calculatedCZK / 100).toFixed(2)} CZK/{t("grams")}
@@ -238,8 +216,8 @@ export function StockInForm({
           </div>
         )}
 
-        {/* Quantities */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Total grams + date */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label={t("totalGrams")}
             type="number"
@@ -247,51 +225,6 @@ export function StockInForm({
             onChange={(e) => setTotalGrams(e.target.value)}
             required
             min={1}
-          />
-          <Input
-            label={t("totalPieces")}
-            type="number"
-            value={totalPieces}
-            onChange={(e) => setTotalPieces(e.target.value)}
-            min={0}
-          />
-          {parseInt(totalPieces) > 0 && (
-            <Input
-              label={t("pieceWeight")}
-              type="number"
-              value={pieceWeight}
-              onChange={(e) => setPieceWeight(e.target.value)}
-              required
-              min={1}
-            />
-          )}
-        </div>
-
-        {/* Barcode */}
-        <div className="flex items-end gap-2">
-          <div className="flex-1">
-            <Input
-              label={t("barcode")}
-              value={barcode}
-              onChange={(e) => setBarcode(e.target.value)}
-              placeholder="HR-20260601-A1B2"
-            />
-          </div>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleGenerateBarcode}
-          >
-            {t("generateBarcode")}
-          </Button>
-        </div>
-
-        {/* Batch code + date */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label={t("batchCode")}
-            value={batchCode}
-            onChange={(e) => setBatchCode(e.target.value)}
           />
           <Input
             label={t("stockedAt")}
@@ -308,7 +241,7 @@ export function StockInForm({
           </label>
           <textarea
             className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-            rows={3}
+            rows={2}
             value={note}
             onChange={(e) => setNote(e.target.value)}
           />

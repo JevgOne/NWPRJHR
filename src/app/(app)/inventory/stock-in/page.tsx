@@ -26,6 +26,7 @@ export default async function StockInPage() {
   const productOptions = products.map((p) => ({
     id: p.id,
     name: p.name,
+    category: p.category,
     variants: p.variants.map((v) => ({
       id: v.id,
       lengthCm: v.lengthCm,
