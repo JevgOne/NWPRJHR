@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
@@ -64,8 +65,15 @@ export function PublicNavbar() {
     <nav className="sticky top-0 z-50 bg-white border-b border-line shadow-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-ink">
-            Hairland
+          <Link href="/" className="flex-shrink-0">
+            <Image
+              src="/logo-light.svg"
+              alt="Hairland"
+              width={180}
+              height={58}
+              priority
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}

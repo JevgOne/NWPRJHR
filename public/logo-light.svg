@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="170" viewBox="0 0 360 120">
+  <!-- transparent background -->
+  <circle cx="60" cy="60" r="46" fill="#fdfaf7" stroke="#3a2c2a" stroke-width="1.4"/>
+  <text x="60" y="72" font-family="Marcellus, Georgia, serif" font-size="44" fill="#3a2c2a" text-anchor="middle">H</text>
+  <line x1="42" y1="82" x2="78" y2="82" stroke="#dba8a6" stroke-width="0.8"/>
+  <text x="138" y="56" font-family="Marcellus, Georgia, serif" font-size="34" letter-spacing="5" fill="#3a2c2a">HAIRLAND</text>
+  <text x="139" y="76" font-family="Jost, Arial, sans-serif" font-size="10" letter-spacing="6" fill="#a96d6c">PRÉMIOVÉ VLASY</text>
+</svg>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 export function PublicFooter() {
@@ -12,7 +13,15 @@ export function PublicFooter() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="md:col-span-1">
-            <span className="text-2xl font-bold text-white tracking-tight">Hairland</span>
+            <Link href="/">
+              <Image
+                src="/seal-dark.svg"
+                alt="Hairland"
+                width={80}
+                height={80}
+                className="w-20 h-20"
+              />
+            </Link>
             <p className="mt-3 text-sm text-nude-200/80 leading-relaxed">
               {t("footer.brandDesc")}
             </p>
