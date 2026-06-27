@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { createSalonNotification } from "@/lib/notifications";
 
 export async function PUT(
   request: NextRequest,
@@ -41,6 +42,17 @@ export async function PUT(
     where: { id },
     data,
   });
+
+  // Notify salon when sample is sent
+  if (body.status === "SENT" && sample.salonId) {
+    createSalonNotification({
+      salonId: sample.salonId,
+      type: "SAMPLE_REQUEST",
+      title: "Vzorek odeslan",
+      message: "Vas vzorek byl odeslan.",
+      data: { sampleId: id },
+    }).catch(() => {});
+  }
 
   return NextResponse.json(updated);
 }

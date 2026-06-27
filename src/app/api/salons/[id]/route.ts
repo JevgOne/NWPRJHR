@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateSalonSchema } from "@/lib/validations/salon";
+import { createSalonNotification } from "@/lib/notifications";
 
 export async function GET(
   _request: NextRequest,
@@ -104,10 +105,25 @@ export async function PUT(
       { status: 400 }
     );
 
+  // Check if this is an approval (approved changing from false to true)
+  const existingSalon = await prisma.salon.findUnique({ where: { id }, select: { approved: true } });
+  const isApproval = !existingSalon?.approved && parsed.data.approved === true;
+
   const salon = await prisma.salon.update({
     where: { id },
     data: parsed.data,
   });
+
+  // Notify salon user when approved
+  if (isApproval) {
+    createSalonNotification({
+      salonId: id,
+      type: "REGISTRATION",
+      title: "Registrace schvalena",
+      message: "Vas B2B ucet byl schvalen. Nyni muzete objednavat.",
+      data: { approved: true },
+    }).catch(() => {});
+  }
 
   return NextResponse.json(salon);
 }

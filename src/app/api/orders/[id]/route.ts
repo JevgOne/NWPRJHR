@@ -9,6 +9,7 @@ import {
 } from "@/lib/order-workflow";
 import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale } from "@/lib/invoicing";
+import { createSalonNotification } from "@/lib/notifications";
 
 export async function GET(
   _request: NextRequest,
@@ -67,6 +68,14 @@ export async function POST(
         if (session.user.role !== "OWNER")
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         const order = await confirmOrder(id, session.user.id);
+
+        // Notify salon about confirmation
+        createSalonNotification({
+          salonId: order.salonId,
+          type: "ORDER_CONFIRMED",
+          data: { orderId: order.id, orderNumber: order.orderNumber },
+        }).catch(() => {});
+
         return NextResponse.json(order);
       }
 
@@ -79,6 +88,14 @@ export async function POST(
             { status: 400 }
           );
         const order = await rejectOrder(id, body.reason);
+
+        // Notify salon about rejection
+        createSalonNotification({
+          salonId: order.salonId,
+          type: "ORDER_REJECTED",
+          data: { orderId: order.id, orderNumber: order.orderNumber },
+        }).catch(() => {});
+
         return NextResponse.json(order);
       }
 
@@ -91,6 +108,15 @@ export async function POST(
             { status: 400 }
           );
         const order = await updateOrderStatus(id, body.status);
+
+        // Notify salon about status change
+        const notifType = body.status === "READY" ? "ORDER_READY" as const : "ORDER_IN_TRANSIT" as const;
+        createSalonNotification({
+          salonId: order.salonId,
+          type: notifType,
+          data: { orderId: order.id, orderNumber: order.orderNumber },
+        }).catch(() => {});
+
         return NextResponse.json(order);
       }
 
@@ -155,6 +181,13 @@ export async function POST(
           body.companyId
         );
 
+        // Notify salon about issued invoice
+        createSalonNotification({
+          salonId: result.salonId,
+          type: "INVOICE_ISSUED",
+          data: { invoiceId: invoice.id, invoiceNumber: invoice.number },
+        }).catch(() => {});
+
         return NextResponse.json({
           order: result.order,
           sale: { id: sale.id, saleNumber: sale.saleNumber },
@@ -184,6 +217,14 @@ export async function POST(
         }
 
         const order = await cancelOrder(id);
+
+        // Notify salon about cancellation
+        createSalonNotification({
+          salonId: orderCheck.salonId,
+          type: "ORDER_REJECTED",
+          data: { orderId: order.id, orderNumber: order.orderNumber },
+        }).catch(() => {});
+
         return NextResponse.json(order);
       }
 

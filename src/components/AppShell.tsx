@@ -121,18 +121,19 @@ export function AppShell({ session, children }: AppShellProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform lg:translate-x-0 lg:static lg:flex-shrink-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-espresso text-nude-100 transform transition-transform lg:translate-x-0 lg:static lg:flex-shrink-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between px-4 h-16 border-b border-gray-800">
-            <Link href="/dashboard" className="text-xl font-bold">
-              Hairland
+          <div className="flex items-center justify-between px-4 h-16 border-b border-nude-200/20">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <img src="/icons/icon-192x192.png" alt="Hairland" className="w-8 h-8 rounded-lg" />
+              <span className="text-xl font-bold text-white">Hairland</span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-gray-400 hover:text-white"
+              className="lg:hidden text-nude-200 hover:text-white"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -147,7 +148,7 @@ export function AppShell({ session, children }: AppShellProps) {
               return (
                 <div key={group.label ?? "_main"} className={group.label ? "mt-4" : ""}>
                   {group.label && (
-                    <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                    <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-nude-200/50">
                       {group.label}
                     </p>
                   )}
@@ -160,8 +161,8 @@ export function AppShell({ session, children }: AppShellProps) {
                           href={item.href}
                           className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                             isActive
-                              ? "bg-indigo-600 text-white"
-                              : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                              ? "bg-rose text-white"
+                              : "text-nude-100 hover:bg-white/10 hover:text-white"
                           }`}
                           onClick={() => setSidebarOpen(false)}
                         >
@@ -180,14 +181,14 @@ export function AppShell({ session, children }: AppShellProps) {
             })}
           </nav>
 
-          <div className="px-4 py-4 border-t border-gray-800">
-            <div className="text-sm text-gray-400 mb-2">
+          <div className="px-4 py-4 border-t border-nude-200/20">
+            <div className="text-sm text-nude-200 mb-2">
               {session.user.name || session.user.email}
             </div>
             <LocaleSwitcher />
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="mt-2 w-full text-left text-sm text-gray-400 hover:text-white transition-colors"
+              className="mt-2 w-full text-left text-sm text-nude-200 hover:text-white transition-colors"
             >
               {tAuth("logout")}
             </button>
