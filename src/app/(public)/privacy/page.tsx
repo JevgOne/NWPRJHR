@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "Ochrana osobních údajů",
+  description: "Zásady ochrany osobních údajů — Hairland.cz",
+  alternates: { canonical: "/privacy" },
+};
 
 export default async function PrivacyPage() {
   const t = await getTranslations("privacy");

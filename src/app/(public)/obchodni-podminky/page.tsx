@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Obchodní podmínky",
+  description: "Obchodní podmínky e-shopu Hairland.cz — prodej prémiových vlasů k prodloužení.",
+  alternates: { canonical: "/obchodni-podminky" },
 };
 
 export default async function ObchodniPodminkyPage() {

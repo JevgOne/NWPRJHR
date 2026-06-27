@@ -25,8 +25,24 @@ export default async function StylistsPublicPage() {
     include: { salon: { select: { name: true } } },
   });
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Spolupracující kadeřnice Hairland",
+    itemListElement: stylists.map((s, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://www.hairland.cz/kadernice/${s.slug}`,
+      name: s.name,
+    })),
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
         <p className="text-muted text-sm mt-1">

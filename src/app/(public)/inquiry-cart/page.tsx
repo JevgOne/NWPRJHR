@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { InquiryCartClient } from "./InquiryCartClient";
+
+export const metadata: Metadata = {
+  title: "Poptávkový košík",
+  description: "Váš poptávkový košík — nezávazná poptávka prémiových vlasů k prodloužení.",
+  alternates: { canonical: "/inquiry-cart" },
+  robots: { index: false },
+};
 
 export default function InquiryCartPage() {
   return (

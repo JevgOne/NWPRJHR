@@ -33,6 +33,7 @@ async function getProduct(id: string) {
       origin: true,
       texture: true,
       photos: true,
+      archived: true,
       variants: {
         where: { active: true },
         select: {
@@ -194,11 +195,16 @@ export default async function ProductDetailPage({ params }: Props) {
     name: productName,
     description: description || undefined,
     image: product.photos.length > 0 ? product.photos[0] : undefined,
+    brand: { "@type": "Brand", name: "Hairland" },
+    sku: product.id,
     offers: {
       "@type": "Offer",
       price: priceTip100g ? (priceTip100g / 100).toFixed(2) : undefined,
       priceCurrency: "CZK",
-      availability: "https://schema.org/InStock",
+      availability: product.archived
+        ? "https://schema.org/Discontinued"
+        : "https://schema.org/InStock",
+      url: `https://www.hairland.cz/offer/${product.id}`,
     },
   };
 

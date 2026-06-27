@@ -1,7 +1,29 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const stylist = await prisma.stylist.findUnique({
+    where: { slug },
+    select: { name: true, bio: true, photo: true },
+  });
+  if (!stylist) return {};
+  return {
+    title: `${stylist.name} — Kadeřnice`,
+    description:
+      stylist.bio?.slice(0, 155) ||
+      `${stylist.name} — spolupracující kadeřnice Hairland`,
+    alternates: { canonical: `/kadernice/${slug}` },
+    openGraph: stylist.photo
+      ? { images: [{ url: stylist.photo }] }
+      : undefined,
+  };
+}
 
 const langFlags: Record<string, { flag: string; label: string }> = {
   cs: { flag: "🇨🇿", label: "Čeština" },
@@ -25,8 +47,32 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
   const langs: string[] = JSON.parse(stylist.languages || "[]");
   const certs: string[] = JSON.parse(stylist.certifications || "[]");
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: stylist.name,
+    jobTitle: "Kadeřnice",
+    ...(stylist.photo && { image: stylist.photo }),
+    ...(stylist.bio && { description: stylist.bio }),
+    ...(stylist.city && {
+      address: { "@type": "PostalAddress", addressLocality: stylist.city },
+    }),
+    ...(stylist.email && { email: stylist.email }),
+    ...(stylist.phone && { telephone: stylist.phone }),
+    url: `https://www.hairland.cz/kadernice/${slug}`,
+    worksFor: {
+      "@type": "Organization",
+      name: "Hairland",
+      url: "https://www.hairland.cz",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-nude-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero header — Telegram-style */}
       <div className="bg-gradient-to-br from-rose via-rose-deep to-pink-500 pb-16 pt-10">
         <div className="max-w-md mx-auto px-4 text-center">

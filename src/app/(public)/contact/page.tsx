@@ -9,11 +9,35 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "Hairland",
+  url: "https://www.hairland.cz",
+  telephone: "+420728729666",
+  email: "info@hairland.cz",
+  image: "https://www.hairland.cz/icons/icon-512x512.png",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Školská 660/3",
+    addressLocality: "Praha",
+    postalCode: "110 00",
+    addressCountry: "CZ",
+  },
+  priceRange: "Kč Kč Kč",
+  description:
+    "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
+};
+
 export default async function ContactPage() {
   const t = await getTranslations("public");
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="text-3xl font-bold text-ink mb-8">
         {t("contact.title")}
       </h1>
