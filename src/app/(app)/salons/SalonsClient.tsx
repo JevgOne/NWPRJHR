@@ -80,7 +80,7 @@ export function SalonsClient({ role }: { role: Role }) {
         <button
           className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
             tab === "active"
-              ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+              ? "border-rose bg-rose/10 text-espresso"
               : "border-gray-200 hover:bg-gray-50"
           }`}
           onClick={() => setTab("active")}
@@ -90,7 +90,7 @@ export function SalonsClient({ role }: { role: Role }) {
         <button
           className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
             tab === "archived"
-              ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+              ? "border-rose bg-rose/10 text-espresso"
               : "border-gray-200 hover:bg-gray-50"
           }`}
           onClick={() => setTab("archived")}
@@ -137,7 +137,7 @@ export function SalonsClient({ role }: { role: Role }) {
                   <td className="py-2 pr-3">
                     <Link
                       href={`/salons/${s.id}`}
-                      className="text-indigo-600 hover:underline font-medium"
+                      className="text-espresso hover:underline font-medium"
                     >
                       {s.name}
                     </Link>
@@ -147,7 +147,7 @@ export function SalonsClient({ role }: { role: Role }) {
                       </span>
                     )}
                     {s.type === "HAIRDRESSER" && (
-                      <span className="ml-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                      <span className="ml-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded bg-nude-100 text-espresso">
                         {t("typeHairdresser")}
                       </span>
                     )}

@@ -125,7 +125,7 @@ export function ExportClient() {
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="block rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="block rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
               />
             </div>
             <div>
@@ -136,7 +136,7 @@ export function ExportClient() {
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="block rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="block rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
               />
             </div>
           </div>
@@ -168,7 +168,7 @@ export function ExportClient() {
               onClick={() => setFormat("xlsx")}
               className={`px-3 py-1 text-xs rounded-lg border ${
                 format === "xlsx"
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                  ? "border-rose bg-rose/10 text-espresso"
                   : "border-gray-200"
               }`}
             >
@@ -178,7 +178,7 @@ export function ExportClient() {
               onClick={() => setFormat("csv")}
               className={`px-3 py-1 text-xs rounded-lg border ${
                 format === "csv"
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                  ? "border-rose bg-rose/10 text-espresso"
                   : "border-gray-200"
               }`}
             >
@@ -202,7 +202,7 @@ export function ExportClient() {
             <select
               value={selectedIco}
               onChange={(e) => setSelectedIco(e.target.value)}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm mb-4 focus:border-indigo-500 focus:outline-none"
+              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm mb-4 focus:border-rose focus:outline-none"
             >
               {companies.map((c) => (
                 <option key={c.id} value={c.ico}>

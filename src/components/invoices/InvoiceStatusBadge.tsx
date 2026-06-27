@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 const statusStyles: Record<string, string> = {
-  ISSUED: "bg-blue-100 text-blue-700",
+  ISSUED: "bg-nude-100 text-espresso",
   AWAITING: "bg-yellow-100 text-yellow-700",
   PAID: "bg-green-100 text-green-700",
   OVERDUE: "bg-red-100 text-red-700",

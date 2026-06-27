@@ -246,7 +246,7 @@ async function main() {
     update: {},
     create: {
       email: "owner@hairora.cz",
-      name: "Admin Hairora",
+      name: "Admin Hairland",
       hashedPassword: ownerPassword,
       role: "OWNER",
     },

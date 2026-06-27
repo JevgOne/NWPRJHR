@@ -167,7 +167,7 @@ export function CreateProductForm() {
           <input
             id="origin"
             type="text"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
             value={origin}
             onChange={(e) => {
               setOrigin(e.target.value);
@@ -183,7 +183,7 @@ export function CreateProductForm() {
                 <li key={o.name}>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-indigo-50 text-left"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-rose/10 text-left"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       setOrigin(o.name);
@@ -205,7 +205,7 @@ export function CreateProductForm() {
           <input
             id="texture"
             type="text"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
             value={texture}
             onChange={(e) => {
               setTexture(e.target.value);
@@ -221,7 +221,7 @@ export function CreateProductForm() {
                 <li key={opt.name}>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-indigo-50 text-left"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-rose/10 text-left"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       setTexture(opt.name);

@@ -24,8 +24,8 @@ function formatCZK(halere: number): string {
 }
 
 const statusColors: Record<string, string> = {
-  NEW: "bg-blue-100 text-blue-700",
-  CONFIRMED: "bg-indigo-100 text-indigo-700",
+  NEW: "bg-nude-100 text-espresso",
+  CONFIRMED: "bg-rose/15 text-espresso",
   REJECTED: "bg-red-100 text-red-700",
   READY: "bg-green-100 text-green-700",
   IN_TRANSIT: "bg-yellow-100 text-yellow-700",
@@ -80,7 +80,7 @@ export function OrdersClient({ role }: { role: Role }) {
             key={s}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors whitespace-nowrap ${
               statusFilter === s
-                ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                ? "border-rose bg-rose/10 text-espresso"
                 : "border-gray-200 hover:bg-gray-50"
             }`}
             onClick={() => {
@@ -119,7 +119,7 @@ export function OrdersClient({ role }: { role: Role }) {
                     <td className="py-2 pr-3">
                       <Link
                         href={`/orders/${o.id}`}
-                        className="text-indigo-600 hover:underline font-medium"
+                        className="text-espresso hover:underline font-medium"
                       >
                         {new Date(o.createdAt).toLocaleDateString("cs-CZ")}
                       </Link>

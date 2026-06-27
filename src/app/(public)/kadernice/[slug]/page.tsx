@@ -145,7 +145,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
             )}
             {stylist.email && (
               <a href={`mailto:${stylist.email}`} className="flex items-center gap-3 text-sm text-espresso hover:text-rose transition-colors">
-                <span className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-lg">✉️</span>
+                <span className="w-10 h-10 bg-nude-100 text-espresso rounded-xl flex items-center justify-center text-lg">✉️</span>
                 <div>
                   <div className="font-medium">{stylist.email}</div>
                   <div className="text-xs text-muted">{t("emailLabel")}</div>
@@ -162,7 +162,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
               </a>
             )}
             {stylist.telegram && (
-              <a href={`https://t.me/${stylist.telegram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-espresso hover:text-blue-500 transition-colors">
+              <a href={`https://t.me/${stylist.telegram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-espresso hover:text-espresso transition-colors">
                 <span className="w-10 h-10 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-lg">✈️</span>
                 <div>
                   <div className="font-medium">{stylist.telegram}</div>

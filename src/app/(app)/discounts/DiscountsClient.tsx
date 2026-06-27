@@ -78,7 +78,7 @@ export function DiscountsClient() {
   };
 
   const typeColors: Record<string, string> = {
-    STANDARD: "bg-blue-100 text-blue-700",
+    STANDARD: "bg-nude-100 text-espresso",
     MARKETING: "bg-purple-100 text-purple-700",
     PERSONAL: "bg-orange-100 text-orange-700",
   };

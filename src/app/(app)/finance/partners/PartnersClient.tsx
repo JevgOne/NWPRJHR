@@ -154,7 +154,7 @@ export function PartnersClient() {
                       <td className="p-3">
                         <Link
                           href={`/finance/partners/${p.partnerId}`}
-                          className="text-blue-600 hover:underline"
+                          className="text-espresso hover:underline"
                         >
                           {p.partnerName}
                         </Link>
@@ -181,7 +181,7 @@ export function PartnersClient() {
                       <td className="p-3">
                         <button
                           onClick={() => setWithdrawPartnerId(p.partnerId)}
-                          className="text-blue-600 hover:underline"
+                          className="text-espresso hover:underline"
                         >
                           {t("recordWithdrawal")}
                         </button>

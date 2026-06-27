@@ -280,7 +280,7 @@ export function NewSaleWizard({
           <div
             key={s}
             className={`flex-1 h-1 rounded-full ${
-              i <= step ? "bg-indigo-600" : "bg-gray-200"
+              i <= step ? "bg-rose" : "bg-gray-200"
             }`}
           />
         ))}

@@ -235,7 +235,7 @@ export function OrderDetailClient({
       {order.sale && (
         <Link
           href={`/sales/${order.sale.id}`}
-          className="text-sm text-indigo-600 hover:underline"
+          className="text-sm text-espresso hover:underline"
         >
           {order.sale.saleNumber || order.sale.id.slice(0, 8)}
         </Link>

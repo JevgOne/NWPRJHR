@@ -73,7 +73,7 @@ export function NotificationsClient() {
             onClick={() => setShowUnread(!showUnread)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               showUnread
-                ? "bg-indigo-600 text-white"
+                ? "bg-rose text-white"
                 : "bg-gray-100 text-gray-700"
             }`}
           >
@@ -100,7 +100,7 @@ export function NotificationsClient() {
               className={`p-4 rounded-lg border cursor-pointer transition-colors ${
                 n.read
                   ? "bg-white border-gray-200"
-                  : "bg-indigo-50 border-indigo-200"
+                  : "bg-rose/10 border-rose/30"
               }`}
               onClick={() => !n.read && handleMarkRead(n.id)}
             >
@@ -108,7 +108,7 @@ export function NotificationsClient() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     {!n.read && (
-                      <span className="w-2 h-2 bg-indigo-600 rounded-full" />
+                      <span className="w-2 h-2 bg-rose rounded-full" />
                     )}
                     <span className="font-medium text-sm">{n.title}</span>
                   </div>

@@ -69,7 +69,7 @@ export function InvoicesClient({ role }: { role: Role }) {
             key={s}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors whitespace-nowrap ${
               statusFilter === s
-                ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                ? "border-rose bg-rose/10 text-espresso"
                 : "border-gray-200 hover:bg-gray-50"
             }`}
             onClick={() => {
@@ -107,7 +107,7 @@ export function InvoicesClient({ role }: { role: Role }) {
                     <td className="py-2 pr-3">
                       <Link
                         href={`/invoices/${inv.id}`}
-                        className="text-indigo-600 hover:underline font-medium"
+                        className="text-espresso hover:underline font-medium"
                       >
                         {inv.number}
                       </Link>

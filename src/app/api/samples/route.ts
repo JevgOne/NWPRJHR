@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { sampleRequestSchema } from "@/lib/validations/salon";
+import { createNotificationForRole } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -59,6 +60,15 @@ export async function POST(request: NextRequest) {
       note: parsed.data.note,
     },
   });
+
+  // Notify owners about sample request
+  createNotificationForRole({
+    role: "OWNER",
+    type: "SAMPLE_REQUEST",
+    title: `Zadost o vzorek: ${parsed.data.salonName ?? ""}`,
+    message: `Salon "${parsed.data.salonName ?? ""}" zada o vzorek.`,
+    data: { sampleId: sample.id, salonName: parsed.data.salonName },
+  }).catch(() => {});
 
   return NextResponse.json(sample, { status: 201 });
 }

@@ -6,7 +6,7 @@ import type { ProductCategory } from "@prisma/client";
 const categoryStyles: Record<ProductCategory, string> = {
   VIRGIN: "bg-purple-100 text-purple-800",
   PREMIUM: "bg-amber-100 text-amber-800",
-  STANDARD: "bg-blue-100 text-blue-800",
+  STANDARD: "bg-nude-100 text-espresso",
   SALE: "bg-red-100 text-red-800",
 };
 

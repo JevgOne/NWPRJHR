@@ -204,7 +204,7 @@ export function VariantTable({
                           <button
                             className={`font-medium ${
                               isOwner
-                                ? "cursor-pointer hover:text-indigo-600"
+                                ? "cursor-pointer hover:text-espresso"
                                 : "cursor-default"
                             }`}
                             onClick={() => {

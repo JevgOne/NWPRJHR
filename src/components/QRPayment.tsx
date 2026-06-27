@@ -74,7 +74,7 @@ export function QRPayment({
 
       <button
         onClick={copyDetails}
-        className="text-xs text-indigo-600 hover:underline"
+        className="text-xs text-espresso hover:underline"
       >
         {t("copyDetails") ?? "Copy"}
       </button>

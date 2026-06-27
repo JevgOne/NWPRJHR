@@ -71,7 +71,7 @@ export function CustomerSelect({
           type="button"
           className={`p-4 rounded-xl border-2 text-center font-medium transition-colors ${
             customerType === "SALON"
-              ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+              ? "border-rose bg-rose/10 text-espresso"
               : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={() => onCustomerTypeChange("SALON")}
@@ -82,7 +82,7 @@ export function CustomerSelect({
           type="button"
           className={`p-4 rounded-xl border-2 text-center font-medium transition-colors ${
             customerType === "RETAIL"
-              ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+              ? "border-rose bg-rose/10 text-espresso"
               : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={() => onCustomerTypeChange("RETAIL")}
@@ -111,7 +111,7 @@ export function CustomerSelect({
                   type="button"
                   className={`w-full text-left p-3 rounded-lg border transition-colors ${
                     selectedSalonId === salon.id
-                      ? "border-indigo-600 bg-indigo-50"
+                      ? "border-rose bg-rose/10"
                       : "border-gray-200 hover:bg-gray-50"
                   }`}
                   onClick={() => onSalonSelect(salon.id)}
@@ -201,7 +201,7 @@ export function CustomerSelect({
                 type="button"
                 className={`w-full text-left p-3 rounded-lg border transition-colors ${
                   selectedCustomerId === c.id
-                    ? "border-indigo-600 bg-indigo-50"
+                    ? "border-rose bg-rose/10"
                     : "border-gray-200 hover:bg-gray-50"
                 }`}
                 onClick={() => onCustomerSelect(c.id)}

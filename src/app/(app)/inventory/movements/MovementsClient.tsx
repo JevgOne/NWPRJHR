@@ -19,7 +19,7 @@ interface Movement {
 const TYPE_COLORS: Record<string, string> = {
   RECEIPT: "bg-green-100 text-green-800",
   ISSUE: "bg-red-100 text-red-800",
-  RETURN: "bg-blue-100 text-blue-800",
+  RETURN: "bg-nude-100 text-espresso",
   COMPLAINT: "bg-orange-100 text-orange-800",
   SAMPLE_OUT: "bg-purple-100 text-purple-800",
   SAMPLE_RETURN: "bg-purple-50 text-purple-600",

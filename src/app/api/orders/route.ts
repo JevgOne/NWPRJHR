@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createOrderSchema } from "@/lib/validations/salon";
 import { createOrder } from "@/lib/order-workflow";
+import { createNotificationForRole } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -80,6 +81,17 @@ export async function POST(request: NextRequest) {
 
   try {
     const order = await createOrder(salonId, parsed.data.items, parsed.data.note);
+
+    // Notify owners about new order
+    const salon = await prisma.salon.findUnique({ where: { id: salonId }, select: { name: true } });
+    createNotificationForRole({
+      role: "OWNER",
+      type: "NEW_ORDER",
+      title: `Nova objednavka: ${salon?.name ?? ""}`,
+      message: `Salon "${salon?.name ?? ""}" vytvoril novou objednavku (${parsed.data.items.length} polozek).`,
+      data: { orderId: order.id, salonName: salon?.name, itemCount: parsed.data.items.length },
+    }).catch(() => {});
+
     return NextResponse.json(order, { status: 201 });
   } catch (e) {
     if (e instanceof Error && e.message.startsWith("Insufficient stock")) {

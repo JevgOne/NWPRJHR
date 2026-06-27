@@ -316,7 +316,7 @@ export function InvoiceDetailClient({
       {invoice.sale && (
         <Link
           href={`/sales/${invoice.sale.id}`}
-          className="text-sm text-indigo-600 hover:underline"
+          className="text-sm text-espresso hover:underline"
         >
           {invoice.sale.saleNumber || invoice.sale.id.slice(0, 8)}
         </Link>
@@ -327,7 +327,7 @@ export function InvoiceDetailClient({
           {t("creditNote")}:{" "}
           <Link
             href={`/invoices/${invoice.originalInvoice.id}`}
-            className="text-indigo-600 hover:underline"
+            className="text-espresso hover:underline"
           >
             {invoice.originalInvoice.number}
           </Link>
@@ -341,7 +341,7 @@ export function InvoiceDetailClient({
             <Link
               key={cn.id}
               href={`/invoices/${cn.id}`}
-              className="text-indigo-600 hover:underline mr-2"
+              className="text-espresso hover:underline mr-2"
             >
               {cn.number}
             </Link>

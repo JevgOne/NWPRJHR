@@ -74,7 +74,7 @@ function ProductCard({ product }: { product: GridProduct }) {
 
   const categoryBadgeColors: Record<string, string> = {
     VIRGIN: "bg-amber-500 text-white",
-    PREMIUM: "bg-indigo-500 text-white",
+    PREMIUM: "bg-rose text-white",
     STANDARD: "bg-emerald-600 text-white",
     SALE: "bg-rose text-white",
   };

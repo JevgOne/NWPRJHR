@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { initiateReturn } from "@/lib/returns";
 import { initiateReturnSchema } from "@/lib/validations/returns";
+import { createNotificationForRole } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -68,6 +69,20 @@ export async function POST(request: NextRequest) {
 
   try {
     const ret = await initiateReturn(parsed.data, session.user.id);
+
+    // Notify owners about return request
+    const sale = await prisma.sale.findUnique({
+      where: { id: parsed.data.saleId },
+      select: { salon: { select: { name: true } } },
+    });
+    createNotificationForRole({
+      role: "OWNER",
+      type: "RETURN_REQUEST",
+      title: `Vratka ke schvaleni`,
+      message: `Nova vratka ke schvaleni od salonu ${sale?.salon?.name ?? ""}.`,
+      data: { returnId: ret.id, salonName: sale?.salon?.name },
+    }).catch(() => {});
+
     return NextResponse.json(ret, { status: 201 });
   } catch (e) {
     if (e instanceof Error) {

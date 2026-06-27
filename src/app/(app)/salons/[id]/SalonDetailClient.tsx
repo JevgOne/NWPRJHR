@@ -147,7 +147,7 @@ export function SalonDetailClient({
               {tLoyalty(salon.tier.toLowerCase())}
             </span>
             {salon.type === "HAIRDRESSER" && (
-              <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+              <span className="text-xs bg-nude-100 text-espresso px-1.5 py-0.5 rounded font-medium">
                 {t("typeHairdresser")}
               </span>
             )}
@@ -221,13 +221,13 @@ export function SalonDetailClient({
           {salon.website && (
             <>
               <span className="text-gray-500">Web</span>
-              <a href={salon.website} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{salon.website}</a>
+              <a href={salon.website} target="_blank" rel="noopener noreferrer" className="text-espresso hover:underline">{salon.website}</a>
             </>
           )}
           {salon.instagram && (
             <>
               <span className="text-gray-500">Instagram</span>
-              <a href={salon.instagram.startsWith("http") ? salon.instagram : `https://instagram.com/${salon.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{salon.instagram}</a>
+              <a href={salon.instagram.startsWith("http") ? salon.instagram : `https://instagram.com/${salon.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-espresso hover:underline">{salon.instagram}</a>
             </>
           )}
         </div>
@@ -291,7 +291,7 @@ export function SalonDetailClient({
             >
               <Link
                 href={`/orders/${o.id}`}
-                className="text-indigo-600 hover:underline"
+                className="text-espresso hover:underline"
               >
                 {new Date(o.createdAt).toLocaleDateString("cs-CZ")}
               </Link>
@@ -315,7 +315,7 @@ export function SalonDetailClient({
             >
               <Link
                 href={`/invoices/${inv.id}`}
-                className="text-indigo-600 hover:underline"
+                className="text-espresso hover:underline"
               >
                 {inv.number}
               </Link>

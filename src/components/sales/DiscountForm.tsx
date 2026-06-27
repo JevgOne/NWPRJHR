@@ -111,7 +111,7 @@ export function DiscountForm({
                   type="button"
                   className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
                     current.type === dt
-                      ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                      ? "border-rose bg-rose/10 text-espresso"
                       : "border-gray-200 hover:bg-gray-50"
                   }`}
                   onClick={() => onChange({ ...current, type: dt })}
@@ -166,7 +166,7 @@ export function DiscountForm({
           )}
 
           {discountAmount > 0 && (
-            <div className="text-sm font-medium text-indigo-600">
+            <div className="text-sm font-medium text-espresso">
               {t("discount")}: -{formatCZK(discountAmount)} CZK
             </div>
           )}

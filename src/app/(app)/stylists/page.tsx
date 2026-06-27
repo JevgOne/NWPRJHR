@@ -26,7 +26,7 @@ export default async function StylistsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Kadeřnice</h1>
         <Link
           href="/stylists/new"
-          className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700"
+          className="inline-flex items-center px-4 py-2 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose-deep"
         >
           + Přidat kadeřnici
         </Link>
@@ -45,10 +45,10 @@ export default async function StylistsPage() {
               <Link
                 key={s.id}
                 href={`/stylists/${s.id}`}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-indigo-300 hover:shadow-md transition-all"
+                className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-rose/40 hover:shadow-md transition-all"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-14 h-14 rounded-full bg-rose/15 flex items-center justify-center text-2xl flex-shrink-0">
                     {s.photo ? (
                       <img src={s.photo} alt={s.name} className="w-14 h-14 rounded-full object-cover" />
                     ) : (
@@ -66,7 +66,7 @@ export default async function StylistsPage() {
                       📍 {s.city || "—"} {s.experience ? `· ${s.experience} let praxe` : ""}
                     </p>
                     {s.salon && (
-                      <p className="text-xs text-indigo-600 mt-0.5">🏠 {s.salon.name}</p>
+                      <p className="text-xs text-espresso mt-0.5">🏠 {s.salon.name}</p>
                     )}
                     <div className="flex gap-1 mt-2">
                       {langs.map((l) => (

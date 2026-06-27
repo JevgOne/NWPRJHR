@@ -76,7 +76,7 @@ export function ReturnsClient() {
             onClick={() => setFilter(tab.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               filter === tab.key
-                ? "bg-indigo-600 text-white"
+                ? "bg-rose text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
@@ -179,7 +179,7 @@ export function ReturnsClient() {
                       </div>
                     )}
                     {ret.creditNote && (
-                      <span className="text-indigo-600 text-xs">
+                      <span className="text-espresso text-xs">
                         {t("creditNote")}: {ret.creditNote.number}
                       </span>
                     )}

@@ -128,7 +128,7 @@ export function FinanceOverviewClient() {
             <Card>
               <div className="p-4">
                 <p className="text-sm text-gray-500">{t("grossMargin")}</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-espresso">
                   {formatCZK(data.grossMargin)} CZK
                 </p>
                 {data.revenue > 0 && (

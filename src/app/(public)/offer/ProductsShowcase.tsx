@@ -62,7 +62,7 @@ export function ProductsShowcase() {
 
   const categoryBadgeColors: Record<string, { base: string; hover: string }> = {
     VIRGIN: { base: "bg-amber-500 text-white", hover: "hover:bg-amber-600" },
-    PREMIUM: { base: "bg-indigo-500 text-white", hover: "hover:bg-indigo-600" },
+    PREMIUM: { base: "bg-rose text-white", hover: "hover:bg-rose-deep" },
     STANDARD: { base: "bg-emerald-600 text-white", hover: "hover:bg-emerald-700" },
     SALE: { base: "bg-rose text-white", hover: "hover:bg-rose-deep" },
   };
@@ -370,7 +370,7 @@ export function ProductsShowcase() {
           {activeLength && (
             <button
               onClick={() => setFilter("lengthCm", "")}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-nude-100 text-espresso hover:bg-nude-200 transition-colors"
             >
               {activeLength} cm
               <span className="ml-0.5">&times;</span>

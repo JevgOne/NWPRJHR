@@ -101,7 +101,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
                     <td className="py-2 pr-3">
                       <Link
                         href={`/sales/${sale.id}`}
-                        className="text-indigo-600 hover:underline"
+                        className="text-espresso hover:underline"
                       >
                         {sale.completedAt ? formatDate(sale.completedAt) : "-"}
                       </Link>
@@ -110,7 +110,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
                       <span
                         className={`inline-block px-1.5 py-0.5 rounded text-xs font-medium mr-1 ${
                           sale.customerType === "SALON"
-                            ? "bg-blue-100 text-blue-700"
+                            ? "bg-nude-100 text-espresso"
                             : "bg-gray-100 text-gray-700"
                         }`}
                       >

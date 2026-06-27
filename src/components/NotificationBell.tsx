@@ -133,7 +133,7 @@ export function NotificationBell() {
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="text-xs text-indigo-600 hover:text-indigo-800"
+                className="text-xs text-espresso hover:text-espresso"
               >
                 {t("markAllRead")}
               </button>
@@ -150,13 +150,13 @@ export function NotificationBell() {
                 <div
                   key={n.id}
                   className={`px-4 py-3 border-b last:border-0 cursor-pointer hover:bg-gray-50 ${
-                    !n.read ? "bg-indigo-50" : ""
+                    !n.read ? "bg-rose/10" : ""
                   }`}
                   onClick={() => !n.read && handleMarkRead(n.id)}
                 >
                   <div className="flex items-start gap-2">
                     {!n.read && (
-                      <span className="w-2 h-2 bg-indigo-600 rounded-full mt-1.5 flex-shrink-0" />
+                      <span className="w-2 h-2 bg-rose rounded-full mt-1.5 flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{n.title}</p>
@@ -175,7 +175,7 @@ export function NotificationBell() {
 
           <Link
             href="/notifications"
-            className="block text-center text-xs text-indigo-600 py-2 border-t hover:bg-gray-50"
+            className="block text-center text-xs text-espresso py-2 border-t hover:bg-gray-50"
             onClick={() => setIsOpen(false)}
           >
             {t("viewAll")}

@@ -294,7 +294,7 @@ export function CostsClient() {
                         <a
                           href={cost.receiptFile}
                           target="_blank"
-                          className="text-blue-600 underline"
+                          className="text-espresso underline"
                         >
                           {cost.receiptName ?? t("receipt")}
                         </a>
@@ -304,7 +304,7 @@ export function CostsClient() {
                       <div className="flex gap-1">
                         <button
                           onClick={() => startEdit(cost)}
-                          className="text-blue-600 hover:underline"
+                          className="text-espresso hover:underline"
                         >
                           {tCommon("edit")}
                         </button>

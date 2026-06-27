@@ -117,7 +117,7 @@ export function CustomersClient() {
             <Link key={c.id} href={`/customers/${c.id}`}>
               <Card
                 padding="sm"
-                className="hover:border-indigo-200 transition-colors cursor-pointer"
+                className="hover:border-rose/30 transition-colors cursor-pointer"
               >
                 <div className="font-medium">{c.name}</div>
                 <div className="text-sm text-gray-500">

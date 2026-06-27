@@ -66,7 +66,7 @@ export function SalonInvoicesClient() {
                   <td className="py-2 pr-3">
                     <Link
                       href={`/salon/invoices/${inv.id}`}
-                      className="text-indigo-600 hover:underline font-medium"
+                      className="text-espresso hover:underline font-medium"
                     >
                       {inv.number}
                     </Link>

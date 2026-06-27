@@ -135,7 +135,7 @@ export function StylistForm({ stylist, salons }: Props) {
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
           <div>
@@ -145,7 +145,7 @@ export function StylistForm({ stylist, salons }: Props) {
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
         </div>
@@ -157,7 +157,7 @@ export function StylistForm({ stylist, salons }: Props) {
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
           <div>
@@ -166,7 +166,7 @@ export function StylistForm({ stylist, salons }: Props) {
               type="number"
               value={experience}
               onChange={(e) => setExperience(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
         </div>
@@ -176,7 +176,7 @@ export function StylistForm({ stylist, salons }: Props) {
           <select
             value={salonId}
             onChange={(e) => setSalonId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           >
             <option value="">— Bez salonu —</option>
             {salons.map((s) => (
@@ -187,11 +187,11 @@ export function StylistForm({ stylist, salons }: Props) {
 
         <div className="flex gap-4">
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-gray-300 text-indigo-600" />
+            <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-gray-300 text-espresso" />
             ⭐ Doporučená
           </label>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="rounded border-gray-300 text-indigo-600" />
+            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="rounded border-gray-300 text-espresso" />
             ✅ Aktivní
           </label>
         </div>
@@ -206,7 +206,7 @@ export function StylistForm({ stylist, salons }: Props) {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             placeholder="Krátký popis, emoji vítány! ✨💇‍♀️"
           />
         </div>
@@ -216,7 +216,7 @@ export function StylistForm({ stylist, salons }: Props) {
             value={bioUk}
             onChange={(e) => setBioUk(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           />
         </div>
         <div>
@@ -225,7 +225,7 @@ export function StylistForm({ stylist, salons }: Props) {
             value={bioRu}
             onChange={(e) => setBioRu(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           />
         </div>
       </div>
@@ -239,7 +239,7 @@ export function StylistForm({ stylist, salons }: Props) {
             type="text"
             value={specializations}
             onChange={(e) => setSpecializations(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             placeholder="Prodlužování vlasů, Keratin, Tape-in, Barvení"
           />
         </div>
@@ -254,7 +254,7 @@ export function StylistForm({ stylist, salons }: Props) {
                 onClick={() => toggleLang(l.code)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   languages.includes(l.code)
-                    ? "bg-indigo-100 text-indigo-700 ring-2 ring-indigo-500"
+                    ? "bg-rose/15 text-espresso ring-2 ring-rose"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
@@ -270,7 +270,7 @@ export function StylistForm({ stylist, salons }: Props) {
             type="text"
             value={certifications}
             onChange={(e) => setCertifications(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             placeholder="Great Lengths, Hairdreams Master"
           />
         </div>
@@ -282,23 +282,23 @@ export function StylistForm({ stylist, salons }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">📱 Telefon</label>
-            <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">✉️ E-mail</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">📸 Instagram</label>
-            <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="@username" />
+            <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">✈️ Telegram</label>
-            <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="@username" />
+            <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">💬 WhatsApp</label>
-            <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="+420..." />
+            <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="+420..." />
           </div>
         </div>
       </div>
@@ -307,7 +307,7 @@ export function StylistForm({ stylist, salons }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
+          className="px-6 py-2.5 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose-deep disabled:opacity-50"
         >
           {saving ? "Ukládám..." : stylist ? "Uložit změny" : "Vytvořit kadeřnici"}
         </button>

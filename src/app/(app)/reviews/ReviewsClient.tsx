@@ -57,7 +57,7 @@ const SOURCE_LABELS = {
 
 const SOURCE_COLORS = {
   MANUAL: "bg-gray-100 text-gray-700",
-  GOOGLE: "bg-blue-100 text-blue-700",
+  GOOGLE: "bg-nude-100 text-espresso",
   INSTAGRAM: "bg-pink-100 text-pink-700",
 };
 
@@ -391,7 +391,7 @@ export function ReviewsClient() {
                   )}
                   <p className="text-sm text-gray-700 mt-1 line-clamp-2">{r.text}</p>
                   {r.sourceUrl && (
-                    <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline mt-1 inline-block">
+                    <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-espresso hover:underline mt-1 inline-block">
                       Zdroj →
                     </a>
                   )}
@@ -413,7 +413,7 @@ export function ReviewsClient() {
                   </button>
                   <button
                     onClick={() => handleEdit(r)}
-                    className="p-1.5 rounded text-sm text-gray-400 hover:text-indigo-600"
+                    className="p-1.5 rounded text-sm text-gray-400 hover:text-espresso"
                   >
                     ✏️
                   </button>

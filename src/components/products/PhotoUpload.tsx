@@ -95,7 +95,7 @@ export function PhotoUpload({ photos, onChange, disabled }: PhotoUploadProps) {
         onClick={() => !disabled && !uploading && inputRef.current?.click()}
         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
           dragOver
-            ? "border-indigo-400 bg-indigo-50"
+            ? "border-rose bg-rose/10"
             : "border-gray-300 hover:border-gray-400"
         } ${disabled || uploading ? "opacity-50 cursor-not-allowed" : ""}`}
       >

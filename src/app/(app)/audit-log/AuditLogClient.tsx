@@ -120,7 +120,7 @@ export function AuditLogClient() {
                     {log.userEmail || log.userId || "—"}
                   </td>
                   <td className="px-4 py-3 text-sm">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-nude-100 text-espresso">
                       {log.action}
                     </span>
                   </td>

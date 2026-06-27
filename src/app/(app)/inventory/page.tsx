@@ -52,7 +52,7 @@ export default async function InventoryPage() {
           {role === "OWNER" && (
             <a
               href="/inventory/stock-in"
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700"
+              className="inline-flex items-center px-4 py-2 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose-deep"
             >
               {t("stock.newDelivery")}
             </a>

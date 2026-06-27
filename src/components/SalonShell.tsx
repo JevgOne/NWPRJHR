@@ -30,7 +30,7 @@ export function SalonShell({ session, children }: SalonShellProps) {
       <nav className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/salon/catalog" className="text-lg font-bold text-indigo-600">
+            <Link href="/salon/catalog" className="text-lg font-bold text-espresso">
               Hairland
             </Link>
             <div className="flex gap-1">
@@ -40,7 +40,7 @@ export function SalonShell({ session, children }: SalonShellProps) {
                   href={item.href}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     pathname.startsWith(item.href)
-                      ? "bg-indigo-50 text-indigo-700"
+                      ? "bg-rose/10 text-espresso"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >

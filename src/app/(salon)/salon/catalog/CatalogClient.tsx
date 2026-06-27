@@ -69,7 +69,7 @@ export function CatalogClient({ role }: { role: Role }) {
       <h1 className="text-xl font-bold">{t("catalog")}</h1>
       <div className={`rounded-lg px-4 py-2.5 text-sm font-medium ${
         role === "HAIRDRESSER"
-          ? "bg-blue-50 text-blue-700"
+          ? "bg-nude-50 text-espresso"
           : "bg-rose/5 text-rose"
       }`}>
         {role === "HAIRDRESSER"

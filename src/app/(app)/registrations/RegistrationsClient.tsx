@@ -126,7 +126,7 @@ export function RegistrationsClient({ role }: { role: Role }) {
                   <td className="py-3 pr-3">
                     <Link
                       href={`/salons/${r.id}`}
-                      className="text-indigo-600 hover:underline font-medium"
+                      className="text-espresso hover:underline font-medium"
                     >
                       {r.name}
                     </Link>
@@ -144,8 +144,8 @@ export function RegistrationsClient({ role }: { role: Role }) {
                   <td className="py-3 pr-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                       r.type === "HAIRDRESSER"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-indigo-100 text-indigo-700"
+                        ? "bg-nude-100 text-espresso"
+                        : "bg-rose/15 text-espresso"
                     }`}>
                       {r.type === "HAIRDRESSER" ? tSalon("typeHairdresser") : tSalon("typeSalon")}
                     </span>

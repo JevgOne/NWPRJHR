@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const categoryColors: Record<string, string> = {
-  types: "bg-blue-100 text-blue-700",
+  types: "bg-nude-100 text-espresso",
   care: "bg-green-100 text-green-700",
   guide: "bg-amber-100 text-amber-700",
   quality: "bg-purple-100 text-purple-700",

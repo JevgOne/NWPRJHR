@@ -87,7 +87,7 @@ export function ComplaintsClient() {
             onClick={() => setFilter(tab.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               filter === tab.key
-                ? "bg-indigo-600 text-white"
+                ? "bg-rose text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
@@ -160,7 +160,7 @@ export function ComplaintsClient() {
                           ? "bg-yellow-100 text-yellow-800"
                           : c.status === "RESOLVED"
                           ? "bg-green-100 text-green-800"
-                          : "bg-blue-100 text-blue-800"
+                          : "bg-nude-100 text-espresso"
                       }`}
                     >
                       {c.status === "OPEN"
@@ -174,13 +174,13 @@ export function ComplaintsClient() {
                     {c.status !== "RESOLVED" && (
                       <button
                         onClick={() => setRefundModal(c.id)}
-                        className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                        className="px-3 py-1 bg-rose text-white text-xs rounded hover:bg-rose-deep"
                       >
                         {t("recordRefund")}
                       </button>
                     )}
                     {c.creditNote && (
-                      <span className="text-indigo-600 text-xs ml-2">
+                      <span className="text-espresso text-xs ml-2">
                         {t("creditNote")}: {c.creditNote.number}
                       </span>
                     )}
@@ -230,7 +230,7 @@ export function ComplaintsClient() {
                 </button>
                 <button
                   onClick={() => handleSupplierRefund(refundModal)}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm"
+                  className="px-4 py-2 bg-rose text-white rounded-lg text-sm"
                 >
                   {tc("save")}
                 </button>

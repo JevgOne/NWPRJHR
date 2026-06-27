@@ -20,7 +20,7 @@ function fmtDate(d: Date | null): string {
 
 const categoryColors: Record<string, { bg: string; text: string; bar: string }> = {
   VIRGIN: { bg: "bg-amber-100", text: "text-amber-800", bar: "bg-amber-500" },
-  PREMIUM: { bg: "bg-indigo-100", text: "text-indigo-800", bar: "bg-indigo-500" },
+  PREMIUM: { bg: "bg-nude-100", text: "text-espresso", bar: "bg-rose" },
   STANDARD: { bg: "bg-emerald-100", text: "text-emerald-800", bar: "bg-emerald-500" },
   SALE: { bg: "bg-rose-100", text: "text-rose-800", bar: "bg-rose-500" },
 };
@@ -34,7 +34,7 @@ const categoryLabels: Record<string, string> = {
 
 const movementTypeColors: Record<string, { bg: string; text: string; label: string }> = {
   RECEIPT: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Příjem" },
-  SALE: { bg: "bg-blue-100", text: "text-blue-700", label: "Prodej" },
+  SALE: { bg: "bg-nude-100", text: "text-espresso", label: "Prodej" },
   RETURN: { bg: "bg-amber-100", text: "text-amber-700", label: "Vrácení" },
   ADJUSTMENT: { bg: "bg-gray-100", text: "text-gray-700", label: "Úprava" },
   COMPLAINT: { bg: "bg-rose-100", text: "text-rose-700", label: "Reklamace" },
@@ -287,7 +287,7 @@ export default async function DashboardPage() {
 
       {/* ── ROW 4: Quick info badges ── */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <a href="/salons"><QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="indigo" /></a>
+        <a href="/salons"><QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="rose" /></a>
         <a href="/registrations"><QuickBadge label={t("pendingRegistrations")} value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
         <a href="/orders"><QuickBadge label={t("pendingOrders")} value={newOrders} color={newOrders > 0 ? "blue" : "gray"} /></a>
         <a href="/returns"><QuickBadge label={t("pendingReturns")} value={pendingReturns} color={pendingReturns > 0 ? "orange" : "gray"} /></a>
@@ -309,9 +309,8 @@ function StatCard({ label, value, sub1, sub2 }: { label: string; value: string; 
 }
 
 const badgeColors: Record<string, string> = {
-  indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
   amber: "bg-amber-50 text-amber-700 border-amber-200",
-  blue: "bg-blue-50 text-blue-700 border-blue-200",
+  blue: "bg-nude-50 text-espresso border-nude-200",
   orange: "bg-orange-50 text-orange-700 border-orange-200",
   rose: "bg-rose-50 text-rose-700 border-rose-200",
   gray: "bg-gray-50 text-gray-600 border-gray-200",

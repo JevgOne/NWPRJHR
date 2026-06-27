@@ -21,8 +21,8 @@ interface SampleRow {
 }
 
 const statusColors: Record<string, string> = {
-  REQUESTED: "bg-blue-100 text-blue-700",
-  APPROVED: "bg-indigo-100 text-indigo-700",
+  REQUESTED: "bg-nude-100 text-espresso",
+  APPROVED: "bg-rose/15 text-espresso",
   SENT: "bg-yellow-100 text-yellow-700",
   RETURNED: "bg-green-100 text-green-700",
   WRITTEN_OFF: "bg-gray-100 text-gray-500",
