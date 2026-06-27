@@ -1,24 +1,36 @@
 {
-  "name": "Hairland - Vlasy k prodloužení",
+  "name": "Hairland — Prémiové vlasy k prodloužení",
   "short_name": "Hairland",
-  "description": "Interní systém pro velkoobchod s vlasy k prodloužení",
+  "description": "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Skladem v Praze.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1a1a2e",
+  "background_color": "#fdfaf7",
+  "theme_color": "#3a2c2a",
   "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

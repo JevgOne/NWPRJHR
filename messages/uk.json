@@ -61,7 +61,8 @@
     "complaints": "Рекламації",
     "payments": "Платежі",
     "export": "Експорт",
-    "auditLog": "Журнал дій"
+    "auditLog": "Журнал дій",
+    "registrations": "Реєстрації"
   },
   "dashboard": {
     "title": "Огляд",
@@ -1184,5 +1185,15 @@
     "tierCustomer": "Клієнт",
     "tierHairdresser": "Майстер",
     "tierSalon": "Салон"
+  },
+  "registrations": {
+    "title": "Реєстрації",
+    "pendingSalons": "Очікують салони",
+    "pendingHairdressers": "Очікують перукарки",
+    "noRegistrations": "Немає очікуючих реєстрацій",
+    "approve": "Затвердити",
+    "reject": "Відхилити",
+    "registeredAt": "Зареєстровано",
+    "all": "Усі"
   }
 }

@@ -61,7 +61,8 @@
     "complaints": "Рекламации",
     "payments": "Платежи",
     "export": "Экспорт",
-    "auditLog": "Журнал действий"
+    "auditLog": "Журнал действий",
+    "registrations": "Регистрации"
   },
   "dashboard": {
     "title": "Обзор",
@@ -1184,5 +1185,15 @@
     "tierCustomer": "Клиент",
     "tierHairdresser": "Мастер",
     "tierSalon": "Салон"
+  },
+  "registrations": {
+    "title": "Регистрации",
+    "pendingSalons": "Ожидающие салоны",
+    "pendingHairdressers": "Ожидающие парикмахеры",
+    "noRegistrations": "Нет ожидающих регистраций",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "registeredAt": "Зарегистрировано",
+    "all": "Все"
   }
 }

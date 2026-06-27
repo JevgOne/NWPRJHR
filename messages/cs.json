@@ -61,7 +61,8 @@
     "complaints": "Reklamace",
     "payments": "Platby",
     "export": "Export",
-    "auditLog": "Audit log"
+    "auditLog": "Audit log",
+    "registrations": "Registrace"
   },
   "dashboard": {
     "title": "Přehled",
@@ -1184,5 +1185,15 @@
     "tierCustomer": "Zákazník",
     "tierHairdresser": "Kadeřnice",
     "tierSalon": "Salon"
+  },
+  "registrations": {
+    "title": "Registrace",
+    "pendingSalons": "Čekající salony",
+    "pendingHairdressers": "Čekající kadeřnice",
+    "noRegistrations": "Žádné čekající registrace",
+    "approve": "Schválit",
+    "reject": "Zamítnout",
+    "registeredAt": "Registrováno",
+    "all": "Vše"
   }
 }

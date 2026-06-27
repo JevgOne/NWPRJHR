@@ -22,6 +22,15 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Přímý import z Ukrajiny, Ruska, Kazachstánu. Skladem v Praze, dovoz zdarma.",
     manifest: "/manifest.json",
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "32x32" },
+        { url: "/icon.svg", type: "image/svg+xml" },
+      ],
+      apple: [
+        { url: "/icons/icon-192x192.png", sizes: "192x192" },
+      ],
+    },
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
@@ -67,7 +76,6 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <HreflangTags />
       </head>
       <body className="min-h-full flex flex-col bg-gray-50 font-[family-name:var(--font-geist)]">
