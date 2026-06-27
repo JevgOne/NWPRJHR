@@ -13,7 +13,7 @@ const BLOB = "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair";
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "HairSalon",
+  "@type": "Store",
   name: "Hairland",
   url: "https://www.hairland.cz",
   description:
@@ -173,48 +173,26 @@ export default async function LandingPage() {
           <p className="text-muted text-center mb-10 max-w-xl mx-auto">
             {t("landing.howItWorksSubtitle")}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
-                1️⃣
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: "1️⃣", titleKey: "landing.step1Title" as const, descKey: "landing.step1Desc" as const },
+              { icon: "2️⃣", titleKey: "landing.step2Title" as const, descKey: "landing.step2Desc" as const },
+              { icon: "3️⃣", titleKey: "landing.step3Title" as const, descKey: "landing.step3Desc" as const },
+              { icon: "4️⃣", titleKey: "landing.step4Title" as const, descKey: "landing.step4Desc" as const },
+            ].map(({ icon, titleKey, descKey }) => (
+              <div key={titleKey} className="text-center">
+                <div className="w-12 h-12 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl">
+                  {icon}
+                </div>
+                <h3 className="font-semibold text-ink mb-1 text-sm">{t(titleKey)}</h3>
+                <p className="text-xs text-muted">{t(descKey)}</p>
               </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step1Title")}</h3>
-              <p className="text-xs text-muted">
-                {t("landing.step1Desc")}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
-                2️⃣
-              </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step2Title")}</h3>
-              <p className="text-xs text-muted">
-                {t("landing.step2Desc")}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
-                3️⃣
-              </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step3Title")}</h3>
-              <p className="text-xs text-muted">
-                {t("landing.step3Desc")}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-blush-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
-                4️⃣
-              </div>
-              <h3 className="font-semibold text-ink mb-1 text-sm">{t("landing.step4Title")}</h3>
-              <p className="text-xs text-muted">
-                {t("landing.step4Desc")}
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Trust section */}
+      {/* Trust section — 4 items, no duplicates */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-ink text-center mb-3">
@@ -223,61 +201,21 @@ export default async function LandingPage() {
           <p className="text-muted text-center mb-10 max-w-xl mx-auto">
             {t("landing.trustSubtitle")}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
-              <div className="text-3xl flex-shrink-0">🤝</div>
-              <div>
-                <h3 className="font-semibold text-ink mb-1">{t("landing.trust1Title")}</h3>
-                <p className="text-sm text-muted">
-                  {t("landing.trust1Desc")}
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { icon: "👁️", titleKey: "landing.trust1Title" as const, descKey: "landing.trust1Desc" as const },
+              { icon: "🌍", titleKey: "landing.trust2Title" as const, descKey: "landing.trust2Desc" as const },
+              { icon: "✂️", titleKey: "landing.trust3Title" as const, descKey: "landing.trust3Desc" as const },
+              { icon: "🧾", titleKey: "landing.trust4Title" as const, descKey: "landing.trust4Desc" as const },
+            ].map(({ icon, titleKey, descKey }) => (
+              <div key={titleKey} className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
+                <div className="text-3xl flex-shrink-0">{icon}</div>
+                <div>
+                  <h3 className="font-semibold text-ink mb-1">{t(titleKey)}</h3>
+                  <p className="text-sm text-muted">{t(descKey)}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
-              <div className="text-3xl flex-shrink-0">✋</div>
-              <div>
-                <h3 className="font-semibold text-ink mb-1">{t("landing.trust2Title")}</h3>
-                <p className="text-sm text-muted">
-                  {t("landing.trust2Desc")}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
-              <div className="text-3xl flex-shrink-0">🚗</div>
-              <div>
-                <h3 className="font-semibold text-ink mb-1">{t("landing.trust3Title")}</h3>
-                <p className="text-sm text-muted">
-                  {t("landing.trust3Desc")}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
-              <div className="text-3xl flex-shrink-0">⏰</div>
-              <div>
-                <h3 className="font-semibold text-ink mb-1">{t("landing.trust4Title")}</h3>
-                <p className="text-sm text-muted">
-                  {t("landing.trust4Desc")}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
-              <div className="text-3xl flex-shrink-0">🌍</div>
-              <div>
-                <h3 className="font-semibold text-ink mb-1">{t("landing.trust5Title")}</h3>
-                <p className="text-sm text-muted">
-                  {t("landing.trust5Desc")}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
-              <div className="text-3xl flex-shrink-0">🧾</div>
-              <div>
-                <h3 className="font-semibold text-ink mb-1">{t("landing.trust6Title")}</h3>
-                <p className="text-sm text-muted">
-                  {t("landing.trust6Desc")}
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -353,21 +291,39 @@ export default async function LandingPage() {
         </section>
       )}
 
-      {/* Trilingual support */}
-      <section className="py-12 bg-nude-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex justify-center gap-3 text-4xl mb-4">
-            <span>🇨🇿</span><span>🇺🇦</span><span>🇷🇺</span>
-          </div>
-          <h3 className="text-lg font-semibold text-ink mb-2">{t("landing.langTitle")}</h3>
-          <p className="text-sm text-muted max-w-lg mx-auto">
-            {t("landing.langDesc")}
+      {/* Trilingual banner */}
+      <div className="bg-nude-50 py-3 text-center text-sm text-muted">
+        {t("landing.langBanner")}
+      </div>
+
+      {/* B2B for salons */}
+      <section className="py-12 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-xl font-bold text-ink mb-2">
+            {t("landing.b2bTitle")}
+          </h2>
+          <p className="text-muted mb-4">
+            {t("landing.b2bDesc")}
           </p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/pro"
+              className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              {t("landing.b2bCta")}
+            </Link>
+            <Link
+              href="/registrace"
+              className="px-5 py-2.5 bg-white text-rose border border-blush-200 hover:bg-blush-100 text-sm font-medium rounded-lg transition-colors"
+            >
+              {t("landing.b2bRegister")}
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Contact CTA */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-nude-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-ink mb-3">
             {t("landing.ctaTitle")}
