@@ -421,7 +421,7 @@ export function ProductsShowcase() {
               >
                 {/* Product image */}
                 <Link href={`/offer/${p.id}`}>
-                  <div className="h-72 bg-nude-100 flex items-center justify-center">
+                  <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center">
                     {p.photos.length > 0 ? (
                       <img
                         src={p.photos[0]}

@@ -52,21 +52,21 @@ export function HeroProductSlider() {
 
   if (products.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-56 bg-nude-100 rounded-xl animate-pulse" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="aspect-[3/4] bg-nude-100 rounded-xl animate-pulse" />
         ))}
       </div>
     );
   }
 
-  // Show 3 products at a time on desktop, 1 on mobile
-  const visible = getVisibleProducts(products, current, 3);
+  // Show 4 products at a time on desktop, 1 on mobile
+  const visible = getVisibleProducts(products, current, 4);
 
   return (
     <div className="relative">
-      {/* Desktop: 3 cards */}
-      <div className="hidden sm:grid grid-cols-3 gap-4">
+      {/* Desktop: 4 cards */}
+      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-3">
         {visible.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
@@ -147,20 +147,20 @@ function ProductCard({ product }: { product: SliderProduct }) {
           </svg>
         )}
       </div>
-      <div className="p-4">
-        {/* Badges: category, origin, texture, tone */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-2">
-          <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-blush-100 text-rose-deep">
+      <div className="p-3">
+        {/* Badges: category, origin, texture */}
+        <div className="flex flex-wrap items-center gap-1 mb-1.5">
+          <span className="inline-block px-1.5 py-0.5 rounded text-[11px] font-medium bg-blush-100 text-rose-deep">
             {categoryLabel}
           </span>
           {product.origin && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-700">
               {getOriginFlag(product.origin)} {originName(product.origin)}
             </span>
           )}
           {product.texture && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
-              <TextureSwatch texture={product.texture} size={18} />
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-medium bg-violet-100 text-violet-700">
+              <TextureSwatch texture={product.texture} size={16} />
               {product.texture}
             </span>
           )}
@@ -171,12 +171,12 @@ function ProductCard({ product }: { product: SliderProduct }) {
 
         {/* Length badges */}
         {lengths.length > 0 && (
-          <div className="mt-2">
+          <div className="mt-1.5">
             <div className="flex flex-wrap gap-1">
               {lengths.map((len) => (
                 <span
                   key={len}
-                  className="px-2 py-0.5 rounded-lg text-xs font-medium border border-line bg-white text-espresso"
+                  className="px-1.5 py-0.5 rounded-lg text-[11px] font-medium border border-line bg-white text-espresso"
                 >
                   {len} cm
                 </span>
@@ -187,13 +187,13 @@ function ProductCard({ product }: { product: SliderProduct }) {
 
         {/* Color swatches */}
         {colors.length > 0 && (
-          <div className="mt-2">
+          <div className="mt-1.5">
             <div className="flex flex-wrap gap-1">
               {colors.map((code) => {
                 return (
                   <span
                     key={code}
-                    className="w-7 h-7 rounded-full border-2 border-line overflow-hidden"
+                    className="w-6 h-6 rounded-full border-2 border-line overflow-hidden"
                   >
                     <img src={`/swatches/color-${code}.png`} alt="" className="w-full h-full object-cover" />
                   </span>
