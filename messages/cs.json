@@ -418,7 +418,7 @@
     },
     "register": {
       "title": "B2B Registrace",
-      "pageTitle": "B2B Registrace | Hairland",
+      "pageTitle": "B2B Registrace",
       "pageDescription": "Zaregistrujte se jako salon nebo kadeřnice pro velkoobchodní nákup vlasů",
       "subtitle": "B2B účet pro zvýhodněný nákup vlasů. Po ověření aktivujeme přístup — obvykle do 24 hodin.",
       "typeSection": "Typ účtu",
@@ -505,7 +505,7 @@
       "allStylists": "← Všechny kadeřnice"
     },
     "landing": {
-      "heroTitle": "Prémiové vlasy na prodej i k prodloužení",
+      "heroTitle": "Prémiové vlasy k prodloužení — skladem v Praze",
       "heroSubtitle": "Prodáváme přírodní vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. Clip-in a tape-in připravíme na zakázku do 7 dnů.",
       "badgeInStock": "✅ Vlasy skladem — vezmete si hned",
       "badgeCustom": "✂️ Clip-in, tape-in, micro ring do 7 dnů",
@@ -1027,7 +1027,7 @@
     "deleteCustomerConfirm": "Opravdu chcete anonymizovat data tohoto zákazníka?"
   },
   "b2b": {
-    "pageTitle": "Pro kadeřníky a salony | Hairland",
+    "pageTitle": "Pro kadeřníky a salony",
     "pageDescription": "Spolupracujte s Hairland — zvýhodněné ceny na prémiové vlasy pro profesionály",
     "heroTitle": "Spolupracujte s Hairland",
     "heroSubtitle": "Získejte zvýhodněné ceny na prémiové vlasy. Program pro salony a samostatné kadeřnice.",

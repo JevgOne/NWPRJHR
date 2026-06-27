@@ -1,9 +1,30 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 const BLOB = "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  name: "Hairland",
+  url: "https://www.hairland.cz",
+  description:
+    "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Praha",
+    addressCountry: "CZ",
+  },
+  email: "info@hairland.cz",
+  sameAs: ["https://www.instagram.com/hairland.cz"],
+};
 
 export default async function LandingPage() {
   const t = await getTranslations("public");
@@ -11,6 +32,10 @@ export default async function LandingPage() {
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero — text + benefits + product slider */}
       <section className="bg-white pt-12 pb-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

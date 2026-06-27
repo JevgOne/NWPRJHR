@@ -1,6 +1,14 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ProductsShowcase } from "./ProductsShowcase";
+
+export const metadata: Metadata = {
+  title: "Nabídka prémiových vlasů | Clip-in, Tape-in, Keratin",
+  description:
+    "Široký výběr prémiových přírodních vlasů k prodloužení — clip-in, tape-in, keratin, micro ring. Virgin, premium i standard kvalita. Skladem v Praze.",
+  alternates: { canonical: "/offer" },
+};
 
 export default async function ProductsPage() {
   const t = await getTranslations("public");

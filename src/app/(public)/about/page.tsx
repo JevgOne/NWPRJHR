@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "O nás",
+  description:
+    "Hairland — prémiové přírodní vlasy k prodloužení. Přímý import z Ukrajiny, Ruska a Kazachstánu. Kvalita, důvěra a osobní přístup.",
+  alternates: { canonical: "/about" },
+};
 
 export default async function AboutPage() {
   const t = await getTranslations("public");

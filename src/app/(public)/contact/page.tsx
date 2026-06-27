@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ContactForm } from "./ContactForm";
+
+export const metadata: Metadata = {
+  title: "Kontakt",
+  description:
+    "Kontaktujte nás — prémiové vlasy k prodloužení, osobní konzultace v Praze. Dovoz zdarma po Praze.",
+  alternates: { canonical: "/contact" },
+};
 
 export default async function ContactPage() {
   const t = await getTranslations("public");

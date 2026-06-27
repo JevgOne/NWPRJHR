@@ -50,6 +50,12 @@ async function getProduct(id: string) {
   };
 }
 
+const PROCESSING_LABELS: Record<string, Record<string, string>> = {
+  cs: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Keratin", WEFT: "Tresový", MICRO_RING: "Micro ring", OTHER: "" },
+  uk: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Кератин", WEFT: "Тресове", MICRO_RING: "Micro ring", OTHER: "" },
+  ru: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Кератин", WEFT: "Трессовые", MICRO_RING: "Micro ring", OTHER: "" },
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const product = await getProduct(id);
@@ -64,11 +70,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : locale === "uk" && product.nameUk
       ? product.nameUk
       : product.name;
+  const processingLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? PROCESSING_LABELS.cs[product.processingType] ?? "";
+  const originLabel = product.origin ?? "";
+  // Title: "Panenské vlasy Clip-in — Ukrajina" — unique per product
+  const titleParts = [productName, processingLabel, originLabel].filter(Boolean);
+  const title = titleParts.join(" — ");
+  const categoryLabel = tCategory(product.category.toLowerCase());
+  const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
+  const colorCount = new Set(product.variants.map((v) => v.color)).size;
+  const minLength = lengths[0];
+  const maxLength = lengths[lengths.length - 1];
+  const originPart = product.origin ? `Původ: ${product.origin}. ` : "";
+  const description = `${productName} ${processingLabel} — ${categoryLabel} vlasy k prodloužení. ${originPart}Délky ${minLength}–${maxLength} cm, ${colorCount} odstínů. Skladem v Praze | Hairland`;
+  const firstPhoto = product.photos[0];
   return {
-    title: productName,
-    description:
-      product.description ??
-      t("metaDesc", { name: productName, category: tCategory(product.category.toLowerCase()) }),
+    title,
+    description,
+    alternates: { canonical: `/offer/${id}` },
+    openGraph: firstPhoto ? {
+      images: [{ url: firstPhoto, alt: title }],
+      type: "website",
+    } : undefined,
   };
 }
 
@@ -161,8 +183,27 @@ export default async function ProductDetailPage({ params }: Props) {
   ];
   const description = localizedDesc || catDesc;
 
+  // Product schema JSON-LD
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: productName,
+    description: description || undefined,
+    image: product.photos.length > 0 ? product.photos[0] : undefined,
+    offers: {
+      "@type": "Offer",
+      price: priceTip100g ? (priceTip100g / 100).toFixed(2) : undefined,
+      priceCurrency: "CZK",
+      availability: "https://schema.org/InStock",
+    },
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-muted mb-4">
         <Link href="/" className="hover:text-rose transition-colors">{t("productDetail.home")}</Link>

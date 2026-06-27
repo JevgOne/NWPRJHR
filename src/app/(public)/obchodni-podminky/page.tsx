@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "Obchodní podmínky | Hairland",
+  title: "Obchodní podmínky",
 };
 
 export default async function ObchodniPodminkyPage() {

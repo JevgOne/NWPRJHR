@@ -14,13 +14,38 @@ const geist = Geist({
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata");
   return {
-    title: "Hairland",
-    description: t("description"),
+    metadataBase: new URL("https://www.hairland.cz"),
+    title: {
+      template: "%s | Hairland",
+      default: "Prémiové vlasy k prodloužení — skladem v Praze | Hairland",
+    },
+    description:
+      "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Přímý import z Ukrajiny, Ruska, Kazachstánu. Skladem v Praze, dovoz zdarma.",
     manifest: "/manifest.json",
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
       title: "Hairland",
+    },
+    openGraph: {
+      type: "website",
+      siteName: "Hairland",
+      locale: "cs_CZ",
+      images: [
+        {
+          url: "/og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Hairland — Prémiové vlasy k prodloužení",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["/og-image.jpg"],
+    },
+    alternates: {
+      canonical: "/",
     },
   };
 }
@@ -29,7 +54,6 @@ export const viewport: Viewport = {
   themeColor: "#1a1a2e",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 };
 
 export default async function RootLayout({

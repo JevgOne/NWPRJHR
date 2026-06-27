@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "Spolupracující kadeřnice",
+  description:
+    "Najděte spolupracující kadeřnice a salony Hairland v Praze a okolí. Odborné prodlužování vlasů.",
+  alternates: { canonical: "/kadernice" },
+};
 
 const langFlags: Record<string, string> = {
   cs: "🇨🇿",

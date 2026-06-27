@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /salon/
+Disallow: /settings/
+Disallow: /inventory/
+Disallow: /invoices/
+Disallow: /sales/
+Disallow: /orders/
+Disallow: /customers/
+Disallow: /products/
+Disallow: /suppliers/
+Disallow: /complaints/
+Disallow: /returns/
+Disallow: /payments/
+Disallow: /notifications/
+Disallow: /finance/
+Disallow: /discounts/
+Disallow: /samples/
+Disallow: /audit-log
+Disallow: /export
+
+Sitemap: https://www.hairland.cz/sitemap.xml
