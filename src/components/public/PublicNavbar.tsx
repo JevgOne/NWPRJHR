@@ -65,29 +65,21 @@ export function PublicNavbar() {
     <nav className="sticky top-0 z-50 bg-white border-b border-line shadow-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex-shrink-0">
-            {/* Mobile: seal only */}
-            <Image
-              src="/seal-light.svg"
-              alt="Hairland"
-              width={40}
-              height={40}
-              priority
-              className="h-9 w-9 md:hidden"
-            />
-            {/* Desktop: full horizontal logo */}
-            <Image
-              src="/logo-light.svg"
-              alt="Hairland"
-              width={180}
-              height={58}
-              priority
-              className="h-10 w-auto hidden md:block"
-            />
+          <Link href="/" className="flex-shrink-0 flex items-center gap-2">
+            {/* H seal icon — always visible */}
+            <svg width="36" height="36" viewBox="0 0 230 230" className="flex-shrink-0">
+              <circle cx="115" cy="115" r="100" fill="#fdfaf7" stroke="#3a2c2a" strokeWidth="1.6"/>
+              <text x="115" y="128" fontFamily="Georgia, serif" fontSize="86" fill="#3a2c2a" textAnchor="middle">H</text>
+              <line x1="80" y1="150" x2="150" y2="150" stroke="#dba8a6" strokeWidth="1"/>
+            </svg>
+            {/* "HAIRLAND" text — hidden on small screens */}
+            <span className="hidden sm:block text-lg font-bold text-ink tracking-widest" style={{ fontFamily: "Georgia, serif" }}>
+              HAIRLAND
+            </span>
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-5">
             {navLinks.map((link) => {
               const isActive =
                 link.href === "/"
@@ -129,7 +121,7 @@ export function PublicNavbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-muted hover:text-ink"
+            className="lg:hidden text-muted hover:text-ink"
           >
             <svg
               className="w-6 h-6"
@@ -158,7 +150,7 @@ export function PublicNavbar() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden pb-4 space-y-2">
+          <div className="lg:hidden pb-4 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
