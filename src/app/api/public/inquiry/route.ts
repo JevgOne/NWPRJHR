@@ -108,6 +108,25 @@ export async function POST(request: NextRequest) {
         .join("\n"),
     }).catch(() => {});
 
+    // In-app notification for all owners
+    try {
+      const owners = await prisma.user.findMany({
+        where: { role: "OWNER" },
+        select: { id: true },
+      });
+      if (owners.length > 0) {
+        await prisma.notification.createMany({
+          data: owners.map((o) => ({
+            recipientId: o.id,
+            type: "NEW_INQUIRY" as const,
+            title: `Nová poptávka: ${name}${salonName ? ` (${salonName})` : ""}`,
+            message: `${name} poptává ${items.length} položek. ${items.map((i) => i.productName).join(", ")}`,
+            data: JSON.stringify({ inquiryId: inquiry.id, name, itemCount: items.length }),
+          })),
+        });
+      }
+    } catch {}
+
     // Telegram notification
     notifyInquiry(inquiry.id, {
       name,
