@@ -6,6 +6,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
+import { getTextureInfo, TEXTURE_OPTIONS } from "@/lib/hair-textures";
+import { getToneInfo, TONE_OPTIONS } from "@/lib/hair-tones";
+import { TextureSwatch } from "@/components/TextureSwatch";
 
 interface PublicVariant {
   lengthCm: number;
@@ -23,6 +26,8 @@ interface PublicProduct {
   category: string;
   processingType: string;
   origin: string | null;
+  texture: string | null;
+  tone: string | null;
   photos: string[];
   variants: PublicVariant[];
 }
@@ -43,6 +48,8 @@ export function ProductsShowcase() {
   const activeOrigin = searchParams.get("origin") ?? "";
   const activeColor = searchParams.get("color") ?? "";
   const activeLength = searchParams.get("lengthCm") ?? "";
+  const activeTexture = searchParams.get("texture") ?? "";
+  const activeTone = searchParams.get("tone") ?? "";
   const activeSearch = searchParams.get("search") ?? "";
 
   const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
@@ -60,10 +67,18 @@ export function ProductsShowcase() {
     const origins: Record<string, number> = {};
     const lengths: Record<number, number> = {};
     const colors: Record<string, number> = {};
+    const textures: Record<string, number> = {};
+    const tones: Record<string, number> = {};
 
     allProducts.forEach((p) => {
       if (p.origin) {
         origins[p.origin] = (origins[p.origin] ?? 0) + 1;
+      }
+      if (p.texture) {
+        textures[p.texture] = (textures[p.texture] ?? 0) + 1;
+      }
+      if (p.tone) {
+        tones[p.tone] = (tones[p.tone] ?? 0) + 1;
       }
       const pLengths = new Set<number>();
       const pColors = new Set<string>();
@@ -85,6 +100,8 @@ export function ProductsShowcase() {
         .map(([l, c]) => [Number(l), c] as [number, number])
         .sort((a, b) => a[0] - b[0]),
       colors: Object.entries(colors).sort((a, b) => b[1] - a[1]),
+      textures: Object.entries(textures).sort((a, b) => b[1] - a[1]),
+      tones: Object.entries(tones).sort((a, b) => b[1] - a[1]),
     };
   }, [allProducts]);
 
@@ -129,6 +146,8 @@ export function ProductsShowcase() {
     if (activeOrigin) params.set("origin", activeOrigin);
     if (activeColor) params.set("color", activeColor);
     if (activeLength) params.set("lengthCm", activeLength);
+    if (activeTexture) params.set("texture", activeTexture);
+    if (activeTone) params.set("tone", activeTone);
     if (activeSearch) params.set("search", activeSearch);
 
     fetch(`/api/public/products?${params}`)
@@ -136,7 +155,7 @@ export function ProductsShowcase() {
       .then((data) => setProducts(data.data ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [activeCategory, activeOrigin, activeColor, activeLength, activeSearch]);
+  }, [activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeTone, activeSearch]);
 
   const productLengths = (p: PublicProduct) => [
     ...new Set(p.variants.map((v) => v.lengthCm)),
@@ -151,7 +170,7 @@ export function ProductsShowcase() {
     return tCategory(cat.toLowerCase());
   };
 
-  const hasActiveFilters = activeOrigin || activeColor || activeLength || activeSearch;
+  const hasActiveFilters = activeOrigin || activeColor || activeLength || activeTexture || activeTone || activeSearch;
 
   return (
     <div>
@@ -288,6 +307,59 @@ export function ProductsShowcase() {
             </div>
           </div>
         )}
+
+        {/* Textures — visual swatches */}
+        {filterOptions.textures.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.textureLabel")}</div>
+            <div className="flex flex-wrap gap-1.5">
+              {filterOptions.textures.map(([tex, count]) => {
+                return (
+                  <button
+                    key={tex}
+                    onClick={() => toggleFilter("texture", tex)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
+                      activeTexture === tex
+                        ? "border-violet-400 bg-violet-100 text-violet-800 ring-1 ring-violet-300"
+                        : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
+                    }`}
+                  >
+                    <TextureSwatch texture={tex} size={20} />
+                    {tex}
+                    <span className="text-muted ml-0.5">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Tones */}
+        {filterOptions.tones.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.toneLabel")}</div>
+            <div className="flex flex-wrap gap-1.5">
+              {filterOptions.tones.map(([tn, count]) => {
+                const info = getToneInfo(tn);
+                return (
+                  <button
+                    key={tn}
+                    onClick={() => toggleFilter("tone", tn)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
+                      activeTone === tn
+                        ? "border-amber-400 bg-amber-100 text-amber-800 ring-1 ring-amber-300"
+                        : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
+                    }`}
+                  >
+                    <span className="w-3 h-3 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: info.hex }} />
+                    {tn}
+                    <span className="text-muted ml-0.5">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Active filters summary */}
@@ -331,6 +403,26 @@ export function ProductsShowcase() {
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
             >
               {activeLength} cm
+              <span className="ml-0.5">&times;</span>
+            </button>
+          )}
+          {activeTexture && (
+            <button
+              onClick={() => setFilter("texture", "")}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors"
+            >
+              <TextureSwatch texture={activeTexture} size={16} />
+              {activeTexture}
+              <span className="ml-0.5">&times;</span>
+            </button>
+          )}
+          {activeTone && (
+            <button
+              onClick={() => setFilter("tone", "")}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+            >
+              <span className="w-3 h-3 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(activeTone).hex }} />
+              {activeTone}
               <span className="ml-0.5">&times;</span>
             </button>
           )}
@@ -411,6 +503,32 @@ export function ProductsShowcase() {
                         }`}
                       >
                         {getOriginFlag(p.origin)} {originName(p.origin)}
+                      </button>
+                    )}
+                    {p.texture && (
+                      <button
+                        onClick={() => toggleFilter("texture", p.texture!)}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors cursor-pointer ${
+                          activeTexture === p.texture
+                            ? "bg-violet-200 text-violet-800 ring-1 ring-violet-400"
+                            : "bg-violet-100 text-violet-700 hover:bg-violet-200"
+                        }`}
+                      >
+                        <TextureSwatch texture={p.texture} tone={p.tone} size={18} />
+                        {p.texture}
+                      </button>
+                    )}
+                    {p.tone && (
+                      <button
+                        onClick={() => toggleFilter("tone", p.tone!)}
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium transition-colors cursor-pointer ${
+                          activeTone === p.tone
+                            ? "bg-amber-200 text-amber-800 ring-1 ring-amber-400"
+                            : "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                        }`}
+                      >
+                        <span className="w-3 h-3 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(p.tone).hex }} />
+                        {p.tone}
                       </button>
                     )}
                   </div>

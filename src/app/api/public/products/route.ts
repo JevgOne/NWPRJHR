@@ -19,6 +19,10 @@ export async function GET(request: NextRequest) {
     if (origin) {
       where.origin = origin;
     }
+    const texture = sp.get("texture");
+    const tone = sp.get("tone");
+    if (texture) where.texture = texture;
+    if (tone) where.tone = tone;
     if (search) {
       where.OR = [
         { name: { contains: search } },
@@ -51,6 +55,8 @@ export async function GET(request: NextRequest) {
         category: true,
         processingType: true,
         origin: true,
+        texture: true,
+        tone: true,
         photos: true,
         variants: {
           where: { active: true },

@@ -86,7 +86,27 @@
     "length": "Длина",
     "color": "Цвет / оттенок",
     "origin": "Происхождение волос",
-    "originPlaceholder": "Начните вводить название страны..."
+    "originPlaceholder": "Начните вводить название страны...",
+    "texture": "Структура волос",
+    "texturePlaceholder": "Выберите или введите структуру...",
+    "tone": "Тон цвета",
+    "tonePlaceholder": "Выберите или введите тон..."
+  },
+  "texture": {
+    "straight": "Прямые",
+    "slightlyWavy": "Слегка волнистые",
+    "wavy": "Волнистые",
+    "curly": "Кудрявые",
+    "unknown": "Не указано",
+    "custom": "Другое"
+  },
+  "tone": {
+    "blond": "Блонд",
+    "brown": "Каштановые",
+    "darkBrown": "Тёмно-каштановые",
+    "red": "Рыжие",
+    "unknown": "Не указано",
+    "custom": "Другое"
   },
   "category": {
     "virgin": "Натуральные неокрашенные (Virgin)",
@@ -570,6 +590,8 @@
       "originLabel": "Происхождение",
       "lengthLabel": "Длина",
       "colorLabel": "Цвет",
+      "textureLabel": "Структура",
+      "toneLabel": "Тон",
       "activeFilters": "Активные фильтры:",
       "clearAll": "Сбросить все",
       "clearFilters": "Сбросить фильтры",
@@ -580,6 +602,8 @@
       "home": "Главная",
       "offer": "Предложение",
       "originLabel": "Происхождение",
+      "textureLabel": "Структура",
+      "toneLabel": "Тон",
       "lengthsLabel": "Длины",
       "shadesLabel": "Оттенки",
       "shadesCount": "{count, plural, one {1 цвет} few {# цвета} other {# цветов}}",

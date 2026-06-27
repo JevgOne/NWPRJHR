@@ -9,6 +9,8 @@ import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
+import { getToneInfo } from "@/lib/hair-tones";
+import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
 
@@ -30,6 +32,8 @@ async function getProduct(id: string) {
       category: true,
       processingType: true,
       origin: true,
+      texture: true,
+      tone: true,
       photos: true,
       variants: {
         where: { active: true },
@@ -72,8 +76,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : product.name;
   const processingLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? PROCESSING_LABELS.cs[product.processingType] ?? "";
   const originLabel = product.origin ?? "";
-  // Title: "Panenské vlasy Clip-in — Ukrajina" — unique per product
-  const titleParts = [productName, processingLabel, originLabel].filter(Boolean);
+  const textureLabel = product.texture ?? "";
+  // Title: "Panenské vlasy Clip-in — Rovné — Ukrajina" — unique per product
+  const titleParts = [productName, processingLabel, textureLabel, originLabel].filter(Boolean);
   const title = titleParts.join(" — ");
   const categoryLabel = tCategory(product.category.toLowerCase());
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
@@ -81,7 +86,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const minLength = lengths[0];
   const maxLength = lengths[lengths.length - 1];
   const originPart = product.origin ? `Původ: ${product.origin}. ` : "";
-  const description = `${productName} ${processingLabel} — ${categoryLabel} vlasy k prodloužení. ${originPart}Délky ${minLength}–${maxLength} cm, ${colorCount} odstínů. Skladem v Praze | Hairland`;
+  const texturePart = product.texture ? `Struktura: ${product.texture}. ` : "";
+  const tonePart = product.tone ? `Tón: ${product.tone}. ` : "";
+  const description = `${productName} ${processingLabel} — ${categoryLabel} vlasy k prodloužení. ${originPart}${texturePart}${tonePart}Délky ${minLength}–${maxLength} cm, ${colorCount} odstínů. Skladem v Praze | Hairland`;
   const firstPhoto = product.photos[0];
   return {
     title,
@@ -284,6 +291,30 @@ export default async function ProductDetailPage({ params }: Props) {
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.originLabel")}</div>
                   <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{originName(product.origin)}</div>
+                </div>
+              </Link>
+            )}
+            {product.texture && (
+              <Link
+                href={`/offer?texture=${encodeURIComponent(product.texture)}`}
+                className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
+              >
+                <TextureSwatch texture={product.texture} tone={product.tone} size={32} />
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.textureLabel")}</div>
+                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.texture}</div>
+                </div>
+              </Link>
+            )}
+            {product.tone && (
+              <Link
+                href={`/offer?tone=${encodeURIComponent(product.tone)}`}
+                className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
+              >
+                <span className="w-5 h-5 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(product.tone).hex }} />
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.toneLabel")}</div>
+                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.tone}</div>
                 </div>
               </Link>
             )}

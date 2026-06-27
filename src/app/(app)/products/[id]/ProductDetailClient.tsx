@@ -10,6 +10,7 @@ import { PhotoUpload } from "@/components/products/PhotoUpload";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { TextureSwatch } from "@/components/TextureSwatch";
 
 interface ProductDetail {
   id: string;
@@ -20,6 +21,8 @@ interface ProductDetail {
   category: string;
   processingType: string;
   origin?: string | null;
+  texture?: string | null;
+  tone?: string | null;
   photos?: string;
   variants?: Array<{
     id: string;
@@ -104,6 +107,17 @@ export function ProductDetailClient({
             {product.origin && (
               <span className="text-sm text-gray-500">
                 🌍 {product.origin}
+              </span>
+            )}
+            {product.texture && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
+                <TextureSwatch texture={product.texture} tone={product.tone} size={20} />
+                {product.texture}
+              </span>
+            )}
+            {product.tone && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
+                {product.tone}
               </span>
             )}
           </div>

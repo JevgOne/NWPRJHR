@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { CategoryBadge } from "@/components/products/CategoryBadge";
 import { Card } from "@/components/ui/Card";
+import { TextureSwatch } from "@/components/TextureSwatch";
 
 interface ProductItem {
   id: string;
@@ -38,9 +39,22 @@ export function ProductListClient({ products }: { products: ProductItem[] }) {
                 category={product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"}
               />
             </div>
-            <p className="text-sm text-gray-500 mb-2">
-              {product.processingType.replace(/_/g, "-")}
-            </p>
+            <div className="flex flex-wrap items-center gap-1.5 mb-2">
+              <span className="text-sm text-gray-500">
+                {product.processingType.replace(/_/g, "-")}
+              </span>
+              {typeof product.texture === "string" && product.texture && (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
+                  <TextureSwatch texture={product.texture} tone={typeof product.tone === "string" ? product.tone : undefined} size={16} />
+                  {product.texture}
+                </span>
+              )}
+              {typeof product.tone === "string" && product.tone && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
+                  {product.tone}
+                </span>
+              )}
+            </div>
             <p className="text-xs text-gray-400">
               {product.variants?.length ?? 0} {t("salon.priceVariant").toLowerCase()}
             </p>

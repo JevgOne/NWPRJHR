@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { getOriginFlag } from "@/lib/origin-flags";
+import { getToneInfo } from "@/lib/hair-tones";
+import { TextureSwatch } from "@/components/TextureSwatch";
 
 interface SliderProduct {
   id: string;
@@ -12,6 +14,8 @@ interface SliderProduct {
   nameRu: string | null;
   category: string;
   origin: string | null;
+  texture: string | null;
+  tone: string | null;
   photos: string[];
   variants: { lengthCm: number; color: string }[];
 }
@@ -165,6 +169,18 @@ function ProductCard({ product }: { product: SliderProduct }) {
           {product.origin && (
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
               {getOriginFlag(product.origin)} {originName(product.origin)}
+            </span>
+          )}
+          {product.texture && (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
+              <TextureSwatch texture={product.texture} tone={product.tone} size={16} />
+              {product.texture}
+            </span>
+          )}
+          {product.tone && (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
+              <span className="w-2.5 h-2.5 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getToneInfo(product.tone).hex }} />
+              {product.tone}
             </span>
           )}
         </div>

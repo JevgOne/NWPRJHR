@@ -86,7 +86,27 @@
     "length": "Довжина",
     "color": "Колір / відтінок",
     "origin": "Походження волосся",
-    "originPlaceholder": "Почніть вводити назву країни..."
+    "originPlaceholder": "Почніть вводити назву країни...",
+    "texture": "Структура волосся",
+    "texturePlaceholder": "Оберіть або введіть структуру...",
+    "tone": "Тон кольору",
+    "tonePlaceholder": "Оберіть або введіть тон..."
+  },
+  "texture": {
+    "straight": "Рівне",
+    "slightlyWavy": "Злегка хвилясте",
+    "wavy": "Хвилясте",
+    "curly": "Кучеряве",
+    "unknown": "Не вказано",
+    "custom": "Власне"
+  },
+  "tone": {
+    "blond": "Блонд",
+    "brown": "Каштанове",
+    "darkBrown": "Темно-каштанове",
+    "red": "Руде",
+    "unknown": "Не вказано",
+    "custom": "Власне"
   },
   "category": {
     "virgin": "Незаймане волосся (Virgin)",
@@ -570,6 +590,8 @@
       "originLabel": "Походження",
       "lengthLabel": "Довжина",
       "colorLabel": "Колір",
+      "textureLabel": "Структура",
+      "toneLabel": "Тон",
       "activeFilters": "Активні фільтри:",
       "clearAll": "Скинути все",
       "clearFilters": "Скинути фільтри",
@@ -580,6 +602,8 @@
       "home": "Головна",
       "offer": "Пропозиція",
       "originLabel": "Походження",
+      "textureLabel": "Структура",
+      "toneLabel": "Тон",
       "lengthsLabel": "Довжини",
       "shadesLabel": "Відтінки",
       "shadesCount": "{count, plural, one {1 колір} few {# кольори} other {# кольорів}}",

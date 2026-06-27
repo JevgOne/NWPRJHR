@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
+import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
+import { TONE_OPTIONS } from "@/lib/hair-tones";
 import { PhotoUpload } from "@/components/products/PhotoUpload";
 
 const CATEGORIES = ["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
@@ -26,17 +28,63 @@ export function CreateProductForm() {
   const [error, setError] = useState("");
   const [origin, setOrigin] = useState("");
   const [originOpen, setOriginOpen] = useState(false);
+  const [texture, setTexture] = useState("");
+  const [textureOpen, setTextureOpen] = useState(false);
+  const [tone, setTone] = useState("");
+  const [toneOpen, setToneOpen] = useState(false);
+  const [dbTextures, setDbTextures] = useState<string[]>([]);
+  const [dbTones, setDbTones] = useState<string[]>([]);
   const [photos, setPhotos] = useState<string[]>([]);
   const originRef = useRef<HTMLDivElement>(null);
+  const textureRef = useRef<HTMLDivElement>(null);
+  const toneRef = useRef<HTMLDivElement>(null);
 
   const filteredOrigins = ORIGIN_OPTIONS.filter((o) =>
     o.name.toLowerCase().includes(origin.toLowerCase())
   );
 
+  const allTextureNames = [...new Set([
+    ...TEXTURE_OPTIONS.map((t) => t.name),
+    ...dbTextures,
+  ])];
+  const filteredTextures = allTextureNames
+    .filter((n) => n.toLowerCase().includes(texture.toLowerCase()))
+    .map((n) => {
+      const opt = TEXTURE_OPTIONS.find((t) => t.name === n);
+      return { name: n, icon: opt?.icon ?? "?" };
+    });
+
+  const allToneNames = [...new Set([
+    ...TONE_OPTIONS.map((t) => t.name),
+    ...dbTones,
+  ])];
+  const filteredTones = allToneNames
+    .filter((n) => n.toLowerCase().includes(tone.toLowerCase()))
+    .map((n) => {
+      const opt = TONE_OPTIONS.find((t) => t.name === n);
+      return { name: n, hex: opt?.hex ?? "#9CA3AF" };
+    });
+
+  useEffect(() => {
+    fetch("/api/products/options")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.textures) setDbTextures(data.textures);
+        if (data?.tones) setDbTones(data.tones);
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (originRef.current && !originRef.current.contains(e.target as Node)) {
         setOriginOpen(false);
+      }
+      if (textureRef.current && !textureRef.current.contains(e.target as Node)) {
+        setTextureOpen(false);
+      }
+      if (toneRef.current && !toneRef.current.contains(e.target as Node)) {
+        setToneOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -57,6 +105,8 @@ export function CreateProductForm() {
       category: form.get("category") as string,
       processingType: form.get("processingType") as string,
       origin: origin || undefined,
+      texture: texture || undefined,
+      tone: tone || undefined,
       photos: photos.length > 0 ? JSON.stringify(photos) : undefined,
       slug:
         (form.get("slug") as string) ||
@@ -169,6 +219,84 @@ export function CreateProductForm() {
             </ul>
           )}
         </div>
+        <div ref={textureRef} className="relative">
+          <label htmlFor="texture" className="block text-sm font-medium text-gray-700 mb-1">
+            {t("product.texture")}
+          </label>
+          <input
+            id="texture"
+            type="text"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            value={texture}
+            onChange={(e) => {
+              setTexture(e.target.value);
+              setTextureOpen(true);
+            }}
+            onFocus={() => setTextureOpen(true)}
+            placeholder={t("product.texturePlaceholder")}
+            autoComplete="off"
+          />
+          {textureOpen && filteredTextures.length > 0 && (
+            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+              {filteredTextures.map((opt) => (
+                <li key={opt.name}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-indigo-50 text-left"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setTexture(opt.name);
+                      setTextureOpen(false);
+                    }}
+                  >
+                    <span>{opt.icon}</span>
+                    <span>{opt.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div ref={toneRef} className="relative">
+          <label htmlFor="tone" className="block text-sm font-medium text-gray-700 mb-1">
+            {t("product.tone")}
+          </label>
+          <input
+            id="tone"
+            type="text"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            value={tone}
+            onChange={(e) => {
+              setTone(e.target.value);
+              setToneOpen(true);
+            }}
+            onFocus={() => setToneOpen(true)}
+            placeholder={t("product.tonePlaceholder")}
+            autoComplete="off"
+          />
+          {toneOpen && filteredTones.length > 0 && (
+            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+              {filteredTones.map((opt) => (
+                <li key={opt.name}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-indigo-50 text-left"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setTone(opt.name);
+                      setToneOpen(false);
+                    }}
+                  >
+                    <span className="w-4 h-4 rounded-full border border-gray-200 flex-shrink-0" style={{ backgroundColor: opt.hex }} />
+                    <span>{opt.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         <PhotoUpload photos={photos} onChange={setPhotos} disabled={loading} />
 
         <Input id="slug" name="slug" label="Slug (URL)" placeholder="auto-generated" />

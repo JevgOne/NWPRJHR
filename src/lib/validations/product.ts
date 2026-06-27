@@ -17,6 +17,8 @@ export const createProductSchema = z.object({
     "OTHER",
   ]),
   origin: z.string().max(200).optional(),
+  texture: z.string().max(200).optional(),
+  tone: z.string().max(200).optional(),
   photos: z.string().optional(),
   slug: z
     .string()
