@@ -119,7 +119,6 @@ export function CatalogClient({ role }: { role: Role }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          salonId: "",
           items: cartItems.map((item) => ({
             variantId: item.variantId,
             grams: item.grams,

@@ -20,8 +20,6 @@ interface SupplierOption {
   name: string;
 }
 
-const CURRENCIES = ["CZK", "USD", "EUR", "UAH"] as const;
-
 export function StockInForm({
   products,
   suppliers,
@@ -41,11 +39,10 @@ export function StockInForm({
   };
 
   const [productId, setProductId] = useState("");
-  const [variantId, setVariantId] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedLength, setSelectedLength] = useState("");
   const [supplierId, setSupplierId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
-  const [currency, setCurrency] = useState<(typeof CURRENCIES)[number]>("CZK");
-  const [exchangeRate, setExchangeRate] = useState("10000");
   const [totalGrams, setTotalGrams] = useState("");
   const [stockedAt, setStockedAt] = useState(
     new Date().toISOString().slice(0, 10)
@@ -57,16 +54,35 @@ export function StockInForm({
   const selectedProduct = products.find((p) => p.id === productId);
   const variants = selectedProduct?.variants ?? [];
 
-  const calculatedCZK = useMemo(() => {
-    const price = parseInt(purchasePrice);
-    const rate = parseInt(exchangeRate);
-    if (!price || !rate) return null;
-    if (currency === "CZK") return price;
-    return Math.round((price * rate) / 10000);
-  }, [purchasePrice, exchangeRate, currency]);
+  // Unique colors available for selected product
+  const uniqueColors = useMemo(() => {
+    const codes = [...new Set(variants.map((v) => v.color))];
+    return codes.sort((a, b) => parseInt(a) - parseInt(b));
+  }, [variants]);
+
+  // Lengths available for selected color
+  const availableLengths = useMemo(() => {
+    if (!selectedColor) return [];
+    return variants
+      .filter((v) => v.color === selectedColor)
+      .map((v) => v.lengthCm)
+      .sort((a, b) => a - b);
+  }, [variants, selectedColor]);
+
+  // Resolved variantId from color + length
+  const variantId = useMemo(() => {
+    if (!selectedColor || !selectedLength) return "";
+    return variants.find((v) => v.color === selectedColor && v.lengthCm === parseInt(selectedLength))?.id ?? "";
+  }, [variants, selectedColor, selectedLength]);
+
+  // Currency is always CZK — user converts manually at current rate
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!variantId) {
+      setError("Vyberte barvu a délku");
+      return;
+    }
     setSubmitting(true);
     setError("");
 
@@ -74,8 +90,8 @@ export function StockInForm({
       variantId,
       supplierId,
       purchasePricePerGramRaw: parseInt(purchasePrice),
-      currency,
-      exchangeRate: parseInt(exchangeRate),
+      currency: "CZK",
+      exchangeRate: 10000,
       totalGrams: parseInt(totalGrams),
       totalPieces: 0,
       stockedAt: new Date(stockedAt).toISOString(),
@@ -102,50 +118,100 @@ export function StockInForm({
   return (
     <Card>
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-        {/* Product + Variant selection */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-espresso mb-1">
-              {t("selectVariant")}
-            </label>
-            <select
-              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-              value={productId}
-              onChange={(e) => {
-                setProductId(e.target.value);
-                setVariantId("");
-              }}
-              required
-            >
-              <option value="">--</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({tCat(p.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale")})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-espresso mb-1">
-              &nbsp;
-            </label>
-            <select
-              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-              value={variantId}
-              onChange={(e) => setVariantId(e.target.value)}
-              required
-              disabled={!productId}
-            >
-              <option value="">--</option>
-              {variants.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.lengthCm} cm — {colorName(v.color)}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Product */}
+        <div>
+          <label className="block text-sm font-medium text-espresso mb-1">
+            {t("selectVariant")}
+          </label>
+          <select
+            className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
+            value={productId}
+            onChange={(e) => {
+              setProductId(e.target.value);
+              setSelectedColor("");
+              setSelectedLength("");
+            }}
+            required
+          >
+            <option value="">--</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} ({tCat(p.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale")})
+              </option>
+            ))}
+          </select>
         </div>
+
+        {/* Color + Length selection */}
+        {productId && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Color selector with swatches */}
+            <div>
+              <label className="block text-sm font-medium text-espresso mb-2">
+                Barva
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {uniqueColors.map((code) => {
+                  const isSelected = selectedColor === code;
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => {
+                        setSelectedColor(code);
+                        setSelectedLength("");
+                      }}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                        isSelected
+                          ? "border-rose bg-rose/10 text-ink ring-1 ring-rose"
+                          : "border-line bg-white text-muted hover:border-espresso/30"
+                      }`}
+                      title={colorName(code)}
+                    >
+                      <span className="w-5 h-5 rounded-full border border-line overflow-hidden flex-shrink-0">
+                        <img src={`/swatches/color-${code}.png`} alt="" className="w-full h-full object-cover" />
+                      </span>
+                      {colorName(code)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Length selector */}
+            <div>
+              <label className="block text-sm font-medium text-espresso mb-2">
+                Délka
+              </label>
+              {selectedColor ? (
+                <div className="flex flex-wrap gap-2">
+                  {availableLengths.map((cm) => {
+                    const isSelected = selectedLength === String(cm);
+                    return (
+                      <button
+                        key={cm}
+                        type="button"
+                        onClick={() => setSelectedLength(String(cm))}
+                        className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
+                          isSelected
+                            ? "border-rose bg-rose/10 text-ink ring-1 ring-rose"
+                            : "border-line bg-white text-muted hover:border-espresso/30"
+                        }`}
+                      >
+                        {cm} cm
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-muted py-2">Nejdříve vyberte barvu</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Hidden required input for form validation */}
+        <input type="hidden" name="variantId" value={variantId} required />
 
         {/* Supplier */}
         <div>
@@ -167,61 +233,16 @@ export function StockInForm({
           </select>
         </div>
 
-        {/* Purchase price + currency (+ exchange rate only for non-CZK) */}
-        <div className={`grid grid-cols-1 gap-4 ${currency !== "CZK" ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
-          <Input
-            label={t("purchasePrice")}
-            type="number"
-            value={purchasePrice}
-            onChange={(e) => setPurchasePrice(e.target.value)}
-            required
-            min={1}
-            placeholder="e.g. 500"
-          />
-
-          <div>
-            <label className="block text-sm font-medium text-espresso mb-1">
-              {t("currency")}
-            </label>
-            <select
-              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-              value={currency}
-              onChange={(e) => {
-                const c = e.target.value as (typeof CURRENCIES)[number];
-                setCurrency(c);
-                if (c === "CZK") setExchangeRate("10000");
-              }}
-            >
-              {CURRENCIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {currency !== "CZK" && (
-            <Input
-              label={t("exchangeRate")}
-              type="number"
-              value={exchangeRate}
-              onChange={(e) => setExchangeRate(e.target.value)}
-              required
-              min={1}
-              placeholder="e.g. 254350"
-            />
-          )}
-        </div>
-
-        {/* Calculated CZK preview */}
-        {calculatedCZK !== null && currency !== "CZK" && (
-          <div className="text-sm text-muted">
-            {t("calculatedCZK")}:{" "}
-            <span className="font-semibold text-ink">
-              {(calculatedCZK / 100).toFixed(2)} CZK/{t("grams")}
-            </span>
-          </div>
-        )}
+        {/* Purchase price in CZK */}
+        <Input
+          label={`${t("purchasePrice")} (CZK)`}
+          type="number"
+          value={purchasePrice}
+          onChange={(e) => setPurchasePrice(e.target.value)}
+          required
+          min={1}
+          placeholder="haléře za gram"
+        />
 
         {/* Total grams + date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
