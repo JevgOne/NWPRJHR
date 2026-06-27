@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
 import type { Role } from "@prisma/client";
@@ -25,6 +25,15 @@ interface CatalogProduct {
   texture?: string;
   photos: string[];
   variants: CatalogVariant[];
+}
+
+interface CartItem {
+  variantId: string;
+  grams: number;
+  productName: string;
+  lengthCm: number;
+  color: string;
+  pricePerGram: number;
 }
 
 function formatCZK(halere: number): string {
@@ -59,6 +68,11 @@ export function CatalogClient({ role }: { role: Role }) {
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [discountPct, setDiscountPct] = useState<number | null>(null);
+  const [cart, setCart] = useState<Map<string, CartItem>>(new Map());
+  const [orderNote, setOrderNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderError, setOrderError] = useState("");
 
   const colorName = (nameKey: string) => {
     try { return tColors(nameKey as "c1"); } catch { return nameKey; }
@@ -80,7 +94,75 @@ export function CatalogClient({ role }: { role: Role }) {
       .catch(() => {});
   }, [role]);
 
+  const updateCart = useCallback((variantId: string, grams: number, meta: Omit<CartItem, "variantId" | "grams">) => {
+    setCart((prev) => {
+      const next = new Map(prev);
+      if (grams <= 0) {
+        next.delete(variantId);
+      } else {
+        next.set(variantId, { variantId, grams, ...meta });
+      }
+      return next;
+    });
+  }, []);
+
+  const cartItems = Array.from(cart.values());
+  const cartTotal = cartItems.reduce((sum, item) => sum + item.grams * item.pricePerGram, 0);
+  const cartTotalGrams = cartItems.reduce((sum, item) => sum + item.grams, 0);
+
+  const submitOrder = async () => {
+    if (cartItems.length === 0) return;
+    setSubmitting(true);
+    setOrderError("");
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          salonId: "",
+          items: cartItems.map((item) => ({
+            variantId: item.variantId,
+            grams: item.grams,
+            pieces: 0,
+          })),
+          note: orderNote || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Chyba při odesílání objednávky");
+      }
+      setOrderSuccess(true);
+      setCart(new Map());
+      setOrderNote("");
+    } catch (e) {
+      setOrderError(e instanceof Error ? e.message : "Chyba při odesílání");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) return <p className="text-muted py-8 text-center">{tCommon("loading")}</p>;
+
+  if (orderSuccess) {
+    return (
+      <div className="bg-white rounded-xl border border-line p-8 text-center space-y-4">
+        <div className="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
+          <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-lg font-semibold text-ink">Objednávka odeslána</h2>
+        <p className="text-muted text-sm">Vaše objednávka byla úspěšně odeslána. Budeme vás kontaktovat.</p>
+        <button
+          onClick={() => setOrderSuccess(false)}
+          className="px-4 py-2 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose/90 transition-colors"
+        >
+          Zpět do katalogu
+        </button>
+      </div>
+    );
+  }
 
   if (products.length === 0) {
     return (
@@ -91,7 +173,7 @@ export function CatalogClient({ role }: { role: Role }) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-32">
       <h1 className="text-xl font-bold text-ink">{t("catalog")}</h1>
 
       {/* Discount banner */}
@@ -178,13 +260,16 @@ export function CatalogClient({ role }: { role: Role }) {
                     <th className="px-4 py-2">Barva</th>
                     <th className="px-4 py-2 text-right">{t("pricePerGram")}</th>
                     <th className="px-4 py-2 text-right">{t("available")}</th>
+                    <th className="px-4 py-2 text-right">{t("orderFromCatalog")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line/50">
                   {product.variants.map((v) => {
                     const { nameKey } = getHairColor(v.color);
+                    const cartItem = cart.get(v.id);
+                    const inCart = cartItem ? cartItem.grams : 0;
                     return (
-                      <tr key={v.id} className="hover:bg-nude-50/50">
+                      <tr key={v.id} className={`hover:bg-nude-50/50 ${inCart > 0 ? "bg-rose/5" : ""}`}>
                         <td className="px-4 py-2 text-ink font-medium whitespace-nowrap">
                           {v.lengthCm} cm
                         </td>
@@ -212,6 +297,32 @@ export function CatalogClient({ role }: { role: Role }) {
                             </span>
                           )}
                         </td>
+                        <td className="px-4 py-2 text-right">
+                          {v.availableGrams > 0 ? (
+                            <div className="inline-flex items-center gap-1">
+                              <input
+                                type="number"
+                                min={0}
+                                max={v.availableGrams}
+                                value={inCart || ""}
+                                placeholder="g"
+                                onChange={(e) => {
+                                  const val = Math.min(parseInt(e.target.value) || 0, v.availableGrams);
+                                  updateCart(v.id, val, {
+                                    productName: product.name,
+                                    lengthCm: v.lengthCm,
+                                    color: v.color,
+                                    pricePerGram: v.pricePerGram,
+                                  });
+                                }}
+                                className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
+                              />
+                              <span className="text-xs text-muted">g</span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted">—</span>
+                          )}
+                        </td>
                       </tr>
                     );
                   })}
@@ -221,6 +332,56 @@ export function CatalogClient({ role }: { role: Role }) {
           </div>
         );
       })}
+
+      {/* Floating cart bar */}
+      {cartItems.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-line shadow-lg">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            {orderError && (
+              <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                {orderError}
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              {/* Cart summary */}
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-ink">
+                  {cartItems.length} {cartItems.length === 1 ? "položka" : cartItems.length < 5 ? "položky" : "položek"} &middot; {cartTotalGrams} g
+                </div>
+                <div className="text-xs text-muted">
+                  Celkem: {formatCZK(cartTotal)} Kč
+                </div>
+              </div>
+
+              {/* Note input */}
+              <input
+                type="text"
+                value={orderNote}
+                onChange={(e) => setOrderNote(e.target.value)}
+                placeholder="Poznámka k objednávce..."
+                className="hidden sm:block flex-1 px-3 py-2 text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
+              />
+
+              {/* Clear */}
+              <button
+                onClick={() => setCart(new Map())}
+                className="px-3 py-2 text-sm text-muted hover:text-ink transition-colors"
+              >
+                Smazat
+              </button>
+
+              {/* Submit */}
+              <button
+                onClick={submitOrder}
+                disabled={submitting}
+                className="px-5 py-2 bg-rose text-white rounded-lg text-sm font-semibold hover:bg-rose/90 transition-colors disabled:opacity-50"
+              >
+                {submitting ? "Odesílám..." : "Odeslat objednávku"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
