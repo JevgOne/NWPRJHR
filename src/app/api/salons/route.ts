@@ -23,6 +23,10 @@ export async function GET(request: NextRequest) {
   else if (archived === "true") where.archived = true;
   else where.archived = false; // default: active only
 
+  const approved = sp.get("approved");
+  if (approved === "false") where.approved = false;
+  else if (approved === "true") where.approved = true;
+
   if (tier) where.tier = tier;
   if (type) where.type = type;
   if (city) where.city = { contains: city, mode: "insensitive" };

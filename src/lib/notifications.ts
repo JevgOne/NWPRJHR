@@ -187,6 +187,10 @@ export function translateNotification(
         title: "Nova poptavka",
         message: `Prisla nova poptavka od ${data?.name ?? ""} (${data?.itemCount ?? 0} polozek)`,
       },
+      REGISTRATION: {
+        title: "Nova registrace",
+        message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" zada o schvaleni.`,
+      },
     },
     uk: {
       NEW_ORDER: {
@@ -237,6 +241,10 @@ export function translateNotification(
         title: "\u041d\u043e\u0432\u0438\u0439 \u0437\u0430\u043f\u0438\u0442",
         message: `\u041d\u0430\u0434\u0456\u0439\u0448\u043e\u0432 \u043d\u043e\u0432\u0438\u0439 \u0437\u0430\u043f\u0438\u0442 \u0432\u0456\u0434 ${data?.name ?? ""} (${data?.itemCount ?? 0} \u043f\u043e\u0437\u0438\u0446\u0456\u0439)`,
       },
+      REGISTRATION: {
+        title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u0454\u0441\u0442\u0440\u0430\u0446\u0456\u044f",
+        message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" \u0437\u0430\u043f\u0438\u0442\u0443\u0454 \u0441\u0445\u0432\u0430\u043b\u0435\u043d\u043d\u044f.`,
+      },
     },
     ru: {
       NEW_ORDER: {
@@ -286,6 +294,10 @@ export function translateNotification(
       NEW_INQUIRY: {
         title: "\u041d\u043e\u0432\u044b\u0439 \u0437\u0430\u043f\u0440\u043e\u0441",
         message: `\u041f\u043e\u0441\u0442\u0443\u043f\u0438\u043b \u043d\u043e\u0432\u044b\u0439 \u0437\u0430\u043f\u0440\u043e\u0441 \u043e\u0442 ${data?.name ?? ""} (${data?.itemCount ?? 0} \u043f\u043e\u0437\u0438\u0446\u0438\u0439)`,
+      },
+      REGISTRATION: {
+        title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f",
+        message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" \u0437\u0430\u043f\u0440\u0430\u0448\u0438\u0432\u0430\u0435\u0442 \u043e\u0434\u043e\u0431\u0440\u0435\u043d\u0438\u0435.`,
       },
     },
   };

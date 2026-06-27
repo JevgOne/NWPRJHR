@@ -100,14 +100,33 @@ export async function POST(request: NextRequest) {
       return { salon, user };
     });
 
-    // Notify owner
-    const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
+    // Create in-app notification for all owners
     const typeLabel = type === "HAIRDRESSER" ? "Kadeřnice" : "Salon";
+    try {
+      const owners = await prisma.user.findMany({
+        where: { role: "OWNER" },
+        select: { id: true },
+      });
+      if (owners.length > 0) {
+        await prisma.notification.createMany({
+          data: owners.map((o) => ({
+            recipientId: o.id,
+            type: "REGISTRATION" as const,
+            title: `Nová registrace: ${salonName}`,
+            message: `${typeLabel} "${salonName}" (${contactPerson}, ${city ?? ""}) žádá o schválení B2B přístupu.`,
+            data: JSON.stringify({ salonId: result.salon.id, type }),
+          })),
+        });
+      }
+    } catch {}
+
+    // Email notification
+    const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
     await sendNotificationEmail({
       to: contactTo,
-      subject: `[Hairland] Nová žádost o registraci (${typeLabel}): ${salonName}`,
+      subject: `[Hairland] Nová registrace (${typeLabel}): ${salonName}`,
       body: [
-        `Nová ${typeLabel.toLowerCase()} žádá o B2B registraci:`,
+        `Nová registrace — ${typeLabel}:`,
         "",
         `Typ: ${typeLabel}`,
         `Název: ${salonName}`,
@@ -120,11 +139,10 @@ export async function POST(request: NextRequest) {
         website ? `Web: ${website}` : null,
         instagram ? `Instagram: ${instagram}` : null,
         "",
-        `Salon ID: ${result.salon.id}`,
+        `ID: ${result.salon.id}`,
         `Jazyk: ${language}`,
         "",
-        `⚠️ Salon čeká na schválení.`,
-        `Pro schválení: přejděte do administrace → Salony → ${salonName} → Schválit`,
+        `⚠️ Čeká na schválení v administraci → Salony.`,
       ]
         .filter(Boolean)
         .join("\n"),
@@ -132,6 +150,7 @@ export async function POST(request: NextRequest) {
 
     // Telegram notification
     notifySalonRegistration({
+      type: typeLabel,
       salonName,
       contactName: contactPerson,
       email,

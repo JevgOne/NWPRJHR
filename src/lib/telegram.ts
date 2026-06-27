@@ -187,28 +187,57 @@ export async function notifyContact(contactId: string, data: {
  * Notify about salon registration.
  */
 export async function notifySalonRegistration(data: {
+  type?: string;
   salonName: string;
   contactName: string;
   email: string;
   phone?: string;
   city?: string;
 }): Promise<void> {
+  const typeLabel = data.type ?? "Salon";
   const lines = [
-    `💇 <b>NOVÁ REGISTRACE SALONU / НОВАЯ РЕГИСТРАЦИЯ САЛОНА</b>`,
-    `Salon žádá o B2B přístup / Салон запрашивает B2B доступ`,
+    `💇 <b>NOVÁ REGISTRACE / НОВАЯ РЕГИСТРАЦИЯ</b>`,
+    `${esc(typeLabel)} žádá o B2B přístup`,
     ``,
-    `${esc(data.salonName)}`,
-    `${esc(data.contactName)}`,
-    `${esc(data.email)}`,
-    data.phone ? `${esc(data.phone)}` : null,
-    data.city ? `${esc(data.city)}` : null,
+    `Typ: ${esc(typeLabel)}`,
+    `Název: ${esc(data.salonName)}`,
+    `Kontakt: ${esc(data.contactName)}`,
+    `E-mail: ${esc(data.email)}`,
+    data.phone ? `Telefon: ${esc(data.phone)}` : null,
+    data.city ? `Město: ${esc(data.city)}` : null,
     ``,
-    `Čeká na schválení. / Ожидает одобрения.`,
+    `⚠️ Čeká na schválení v admin panelu.`,
+    `🔗 https://www.hairland.cz/salons`,
   ]
     .filter(Boolean)
     .join("\n");
 
-  await sendWithClaimButton(lines, "salon", "none");
+  await sendRegistrationNotification(lines);
+}
+
+async function sendRegistrationNotification(text: string): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+
+  const keyboard = {
+    inline_keyboard: [[
+      { text: "✅ Otevřít admin panel", url: "https://www.hairland.cz/salons" },
+    ]],
+  };
+
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text,
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+      }),
+    });
+  } catch {
+    // silent
+  }
 }
 
 /**

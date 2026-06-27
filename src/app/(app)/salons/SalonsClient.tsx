@@ -40,7 +40,7 @@ export function SalonsClient({ role }: { role: Role }) {
   const tCommon = useTranslations("common");
   const [salons, setSalons] = useState<SalonRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"active" | "archived">("active");
+  const [tab, setTab] = useState<"pending" | "active" | "archived">("pending");
   const [typeFilter, setTypeFilter] = useState<"" | "SALON" | "HAIRDRESSER">("");
   const [search, setSearch] = useState("");
 
@@ -49,7 +49,14 @@ export function SalonsClient({ role }: { role: Role }) {
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams();
-    params.set("archived", tab === "archived" ? "true" : "false");
+    if (tab === "pending") {
+      params.set("archived", "false");
+      params.set("approved", "false");
+    } else if (tab === "archived") {
+      params.set("archived", "true");
+    } else {
+      params.set("archived", "false");
+    }
     if (search) params.set("search", search);
     if (typeFilter) params.set("type", typeFilter);
 
@@ -72,6 +79,16 @@ export function SalonsClient({ role }: { role: Role }) {
       </div>
 
       <div className="flex gap-2 items-center">
+        <button
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+            tab === "pending"
+              ? "border-amber-600 bg-amber-50 text-amber-700"
+              : "border-gray-200 hover:bg-gray-50"
+          }`}
+          onClick={() => setTab("pending")}
+        >
+          {t("pendingApproval")}
+        </button>
         <button
           className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
             tab === "active"

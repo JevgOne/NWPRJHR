@@ -980,6 +980,7 @@ enum NotificationType {
   ORDER_REJECTED
   PAYMENT_REMINDER
   NEW_INQUIRY
+  REGISTRATION
 }
 
 // ============================================================

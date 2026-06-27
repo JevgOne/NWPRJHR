@@ -61,6 +61,7 @@ export default async function DashboardPage() {
     pendingReturns,
     newOrders,
     unreadNotifications,
+    pendingRegistrations,
   ] = await Promise.all([
     prisma.sale.aggregate({
       where: { status: "COMPLETED", completedAt: { gte: monthStart } },
@@ -120,6 +121,7 @@ export default async function DashboardPage() {
     prisma.return.count({ where: { status: "PENDING" } }),
     prisma.order.count({ where: { status: "NEW" } }),
     prisma.notification.count({ where: { recipientId: session.user.id, read: false } }),
+    prisma.salon.count({ where: { approved: false, archived: false } }),
   ]);
 
   // Compute stats
@@ -278,10 +280,10 @@ export default async function DashboardPage() {
 
       {/* ── ROW 4: Quick info badges ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="indigo" />
-        <QuickBadge label={t("pendingReturns")} value={pendingReturns} color={pendingReturns > 0 ? "amber" : "gray"} />
-        <QuickBadge label={t("pendingOrders")} value={newOrders} color={newOrders > 0 ? "blue" : "gray"} />
-        <QuickBadge label={t("unreadNotifications")} value={unreadNotifications} color={unreadNotifications > 0 ? "rose" : "gray"} />
+        <a href="/salons"><QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="indigo" /></a>
+        <a href="/salons"><QuickBadge label="Čekající registrace" value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
+        <a href="/orders"><QuickBadge label={t("pendingOrders")} value={newOrders} color={newOrders > 0 ? "blue" : "gray"} /></a>
+        <a href="/notifications"><QuickBadge label={t("unreadNotifications")} value={unreadNotifications} color={unreadNotifications > 0 ? "rose" : "gray"} /></a>
       </div>
     </div>
   );
