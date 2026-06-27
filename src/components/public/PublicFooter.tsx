@@ -15,11 +15,11 @@ export function PublicFooter() {
           <div className="md:col-span-1">
             <Link href="/">
               <Image
-                src="/seal-dark.svg"
+                src="/logo-dark.svg"
                 alt="Hairland"
-                width={80}
-                height={80}
-                className="w-20 h-20"
+                width={200}
+                height={65}
+                className="h-14 w-auto"
               />
             </Link>
             <p className="mt-3 text-sm text-nude-200/80 leading-relaxed">

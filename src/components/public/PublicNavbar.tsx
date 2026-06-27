@@ -66,13 +66,23 @@ export function PublicNavbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex-shrink-0">
+            {/* Mobile: seal only */}
+            <Image
+              src="/seal-light.svg"
+              alt="Hairland"
+              width={40}
+              height={40}
+              priority
+              className="h-9 w-9 md:hidden"
+            />
+            {/* Desktop: full horizontal logo */}
             <Image
               src="/logo-light.svg"
               alt="Hairland"
               width={180}
               height={58}
               priority
-              className="h-10 w-auto"
+              className="h-10 w-auto hidden md:block"
             />
           </Link>
 
