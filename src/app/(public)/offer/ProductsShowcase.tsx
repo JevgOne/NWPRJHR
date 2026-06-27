@@ -439,7 +439,7 @@ export function ProductsShowcase() {
                     {/* Category badge overlay */}
                     <button
                       onClick={(e) => { e.preventDefault(); setFilter("category", p.category); }}
-                      className="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blush-100/90 text-rose-deep backdrop-blur-sm hover:bg-blush-200/90 cursor-pointer"
+                      className="absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold bg-rose text-white shadow-sm hover:bg-rose-deep cursor-pointer"
                     >
                       {tCategory(p.category.toLowerCase())}
                     </button>
@@ -525,7 +525,7 @@ export function ProductsShowcase() {
                   {/* Price */}
                   {pricePerGram && (
                     <div className="text-sm font-bold text-ink">
-                      {t("offer.priceFrom")} {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+                      {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
                     </div>
                   )}
                 </div>

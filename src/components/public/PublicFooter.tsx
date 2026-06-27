@@ -52,6 +52,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/vykup" className="hover:text-white transition-colors">
+                  {t("navbar.buyback")}
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="hover:text-white transition-colors">
                   {t("nav.about")}
                 </Link>

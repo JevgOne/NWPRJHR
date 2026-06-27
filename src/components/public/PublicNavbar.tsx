@@ -55,6 +55,7 @@ export function PublicNavbar() {
   const navLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/offer", label: t("nav.products") },
+    { href: "/vykup", label: t("navbar.buyback") },
     { href: "/kadernice", label: t("navbar.hairdressers") },
     { href: "/pro", label: t("navbar.pro") },
     { href: "/contact", label: t("nav.contact") },

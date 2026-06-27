@@ -296,34 +296,8 @@ export default async function LandingPage() {
         {t("landing.langBanner")}
       </div>
 
-      {/* B2B for salons */}
-      <section className="py-12 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-xl font-bold text-ink mb-2">
-            {t("landing.b2bTitle")}
-          </h2>
-          <p className="text-muted mb-4">
-            {t("landing.b2bDesc")}
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Link
-              href="/pro"
-              className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
-            >
-              {t("landing.b2bCta")}
-            </Link>
-            <Link
-              href="/registrace"
-              className="px-5 py-2.5 bg-white text-rose border border-blush-200 hover:bg-blush-100 text-sm font-medium rounded-lg transition-colors"
-            >
-              {t("landing.b2bRegister")}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact CTA */}
-      <section className="py-16 bg-nude-50">
+      {/* Final CTA — contact + B2B + links */}
+      <section className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-ink mb-3">
             {t("landing.ctaTitle")}
@@ -331,7 +305,7 @@ export default async function LandingPage() {
           <p className="text-muted mb-6 max-w-lg mx-auto">
             {t("landing.ctaDesc")}
           </p>
-          <div className="flex gap-3 justify-center">
+          <div className="flex flex-wrap gap-3 justify-center mb-8">
             <Link
               href="/contact"
               className="px-6 py-3 bg-rose hover:bg-rose-deep text-white font-medium rounded-lg transition-colors"
@@ -339,11 +313,34 @@ export default async function LandingPage() {
               {t("landing.ctaContact")}
             </Link>
             <Link
-              href="/kadernice"
-              className="px-6 py-3 bg-white text-rose border border-blush-200 hover:bg-blush-100 font-medium rounded-lg transition-colors"
+              href="/offer"
+              className="px-6 py-3 bg-white text-ink border border-line hover:bg-nude-50 font-medium rounded-lg transition-colors"
             >
-              {t("landing.ctaHairdressers")}
+              {t("landing.viewFullOffer")}
             </Link>
+          </div>
+          <div className="border-t border-line pt-6">
+            <p className="text-sm text-muted mb-3">{t("landing.b2bTitle")}</p>
+            <div className="flex gap-3 justify-center">
+              <Link
+                href="/pro"
+                className="text-sm text-rose hover:text-rose-deep font-medium transition-colors"
+              >
+                {t("landing.b2bCta")} &rarr;
+              </Link>
+              <Link
+                href="/registrace"
+                className="text-sm text-rose hover:text-rose-deep font-medium transition-colors"
+              >
+                {t("landing.b2bRegister")} &rarr;
+              </Link>
+              <Link
+                href="/kadernice"
+                className="text-sm text-rose hover:text-rose-deep font-medium transition-colors"
+              >
+                {t("landing.ctaHairdressers")} &rarr;
+              </Link>
+            </div>
           </div>
         </div>
       </section>

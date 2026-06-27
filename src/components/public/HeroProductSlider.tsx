@@ -88,7 +88,7 @@ function ProductCard({ product }: { product: GridProduct }) {
           </svg>
         )}
         {/* Category badge overlay */}
-        <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blush-100/90 text-rose-deep backdrop-blur-sm">
+        <span className="absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold bg-rose text-white shadow-sm">
           {categoryLabel}
         </span>
       </div>
@@ -127,7 +127,7 @@ function ProductCard({ product }: { product: GridProduct }) {
         {/* Price */}
         {pricePerGram && (
           <div className="text-sm font-bold text-ink">
-            {t("offer.priceFrom")} {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+            {pricePerGram} Kč<span className="text-[10px] font-normal text-muted">/g</span>
           </div>
         )}
       </div>
