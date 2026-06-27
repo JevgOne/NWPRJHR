@@ -182,7 +182,8 @@
     "cancelled": "Скасовано",
     "issueDate": "Дата виставлення",
     "copyDetails": "Копіювати реквізити",
-    "downloadPdf": "Завантажити PDF"
+    "downloadPdf": "Завантажити PDF",
+    "status": "Статус"
   },
   "company": {
     "title": "Компанії",
@@ -274,7 +275,8 @@
     "salon": "Салон",
     "status": "Статус",
     "quantity": "Кількість",
-    "pricePerGram": "CZK/г"
+    "pricePerGram": "CZK/г",
+    "product": "Товар"
   },
   "sampleManagement": {
     "title": "Зразки",
@@ -286,7 +288,8 @@
     "returned": "Повернено",
     "writtenOff": "Списано",
     "gramsLent": "Видано грамів",
-    "resolution": "Рішення"
+    "resolution": "Рішення",
+    "status": "Статус"
   },
   "loyaltySettings": {
     "title": "Програма лояльності",
@@ -904,7 +907,12 @@
     "outOfStock": "Немає в наявності",
     "pricePerGram": "CZK/г",
     "noProducts": "Немає товарів",
-    "orderFromCatalog": "Замовити"
+    "orderFromCatalog": "Замовити",
+    "dashboard": "Огляд",
+    "welcomeBack": "Ласкаво просимо",
+    "recentOrders": "Останні замовлення",
+    "quickLinks": "Швидкі посилання",
+    "noInvoicesYet": "Поки немає рахунків"
   },
   "returnsMgmt": {
     "title": "Повернення",
@@ -1106,10 +1114,12 @@
     "backToList": "Назад до порад",
     "articleCta": "Зацікавило наше волосся?",
     "articleCtaButton": "Переглянути пропозицію",
-    "cat.types": "Типи нарощування",
-    "cat.care": "Догляд",
-    "cat.guide": "Гід з вибору",
-    "cat.quality": "Якість волосся",
+    "cat": {
+      "types": "Типи нарощування",
+      "care": "Догляд",
+      "guide": "Гід з вибору",
+      "quality": "Якість волосся"
+    },
     "typesTitle": "Типи нарощування волосся",
     "typesDesc": "Огляд методів нарощування — clip-in, tape-in, кератин, micro ring. Переваги та недоліки кожного.",
     "clipVsTapeTitle": "Clip-in чи tape-in: як обрати?",

@@ -182,7 +182,8 @@
     "cancelled": "Stornováno",
     "issueDate": "Datum vystavení",
     "copyDetails": "Kopírovat údaje",
-    "downloadPdf": "Stáhnout PDF"
+    "downloadPdf": "Stáhnout PDF",
+    "status": "Stav"
   },
   "company": {
     "title": "Firmy",
@@ -274,7 +275,8 @@
     "salon": "Salon",
     "status": "Stav",
     "quantity": "Množství",
-    "pricePerGram": "CZK/g"
+    "pricePerGram": "CZK/g",
+    "product": "Produkt"
   },
   "sampleManagement": {
     "title": "Vzorky",
@@ -286,7 +288,8 @@
     "returned": "Vráceno",
     "writtenOff": "Odepsáno",
     "gramsLent": "Zapůjčeno gramů",
-    "resolution": "Řešení"
+    "resolution": "Řešení",
+    "status": "Stav"
   },
   "loyaltySettings": {
     "title": "Věrnostní program",
@@ -904,7 +907,12 @@
     "outOfStock": "Vyprodáno",
     "pricePerGram": "CZK/g",
     "noProducts": "Žádné produkty",
-    "orderFromCatalog": "Objednat"
+    "orderFromCatalog": "Objednat",
+    "dashboard": "Přehled",
+    "welcomeBack": "Vítejte zpět",
+    "recentOrders": "Poslední objednávky",
+    "quickLinks": "Rychlé odkazy",
+    "noInvoicesYet": "Zatím žádné faktury"
   },
   "returnsMgmt": {
     "title": "Vratky",
@@ -1106,10 +1114,12 @@
     "backToList": "Zpět na poradnu",
     "articleCta": "Zaujaly vás naše vlasy?",
     "articleCtaButton": "Prohlédnout nabídku",
-    "cat.types": "Typy prodloužení",
-    "cat.care": "Péče",
-    "cat.guide": "Průvodce výběrem",
-    "cat.quality": "Kvalita vlasů",
+    "cat": {
+      "types": "Typy prodloužení",
+      "care": "Péče",
+      "guide": "Průvodce výběrem",
+      "quality": "Kvalita vlasů"
+    },
     "typesTitle": "Typy prodloužení vlasů",
     "typesDesc": "Přehled metod prodloužení — clip-in, tape-in, keratin, micro ring. Výhody a nevýhody každé z nich.",
     "clipVsTapeTitle": "Clip-in vs. tape-in: Jak si vybrat?",

@@ -182,7 +182,8 @@
     "cancelled": "Отменено",
     "issueDate": "Дата выставления",
     "copyDetails": "Копировать реквизиты",
-    "downloadPdf": "Скачать PDF"
+    "downloadPdf": "Скачать PDF",
+    "status": "Статус"
   },
   "company": {
     "title": "Компании",
@@ -274,7 +275,8 @@
     "salon": "Салон",
     "status": "Статус",
     "quantity": "Количество",
-    "pricePerGram": "CZK/г"
+    "pricePerGram": "CZK/г",
+    "product": "Товар"
   },
   "sampleManagement": {
     "title": "Образцы",
@@ -286,7 +288,8 @@
     "returned": "Возвращено",
     "writtenOff": "Списано",
     "gramsLent": "Выдано граммов",
-    "resolution": "Решение"
+    "resolution": "Решение",
+    "status": "Статус"
   },
   "loyaltySettings": {
     "title": "Программа лояльности",
@@ -904,7 +907,12 @@
     "outOfStock": "Нет в наличии",
     "pricePerGram": "CZK/г",
     "noProducts": "Нет товаров",
-    "orderFromCatalog": "Заказать"
+    "orderFromCatalog": "Заказать",
+    "dashboard": "Обзор",
+    "welcomeBack": "Добро пожаловать",
+    "recentOrders": "Последние заказы",
+    "quickLinks": "Быстрые ссылки",
+    "noInvoicesYet": "Пока нет счетов"
   },
   "returnsMgmt": {
     "title": "Возвраты",
@@ -1106,10 +1114,12 @@
     "backToList": "Назад к советам",
     "articleCta": "Заинтересовали наши волосы?",
     "articleCtaButton": "Посмотреть предложение",
-    "cat.types": "Типы наращивания",
-    "cat.care": "Уход",
-    "cat.guide": "Гид по выбору",
-    "cat.quality": "Качество волос",
+    "cat": {
+      "types": "Типы наращивания",
+      "care": "Уход",
+      "guide": "Гид по выбору",
+      "quality": "Качество волос"
+    },
     "typesTitle": "Типы наращивания волос",
     "typesDesc": "Обзор методов наращивания — clip-in, tape-in, кератин, micro ring. Преимущества и недостатки каждого.",
     "clipVsTapeTitle": "Clip-in или tape-in: как выбрать?",
