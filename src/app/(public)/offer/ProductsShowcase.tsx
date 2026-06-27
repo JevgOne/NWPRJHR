@@ -264,29 +264,29 @@ export function ProductsShowcase() {
           </div>
         )}
 
-        {/* Colors — circular swatches */}
+        {/* Colors — hair texture photo swatches */}
         {filterOptions.colors.length > 0 && (
           <div>
             <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.colorLabel")}</div>
             <div className="flex flex-wrap gap-2">
               {filterOptions.colors.map(([code, count]) => {
-                const { hex, nameKey } = getHairColor(code);
+                const { nameKey } = getHairColor(code);
                 const isActive = activeColor === code;
                 return (
                   <button
                     key={code}
                     onClick={() => toggleFilter("color", code)}
-                    className={`group relative w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${
+                    className={`group relative w-9 h-9 rounded-full border-2 overflow-hidden transition-all cursor-pointer ${
                       isActive
                         ? "border-rose ring-2 ring-blush-300 scale-110 z-10"
                         : "border-line hover:border-blush-300 hover:scale-110"
                     }`}
-                    style={{ backgroundColor: hex }}
                     title={`${colorName(nameKey)} (${count})`}
                   >
+                    <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
                     {isActive && (
-                      <span className="absolute inset-0 flex items-center justify-center">
-                        <span className={`text-xs font-bold ${parseInt(code) <= 5 ? "text-espresso" : "text-white"}`}>✓</span>
+                      <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <span className="text-xs font-bold text-white">✓</span>
                       </span>
                     )}
                     <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-0.5 rounded bg-ink text-white text-[10px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
@@ -354,10 +354,7 @@ export function ProductsShowcase() {
               onClick={() => setFilter("color", "")}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-nude-100 text-espresso hover:bg-nude-100 transition-colors"
             >
-              <span
-                className="w-3 h-3 rounded-full border border-line"
-                style={{ backgroundColor: getHairColor(activeColor).hex }}
-              />
+              <img src={`/swatches/color-${activeColor}.png`} alt="" className="w-4 h-4 rounded-full object-cover border border-line" />
               {activeColor} — {colorName(getHairColor(activeColor).nameKey)}
               <span className="ml-0.5">&times;</span>
             </button>
@@ -501,24 +498,24 @@ export function ProductsShowcase() {
                     </div>
                   </div>
 
-                  {/* Color swatches — circles */}
+                  {/* Color swatches — hair photo circles */}
                   <div className="mt-2.5">
                     <div className="flex flex-wrap gap-1">
                       {pColors.map((code) => {
-                        const { hex, nameKey } = getHairColor(code);
+                        const { nameKey } = getHairColor(code);
                         const isActive = activeColor === code;
                         return (
                           <button
                             key={code}
                             onClick={() => toggleFilter("color", code)}
-                            className={`group relative w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
+                            className={`group relative w-7 h-7 rounded-full border-2 overflow-hidden transition-all cursor-pointer ${
                               isActive
                                 ? "border-rose ring-1 ring-blush-300 scale-110 z-10"
                                 : "border-line hover:border-blush-300 hover:scale-110"
                             }`}
-                            style={{ backgroundColor: hex }}
                             title={colorName(nameKey)}
                           >
+                            <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
                             <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-7 px-1.5 py-0.5 rounded bg-ink text-white text-[10px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
                               {colorName(nameKey)}
                             </span>

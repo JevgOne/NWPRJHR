@@ -109,10 +109,6 @@ export function PublicFooter() {
                 <span>📍</span>
                 <span>{t("footer.locationCity")}</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span>🏢</span>
-                <span className="text-xs text-nude-200/60">Alvento Solutions s.r.o.</span>
-              </li>
             </ul>
           </div>
         </div>

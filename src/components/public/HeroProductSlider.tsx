@@ -78,7 +78,7 @@ export function HeroProductSlider() {
       </div>
 
       {/* Navigation */}
-      {products.length > 3 && (
+      {products.length > 1 && (
         <>
           <button
             onClick={prev}
@@ -99,20 +99,6 @@ export function HeroProductSlider() {
         </>
       )}
 
-      {/* Dots */}
-      {products.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-4">
-          {products.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                i === current ? "bg-rose" : "bg-line"
-              }`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -204,13 +190,13 @@ function ProductCard({ product }: { product: SliderProduct }) {
           <div className="mt-2">
             <div className="flex flex-wrap gap-1">
               {colors.map((code) => {
-                const { hex } = getHairColor(code);
                 return (
                   <span
                     key={code}
-                    className="w-6 h-6 rounded-full border-2 border-line"
-                    style={{ backgroundColor: hex }}
-                  />
+                    className="w-7 h-7 rounded-full border-2 border-line overflow-hidden"
+                  >
+                    <img src={`/swatches/color-${code}.png`} alt="" className="w-full h-full object-cover" />
+                  </span>
                 );
               })}
             </div>

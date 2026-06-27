@@ -357,10 +357,7 @@ export default async function ProductDetailPage({ params }: Props) {
                       href={`/offer?color=${encodeURIComponent(code)}`}
                       className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-line hover:border-blush-300 hover:bg-blush-100 transition-colors text-xs text-muted"
                     >
-                      <span
-                        className="w-4 h-4 rounded-full border border-line flex-shrink-0"
-                        style={{ backgroundColor: hex }}
-                      />
+                      <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-5 h-5 rounded-full object-cover border border-line flex-shrink-0" />
                       {colorName(nameKey)} ({code})
                     </Link>
                   );
@@ -401,7 +398,7 @@ export default async function ProductDetailPage({ params }: Props) {
                                   href={`/offer?color=${encodeURIComponent(code)}`}
                                   className="inline-flex items-center gap-1 text-xs text-muted hover:text-rose transition-colors"
                                 >
-                                  <span className="w-3.5 h-3.5 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: hex }} />
+                                  <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-4 h-4 rounded-full object-cover border border-line flex-shrink-0" />
                                   {colorName(nameKey)} ({code})
                                 </Link>
                               );
