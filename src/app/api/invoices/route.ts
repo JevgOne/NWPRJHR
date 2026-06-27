@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { createInvoiceSchema } from "@/lib/validations/invoice";
 import { createInvoiceFromSale } from "@/lib/invoicing";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { createSalonNotification } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -88,6 +89,15 @@ export async function POST(request: NextRequest) {
     detail: { number: invoice.number, total: invoice.total },
     ipAddress: getClientIp(request),
   });
+
+  // Notify salon about new invoice
+  if (invoice.salonId) {
+    createSalonNotification({
+      salonId: invoice.salonId,
+      type: "INVOICE_ISSUED",
+      data: { invoiceId: invoice.id, invoiceNumber: invoice.number },
+    }).catch(() => {});
+  }
 
   return NextResponse.json(invoice, { status: 201 });
 }

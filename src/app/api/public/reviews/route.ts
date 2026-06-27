@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { notifyNegativeReview } from "@/lib/telegram";
+import { createNotificationForRole } from "@/lib/notifications";
 import { z } from "zod";
 
 const submitSchema = z.object({
@@ -48,6 +49,15 @@ export async function POST(request: NextRequest) {
       active: false, // Requires admin approval
     },
   });
+
+  // In-app notification for owners
+  createNotificationForRole({
+    role: "OWNER",
+    type: "NEW_REVIEW",
+    title: `Nova recenze: ${data.authorName} (${data.rating}★)`,
+    message: `${data.authorName} pridal/a recenzi (${data.rating}★): "${data.text.slice(0, 100)}${data.text.length > 100 ? "..." : ""}"`,
+    data: { reviewId: review.id, authorName: data.authorName, rating: data.rating },
+  }).catch(() => {});
 
   if (data.rating <= 3) {
     notifyNegativeReview({

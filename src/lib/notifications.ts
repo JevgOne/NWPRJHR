@@ -191,6 +191,18 @@ export function translateNotification(
         title: "Nova registrace",
         message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" zada o schvaleni.`,
       },
+      NEW_REVIEW: {
+        title: "Nova recenze",
+        message: `${data?.authorName ?? ""} pridal/a recenzi (${data?.rating ?? ""}★)`,
+      },
+      NEW_CONTACT: {
+        title: "Nova zprava z kontaktniho formulare",
+        message: `${data?.name ?? ""} (${data?.email ?? ""}) poslal/a zpravu`,
+      },
+      NEW_COMPLAINT: {
+        title: "Nova reklamace",
+        message: `Nova reklamace${data?.salonName ? ` od salonu ${data.salonName}` : ""}`,
+      },
     },
     uk: {
       NEW_ORDER: {
@@ -245,6 +257,18 @@ export function translateNotification(
         title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u0454\u0441\u0442\u0440\u0430\u0446\u0456\u044f",
         message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" \u0437\u0430\u043f\u0438\u0442\u0443\u0454 \u0441\u0445\u0432\u0430\u043b\u0435\u043d\u043d\u044f.`,
       },
+      NEW_REVIEW: {
+        title: "\u041d\u043e\u0432\u0438\u0439 \u0432\u0456\u0434\u0433\u0443\u043a",
+        message: `${data?.authorName ?? ""} \u0434\u043e\u0434\u0430\u0432 \u0432\u0456\u0434\u0433\u0443\u043a (${data?.rating ?? ""}\u2605)`,
+      },
+      NEW_CONTACT: {
+        title: "\u041d\u043e\u0432\u0435 \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f",
+        message: `${data?.name ?? ""} (${data?.email ?? ""}) \u043d\u0430\u0434\u0456\u0441\u043b\u0430\u0432 \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f`,
+      },
+      NEW_COMPLAINT: {
+        title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0456\u044f",
+        message: `\u041d\u043e\u0432\u0430 \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0456\u044f${data?.salonName ? ` \u0432\u0456\u0434 \u0441\u0430\u043b\u043e\u043d\u0443 ${data.salonName}` : ""}`,
+      },
     },
     ru: {
       NEW_ORDER: {
@@ -298,6 +322,18 @@ export function translateNotification(
       REGISTRATION: {
         title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f",
         message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" \u0437\u0430\u043f\u0440\u0430\u0448\u0438\u0432\u0430\u0435\u0442 \u043e\u0434\u043e\u0431\u0440\u0435\u043d\u0438\u0435.`,
+      },
+      NEW_REVIEW: {
+        title: "\u041d\u043e\u0432\u044b\u0439 \u043e\u0442\u0437\u044b\u0432",
+        message: `${data?.authorName ?? ""} \u0434\u043e\u0431\u0430\u0432\u0438\u043b \u043e\u0442\u0437\u044b\u0432 (${data?.rating ?? ""}\u2605)`,
+      },
+      NEW_CONTACT: {
+        title: "\u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435",
+        message: `${data?.name ?? ""} (${data?.email ?? ""}) \u043e\u0442\u043f\u0440\u0430\u0432\u0438\u043b \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435`,
+      },
+      NEW_COMPLAINT: {
+        title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0438\u044f",
+        message: `\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0438\u044f${data?.salonName ? ` \u043e\u0442 \u0441\u0430\u043b\u043e\u043d\u0430 ${data.salonName}` : ""}`,
       },
     },
   };

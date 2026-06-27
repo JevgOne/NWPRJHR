@@ -981,6 +981,9 @@ enum NotificationType {
   PAYMENT_REMINDER
   NEW_INQUIRY
   REGISTRATION
+  NEW_REVIEW
+  NEW_CONTACT
+  NEW_COMPLAINT
 }
 
 // ============================================================

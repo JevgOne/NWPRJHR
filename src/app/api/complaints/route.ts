@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createComplaint } from "@/lib/complaints";
 import { createComplaintSchema } from "@/lib/validations/returns";
+import { createNotificationForRole } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -57,6 +58,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const complaint = await createComplaint(parsed.data, session.user.id);
+
+    // Notify owners about new complaint
+    createNotificationForRole({
+      role: "OWNER",
+      type: "NEW_COMPLAINT",
+      title: "Nova reklamace",
+      message: `Nova reklamace: ${parsed.data.description?.slice(0, 100) ?? ""}`,
+      data: { complaintId: complaint.id },
+    }).catch(() => {});
+
     return NextResponse.json(complaint, { status: 201 });
   } catch (e) {
     if (e instanceof Error) {

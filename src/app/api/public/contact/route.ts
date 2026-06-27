@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { contactFormSchema } from "@/lib/validations/export";
 import { sendNotificationEmail } from "@/lib/email";
 import { notifyContact } from "@/lib/telegram";
+import { createNotificationForRole } from "@/lib/notifications";
 
 // Simple in-memory rate limiter: IP -> timestamps[]
 const rateLimitMap = new Map<string, number[]>();
@@ -85,6 +86,15 @@ export async function POST(request: NextRequest) {
     salonName: salonName || undefined,
     message,
     locale: locale || undefined,
+  }).catch(() => {});
+
+  // In-app notification for owners
+  createNotificationForRole({
+    role: "OWNER",
+    type: "NEW_CONTACT",
+    title: `Kontaktni formular: ${name}`,
+    message: `${name}${salonName ? ` (${salonName})` : ""} odeslal/a zpravu pres kontaktni formular.`,
+    data: { contactMessageId: contactMsg.id, name, email },
   }).catch(() => {});
 
   return NextResponse.json({ success: true });
