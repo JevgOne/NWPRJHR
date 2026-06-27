@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatCZK } from "@/lib/pricing";
@@ -17,6 +17,12 @@ interface VariantData {
   active: boolean;
 }
 
+interface StockInfo {
+  availableGrams: number;
+  physicalGrams?: number;
+  reservedGrams?: number;
+}
+
 interface VariantTableProps {
   productId: string;
   variants: VariantData[];
@@ -24,6 +30,7 @@ interface VariantTableProps {
 }
 
 export function VariantTable({
+  productId,
   variants,
   isOwner,
 }: VariantTableProps) {
@@ -32,6 +39,24 @@ export function VariantTable({
   const [saving, setSaving] = useState<string | null>(null);
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [stockMap, setStockMap] = useState<Map<string, StockInfo>>(new Map());
+
+  useEffect(() => {
+    fetch(`/api/stock?productId=${productId}`)
+      .then((r) => r.json())
+      .then((data: Array<{ variantId: string; availableGrams: number; physicalGrams?: number; reservedGrams?: number }>) => {
+        const map = new Map<string, StockInfo>();
+        for (const item of data) {
+          map.set(item.variantId, {
+            availableGrams: item.availableGrams,
+            physicalGrams: item.physicalGrams,
+            reservedGrams: item.reservedGrams,
+          });
+        }
+        setStockMap(map);
+      })
+      .catch(() => {});
+  }, [productId]);
 
   // Group variants by length and color
   const lengths = [...new Set(variants.map((v) => v.lengthCm))].sort(
@@ -267,6 +292,27 @@ export function VariantTable({
                         <span className="text-muted text-xs">/g</span>
                       </div>
                     )}
+                    {/* Stock indicator */}
+                    {stockMap.has(variant.id) && (() => {
+                      const stock = stockMap.get(variant.id)!;
+                      return (
+                        <div className="mt-1 border-t border-line/50 pt-1">
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-medium ${
+                            stock.availableGrams > 0 ? "text-emerald-700" : "text-red-500"
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              stock.availableGrams > 0 ? "bg-emerald-500" : "bg-red-400"
+                            }`} />
+                            {stock.availableGrams} g
+                          </span>
+                          {isOwner && stock.physicalGrams !== undefined && stock.reservedGrams !== undefined && stock.reservedGrams > 0 && (
+                            <div className="text-[9px] text-muted">
+                              {stock.physicalGrams}g - {stock.reservedGrams}g rez.
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </td>
                 );
               })}
