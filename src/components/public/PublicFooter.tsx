@@ -47,6 +47,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/poradna" className="hover:text-white transition-colors">
+                  {t("navbar.advice")}
+                </Link>
+              </li>
+              <li>
                 <Link href="/kadernice" className="hover:text-white transition-colors">
                   {t("footer.hairdressers")}
                 </Link>

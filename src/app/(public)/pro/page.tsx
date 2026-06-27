@@ -66,14 +66,14 @@ export default async function ProPage() {
         {/* Hairdresser card */}
         <div className="bg-white rounded-2xl border border-line p-6 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+              <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
             <h2 className="text-xl font-bold text-ink">{t("hairdresserCard.title")}</h2>
           </div>
-          <p className="text-2xl font-bold text-blue-600">{t("hairdresserCard.discount")}</p>
+          <p className="text-2xl font-bold text-amber-600">{t("hairdresserCard.discount")}</p>
           <ul className="space-y-2 text-sm text-muted">
             <li className="flex items-start gap-2">
               <span className="text-green-500 mt-0.5">&#10003;</span>
@@ -94,7 +94,7 @@ export default async function ProPage() {
           </ul>
           <Link
             href="/registrace"
-            className="block w-full py-2.5 text-center bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+            className="block w-full py-2.5 text-center bg-amber-600 text-white font-medium rounded-xl hover:bg-amber-700 transition-colors"
           >
             {t("ctaRegister")}
           </Link>

@@ -699,7 +699,10 @@
     "navbar": {
       "hairdressers": "Kadeřnice",
       "buyback": "Výkup vlasů",
-      "pro": "Pro kadeřníky",
+      "pro": "Pro salony a kadeřnice",
+      "cooperation": "Spolupráce",
+      "advice": "Poradna",
+      "register": "Registrace",
       "inquiry": "🛒 Poptávka"
     },
     "reviews": {
@@ -1094,6 +1097,43 @@
     "ctaContact": "Napište nám",
     "ctaBrowse": "Prohlédnout nabídku vlasů"
   },
+  "advice": {
+    "pageTitle": "Poradna — Hairland",
+    "pageDescription": "Vše o prodloužení vlasů: typy metod, péče, výběr barvy a délky, rozdíly v kvalitě. Poradíme vám.",
+    "heroTitle": "Poradna",
+    "heroSubtitle": "Praktické rady a informace o prodloužení vlasů, péči i výběru správného typu.",
+    "backToList": "Zpět na poradnu",
+    "articleCta": "Zaujaly vás naše vlasy?",
+    "articleCtaButton": "Prohlédnout nabídku",
+    "cat.types": "Typy prodloužení",
+    "cat.care": "Péče",
+    "cat.guide": "Průvodce výběrem",
+    "cat.quality": "Kvalita vlasů",
+    "typesTitle": "Typy prodloužení vlasů",
+    "typesDesc": "Přehled metod prodloužení — clip-in, tape-in, keratin, micro ring. Výhody a nevýhody každé z nich.",
+    "clipVsTapeTitle": "Clip-in vs. tape-in: Jak si vybrat?",
+    "clipVsTapeDesc": "Porovnání dvou nejoblíbenějších metod prodloužení vlasů. Která je lepší pro vás?",
+    "colorGuideTitle": "Jak vybrat správnou barvu vlasů",
+    "colorGuideDesc": "Tipy pro výběr odstínu, který bude vypadat přirozeně a sladěně s vašimi vlastními vlasy.",
+    "lengthGuideTitle": "Jak vybrat správnou délku",
+    "lengthGuideDesc": "Od 40 do 80 cm — jak zvolit délku prodloužení podle vašeho stylu a typu vlasů.",
+    "careTitle": "Péče o prodloužené vlasy",
+    "careDesc": "Jak správně pečovat o prodloužené vlasy, aby vydržely co nejdéle a vypadaly skvěle.",
+    "originTitle": "Původ vlasů: proč záleží odkud jsou",
+    "originDesc": "Rozdíly mezi vlasy z Ukrajiny, Ruska, Kazachstánu a dalších zemí. Co určuje kvalitu.",
+    "virginVsRemyTitle": "Virgin vs. Remy: jaký je rozdíl?",
+    "virginVsRemyDesc": "Vysvětlení rozdílu mezi virgin a remy vlasy a proč je to důležité pro výsledek.",
+    "durabilityTitle": "Jak dlouho vydrží prodloužené vlasy?",
+    "durabilityDesc": "Životnost podle metody prodloužení a kvality vlasů. Co ovlivňuje, jak dlouho vám vydrží.",
+    "typy_prodlouzeni_content": "<h2>Hlavní metody prodloužení</h2><p>Existuje několik způsobů, jak si prodloužit vlasy. Každá metoda má své výhody a hodí se pro jiný typ vlasů a životní styl.</p><h2>Clip-in</h2><p>Prameny se připínají sponkami a dají se kdykoliv sundat. Ideální pro příležitostné nošení — oslavy, focení, večírky. Nepoškozují vlastní vlasy.</p><h2>Tape-in</h2><p>Tenké pásky nalepené na vlastní vlasy. Vydrží 6–8 týdnů, pak se přelepí. Rychlá aplikace, plochý spoj, vhodné pro jemné vlasy.</p><h2>Keratinové (hot fusion)</h2><p>Prameny spojené keratinem za tepla. Nejtrvanlivější metoda — vydrží 3–5 měsíců. Přirozený vzhled, ale aplikace trvá déle.</p><h2>Micro ring</h2><p>Prameny uchycené malými kroužky bez lepidla a tepla. Šetrné k vlasům, snadné sundání. Vydrží 2–4 měsíce.</p>",
+    "clip_in_vs_tape_in_content": "<h2>Clip-in prodloužení</h2><p>Clip-in prameny si připnete samy doma za pár minut. Jsou ideální, pokud chcete prodloužení jen občas — na večírek, focení nebo speciální příležitost. Večer je sundáte a vlastní vlasy nejsou nijak zatěžovány.</p><p><strong>Výhody:</strong> žádné poškození, okamžitá aplikace, variabilita.</p><p><strong>Nevýhody:</strong> nejsou vhodné pro každodenní celodenní nošení.</p><h2>Tape-in prodloužení</h2><p>Tape-in pásky nalepí kadeřnice přímo na vaše vlasy. Spoj je plochý a prakticky neviditelný. Aplikace trvá asi hodinu a vydrží 6–8 týdnů.</p><p><strong>Výhody:</strong> pohodlné celodenní nošení, vhodné i pro jemné vlasy.</p><p><strong>Nevýhody:</strong> potřebujete kadeřnici na aplikaci a přelepení.</p>",
+    "jak_vybrat_barvu_content": "<h2>Slaďte s kořínky, ne s konečky</h2><p>Při výběru barvy prodloužení se řiďte barvou vlasů u kořínků a ve střední délce — ne konečky, které bývají vybledlé od slunce.</p><h2>Tipy pro správný výběr</h2><ul><li>Porovnávejte barvu při denním světle, ne pod umělým osvětlením.</li><li>Pokud váháte mezi dvěma odstíny, zvolte tmavší — světlejší vlasy pod nimi vyniknou přirozeněji.</li><li>U melírovaných vlasů kombinujte dva odstíny pro přirozený přechod.</li></ul><h2>Objednejte si vzorek</h2><p>Nejste si jistí? Domluvte si osobní ukázku — přijedeme s vlasy přímo za vámi a barvu porovnáme na místě.</p>",
+    "jak_vybrat_delku_content": "<h2>Populární délky</h2><p><strong>40–45 cm</strong> — přidá objem a mírnou délku. Přirozený vzhled, vhodné pro kratší účesy.</p><p><strong>50–55 cm</strong> — nejoblíbenější délka. Vlasy sahají pod lopatky, výrazný efekt prodloužení.</p><p><strong>60–70 cm</strong> — dlouhé vlasy pod pas. Dramatický efekt, vyžaduje silnější vlastní vlasy.</p><p><strong>80+ cm</strong> — extra dlouhé vlasy. Vhodné pro speciální příležitosti a focení.</p><h2>Na co myslet</h2><ul><li>Čím delší prodloužení, tím více zatěžuje vlastní vlasy.</li><li>Pro jemné vlasy doporučujeme max. 55 cm.</li><li>Délku měříme od místa připevnění, ne od temena hlavy.</li></ul>",
+    "pece_o_prodlouzene_vlasy_content": "<h2>Základní pravidla</h2><ul><li>Vlasy česejte od konečků směrem nahoru širokou hřebenem.</li><li>Před spaním vlasy spleťte do volného copu.</li><li>Nepoužívejte kondicionér přímo na spoje.</li><li>Vyvarujte se silikonovým produktům u keratinových spojů.</li></ul><h2>Mytí</h2><p>Vlasy myjte jemným šamponem bez sulfátů. Nemněte vlasy, ale jemně masírujte pokožku hlavy. Spoje netlačte a nekrouťte.</p><h2>Sušení a styling</h2><p>Vlasy sušte přirozeně nebo fénem na nižší teplotu. Při žehlení nebo kulmování se vyhněte kontaktu s lepidlem nebo kroužky.</p><h2>Jak často na údržbu</h2><p>Tape-in: přelepení každých 6–8 týdnů. Keratin: posun každé 3–4 měsíce. Micro ring: dotažení každých 6–8 týdnů.</p>",
+    "puvod_vlasu_content": "<h2>Proč na původu záleží</h2><p>Struktura vlasů se liší podle etnického původu. Evropské vlasy mají jemnou strukturu, kutikulou orientovanou jedním směrem, a přirozeně ladí s vlasy středoevropských žen.</p><h2>Ukrajina a Rusko</h2><p>Nejžádanější vlasy na evropském trhu. Jemné, hedvábné, přirozeně rovné až mírně vlnité. Široká škála přírodních odstínů od světlé po tmavou.</p><h2>Kazachstán</h2><p>Silnější struktura, ideální pro objemové prodloužení. Odolnější, vhodné pro ženy s hustšími vlastními vlasy.</p><h2>Turecko</h2><p>Cenově dostupnější varianta. Tmavší přírodní odstíny, silnější vlákno. Vhodné pro tmavovlasé zákaznice.</p>",
+    "virgin_vs_remy_content": "<h2>Co jsou virgin vlasy?</h2><p>Virgin vlasy jsou zcela přírodní — nikdy nebyly barvené, odbarvované ani chemicky ošetřené. Jsou to vlasy v nejčistší podobě, s neporušenou kutikulou. Mají nejdelší životnost a nejpřirozenější lesk.</p><h2>Co jsou remy vlasy?</h2><p>Remy vlasy mají kutikulu orientovanou jedním směrem (od kořínku ke konečku). Mohou být jemně ošetřené nebo barvené, ale zachovávají přirozený směr vlákna. Díky tomu se nezamotávají.</p><h2>Který typ zvolit?</h2><ul><li><strong>Virgin</strong> — nejvyšší kvalita, nejdelší životnost, vyšší cena. Ideální pro keratinové a tape-in prodloužení.</li><li><strong>Remy</strong> — vynikající kvalita za přijatelnější cenu. Vhodné pro všechny metody prodloužení.</li></ul>",
+    "jak_dlouho_vydrzi_content": "<h2>Životnost podle metody</h2><p><strong>Clip-in:</strong> při správné péči 1–2 roky. Záleží na frekvenci nošení.</p><p><strong>Tape-in:</strong> pásky vydrží 6–8 týdnů, vlasy samotné lze přelepit 2–3×.</p><p><strong>Keratin:</strong> spoj vydrží 3–5 měsíců. Vlasy lze znovu aplikovat.</p><p><strong>Micro ring:</strong> 2–4 měsíce mezi údržbami. Vlasy lze přesadit.</p><h2>Co ovlivňuje životnost</h2><ul><li>Kvalita vlasů — virgin a remy vydrží déle než standard.</li><li>Péče — správné mytí, česání a styling prodlužují životnost.</li><li>Frekvence tepelného stylingu — méně žehlení = delší životnost.</li><li>Typ vlastních vlasů — mastné vlasy mohou zkrátit životnost lepených spojů.</li></ul>"
+  },
   "b2b": {
     "pageTitle": "Pro kadeřníky a salony",
     "pageDescription": "Spolupracujte s Hairland — zvýhodněné ceny na prémiové vlasy pro profesionály",
@@ -1101,7 +1141,7 @@
     "heroSubtitle": "Získejte zvýhodněné ceny na prémiové vlasy. Program pro salony a samostatné kadeřnice.",
     "salonCard": {
       "title": "Pro salony",
-      "discount": "Až 36% sleva",
+      "discount": "Až 40% sleva",
       "benefit1": "Nejnižší velkoobchodní ceny",
       "benefit2": "Věrnostní program s rostoucí slevou",
       "benefit3": "Prioritní zpracování objednávek",
@@ -1113,7 +1153,7 @@
       "benefit1": "Zvýhodněné ceny oproti maloobchodu",
       "benefit2": "Přístup ke kompletnímu katalogu",
       "benefit3": "Online objednávky a fakturace",
-      "benefit4": "Bez nutnosti IČO"
+      "benefit4": "Stačí IČO — i pro OSVČ"
     },
     "howItWorks": {
       "title": "Jak to funguje?",
