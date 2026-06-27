@@ -50,14 +50,6 @@ const categoryBadgeColors: Record<string, string> = {
   SALE: "bg-rose-100 text-rose-800",
 };
 
-const processingLabels: Record<string, string> = {
-  CLIP_IN: "Clip-in",
-  TAPE_IN: "Tape-in",
-  KERATIN: "Keratín",
-  WEFT: "Tresa",
-  MICRO_RING: "Micro ring",
-  OTHER: "Ostatní",
-};
 
 export function CatalogClient({ role }: { role: Role }) {
   const t = useTranslations("salonPortal");
@@ -213,11 +205,8 @@ export function CatalogClient({ role }: { role: Role }) {
                   </span>
                 </div>
 
-                {/* Processing type + origin */}
+                {/* Origin + texture */}
                 <div className="flex items-center gap-2 text-xs text-muted mb-2">
-                  {product.processingType && (
-                    <span>{processingLabels[product.processingType] ?? product.processingType}</span>
-                  )}
                   {product.origin && (
                     <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px] font-medium">
                       {product.origin}
