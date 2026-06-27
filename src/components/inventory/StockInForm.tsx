@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { getHairColor } from "@/lib/hair-colors";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -31,7 +32,13 @@ export function StockInForm({
   const t = useTranslations("stock");
   const tCommon = useTranslations("common");
   const tCat = useTranslations("category");
+  const tColors = useTranslations("public.colors");
   const router = useRouter();
+
+  const colorName = (code: string) => {
+    const { nameKey } = getHairColor(code);
+    try { return tColors(nameKey as "c1"); } catch { return code; }
+  };
 
   const [productId, setProductId] = useState("");
   const [variantId, setVariantId] = useState("");
@@ -133,7 +140,7 @@ export function StockInForm({
               <option value="">--</option>
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.lengthCm} cm — barva {v.color}
+                  {v.lengthCm} cm — {colorName(v.color)}
                 </option>
               ))}
             </select>
