@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { put } from "@vercel/blob";
 
-const UPLOAD_DIR = join(process.cwd(), "public", "uploads", "stylists");
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -11,7 +9,12 @@ export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (session.user.role !== "HAIRDRESSER" && session.user.role !== "OWNER" && session.user.role !== "EMPLOYEE")
+  if (
+    session.user.role !== "HAIRDRESSER" &&
+    session.user.role !== "SALON" &&
+    session.user.role !== "OWNER" &&
+    session.user.role !== "EMPLOYEE"
+  )
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const formData = await request.formData();
@@ -29,15 +32,13 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
-
   const ext = file.name.split(".").pop() ?? "jpg";
-  const safeName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-  const filePath = join(UPLOAD_DIR, safeName);
+  const safeName = `stylists/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(filePath, buffer);
+  const blob = await put(safeName, file, {
+    access: "public",
+    contentType: file.type,
+  });
 
-  const url = `/uploads/stylists/${safeName}`;
-  return NextResponse.json({ url }, { status: 201 });
+  return NextResponse.json({ url: blob.url }, { status: 201 });
 }
