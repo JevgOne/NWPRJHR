@@ -146,6 +146,7 @@
     "createSupplier": "Створити постачальника",
     "deliveryDetail": "Деталі постачання",
     "noStock": "Немає запасів",
+    "showSoldOut": "Показати розпродані",
     "return": "Повернення",
     "complaint": "Рекламація",
     "sample": "Зразок",

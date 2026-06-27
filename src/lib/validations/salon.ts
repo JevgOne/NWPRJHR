@@ -25,7 +25,7 @@ export const createSalonSchema = z.object({
 export const updateSalonSchema = createSalonSchema.partial();
 
 export const createOrderSchema = z.object({
-  salonId: z.string(),
+  salonId: z.string().optional(),
   items: z
     .array(
       z.object({

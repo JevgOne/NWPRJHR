@@ -36,21 +36,34 @@ export function InventoryClient({
   const t = useTranslations("stock");
   const tCat = useTranslations("category");
   const [search, setSearch] = useState("");
+  const [showSoldOut, setShowSoldOut] = useState(false);
 
   const filtered = items.filter(
     (item) =>
-      item.product.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.color.toLowerCase().includes(search.toLowerCase())
+      (showSoldOut || item.availableGrams > 0) &&
+      (item.product.name.toLowerCase().includes(search.toLowerCase()) ||
+        item.color.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
     <Card padding="sm">
-      <div className="mb-4">
-        <Input
-          placeholder={`${t("barcode")} / ${t("selectVariant")}...`}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="mb-4 flex items-center gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder={`${t("barcode")} / ${t("selectVariant")}...`}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <label className="flex items-center gap-2 text-sm text-muted cursor-pointer whitespace-nowrap">
+          <input
+            type="checkbox"
+            checked={showSoldOut}
+            onChange={(e) => setShowSoldOut(e.target.checked)}
+            className="rounded border-line text-rose focus:ring-rose"
+          />
+          {t("showSoldOut")}
+        </label>
       </div>
 
       <div className="overflow-x-auto">

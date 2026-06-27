@@ -146,6 +146,7 @@
     "createSupplier": "Создать поставщика",
     "deliveryDetail": "Детали поставки",
     "noStock": "Нет запасов",
+    "showSoldOut": "Показать распроданные",
     "return": "Возврат",
     "complaint": "Рекламация",
     "sample": "Образец",
