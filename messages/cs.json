@@ -570,7 +570,11 @@
       "ctaTitle": "Chcete se přijít podívat?",
       "ctaDesc": "Napište nám nebo zavolejte. Domluvíme schůzku, přijedeme s ukázkami a pomůžeme s výběrem. Žádný závazek, žádné riziko.",
       "ctaContact": "Napište nám",
-      "ctaHairdressers": "Naše kadeřnice"
+      "ctaHairdressers": "Naše kadeřnice",
+      "stylistsTitle": "Kde si nechat prodloužit vlasy?",
+      "stylistsSubtitle": "Doporučené kadeřnice a salony, které pracují s vlasy Hairland",
+      "allStylists": "Zobrazit všechny",
+      "registerSalon": "Chci se stát partnerem"
     },
     "offer": {
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",

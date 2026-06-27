@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { prisma } from "@/lib/db";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
 
@@ -29,6 +30,13 @@ const jsonLd = {
 export default async function LandingPage() {
   const t = await getTranslations("public");
   const tCategory = await getTranslations("category");
+
+  const stylists = await prisma.stylist.findMany({
+    where: { active: true },
+    orderBy: [{ featured: "desc" }, { name: "asc" }],
+    take: 6,
+    include: { salon: { select: { name: true } } },
+  });
 
   return (
     <div>
@@ -276,6 +284,74 @@ export default async function LandingPage() {
 
       {/* Reviews */}
       <ReviewsSection />
+
+      {/* Partner stylists */}
+      {stylists.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-ink mb-3">
+                {t("landing.stylistsTitle")}
+              </h2>
+              <p className="text-muted max-w-xl mx-auto">
+                {t("landing.stylistsSubtitle")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {stylists.map((s) => {
+                const specs: string[] = JSON.parse(s.specializations || "[]");
+                return (
+                  <Link
+                    key={s.id}
+                    href={`/kadernice/${s.slug}`}
+                    className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-md hover:border-blush-300 transition-all p-3"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2">
+                      {s.photo ? (
+                        <img src={s.photo} alt={s.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-blush-100 flex items-center justify-center text-2xl">💇‍♀️</div>
+                      )}
+                    </div>
+                    <h3 className="text-xs font-semibold text-ink group-hover:text-rose transition-colors text-center">
+                      {s.name}
+                    </h3>
+                    <p className="text-[10px] text-muted mt-0.5">📍 {s.city}</p>
+                    {s.salon && (
+                      <p className="text-[10px] text-rose mt-0.5">{s.salon.name}</p>
+                    )}
+                    {specs.length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-0.5 mt-1.5">
+                        {specs.slice(0, 2).map((sp) => (
+                          <span key={sp} className="text-[9px] bg-blush-100 text-rose-deep px-1.5 py-0.5 rounded-full">
+                            {sp}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-3 justify-center mt-6">
+              <Link
+                href="/kadernice"
+                className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                {t("landing.allStylists")}
+              </Link>
+              <Link
+                href="/registrace"
+                className="px-5 py-2.5 bg-white text-rose border border-blush-200 hover:bg-blush-100 text-sm font-medium rounded-lg transition-colors"
+              >
+                {t("landing.registerSalon")}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Trilingual support */}
       <section className="py-12 bg-nude-50">
