@@ -118,7 +118,7 @@ export function CompaniesClient() {
   const setField = (key: string, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
@@ -141,16 +141,16 @@ export function CompaniesClient() {
                   </span>
                 )}
               </div>
-              <div className="text-gray-500">
+              <div className="text-muted">
                 {t("ico")}: {c.ico}
                 {c.dic && ` | ${t("dic")}: ${c.dic}`}
               </div>
-              <div className="text-gray-500">{c.address}</div>
-              <div className="text-gray-500">
+              <div className="text-muted">{c.address}</div>
+              <div className="text-muted">
                 {t("bankAccount")}: {c.bankAccount}
               </div>
               {c.bankIban && (
-                <div className="text-gray-500">IBAN: {c.bankIban}</div>
+                <div className="text-muted">IBAN: {c.bankIban}</div>
               )}
             </div>
             <div className="flex gap-1">
@@ -184,7 +184,7 @@ export function CompaniesClient() {
 
       {companies.length === 0 && !showForm && (
         <Card>
-          <p className="text-gray-500 text-center py-8">{t("noCompanies")}</p>
+          <p className="text-muted text-center py-8">{t("noCompanies")}</p>
         </Card>
       )}
 

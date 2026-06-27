@@ -49,7 +49,7 @@ export function AuditLogClient() {
       {/* Filters */}
       <div className="flex gap-4 items-end">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-espresso mb-1">
             {t("entity")}
           </label>
           <select
@@ -58,7 +58,7 @@ export function AuditLogClient() {
               setEntityFilter(e.target.value);
               setPage(1);
             }}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            className="border border-line rounded-lg px-3 py-2 text-sm"
           >
             <option value="">{tCommon("all")}</option>
             <option value="Sale">Sale</option>
@@ -75,45 +75,45 @@ export function AuditLogClient() {
             <option value="System">System</option>
           </select>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-muted">
           {t("totalEntries", { count: total })}
         </div>
       </div>
 
       {/* Table */}
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : logs.length === 0 ? (
-        <p className="text-gray-500">{t("noLogs")}</p>
+        <p className="text-muted">{t("noLogs")}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-nude-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("date")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("user")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("action")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("entity")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("detail")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   IP
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                <tr key={log.id} className="hover:bg-nude-50">
+                  <td className="px-4 py-3 text-sm text-ink whitespace-nowrap">
                     {new Date(log.createdAt).toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600">
@@ -127,17 +127,17 @@ export function AuditLogClient() {
                   <td className="px-4 py-3 text-sm text-gray-600">
                     {log.entity}
                     {log.entityId && (
-                      <span className="text-gray-400 ml-1 text-xs">
+                      <span className="text-muted ml-1 text-xs">
                         ({log.entityId.slice(0, 8)})
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
+                  <td className="px-4 py-3 text-sm text-muted max-w-xs truncate">
                     {log.detail
                       ? JSON.stringify(log.detail).slice(0, 100)
                       : "—"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-400 whitespace-nowrap">
+                  <td className="px-4 py-3 text-sm text-muted whitespace-nowrap">
                     {log.ipAddress || "—"}
                   </td>
                 </tr>

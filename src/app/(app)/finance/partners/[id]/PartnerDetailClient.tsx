@@ -90,7 +90,7 @@ export function PartnerDetailClient({ partnerId }: { partnerId: string }) {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <div className="p-4">
-            <p className="text-sm text-gray-500">{t("share")}</p>
+            <p className="text-sm text-muted">{t("share")}</p>
             <p className="text-2xl font-bold">
               {(data.partner.share / 100).toFixed(2)}%
             </p>
@@ -98,7 +98,7 @@ export function PartnerDetailClient({ partnerId }: { partnerId: string }) {
         </Card>
         <Card>
           <div className="p-4">
-            <p className="text-sm text-gray-500">{t("totalWithdrawn")}</p>
+            <p className="text-sm text-muted">{t("totalWithdrawn")}</p>
             <p className="text-2xl font-bold">
               {formatCZK(totalWithdrawn)} CZK
             </p>
@@ -106,7 +106,7 @@ export function PartnerDetailClient({ partnerId }: { partnerId: string }) {
         </Card>
         <Card>
           <div className="p-4">
-            <p className="text-sm text-gray-500">{t("personalDiscounts")}</p>
+            <p className="text-sm text-muted">{t("personalDiscounts")}</p>
             <p className="text-2xl font-bold text-red-600">
               {formatCZK(totalPersonalDiscounts)} CZK
             </p>
@@ -143,7 +143,7 @@ export function PartnerDetailClient({ partnerId }: { partnerId: string }) {
               ))}
               {data.withdrawals.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-2 text-center text-gray-500">
+                  <td colSpan={5} className="p-2 text-center text-muted">
                     {t("noWithdrawals")}
                   </td>
                 </tr>
@@ -184,7 +184,7 @@ export function PartnerDetailClient({ partnerId }: { partnerId: string }) {
               ))}
               {data.personalDiscounts.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-2 text-center text-gray-500">
+                  <td colSpan={4} className="p-2 text-center text-muted">
                     {t("noPersonalDiscounts")}
                   </td>
                 </tr>

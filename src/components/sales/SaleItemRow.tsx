@@ -68,13 +68,13 @@ export function SaleItemRow({
       </div>
 
       <div className="flex justify-between text-sm">
-        <span className="text-gray-500">
+        <span className="text-muted">
           {t("availableStock")}: {item.availableGrams} {tStock("grams")} / {item.availablePieces} {tStock("pieces")}
         </span>
       </div>
 
       <div className="flex justify-between text-sm">
-        <span className="text-gray-500">
+        <span className="text-muted">
           {t("pricePerGram")}: {formatCZK(item.pricePerGram)} CZK
         </span>
         <span className="font-medium">

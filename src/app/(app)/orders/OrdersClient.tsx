@@ -29,8 +29,8 @@ const statusColors: Record<string, string> = {
   REJECTED: "bg-red-100 text-red-700",
   READY: "bg-green-100 text-green-700",
   IN_TRANSIT: "bg-yellow-100 text-yellow-700",
-  COMPLETED: "bg-gray-100 text-gray-600",
-  CANCELLED: "bg-gray-100 text-gray-500",
+  COMPLETED: "bg-nude-100 text-gray-600",
+  CANCELLED: "bg-nude-100 text-muted",
 };
 
 export function OrdersClient({ role }: { role: Role }) {
@@ -81,7 +81,7 @@ export function OrdersClient({ role }: { role: Role }) {
             className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors whitespace-nowrap ${
               statusFilter === s
                 ? "border-rose bg-rose/10 text-espresso"
-                : "border-gray-200 hover:bg-gray-50"
+                : "border-line hover:bg-nude-50"
             }`}
             onClick={() => {
               setStatusFilter(s);
@@ -94,17 +94,17 @@ export function OrdersClient({ role }: { role: Role }) {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : orders.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">{t("noOrders")}</p>
+          <p className="text-muted text-center py-8">{t("noOrders")}</p>
         </Card>
       ) : (
         <>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-gray-500">
+                <tr className="border-b text-left text-muted">
                   <th className="py-2 pr-3">{t("title")}</th>
                   <th className="py-2 pr-3">{role !== "SALON" && role !== "HAIRDRESSER" ? t("salon") : ""}</th>
                   <th className="py-2 pr-3 text-right">
@@ -115,7 +115,7 @@ export function OrdersClient({ role }: { role: Role }) {
               </thead>
               <tbody>
                 {orders.map((o) => (
-                  <tr key={o.id} className="border-b hover:bg-gray-50">
+                  <tr key={o.id} className="border-b hover:bg-nude-50">
                     <td className="py-2 pr-3">
                       <Link
                         href={`/orders/${o.id}`}
@@ -123,7 +123,7 @@ export function OrdersClient({ role }: { role: Role }) {
                       >
                         {new Date(o.createdAt).toLocaleDateString("cs-CZ")}
                       </Link>
-                      <span className="text-gray-400 ml-1 text-xs">
+                      <span className="text-muted ml-1 text-xs">
                         ({o._count.items})
                       </span>
                     </td>
@@ -134,7 +134,7 @@ export function OrdersClient({ role }: { role: Role }) {
                     <td className="py-2 pr-3">
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                          statusColors[o.status] ?? "bg-gray-100"
+                          statusColors[o.status] ?? "bg-nude-100"
                         }`}
                       >
                         {t(o.status === "IN_TRANSIT" ? "inTransit" : o.status.toLowerCase())}
@@ -156,7 +156,7 @@ export function OrdersClient({ role }: { role: Role }) {
               >
                 {tCommon("back")}
               </Button>
-              <span className="text-sm text-gray-500 self-center">
+              <span className="text-sm text-muted self-center">
                 {page} / {totalPages}
               </span>
               <Button

@@ -198,10 +198,10 @@ export function AppShell({ session, children }: AppShellProps) {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white border-b border-gray-200 h-16 flex items-center px-4 lg:px-8">
+        <header className="bg-white border-b border-line h-16 flex items-center px-4 lg:px-8">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden mr-4 text-gray-600 hover:text-gray-900"
+            className="lg:hidden mr-4 text-gray-600 hover:text-ink"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

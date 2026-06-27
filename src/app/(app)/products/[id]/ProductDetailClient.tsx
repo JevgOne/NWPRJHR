@@ -72,7 +72,7 @@ export function ProductDetailClient({
       <div className="flex items-center gap-4">
         <Link
           href="/products"
-          className="text-gray-400 hover:text-gray-600"
+          className="text-muted hover:text-gray-600"
         >
           {t("common.back")}
         </Link>
@@ -81,14 +81,14 @@ export function ProductDetailClient({
       <Card>
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-ink">
               {product.name}
             </h1>
             {product.nameUk && (
-              <p className="text-sm text-gray-500">UK: {product.nameUk}</p>
+              <p className="text-sm text-muted">UK: {product.nameUk}</p>
             )}
             {product.nameRu && (
-              <p className="text-sm text-gray-500">RU: {product.nameRu}</p>
+              <p className="text-sm text-muted">RU: {product.nameRu}</p>
             )}
             {product.description && (
               <p className="mt-2 text-gray-600">{product.description}</p>
@@ -100,11 +100,11 @@ export function ProductDetailClient({
                 product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"
               }
             />
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-muted">
               {product.processingType.replace(/_/g, "-")}
             </span>
             {product.origin && (
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted">
                 🌍 {product.origin}
               </span>
             )}
@@ -129,7 +129,7 @@ export function ProductDetailClient({
 
       {!isOwner && parsedPhotos.length > 0 && (
         <Card>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-espresso mb-2">
             {t("photos.title")}
           </label>
           <div className="flex flex-wrap gap-2">
@@ -138,7 +138,7 @@ export function ProductDetailClient({
                 key={url}
                 src={url}
                 alt={`${t("photos.photo")} ${i + 1}`}
-                className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                className="w-20 h-20 object-cover rounded-lg border border-line"
               />
             ))}
           </div>
@@ -147,7 +147,7 @@ export function ProductDetailClient({
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-ink">
             {t("salon.priceVariant")}
           </h2>
           {isOwner && (

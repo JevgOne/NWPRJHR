@@ -77,7 +77,7 @@ export function ReturnsClient() {
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               filter === tab.key
                 ? "bg-rose text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-nude-100 text-espresso hover:bg-gray-200"
             }`}
           >
             {tab.label}
@@ -86,36 +86,36 @@ export function ReturnsClient() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tc("loading")}</p>
+        <p className="text-muted">{tc("loading")}</p>
       ) : returns.length === 0 ? (
-        <p className="text-gray-500">{t("noReturns")}</p>
+        <p className="text-muted">{t("noReturns")}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-nude-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("date")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("saleNumber")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("salon")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("product")}
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-muted uppercase">
                   {t("grams")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("reason")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("status")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {tc("actions")}
                 </th>
               </tr>

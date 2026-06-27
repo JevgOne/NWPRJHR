@@ -67,7 +67,7 @@ function formatCZK(halere: number): string {
 
 const tierColors: Record<string, string> = {
   BRONZE: "bg-amber-100 text-amber-700",
-  SILVER: "bg-gray-200 text-gray-700",
+  SILVER: "bg-gray-200 text-espresso",
   GOLD: "bg-yellow-100 text-yellow-700",
   PLATINUM: "bg-purple-100 text-purple-700",
 };
@@ -129,7 +129,7 @@ export function SalonDetailClient({
     setNotesSaving(false);
   };
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
   if (!salon) return <p className="text-red-500">{tCommon("error")}</p>;
 
   return (
@@ -141,7 +141,7 @@ export function SalonDetailClient({
           <div className="flex items-center gap-2 mt-1">
             <span
               className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                tierColors[salon.tier] ?? "bg-gray-100"
+                tierColors[salon.tier] ?? "bg-nude-100"
               }`}
             >
               {tLoyalty(salon.tier.toLowerCase())}
@@ -152,7 +152,7 @@ export function SalonDetailClient({
               </span>
             )}
             {salon.city && (
-              <span className="text-gray-400 text-sm">{salon.city}</span>
+              <span className="text-muted text-sm">{salon.city}</span>
             )}
             {!salon.approved && (
               <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
@@ -190,43 +190,43 @@ export function SalonDetailClient({
         <div className="grid grid-cols-2 gap-y-1 text-sm">
           {salon.contactPerson && (
             <>
-              <span className="text-gray-500">{t("contactPerson")}</span>
+              <span className="text-muted">{t("contactPerson")}</span>
               <span>{salon.contactPerson}</span>
             </>
           )}
           {salon.email && (
             <>
-              <span className="text-gray-500">E-mail</span>
+              <span className="text-muted">E-mail</span>
               <span>{salon.email}</span>
             </>
           )}
           {salon.phone && (
             <>
-              <span className="text-gray-500">Tel</span>
+              <span className="text-muted">Tel</span>
               <span>{salon.phone}</span>
             </>
           )}
           {salon.ico && (
             <>
-              <span className="text-gray-500">ICO</span>
+              <span className="text-muted">ICO</span>
               <span>{salon.ico}</span>
             </>
           )}
           {salon.address && (
             <>
-              <span className="text-gray-500">{t("address")}</span>
+              <span className="text-muted">{t("address")}</span>
               <span>{salon.address}</span>
             </>
           )}
           {salon.website && (
             <>
-              <span className="text-gray-500">Web</span>
+              <span className="text-muted">Web</span>
               <a href={salon.website} target="_blank" rel="noopener noreferrer" className="text-espresso hover:underline">{salon.website}</a>
             </>
           )}
           {salon.instagram && (
             <>
-              <span className="text-gray-500">Instagram</span>
+              <span className="text-muted">Instagram</span>
               <a href={salon.instagram.startsWith("http") ? salon.instagram : `https://instagram.com/${salon.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-espresso hover:underline">{salon.instagram}</a>
             </>
           )}
@@ -235,7 +235,7 @@ export function SalonDetailClient({
 
       {/* Loyalty */}
       <Card padding="sm">
-        <h3 className="text-xs text-gray-500 mb-2 uppercase">
+        <h3 className="text-xs text-muted mb-2 uppercase">
           {tLoyalty("program")}
         </h3>
         <div className="grid grid-cols-3 gap-4 text-center">
@@ -243,11 +243,11 @@ export function SalonDetailClient({
             <div className="text-2xl font-bold">
               {formatCZK(salon.totalRevenue)}
             </div>
-            <div className="text-xs text-gray-500">{t("revenueTotal")} CZK</div>
+            <div className="text-xs text-muted">{t("revenueTotal")} CZK</div>
           </div>
           <div>
             <div className="text-2xl font-bold">{salon.points}</div>
-            <div className="text-xs text-gray-500">{tLoyalty("points")}</div>
+            <div className="text-xs text-muted">{tLoyalty("points")}</div>
           </div>
           <div>
             <div
@@ -257,7 +257,7 @@ export function SalonDetailClient({
             >
               {tLoyalty(salon.tier.toLowerCase())}
             </div>
-            <div className="text-xs text-gray-500">{tLoyalty("tier")}</div>
+            <div className="text-xs text-muted">{tLoyalty("tier")}</div>
           </div>
         </div>
       </Card>
@@ -295,7 +295,7 @@ export function SalonDetailClient({
               >
                 {new Date(o.createdAt).toLocaleDateString("cs-CZ")}
               </Link>
-              <span className="text-gray-500">{tOrder(o.status.toLowerCase())}</span>
+              <span className="text-muted">{tOrder(o.status.toLowerCase())}</span>
               <span className="font-medium">
                 {formatCZK(o.estimatedTotal)} CZK
               </span>
@@ -321,7 +321,7 @@ export function SalonDetailClient({
               </Link>
               <span
                 className={
-                  inv.status === "OVERDUE" ? "text-red-600" : "text-gray-500"
+                  inv.status === "OVERDUE" ? "text-red-600" : "text-muted"
                 }
               >
                 {inv.status}
@@ -346,7 +346,7 @@ export function SalonDetailClient({
               className="flex justify-between text-sm border-b py-1"
             >
               <span>{sr.product.name}</span>
-              <span className="text-gray-500">{sr.status}</span>
+              <span className="text-muted">{sr.status}</span>
               {sr.grams && <span>{sr.grams}g</span>}
             </div>
           ))}
@@ -357,7 +357,7 @@ export function SalonDetailClient({
       <Card>
         <h3 className="font-medium text-sm mb-2">{t("notes")}</h3>
         <textarea
-          className="w-full border border-gray-300 rounded-lg p-2 text-sm min-h-[100px]"
+          className="w-full border border-line rounded-lg p-2 text-sm min-h-[100px]"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />

@@ -24,7 +24,7 @@ export default async function ProductsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-ink">
           {t("nav.products")}
         </h1>
         {session.user.role === "OWNER" && (

@@ -20,7 +20,7 @@ export default async function StylistDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Upravit kadeřnici</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">Upravit kadeřnici</h1>
       <StylistForm stylist={stylist} salons={salons} />
     </div>
   );

@@ -88,7 +88,7 @@ export function RegistrationsClient({ role }: { role: Role }) {
               className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
                 tab === key
                   ? "border-amber-600 bg-amber-50 text-amber-700"
-                  : "border-gray-200 hover:bg-gray-50"
+                  : "border-line hover:bg-nude-50"
               }`}
             >
               {label}
@@ -103,16 +103,16 @@ export function RegistrationsClient({ role }: { role: Role }) {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : displayed.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
+        <div className="bg-white rounded-xl border border-line p-8 text-center text-muted">
           {t("noRegistrations")}
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500 text-xs uppercase tracking-wider">
+              <tr className="border-b text-left text-muted text-xs uppercase tracking-wider">
                 <th className="py-2 pr-3">{tSalon("salon")}</th>
                 <th className="py-2 pr-3">Typ</th>
                 <th className="py-2 pr-3">Kontakt</th>
@@ -122,7 +122,7 @@ export function RegistrationsClient({ role }: { role: Role }) {
             </thead>
             <tbody>
               {displayed.map((r) => (
-                <tr key={r.id} className="border-b hover:bg-gray-50">
+                <tr key={r.id} className="border-b hover:bg-nude-50">
                   <td className="py-3 pr-3">
                     <Link
                       href={`/salons/${r.id}`}
@@ -131,12 +131,12 @@ export function RegistrationsClient({ role }: { role: Role }) {
                       {r.name}
                     </Link>
                     {r.contactPerson && (
-                      <span className="text-gray-400 ml-1 text-xs">
+                      <span className="text-muted ml-1 text-xs">
                         ({r.contactPerson})
                       </span>
                     )}
                     {r.city && (
-                      <span className="text-gray-400 ml-1 text-xs">
+                      <span className="text-muted ml-1 text-xs">
                         — {r.city}
                       </span>
                     )}
@@ -154,7 +154,7 @@ export function RegistrationsClient({ role }: { role: Role }) {
                     {r.email && <div>{r.email}</div>}
                     {r.phone && <div>{r.phone}</div>}
                   </td>
-                  <td className="py-3 pr-3 text-gray-500 text-xs whitespace-nowrap">
+                  <td className="py-3 pr-3 text-muted text-xs whitespace-nowrap">
                     {formatDate(r.createdAt)}
                   </td>
                   {isOwner && (

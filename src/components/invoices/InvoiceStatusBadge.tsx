@@ -7,7 +7,7 @@ const statusStyles: Record<string, string> = {
   AWAITING: "bg-yellow-100 text-yellow-700",
   PAID: "bg-green-100 text-green-700",
   OVERDUE: "bg-red-100 text-red-700",
-  CANCELLED: "bg-gray-100 text-gray-500",
+  CANCELLED: "bg-nude-100 text-muted",
 };
 
 export function InvoiceStatusBadge({ status }: { status: string }) {
@@ -24,7 +24,7 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-        statusStyles[status] || "bg-gray-100"
+        statusStyles[status] || "bg-nude-100"
       }`}
     >
       {statusLabels[status] || status}

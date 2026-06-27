@@ -58,7 +58,7 @@ export function PhotoUpload({ photos, onChange, disabled }: PhotoUploadProps) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-espresso mb-1">
         {t("title")}
       </label>
 
@@ -69,7 +69,7 @@ export function PhotoUpload({ photos, onChange, disabled }: PhotoUploadProps) {
               <img
                 src={url}
                 alt={`${t("photo")} ${i + 1}`}
-                className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                className="w-20 h-20 object-cover rounded-lg border border-line"
               />
               {!disabled && (
                 <button
@@ -96,15 +96,15 @@ export function PhotoUpload({ photos, onChange, disabled }: PhotoUploadProps) {
         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
           dragOver
             ? "border-rose bg-rose/10"
-            : "border-gray-300 hover:border-gray-400"
+            : "border-line hover:border-gray-400"
         } ${disabled || uploading ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         {uploading ? (
-          <p className="text-sm text-gray-500">{t("uploading")}</p>
+          <p className="text-sm text-muted">{t("uploading")}</p>
         ) : (
-          <p className="text-sm text-gray-500">{t("dragOrClick")}</p>
+          <p className="text-sm text-muted">{t("dragOrClick")}</p>
         )}
-        <p className="text-xs text-gray-400 mt-1">{t("formats")}</p>
+        <p className="text-xs text-muted mt-1">{t("formats")}</p>
       </div>
 
       <input

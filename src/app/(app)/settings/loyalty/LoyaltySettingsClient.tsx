@@ -57,7 +57,7 @@ export function LoyaltySettingsClient() {
     );
   };
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
@@ -66,7 +66,7 @@ export function LoyaltySettingsClient() {
       <Card>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-gray-500">
+            <tr className="border-b text-left text-muted">
               <th className="py-2 pr-3">{tLoyalty("tier")}</th>
               <th className="py-2 pr-3">{t("revenueThreshold")} (CZK)</th>
               <th className="py-2 pr-3">{t("discountPercent")}</th>
@@ -119,7 +119,7 @@ export function LoyaltySettingsClient() {
             ))}
           </tbody>
         </table>
-        <p className="text-xs text-gray-400 mt-3">{t("warning")}</p>
+        <p className="text-xs text-muted mt-3">{t("warning")}</p>
       </Card>
     </div>
   );

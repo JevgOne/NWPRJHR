@@ -320,7 +320,7 @@ export function CostsClient() {
                 ))}
                 {costs.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="p-3 text-center text-gray-500">
+                    <td colSpan={6} className="p-3 text-center text-muted">
                       {t("noCosts")}
                     </td>
                   </tr>

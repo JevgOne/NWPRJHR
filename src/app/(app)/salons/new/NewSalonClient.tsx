@@ -105,13 +105,13 @@ export function NewSalonClient() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               {t("language")}
             </label>
             <select
               value={form.language}
               onChange={(e) => setField("language", e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-line rounded-lg px-3 py-2 text-sm"
             >
               <option value="cs">{t("czech")}</option>
               <option value="uk">{t("ukrainian")}</option>

@@ -41,18 +41,18 @@ export function LocaleSwitcher() {
     <div ref={ref} className={`relative ${isPending ? "opacity-50" : ""}`}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors text-lg"
+        className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-nude-100 transition-colors text-lg"
         disabled={isPending}
         title={current.label}
       >
         {current.flag}
-        <svg className={`w-3 h-3 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className={`w-3 h-3 text-muted transition-transform ${open ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[140px] right-0">
+        <div className="absolute z-50 mt-1 bg-white rounded-lg shadow-lg border border-line py-1 min-w-[140px] right-0">
           {(["cs", "uk", "ru"] as const).map((loc) => {
             const { flag, label } = localeFlags[loc];
             return (
@@ -62,7 +62,7 @@ export function LocaleSwitcher() {
                 className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm transition-colors ${
                   locale === loc
                     ? "bg-rose/10 text-espresso font-medium"
-                    : "text-gray-700 hover:bg-gray-50"
+                    : "text-espresso hover:bg-nude-50"
                 }`}
               >
                 <span className="text-base">{flag}</span>

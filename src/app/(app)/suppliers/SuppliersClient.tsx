@@ -99,7 +99,7 @@ export function SuppliersClient({
       {showForm && (
         <Card>
           <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-            <h3 className="font-medium text-gray-900">
+            <h3 className="font-medium text-ink">
               {editId ? t("editSupplier") : t("addSupplier")}
             </h3>
             <Input
@@ -147,7 +147,7 @@ export function SuppliersClient({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500">
+              <tr className="border-b border-line text-left text-muted">
                 <th className="py-3 px-2 font-medium">{t("name")}</th>
                 <th className="py-3 px-2 font-medium">{t("contactName")}</th>
                 <th className="py-3 px-2 font-medium">{t("email")}</th>
@@ -160,7 +160,7 @@ export function SuppliersClient({
             <tbody>
               {suppliers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-gray-400">
+                  <td colSpan={7} className="py-8 text-center text-muted">
                     {t("noSuppliers")}
                   </td>
                 </tr>
@@ -168,9 +168,9 @@ export function SuppliersClient({
                 suppliers.map((s) => (
                   <tr
                     key={s.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b border-gray-100 hover:bg-nude-50"
                   >
-                    <td className="py-3 px-2 font-medium text-gray-900">
+                    <td className="py-3 px-2 font-medium text-ink">
                       {s.name}
                     </td>
                     <td className="py-3 px-2 text-gray-600">

@@ -124,59 +124,59 @@ export function StylistForm({ stylist, salons }: Props) {
         <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-gray-900">Základní údaje</h2>
+      <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
+        <h2 className="text-base font-semibold text-ink">Základní údaje</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Jméno *</label>
+            <label className="block text-sm font-medium text-espresso mb-1">Jméno *</label>
             <input
               type="text"
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL) *</label>
+            <label className="block text-sm font-medium text-espresso mb-1">Slug (URL) *</label>
             <input
               type="text"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">📍 Město</label>
+            <label className="block text-sm font-medium text-espresso mb-1">📍 Město</label>
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">🎓 Roky praxe</label>
+            <label className="block text-sm font-medium text-espresso mb-1">🎓 Roky praxe</label>
             <input
               type="number"
               value={experience}
               onChange={(e) => setExperience(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">🏠 Salon</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🏠 Salon</label>
           <select
             value={salonId}
             onChange={(e) => setSalonId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           >
             <option value="">— Bez salonu —</option>
             {salons.map((s) => (
@@ -187,65 +187,65 @@ export function StylistForm({ stylist, salons }: Props) {
 
         <div className="flex gap-4">
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-gray-300 text-espresso" />
+            <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-line text-espresso" />
             ⭐ Doporučená
           </label>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="rounded border-gray-300 text-espresso" />
+            <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="rounded border-line text-espresso" />
             ✅ Aktivní
           </label>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-gray-900">📝 Bio / Popis</h2>
+      <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
+        <h2 className="text-base font-semibold text-ink">📝 Bio / Popis</h2>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">🇨🇿 Bio (čeština)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🇨🇿 Bio (čeština)</label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             placeholder="Krátký popis, emoji vítány! ✨💇‍♀️"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">🇺🇦 Bio (ukrajinsky)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🇺🇦 Bio (ukrajinsky)</label>
           <textarea
             value={bioUk}
             onChange={(e) => setBioUk(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">🇷🇺 Bio (rusky)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🇷🇺 Bio (rusky)</label>
           <textarea
             value={bioRu}
             onChange={(e) => setBioRu(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-gray-900">💼 Specializace & Jazyky</h2>
+      <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
+        <h2 className="text-base font-semibold text-ink">💼 Specializace & Jazyky</h2>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Specializace (oddělené čárkou)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">Specializace (oddělené čárkou)</label>
           <input
             type="text"
             value={specializations}
             onChange={(e) => setSpecializations(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             placeholder="Prodlužování vlasů, Keratin, Tape-in, Barvení"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Jazyky</label>
+          <label className="block text-sm font-medium text-espresso mb-2">Jazyky</label>
           <div className="flex gap-3">
             {allLangs.map((l) => (
               <button
@@ -255,7 +255,7 @@ export function StylistForm({ stylist, salons }: Props) {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   languages.includes(l.code)
                     ? "bg-rose/15 text-espresso ring-2 ring-rose"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-nude-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 <span className="text-lg">{l.flag}</span> {l.label}
@@ -265,40 +265,40 @@ export function StylistForm({ stylist, salons }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">🏅 Certifikáty (oddělené čárkou)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🏅 Certifikáty (oddělené čárkou)</label>
           <input
             type="text"
             value={certifications}
             onChange={(e) => setCertifications(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
             placeholder="Great Lengths, Hairdreams Master"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-gray-900">📞 Kontakty</h2>
+      <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
+        <h2 className="text-base font-semibold text-ink">📞 Kontakty</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">📱 Telefon</label>
-            <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
+            <label className="block text-sm font-medium text-espresso mb-1">📱 Telefon</label>
+            <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">✉️ E-mail</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
+            <label className="block text-sm font-medium text-espresso mb-1">✉️ E-mail</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">📸 Instagram</label>
-            <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
+            <label className="block text-sm font-medium text-espresso mb-1">📸 Instagram</label>
+            <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">✈️ Telegram</label>
-            <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
+            <label className="block text-sm font-medium text-espresso mb-1">✈️ Telegram</label>
+            <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">💬 WhatsApp</label>
-            <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="+420..." />
+            <label className="block text-sm font-medium text-espresso mb-1">💬 WhatsApp</label>
+            <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="+420..." />
           </div>
         </div>
       </div>
@@ -313,7 +313,7 @@ export function StylistForm({ stylist, salons }: Props) {
         </button>
         <a
           href="/stylists"
-          className="px-6 py-2.5 bg-white text-gray-700 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"
+          className="px-6 py-2.5 bg-white text-espresso border border-line rounded-lg text-sm font-medium hover:bg-nude-50"
         >
           Zpět
         </a>

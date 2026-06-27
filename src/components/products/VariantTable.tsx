@@ -73,7 +73,7 @@ export function VariantTable({
 
   if (variants.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-muted">
         {t("product.length")}/{t("product.color")} — {t("common.add")}
       </div>
     );
@@ -81,16 +81,16 @@ export function VariantTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full border border-gray-200 text-sm">
+      <table className="min-w-full border border-line text-sm">
         <thead>
-          <tr className="bg-gray-50">
-            <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-700">
+          <tr className="bg-nude-50">
+            <th className="border border-line px-3 py-2 text-left font-medium text-espresso">
               {t("product.length")} \ {t("product.color")}
             </th>
             {colors.map((color) => (
               <th
                 key={color}
-                className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-700"
+                className="border border-line px-3 py-2 text-center font-medium text-espresso"
               >
                 {color}
               </th>
@@ -100,7 +100,7 @@ export function VariantTable({
         <tbody>
           {lengths.map((length) => (
             <tr key={length}>
-              <td className="border border-gray-200 px-3 py-2 font-medium text-gray-700 bg-gray-50">
+              <td className="border border-line px-3 py-2 font-medium text-espresso bg-nude-50">
                 {length} cm
               </td>
               {colors.map((color) => {
@@ -109,7 +109,7 @@ export function VariantTable({
                   return (
                     <td
                       key={color}
-                      className="border border-gray-200 px-3 py-2 text-center text-gray-300"
+                      className="border border-line px-3 py-2 text-center text-gray-300"
                     >
                       —
                     </td>
@@ -121,7 +121,7 @@ export function VariantTable({
                 return (
                   <td
                     key={color}
-                    className={`border border-gray-200 px-3 py-2 text-center ${
+                    className={`border border-line px-3 py-2 text-center ${
                       !variant.active ? "opacity-40" : ""
                     }`}
                   >
@@ -242,7 +242,7 @@ export function VariantTable({
                         {isOwner && variant.retailManualOverride && (
                           <button
                             onClick={() => handleResetOverride(variant.id)}
-                            className="ml-1 text-[10px] text-gray-400 hover:text-red-500"
+                            className="ml-1 text-[10px] text-muted hover:text-red-500"
                             disabled={isSaving}
                           >
                             {t("variant.resetOverride")}
@@ -264,7 +264,7 @@ export function VariantTable({
                     {variant.pricePerGram !== undefined && (
                       <div className="font-medium">
                         {formatCZK(variant.pricePerGram)}
-                        <span className="text-gray-400 text-xs">/g</span>
+                        <span className="text-muted text-xs">/g</span>
                       </div>
                     )}
                   </td>

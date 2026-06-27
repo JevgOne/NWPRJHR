@@ -50,7 +50,7 @@ export function SaleSummary({
           <div key={i} className="flex justify-between text-sm border-b pb-2">
             <div>
               <div className="font-medium">{item.variantLabel}</div>
-              <div className="text-gray-500">
+              <div className="text-muted">
                 {item.grams} {tStock("grams")}
                 {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
                 {" @ "}
@@ -90,11 +90,11 @@ export function SaleSummary({
       {isOwner && costOfGoods !== undefined && grossMargin !== undefined && (
         <div className="mt-4 pt-3 border-t border-dashed space-y-1 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-500">{t("costOfGoods")}</span>
+            <span className="text-muted">{t("costOfGoods")}</span>
             <span>{formatCZK(costOfGoods)} CZK</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-500">{t("grossMargin")}</span>
+            <span className="text-muted">{t("grossMargin")}</span>
             <span
               className={
                 grossMargin >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"

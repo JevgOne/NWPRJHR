@@ -23,7 +23,7 @@ const TYPE_COLORS: Record<string, string> = {
   COMPLAINT: "bg-orange-100 text-orange-800",
   SAMPLE_OUT: "bg-purple-100 text-purple-800",
   SAMPLE_RETURN: "bg-purple-50 text-purple-600",
-  ADJUSTMENT: "bg-gray-100 text-gray-800",
+  ADJUSTMENT: "bg-nude-100 text-gray-800",
 };
 
 export function MovementsClient({ movements }: { movements: Movement[] }) {
@@ -47,7 +47,7 @@ export function MovementsClient({ movements }: { movements: Movement[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-gray-500">
+            <tr className="border-b border-line text-left text-muted">
               <th className="py-3 px-2 font-medium">{t("stockedAt")}</th>
               <th className="py-3 px-2 font-medium">{t("movement")}</th>
               <th className="py-3 px-2 font-medium">{t("selectVariant")}</th>
@@ -61,7 +61,7 @@ export function MovementsClient({ movements }: { movements: Movement[] }) {
             {movements.map((m) => (
               <tr
                 key={m.id}
-                className="border-b border-gray-100 hover:bg-gray-50"
+                className="border-b border-gray-100 hover:bg-nude-50"
               >
                 <td className="py-3 px-2 text-gray-600">
                   {new Date(m.createdAt).toLocaleDateString("cs-CZ")}{" "}
@@ -69,18 +69,18 @@ export function MovementsClient({ movements }: { movements: Movement[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <span
-                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[m.type] ?? "bg-gray-100"}`}
+                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[m.type] ?? "bg-nude-100"}`}
                   >
                     {typeLabel(m.type)}
                   </span>
                 </td>
                 <td className="py-3 px-2">
                   <div className="font-medium">{m.variant.productName}</div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-muted">
                     {m.variant.lengthCm} cm / {m.variant.color}
                   </div>
                 </td>
-                <td className="py-3 px-2 text-gray-500 font-mono text-xs">
+                <td className="py-3 px-2 text-muted font-mono text-xs">
                   {m.deliveryBarcode ?? "-"}
                 </td>
                 <td className={`py-3 px-2 text-right ${m.grams < 0 ? "text-red-600" : "text-green-600"}`}>
@@ -91,14 +91,14 @@ export function MovementsClient({ movements }: { movements: Movement[] }) {
                   {m.pieces > 0 ? "+" : ""}
                   {m.pieces}
                 </td>
-                <td className="py-3 px-2 text-gray-500 max-w-[150px] truncate">
+                <td className="py-3 px-2 text-muted max-w-[150px] truncate">
                   {m.note ?? "-"}
                 </td>
               </tr>
             ))}
             {movements.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-8 text-center text-gray-400">
+                <td colSpan={7} className="py-8 text-center text-muted">
                   {t("noStock")}
                 </td>
               </tr>

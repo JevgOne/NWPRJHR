@@ -104,7 +104,7 @@ export function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none"
+        className="relative p-2 text-gray-600 hover:text-ink focus:outline-none"
       >
         <svg
           className="w-6 h-6"
@@ -142,14 +142,14 @@ export function NotificationBell() {
 
           <div className="overflow-y-auto max-h-72">
             {notifications.length === 0 ? (
-              <p className="p-4 text-sm text-gray-500 text-center">
+              <p className="p-4 text-sm text-muted text-center">
                 {t("noNotifications")}
               </p>
             ) : (
               notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`px-4 py-3 border-b last:border-0 cursor-pointer hover:bg-gray-50 ${
+                  className={`px-4 py-3 border-b last:border-0 cursor-pointer hover:bg-nude-50 ${
                     !n.read ? "bg-rose/10" : ""
                   }`}
                   onClick={() => !n.read && handleMarkRead(n.id)}
@@ -160,11 +160,11 @@ export function NotificationBell() {
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{n.title}</p>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-muted truncate">
                         {n.message}
                       </p>
                     </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0">
+                    <span className="text-xs text-muted flex-shrink-0">
                       {formatTime(n.createdAt)}
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export function NotificationBell() {
 
           <Link
             href="/notifications"
-            className="block text-center text-xs text-espresso py-2 border-t hover:bg-gray-50"
+            className="block text-center text-xs text-espresso py-2 border-t hover:bg-nude-50"
             onClick={() => setIsOpen(false)}
           >
             {t("viewAll")}

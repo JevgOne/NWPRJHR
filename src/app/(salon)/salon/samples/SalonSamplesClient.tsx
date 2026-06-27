@@ -16,7 +16,7 @@ const statusColors: Record<string, string> = {
   REQUESTED: "bg-nude-100 text-espresso",
   APPROVED: "bg-rose/15 text-espresso",
   SENT: "bg-green-100 text-green-700",
-  RETURNED: "bg-gray-100 text-gray-600",
+  RETURNED: "bg-nude-100 text-gray-600",
   WRITTEN_OFF: "bg-red-100 text-red-700",
 };
 
@@ -35,7 +35,7 @@ export function SalonSamplesClient({ salonId }: { salonId: string }) {
       .finally(() => setLoading(false));
   }, [salonId]);
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
 
   return (
     <div className="space-y-4">
@@ -43,7 +43,7 @@ export function SalonSamplesClient({ salonId }: { salonId: string }) {
 
       {samples.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-muted text-center py-8">
             {tSample("noSamples")}
           </p>
         </Card>
@@ -51,7 +51,7 @@ export function SalonSamplesClient({ salonId }: { salonId: string }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500">
+              <tr className="border-b text-left text-muted">
                 <th className="py-2 pr-3">{tSample("title")}</th>
                 <th className="py-2 pr-3 text-right">{tSample("gramsLent")}</th>
                 <th className="py-2 pr-3">-</th>
@@ -65,7 +65,7 @@ export function SalonSamplesClient({ salonId }: { salonId: string }) {
                   <td className="py-2 pr-3">
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        statusColors[s.status] ?? "bg-gray-100"
+                        statusColors[s.status] ?? "bg-nude-100"
                       }`}
                     >
                       {tSample(

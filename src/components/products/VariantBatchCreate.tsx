@@ -120,7 +120,7 @@ export function VariantBatchCreate({
         />
 
         {previewCount > 0 && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted">
             {t("variant.willBeCreated", { count: previewCount })}
           </p>
         )}

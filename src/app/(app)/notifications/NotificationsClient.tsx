@@ -74,14 +74,14 @@ export function NotificationsClient() {
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               showUnread
                 ? "bg-rose text-white"
-                : "bg-gray-100 text-gray-700"
+                : "bg-nude-100 text-espresso"
             }`}
           >
             {t("unreadOnly")}
           </button>
           <button
             onClick={handleMarkAllRead}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
+            className="px-4 py-2 bg-nude-100 text-espresso rounded-lg text-sm font-medium hover:bg-gray-200"
           >
             {t("markAllRead")}
           </button>
@@ -89,9 +89,9 @@ export function NotificationsClient() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tc("loading")}</p>
+        <p className="text-muted">{tc("loading")}</p>
       ) : notifications.length === 0 ? (
-        <p className="text-gray-500">{t("noNotifications")}</p>
+        <p className="text-muted">{t("noNotifications")}</p>
       ) : (
         <div className="space-y-2">
           {notifications.map((n) => (
@@ -99,7 +99,7 @@ export function NotificationsClient() {
               key={n.id}
               className={`p-4 rounded-lg border cursor-pointer transition-colors ${
                 n.read
-                  ? "bg-white border-gray-200"
+                  ? "bg-white border-line"
                   : "bg-rose/10 border-rose/30"
               }`}
               onClick={() => !n.read && handleMarkRead(n.id)}
@@ -114,14 +114,14 @@ export function NotificationsClient() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">{n.message}</p>
                 </div>
-                <span className="text-xs text-gray-400 whitespace-nowrap ml-4">
+                <span className="text-xs text-muted whitespace-nowrap ml-4">
                   {formatRelativeTime(n.createdAt)}
                 </span>
               </div>
             </div>
           ))}
           {total > notifications.length && (
-            <p className="text-center text-sm text-gray-500 py-2">
+            <p className="text-center text-sm text-muted py-2">
               {t("showing")} {notifications.length} / {total}
             </p>
           )}

@@ -80,7 +80,7 @@ export function OrderDetailClient({
     if (res.ok) load();
   };
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
   if (!order) return <p className="text-red-500">{tCommon("error")}</p>;
 
   return (
@@ -88,7 +88,7 @@ export function OrderDetailClient({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">{t("orderDetail")}</h1>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted">
             {order.salon.name} |{" "}
             {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
           </div>
@@ -104,7 +104,7 @@ export function OrderDetailClient({
       <Card>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-gray-500">
+            <tr className="border-b text-left text-muted">
               <th className="py-1 pr-2">-</th>
               <th className="py-1 pr-2 text-right">{t("quantity")}</th>
               <th className="py-1 pr-2 text-right">{t("pricePerGram")}</th>
@@ -141,7 +141,7 @@ export function OrderDetailClient({
       {order.note && (
         <Card padding="sm">
           <div className="text-sm">
-            <span className="text-gray-500">{t("note")}: </span>
+            <span className="text-muted">{t("note")}: </span>
             {order.note}
           </div>
         </Card>

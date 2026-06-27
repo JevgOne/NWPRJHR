@@ -38,7 +38,7 @@ export function SalonInvoicesClient() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
 
   return (
     <div className="space-y-4">
@@ -46,13 +46,13 @@ export function SalonInvoicesClient() {
 
       {invoices.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">-</p>
+          <p className="text-muted text-center py-8">-</p>
         </Card>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500">
+              <tr className="border-b text-left text-muted">
                 <th className="py-2 pr-3">{tInvoice("invoice")}</th>
                 <th className="py-2 pr-3">{tInvoice("issueDate")}</th>
                 <th className="py-2 pr-3">{tInvoice("dueDate")}</th>
@@ -62,7 +62,7 @@ export function SalonInvoicesClient() {
             </thead>
             <tbody>
               {invoices.map((inv) => (
-                <tr key={inv.id} className="border-b hover:bg-gray-50">
+                <tr key={inv.id} className="border-b hover:bg-nude-50">
                   <td className="py-2 pr-3">
                     <Link
                       href={`/salon/invoices/${inv.id}`}

@@ -71,7 +71,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
     }
   };
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
   if (!customer) return <p className="text-red-500">{tCommon("error")}</p>;
 
   return (
@@ -128,11 +128,11 @@ export function CustomerDetailClient({ id }: { id: string }) {
       ) : (
         <Card>
           <div className="grid grid-cols-2 gap-y-2 text-sm">
-            <span className="text-gray-500">{t("email")}</span>
+            <span className="text-muted">{t("email")}</span>
             <span>{customer.email || "-"}</span>
-            <span className="text-gray-500">{t("phone")}</span>
+            <span className="text-muted">{t("phone")}</span>
             <span>{customer.phone || "-"}</span>
-            <span className="text-gray-500">{t("totalSpent")}</span>
+            <span className="text-muted">{t("totalSpent")}</span>
             <span className="font-medium">
               {formatCZK(customer.totalSpent)} CZK
             </span>
@@ -145,12 +145,12 @@ export function CustomerDetailClient({ id }: { id: string }) {
           {t("purchaseHistory")} ({customer.salesCount})
         </h2>
         {customer.sales.length === 0 ? (
-          <p className="text-gray-500 text-sm">{tSale("noSales")}</p>
+          <p className="text-muted text-sm">{tSale("noSales")}</p>
         ) : (
           <div className="space-y-2">
             {customer.sales.map((sale) => (
               <Link key={sale.id} href={`/sales/${sale.id}`}>
-                <div className="flex justify-between items-center p-2 rounded hover:bg-gray-50 text-sm">
+                <div className="flex justify-between items-center p-2 rounded hover:bg-nude-50 text-sm">
                   <span>
                     {sale.completedAt
                       ? new Date(sale.completedAt).toLocaleDateString("cs-CZ")

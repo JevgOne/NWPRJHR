@@ -72,7 +72,7 @@ export function CustomerSelect({
           className={`p-4 rounded-xl border-2 text-center font-medium transition-colors ${
             customerType === "SALON"
               ? "border-rose bg-rose/10 text-espresso"
-              : "border-gray-200 hover:border-gray-300"
+              : "border-line hover:border-line"
           }`}
           onClick={() => onCustomerTypeChange("SALON")}
         >
@@ -83,7 +83,7 @@ export function CustomerSelect({
           className={`p-4 rounded-xl border-2 text-center font-medium transition-colors ${
             customerType === "RETAIL"
               ? "border-rose bg-rose/10 text-espresso"
-              : "border-gray-200 hover:border-gray-300"
+              : "border-line hover:border-line"
           }`}
           onClick={() => onCustomerTypeChange("RETAIL")}
         >
@@ -112,13 +112,13 @@ export function CustomerSelect({
                   className={`w-full text-left p-3 rounded-lg border transition-colors ${
                     selectedSalonId === salon.id
                       ? "border-rose bg-rose/10"
-                      : "border-gray-200 hover:bg-gray-50"
+                      : "border-line hover:bg-nude-50"
                   }`}
                   onClick={() => onSalonSelect(salon.id)}
                 >
                   <div className="font-medium">{salon.name}</div>
                   {salon.city && (
-                    <div className="text-sm text-gray-500">{salon.city}</div>
+                    <div className="text-sm text-muted">{salon.city}</div>
                   )}
                 </button>
               ))}
@@ -202,13 +202,13 @@ export function CustomerSelect({
                 className={`w-full text-left p-3 rounded-lg border transition-colors ${
                   selectedCustomerId === c.id
                     ? "border-rose bg-rose/10"
-                    : "border-gray-200 hover:bg-gray-50"
+                    : "border-line hover:bg-nude-50"
                 }`}
                 onClick={() => onCustomerSelect(c.id)}
               >
                 <div className="font-medium">{c.name}</div>
                 {c.email && (
-                  <div className="text-sm text-gray-500">{c.email}</div>
+                  <div className="text-sm text-muted">{c.email}</div>
                 )}
               </button>
             ))}

@@ -117,7 +117,7 @@ export function CreateProductForm() {
 
   return (
     <Card>
-      <h2 className="text-xl font-bold text-gray-900 mb-6">
+      <h2 className="text-xl font-bold text-ink mb-6">
         {t("common.add")} — {t("nav.products")}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -127,13 +127,13 @@ export function CreateProductForm() {
         <Input id="description" name="description" label={`${t("nav.products")} — ${t("productForm.description")}`} />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-espresso mb-1">
             {t("category.virgin")} / {t("category.premium")} / ...
           </label>
           <select
             name="category"
             required
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
           >
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
@@ -144,13 +144,13 @@ export function CreateProductForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-espresso mb-1">
             {t("salon.processingType")}
           </label>
           <select
             name="processingType"
             required
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
           >
             {PROCESSING_TYPES.map((pt) => (
               <option key={pt} value={pt}>
@@ -161,13 +161,13 @@ export function CreateProductForm() {
         </div>
 
         <div ref={originRef} className="relative">
-          <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="origin" className="block text-sm font-medium text-espresso mb-1">
             {t("product.origin")}
           </label>
           <input
             id="origin"
             type="text"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
             value={origin}
             onChange={(e) => {
               setOrigin(e.target.value);
@@ -178,7 +178,7 @@ export function CreateProductForm() {
             autoComplete="off"
           />
           {originOpen && filteredOrigins.length > 0 && (
-            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-line bg-white shadow-lg">
               {filteredOrigins.map((o) => (
                 <li key={o.name}>
                   <button
@@ -199,13 +199,13 @@ export function CreateProductForm() {
           )}
         </div>
         <div ref={textureRef} className="relative">
-          <label htmlFor="texture" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="texture" className="block text-sm font-medium text-espresso mb-1">
             {t("product.texture")}
           </label>
           <input
             id="texture"
             type="text"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
             value={texture}
             onChange={(e) => {
               setTexture(e.target.value);
@@ -216,7 +216,7 @@ export function CreateProductForm() {
             autoComplete="off"
           />
           {textureOpen && filteredTextures.length > 0 && (
-            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-line bg-white shadow-lg">
               {filteredTextures.map((opt) => (
                 <li key={opt.name}>
                   <button

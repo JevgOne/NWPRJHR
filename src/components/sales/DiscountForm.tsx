@@ -81,7 +81,7 @@ export function DiscountForm({
             if (!e.target.checked) onChange(null);
             else onChange(current);
           }}
-          className="w-5 h-5 rounded border-gray-300"
+          className="w-5 h-5 rounded border-line"
         />
         <span className="font-medium">{t("applyDiscount")}</span>
       </label>
@@ -101,7 +101,7 @@ export function DiscountForm({
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               {t("discountType")}
             </label>
             <div className="flex gap-2">
@@ -112,7 +112,7 @@ export function DiscountForm({
                   className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
                     current.type === dt
                       ? "border-rose bg-rose/10 text-espresso"
-                      : "border-gray-200 hover:bg-gray-50"
+                      : "border-line hover:bg-nude-50"
                   }`}
                   onClick={() => onChange({ ...current, type: dt })}
                 >
@@ -136,12 +136,12 @@ export function DiscountForm({
 
           {current.type === "PERSONAL" && isOwner && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-espresso mb-1">
                 {t("selectBearers")}
               </label>
               <div className="space-y-1">
                 {partners.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                  <label key={p.id} className="flex items-center gap-2 p-2 rounded hover:bg-nude-50">
                     <input
                       type="checkbox"
                       checked={current.bearerPartnerIds.includes(p.id)}
@@ -151,14 +151,14 @@ export function DiscountForm({
                           : current.bearerPartnerIds.filter((id) => id !== p.id);
                         onChange({ ...current, bearerPartnerIds: ids });
                       }}
-                      className="w-4 h-4 rounded border-gray-300"
+                      className="w-4 h-4 rounded border-line"
                     />
                     <span className="text-sm">{p.name}</span>
                   </label>
                 ))}
               </div>
               {current.bearerPartnerIds.length > 1 && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted mt-1">
                   {t("equalSplit")} ({current.bearerPartnerIds.length}x)
                 </p>
               )}

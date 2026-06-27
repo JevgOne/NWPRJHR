@@ -104,10 +104,10 @@ export function CustomersClient() {
       )}
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : customers.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-muted text-center py-8">
             {t("noCustomers")}
           </p>
         </Card>
@@ -120,7 +120,7 @@ export function CustomersClient() {
                 className="hover:border-rose/30 transition-colors cursor-pointer"
               >
                 <div className="font-medium">{c.name}</div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted">
                   {[c.email, c.phone].filter(Boolean).join(" | ") || "-"}
                 </div>
               </Card>

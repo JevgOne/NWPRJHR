@@ -17,9 +17,9 @@ export function PriceDisplay({
 }: PriceDisplayProps) {
   return (
     <span className={className}>
-      {label && <span className="text-gray-500 text-xs mr-1">{label}</span>}
+      {label && <span className="text-muted text-xs mr-1">{label}</span>}
       {formatCZK(halere)}
-      {perGram && <span className="text-gray-400 text-xs">/g</span>}
+      {perGram && <span className="text-muted text-xs">/g</span>}
     </span>
   );
 }

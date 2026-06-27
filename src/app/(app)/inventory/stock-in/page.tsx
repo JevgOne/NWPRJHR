@@ -40,7 +40,7 @@ export default async function StockInPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+      <h1 className="text-2xl font-bold text-ink mb-6">
         {t("stock.newDelivery")}
       </h1>
       <StockInForm products={productOptions} suppliers={supplierOptions} />

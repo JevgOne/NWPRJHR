@@ -84,7 +84,7 @@ export function PaymentsClient() {
     });
   }
 
-  if (loading) return <p className="text-gray-500">{tc("loading")}</p>;
+  if (loading) return <p className="text-muted">{tc("loading")}</p>;
   if (!data) return null;
 
   return (
@@ -94,7 +94,7 @@ export function PaymentsClient() {
       {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white p-4 rounded-lg border">
-          <div className="text-sm text-gray-500">{t("totalReceivables")}</div>
+          <div className="text-sm text-muted">{t("totalReceivables")}</div>
           <div className="text-2xl font-bold">{formatCZK(data.totalOwed)}</div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-red-200">
@@ -104,7 +104,7 @@ export function PaymentsClient() {
           </div>
         </div>
         <div className="bg-white p-4 rounded-lg border">
-          <div className="text-sm text-gray-500">{t("invoiceCount")}</div>
+          <div className="text-sm text-muted">{t("invoiceCount")}</div>
           <div className="text-2xl font-bold">
             {data.receivables.length}
           </div>
@@ -113,34 +113,34 @@ export function PaymentsClient() {
 
       {/* Receivables table */}
       {data.receivables.length === 0 ? (
-        <p className="text-gray-500">{t("noReceivables")}</p>
+        <p className="text-muted">{t("noReceivables")}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-nude-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("invoiceNumber")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("customer")}
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-muted uppercase">
                   {tc("total")}
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-muted uppercase">
                   {t("paid")}
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-muted uppercase">
                   {t("remaining")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {t("dueDate")}
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-muted uppercase">
                   {t("daysOverdue")}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase">
                   {tc("actions")}
                 </th>
               </tr>
@@ -217,7 +217,7 @@ export function PaymentsClient() {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-espresso mb-1">
                   {t("amount")} ({t("halere")})
                 </label>
                 <input
@@ -227,12 +227,12 @@ export function PaymentsClient() {
                   className="w-full border rounded-lg px-3 py-2"
                   min="1"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted mt-1">
                   {t("remaining")}: {formatCZK(payModal.remainingAmount)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-espresso mb-1">
                   {t("note")}
                 </label>
                 <input

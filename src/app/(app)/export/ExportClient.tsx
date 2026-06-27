@@ -115,28 +115,28 @@ export function ExportClient() {
       {/* Period selector */}
       <Card>
         <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-gray-700">{t("period")}</h2>
+          <h2 className="text-sm font-semibold text-espresso">{t("period")}</h2>
           <div className="flex flex-wrap gap-4 items-end">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
+              <label className="block text-xs text-muted mb-1">
                 {t("from")}
               </label>
               <input
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="block rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
+                className="block rounded-lg border border-line px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
+              <label className="block text-xs text-muted mb-1">
                 {t("to")}
               </label>
               <input
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="block rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
+                className="block rounded-lg border border-line px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
               />
             </div>
           </div>
@@ -148,7 +148,7 @@ export function ExportClient() {
               <button
                 key={preset}
                 onClick={() => quickSelect(preset)}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-line text-gray-600 hover:bg-nude-50 transition-colors"
               >
                 {t(preset)}
               </button>
@@ -161,15 +161,15 @@ export function ExportClient() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Excel/CSV */}
         <Card>
-          <h3 className="font-semibold text-gray-900 mb-2">{t("excel")}</h3>
-          <p className="text-xs text-gray-500 mb-4">{t("excelDesc")}</p>
+          <h3 className="font-semibold text-ink mb-2">{t("excel")}</h3>
+          <p className="text-xs text-muted mb-4">{t("excelDesc")}</p>
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setFormat("xlsx")}
               className={`px-3 py-1 text-xs rounded-lg border ${
                 format === "xlsx"
                   ? "border-rose bg-rose/10 text-espresso"
-                  : "border-gray-200"
+                  : "border-line"
               }`}
             >
               XLSX
@@ -179,7 +179,7 @@ export function ExportClient() {
               className={`px-3 py-1 text-xs rounded-lg border ${
                 format === "csv"
                   ? "border-rose bg-rose/10 text-espresso"
-                  : "border-gray-200"
+                  : "border-line"
               }`}
             >
               CSV
@@ -196,13 +196,13 @@ export function ExportClient() {
 
         {/* Pohoda XML */}
         <Card>
-          <h3 className="font-semibold text-gray-900 mb-2">{t("pohoda")}</h3>
-          <p className="text-xs text-gray-500 mb-4">{t("pohodaDesc")}</p>
+          <h3 className="font-semibold text-ink mb-2">{t("pohoda")}</h3>
+          <p className="text-xs text-muted mb-4">{t("pohodaDesc")}</p>
           {companies.length > 0 && (
             <select
               value={selectedIco}
               onChange={(e) => setSelectedIco(e.target.value)}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm mb-4 focus:border-rose focus:outline-none"
+              className="block w-full rounded-lg border border-line px-3 py-2 text-sm mb-4 focus:border-rose focus:outline-none"
             >
               {companies.map((c) => (
                 <option key={c.id} value={c.ico}>
@@ -222,8 +222,8 @@ export function ExportClient() {
 
         {/* PDF ZIP */}
         <Card>
-          <h3 className="font-semibold text-gray-900 mb-2">{t("pdfBundle")}</h3>
-          <p className="text-xs text-gray-500 mb-4">{t("pdfBundleDesc")}</p>
+          <h3 className="font-semibold text-ink mb-2">{t("pdfBundle")}</h3>
+          <p className="text-xs text-muted mb-4">{t("pdfBundleDesc")}</p>
           <Button
             size="sm"
             onClick={() => download("pdf")}

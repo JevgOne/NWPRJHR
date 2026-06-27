@@ -44,7 +44,7 @@ const TYPE_COLORS: Record<string, string> = {
   COMPLAINT: "bg-orange-100 text-orange-800",
   SAMPLE_OUT: "bg-purple-100 text-purple-800",
   SAMPLE_RETURN: "bg-purple-50 text-purple-600",
-  ADJUSTMENT: "bg-gray-100 text-gray-800",
+  ADJUSTMENT: "bg-nude-100 text-gray-800",
 };
 
 export function DeliveryDetailClient({
@@ -83,22 +83,22 @@ export function DeliveryDetailClient({
       <Card>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <div className="text-gray-500 mb-1">{t("selectVariant")}</div>
+            <div className="text-muted mb-1">{t("selectVariant")}</div>
             <div className="font-medium">
               {delivery.variant.product.name} — {delivery.variant.lengthCm} cm /{" "}
               {delivery.variant.color}
             </div>
           </div>
           <div>
-            <div className="text-gray-500 mb-1">{t("supplier")}</div>
+            <div className="text-muted mb-1">{t("supplier")}</div>
             <div className="font-medium">{delivery.supplier.name}</div>
           </div>
           <div>
-            <div className="text-gray-500 mb-1">{tFinance("purchasePrice")}</div>
+            <div className="text-muted mb-1">{tFinance("purchasePrice")}</div>
             <div className="font-medium">
               {delivery.purchasePricePerGramRaw} ({delivery.currency})
               {delivery.currency !== "CZK" && (
-                <span className="text-gray-500 ml-1">
+                <span className="text-muted ml-1">
                   = {(delivery.purchasePricePerGramCZK / 100).toFixed(2)} CZK/{t("grams")}
                 </span>
               )}
@@ -106,18 +106,18 @@ export function DeliveryDetailClient({
           </div>
           {delivery.currency !== "CZK" && (
             <div>
-              <div className="text-gray-500 mb-1">{t("exchangeRate")}</div>
+              <div className="text-muted mb-1">{t("exchangeRate")}</div>
               <div className="font-medium">
                 {(delivery.exchangeRate / 10000).toFixed(4)}
               </div>
             </div>
           )}
           <div>
-            <div className="text-gray-500 mb-1">{t("barcode")}</div>
+            <div className="text-muted mb-1">{t("barcode")}</div>
             <div className="font-mono text-xs">{delivery.barcode ?? "-"}</div>
           </div>
           <div>
-            <div className="text-gray-500 mb-1">{t("stockedAt")}</div>
+            <div className="text-muted mb-1">{t("stockedAt")}</div>
             <div>
               {new Date(delivery.stockedAt).toLocaleDateString("cs-CZ")}
             </div>
@@ -137,17 +137,17 @@ export function DeliveryDetailClient({
               />
             </div>
           </div>
-          <div className="text-gray-700 whitespace-nowrap">
+          <div className="text-espresso whitespace-nowrap">
             {delivery.remainingGrams} / {delivery.initialGrams} {t("grams")}
           </div>
           {delivery.initialPieces > 0 && (
-            <div className="text-gray-700 whitespace-nowrap">
+            <div className="text-espresso whitespace-nowrap">
               {delivery.remainingPieces} / {delivery.initialPieces} {t("pieces")}
             </div>
           )}
         </div>
         {delivery.note && (
-          <div className="mt-3 text-sm text-gray-500">
+          <div className="mt-3 text-sm text-muted">
             {t("note")}: {delivery.note}
           </div>
         )}
@@ -155,12 +155,12 @@ export function DeliveryDetailClient({
 
       {/* Movements history */}
       <Card padding="sm">
-        <h2 className="text-sm font-medium text-gray-700 px-2 py-2">
+        <h2 className="text-sm font-medium text-espresso px-2 py-2">
           {t("movements")}
         </h2>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-gray-500">
+            <tr className="border-b border-line text-left text-muted">
               <th className="py-2 px-2 font-medium">{t("stockedAt")}</th>
               <th className="py-2 px-2 font-medium">{t("movement")}</th>
               <th className="py-2 px-2 font-medium text-right">{t("grams")}</th>
@@ -176,7 +176,7 @@ export function DeliveryDetailClient({
                 </td>
                 <td className="py-2 px-2">
                   <span
-                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[m.type] ?? "bg-gray-100"}`}
+                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[m.type] ?? "bg-nude-100"}`}
                   >
                     {typeLabel(m.type)}
                   </span>
@@ -189,7 +189,7 @@ export function DeliveryDetailClient({
                   {m.pieces > 0 ? "+" : ""}
                   {m.pieces}
                 </td>
-                <td className="py-2 px-2 text-gray-500">{m.note ?? "-"}</td>
+                <td className="py-2 px-2 text-muted">{m.note ?? "-"}</td>
               </tr>
             ))}
           </tbody>

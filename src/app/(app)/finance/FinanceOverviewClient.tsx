@@ -105,34 +105,34 @@ export function FinanceOverviewClient() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <div className="p-4">
-                <p className="text-sm text-gray-500">{t("revenue")}</p>
+                <p className="text-sm text-muted">{t("revenue")}</p>
                 <p className="text-2xl font-bold text-green-600">
                   {formatCZK(data.revenue)} CZK
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted">
                   {data.revenueInvoiceCount} {t("invoices")}
                 </p>
               </div>
             </Card>
             <Card>
               <div className="p-4">
-                <p className="text-sm text-gray-500">{t("costOfGoods")}</p>
+                <p className="text-sm text-muted">{t("costOfGoods")}</p>
                 <p className="text-2xl font-bold text-red-600">
                   {formatCZK(data.costOfGoods)} CZK
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted">
                   {data.costOfGoodsSaleCount} {t("sales")}
                 </p>
               </div>
             </Card>
             <Card>
               <div className="p-4">
-                <p className="text-sm text-gray-500">{t("grossMargin")}</p>
+                <p className="text-sm text-muted">{t("grossMargin")}</p>
                 <p className="text-2xl font-bold text-espresso">
                   {formatCZK(data.grossMargin)} CZK
                 </p>
                 {data.revenue > 0 && (
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-muted">
                     {((data.grossMargin / data.revenue) * 100).toFixed(1)}%
                   </p>
                 )}
@@ -170,7 +170,7 @@ export function FinanceOverviewClient() {
 
           <Card>
             <div className="p-4">
-              <p className="text-sm text-gray-500">{t("netProfit")}</p>
+              <p className="text-sm text-muted">{t("netProfit")}</p>
               <p
                 className={`text-3xl font-bold ${data.netProfit >= 0 ? "text-green-700" : "text-red-700"}`}
               >

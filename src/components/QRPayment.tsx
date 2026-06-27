@@ -41,7 +41,7 @@ export function QRPayment({
   };
 
   return (
-    <div className="flex flex-col items-center gap-3 p-4 bg-gray-50 rounded-lg">
+    <div className="flex flex-col items-center gap-3 p-4 bg-nude-50 rounded-lg">
       <h3 className="font-medium text-sm">{t("qrPayment")}</h3>
 
       {qrUrl && (
@@ -57,17 +57,17 @@ export function QRPayment({
 
       <div className="text-sm text-center space-y-1">
         {iban && (
-          <div className="text-gray-500">
+          <div className="text-muted">
             IBAN: <span className="font-mono">{iban}</span>
           </div>
         )}
         <div>
           {t("total")}: <span className="font-bold">{amountCZK} CZK</span>
         </div>
-        <div className="text-gray-500">
+        <div className="text-muted">
           VS: <span className="font-mono">{variableSymbol}</span>
         </div>
-        <div className="text-gray-400 text-xs">
+        <div className="text-muted text-xs">
           {t("invoice")} {invoiceNumber}
         </div>
       </div>

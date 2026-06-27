@@ -47,7 +47,7 @@ export function B2BSettingsClient() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
 
   const hairdresserPct = (settings.hairdresserDiscountPct / 100).toFixed(2);
   const salonPct = (settings.salonDiscountPct / 100).toFixed(2);
@@ -55,12 +55,12 @@ export function B2BSettingsClient() {
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-bold">{t("title")}</h1>
-      <p className="text-sm text-gray-500">{t("description")}</p>
+      <p className="text-sm text-muted">{t("description")}</p>
 
       <Card>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               {t("hairdresserDiscount")}
             </label>
             <div className="flex items-center gap-2">
@@ -78,17 +78,17 @@ export function B2BSettingsClient() {
                     ),
                   }))
                 }
-                className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+                className="w-24 border border-line rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"
               />
-              <span className="text-sm text-gray-500">%</span>
+              <span className="text-sm text-muted">%</span>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-muted mt-1">
               {t("hairdresserDiscountHelp")}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               {t("salonDiscount")}
             </label>
             <div className="flex items-center gap-2">
@@ -106,11 +106,11 @@ export function B2BSettingsClient() {
                     ),
                   }))
                 }
-                className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+                className="w-24 border border-line rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose focus:border-rose"
               />
-              <span className="text-sm text-gray-500">%</span>
+              <span className="text-sm text-muted">%</span>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-muted mt-1">
               {t("salonDiscountHelp")}
             </p>
           </div>
@@ -127,14 +127,14 @@ export function B2BSettingsClient() {
       </Card>
 
       <Card>
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">
+        <h3 className="text-sm font-semibold text-espresso mb-2">
           {t("previewTitle")}
         </h3>
-        <p className="text-xs text-gray-400 mb-3">{t("previewDescription")}</p>
+        <p className="text-xs text-muted mb-3">{t("previewDescription")}</p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500">
+              <tr className="border-b text-left text-muted">
                 <th className="py-2 pr-3">{t("tier")}</th>
                 <th className="py-2 pr-3 text-right">{t("discount")}</th>
                 <th className="py-2 pr-3 text-right">{t("examplePrice")}</th>

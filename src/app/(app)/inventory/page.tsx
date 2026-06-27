@@ -45,7 +45,7 @@ export default async function InventoryPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-ink">
           {t("stock.overview")}
         </h1>
         <div className="flex gap-2">
@@ -60,7 +60,7 @@ export default async function InventoryPage() {
           {role === "OWNER" && (
             <a
               href="/inventory/movements"
-              className="inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"
+              className="inline-flex items-center px-4 py-2 bg-white text-espresso border border-line rounded-lg text-sm font-medium hover:bg-nude-50"
             >
               {t("stock.movements")}
             </a>

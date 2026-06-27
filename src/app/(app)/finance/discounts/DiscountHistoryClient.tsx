@@ -141,7 +141,7 @@ export function DiscountHistoryClient() {
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <div className="p-4">
-                <p className="text-sm text-gray-500">{t("totalDiscounts")}</p>
+                <p className="text-sm text-muted">{t("totalDiscounts")}</p>
                 <p className="text-xl font-bold">
                   {discounts.length}x / {formatCZK(totalDiscounts)} CZK
                 </p>
@@ -150,7 +150,7 @@ export function DiscountHistoryClient() {
             {summary.map((s) => (
               <Card key={s.userId}>
                 <div className="p-4">
-                  <p className="text-sm text-gray-500">{s.userName}</p>
+                  <p className="text-sm text-muted">{s.userName}</p>
                   <p className="text-lg font-bold">
                     {s.totalCount}x / {formatCZK(s.totalAmountHalere)} CZK
                   </p>
@@ -204,7 +204,7 @@ export function DiscountHistoryClient() {
                   ))}
                   {discounts.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="p-3 text-center text-gray-500">
+                      <td colSpan={7} className="p-3 text-center text-muted">
                         {t("noDiscounts")}
                       </td>
                     </tr>

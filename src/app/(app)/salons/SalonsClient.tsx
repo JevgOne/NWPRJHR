@@ -29,7 +29,7 @@ function formatCZK(halere: number): string {
 
 const tierColors: Record<string, string> = {
   BRONZE: "bg-amber-100 text-amber-700",
-  SILVER: "bg-gray-200 text-gray-700",
+  SILVER: "bg-gray-200 text-espresso",
   GOLD: "bg-yellow-100 text-yellow-700",
   PLATINUM: "bg-purple-100 text-purple-700",
 };
@@ -81,7 +81,7 @@ export function SalonsClient({ role }: { role: Role }) {
           className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
             tab === "active"
               ? "border-rose bg-rose/10 text-espresso"
-              : "border-gray-200 hover:bg-gray-50"
+              : "border-line hover:bg-nude-50"
           }`}
           onClick={() => setTab("active")}
         >
@@ -91,7 +91,7 @@ export function SalonsClient({ role }: { role: Role }) {
           className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
             tab === "archived"
               ? "border-rose bg-rose/10 text-espresso"
-              : "border-gray-200 hover:bg-gray-50"
+              : "border-line hover:bg-nude-50"
           }`}
           onClick={() => setTab("archived")}
         >
@@ -100,7 +100,7 @@ export function SalonsClient({ role }: { role: Role }) {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value as "" | "SALON" | "HAIRDRESSER")}
-          className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-white"
+          className="px-3 py-1.5 rounded-lg text-sm font-medium border border-line bg-white"
         >
           <option value="">{tCommon("all")}</option>
           <option value="SALON">{t("typeSalon")}</option>
@@ -115,16 +115,16 @@ export function SalonsClient({ role }: { role: Role }) {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : salons.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">{t("noSalons")}</p>
+          <p className="text-muted text-center py-8">{t("noSalons")}</p>
         </Card>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500">
+              <tr className="border-b text-left text-muted">
                 <th className="py-2 pr-3">{t("salon")}</th>
                 <th className="py-2 pr-3">{tLoyalty("tier")}</th>
                 <th className="py-2 pr-3 text-right">{t("revenueTotal")}</th>
@@ -133,7 +133,7 @@ export function SalonsClient({ role }: { role: Role }) {
             </thead>
             <tbody>
               {salons.map((s) => (
-                <tr key={s.id} className="border-b hover:bg-gray-50">
+                <tr key={s.id} className="border-b hover:bg-nude-50">
                   <td className="py-2 pr-3">
                     <Link
                       href={`/salons/${s.id}`}
@@ -142,7 +142,7 @@ export function SalonsClient({ role }: { role: Role }) {
                       {s.name}
                     </Link>
                     {s.city && (
-                      <span className="text-gray-400 ml-1 text-xs">
+                      <span className="text-muted ml-1 text-xs">
                         {s.city}
                       </span>
                     )}
@@ -160,7 +160,7 @@ export function SalonsClient({ role }: { role: Role }) {
                   <td className="py-2 pr-3">
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        tierColors[s.tier] ?? "bg-gray-100"
+                        tierColors[s.tier] ?? "bg-nude-100"
                       }`}
                     >
                       {tLoyalty(s.tier.toLowerCase())}
@@ -169,7 +169,7 @@ export function SalonsClient({ role }: { role: Role }) {
                   <td className="py-2 pr-3 text-right font-medium">
                     {formatCZK(s.totalRevenue)} CZK
                   </td>
-                  <td className="py-2 pr-3 text-right text-gray-500">
+                  <td className="py-2 pr-3 text-right text-muted">
                     {s._count.orders}/{s._count.sales}
                   </td>
                 </tr>

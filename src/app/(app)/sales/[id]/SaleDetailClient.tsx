@@ -75,7 +75,7 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
   if (!sale) return <p className="text-red-500">{tCommon("error")}</p>;
 
   return (
@@ -91,25 +91,25 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
 
       <Card>
         <div className="grid grid-cols-2 gap-y-2 text-sm">
-          <span className="text-gray-500">{t("selectCustomerType")}</span>
+          <span className="text-muted">{t("selectCustomerType")}</span>
           <span>
             {sale.customerType === "SALON"
               ? t("salonCustomer")
               : t("retailCustomer")}
           </span>
-          <span className="text-gray-500">{t("customer")}</span>
+          <span className="text-muted">{t("customer")}</span>
           <span>{sale.salonName || sale.customerName || "-"}</span>
-          <span className="text-gray-500">{t("date")}</span>
+          <span className="text-muted">{t("date")}</span>
           <span>
             {sale.completedAt
               ? new Date(sale.completedAt).toLocaleString("cs-CZ")
               : "-"}
           </span>
-          <span className="text-gray-500">{t("status")}</span>
+          <span className="text-muted">{t("status")}</span>
           <span>{t(sale.status.toLowerCase() as "completed" | "cancelled" | "draft")}</span>
           {isOwner && sale.userName && (
             <>
-              <span className="text-gray-500">{t("saleNumber")}</span>
+              <span className="text-muted">{t("saleNumber")}</span>
               <span>{sale.saleNumber || sale.id.slice(0, 8)}</span>
             </>
           )}
@@ -126,20 +126,20 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
                   ? `${item.variant.product.name} ${item.variant.lengthCm}cm ${item.variant.color}`
                   : item.variantId.slice(0, 8)}
               </div>
-              <div className="flex justify-between text-gray-500 mt-1">
+              <div className="flex justify-between text-muted mt-1">
                 <span>
                   {item.grams} {tStock("grams")}
                   {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
                   {" @ "}
                   {formatCZK(item.pricePerGramUsed)} CZK/{tStock("grams")}
                 </span>
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-ink">
                   {formatCZK(item.lineTotal)} CZK
                 </span>
               </div>
               {isOwner && item.itemMargin !== undefined && (
                 <div className="flex justify-between mt-1 text-xs">
-                  <span className="text-gray-400">
+                  <span className="text-muted">
                     {t("costOfGoods")}:{" "}
                     {formatCZK((item.purchasePricePerGramCZK ?? 0) * item.grams)}
                   </span>
@@ -189,11 +189,11 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
             sale.grossMargin !== undefined && (
               <div className="mt-3 pt-3 border-t border-dashed space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">{t("costOfGoods")}</span>
+                  <span className="text-muted">{t("costOfGoods")}</span>
                   <span>{formatCZK(sale.totalCostOfGoods)} CZK</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">{t("grossMargin")}</span>
+                  <span className="text-muted">{t("grossMargin")}</span>
                   <span
                     className={
                       sale.grossMargin >= 0
@@ -227,12 +227,12 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
                 </span>
               </div>
               {d.counterPerformanceNote && (
-                <p className="text-gray-500 text-xs">
+                <p className="text-muted text-xs">
                   {tPartner("counterPerformance")}: {d.counterPerformanceNote}
                 </p>
               )}
               {d.bearers.length > 0 && (
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted">
                   {d.bearers.map((b, i) => (
                     <span key={i}>
                       {b.partnerName}: {formatCZK(b.shareAmount)} CZK

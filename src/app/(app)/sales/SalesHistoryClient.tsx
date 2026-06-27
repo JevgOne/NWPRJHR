@@ -73,17 +73,17 @@ export function SalesHistoryClient({ role }: { role: Role }) {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : sales.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">{t("noSales")}</p>
+          <p className="text-muted text-center py-8">{t("noSales")}</p>
         </Card>
       ) : (
         <>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-gray-500">
+                <tr className="border-b text-left text-muted">
                   <th className="py-2 pr-3">{t("date")}</th>
                   <th className="py-2 pr-3">{t("customer")}</th>
                   <th className="py-2 pr-3">{t("items")}</th>
@@ -97,7 +97,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
               </thead>
               <tbody>
                 {sales.map((sale) => (
-                  <tr key={sale.id} className="border-b hover:bg-gray-50">
+                  <tr key={sale.id} className="border-b hover:bg-nude-50">
                     <td className="py-2 pr-3">
                       <Link
                         href={`/sales/${sale.id}`}
@@ -111,7 +111,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
                         className={`inline-block px-1.5 py-0.5 rounded text-xs font-medium mr-1 ${
                           sale.customerType === "SALON"
                             ? "bg-nude-100 text-espresso"
-                            : "bg-gray-100 text-gray-700"
+                            : "bg-nude-100 text-espresso"
                         }`}
                       >
                         {sale.customerType === "SALON"
@@ -155,7 +155,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
               >
                 {tCommon("back")}
               </Button>
-              <span className="text-sm text-gray-500 self-center">
+              <span className="text-sm text-muted self-center">
                 {page} / {totalPages}
               </span>
               <Button

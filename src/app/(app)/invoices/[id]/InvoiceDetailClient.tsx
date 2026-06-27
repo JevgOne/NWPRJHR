@@ -124,7 +124,7 @@ export function InvoiceDetailClient({
     }
   };
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
   if (!invoice) return <p className="text-red-500">{tCommon("error")}</p>;
 
   const totalPaid = invoice.payments.reduce((s, p) => s + p.amount, 0);
@@ -157,24 +157,24 @@ export function InvoiceDetailClient({
       {/* Supplier + Buyer */}
       <div className="grid grid-cols-2 gap-4">
         <Card padding="sm">
-          <h3 className="text-xs text-gray-500 mb-1 uppercase">
+          <h3 className="text-xs text-muted mb-1 uppercase">
             {t("taxDocument")}
           </h3>
           <div className="text-sm">
             <div className="font-medium">{invoice.company.name}</div>
             <div>ICO: {invoice.company.ico}</div>
             {invoice.company.dic && <div>DIC: {invoice.company.dic}</div>}
-            <div className="text-gray-500">{invoice.company.address}</div>
+            <div className="text-muted">{invoice.company.address}</div>
           </div>
         </Card>
         <Card padding="sm">
-          <h3 className="text-xs text-gray-500 mb-1 uppercase">-</h3>
+          <h3 className="text-xs text-muted mb-1 uppercase">-</h3>
           <div className="text-sm">
             <div className="font-medium">{invoice.buyerName}</div>
             {invoice.buyerIco && <div>ICO: {invoice.buyerIco}</div>}
             {invoice.buyerDic && <div>DIC: {invoice.buyerDic}</div>}
             {invoice.buyerAddress && (
-              <div className="text-gray-500">{invoice.buyerAddress}</div>
+              <div className="text-muted">{invoice.buyerAddress}</div>
             )}
           </div>
         </Card>
@@ -183,13 +183,13 @@ export function InvoiceDetailClient({
       {/* Meta */}
       <Card padding="sm">
         <div className="grid grid-cols-2 gap-y-1 text-sm">
-          <span className="text-gray-500">{t("issueDate")}</span>
+          <span className="text-muted">{t("issueDate")}</span>
           <span>
             {new Date(invoice.issueDate).toLocaleDateString("cs-CZ")}
           </span>
-          <span className="text-gray-500">{t("dueDate")}</span>
+          <span className="text-muted">{t("dueDate")}</span>
           <span>{new Date(invoice.dueDate).toLocaleDateString("cs-CZ")}</span>
-          <span className="text-gray-500">{t("variableSymbol")}</span>
+          <span className="text-muted">{t("variableSymbol")}</span>
           <span className="font-mono">{invoice.variableSymbol}</span>
         </div>
       </Card>
@@ -198,7 +198,7 @@ export function InvoiceDetailClient({
       <Card>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-gray-500">
+            <tr className="border-b text-left text-muted">
               <th className="py-1 pr-2">-</th>
               <th className="py-1 pr-2 text-right">-</th>
               <th className="py-1 pr-2 text-right">{t("pricePerGram")}</th>
@@ -233,7 +233,7 @@ export function InvoiceDetailClient({
             <span>{formatCZK(invoice.vatAmount)} CZK</span>
           </div>
           {invoice.roundingAmount !== 0 && (
-            <div className="flex justify-between text-gray-500">
+            <div className="flex justify-between text-muted">
               <span>-</span>
               <span>{formatCZK(invoice.roundingAmount)} CZK</span>
             </div>
@@ -323,7 +323,7 @@ export function InvoiceDetailClient({
       )}
 
       {invoice.originalInvoice && (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-muted">
           {t("creditNote")}:{" "}
           <Link
             href={`/invoices/${invoice.originalInvoice.id}`}
@@ -335,7 +335,7 @@ export function InvoiceDetailClient({
       )}
 
       {invoice.creditNotes && invoice.creditNotes.length > 0 && (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-muted">
           {t("creditNote")}:{" "}
           {invoice.creditNotes.map((cn) => (
             <Link

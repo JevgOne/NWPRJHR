@@ -125,7 +125,7 @@ export function PartnersClient() {
         <>
           <Card>
             <div className="p-4">
-              <p className="text-sm text-gray-500">{t("netProfit")}</p>
+              <p className="text-sm text-muted">{t("netProfit")}</p>
               <p className="text-2xl font-bold">
                 {formatCZK(data.financeSummary.netProfit)} CZK
               </p>

@@ -21,7 +21,7 @@ export function ProductListClient({ products }: { products: ProductItem[] }) {
   if (products.length === 0) {
     return (
       <Card>
-        <p className="text-gray-500 text-center py-4">
+        <p className="text-muted text-center py-4">
           {t("common.search")} — 0
         </p>
       </Card>
@@ -34,13 +34,13 @@ export function ProductListClient({ products }: { products: ProductItem[] }) {
         <Link key={product.id} href={`/products/${product.id}`}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex items-start justify-between mb-2">
-              <h3 className="font-semibold text-gray-900">{product.name}</h3>
+              <h3 className="font-semibold text-ink">{product.name}</h3>
               <CategoryBadge
                 category={product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"}
               />
             </div>
             <div className="flex flex-wrap items-center gap-1.5 mb-2">
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted">
                 {product.processingType.replace(/_/g, "-")}
               </span>
               {typeof product.texture === "string" && product.texture && (
@@ -50,7 +50,7 @@ export function ProductListClient({ products }: { products: ProductItem[] }) {
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-muted">
               {product.variants?.length ?? 0} {t("salon.priceVariant").toLowerCase()}
             </p>
           </Card>

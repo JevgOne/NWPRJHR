@@ -113,11 +113,11 @@ export function StockInForm({
         {/* Product + Variant selection */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               {t("selectVariant")}
             </label>
             <select
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
               value={productId}
               onChange={(e) => {
                 setProductId(e.target.value);
@@ -143,11 +143,11 @@ export function StockInForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               &nbsp;
             </label>
             <select
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
               value={variantId}
               onChange={(e) => setVariantId(e.target.value)}
               required
@@ -165,11 +165,11 @@ export function StockInForm({
 
         {/* Supplier */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-espresso mb-1">
             {t("supplier")}
           </label>
           <select
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
             value={supplierId}
             onChange={(e) => setSupplierId(e.target.value)}
             required
@@ -196,11 +196,11 @@ export function StockInForm({
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-espresso mb-1">
               {t("currency")}
             </label>
             <select
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
               value={currency}
               onChange={(e) => {
                 const c = e.target.value as (typeof CURRENCIES)[number];
@@ -232,7 +232,7 @@ export function StockInForm({
         {calculatedCZK !== null && (
           <div className="text-sm text-gray-600">
             {t("calculatedCZK")}:{" "}
-            <span className="font-semibold text-gray-900">
+            <span className="font-semibold text-ink">
               {(calculatedCZK / 100).toFixed(2)} CZK/{t("grams")}
             </span>
           </div>
@@ -303,11 +303,11 @@ export function StockInForm({
 
         {/* Note */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-espresso mb-1">
             {t("note")}
           </label>
           <textarea
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
             rows={3}
             value={note}
             onChange={(e) => setNote(e.target.value)}

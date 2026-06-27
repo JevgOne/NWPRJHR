@@ -25,7 +25,7 @@ const statusColors: Record<string, string> = {
   APPROVED: "bg-rose/15 text-espresso",
   SENT: "bg-yellow-100 text-yellow-700",
   RETURNED: "bg-green-100 text-green-700",
-  WRITTEN_OFF: "bg-gray-100 text-gray-500",
+  WRITTEN_OFF: "bg-nude-100 text-muted",
 };
 
 export function SamplesClient({ role }: { role: Role }) {
@@ -75,7 +75,7 @@ export function SamplesClient({ role }: { role: Role }) {
 
   const statusLabel = (s: string) => statusLabels[s] ?? s;
 
-  if (loading) return <p className="text-gray-500">{tCommon("loading")}</p>;
+  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
 
   return (
     <div className="space-y-4">
@@ -83,7 +83,7 @@ export function SamplesClient({ role }: { role: Role }) {
 
       {samples.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">{t("noSamples")}</p>
+          <p className="text-muted text-center py-8">{t("noSamples")}</p>
         </Card>
       ) : (
         samples.map((s) => (
@@ -91,20 +91,20 @@ export function SamplesClient({ role }: { role: Role }) {
             <div className="flex items-start justify-between">
               <div className="text-sm">
                 <div className="font-medium">{s.product.name}</div>
-                <div className="text-gray-500">
+                <div className="text-muted">
                   {s.salon?.name ?? s.salonName ?? "-"} |{" "}
                   {new Date(s.createdAt).toLocaleDateString("cs-CZ")}
                 </div>
                 {s.grams && (
-                  <div className="text-gray-500">
+                  <div className="text-muted">
                     {t("gramsLent")}: {s.grams}g
                   </div>
                 )}
                 {s.note && (
-                  <div className="text-gray-400 text-xs mt-1">{s.note}</div>
+                  <div className="text-muted text-xs mt-1">{s.note}</div>
                 )}
                 {s.resolution && (
-                  <div className="text-gray-500 text-xs mt-1">
+                  <div className="text-muted text-xs mt-1">
                     {t("resolution")}: {s.resolution}
                   </div>
                 )}
@@ -112,7 +112,7 @@ export function SamplesClient({ role }: { role: Role }) {
               <div className="flex flex-col items-end gap-1">
                 <span
                   className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                    statusColors[s.status] ?? "bg-gray-100"
+                    statusColors[s.status] ?? "bg-nude-100"
                   }`}
                 >
                   {statusLabel(s.status)}

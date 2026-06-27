@@ -105,22 +105,22 @@ export function DiscountsClient() {
       {summary && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Card padding="sm">
-            <div className="text-xs text-gray-500">{tPartner("standardDiscount")}</div>
+            <div className="text-xs text-muted">{tPartner("standardDiscount")}</div>
             <div className="font-bold">{formatCZK(summary.byType.STANDARD)} CZK</div>
           </Card>
           <Card padding="sm">
-            <div className="text-xs text-gray-500">{tPartner("marketingDiscount")}</div>
+            <div className="text-xs text-muted">{tPartner("marketingDiscount")}</div>
             <div className="font-bold">{formatCZK(summary.byType.MARKETING)} CZK</div>
           </Card>
           <Card padding="sm">
-            <div className="text-xs text-gray-500">{tPartner("personalDiscount")}</div>
+            <div className="text-xs text-muted">{tPartner("personalDiscount")}</div>
             <div className="font-bold">{formatCZK(summary.byType.PERSONAL)} CZK</div>
           </Card>
           <Card padding="sm">
-            <div className="text-xs text-gray-500">{t("summary")}</div>
+            <div className="text-xs text-muted">{t("summary")}</div>
             <div className="font-bold">
               {formatCZK(summary.totalDiscountAmount)} CZK
-              <span className="text-gray-400 font-normal text-xs ml-1">
+              <span className="text-muted font-normal text-xs ml-1">
                 ({summary.totalDiscounts}x)
               </span>
             </div>
@@ -143,16 +143,16 @@ export function DiscountsClient() {
       )}
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : discounts.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">{t("noDiscounts")}</p>
+          <p className="text-muted text-center py-8">{t("noDiscounts")}</p>
         </Card>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500">
+              <tr className="border-b text-left text-muted">
                 <th className="py-2 pr-3">{t("type")}</th>
                 <th className="py-2 pr-3">{t("percent")}</th>
                 <th className="py-2 pr-3 text-right">{t("amount")}</th>
@@ -179,7 +179,7 @@ export function DiscountsClient() {
                   <td className="py-2 pr-3">
                     {d.givenByUser.name || d.givenByUser.email}
                   </td>
-                  <td className="py-2 pr-3 text-xs text-gray-500">
+                  <td className="py-2 pr-3 text-xs text-muted">
                     {d.bearers.map((b) => b.partner.name).join(", ") || "-"}
                   </td>
                 </tr>

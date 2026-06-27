@@ -29,7 +29,7 @@ const RATING_EMOJIS = ["😕", "😐", "🙂", "😊", "😍"] as const;
 function EmojiRatingPicker({ label, value, onChange }: { label: string; value: number | null; onChange: (v: number | null) => void }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium text-espresso mb-1">{label}</label>
       <div className="flex items-center gap-1">
         {RATING_EMOJIS.map((emoji, i) => {
           const val = i + 1;
@@ -56,7 +56,7 @@ const SOURCE_LABELS = {
 };
 
 const SOURCE_COLORS = {
-  MANUAL: "bg-gray-100 text-gray-700",
+  MANUAL: "bg-nude-100 text-espresso",
   GOOGLE: "bg-nude-100 text-espresso",
   INSTAGRAM: "bg-pink-100 text-pink-700",
 };
@@ -179,7 +179,7 @@ export function ReviewsClient() {
     fetchReviews();
   };
 
-  if (loading) return <div className="p-4 text-gray-500">Načítání...</div>;
+  if (loading) return <div className="p-4 text-muted">Načítání...</div>;
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
@@ -199,16 +199,16 @@ export function ReviewsClient() {
       {showForm && (
         <Card>
           <div className="space-y-3">
-            <div className="text-sm font-semibold text-gray-700">
+            <div className="text-sm font-semibold text-espresso">
               {editingId ? "Upravit recenzi" : "Nová recenze"}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Typ zdroje</label>
+              <label className="block text-sm font-medium text-espresso mb-1">Typ zdroje</label>
               <select
                 value={form.source}
                 onChange={(e) => setField("source", e.target.value as FormState["source"])}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               >
                 <option value="MANUAL">Ruční zadání</option>
                 <option value="GOOGLE">Google recenze</option>
@@ -244,7 +244,7 @@ export function ReviewsClient() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-espresso mb-1">
                 Hodnocení: {form.rating}/5
               </label>
               <div className="flex gap-1">
@@ -280,18 +280,18 @@ export function ReviewsClient() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Text recenze *</label>
+              <label className="block text-sm font-medium text-espresso mb-1">Text recenze *</label>
               <textarea
                 value={form.text}
                 onChange={(e) => setField("text", e.target.value)}
                 rows={3}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               />
             </div>
 
             {form.source === "INSTAGRAM" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
+                <label className="block text-sm font-medium text-espresso mb-1">Instagram URL</label>
                 <Input
                   value={form.sourceUrl}
                   onChange={(e) => setField("sourceUrl", e.target.value)}
@@ -344,7 +344,7 @@ export function ReviewsClient() {
 
       {reviews.length === 0 ? (
         <Card>
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-muted py-8">
             Zatím žádné recenze. Přidejte první!
           </div>
         </Card>
@@ -358,12 +358,12 @@ export function ReviewsClient() {
                     {r.authorPhoto && (
                       <img src={r.authorPhoto} alt="" className="w-8 h-8 rounded-full object-cover" />
                     )}
-                    <span className="font-semibold text-gray-900">{r.authorName}</span>
+                    <span className="font-semibold text-ink">{r.authorName}</span>
                     {r.authorCity && (
-                      <span className="text-xs text-gray-500">{r.authorCity}</span>
+                      <span className="text-xs text-muted">{r.authorCity}</span>
                     )}
                     {r.salonName && (
-                      <span className="text-xs text-gray-500">• {r.salonName}</span>
+                      <span className="text-xs text-muted">• {r.salonName}</span>
                     )}
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[r.source]}`}>
                       {SOURCE_LABELS[r.source]}
@@ -383,13 +383,13 @@ export function ReviewsClient() {
                     {"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}
                   </div>
                   {(r.ratingQuality || r.ratingCommunication || r.ratingSpeed) && (
-                    <div className="flex gap-3 mt-1 text-xs text-gray-500">
+                    <div className="flex gap-3 mt-1 text-xs text-muted">
                       {r.ratingQuality && <span>✨ {RATING_EMOJIS[r.ratingQuality - 1]}</span>}
                       {r.ratingCommunication && <span>💬 {RATING_EMOJIS[r.ratingCommunication - 1]}</span>}
                       {r.ratingSpeed && <span>📦 {RATING_EMOJIS[r.ratingSpeed - 1]}</span>}
                     </div>
                   )}
-                  <p className="text-sm text-gray-700 mt-1 line-clamp-2">{r.text}</p>
+                  <p className="text-sm text-espresso mt-1 line-clamp-2">{r.text}</p>
                   {r.sourceUrl && (
                     <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-espresso hover:underline mt-1 inline-block">
                       Zdroj →
@@ -399,27 +399,27 @@ export function ReviewsClient() {
                 <div className="flex gap-1 flex-shrink-0">
                   <button
                     onClick={() => toggleFeatured(r)}
-                    className={`p-1.5 rounded text-sm ${r.featured ? "text-yellow-600 bg-yellow-50" : "text-gray-400 hover:text-yellow-600"}`}
+                    className={`p-1.5 rounded text-sm ${r.featured ? "text-yellow-600 bg-yellow-50" : "text-muted hover:text-yellow-600"}`}
                     title={r.featured ? "Odebrat z homepage" : "Zobrazit na homepage"}
                   >
                     ★
                   </button>
                   <button
                     onClick={() => toggleActive(r)}
-                    className={`p-1.5 rounded text-sm ${r.active ? "text-emerald-600" : "text-gray-400"}`}
+                    className={`p-1.5 rounded text-sm ${r.active ? "text-emerald-600" : "text-muted"}`}
                     title={r.active ? "Skrýt" : "Zobrazit"}
                   >
                     {r.active ? "👁" : "👁‍🗨"}
                   </button>
                   <button
                     onClick={() => handleEdit(r)}
-                    className="p-1.5 rounded text-sm text-gray-400 hover:text-espresso"
+                    className="p-1.5 rounded text-sm text-muted hover:text-espresso"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(r.id)}
-                    className="p-1.5 rounded text-sm text-gray-400 hover:text-red-600"
+                    className="p-1.5 rounded text-sm text-muted hover:text-red-600"
                   >
                     🗑
                   </button>

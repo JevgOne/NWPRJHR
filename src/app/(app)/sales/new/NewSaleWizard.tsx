@@ -285,7 +285,7 @@ export function NewSaleWizard({
           />
         ))}
       </div>
-      <p className="text-sm text-gray-500">{t(STEPS[step])}</p>
+      <p className="text-sm text-muted">{t(STEPS[step])}</p>
 
       {error && (
         <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
@@ -349,7 +349,7 @@ export function NewSaleWizard({
                     <button
                       key={v.id}
                       type="button"
-                      className="w-full text-left p-2 rounded border border-gray-200 hover:bg-gray-50 text-sm"
+                      className="w-full text-left p-2 rounded border border-line hover:bg-nude-50 text-sm"
                       onClick={() => {
                         addItemFromVariantId(v.id);
                         setShowProductPicker(false);

@@ -67,17 +67,17 @@ export function PricingSettingsClient() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+      <h1 className="text-2xl font-bold text-ink mb-6">
         {t("salon.markup")} — {t("nav.settings")}
       </h1>
       <Card>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
-              <th className="text-left py-2 font-medium text-gray-700">
+              <th className="text-left py-2 font-medium text-espresso">
                 {t("category.virgin")} / ...
               </th>
-              <th className="text-left py-2 font-medium text-gray-700">
+              <th className="text-left py-2 font-medium text-espresso">
                 {t("salon.markup")} (%)
               </th>
               <th className="text-right py-2"></th>
@@ -102,7 +102,7 @@ export function PricingSettingsClient() {
                         setValues((v) => ({ ...v, [cat]: e.target.value }))
                       }
                     />
-                    <span className="ml-1 text-gray-500">%</span>
+                    <span className="ml-1 text-muted">%</span>
                   </td>
                   <td className="py-3 text-right">
                     <Button
@@ -113,7 +113,7 @@ export function PricingSettingsClient() {
                       {saving === cat ? "..." : t("common.save")}
                     </Button>
                     {setting && (
-                      <span className="ml-2 text-xs text-gray-400">
+                      <span className="ml-2 text-xs text-muted">
                         {new Date(setting.updatedAt).toLocaleDateString()}
                       </span>
                     )}

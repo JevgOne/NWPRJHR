@@ -36,7 +36,7 @@ const movementTypeColors: Record<string, { bg: string; text: string; label: stri
   RECEIPT: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Příjem" },
   SALE: { bg: "bg-nude-100", text: "text-espresso", label: "Prodej" },
   RETURN: { bg: "bg-amber-100", text: "text-amber-700", label: "Vrácení" },
-  ADJUSTMENT: { bg: "bg-gray-100", text: "text-gray-700", label: "Úprava" },
+  ADJUSTMENT: { bg: "bg-nude-100", text: "text-espresso", label: "Úprava" },
   COMPLAINT: { bg: "bg-rose-100", text: "text-rose-700", label: "Reklamace" },
   SAMPLE: { bg: "bg-purple-100", text: "text-purple-700", label: "Vzorek" },
 };
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-ink">Dashboard</h1>
 
       {/* ── ROW 1: Key stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -188,8 +188,8 @@ export default async function DashboardPage() {
       {/* ── ROW 2: Categories + Stock alerts ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Stock by category */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">Skladem podle kategorie</h2>
+        <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+          <h2 className="text-base font-semibold text-ink mb-4">Skladem podle kategorie</h2>
           <div className="space-y-4">
             {(["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const).map((cat) => {
               const data = catMap[cat];
@@ -202,11 +202,11 @@ export default async function DashboardPage() {
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors.bg} ${colors.text}`}>
                       {categoryLabels[cat]}
                     </span>
-                    <span className="text-sm text-gray-700">
+                    <span className="text-sm text-espresso">
                       {fmtGrams(data.grams)} · {fmtCZK(data.value)}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full bg-nude-100 rounded-full h-2">
                     <div className={`${colors.bar} h-2 rounded-full`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
@@ -216,10 +216,10 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stock alerts */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">{t("lowStock")}</h2>
+        <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+          <h2 className="text-base font-semibold text-ink mb-4">{t("lowStock")}</h2>
           {lowStockVariants.length === 0 ? (
-            <p className="text-sm text-gray-500">{t("noLowStock")}</p>
+            <p className="text-sm text-muted">{t("noLowStock")}</p>
           ) : (
             <div className="space-y-3">
               {lowStockVariants.map((v) => {
@@ -228,10 +228,10 @@ export default async function DashboardPage() {
                 return (
                   <div key={v.variantId} className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-gray-900 truncate">
+                      <p className="text-sm text-ink truncate">
                         {v.productName} · {v.color}
                       </p>
-                      <p className="text-xs text-gray-500">#{v.lengthCm}cm</p>
+                      <p className="text-xs text-muted">#{v.lengthCm}cm</p>
                     </div>
                     <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${alertColor}`}>
                       {remaining} g
@@ -245,12 +245,12 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── ROW 3: Recent movements ── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Poslední pohyby</h2>
+      <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+        <h2 className="text-base font-semibold text-ink mb-4">Poslední pohyby</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <tr className="text-left text-xs font-medium text-muted uppercase tracking-wider">
                 <th className="pb-3 pr-4">Datum</th>
                 <th className="pb-3 pr-4">Typ</th>
                 <th className="pb-3 pr-4">Produkt</th>
@@ -260,7 +260,7 @@ export default async function DashboardPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {recentMovements.map((m) => {
-                const mt = movementTypeColors[m.type] ?? { bg: "bg-gray-100", text: "text-gray-700", label: m.type };
+                const mt = movementTypeColors[m.type] ?? { bg: "bg-nude-100", text: "text-espresso", label: m.type };
                 const sign = m.type === "RECEIPT" || m.type === "RETURN" ? "+" : "-";
                 return (
                   <tr key={m.id}>
@@ -270,13 +270,13 @@ export default async function DashboardPage() {
                         {mt.label}
                       </span>
                     </td>
-                    <td className="py-2.5 pr-4 text-gray-900">
+                    <td className="py-2.5 pr-4 text-ink">
                       {m.variant.product.name} · {m.variant.color} #{m.variant.lengthCm}cm
                     </td>
-                    <td className="py-2.5 pr-4 text-right font-medium text-gray-900 whitespace-nowrap">
+                    <td className="py-2.5 pr-4 text-right font-medium text-ink whitespace-nowrap">
                       {sign}{m.grams} g
                     </td>
-                    <td className="py-2.5 text-gray-500 truncate max-w-[200px]">{m.note || "—"}</td>
+                    <td className="py-2.5 text-muted truncate max-w-[200px]">{m.note || "—"}</td>
                   </tr>
                 );
               })}
@@ -299,11 +299,11 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, sub1, sub2 }: { label: string; value: string; sub1?: string; sub2?: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</p>
-      <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
+    <div className="bg-white rounded-xl border border-line shadow-sm p-5">
+      <p className="text-xs font-semibold text-muted uppercase tracking-wider">{label}</p>
+      <p className="mt-2 text-2xl font-bold text-ink">{value}</p>
       {sub1 && <p className="mt-1 text-sm text-gray-600">{sub1}</p>}
-      {sub2 && <p className="text-xs text-gray-400">{sub2}</p>}
+      {sub2 && <p className="text-xs text-muted">{sub2}</p>}
     </div>
   );
 }
@@ -313,7 +313,7 @@ const badgeColors: Record<string, string> = {
   blue: "bg-nude-50 text-espresso border-nude-200",
   orange: "bg-orange-50 text-orange-700 border-orange-200",
   rose: "bg-rose-50 text-rose-700 border-rose-200",
-  gray: "bg-gray-50 text-gray-600 border-gray-200",
+  gray: "bg-nude-50 text-gray-600 border-line",
 };
 
 function QuickBadge({ label, value, color }: { label: string; value: number; color: string }) {

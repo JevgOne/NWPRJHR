@@ -70,7 +70,7 @@ export function InvoicesClient({ role }: { role: Role }) {
             className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors whitespace-nowrap ${
               statusFilter === s
                 ? "border-rose bg-rose/10 text-espresso"
-                : "border-gray-200 hover:bg-gray-50"
+                : "border-line hover:bg-nude-50"
             }`}
             onClick={() => {
               setStatusFilter(s);
@@ -83,17 +83,17 @@ export function InvoicesClient({ role }: { role: Role }) {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">{tCommon("loading")}</p>
+        <p className="text-muted">{tCommon("loading")}</p>
       ) : invoices.length === 0 ? (
         <Card>
-          <p className="text-gray-500 text-center py-8">-</p>
+          <p className="text-muted text-center py-8">-</p>
         </Card>
       ) : (
         <>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-gray-500">
+                <tr className="border-b text-left text-muted">
                   <th className="py-2 pr-3">{t("invoice")}</th>
                   <th className="py-2 pr-3">{t("dueDate")}</th>
                   <th className="py-2 pr-3">-</th>
@@ -103,7 +103,7 @@ export function InvoicesClient({ role }: { role: Role }) {
               </thead>
               <tbody>
                 {invoices.map((inv) => (
-                  <tr key={inv.id} className="border-b hover:bg-gray-50">
+                  <tr key={inv.id} className="border-b hover:bg-nude-50">
                     <td className="py-2 pr-3">
                       <Link
                         href={`/invoices/${inv.id}`}
@@ -117,7 +117,7 @@ export function InvoicesClient({ role }: { role: Role }) {
                         </span>
                       )}
                     </td>
-                    <td className="py-2 pr-3 text-gray-500">
+                    <td className="py-2 pr-3 text-muted">
                       {new Date(inv.dueDate).toLocaleDateString("cs-CZ")}
                     </td>
                     <td className="py-2 pr-3">{inv.buyerName}</td>
@@ -143,7 +143,7 @@ export function InvoicesClient({ role }: { role: Role }) {
               >
                 {tCommon("back")}
               </Button>
-              <span className="text-sm text-gray-500 self-center">
+              <span className="text-sm text-muted self-center">
                 {page} / {totalPages}
               </span>
               <Button
