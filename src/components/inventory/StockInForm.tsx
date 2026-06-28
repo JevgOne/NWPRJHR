@@ -8,6 +8,13 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
+interface SuccessData {
+  productId: string;
+  productName: string;
+  totalGrams: number;
+  barcode: string;
+}
+
 interface ProductOption {
   id: string;
   name: string;
@@ -51,6 +58,8 @@ export function StockInForm({
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [successData, setSuccessData] = useState<SuccessData | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState("");
 
   const selectedProduct = products.find((p) => p.id === productId);
   const variants = selectedProduct?.variants ?? [];
@@ -112,8 +121,65 @@ export function StockInForm({
       return;
     }
 
-    router.push("/inventory");
-    router.refresh();
+    const result = await res.json();
+    const productUrl = `${window.location.origin}/offer/${result.productId}`;
+    const QRCode = await import("qrcode");
+    const dataUrl = await QRCode.toDataURL(productUrl, {
+      errorCorrectionLevel: "M",
+      width: 200,
+      margin: 2,
+    });
+    setQrDataUrl(dataUrl);
+    setSuccessData({
+      productId: result.productId,
+      productName: result.productName ?? "",
+      totalGrams: parseInt(totalGrams),
+      barcode: result.barcode ?? "",
+    });
+    setSubmitting(false);
+  }
+
+  if (successData) {
+    return (
+      <Card>
+        <div className="flex flex-col items-center py-8 max-w-sm mx-auto text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-espresso">{t("stockedSuccess")}</h2>
+          <p className="text-sm text-muted">
+            {successData.productName} &mdash; {successData.totalGrams} g
+          </p>
+          {qrDataUrl && (
+            <img src={qrDataUrl} alt="QR" width={200} height={200} className="mx-auto" />
+          )}
+          {successData.barcode && (
+            <p className="text-xs text-muted font-mono">{successData.barcode}</p>
+          )}
+          <p className="text-xs text-muted">{t("qrLinkDesc")}</p>
+          <div className="flex gap-3 pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => window.print()}
+            >
+              {t("printLabel")}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                router.push("/inventory");
+                router.refresh();
+              }}
+            >
+              {tCommon("done")}
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
   }
 
   return (

@@ -77,5 +77,13 @@ export async function POST(request: NextRequest) {
     session.user.id
   );
 
-  return NextResponse.json(delivery, { status: 201 });
+  const variant = await prisma.variant.findUnique({
+    where: { id: delivery.variantId },
+    select: { productId: true, product: { select: { name: true } } },
+  });
+
+  return NextResponse.json(
+    { ...delivery, productId: variant?.productId, productName: variant?.product.name },
+    { status: 201 }
+  );
 }

@@ -21,7 +21,11 @@
     "total": "Celkem",
     "all": "Vše",
     "actions": "Akce",
-    "notFound": "Nenalezeno"
+    "notFound": "Nenalezeno",
+    "done": "Hotovo",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno!",
+    "close": "Zavřít"
   },
   "auth": {
     "login": "Přihlášení",
@@ -90,7 +94,8 @@
     "origin": "Původ vlasů",
     "originPlaceholder": "Začněte psát název země...",
     "texture": "Struktura vlasu",
-    "texturePlaceholder": "Vyberte nebo zadejte strukturu..."
+    "texturePlaceholder": "Vyberte nebo zadejte strukturu...",
+    "generatePost": "Generovat příspěvek"
   },
   "texture": {
     "straight": "Rovné",
@@ -155,7 +160,10 @@
     "color": "Barva",
     "length": "Délka",
     "selectColorFirst": "Nejdříve vyberte barvu",
-    "selectColorAndLength": "Vyberte barvu a délku"
+    "selectColorAndLength": "Vyberte barvu a délku",
+    "stockedSuccess": "Naskladněno!",
+    "qrLinkDesc": "QR kód vede na stránku produktu v e-shopu",
+    "printLabel": "Tisknout štítek"
   },
   "order": {
     "order": "Objednávka",

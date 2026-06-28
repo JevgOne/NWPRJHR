@@ -21,7 +21,11 @@
     "total": "Усього",
     "all": "Усі",
     "actions": "Дії",
-    "notFound": "Не знайдено"
+    "notFound": "Не знайдено",
+    "done": "Готово",
+    "copy": "Копіювати",
+    "copied": "Скопійовано!",
+    "close": "Закрити"
   },
   "auth": {
     "login": "Вхід",
@@ -90,7 +94,8 @@
     "origin": "Походження волосся",
     "originPlaceholder": "Почніть вводити назву країни...",
     "texture": "Структура волосся",
-    "texturePlaceholder": "Оберіть або введіть структуру..."
+    "texturePlaceholder": "Оберіть або введіть структуру...",
+    "generatePost": "Згенерувати пост"
   },
   "texture": {
     "straight": "Рівне",
@@ -155,7 +160,10 @@
     "color": "Колір",
     "length": "Довжина",
     "selectColorFirst": "Спочатку оберіть колір",
-    "selectColorAndLength": "Оберіть колір і довжину"
+    "selectColorAndLength": "Оберіть колір і довжину",
+    "stockedSuccess": "Прийнято на склад!",
+    "qrLinkDesc": "QR код веде на сторінку товару в e-shop",
+    "printLabel": "Друкувати етикетку"
   },
   "order": {
     "order": "Замовлення",

@@ -21,7 +21,11 @@
     "total": "Итого",
     "all": "Все",
     "actions": "Действия",
-    "notFound": "Не найдено"
+    "notFound": "Не найдено",
+    "done": "Готово",
+    "copy": "Копировать",
+    "copied": "Скопировано!",
+    "close": "Закрыть"
   },
   "auth": {
     "login": "Вход",
@@ -90,7 +94,8 @@
     "origin": "Происхождение волос",
     "originPlaceholder": "Начните вводить название страны...",
     "texture": "Структура волос",
-    "texturePlaceholder": "Выберите или введите структуру..."
+    "texturePlaceholder": "Выберите или введите структуру...",
+    "generatePost": "Сгенерировать пост"
   },
   "texture": {
     "straight": "Прямые",
@@ -155,7 +160,10 @@
     "color": "Цвет",
     "length": "Длина",
     "selectColorFirst": "Сначала выберите цвет",
-    "selectColorAndLength": "Выберите цвет и длину"
+    "selectColorAndLength": "Выберите цвет и длину",
+    "stockedSuccess": "Принято на склад!",
+    "qrLinkDesc": "QR код ведёт на страницу товара в интернет-магазине",
+    "printLabel": "Печать этикетки"
   },
   "order": {
     "order": "Заказ",
