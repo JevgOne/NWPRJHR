@@ -157,13 +157,17 @@ export function ProductsShowcase() {
       .finally(() => setLoading(false));
   }, [activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeSearch]);
 
-  const productLengths = (p: PublicProduct) => [
-    ...new Set(p.variants.map((v) => v.lengthCm)),
-  ].sort((a, b) => a - b);
-
-  const productColors = (p: PublicProduct) => [
-    ...new Set(p.variants.map((v) => v.color)),
-  ];
+  // Flatten products into individual variant cards
+  const variantCards = useMemo(() => {
+    return products.flatMap((p) =>
+      p.variants
+        .filter((v) => v.retailPricePerGram > 0)
+        .map((v) => ({
+          product: p,
+          variant: v,
+        }))
+    ).sort((a, b) => b.variant.availableGrams - a.variant.availableGrams || a.variant.retailPricePerGram - b.variant.retailPricePerGram);
+  }, [products]);
 
   const categoryLabel = (cat: string) => {
     if (cat === "ALL") return tCommon("all");
@@ -399,13 +403,13 @@ export function ProductsShowcase() {
       {/* Results count */}
       {!loading && (
         <div className="text-xs text-muted mb-3">
-          {t("offer.productCount", { count: products.length })}
+          {t("offer.productCount", { count: variantCards.length })}
         </div>
       )}
 
       {loading ? (
         <p className="text-muted">{tCommon("loading")}</p>
-      ) : products.length === 0 ? (
+      ) : variantCards.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted mb-3">{t("products.noProducts")}</p>
           {hasActiveFilters && (
@@ -419,14 +423,14 @@ export function ProductsShowcase() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {products.map((p) => {
-            const prices = p.variants.map((v) => v.retailPricePerGram).filter((pr) => pr > 0);
-            const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+          {variantCards.map(({ product: p, variant: v }) => {
+            const { nameKey } = getHairColor(v.color);
+            const inStock = v.availableGrams > 0;
 
             return (
               <div
-                key={p.id}
-                className="bg-white rounded-xl border border-line overflow-hidden hover:shadow-md transition-shadow"
+                key={`${p.id}-${v.lengthCm}-${v.color}`}
+                className={`bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock ? "border-line" : "border-line opacity-60"}`}
               >
                 {/* Product image */}
                 <Link href={`/offer/${p.id}`}>
@@ -442,7 +446,7 @@ export function ProductsShowcase() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     )}
-                    {/* Category badge overlay */}
+                    {/* Category badge */}
                     <button
                       onClick={(e) => { e.preventDefault(); setFilter("category", p.category); }}
                       className={`absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold shadow-sm cursor-pointer ${(categoryBadgeColors[p.category]?.base ?? "bg-rose text-white")} ${(categoryBadgeColors[p.category]?.hover ?? "hover:bg-rose-deep")}`}
@@ -453,9 +457,9 @@ export function ProductsShowcase() {
                 </Link>
 
                 <div className="p-2.5">
-                  {/* Badges: origin, texture */}
-                  <div className="flex flex-wrap items-center gap-1 mb-1">
-                    {p.origin && (
+                  {/* Origin badge */}
+                  {p.origin && (
+                    <div className="mb-1">
                       <button
                         onClick={() => toggleFilter("origin", p.origin!)}
                         className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
@@ -466,35 +470,34 @@ export function ProductsShowcase() {
                       >
                         {getOriginFlag(p.origin)} {originName(p.origin)}
                       </button>
-                    )}
-                    {p.texture && (
-                      <button
-                        onClick={() => toggleFilter("texture", p.texture!)}
-                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                          activeTexture === p.texture
-                            ? "bg-violet-200 text-violet-800 ring-1 ring-violet-400"
-                            : "bg-violet-100 text-violet-700 hover:bg-violet-200"
-                        }`}
-                      >
-                        <TextureSwatch texture={p.texture} size={14} />
-                        {p.texture}
-                      </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Product name */}
                   <Link href={`/offer/${p.id}`}>
-                    <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1.5">
+                    <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1">
                       {localizedName(p)}
                     </h3>
                   </Link>
 
-                  {/* Price */}
-                  {minPrice > 0 && (
+                  {/* Exact length + color */}
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <span className="text-[11px] font-medium text-ink">{v.lengthCm} cm</span>
+                    <span className="w-4 h-4 rounded-full border border-line overflow-hidden flex-shrink-0">
+                      <img src={`/swatches/color-${v.color}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
+                    </span>
+                    <span className="text-[10px] text-muted">{colorName(nameKey)}</span>
+                  </div>
+
+                  {/* Price + stock */}
+                  <div className="flex items-baseline justify-between">
                     <div className="text-sm font-bold text-ink">
-                      od {(minPrice / 100).toFixed(0)} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+                      {(v.retailPricePerGram / 100).toFixed(0)} Kč<span className="text-[10px] font-normal text-muted">/g</span>
                     </div>
-                  )}
+                    <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
+                      {inStock ? `${v.availableGrams} g` : t("inquiry.outOfStock")}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
