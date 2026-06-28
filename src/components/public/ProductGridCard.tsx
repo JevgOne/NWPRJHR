@@ -156,42 +156,43 @@ export function ProductGridCard({
       {isInteractive ? (
         <Link href={href}>
           <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1">
-            {localizedName}
+            {categoryLabel}
           </h3>
         </Link>
       ) : (
         <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 mb-1">
-          {localizedName}
+          {categoryLabel}
         </h3>
       )}
 
-      {/* Texture + length */}
-      <div className="flex flex-wrap items-center gap-1 mb-1">
-        {p.texture && (
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-nude-100 text-[10px] font-medium text-espresso">
-            <TextureSwatch texture={p.texture} size={12} />
-            {textureLabel}
-          </span>
-        )}
-        {uniqueLengths.map((cm) => (
-          <span key={cm} className="px-1.5 py-0.5 rounded bg-nude-100 text-[10px] font-medium text-espresso">
-            {cm} cm
-          </span>
-        ))}
-      </div>
+      {/* Texture */}
+      {p.texture && (
+        <div className="flex items-center gap-1.5 mb-1">
+          <TextureSwatch texture={p.texture} size={14} />
+          <span className="text-[10px] text-muted">{textureLabel}</span>
+        </div>
+      )}
 
-      {/* Color circle + shade name */}
+      {/* Color */}
       {uniqueColors.length > 0 && (
-        <div className="flex items-center gap-1.5 mb-1.5">
+        <div className="flex items-center gap-1.5 mb-1">
           {uniqueColors.map((code) => (
             <div key={code} className="flex items-center gap-1">
               <span
-                className="w-4 h-4 rounded-full border border-line flex-shrink-0"
+                className="w-3.5 h-3.5 rounded-full border border-line flex-shrink-0"
                 style={{ backgroundColor: getHairColor(code).hex }}
               />
               <span className="text-[10px] text-muted">{t(`colors.${getHairColor(code).nameKey}`)}</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Length */}
+      {uniqueLengths.length > 0 && (
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <span className="text-[10px] text-muted">📏</span>
+          <span className="text-[10px] text-muted">{uniqueLengths.map(cm => `${cm} cm`).join(", ")}</span>
         </div>
       )}
 
