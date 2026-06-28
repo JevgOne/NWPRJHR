@@ -13,11 +13,7 @@ export async function GET(request: NextRequest) {
     const search = sp.get("search");
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
-      archived: false,
-      texture: { not: null },
-      origin: { not: null },
-    };
+    const where: any = { archived: false };
     if (category) {
       where.category = category;
     }
