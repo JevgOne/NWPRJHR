@@ -77,7 +77,6 @@ export function ProductGridCard({
   const uniqueColors = [...new Set(stockedVariants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
   const priceVariants = p.variants.filter(v => v.retailPricePerGram > 0);
   const minRetailPrice = priceVariants.length > 0 ? Math.min(...priceVariants.map(v => v.retailPricePerGram)) : 0;
-  const maxRetailPrice = priceVariants.length > 0 ? Math.max(...priceVariants.map(v => v.retailPricePerGram)) : 0;
   const totalStock = p.variants.reduce((sum, v) => sum + v.availableGrams, 0);
   const inStock = totalStock > 0;
 
@@ -223,9 +222,12 @@ export function ProductGridCard({
       {uniqueColors.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-1.5">
           {uniqueColors.slice(0, 6).map((code) => (
-            <span key={code} className="w-4 h-4 rounded-full border border-line overflow-hidden flex-shrink-0">
-              <img src={`/swatches/color-${code}.png`} alt={t(`colors.${getHairColor(code).nameKey}`)} className="w-full h-full object-cover" />
-            </span>
+            <span
+              key={code}
+              className="w-4 h-4 rounded-full border border-line flex-shrink-0"
+              style={{ backgroundColor: getHairColor(code).hex }}
+              title={t(`colors.${getHairColor(code).nameKey}`)}
+            />
           ))}
           {uniqueColors.length > 6 && (
             <span className="text-[10px] text-muted self-center">+{uniqueColors.length - 6}</span>
@@ -233,12 +235,11 @@ export function ProductGridCard({
         </div>
       )}
 
-      {/* Price range + total stock */}
+      {/* Price + total stock */}
       <div className="flex items-baseline justify-between">
         {(() => {
           if (minRetailPrice === 0) return null;
-          const minDisplay = (minRetailPrice / 100).toFixed(0);
-          const maxDisplay = (maxRetailPrice / 100).toFixed(0);
+          const priceDisplay = (minRetailPrice / 100).toFixed(0);
 
           if (userRole === "SALON") {
             const wholesaleVariants = p.variants.filter(v => v.wholesalePricePerGram && v.wholesalePricePerGram > 0);
@@ -248,9 +249,9 @@ export function ProductGridCard({
               return (
                 <div>
                   <span className="text-[10px] text-muted line-through">
-                    {minRetailPrice === maxRetailPrice ? `${minDisplay} Kc/g` : `${minDisplay}-${maxDisplay} Kc/g`}
+                    {priceDisplay} Kc/g
                   </span>
-                  <div className="text-sm font-bold text-rose">od {b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
+                  <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
                 </div>
               );
             }
@@ -261,19 +262,16 @@ export function ProductGridCard({
             return (
               <div>
                 <span className="text-[10px] text-muted line-through">
-                  {minRetailPrice === maxRetailPrice ? `${minDisplay} Kc/g` : `${minDisplay}-${maxDisplay} Kc/g`}
+                  {priceDisplay} Kc/g
                 </span>
-                <div className="text-sm font-bold text-rose">od {b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
+                <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
               </div>
             );
           }
 
-          const priceText = minRetailPrice === maxRetailPrice
-            ? `${minDisplay} Kc`
-            : `${minDisplay}-${maxDisplay} Kc`;
           return (
             <div className="text-sm font-bold text-ink">
-              {priceText}<span className="text-[10px] font-normal text-muted">/g</span>
+              {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/g</span>
             </div>
           );
         })()}
