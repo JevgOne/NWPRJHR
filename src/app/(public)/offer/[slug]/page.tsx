@@ -360,7 +360,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.lengthsLabel")}</div>
                   <div className="text-sm font-semibold text-ink">
-                    {lengths[0]}–{lengths[lengths.length - 1]} cm
+                    {lengths.join(", ")} cm
                   </div>
                 </div>
               </div>

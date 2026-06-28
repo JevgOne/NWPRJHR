@@ -2,16 +2,24 @@ import { prisma } from "../src/lib/db";
 import { slugify } from "../src/lib/slugify";
 
 async function main() {
+  // Regenerate ALL slugs (name only, no processing type)
   const products = await prisma.product.findMany({
-    where: { slug: null },
-    select: { id: true, name: true, processingType: true },
+    select: { id: true, name: true, slug: true },
   });
 
-  console.log(`Found ${products.length} products without slugs`);
+  console.log(`Found ${products.length} products to update`);
 
+  // First pass: clear all slugs to avoid conflicts
   for (const product of products) {
-    const baseName = `${product.name} ${product.processingType.replace(/_/g, "-")}`;
-    let slug = slugify(baseName);
+    await prisma.product.update({
+      where: { id: product.id },
+      data: { slug: null },
+    });
+  }
+
+  // Second pass: set new slugs
+  for (const product of products) {
+    let slug = slugify(product.name);
 
     // Ensure uniqueness
     let suffix = 0;
@@ -25,7 +33,7 @@ async function main() {
       where: { id: product.id },
       data: { slug: candidate },
     });
-    console.log(`  ${product.name} (${product.processingType}) -> ${candidate}`);
+    console.log(`  ${product.name}: ${product.slug} -> ${candidate}`);
   }
 
   console.log("Done!");
