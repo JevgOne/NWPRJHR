@@ -11,7 +11,7 @@ import { getOriginFlag } from "@/lib/origin-flags";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
-import { getStockNumbers } from "@/lib/stock";
+import { getAllStockNumbers } from "@/lib/stock";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -48,13 +48,12 @@ async function getProduct(id: string) {
   });
   if (!product) return null;
 
-  // Fetch stock for all variants
-  const variantsWithStock = await Promise.all(
-    product.variants.map(async (v) => {
-      const stock = await getStockNumbers(v.id);
-      return { ...v, availableGrams: stock.availableGrams };
-    })
-  );
+  // Bulk stock fetch — 2 SQL queries instead of N
+  const stockMap = await getAllStockNumbers();
+  const variantsWithStock = product.variants.map((v) => ({
+    ...v,
+    availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
+  }));
 
   return {
     ...product,

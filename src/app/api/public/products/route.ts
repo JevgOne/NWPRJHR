@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getStockNumbers } from "@/lib/stock";
+import { getAllStockNumbers } from "@/lib/stock";
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,23 +70,21 @@ export async function GET(request: NextRequest) {
       orderBy: { name: "asc" },
     });
 
-    const withStock = await Promise.all(
-      products.map(async (p) => {
-        const variantsWithStock = await Promise.all(
-          p.variants.map(async (v) => {
-            const stock = await getStockNumbers(v.id);
-            return {
-              lengthCm: v.lengthCm,
-              color: v.color,
-              retailPricePerGram: v.retailPricePerGram,
-              wholesalePricePerGram: v.wholesalePricePerGram,
-              availableGrams: stock.availableGrams,
-            };
-          })
-        );
+    // Single bulk query for all stock — 2 SQL queries instead of 468
+    const stockMap = await getAllStockNumbers();
 
-        const inStock = variantsWithStock.filter((v) => v.availableGrams > 0);
-        if (inStock.length === 0) return null;
+    const parsed = products
+      .map((p) => {
+        const variantsWithStock = p.variants.map((v) => {
+          const stock = stockMap.get(v.id);
+          return {
+            lengthCm: v.lengthCm,
+            color: v.color,
+            retailPricePerGram: v.retailPricePerGram,
+            wholesalePricePerGram: v.wholesalePricePerGram,
+            availableGrams: stock?.availableGrams ?? 0,
+          };
+        });
 
         return {
           id: p.id,
@@ -101,12 +99,9 @@ export async function GET(request: NextRequest) {
           origin: p.origin,
           texture: p.texture,
           photos: JSON.parse(p.photos || "[]"),
-          variants: inStock,
+          variants: variantsWithStock,
         };
-      })
-    );
-
-    const parsed = withStock.filter(Boolean);
+      });
 
     return NextResponse.json(
       { data: parsed },
