@@ -32,8 +32,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const tColors = useTranslations("public.colors");
   const router = useRouter();
 
-  // Wizard state
-  const [step, setStep] = useState(1);
+  // Progressive form state
   const [category, setCategory] = useState<Category | "">("");
   const [origin, setOrigin] = useState("");
   const [texture, setTexture] = useState("");
@@ -41,7 +40,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [lengthCm, setLengthCm] = useState<number | null>(null);
   const [customLength, setCustomLength] = useState("");
 
-  // Form state (step 6)
+  // Details form state
   const [supplierId, setSupplierId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
   const [totalGrams, setTotalGrams] = useState("");
@@ -64,15 +63,24 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     }
   };
 
+  // Reset from a given level forward
+  function resetFrom(level: number) {
+    if (level <= 1) { setCategory(""); setOrigin(""); setTexture(""); setColor(""); setLengthCm(null); setCustomLength(""); }
+    if (level === 2) { setOrigin(""); setTexture(""); setColor(""); setLengthCm(null); setCustomLength(""); }
+    if (level === 3) { setTexture(""); setColor(""); setLengthCm(null); setCustomLength(""); }
+    if (level === 4) { setColor(""); setLengthCm(null); setCustomLength(""); }
+    if (level === 5) { setLengthCm(null); setCustomLength(""); }
+  }
+
   // Badge row showing selected attributes
   function BadgeRow() {
-    const badges: { label: string; step: number }[] = [];
+    const badges: { label: string; level: number }[] = [];
     if (category)
-      badges.push({ label: tCat(category.toLowerCase() as "virgin"), step: 1 });
-    if (origin) badges.push({ label: origin, step: 2 });
-    if (texture) badges.push({ label: texture, step: 3 });
-    if (color) badges.push({ label: colorName(color), step: 4 });
-    if (lengthCm) badges.push({ label: `${lengthCm} cm`, step: 5 });
+      badges.push({ label: tCat(category.toLowerCase() as "virgin"), level: 1 });
+    if (origin) badges.push({ label: origin, level: 2 });
+    if (texture) badges.push({ label: texture, level: 3 });
+    if (color) badges.push({ label: colorName(color), level: 4 });
+    if (lengthCm) badges.push({ label: `${lengthCm} cm`, level: 5 });
 
     if (badges.length === 0) return null;
 
@@ -80,9 +88,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       <div className="flex flex-wrap gap-1.5 mb-4">
         {badges.map((b) => (
           <button
-            key={b.step}
+            key={b.level}
             type="button"
-            onClick={() => setStep(b.step)}
+            onClick={() => resetFrom(b.level)}
             className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-nude-100 text-espresso hover:bg-nude-200 transition-colors"
           >
             {b.label}
@@ -91,32 +99,6 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
         ))}
       </div>
     );
-  }
-
-  function selectCategory(cat: Category) {
-    setCategory(cat);
-    setStep(2);
-  }
-
-  function selectOrigin(o: string) {
-    setOrigin(o);
-    setStep(3);
-  }
-
-  function selectTexture(t: string) {
-    setTexture(t);
-    setStep(4);
-  }
-
-  function selectColor(c: string) {
-    setColor(c);
-    setStep(5);
-  }
-
-  function selectLength(cm: number) {
-    setLengthCm(cm);
-    setCustomLength("");
-    setStep(6);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -223,10 +205,8 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             <Button
               type="button"
               onClick={() => {
-                // Reset wizard for next stock-in
                 setSuccessData(null);
                 setQrDataUrl("");
-                setStep(1);
                 setCategory("");
                 setOrigin("");
                 setTexture("");
@@ -262,20 +242,8 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     <Card>
       <BadgeRow />
 
-      {/* Step indicator */}
-      <div className="flex items-center gap-1 mb-6">
-        {[1, 2, 3, 4, 5, 6].map((s) => (
-          <div
-            key={s}
-            className={`h-1 flex-1 rounded-full transition-colors ${
-              s <= step ? "bg-rose" : "bg-line"
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Step 1: Category */}
-      {step === 1 && (
+      <div className="space-y-6">
+        {/* Category — always visible */}
         <div>
           <h2 className="text-sm font-medium text-espresso mb-3">
             {t("wizCategory")}
@@ -285,7 +253,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
               <button
                 key={cat}
                 type="button"
-                onClick={() => selectCategory(cat)}
+                onClick={() => { setCategory(cat); resetFrom(2); }}
                 className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
                   category === cat
                     ? "border-rose bg-rose/5 text-ink"
@@ -297,227 +265,227 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             ))}
           </div>
         </div>
-      )}
 
-      {/* Step 2: Origin */}
-      {step === 2 && (
-        <div>
-          <h2 className="text-sm font-medium text-espresso mb-3">
-            {t("wizOrigin")}
-          </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-            {ORIGIN_OPTIONS.map((o) => (
-              <button
-                key={o.name}
-                type="button"
-                onClick={() => selectOrigin(o.name)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 text-xs font-medium transition-colors ${
-                  origin === o.name
-                    ? "border-rose bg-rose/5 text-ink"
-                    : "border-line bg-white text-muted hover:border-espresso/30"
-                }`}
-              >
-                <span className="text-xl">{o.flag}</span>
-                {o.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Texture */}
-      {step === 3 && (
-        <div>
-          <h2 className="text-sm font-medium text-espresso mb-3">
-            {t("wizTexture")}
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {TEXTURE_OPTIONS.map((tex) => (
-              <button
-                key={tex.name}
-                type="button"
-                onClick={() => selectTexture(tex.name)}
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 text-sm font-medium transition-colors ${
-                  texture === tex.name
-                    ? "border-rose bg-rose/5 text-ink"
-                    : "border-line bg-white text-muted hover:border-espresso/30"
-                }`}
-              >
-                <span className="text-2xl">{tex.icon}</span>
-                {tex.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Step 4: Color */}
-      {step === 4 && (
-        <div>
-          <h2 className="text-sm font-medium text-espresso mb-3">
-            {t("color")}
-          </h2>
-          <div className="grid grid-cols-5 gap-3">
-            {COLOR_CODES.map((code) => {
-              const hc = getHairColor(code);
-              return (
+        {/* Origin — after category */}
+        {category && (
+          <div>
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              {t("wizOrigin")}
+            </h2>
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+              {ORIGIN_OPTIONS.map((o) => (
                 <button
-                  key={code}
+                  key={o.name}
                   type="button"
-                  onClick={() => selectColor(code)}
-                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-colors ${
-                    color === code
-                      ? "border-rose bg-rose/5"
-                      : "border-line bg-white hover:border-espresso/30"
+                  onClick={() => { setOrigin(o.name); resetFrom(3); }}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 text-xs font-medium transition-colors ${
+                    origin === o.name
+                      ? "border-rose bg-rose/5 text-ink"
+                      : "border-line bg-white text-muted hover:border-espresso/30"
                   }`}
                 >
-                  <span
-                    className="w-10 h-10 rounded-full border border-line flex-shrink-0"
-                    style={{ backgroundColor: hc.hex }}
-                  />
-                  <span className="text-xs font-medium text-ink">
-                    {colorName(code)}
-                  </span>
+                  <span className="text-xl">{o.flag}</span>
+                  {o.name}
                 </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Step 5: Length */}
-      {step === 5 && (
-        <div>
-          <h2 className="text-sm font-medium text-espresso mb-3">
-            {t("length")}
-          </h2>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {LENGTH_PRESETS.map((cm) => (
-              <button
-                key={cm}
-                type="button"
-                onClick={() => selectLength(cm)}
-                className={`px-4 py-2 rounded-xl border-2 text-sm font-medium transition-colors ${
-                  lengthCm === cm
-                    ? "border-rose bg-rose/5 text-ink"
-                    : "border-line bg-white text-muted hover:border-espresso/30"
-                }`}
-              >
-                {cm} cm
-              </button>
-            ))}
-          </div>
-          <div className="flex items-end gap-2 max-w-xs">
-            <Input
-              label={t("wizCustomLength")}
-              type="number"
-              value={customLength}
-              onChange={(e) => setCustomLength(e.target.value)}
-              min={10}
-              max={150}
-              placeholder="cm"
-            />
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={!customLength || parseInt(customLength) < 10}
-              onClick={() => selectLength(parseInt(customLength))}
-            >
-              OK
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 6: Details form */}
-      {step === 6 && (
-        <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
-          <h2 className="text-sm font-medium text-espresso mb-1">
-            {t("wizDetails")}
-          </h2>
-
-          {/* Supplier */}
-          <div>
-            <label className="block text-sm font-medium text-espresso mb-1">
-              {t("supplier")}
-            </label>
-            <select
-              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-              value={supplierId}
-              onChange={(e) => setSupplierId(e.target.value)}
-              required
-            >
-              <option value="">{t("selectSupplier")}</option>
-              {suppliers.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
               ))}
-            </select>
+            </div>
           </div>
+        )}
 
-          {/* Purchase price */}
-          <Input
-            label={`${t("purchasePrice")} (Kc/g)`}
-            type="number"
-            value={purchasePrice}
-            onChange={(e) => setPurchasePrice(e.target.value)}
-            required
-            min={1}
-            step="0.01"
-          />
+        {/* Texture — after origin */}
+        {category && origin && (
+          <div>
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              {t("wizTexture")}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {TEXTURE_OPTIONS.map((tex) => (
+                <button
+                  key={tex.name}
+                  type="button"
+                  onClick={() => { setTexture(tex.name); resetFrom(4); }}
+                  className={`flex items-center gap-3 p-4 rounded-xl border-2 text-sm font-medium transition-colors ${
+                    texture === tex.name
+                      ? "border-rose bg-rose/5 text-ink"
+                      : "border-line bg-white text-muted hover:border-espresso/30"
+                  }`}
+                >
+                  <span className="text-2xl">{tex.icon}</span>
+                  {tex.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
-          {/* Grams + Date */}
-          <div className="grid grid-cols-2 gap-4">
+        {/* Color — after texture */}
+        {category && origin && texture && (
+          <div>
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              {t("color")}
+            </h2>
+            <div className="grid grid-cols-5 gap-3">
+              {COLOR_CODES.map((code) => {
+                const hc = getHairColor(code);
+                return (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => { setColor(code); resetFrom(5); }}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-colors ${
+                      color === code
+                        ? "border-rose bg-rose/5"
+                        : "border-line bg-white hover:border-espresso/30"
+                    }`}
+                  >
+                    <span
+                      className="w-10 h-10 rounded-full border border-line flex-shrink-0"
+                      style={{ backgroundColor: hc.hex }}
+                    />
+                    <span className="text-xs font-medium text-ink">
+                      {colorName(code)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Length — after color */}
+        {category && origin && texture && color && (
+          <div>
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              {t("length")}
+            </h2>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {LENGTH_PRESETS.map((cm) => (
+                <button
+                  key={cm}
+                  type="button"
+                  onClick={() => { setLengthCm(cm); setCustomLength(""); }}
+                  className={`px-4 py-2 rounded-xl border-2 text-sm font-medium transition-colors ${
+                    lengthCm === cm
+                      ? "border-rose bg-rose/5 text-ink"
+                      : "border-line bg-white text-muted hover:border-espresso/30"
+                  }`}
+                >
+                  {cm} cm
+                </button>
+              ))}
+            </div>
+            <div className="flex items-end gap-2 max-w-xs">
+              <Input
+                label={t("wizCustomLength")}
+                type="number"
+                value={customLength}
+                onChange={(e) => setCustomLength(e.target.value)}
+                min={10}
+                max={150}
+                placeholder="cm"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={!customLength || parseInt(customLength) < 10}
+                onClick={() => { setLengthCm(parseInt(customLength)); setCustomLength(""); }}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Details — after length */}
+        {category && origin && texture && color && lengthCm && (
+          <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
+            <h2 className="text-sm font-medium text-espresso mb-1">
+              {t("wizDetails")}
+            </h2>
+
+            {/* Supplier */}
+            <div>
+              <label className="block text-sm font-medium text-espresso mb-1">
+                {t("supplier")}
+              </label>
+              <select
+                className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
+                value={supplierId}
+                onChange={(e) => setSupplierId(e.target.value)}
+                required
+              >
+                <option value="">{t("selectSupplier")}</option>
+                {suppliers.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Purchase price */}
             <Input
-              label={t("totalGrams")}
+              label={`${t("purchasePrice")} (Kc/g)`}
               type="number"
-              value={totalGrams}
-              onChange={(e) => setTotalGrams(e.target.value)}
+              value={purchasePrice}
+              onChange={(e) => setPurchasePrice(e.target.value)}
               required
               min={1}
+              step="0.01"
             />
-            <Input
-              label={t("stockedAt")}
-              type="date"
-              value={stockedAt}
-              onChange={(e) => setStockedAt(e.target.value)}
-            />
-          </div>
 
-          {/* Note */}
-          <div>
-            <label className="block text-sm font-medium text-espresso mb-1">
-              {t("note")}
-            </label>
-            <textarea
-              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-              rows={2}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
-          </div>
-
-          {error && (
-            <div className="text-sm text-red-600 bg-red-50 rounded-lg p-3">
-              {error}
+            {/* Grams + Date */}
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label={t("totalGrams")}
+                type="number"
+                value={totalGrams}
+                onChange={(e) => setTotalGrams(e.target.value)}
+                required
+                min={1}
+              />
+              <Input
+                label={t("stockedAt")}
+                type="date"
+                value={stockedAt}
+                onChange={(e) => setStockedAt(e.target.value)}
+              />
             </div>
-          )}
 
-          <div className="flex gap-3">
-            <Button type="submit" disabled={submitting}>
-              {submitting ? tCommon("loading") : t("stockIn")}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => router.push("/inventory")}
-            >
-              {tCommon("cancel")}
-            </Button>
-          </div>
-        </form>
-      )}
+            {/* Note */}
+            <div>
+              <label className="block text-sm font-medium text-espresso mb-1">
+                {t("note")}
+              </label>
+              <textarea
+                className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
+                rows={2}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </div>
+
+            {error && (
+              <div className="text-sm text-red-600 bg-red-50 rounded-lg p-3">
+                {error}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button type="submit" disabled={submitting}>
+                {submitting ? tCommon("loading") : t("stockIn")}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => router.push("/inventory")}
+              >
+                {tCommon("cancel")}
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
     </Card>
   );
 }

@@ -12,16 +12,16 @@ export interface HairColor {
 }
 
 export const HAIR_COLORS: Record<string, HairColor> = {
-  "1":  { hex: "#FAF0DC", nameKey: "c1" },
-  "2":  { hex: "#E8D5A8", nameKey: "c2" },
-  "3":  { hex: "#D4B06A", nameKey: "c3" },
-  "4":  { hex: "#C49A48", nameKey: "c4" },
-  "5":  { hex: "#A07030", nameKey: "c5" },
-  "6":  { hex: "#7A5230", nameKey: "c6" },
-  "7":  { hex: "#5C3A1E", nameKey: "c7" },
-  "8":  { hex: "#3E2512", nameKey: "c8" },
-  "9":  { hex: "#2A1A0C", nameKey: "c9" },
-  "10": { hex: "#0F0A06", nameKey: "c10" },
+  "1":  { hex: "#F5E6C8", nameKey: "c1" },
+  "2":  { hex: "#E6C47C", nameKey: "c2" },
+  "3":  { hex: "#D4A84B", nameKey: "c3" },
+  "4":  { hex: "#C08A3E", nameKey: "c4" },
+  "5":  { hex: "#A0673A", nameKey: "c5" },
+  "6":  { hex: "#8B5E3C", nameKey: "c6" },
+  "7":  { hex: "#6B4226", nameKey: "c7" },
+  "8":  { hex: "#4A2912", nameKey: "c8" },
+  "9":  { hex: "#2C1608", nameKey: "c9" },
+  "10": { hex: "#1A0E05", nameKey: "c10" },
 };
 
 /** Ordered list of all color codes for display */
