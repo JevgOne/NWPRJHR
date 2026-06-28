@@ -13,6 +13,7 @@ type Platform = "instagram" | "facebook";
 interface SocialPostModalProps {
   product: {
     id: string;
+    slug?: string | null;
     name: string;
     category: string;
     processingType: string;

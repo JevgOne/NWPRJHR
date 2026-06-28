@@ -122,7 +122,7 @@ export function StockInForm({
     }
 
     const result = await res.json();
-    const productUrl = `${window.location.origin}/offer/${result.productId}`;
+    const productUrl = `${window.location.origin}/offer/${result.productSlug ?? result.productId}`;
     const QRCode = await import("qrcode");
     const dataUrl = await QRCode.toDataURL(productUrl, {
       errorCorrectionLevel: "M",

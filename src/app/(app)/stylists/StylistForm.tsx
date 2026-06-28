@@ -3,19 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Stylist } from "@prisma/client";
+import { slugify } from "@/lib/slugify";
 
 interface Props {
   stylist?: Stylist;
   salons: Array<{ id: string; name: string }>;
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 }
 
 export function StylistForm({ stylist, salons }: Props) {

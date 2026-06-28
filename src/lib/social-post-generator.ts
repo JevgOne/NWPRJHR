@@ -7,6 +7,7 @@ interface PostProductData {
   origin?: string | null;
   texture?: string | null;
   id: string;
+  slug?: string | null;
   variants?: Array<{
     lengthCm: number;
     color: string;
@@ -52,8 +53,8 @@ function getProductStats(variants: PostProductData["variants"]) {
   };
 }
 
-function buildProductUrl(productId: string): string {
-  return `https://www.hairland.cz/offer/${productId}`;
+function buildProductUrl(product: { id: string; slug?: string | null }): string {
+  return `https://www.hairland.cz/offer/${product.slug ?? product.id}`;
 }
 
 export function generateInstagramPost(product: PostProductData): string {
@@ -64,7 +65,7 @@ export function generateInstagramPost(product: PostProductData): string {
   const stats = getProductStats(product.variants);
   const flag = product.origin ? getOriginFlag(product.origin) : "";
   const originText = product.origin ? `${flag} ${product.origin}` : "";
-  const url = buildProductUrl(product.id);
+  const url = buildProductUrl(product);
 
   const lines: string[] = [];
   lines.push(`${emoji} ${product.name}`);
@@ -124,7 +125,7 @@ export function generateFacebookPost(product: PostProductData): string {
   const stats = getProductStats(product.variants);
   const flag = product.origin ? getOriginFlag(product.origin) : "";
   const originText = product.origin ? `${flag} ${product.origin}` : "";
-  const url = buildProductUrl(product.id);
+  const url = buildProductUrl(product);
 
   const lines: string[] = [];
   lines.push(`${emoji} Nov\u00e9 na sklad\u011b: ${product.name}!`);

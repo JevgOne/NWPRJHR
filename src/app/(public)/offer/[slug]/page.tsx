@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -14,38 +14,55 @@ import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
-async function getProduct(id: string) {
-  const product = await prisma.product.findUnique({
-    where: { id },
+const productSelect = {
+  id: true,
+  slug: true,
+  name: true,
+  nameUk: true,
+  nameRu: true,
+  description: true,
+  descriptionUk: true,
+  descriptionRu: true,
+  category: true,
+  processingType: true,
+  origin: true,
+  texture: true,
+  photos: true,
+  archived: true,
+  variants: {
+    where: { active: true },
     select: {
       id: true,
-      name: true,
-      nameUk: true,
-      nameRu: true,
-      description: true,
-      descriptionUk: true,
-      descriptionRu: true,
-      category: true,
-      processingType: true,
-      origin: true,
-      texture: true,
-      photos: true,
-      archived: true,
-      variants: {
-        where: { active: true },
-        select: {
-          id: true,
-          lengthCm: true,
-          color: true,
-          retailPricePerGram: true,
-          wholesalePricePerGram: true,
-        },
-      },
+      lengthCm: true,
+      color: true,
+      retailPricePerGram: true,
+      wholesalePricePerGram: true,
     },
+  },
+} as const;
+
+async function getProduct(slugOrId: string) {
+  // Try slug first
+  let product = await prisma.product.findUnique({
+    where: { slug: slugOrId },
+    select: productSelect,
   });
+
+  if (!product) {
+    // Fallback: try as CUID id for old URLs
+    product = await prisma.product.findUnique({
+      where: { id: slugOrId },
+      select: productSelect,
+    });
+    // If found by ID and has slug, redirect to slug URL
+    if (product?.slug) {
+      redirect(`/offer/${product.slug}`);
+    }
+  }
+
   if (!product) return null;
 
   // Bulk stock fetch — 2 SQL queries instead of N
@@ -69,8 +86,8 @@ const PROCESSING_LABELS: Record<string, Record<string, string>> = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const product = await getProduct(id);
+  const { slug } = await params;
+  const product = await getProduct(slug);
   const t = await getTranslations("public.productDetail");
   const tCategory = await getTranslations("category");
   const locale = await getLocale();
@@ -100,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/offer/${id}` },
+    alternates: { canonical: `/offer/${product.slug ?? slug}` },
     openGraph: firstPhoto ? {
       images: [{ url: firstPhoto, alt: title }],
       type: "website",
@@ -109,8 +126,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { id } = await params;
-  const product = await getProduct(id);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     notFound();
@@ -215,7 +232,7 @@ export default async function ProductDetailPage({ params }: Props) {
       availability: product.archived
         ? "https://schema.org/Discontinued"
         : "https://schema.org/InStock",
-      url: `https://www.hairland.cz/offer/${product.id}`,
+      url: `https://www.hairland.cz/offer/${product.slug ?? product.id}`,
     },
   };
 

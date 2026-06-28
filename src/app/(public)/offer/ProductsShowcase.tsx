@@ -19,6 +19,7 @@ interface PublicVariant {
 
 interface PublicProduct {
   id: string;
+  slug: string | null;
   name: string;
   nameUk: string | null;
   nameRu: string | null;
@@ -439,7 +440,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
                 className={`bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock ? "border-line" : "border-line opacity-60"}`}
               >
                 {/* Product image */}
-                <Link href={`/offer/${p.id}`}>
+                <Link href={`/offer/${p.slug ?? p.id}`}>
                   <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center relative">
                     {p.photos.length > 0 ? (
                       <img
@@ -493,7 +494,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
                   </div>
 
                   {/* Product name */}
-                  <Link href={`/offer/${p.id}`}>
+                  <Link href={`/offer/${p.slug ?? p.id}`}>
                     <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1">
                       {localizedName(p)}
                     </h3>

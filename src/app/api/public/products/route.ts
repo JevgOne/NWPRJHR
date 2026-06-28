@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
       where,
       select: {
         id: true,
+        slug: true,
         name: true,
         nameUk: true,
         nameRu: true,
@@ -88,6 +89,7 @@ export async function GET(request: NextRequest) {
 
         return {
           id: p.id,
+          slug: p.slug,
           name: p.name,
           nameUk: p.nameUk,
           nameRu: p.nameRu,

@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { PhotoUpload } from "@/components/products/PhotoUpload";
+import { slugify } from "@/lib/slugify";
 
 const CATEGORIES = ["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
 const PROCESSING_TYPES = [
@@ -89,10 +90,7 @@ export function CreateProductForm() {
       photos: photos.length > 0 ? JSON.stringify(photos) : undefined,
       slug:
         (form.get("slug") as string) ||
-        (form.get("name") as string)
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "") || undefined,
+        slugify(form.get("name") as string) || undefined,
     };
 
     try {

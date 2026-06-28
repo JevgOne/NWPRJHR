@@ -16,6 +16,7 @@ import { SocialPostModal } from "@/components/products/SocialPostModal";
 
 interface ProductDetail {
   id: string;
+  slug?: string | null;
   name: string;
   nameUk?: string | null;
   nameRu?: string | null;

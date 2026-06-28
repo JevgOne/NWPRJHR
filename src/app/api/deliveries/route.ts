@@ -79,11 +79,11 @@ export async function POST(request: NextRequest) {
 
   const variant = await prisma.variant.findUnique({
     where: { id: delivery.variantId },
-    select: { productId: true, product: { select: { name: true } } },
+    select: { productId: true, product: { select: { name: true, slug: true } } },
   });
 
   return NextResponse.json(
-    { ...delivery, productId: variant?.productId, productName: variant?.product.name },
+    { ...delivery, productId: variant?.productId, productName: variant?.product.name, productSlug: variant?.product.slug },
     { status: 201 }
   );
 }
