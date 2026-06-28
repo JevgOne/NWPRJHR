@@ -64,6 +64,12 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
       .sort((a, b) => a.lengthCm - b.lengthCm);
   }, [variants, selectedColor]);
 
+  // Max grams for selected variant
+  const selectedVariant = (selectedColor && selectedLength)
+    ? variants.find(v => v.color === selectedColor && v.lengthCm === selectedLength)
+    : null;
+  const maxGrams = selectedVariant?.availableGrams ?? Infinity;
+
   const handleAdd = () => {
     if (!selectedLength || !selectedColor) return;
     addItem({
@@ -173,26 +179,33 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
             <input
               type="number"
               value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) => {
+                const val = Math.max(1, parseInt(e.target.value) || 1);
+                setQuantity(maxGrams !== Infinity ? Math.min(val, maxGrams) : val);
+              }}
+              max={maxGrams !== Infinity ? maxGrams : undefined}
               className="w-20 text-center text-sm border border-line rounded-lg py-1.5 focus:outline-none focus:ring-2 focus:ring-rose"
             />
             <button
-              onClick={() => setQuantity(quantity + 50)}
+              onClick={() => setQuantity(Math.min(quantity + 50, maxGrams !== Infinity ? maxGrams : quantity + 50))}
               className="w-8 h-8 rounded-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-50"
             >
               +
             </button>
             <span className="text-xs text-muted">g</span>
+            {maxGrams !== Infinity && (
+              <span className="text-[11px] text-muted">max {maxGrams}g</span>
+            )}
           </div>
         </div>
 
         <button
           onClick={handleAdd}
-          disabled={!selectedLength || !selectedColor}
+          disabled={!selectedLength || !selectedColor || quantity > maxGrams}
           className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
             added
               ? "bg-emerald-600 text-white"
-              : !selectedLength || !selectedColor
+              : !selectedLength || !selectedColor || quantity > maxGrams
                 ? "bg-nude-100 text-muted cursor-not-allowed"
                 : "bg-rose text-white hover:bg-rose-deep"
           }`}

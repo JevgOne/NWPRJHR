@@ -427,13 +427,20 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                     </div>
                   </div>
                 )}
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xl">✅</span>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
-                    <div className="text-sm font-semibold text-emerald-700">{t("productDetail.inStock")}</div>
-                  </div>
-                </div>
+                {(() => {
+                  const totalStock = product.variants.reduce((sum, v) => sum + v.availableGrams, 0);
+                  return (
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xl">✅</span>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
+                        <div className={`text-sm font-semibold ${totalStock > 0 ? "text-emerald-700" : "text-red-500"}`}>
+                          {totalStock > 0 ? `${totalStock} g ${t("productDetail.inStock").toLowerCase()}` : t("inquiry.outOfStock")}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </>
             )}
           </div>
