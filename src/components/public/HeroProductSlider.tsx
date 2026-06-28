@@ -117,12 +117,19 @@ function VariantCard({ product, variant }: { product: SliderProduct; variant: Sl
         </span>
       </div>
       <div className="p-2.5">
-        {/* Origin badge */}
-        {product.origin && (
-          <div className="mb-1">
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
-              {getOriginFlag(product.origin)} {originName(product.origin)}
-            </span>
+        {/* Origin + texture badges */}
+        {(product.origin || product.texture) && (
+          <div className="mb-1 flex flex-wrap gap-1">
+            {product.origin && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
+                {getOriginFlag(product.origin)} {originName(product.origin)}
+              </span>
+            )}
+            {product.texture && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
+                {product.texture}
+              </span>
+            )}
           </div>
         )}
 

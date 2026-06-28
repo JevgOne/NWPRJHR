@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { CategoryBadge } from "@/components/products/CategoryBadge";
@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { TextureSwatch } from "@/components/TextureSwatch";
+import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 
 interface ProductDetail {
   id: string;
@@ -46,6 +47,30 @@ export function ProductDetailClient({
   const t = useTranslations();
   const router = useRouter();
   const [showBatchCreate, setShowBatchCreate] = useState(false);
+  const [editingTexture, setEditingTexture] = useState(false);
+  const [textureValue, setTextureValue] = useState(product.texture ?? "");
+  const textureRef = useRef<HTMLDivElement>(null);
+
+  const saveTexture = useCallback(async (newTexture: string) => {
+    await fetch(`/api/products/${product.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texture: newTexture || null }),
+    });
+    setEditingTexture(false);
+    router.refresh();
+  }, [product.id, router]);
+
+  useEffect(() => {
+    if (!editingTexture) return;
+    function handleClick(e: MouseEvent) {
+      if (textureRef.current && !textureRef.current.contains(e.target as Node)) {
+        setEditingTexture(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [editingTexture]);
 
   const parsedPhotos: string[] = (() => {
     try {
@@ -108,12 +133,59 @@ export function ProductDetailClient({
                 🌍 {product.origin}
               </span>
             )}
-            {product.texture && (
+            {isOwner ? (
+              <div ref={textureRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setEditingTexture(!editingTexture)}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors"
+                >
+                  {textureValue ? (
+                    <>
+                      <TextureSwatch texture={textureValue} size={20} />
+                      {textureValue}
+                    </>
+                  ) : (
+                    <span className="text-violet-400">+ {t("product.texture")}</span>
+                  )}
+                </button>
+                {editingTexture && (
+                  <div className="absolute right-0 top-full mt-1 z-20 w-48 bg-white rounded-lg border border-line shadow-lg">
+                    {TEXTURE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.name}
+                        type="button"
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-rose/10 text-left"
+                        onClick={() => {
+                          setTextureValue(opt.name);
+                          saveTexture(opt.name);
+                        }}
+                      >
+                        <span>{opt.icon}</span>
+                        <span>{opt.name}</span>
+                      </button>
+                    ))}
+                    {textureValue && (
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 text-left border-t border-line"
+                        onClick={() => {
+                          setTextureValue("");
+                          saveTexture("");
+                        }}
+                      >
+                        {t("common.delete")}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : product.texture ? (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
                 <TextureSwatch texture={product.texture} size={20} />
                 {product.texture}
               </span>
-            )}
+            ) : null}
           </div>
         </div>
       </Card>

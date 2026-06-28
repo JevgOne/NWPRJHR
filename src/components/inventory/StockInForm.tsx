@@ -12,6 +12,7 @@ interface ProductOption {
   id: string;
   name: string;
   category: string;
+  texture?: string | null;
   variants: { id: string; lengthCm: number; color: string }[];
 }
 
@@ -136,10 +137,15 @@ export function StockInForm({
             <option value="">--</option>
             {products.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name}
+                {p.name}{p.texture ? ` — ${p.texture}` : ""}
               </option>
             ))}
           </select>
+          {selectedProduct?.texture && (
+            <p className="mt-1 text-xs text-violet-600 font-medium">
+              {selectedProduct.texture}
+            </p>
+          )}
         </div>
 
         {/* Color + Length selection */}

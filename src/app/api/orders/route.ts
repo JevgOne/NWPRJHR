@@ -74,7 +74,10 @@ export async function POST(request: NextRequest) {
   // SALON/HAIRDRESSER can only create orders for their own salon
   let salonId: string;
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
-    salonId = session.user.salonId!;
+    if (!session.user.salonId) {
+      return NextResponse.json({ error: "Salon account not linked. Contact support." }, { status: 403 });
+    }
+    salonId = session.user.salonId;
   } else if (["OWNER", "EMPLOYEE"].includes(session.user.role)) {
     if (!parsed.data.salonId) {
       return NextResponse.json({ error: "salonId is required for staff orders" }, { status: 400 });

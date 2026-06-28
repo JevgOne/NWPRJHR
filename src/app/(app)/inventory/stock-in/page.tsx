@@ -27,6 +27,7 @@ export default async function StockInPage() {
     id: p.id,
     name: p.name,
     category: p.category,
+    texture: p.texture,
     variants: p.variants.map((v) => ({
       id: v.id,
       lengthCm: v.lengthCm,
