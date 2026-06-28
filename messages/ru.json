@@ -117,9 +117,9 @@
     "custom": "Другое"
   },
   "category": {
-    "virgin": "Натуральные неокрашенные (Virgin)",
-    "premium": "Премиум",
-    "standard": "Стандарт",
+    "virgin": "Натуральные Волосы",
+    "premium": "Премиум Волосы",
+    "standard": "Стандарт Волосы",
     "sale": "Распродажа"
   },
   "stock": {
@@ -174,7 +174,13 @@
     "selectColorAndLength": "Выберите цвет и длину",
     "stockedSuccess": "Принято на склад!",
     "qrLinkDesc": "QR код ведёт на страницу товара в интернет-магазине",
-    "printLabel": "Печать этикетки"
+    "printLabel": "Печать этикетки",
+    "stockAnother": "Принять ещё",
+    "wizCategory": "Выберите категорию",
+    "wizOrigin": "Выберите происхождение",
+    "wizTexture": "Выберите текстуру",
+    "wizCustomLength": "Другая длина",
+    "wizDetails": "Детали поставки"
   },
   "order": {
     "order": "Заказ",

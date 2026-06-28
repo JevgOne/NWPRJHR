@@ -117,9 +117,9 @@
     "custom": "Власне"
   },
   "category": {
-    "virgin": "Незаймане волосся (Virgin)",
-    "premium": "Преміум",
-    "standard": "Стандарт",
+    "virgin": "Натуральне Волосся",
+    "premium": "Преміум Волосся",
+    "standard": "Стандарт Волосся",
     "sale": "Розпродаж"
   },
   "stock": {
@@ -174,7 +174,13 @@
     "selectColorAndLength": "Оберіть колір і довжину",
     "stockedSuccess": "Прийнято на склад!",
     "qrLinkDesc": "QR код веде на сторінку товару в e-shop",
-    "printLabel": "Друкувати етикетку"
+    "printLabel": "Друкувати етикетку",
+    "stockAnother": "Прийняти ще",
+    "wizCategory": "Оберіть категорію",
+    "wizOrigin": "Оберіть походження",
+    "wizTexture": "Оберіть текстуру",
+    "wizCustomLength": "Інша довжина",
+    "wizDetails": "Деталі постачання"
   },
   "order": {
     "order": "Замовлення",

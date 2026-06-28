@@ -117,9 +117,9 @@
     "custom": "Vlastní"
   },
   "category": {
-    "virgin": "Panenské vlasy",
-    "premium": "Premium",
-    "standard": "Standard",
+    "virgin": "Panenské Vlasy",
+    "premium": "Premium Vlasy",
+    "standard": "Standard Vlasy",
     "sale": "Výprodej"
   },
   "stock": {
@@ -174,7 +174,13 @@
     "selectColorAndLength": "Vyberte barvu a délku",
     "stockedSuccess": "Naskladněno!",
     "qrLinkDesc": "QR kód vede na stránku produktu v e-shopu",
-    "printLabel": "Tisknout štítek"
+    "printLabel": "Tisknout štítek",
+    "stockAnother": "Naskladnit další",
+    "wizCategory": "Vyberte kategorii",
+    "wizOrigin": "Vyberte původ",
+    "wizTexture": "Vyberte texturu",
+    "wizCustomLength": "Jiná délka",
+    "wizDetails": "Detaily dodávky"
   },
   "order": {
     "order": "Objednávka",

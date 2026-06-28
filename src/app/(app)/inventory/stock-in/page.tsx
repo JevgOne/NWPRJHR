@@ -11,31 +11,10 @@ export default async function StockInPage() {
 
   const t = await getTranslations();
 
-  const [products, suppliers] = await Promise.all([
-    prisma.product.findMany({
-      where: { archived: false },
-      include: { variants: { where: { active: true }, orderBy: [{ lengthCm: "asc" }, { color: "asc" }] } },
-      orderBy: { name: "asc" },
-    }),
-    prisma.supplier.findMany({
-      where: { archived: false },
-      orderBy: { name: "asc" },
-    }),
-  ]);
-
-  const productOptions = products.map((p) => ({
-    id: p.id,
-    name: p.name,
-    category: p.category,
-    origin: p.origin,
-    texture: p.texture,
-    colorTone: p.colorTone,
-    variants: p.variants.map((v) => ({
-      id: v.id,
-      lengthCm: v.lengthCm,
-      color: v.color,
-    })),
-  }));
+  const suppliers = await prisma.supplier.findMany({
+    where: { archived: false },
+    orderBy: { name: "asc" },
+  });
 
   const supplierOptions = suppliers.map((s) => ({
     id: s.id,
@@ -47,7 +26,7 @@ export default async function StockInPage() {
       <h1 className="text-2xl font-bold text-ink mb-6">
         {t("stock.newDelivery")}
       </h1>
-      <StockInForm products={productOptions} suppliers={supplierOptions} />
+      <StockInForm suppliers={supplierOptions} />
     </div>
   );
 }
