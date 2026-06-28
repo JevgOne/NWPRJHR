@@ -4,6 +4,8 @@ import { getLoyaltyDiscount } from "./loyalty";
 import { roundHalereUp } from "./rounding";
 import type { Order } from "@prisma/client";
 
+const TX_TIMEOUT = 15000;
+
 export class InsufficientStockError extends Error {
   constructor(
     public unit: string,
@@ -102,7 +104,7 @@ export async function createOrder(
     });
 
     return order;
-  });
+  }, { timeout: TX_TIMEOUT });
 }
 
 /**
@@ -129,7 +131,7 @@ export async function confirmOrder(
         confirmedBy: userId,
       },
     });
-  });
+  }, { timeout: TX_TIMEOUT });
 }
 
 /**
@@ -161,7 +163,7 @@ export async function rejectOrder(
         rejectedReason: reason,
       },
     });
-  });
+  }, { timeout: TX_TIMEOUT });
 }
 
 /**
@@ -214,5 +216,5 @@ export async function cancelOrder(orderId: string): Promise<Order> {
       where: { id: orderId },
       data: { status: "CANCELLED" },
     });
-  });
+  }, { timeout: TX_TIMEOUT });
 }
