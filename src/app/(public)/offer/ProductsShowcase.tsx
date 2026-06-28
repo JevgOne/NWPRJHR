@@ -457,9 +457,9 @@ export function ProductsShowcase() {
                 </Link>
 
                 <div className="p-2.5">
-                  {/* Origin badge */}
-                  {p.origin && (
-                    <div className="mb-1">
+                  {/* Origin + texture badges */}
+                  <div className="flex flex-wrap items-center gap-1 mb-1">
+                    {p.origin && (
                       <button
                         onClick={() => toggleFilter("origin", p.origin!)}
                         className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
@@ -470,8 +470,21 @@ export function ProductsShowcase() {
                       >
                         {getOriginFlag(p.origin)} {originName(p.origin)}
                       </button>
-                    </div>
-                  )}
+                    )}
+                    {p.texture && (
+                      <button
+                        onClick={() => toggleFilter("texture", p.texture!)}
+                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
+                          activeTexture === p.texture
+                            ? "bg-violet-200 text-violet-800 ring-1 ring-violet-400"
+                            : "bg-violet-100 text-violet-700 hover:bg-violet-200"
+                        }`}
+                      >
+                        <TextureSwatch texture={p.texture} size={14} />
+                        {p.texture}
+                      </button>
+                    )}
+                  </div>
 
                   {/* Product name */}
                   <Link href={`/offer/${p.id}`}>
