@@ -165,16 +165,20 @@ export function ProductGridCard({
         </h3>
       )}
 
-      {/* Lengths as chips */}
-      {uniqueLengths.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-1">
-          {uniqueLengths.map((cm) => (
-            <span key={cm} className="px-1.5 py-0.5 rounded bg-nude-100 text-[10px] font-medium text-espresso">
-              {cm} cm
-            </span>
-          ))}
-        </div>
-      )}
+      {/* Texture + length */}
+      <div className="flex flex-wrap items-center gap-1 mb-1">
+        {p.texture && (
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-nude-100 text-[10px] font-medium text-espresso">
+            <TextureSwatch texture={p.texture} size={12} />
+            {textureLabel}
+          </span>
+        )}
+        {uniqueLengths.map((cm) => (
+          <span key={cm} className="px-1.5 py-0.5 rounded bg-nude-100 text-[10px] font-medium text-espresso">
+            {cm} cm
+          </span>
+        ))}
+      </div>
 
       {/* Color circle + shade name */}
       {uniqueColors.length > 0 && (
