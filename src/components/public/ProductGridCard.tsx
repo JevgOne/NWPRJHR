@@ -71,9 +71,10 @@ export function ProductGridCard({
   const textureInfo = getTextureInfo(p.texture);
   const textureLabel = p.texture ? tTexture(textureInfo.nameKey) : null;
 
-  // Aggregate variants
-  const uniqueLengths = [...new Set(p.variants.map(v => v.lengthCm))].sort((a, b) => a - b);
-  const uniqueColors = [...new Set(p.variants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
+  // Aggregate variants — show only stocked lengths/colors
+  const stockedVariants = p.variants.filter(v => v.availableGrams > 0);
+  const uniqueLengths = [...new Set(stockedVariants.map(v => v.lengthCm))].sort((a, b) => a - b);
+  const uniqueColors = [...new Set(stockedVariants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
   const priceVariants = p.variants.filter(v => v.retailPricePerGram > 0);
   const minRetailPrice = priceVariants.length > 0 ? Math.min(...priceVariants.map(v => v.retailPricePerGram)) : 0;
   const maxRetailPrice = priceVariants.length > 0 ? Math.max(...priceVariants.map(v => v.retailPricePerGram)) : 0;
