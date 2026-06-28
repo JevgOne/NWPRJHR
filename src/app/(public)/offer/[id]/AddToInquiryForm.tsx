@@ -137,7 +137,7 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
                 >
                   <div className="font-medium text-ink">{v.lengthCm} cm</div>
                   <div className="text-xs text-muted">
-                    {formatPrice(v.pricePerGram)} Kc/g
+                    {formatPrice(v.pricePerGram)} Kč/g
                   </div>
                   <div className={`text-[11px] ${inStock ? "text-emerald-600" : "text-red-400"}`}>
                     {inStock ? `${v.availableGrams}g` : t("inquiry.outOfStock")}
