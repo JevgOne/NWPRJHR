@@ -13,9 +13,11 @@ import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
+import { getHairColor } from "@/lib/hair-colors";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ color?: string; length?: string }>;
 };
 
 const productSelect = {
@@ -133,8 +135,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const sp = await searchParams;
   const product = await getProduct(slug);
 
   if (!product) {
@@ -180,14 +183,23 @@ export default async function ProductDetailPage({ params }: Props) {
       };
     });
 
-  // Min price for display
-  const pricePerGram = pickerVariants.length > 0
-    ? Math.min(...pickerVariants.map((v) => v.pricePerGram))
+  // Find focused variant from query params
+  const focusedVariant = (sp.color && sp.length)
+    ? pickerVariants.find((v) => v.color === sp.color && v.lengthCm === parseInt(sp.length!, 10))
     : null;
+
+  // Price: use focused variant if available, otherwise min
+  const pricePerGram = focusedVariant
+    ? focusedVariant.pricePerGram
+    : pickerVariants.length > 0
+      ? Math.min(...pickerVariants.map((v) => v.pricePerGram))
+      : null;
   const priceTip100g = pricePerGram ? pricePerGram * 100 : null;
-  const retailPricePerGram = (tierBadge && pickerVariants.length > 0)
-    ? Math.min(...pickerVariants.map((v) => v.retailPricePerGram))
-    : null;
+  const retailPricePerGram = focusedVariant
+    ? (tierBadge ? focusedVariant.retailPricePerGram : null)
+    : (tierBadge && pickerVariants.length > 0)
+      ? Math.min(...pickerVariants.map((v) => v.retailPricePerGram))
+      : null;
 
   // Localized product name
   const productName = locale === "ru" && product.nameRu
@@ -354,24 +366,56 @@ export default async function ProductDetailPage({ params }: Props) {
                 </div>
               </Link>
             )}
-            {lengths.length > 0 && (
-              <div className="flex items-center gap-2.5">
-                <span className="text-xl">📏</span>
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.lengthsLabel")}</div>
-                  <div className="text-sm font-semibold text-ink">
-                    {lengths[0]}–{lengths[lengths.length - 1]} cm
+            {focusedVariant ? (
+              <>
+                <div className="flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-full border border-line overflow-hidden flex-shrink-0">
+                    <img src={`/swatches/color-${focusedVariant.color}.png`} alt="" className="w-full h-full object-cover" />
+                  </span>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.colorLabel")}</div>
+                    <div className="text-sm font-semibold text-ink">{(() => { const { nameKey } = getHairColor(focusedVariant.color); try { return t(`colors.${nameKey}`); } catch { return nameKey; } })()}</div>
                   </div>
                 </div>
-              </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">📏</span>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.lengthLabel")}</div>
+                    <div className="text-sm font-semibold text-ink">{focusedVariant.lengthCm} cm</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">✅</span>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
+                    <div className={`text-sm font-semibold ${focusedVariant.availableGrams > 0 ? "text-emerald-700" : "text-red-500"}`}>
+                      {focusedVariant.availableGrams > 0 ? `${focusedVariant.availableGrams} g ${t("productDetail.inStock").toLowerCase()}` : t("inquiry.outOfStock")}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {lengths.length > 0 && (
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl">📏</span>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.lengthsLabel")}</div>
+                      <div className="text-sm font-semibold text-ink">
+                        {lengths[0]}–{lengths[lengths.length - 1]} cm
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">✅</span>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
+                    <div className="text-sm font-semibold text-emerald-700">{t("productDetail.inStock")}</div>
+                  </div>
+                </div>
+              </>
             )}
-            <div className="flex items-center gap-2.5">
-              <span className="text-xl">✅</span>
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
-                <div className="text-sm font-semibold text-emerald-700">{t("productDetail.inStock")}</div>
-              </div>
-            </div>
           </div>
 
           {/* Category features */}
@@ -394,6 +438,8 @@ export default async function ProductDetailPage({ params }: Props) {
             productId={product.id}
             productName={product.name}
             variants={pickerVariants}
+            defaultColor={sp.color}
+            defaultLength={sp.length ? parseInt(sp.length, 10) : undefined}
           />
 
           {/* Delivery perks — tight row */}

@@ -18,6 +18,8 @@ interface AddToInquiryFormProps {
   productId: string;
   productName: string;
   variants: PickerVariant[];
+  defaultColor?: string;
+  defaultLength?: number;
 }
 
 function formatPrice(halere: number): string {
@@ -27,11 +29,11 @@ function formatPrice(halere: number): string {
   });
 }
 
-export function AddToInquiryForm({ productId, productName, variants }: AddToInquiryFormProps) {
+export function AddToInquiryForm({ productId, productName, variants, defaultColor, defaultLength }: AddToInquiryFormProps) {
   const t = useTranslations("public");
   const { addItem } = useInquiryCart();
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedLength, setSelectedLength] = useState<number | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(defaultColor ?? null);
+  const [selectedLength, setSelectedLength] = useState<number | null>(defaultLength ?? null);
   const [quantity, setQuantity] = useState(100);
   const [added, setAdded] = useState(false);
 

@@ -98,7 +98,7 @@ function VariantCard({ product, variant }: { product: SliderProduct; variant: Sl
 
   return (
     <Link
-      href={`/offer/${product.slug ?? product.id}`}
+      href={`/offer/${product.slug ?? product.id}?color=${variant.color}&length=${variant.lengthCm}`}
       className="block bg-white rounded-xl border border-line overflow-hidden hover:shadow-md transition-shadow"
     >
       <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center relative">
