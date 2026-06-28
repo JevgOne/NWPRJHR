@@ -629,6 +629,8 @@
       "originLabel": "Původ",
       "textureLabel": "Struktura",
       "colorToneLabel": "Tón barvy",
+      "colorLabel": "Barva",
+      "lengthLabel": "Délka",
       "lengthsLabel": "Délky",
       "shadesLabel": "Odstíny",
       "shadesCount": "{count, plural, one {1 barva} few {# barvy} other {# barev}}",

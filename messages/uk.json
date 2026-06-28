@@ -629,6 +629,8 @@
       "originLabel": "Походження",
       "textureLabel": "Структура",
       "colorToneLabel": "Тон кольору",
+      "colorLabel": "Колір",
+      "lengthLabel": "Довжина",
       "lengthsLabel": "Довжини",
       "shadesLabel": "Відтінки",
       "shadesCount": "{count, plural, one {1 колір} few {# кольори} other {# кольорів}}",

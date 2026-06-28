@@ -629,6 +629,8 @@
       "originLabel": "Происхождение",
       "textureLabel": "Структура",
       "colorToneLabel": "Тон цвета",
+      "colorLabel": "Цвет",
+      "lengthLabel": "Длина",
       "lengthsLabel": "Длины",
       "shadesLabel": "Оттенки",
       "shadesCount": "{count, plural, one {1 цвет} few {# цвета} other {# цветов}}",
