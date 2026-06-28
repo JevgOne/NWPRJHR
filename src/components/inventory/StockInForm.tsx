@@ -372,18 +372,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                   }`}
                 >
                   <span
-                    className="w-10 h-10 rounded-full border border-line overflow-hidden flex-shrink-0"
-                  >
-                    <img
-                      src={`/swatches/color-${code}.png`}
-                      alt=""
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                        (e.target as HTMLImageElement).parentElement!.style.backgroundColor = hc.hex;
-                      }}
-                    />
-                  </span>
+                    className="w-10 h-10 rounded-full border border-line flex-shrink-0"
+                    style={{ backgroundColor: hc.hex }}
+                  />
                   <span className="text-xs font-medium text-ink">
                     {colorName(code)}
                   </span>
