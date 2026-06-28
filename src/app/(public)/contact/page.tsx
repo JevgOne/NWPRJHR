@@ -24,9 +24,9 @@ const jsonLd = {
     postalCode: "110 00",
     addressCountry: "CZ",
   },
-  priceRange: "Kč Kč Kč",
+  priceRange: "500 Kč - 17 000 Kč",
   description:
-    "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
+    "Prémiové surové vlasy k prodloužení. Zpracování na zakázku — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
 };
 
 export default async function ContactPage() {

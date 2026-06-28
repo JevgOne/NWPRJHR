@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   return new Promise<NextResponse>((resolve) => {
-    const backupDir = process.env.BACKUP_DIR || "/var/backups/hairora";
+    const backupDir = process.env.BACKUP_DIR || "/var/backups/hairland";
 
     exec(
       `DATABASE_URL="${process.env.DATABASE_URL}" BACKUP_DIR="${backupDir}" bash scripts/backup.sh`,

@@ -86,7 +86,7 @@ export function InvoicesClient({ role }: { role: Role }) {
         <p className="text-muted">{tCommon("loading")}</p>
       ) : invoices.length === 0 ? (
         <Card>
-          <p className="text-muted text-center py-8">-</p>
+          <p className="text-muted text-center py-8">{t("noInvoices")}</p>
         </Card>
       ) : (
         <>
@@ -96,9 +96,9 @@ export function InvoicesClient({ role }: { role: Role }) {
                 <tr className="border-b text-left text-muted">
                   <th className="py-2 pr-3">{t("invoice")}</th>
                   <th className="py-2 pr-3">{t("dueDate")}</th>
-                  <th className="py-2 pr-3">-</th>
+                  <th className="py-2 pr-3">{t("buyer")}</th>
                   <th className="py-2 pr-3 text-right">{t("total")}</th>
-                  <th className="py-2 pr-3">-</th>
+                  <th className="py-2 pr-3">{t("status")}</th>
                 </tr>
               </thead>
               <tbody>

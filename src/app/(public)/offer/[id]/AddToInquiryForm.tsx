@@ -100,7 +100,7 @@ export function AddToInquiryForm({ productId, productName, variants }: AddToInqu
                 <span className="w-4 h-4 rounded-full border border-line flex-shrink-0 overflow-hidden">
                   <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
                 </span>
-                {code}
+                {colorName(nameKey)}
               </button>
             );
           })}

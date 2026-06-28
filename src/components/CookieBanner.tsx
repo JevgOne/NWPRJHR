@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
-const CONSENT_KEY = "hairora_cookie_consent";
+const CONSENT_KEY = "hairland_cookie_consent";
 
 export function CookieBanner() {
   const t = useTranslations("public");

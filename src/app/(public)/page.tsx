@@ -17,10 +17,10 @@ const jsonLd = {
   name: "Hairland",
   url: "https://www.hairland.cz",
   description:
-    "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Přímý import, skladem v Praze.",
+    "Prémiové surové vlasy k prodloužení. Zpracování na zakázku — clip-in, tape-in, micro ring. Přímý import, skladem v Praze.",
   image: "https://www.hairland.cz/icons/icon-512x512.png",
-  telephone: "+420 XXX XXX XXX",
-  priceRange: "Kč Kč Kč",
+  telephone: "+420728729666",
+  priceRange: "500 Kč - 17 000 Kč",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Školská 660/3",

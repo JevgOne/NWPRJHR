@@ -121,13 +121,13 @@ export function CatalogClient({ role }: { role: Role }) {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Chyba při odesílání objednávky");
+        throw new Error(data.error || t("orderError"));
       }
       setOrderSuccess(true);
       setCart(new Map());
       setOrderNote("");
     } catch (e) {
-      setOrderError(e instanceof Error ? e.message : "Chyba při odesílání");
+      setOrderError(e instanceof Error ? e.message : t("orderError"));
     } finally {
       setSubmitting(false);
     }
@@ -143,13 +143,13 @@ export function CatalogClient({ role }: { role: Role }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-ink">Objednávka odeslána</h2>
-        <p className="text-muted text-sm">Vaše objednávka byla úspěšně odeslána. Budeme vás kontaktovat.</p>
+        <h2 className="text-lg font-semibold text-ink">{t("orderSent")}</h2>
+        <p className="text-muted text-sm">{t("orderSentDesc")}</p>
         <button
           onClick={() => setOrderSuccess(false)}
           className="px-4 py-2 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose/90 transition-colors"
         >
-          Zpět do katalogu
+          {t("backToCatalog")}
         </button>
       </div>
     );
@@ -244,8 +244,8 @@ export function CatalogClient({ role }: { role: Role }) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-t border-line text-left text-xs font-medium text-muted uppercase tracking-wider">
-                    <th className="px-4 py-2">Délka</th>
-                    <th className="px-4 py-2">Barva</th>
+                    <th className="px-4 py-2">{t("length")}</th>
+                    <th className="px-4 py-2">{t("color")}</th>
                     <th className="px-4 py-2 text-right">{t("pricePerGram")}</th>
                     <th className="px-4 py-2 text-right">{t("available")}</th>
                     <th className="px-4 py-2 text-right">{t("orderFromCatalog")}</th>
@@ -323,10 +323,10 @@ export function CatalogClient({ role }: { role: Role }) {
               {/* Cart summary */}
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-ink">
-                  {cartItems.length} {cartItems.length === 1 ? "položka" : cartItems.length < 5 ? "položky" : "položek"} &middot; {cartTotalGrams} g
+                  {t("cartItems", { count: cartItems.length })} &middot; {cartTotalGrams} g
                 </div>
                 <div className="text-xs text-muted">
-                  Celkem: {formatCZK(cartTotal)} Kč
+                  {t("cartTotal")}: {formatCZK(cartTotal)} Kč
                 </div>
               </div>
 
@@ -335,7 +335,7 @@ export function CatalogClient({ role }: { role: Role }) {
                 type="text"
                 value={orderNote}
                 onChange={(e) => setOrderNote(e.target.value)}
-                placeholder="Poznámka k objednávce..."
+                placeholder={t("orderNotePlaceholder")}
                 className="hidden sm:block flex-1 px-3 py-2 text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
               />
 
@@ -344,7 +344,7 @@ export function CatalogClient({ role }: { role: Role }) {
                 onClick={() => setCart(new Map())}
                 className="px-3 py-2 text-sm text-muted hover:text-ink transition-colors"
               >
-                Smazat
+                {t("clearCart")}
               </button>
 
               {/* Submit */}
@@ -353,7 +353,7 @@ export function CatalogClient({ role }: { role: Role }) {
                 disabled={submitting}
                 className="px-5 py-2 bg-rose text-white rounded-lg text-sm font-semibold hover:bg-rose/90 transition-colors disabled:opacity-50"
               >
-                {submitting ? "Odesílám..." : "Odeslat objednávku"}
+                {submitting ? t("submitting") : t("submitOrder")}
               </button>
             </div>
           </div>

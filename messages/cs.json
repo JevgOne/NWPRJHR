@@ -151,7 +151,11 @@
     "complaint": "Reklamace",
     "sample": "Vzorek",
     "sampleReturn": "Vzorek vrácen",
-    "adjustment": "Korekce"
+    "adjustment": "Korekce",
+    "color": "Barva",
+    "length": "Délka",
+    "selectColorFirst": "Nejdříve vyberte barvu",
+    "selectColorAndLength": "Vyberte barvu a délku"
   },
   "order": {
     "order": "Objednávka",
@@ -184,7 +188,9 @@
     "issueDate": "Datum vystavení",
     "copyDetails": "Kopírovat údaje",
     "downloadPdf": "Stáhnout PDF",
-    "status": "Stav"
+    "status": "Stav",
+    "buyer": "Odběratel",
+    "noInvoices": "Žádné faktury"
   },
   "company": {
     "title": "Firmy",
@@ -379,7 +385,7 @@
     },
     "hero": {
       "title": "Prémiové vlasy z celého světa",
-      "subtitle": "Přímý import, záruka kvality a osobní přístup. Prodej, příprava clip-in a tape-in na zakázku. Trojjazyčná podpora.",
+      "subtitle": "Přímý import, záruka kvality a osobní přístup. Prodej surových vlasů + zpracování na zakázku. Trojjazyčná podpora.",
       "cta": "Kontaktujte nás",
       "viewOffer": "Zobrazit nabídku"
     },
@@ -522,9 +528,9 @@
     },
     "landing": {
       "heroTitle": "Prémiové vlasy k prodloužení — skladem v Praze",
-      "heroSubtitle": "Prodáváme přírodní vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. Clip-in a tape-in připravíme na zakázku do 7 dnů.",
+      "heroSubtitle": "Prodáváme přírodní vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. Zpracování na zakázku — clip-in, tape-in, micro ring do 7 dnů.",
       "badgeInStock": "✅ Vlasy skladem — vezmete si hned",
-      "badgeCustom": "✂️ Clip-in, tape-in, micro ring do 7 dnů",
+      "badgeCustom": "✂️ Zpracování na zakázku — clip-in, tape-in, micro ring do 7 dnů",
       "badgeDelivery": "🚗 Dovoz po Praze zdarma",
       "badgeOrigin": "🌍 U každého produktu přesný původ",
       "viewFullOffer": "Zobrazit celou nabídku",
@@ -548,13 +554,13 @@
       "colorBlack": "Černá",
       "colorPaletteAlt": "Přehled odstínů vlasů",
       "howItWorksTitle": "Jak to funguje",
-      "howItWorksSubtitle": "Prodáváme prémiové vlasy. Po zaplacení připravíme clip-in, tape-in nebo keratin do 7 dnů.",
+      "howItWorksSubtitle": "Prodáváme prémiové surové vlasy. Za příplatek připravíme clip-in, tape-in nebo keratin do 7 dnů.",
       "step1Title": "Vyberte si vlasy",
       "step1Desc": "Prohlédněte si nabídku online nebo se domluvte na osobní ukázce. Poradíme s barvou i délkou.",
       "step2Title": "Objednejte a zaplaťte",
-      "step2Desc": "Vlasy skladem si vezmete rovnou. Potřebujete clip-in, tape-in nebo keratin? Po zaplacení je připravíme na míru.",
+      "step2Desc": "Vlasy skladem si vezmete rovnou. Chcete zpracování na clip-in, tape-in nebo keratin? Po zaplacení připravíme na míru.",
       "step3Title": "Připravíme do 7 dnů",
-      "step3Desc": "Clip-in, tape-in i keratinové připravíme přesně podle vašich požadavků do 7 pracovních dnů.",
+      "step3Desc": "Zpracování na clip-in, tape-in i keratin připravíme přesně podle vašich požadavků do 7 pracovních dnů.",
       "step4Title": "Vyzvednete nebo dovezeme",
       "step4Desc": "Vyzvednete si u nás nebo vám dovezeme — po Praze zdarma. Prodloužení si domluvte s vaší kadeřnicí.",
       "trustTitle": "Proč nakupovat u nás",
@@ -564,7 +570,7 @@
       "trust2Title": "Přesný původ u každého produktu",
       "trust2Desc": "U každého produktu uvádíme přesný původ. Vlasy z Ukrajiny, Ruska, Kazachstánu, Turecka a dalších zemí.",
       "trust3Title": "Připravíme na zakázku do 7 dnů",
-      "trust3Desc": "Po zaplacení připravíme clip-in, tape-in nebo keratinové prodloužení přesně podle vašich požadavků.",
+      "trust3Desc": "Po zaplacení zpracujeme vlasy na clip-in, tape-in nebo keratin přesně podle vašich požadavků.",
       "trust4Title": "Vše oficiálně fakturováno",
       "trust4Desc": "Ke každému nákupu vystavíme řádný doklad. Kvalita doložená, vše transparentní.",
       "langBanner": "🇨🇿 Česky · 🇺🇦 Українською · 🇷🇺 По-русски",
@@ -583,7 +589,7 @@
     },
     "offer": {
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
-      "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
+      "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete zpracování na clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
       "bannerCta": "🤝 Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.",
       "searchPlaceholder": "Hledat vlasy — název, původ, barva...",
       "originLabel": "Původ",
@@ -614,7 +620,7 @@
       "categoryFeatures": "{category} — vlastnosti",
       "deliveryInStock": "Skladem",
       "deliveryPrague": "Dovoz Praha zdarma",
-      "deliveryCustom": "Clip-in/tape-in do 7 dnů",
+      "deliveryCustom": "Zpracování na zakázku do 7 dnů",
       "deliveryInvoice": "Faktura",
       "notFound": "Produkt nenalezen",
       "metaDesc": "{name} - {category} prémiové vlasy na prodej",
@@ -699,7 +705,7 @@
       "termsLink": "Obchodní podmínky",
       "salonRegLink": "Registrace salonu",
       "locationCity": "Praha, Česká republika",
-      "tagline": "Prémiové vlasy — prodej, příprava clip-in, tape-in, micro ring na zakázku",
+      "tagline": "Prémiové vlasy — prodej surových vlasů + zpracování na zakázku (clip-in, tape-in, micro ring)",
       "hairdressers": "Kadeřnice"
     },
     "navbar": {
@@ -936,7 +942,19 @@
     "uploadPhoto": "Nahrát fotku",
     "changePhoto": "Změnit fotku",
     "removePhoto": "Odebrat",
-    "uploading": "Nahrávám..."
+    "uploading": "Nahrávám...",
+    "orderSent": "Objednávka odeslána",
+    "orderSentDesc": "Vaše objednávka byla úspěšně odeslána. Budeme vás kontaktovat.",
+    "backToCatalog": "Zpět do katalogu",
+    "orderError": "Chyba při odesílání objednávky",
+    "cartItems": "{count, plural, one {# položka} few {# položky} other {# položek}}",
+    "cartTotal": "Celkem",
+    "orderNotePlaceholder": "Poznámka k objednávce...",
+    "clearCart": "Smazat",
+    "submitOrder": "Odeslat objednávku",
+    "submitting": "Odesílám...",
+    "length": "Délka",
+    "color": "Barva"
   },
   "returnsMgmt": {
     "title": "Vratky",

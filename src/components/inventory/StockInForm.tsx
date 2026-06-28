@@ -80,7 +80,7 @@ export function StockInForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!variantId) {
-      setError("Vyberte barvu a délku");
+      setError(t("selectColorAndLength"));
       return;
     }
     setSubmitting(true);
@@ -148,7 +148,7 @@ export function StockInForm({
             {/* Color selector with swatches */}
             <div>
               <label className="block text-sm font-medium text-espresso mb-2">
-                Barva
+                {t("color")}
               </label>
               <div className="flex flex-wrap gap-2">
                 {uniqueColors.map((code) => {
@@ -181,7 +181,7 @@ export function StockInForm({
             {/* Length selector */}
             <div>
               <label className="block text-sm font-medium text-espresso mb-2">
-                Délka
+                {t("length")}
               </label>
               {selectedColor ? (
                 <div className="flex flex-wrap gap-2">
@@ -204,7 +204,7 @@ export function StockInForm({
                   })}
                 </div>
               ) : (
-                <p className="text-xs text-muted py-2">Nejdříve vyberte barvu</p>
+                <p className="text-xs text-muted py-2">{t("selectColorFirst")}</p>
               )}
             </div>
           </div>

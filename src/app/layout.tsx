@@ -78,7 +78,7 @@ export default async function RootLayout({
       <head>
         <HreflangTags />
       </head>
-      <body className="min-h-full flex flex-col bg-gray-50 font-[family-name:var(--font-geist)]">
+      <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)]">
         <NextIntlClientProvider messages={messages}>
           {children}
           <CookieBanner />

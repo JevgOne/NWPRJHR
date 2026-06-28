@@ -4,9 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { ProductsShowcase } from "./ProductsShowcase";
 
 export const metadata: Metadata = {
-  title: "Nabídka prémiových vlasů | Clip-in, Tape-in, Keratin",
+  title: "Nabídka prémiových vlasů | Virgin, Premium, Standard",
   description:
-    "Široký výběr prémiových přírodních vlasů k prodloužení — clip-in, tape-in, keratin, micro ring. Virgin, premium i standard kvalita. Skladem v Praze.",
+    "Široký výběr prémiových surových vlasů k prodloužení. Zpracování na zakázku — clip-in, tape-in, keratin. Virgin, premium i standard kvalita. Skladem v Praze.",
   alternates: { canonical: "/offer" },
 };
 
