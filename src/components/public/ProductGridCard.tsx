@@ -130,66 +130,24 @@ export function ProductGridCard({
 
   const infoBlock = (
     <div className="p-2.5">
-      {/* Origin + texture + colorTone badges */}
-      {(p.origin || p.texture || p.colorTone) && (
+      {/* Origin badge only */}
+      {p.origin && (
         <div className="flex flex-wrap items-center gap-1 mb-1">
-          {p.origin && (
-            isInteractive ? (
-              <button
-                onClick={() => onOriginClick!(p.origin!)}
-                className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                  activeOriginFilter === p.origin
-                    ? "bg-emerald-200 text-emerald-800 ring-1 ring-emerald-400"
-                    : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                }`}
-              >
-                {getOriginFlag(p.origin)} {originName(p.origin)}
-              </button>
-            ) : (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
-                {getOriginFlag(p.origin)} {originName(p.origin)}
-              </span>
-            )
-          )}
-          {p.texture && (
-            isInteractive ? (
-              <button
-                onClick={() => onTextureClick!(p.texture!)}
-                className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                  activeTextureFilter === p.texture
-                    ? "bg-violet-200 text-violet-800 ring-1 ring-violet-400"
-                    : "bg-violet-100 text-violet-700 hover:bg-violet-200"
-                }`}
-              >
-                <TextureSwatch texture={p.texture} size={14} />
-                {textureLabel}
-              </button>
-            ) : (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
-                <TextureSwatch texture={p.texture} size={14} />
-                {textureLabel}
-              </span>
-            )
-          )}
-          {p.colorTone && (
-            isInteractive ? (
-              <button
-                onClick={() => onColorToneClick!(p.colorTone!)}
-                className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                  activeColorToneFilter === p.colorTone
-                    ? "bg-amber-200 text-amber-800 ring-1 ring-amber-400"
-                    : "bg-amber-100 text-amber-700 hover:bg-amber-200"
-                }`}
-              >
-                <span className="w-2.5 h-2.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(p.colorTone).hex }} />
-                {p.colorTone}
-              </button>
-            ) : (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
-                <span className="w-2.5 h-2.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(p.colorTone).hex }} />
-                {p.colorTone}
-              </span>
-            )
+          {isInteractive ? (
+            <button
+              onClick={() => onOriginClick!(p.origin!)}
+              className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
+                activeOriginFilter === p.origin
+                  ? "bg-emerald-200 text-emerald-800 ring-1 ring-emerald-400"
+                  : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+              }`}
+            >
+              {getOriginFlag(p.origin)} {originName(p.origin)}
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
+              {getOriginFlag(p.origin)} {originName(p.origin)}
+            </span>
           )}
         </div>
       )}
@@ -218,20 +176,18 @@ export function ProductGridCard({
         </div>
       )}
 
-      {/* Colors as small swatches */}
+      {/* Color circle + shade name */}
       {uniqueColors.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-1.5">
-          {uniqueColors.slice(0, 6).map((code) => (
-            <span
-              key={code}
-              className="w-4 h-4 rounded-full border border-line flex-shrink-0"
-              style={{ backgroundColor: getHairColor(code).hex }}
-              title={t(`colors.${getHairColor(code).nameKey}`)}
-            />
+        <div className="flex items-center gap-1.5 mb-1.5">
+          {uniqueColors.map((code) => (
+            <div key={code} className="flex items-center gap-1">
+              <span
+                className="w-4 h-4 rounded-full border border-line flex-shrink-0"
+                style={{ backgroundColor: getHairColor(code).hex }}
+              />
+              <span className="text-[10px] text-muted">{t(`colors.${getHairColor(code).nameKey}`)}</span>
+            </div>
           ))}
-          {uniqueColors.length > 6 && (
-            <span className="text-[10px] text-muted self-center">+{uniqueColors.length - 6}</span>
-          )}
         </div>
       )}
 
