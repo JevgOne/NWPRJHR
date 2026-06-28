@@ -420,16 +420,8 @@ export function ProductsShowcase() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {products.map((p) => {
-            const pLengths = productLengths(p);
-            const pColors = productColors(p);
             const prices = p.variants.map((v) => v.retailPricePerGram).filter((pr) => pr > 0);
             const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-            const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-            const priceDisplay = minPrice > 0
-              ? minPrice === maxPrice
-                ? `${(minPrice / 100).toFixed(0)}`
-                : `${(minPrice / 100).toFixed(0)}–${(maxPrice / 100).toFixed(0)}`
-              : null;
 
             return (
               <div
@@ -497,49 +489,10 @@ export function ProductsShowcase() {
                     </h3>
                   </Link>
 
-                  {/* Length badges */}
-                  <div className="flex flex-wrap gap-0.5 mb-1.5">
-                    {pLengths.map((len) => (
-                      <button
-                        key={len}
-                        onClick={() => toggleFilter("lengthCm", String(len))}
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-medium border transition-colors cursor-pointer ${
-                          activeLength === String(len)
-                            ? "border-rose bg-blush-100 text-rose-deep ring-1 ring-blush-300"
-                            : "border-line bg-nude-50 text-espresso hover:bg-nude-100"
-                        }`}
-                      >
-                        {len} cm
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Color swatches */}
-                  <div className="flex flex-wrap gap-0.5 mb-1.5">
-                    {pColors.map((code) => {
-                      const { nameKey } = getHairColor(code);
-                      const isActive = activeColor === code;
-                      return (
-                        <button
-                          key={code}
-                          onClick={() => toggleFilter("color", code)}
-                          className={`w-5 h-5 rounded-full border overflow-hidden transition-all cursor-pointer ${
-                            isActive
-                              ? "border-rose ring-1 ring-blush-300 scale-110 z-10"
-                              : "border-line hover:scale-110"
-                          }`}
-                          title={colorName(nameKey)}
-                        >
-                          <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
-                        </button>
-                      );
-                    })}
-                  </div>
-
                   {/* Price */}
-                  {priceDisplay && (
+                  {minPrice > 0 && (
                     <div className="text-sm font-bold text-ink">
-                      {priceDisplay} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+                      od {(minPrice / 100).toFixed(0)} Kč<span className="text-[10px] font-normal text-muted">/g</span>
                     </div>
                   )}
                 </div>
