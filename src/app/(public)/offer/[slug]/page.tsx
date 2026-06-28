@@ -14,7 +14,6 @@ import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
-import { getColorToneInfo } from "@/lib/color-tones";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -371,18 +370,22 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                 </div>
               </Link>
             )}
-            {product.colorTone && (
-              <Link
-                href={`/offer?colorTone=${encodeURIComponent(product.colorTone)}`}
-                className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
-              >
-                <span className="w-8 h-8 rounded-full border border-line/50 flex-shrink-0" style={{ backgroundColor: getColorToneInfo(product.colorTone).hex }} />
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.colorToneLabel")}</div>
-                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.colorTone}</div>
+            {(() => {
+              const variantColors = [...new Set(product.variants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
+              if (variantColors.length === 0) return null;
+              const firstColor = variantColors[0];
+              const hc = getHairColor(firstColor);
+              const colorLabel = (() => { try { return t(`colors.${hc.nameKey}`); } catch { return hc.nameKey; } })();
+              return (
+                <div className="flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-full border border-line/50 flex-shrink-0" style={{ backgroundColor: hc.hex }} />
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.colorLabel")}</div>
+                    <div className="text-sm font-semibold text-ink">{colorLabel}</div>
+                  </div>
                 </div>
-              </Link>
-            )}
+              );
+            })()}
             {focusedVariant ? (
               <>
                 <div className="flex items-center gap-2.5">
@@ -417,7 +420,9 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                     <div>
                       <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.lengthsLabel")}</div>
                       <div className="text-sm font-semibold text-ink">
-                        {lengths[0]}–{lengths[lengths.length - 1]} cm
+                        {lengths.length === 1
+                          ? `${lengths[0]} cm`
+                          : `${lengths[0]}–${lengths[lengths.length - 1]} cm`}
                       </div>
                     </div>
                   </div>

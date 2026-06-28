@@ -32,8 +32,16 @@ function formatPrice(halere: number): string {
 export function AddToInquiryForm({ productId, productName, variants, defaultColor, defaultLength }: AddToInquiryFormProps) {
   const t = useTranslations("public");
   const { addItem } = useInquiryCart();
-  const [selectedColor, setSelectedColor] = useState<string | null>(defaultColor ?? null);
-  const [selectedLength, setSelectedLength] = useState<number | null>(defaultLength ?? null);
+
+  // Auto-select color/length when there's only one option
+  const uniqueColorCodes = [...new Set(variants.map(v => v.color))];
+  const autoColor = defaultColor ?? (uniqueColorCodes.length === 1 ? uniqueColorCodes[0] : null);
+  const autoLengthVariants = autoColor ? variants.filter(v => v.color === autoColor) : [];
+  const uniqueAutoLengths = [...new Set(autoLengthVariants.map(v => v.lengthCm))];
+  const autoLength = defaultLength ?? (uniqueAutoLengths.length === 1 ? uniqueAutoLengths[0] : null);
+
+  const [selectedColor, setSelectedColor] = useState<string | null>(autoColor);
+  const [selectedLength, setSelectedLength] = useState<number | null>(autoLength);
   const [quantity, setQuantity] = useState(100);
   const [added, setAdded] = useState(false);
 
