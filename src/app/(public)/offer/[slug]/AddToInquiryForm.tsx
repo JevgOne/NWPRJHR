@@ -105,9 +105,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
                 }`}
                 title={colorName(code)}
               >
-                <span className="w-5 h-5 rounded-full border border-line overflow-hidden flex-shrink-0">
-                  <img src={`/swatches/color-${code}.png`} alt="" className="w-full h-full object-cover" />
-                </span>
+                <span className="w-5 h-5 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
                 {colorName(code)}
               </button>
             );

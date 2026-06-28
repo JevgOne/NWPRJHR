@@ -297,7 +297,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
                     }`}
                     title={`${colorName(nameKey)} (${count})`}
                   >
-                    <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
+                    <span className="block w-full h-full rounded-full" style={{ backgroundColor: getHairColor(code).hex }} />
                     {isActive && (
                       <span className="absolute inset-0 flex items-center justify-center bg-black/20">
                         <span className="text-xs font-bold text-white">✓</span>
@@ -395,7 +395,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
               onClick={() => setFilter("color", "")}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-nude-100 text-espresso hover:bg-nude-100 transition-colors"
             >
-              <img src={`/swatches/color-${activeColor}.png`} alt="" className="w-4 h-4 rounded-full object-cover border border-line" />
+              <span className="w-4 h-4 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getHairColor(activeColor).hex }} />
               {activeColor} — {colorName(getHairColor(activeColor).nameKey)}
               <span className="ml-0.5">&times;</span>
             </button>

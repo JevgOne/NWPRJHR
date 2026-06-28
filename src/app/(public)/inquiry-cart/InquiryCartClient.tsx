@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import confetti from "canvas-confetti";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
+import { getHairColor } from "@/lib/hair-colors";
 
 
 export function InquiryCartClient() {
@@ -187,9 +188,7 @@ function CartItemRow({
 }) {
   return (
     <div className="flex items-center gap-3 bg-white rounded-xl border border-line p-3">
-      <span className="w-8 h-8 rounded-full border border-line flex-shrink-0 overflow-hidden">
-        <img src={`/swatches/color-${item.color}.png`} alt={item.color} className="w-full h-full object-cover" />
-      </span>
+      <span className="w-8 h-8 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getHairColor(item.color).hex }} />
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium text-ink truncate">{item.productName}</div>
         <div className="text-xs text-muted">

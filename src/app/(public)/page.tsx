@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { getHairColor } from "@/lib/hair-colors";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
 
@@ -151,9 +152,7 @@ export default async function LandingPage() {
               { code: "10", nameKey: "colors.c10" as const },
             ].map(({ code, nameKey }) => (
               <Link key={code} href={`/offer?color=${code}`} className="flex flex-col items-center gap-2 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line overflow-hidden">
-                  <img src={`/swatches/color-${code}.png`} alt={t(nameKey)} className="w-full h-full object-cover" />
-                </div>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line" style={{ backgroundColor: getHairColor(code).hex }} />
                 <span className="text-[10px] sm:text-xs text-muted font-medium text-center leading-tight">{t(nameKey)}</span>
               </Link>
             ))}

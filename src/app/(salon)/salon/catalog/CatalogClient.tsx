@@ -227,11 +227,10 @@ export function CatalogClient({ role }: { role: Role }) {
                       return (
                         <span
                           key={code}
-                          className="w-5 h-5 rounded-full border border-line overflow-hidden"
+                          className="w-5 h-5 rounded-full border border-line"
                           title={colorName(nameKey)}
-                        >
-                          <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
-                        </span>
+                          style={{ backgroundColor: getHairColor(code).hex }}
+                        />
                       );
                     })}
                   </div>
@@ -263,9 +262,7 @@ export function CatalogClient({ role }: { role: Role }) {
                         </td>
                         <td className="px-4 py-2">
                           <span className="inline-flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full border border-line overflow-hidden flex-shrink-0">
-                              <img src={`/swatches/color-${v.color}.png`} alt="" className="w-full h-full object-cover" />
-                            </span>
+                            <span className="w-4 h-4 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getHairColor(v.color).hex }} />
                             <span className="text-ink">{colorName(nameKey)}</span>
                           </span>
                         </td>

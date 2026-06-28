@@ -386,9 +386,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             {focusedVariant ? (
               <>
                 <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-full border border-line overflow-hidden flex-shrink-0">
-                    <img src={`/swatches/color-${focusedVariant.color}.png`} alt="" className="w-full h-full object-cover" />
-                  </span>
+                  <span className="w-8 h-8 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getHairColor(focusedVariant.color).hex }} />
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.colorLabel")}</div>
                     <div className="text-sm font-semibold text-ink">{(() => { const { nameKey } = getHairColor(focusedVariant.color); try { return t(`colors.${nameKey}`); } catch { return nameKey; } })()}</div>
