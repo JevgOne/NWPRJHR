@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
+import { getOriginFlag } from "@/lib/origin-flags";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -19,6 +20,7 @@ interface ProductOption {
   id: string;
   name: string;
   category: string;
+  origin?: string | null;
   texture?: string | null;
   colorTone?: string | null;
   variants: { id: string; lengthCm: number; color: string }[];
@@ -208,10 +210,27 @@ export function StockInForm({
               </option>
             ))}
           </select>
-          {(selectedProduct?.texture || selectedProduct?.colorTone) && (
-            <p className="mt-1 text-xs text-violet-600 font-medium">
-              {[selectedProduct.texture, selectedProduct.colorTone].filter(Boolean).join(" | ")}
-            </p>
+          {selectedProduct && (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-nude-100 text-espresso">
+                {tCat(selectedProduct.category.toLowerCase())}
+              </span>
+              {selectedProduct.origin && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
+                  {getOriginFlag(selectedProduct.origin)} {selectedProduct.origin}
+                </span>
+              )}
+              {selectedProduct.texture && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
+                  {selectedProduct.texture}
+                </span>
+              )}
+              {selectedProduct.colorTone && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
+                  {selectedProduct.colorTone}
+                </span>
+              )}
+            </div>
           )}
         </div>
 

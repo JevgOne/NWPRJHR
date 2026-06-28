@@ -13,7 +13,11 @@ export async function GET(request: NextRequest) {
     const search = sp.get("search");
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { archived: false };
+    const where: any = {
+      archived: false,
+      texture: { not: null },
+      origin: { not: null },
+    };
     if (category) {
       where.category = category;
     }
@@ -33,15 +37,14 @@ export async function GET(request: NextRequest) {
         { description: { contains: search } },
       ];
     }
-    if (color || lengthCm) {
-      where.variants = {
-        some: {
-          active: true,
-          ...(color ? { color } : {}),
-          ...(lengthCm ? { lengthCm: parseInt(lengthCm, 10) } : {}),
-        },
-      };
-    }
+    // Always require at least 1 active variant; optionally filter by color/length
+    where.variants = {
+      some: {
+        active: true,
+        ...(color ? { color } : {}),
+        ...(lengthCm ? { lengthCm: parseInt(lengthCm, 10) } : {}),
+      },
+    };
 
     const products = await prisma.product.findMany({
       where,

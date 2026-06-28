@@ -7,7 +7,7 @@ import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
 import { getColorToneInfo } from "@/lib/color-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
-import { ProductCard } from "@/components/public/ProductCard";
+import { ProductGridCard } from "@/components/public/ProductGridCard";
 
 interface PublicVariant {
   lengthCm: number;
@@ -159,16 +159,15 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
       .finally(() => setLoading(false));
   }, [activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch]);
 
-  // Flatten products into individual variant cards
-  const variantCards = useMemo(() => {
-    return products.flatMap((p) =>
-      p.variants
-        .filter((v) => v.retailPricePerGram > 0)
-        .map((v) => ({
-          product: p,
-          variant: v,
-        }))
-    ).sort((a, b) => b.variant.availableGrams - a.variant.availableGrams || a.variant.retailPricePerGram - b.variant.retailPricePerGram);
+  // Sort products by total stock (descending)
+  const sortedProducts = useMemo(() => {
+    return [...products]
+      .filter((p) => p.variants.some((v) => v.retailPricePerGram > 0))
+      .sort((a, b) => {
+        const stockA = a.variants.reduce((s, v) => s + v.availableGrams, 0);
+        const stockB = b.variants.reduce((s, v) => s + v.availableGrams, 0);
+        return stockB - stockA;
+      });
   }, [products]);
 
   const categoryLabel = (cat: string) => {
@@ -442,13 +441,13 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
       {/* Results count */}
       {!loading && (
         <div className="text-xs text-muted mb-3">
-          {t("offer.productCount", { count: variantCards.length })}
+          {t("offer.productCount", { count: sortedProducts.length })}
         </div>
       )}
 
       {loading ? (
         <p className="text-muted">{tCommon("loading")}</p>
-      ) : variantCards.length === 0 ? (
+      ) : sortedProducts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted mb-3">{t("products.noProducts")}</p>
           {hasActiveFilters && (
@@ -462,11 +461,10 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {variantCards.map(({ product: p, variant: v }) => (
-            <ProductCard
-              key={`${p.id}-${v.lengthCm}-${v.color}`}
+          {sortedProducts.map((p) => (
+            <ProductGridCard
+              key={p.id}
               product={p}
-              variant={v}
               userRole={userRole}
               discountPct={discountPct}
               onCategoryClick={(cat) => setFilter("category", cat)}

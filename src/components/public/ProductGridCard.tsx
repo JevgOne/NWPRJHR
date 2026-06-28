@@ -8,7 +8,7 @@ import { getTextureInfo } from "@/lib/hair-textures";
 import { getColorToneInfo } from "@/lib/color-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
 
-interface ProductCardVariant {
+interface ProductGridCardVariant {
   lengthCm: number;
   color: string;
   retailPricePerGram: number;
@@ -16,7 +16,7 @@ interface ProductCardVariant {
   availableGrams: number;
 }
 
-interface ProductCardProduct {
+export interface ProductGridCardProduct {
   id: string;
   slug: string | null;
   name: string;
@@ -27,11 +27,11 @@ interface ProductCardProduct {
   texture: string | null;
   colorTone: string | null;
   photos: string[];
+  variants: ProductGridCardVariant[];
 }
 
-interface ProductCardProps {
-  product: ProductCardProduct;
-  variant: ProductCardVariant;
+interface ProductGridCardProps {
+  product: ProductGridCardProduct;
   userRole?: string | null;
   discountPct?: number;
   onCategoryClick?: (category: string) => void;
@@ -43,9 +43,8 @@ interface ProductCardProps {
   activeColorToneFilter?: string;
 }
 
-export function ProductCard({
+export function ProductGridCard({
   product: p,
-  variant: v,
   userRole,
   discountPct = 0,
   onCategoryClick,
@@ -55,7 +54,7 @@ export function ProductCard({
   activeOriginFilter,
   activeTextureFilter,
   activeColorToneFilter,
-}: ProductCardProps) {
+}: ProductGridCardProps) {
   const t = useTranslations("public");
   const tTexture = useTranslations("texture");
   const tCategory = useTranslations("category");
@@ -66,16 +65,22 @@ export function ProductCard({
     : locale === "uk" && p.nameUk ? p.nameUk
     : p.name;
 
-  const { nameKey } = getHairColor(v.color);
-  const colorLabel = t(`colors.${nameKey}`);
   const originName = (origin: string) => {
     try { return t(`origins.${origin}`); } catch { return origin; }
   };
   const textureInfo = getTextureInfo(p.texture);
   const textureLabel = p.texture ? tTexture(textureInfo.nameKey) : null;
 
-  const inStock = v.availableGrams > 0;
-  const href = `/offer/${p.slug ?? p.id}?color=${v.color}&length=${v.lengthCm}`;
+  // Aggregate variants
+  const uniqueLengths = [...new Set(p.variants.map(v => v.lengthCm))].sort((a, b) => a - b);
+  const uniqueColors = [...new Set(p.variants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
+  const priceVariants = p.variants.filter(v => v.retailPricePerGram > 0);
+  const minRetailPrice = priceVariants.length > 0 ? Math.min(...priceVariants.map(v => v.retailPricePerGram)) : 0;
+  const maxRetailPrice = priceVariants.length > 0 ? Math.max(...priceVariants.map(v => v.retailPricePerGram)) : 0;
+  const totalStock = p.variants.reduce((sum, v) => sum + v.availableGrams, 0);
+  const inStock = totalStock > 0;
+
+  const href = `/offer/${p.slug ?? p.id}`;
 
   const categoryLabel = tCategory(p.category.toLowerCase());
   const categoryBadgeColors: Record<string, string> = {
@@ -125,8 +130,8 @@ export function ProductCard({
 
   const infoBlock = (
     <div className="p-2.5">
-      {/* Origin + texture badges */}
-      {(p.origin || p.texture) && (
+      {/* Origin + texture + colorTone badges */}
+      {(p.origin || p.texture || p.colorTone) && (
         <div className="flex flex-wrap items-center gap-1 mb-1">
           {p.origin && (
             isInteractive ? (
@@ -192,56 +197,87 @@ export function ProductCard({
       {/* Product name */}
       {isInteractive ? (
         <Link href={href}>
-          <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-0.5">
+          <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1">
             {localizedName}
           </h3>
         </Link>
       ) : (
-        <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 mb-0.5">
+        <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 mb-1">
           {localizedName}
         </h3>
       )}
 
-      {/* Exact length + color */}
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <span className="text-[11px] font-medium text-ink">{v.lengthCm} cm</span>
-        <span className="w-4 h-4 rounded-full border border-line overflow-hidden flex-shrink-0">
-          <img src={`/swatches/color-${v.color}.png`} alt={colorLabel} className="w-full h-full object-cover" />
-        </span>
-        <span className="text-[10px] text-muted">{colorLabel}</span>
-      </div>
+      {/* Lengths as chips */}
+      {uniqueLengths.length > 0 && (
+        <div className="flex flex-wrap gap-1 mb-1">
+          {uniqueLengths.map((cm) => (
+            <span key={cm} className="px-1.5 py-0.5 rounded bg-nude-100 text-[10px] font-medium text-espresso">
+              {cm} cm
+            </span>
+          ))}
+        </div>
+      )}
 
-      {/* Price + stock */}
+      {/* Colors as small swatches */}
+      {uniqueColors.length > 0 && (
+        <div className="flex flex-wrap gap-1 mb-1.5">
+          {uniqueColors.slice(0, 6).map((code) => (
+            <span key={code} className="w-4 h-4 rounded-full border border-line overflow-hidden flex-shrink-0">
+              <img src={`/swatches/color-${code}.png`} alt={t(`colors.${getHairColor(code).nameKey}`)} className="w-full h-full object-cover" />
+            </span>
+          ))}
+          {uniqueColors.length > 6 && (
+            <span className="text-[10px] text-muted self-center">+{uniqueColors.length - 6}</span>
+          )}
+        </div>
+      )}
+
+      {/* Price range + total stock */}
       <div className="flex items-baseline justify-between">
         {(() => {
-          const retailDisplay = (v.retailPricePerGram / 100).toFixed(0);
-          if (userRole === "SALON" && v.wholesalePricePerGram && v.wholesalePricePerGram > 0) {
-            const b2bDisplay = (v.wholesalePricePerGram / 100).toFixed(0);
-            return (
-              <div>
-                <span className="text-[10px] text-muted line-through">{retailDisplay} Kč/g</span>
-                <div className="text-sm font-bold text-rose">{b2bDisplay} Kč<span className="text-[10px] font-normal">/g</span></div>
-              </div>
-            );
+          if (minRetailPrice === 0) return null;
+          const minDisplay = (minRetailPrice / 100).toFixed(0);
+          const maxDisplay = (maxRetailPrice / 100).toFixed(0);
+
+          if (userRole === "SALON") {
+            const wholesaleVariants = p.variants.filter(v => v.wholesalePricePerGram && v.wholesalePricePerGram > 0);
+            if (wholesaleVariants.length > 0) {
+              const minB2B = Math.min(...wholesaleVariants.map(v => v.wholesalePricePerGram!));
+              const b2bDisplay = (minB2B / 100).toFixed(0);
+              return (
+                <div>
+                  <span className="text-[10px] text-muted line-through">
+                    {minRetailPrice === maxRetailPrice ? `${minDisplay} Kc/g` : `${minDisplay}-${maxDisplay} Kc/g`}
+                  </span>
+                  <div className="text-sm font-bold text-rose">od {b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
+                </div>
+              );
+            }
           }
           if (userRole === "HAIRDRESSER" && discountPct > 0) {
-            const b2bPrice = Math.ceil(v.retailPricePerGram * (10000 - discountPct) / 10000);
-            const b2bDisplay = (b2bPrice / 100).toFixed(0);
+            const b2bMin = Math.ceil(minRetailPrice * (10000 - discountPct) / 10000);
+            const b2bDisplay = (b2bMin / 100).toFixed(0);
             return (
               <div>
-                <span className="text-[10px] text-muted line-through">{retailDisplay} Kč/g</span>
-                <div className="text-sm font-bold text-rose">{b2bDisplay} Kč<span className="text-[10px] font-normal">/g</span></div>
+                <span className="text-[10px] text-muted line-through">
+                  {minRetailPrice === maxRetailPrice ? `${minDisplay} Kc/g` : `${minDisplay}-${maxDisplay} Kc/g`}
+                </span>
+                <div className="text-sm font-bold text-rose">od {b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
               </div>
             );
           }
+
+          const priceText = minRetailPrice === maxRetailPrice
+            ? `${minDisplay} Kc`
+            : `${minDisplay}-${maxDisplay} Kc`;
           return (
             <div className="text-sm font-bold text-ink">
-              {retailDisplay} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+              {priceText}<span className="text-[10px] font-normal text-muted">/g</span>
             </div>
           );
         })()}
         <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
-          {inStock ? `${v.availableGrams} g` : t("inquiry.outOfStock")}
+          {inStock ? `${totalStock} g` : t("inquiry.outOfStock")}
         </span>
       </div>
     </div>

@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ProductCard } from "@/components/public/ProductCard";
-
-interface SliderVariant {
-  lengthCm: number;
-  color: string;
-  retailPricePerGram: number;
-  availableGrams: number;
-}
+import { ProductGridCard } from "@/components/public/ProductGridCard";
 
 interface SliderProduct {
   id: string;
@@ -21,7 +14,12 @@ interface SliderProduct {
   texture: string | null;
   colorTone: string | null;
   photos: string[];
-  variants: SliderVariant[];
+  variants: {
+    lengthCm: number;
+    color: string;
+    retailPricePerGram: number;
+    availableGrams: number;
+  }[];
 }
 
 export function HeroProductSlider() {
@@ -34,19 +32,19 @@ export function HeroProductSlider() {
       .catch(() => {});
   }, []);
 
-  // Flatten to variant cards, pick top 4 with most stock
-  const cards = useMemo(() => {
+  // Top 4 products by total stock
+  const topProducts = useMemo(() => {
     return products
-      .flatMap((p) =>
-        p.variants
-          .filter((v) => v.retailPricePerGram > 0 && v.availableGrams > 0)
-          .map((v) => ({ product: p, variant: v }))
-      )
-      .sort((a, b) => b.variant.availableGrams - a.variant.availableGrams)
+      .filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 && v.availableGrams > 0))
+      .sort((a, b) => {
+        const stockA = a.variants.reduce((s, v) => s + v.availableGrams, 0);
+        const stockB = b.variants.reduce((s, v) => s + v.availableGrams, 0);
+        return stockB - stockA;
+      })
       .slice(0, 4);
   }, [products]);
 
-  if (cards.length === 0) {
+  if (topProducts.length === 0) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[1, 2, 3, 4].map((i) => (
@@ -58,11 +56,10 @@ export function HeroProductSlider() {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      {cards.map(({ product: p, variant: v }) => (
-        <ProductCard
-          key={`${p.id}-${v.lengthCm}-${v.color}`}
+      {topProducts.map((p) => (
+        <ProductGridCard
+          key={p.id}
           product={p}
-          variant={v}
         />
       ))}
     </div>
