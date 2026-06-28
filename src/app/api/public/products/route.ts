@@ -63,6 +63,7 @@ export async function GET(request: NextRequest) {
             lengthCm: true,
             color: true,
             retailPricePerGram: true,
+            wholesalePricePerGram: true,
           },
         },
       },
@@ -78,6 +79,7 @@ export async function GET(request: NextRequest) {
               lengthCm: v.lengthCm,
               color: v.color,
               retailPricePerGram: v.retailPricePerGram,
+              wholesalePricePerGram: v.wholesalePricePerGram,
               availableGrams: stock.availableGrams,
             };
           })

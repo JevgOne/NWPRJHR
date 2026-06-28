@@ -13,6 +13,7 @@ interface PublicVariant {
   lengthCm: number;
   color: string;
   retailPricePerGram: number;
+  wholesalePricePerGram: number;
   availableGrams: number;
 }
 
@@ -32,7 +33,12 @@ interface PublicProduct {
   variants: PublicVariant[];
 }
 
-export function ProductsShowcase() {
+interface ShowcaseProps {
+  userRole?: string | null;
+  discountPct?: number;
+}
+
+export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
   const t = useTranslations("public");
   const tCategory = useTranslations("category");
   const tCommon = useTranslations("common");
@@ -503,13 +509,39 @@ export function ProductsShowcase() {
                   </div>
 
                   {/* Price + stock */}
-                  <div className="flex items-baseline justify-between">
-                    <div className="text-sm font-bold text-ink">
-                      {(v.retailPricePerGram / 100).toFixed(0)} Kč<span className="text-[10px] font-normal text-muted">/g</span>
-                    </div>
-                    <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
-                      {inStock ? `${v.availableGrams} g` : t("inquiry.outOfStock")}
+                  <div className="space-y-0.5">
+                    <div className="flex items-baseline justify-between">
+                      {(() => {
+                        const retailDisplay = (v.retailPricePerGram / 100).toFixed(0);
+                        if (userRole === "SALON" && v.wholesalePricePerGram > 0) {
+                          const b2bDisplay = (v.wholesalePricePerGram / 100).toFixed(0);
+                          return (
+                            <div>
+                              <span className="text-[10px] text-muted line-through">{retailDisplay} Kč/g</span>
+                              <div className="text-sm font-bold text-rose">{b2bDisplay} Kč<span className="text-[10px] font-normal">/g</span></div>
+                            </div>
+                          );
+                        }
+                        if (userRole === "HAIRDRESSER" && discountPct > 0) {
+                          const b2bPrice = Math.ceil(v.retailPricePerGram * (10000 - discountPct) / 10000);
+                          const b2bDisplay = (b2bPrice / 100).toFixed(0);
+                          return (
+                            <div>
+                              <span className="text-[10px] text-muted line-through">{retailDisplay} Kč/g</span>
+                              <div className="text-sm font-bold text-rose">{b2bDisplay} Kč<span className="text-[10px] font-normal">/g</span></div>
+                            </div>
+                          );
+                        }
+                        return (
+                          <div className="text-sm font-bold text-ink">
+                            {retailDisplay} Kč<span className="text-[10px] font-normal text-muted">/g</span>
+                          </div>
+                        );
+                      })()}
+                      <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
+                        {inStock ? `${v.availableGrams} g` : t("inquiry.outOfStock")}
                     </span>
+                    </div>
                   </div>
                 </div>
               </div>

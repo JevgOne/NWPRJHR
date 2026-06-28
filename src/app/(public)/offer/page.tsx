@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { ProductsShowcase } from "./ProductsShowcase";
 
 export const metadata: Metadata = {
@@ -12,6 +14,19 @@ export const metadata: Metadata = {
 
 export default async function ProductsPage() {
   const t = await getTranslations("public");
+  const session = await auth();
+
+  // Resolve user pricing tier
+  let userRole: string | null = null;
+  let discountPct = 0;
+
+  if (session?.user?.role === "HAIRDRESSER") {
+    userRole = "HAIRDRESSER";
+    const settings = await prisma.b2BSettings.findFirst();
+    discountPct = settings?.hairdresserDiscountPct ?? 2000;
+  } else if (session?.user?.role === "SALON") {
+    userRole = "SALON";
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -32,7 +47,7 @@ export default async function ProductsPage() {
       </div>
 
       <Suspense fallback={<p className="text-muted">{t("offer.loadingProducts")}</p>}>
-        <ProductsShowcase />
+        <ProductsShowcase userRole={userRole} discountPct={discountPct} />
       </Suspense>
     </div>
   );
