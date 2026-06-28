@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
+import { COLOR_TONE_OPTIONS, getColorToneInfo } from "@/lib/color-tones";
 import { SocialPostModal } from "@/components/products/SocialPostModal";
 import { generateProductBio } from "@/lib/product-bio";
 
@@ -26,6 +27,7 @@ interface ProductDetail {
   processingType: string;
   origin?: string | null;
   texture?: string | null;
+  colorTone?: string | null;
   photos?: string;
   variants?: Array<{
     id: string;
@@ -54,6 +56,9 @@ export function ProductDetailClient({
   const [editingTexture, setEditingTexture] = useState(false);
   const [textureValue, setTextureValue] = useState(product.texture ?? "");
   const textureRef = useRef<HTMLDivElement>(null);
+  const [editingColorTone, setEditingColorTone] = useState(false);
+  const [colorToneValue, setColorToneValue] = useState(product.colorTone ?? "");
+  const colorToneRef = useRef<HTMLDivElement>(null);
 
   const saveTexture = useCallback(async (newTexture: string) => {
     await fetch(`/api/products/${product.id}`, {
@@ -65,16 +70,29 @@ export function ProductDetailClient({
     router.refresh();
   }, [product.id, router]);
 
+  const saveColorTone = useCallback(async (newColorTone: string) => {
+    await fetch(`/api/products/${product.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ colorTone: newColorTone || null }),
+    });
+    setEditingColorTone(false);
+    router.refresh();
+  }, [product.id, router]);
+
   useEffect(() => {
-    if (!editingTexture) return;
+    if (!editingTexture && !editingColorTone) return;
     function handleClick(e: MouseEvent) {
       if (textureRef.current && !textureRef.current.contains(e.target as Node)) {
         setEditingTexture(false);
       }
+      if (colorToneRef.current && !colorToneRef.current.contains(e.target as Node)) {
+        setEditingColorTone(false);
+      }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [editingTexture]);
+  }, [editingTexture, editingColorTone]);
 
   const [generatingBio, setGeneratingBio] = useState(false);
 
@@ -87,6 +105,7 @@ export function ProductDetailClient({
       processingType: product.processingType,
       origin: product.origin,
       texture: product.texture,
+      colorTone: product.colorTone,
       lengths,
       colorCount,
     });
@@ -220,6 +239,59 @@ export function ProductDetailClient({
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
                 <TextureSwatch texture={product.texture} size={20} />
                 {product.texture}
+              </span>
+            ) : null}
+            {isOwner ? (
+              <div ref={colorToneRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setEditingColorTone(!editingColorTone)}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+                >
+                  {colorToneValue ? (
+                    <>
+                      <span className="w-3.5 h-3.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(colorToneValue).hex }} />
+                      {colorToneValue}
+                    </>
+                  ) : (
+                    <span className="text-amber-400">+ {t("product.colorTone")}</span>
+                  )}
+                </button>
+                {editingColorTone && (
+                  <div className="absolute right-0 top-full mt-1 z-20 w-48 bg-white rounded-lg border border-line shadow-lg">
+                    {COLOR_TONE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.name}
+                        type="button"
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-rose/10 text-left"
+                        onClick={() => {
+                          setColorToneValue(opt.name);
+                          saveColorTone(opt.name);
+                        }}
+                      >
+                        <span className="w-4 h-4 rounded-full inline-block border border-line/50" style={{ backgroundColor: opt.hex }} />
+                        <span>{opt.name}</span>
+                      </button>
+                    ))}
+                    {colorToneValue && (
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 text-left border-t border-line"
+                        onClick={() => {
+                          setColorToneValue("");
+                          saveColorTone("");
+                        }}
+                      >
+                        {t("common.delete")}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : product.colorTone ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
+                <span className="w-3.5 h-3.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(product.colorTone).hex }} />
+                {product.colorTone}
               </span>
             ) : null}
           </div>

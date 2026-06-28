@@ -18,6 +18,7 @@ export const createProductSchema = z.object({
   ]),
   origin: z.string().max(200).optional(),
   texture: z.string().max(200).nullable().optional(),
+  colorTone: z.string().max(200).nullable().optional(),
   photos: z.string().optional(),
   slug: z
     .string()

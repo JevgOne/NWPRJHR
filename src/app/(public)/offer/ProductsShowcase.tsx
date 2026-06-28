@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
-import { getTextureInfo, TEXTURE_OPTIONS } from "@/lib/hair-textures";
+import { getColorToneInfo } from "@/lib/color-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
-import { generateProductBioShort } from "@/lib/product-bio";
+import { ProductCard } from "@/components/public/ProductCard";
 
 interface PublicVariant {
   lengthCm: number;
@@ -31,6 +30,7 @@ interface PublicProduct {
   processingType: string;
   origin: string | null;
   texture: string | null;
+  colorTone: string | null;
   photos: string[];
   variants: PublicVariant[];
 }
@@ -57,31 +57,20 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
   const activeColor = searchParams.get("color") ?? "";
   const activeLength = searchParams.get("lengthCm") ?? "";
   const activeTexture = searchParams.get("texture") ?? "";
+  const activeColorTone = searchParams.get("colorTone") ?? "";
   const activeSearch = searchParams.get("search") ?? "";
 
   const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
 
-  const locale = useLocale();
   const colorName = (nameKey: string) => t(`colors.${nameKey}`);
   const originName = (origin: string) => { try { return t(`origins.${origin}`); } catch { return origin; } };
-  const localizedName = (p: PublicProduct) =>
-    locale === "ru" && p.nameRu ? p.nameRu
-    : locale === "uk" && p.nameUk ? p.nameUk
-    : p.name;
-
-  const categoryBadgeColors: Record<string, { base: string; hover: string }> = {
-    VIRGIN: { base: "bg-amber-600 text-white", hover: "hover:bg-amber-700" },
-    PREMIUM: { base: "bg-mauve text-white", hover: "hover:bg-espresso" },
-    STANDARD: { base: "bg-emerald-600 text-white", hover: "hover:bg-emerald-700" },
-    SALE: { base: "bg-red-500 text-white", hover: "hover:bg-red-600" },
-  };
-
   // Extract all available filter options from all products (unfiltered)
   const filterOptions = useMemo(() => {
     const origins: Record<string, number> = {};
     const lengths: Record<number, number> = {};
     const colors: Record<string, number> = {};
     const textures: Record<string, number> = {};
+    const colorTones: Record<string, number> = {};
 
     allProducts.forEach((p) => {
       if (p.origin) {
@@ -89,6 +78,9 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
       }
       if (p.texture) {
         textures[p.texture] = (textures[p.texture] ?? 0) + 1;
+      }
+      if (p.colorTone) {
+        colorTones[p.colorTone] = (colorTones[p.colorTone] ?? 0) + 1;
       }
       const pLengths = new Set<number>();
       const pColors = new Set<string>();
@@ -111,6 +103,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
         .sort((a, b) => a[0] - b[0]),
       colors: Object.entries(colors).sort((a, b) => b[1] - a[1]),
       textures: Object.entries(textures).sort((a, b) => b[1] - a[1]),
+      colorTones: Object.entries(colorTones).sort((a, b) => b[1] - a[1]),
     };
   }, [allProducts]);
 
@@ -156,6 +149,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
     if (activeColor) params.set("color", activeColor);
     if (activeLength) params.set("lengthCm", activeLength);
     if (activeTexture) params.set("texture", activeTexture);
+    if (activeColorTone) params.set("colorTone", activeColorTone);
     if (activeSearch) params.set("search", activeSearch);
 
     fetch(`/api/public/products?${params}`)
@@ -163,7 +157,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
       .then((data) => setProducts(data.data ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeSearch]);
+  }, [activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch]);
 
   // Flatten products into individual variant cards
   const variantCards = useMemo(() => {
@@ -182,7 +176,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
     return tCategory(cat.toLowerCase());
   };
 
-  const hasActiveFilters = activeOrigin || activeColor || activeLength || activeTexture || activeSearch;
+  const hasActiveFilters = activeOrigin || activeColor || activeLength || activeTexture || activeColorTone || activeSearch;
 
   return (
     <div>
@@ -346,6 +340,33 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
           </div>
         )}
 
+        {/* Color Tones — color dot swatches */}
+        {filterOptions.colorTones.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("offer.colorToneLabel")}</div>
+            <div className="flex flex-wrap gap-1.5">
+              {filterOptions.colorTones.map(([ct, count]) => {
+                const info = getColorToneInfo(ct);
+                return (
+                  <button
+                    key={ct}
+                    onClick={() => toggleFilter("colorTone", ct)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
+                      activeColorTone === ct
+                        ? "border-amber-400 bg-amber-100 text-amber-800 ring-1 ring-amber-300"
+                        : "border-line bg-white text-espresso hover:border-line hover:bg-nude-50"
+                    }`}
+                  >
+                    <span className="w-3.5 h-3.5 rounded-full inline-block border border-line/50" style={{ backgroundColor: info.hex }} />
+                    {ct}
+                    <span className="text-muted ml-0.5">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Active filters summary */}
@@ -399,6 +420,16 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
               <span className="ml-0.5">&times;</span>
             </button>
           )}
+          {activeColorTone && (
+            <button
+              onClick={() => setFilter("colorTone", "")}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+            >
+              <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: getColorToneInfo(activeColorTone).hex }} />
+              {activeColorTone}
+              <span className="ml-0.5">&times;</span>
+            </button>
+          )}
           <button
             onClick={clearFilters}
             className="text-xs text-muted hover:text-muted underline ml-1"
@@ -431,133 +462,22 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {variantCards.map(({ product: p, variant: v }) => {
-            const { nameKey } = getHairColor(v.color);
-            const inStock = v.availableGrams > 0;
-
-            return (
-              <div
-                key={`${p.id}-${v.lengthCm}-${v.color}`}
-                className={`bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock ? "border-line" : "border-line opacity-60"}`}
-              >
-                {/* Product image */}
-                <Link href={`/offer/${p.slug ?? p.id}?color=${v.color}&length=${v.lengthCm}`}>
-                  <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center relative">
-                    {p.photos.length > 0 ? (
-                      <img
-                        src={p.photos[0]}
-                        alt={p.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <svg className="w-8 h-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    )}
-                    {/* Category badge */}
-                    <button
-                      onClick={(e) => { e.preventDefault(); setFilter("category", p.category); }}
-                      className={`absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold shadow-sm cursor-pointer ${(categoryBadgeColors[p.category]?.base ?? "bg-rose text-white")} ${(categoryBadgeColors[p.category]?.hover ?? "hover:bg-rose-deep")}`}
-                    >
-                      {tCategory(p.category.toLowerCase())}
-                    </button>
-                  </div>
-                </Link>
-
-                <div className="p-2.5">
-                  {/* Origin + texture badges */}
-                  <div className="flex flex-wrap items-center gap-1 mb-1">
-                    {p.origin && (
-                      <button
-                        onClick={() => toggleFilter("origin", p.origin!)}
-                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                          activeOrigin === p.origin
-                            ? "bg-emerald-200 text-emerald-800 ring-1 ring-emerald-400"
-                            : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                        }`}
-                      >
-                        {getOriginFlag(p.origin)} {originName(p.origin)}
-                      </button>
-                    )}
-                    {p.texture && (
-                      <button
-                        onClick={() => toggleFilter("texture", p.texture!)}
-                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                          activeTexture === p.texture
-                            ? "bg-violet-200 text-violet-800 ring-1 ring-violet-400"
-                            : "bg-violet-100 text-violet-700 hover:bg-violet-200"
-                        }`}
-                      >
-                        <TextureSwatch texture={p.texture} size={14} />
-                        {p.texture}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Product name */}
-                  <Link href={`/offer/${p.slug ?? p.id}?color=${v.color}&length=${v.lengthCm}`}>
-                    <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-0.5">
-                      {localizedName(p)}
-                    </h3>
-                  </Link>
-                  <p className="text-[10px] text-muted line-clamp-1 mb-1">
-                    {generateProductBioShort({
-                      name: localizedName(p),
-                      category: p.category,
-                      processingType: p.processingType,
-                      origin: p.origin,
-                      texture: p.texture,
-                    })}
-                  </p>
-
-                  {/* Exact length + color */}
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <span className="text-[11px] font-medium text-ink">{v.lengthCm} cm</span>
-                    <span className="w-4 h-4 rounded-full border border-line overflow-hidden flex-shrink-0">
-                      <img src={`/swatches/color-${v.color}.png`} alt={colorName(nameKey)} className="w-full h-full object-cover" />
-                    </span>
-                    <span className="text-[10px] text-muted">{colorName(nameKey)}</span>
-                  </div>
-
-                  {/* Price + stock */}
-                  <div className="space-y-0.5">
-                    <div className="flex items-baseline justify-between">
-                      {(() => {
-                        const retailDisplay = (v.retailPricePerGram / 100).toFixed(0);
-                        if (userRole === "SALON" && v.wholesalePricePerGram > 0) {
-                          const b2bDisplay = (v.wholesalePricePerGram / 100).toFixed(0);
-                          return (
-                            <div>
-                              <span className="text-[10px] text-muted line-through">{retailDisplay} Kč/g</span>
-                              <div className="text-sm font-bold text-rose">{b2bDisplay} Kč<span className="text-[10px] font-normal">/g</span></div>
-                            </div>
-                          );
-                        }
-                        if (userRole === "HAIRDRESSER" && discountPct > 0) {
-                          const b2bPrice = Math.ceil(v.retailPricePerGram * (10000 - discountPct) / 10000);
-                          const b2bDisplay = (b2bPrice / 100).toFixed(0);
-                          return (
-                            <div>
-                              <span className="text-[10px] text-muted line-through">{retailDisplay} Kč/g</span>
-                              <div className="text-sm font-bold text-rose">{b2bDisplay} Kč<span className="text-[10px] font-normal">/g</span></div>
-                            </div>
-                          );
-                        }
-                        return (
-                          <div className="text-sm font-bold text-ink">
-                            {retailDisplay} Kč<span className="text-[10px] font-normal text-muted">/g</span>
-                          </div>
-                        );
-                      })()}
-                      <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
-                        {inStock ? `${v.availableGrams} g` : t("inquiry.outOfStock")}
-                    </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {variantCards.map(({ product: p, variant: v }) => (
+            <ProductCard
+              key={`${p.id}-${v.lengthCm}-${v.color}`}
+              product={p}
+              variant={v}
+              userRole={userRole}
+              discountPct={discountPct}
+              onCategoryClick={(cat) => setFilter("category", cat)}
+              onOriginClick={(origin) => toggleFilter("origin", origin)}
+              onTextureClick={(texture) => toggleFilter("texture", texture)}
+              onColorToneClick={(ct) => toggleFilter("colorTone", ct)}
+              activeOriginFilter={activeOrigin}
+              activeTextureFilter={activeTexture}
+              activeColorToneFilter={activeColorTone}
+            />
+          ))}
         </div>
       )}
     </div>

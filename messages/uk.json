@@ -96,7 +96,17 @@
     "texture": "Структура волосся",
     "texturePlaceholder": "Оберіть або введіть структуру...",
     "generatePost": "Згенерувати пост",
-    "generateBio": "Згенерувати опис"
+    "generateBio": "Згенерувати опис",
+    "colorTone": "Тон кольору",
+    "colorTonePlaceholder": "Виберіть або введіть тон..."
+  },
+  "colorTone": {
+    "blond": "Блонд",
+    "brown": "Каштанове",
+    "darkBrown": "Темно-каштанове",
+    "red": "Руде",
+    "unknown": "Не вказано",
+    "custom": "Власне"
   },
   "texture": {
     "straight": "Рівне",
@@ -605,6 +615,7 @@
       "lengthLabel": "Довжина",
       "colorLabel": "Колір",
       "textureLabel": "Структура",
+      "colorToneLabel": "Тон кольору",
       "activeFilters": "Активні фільтри:",
       "clearAll": "Скинути все",
       "clearFilters": "Скинути фільтри",
@@ -617,6 +628,7 @@
       "offer": "Пропозиція",
       "originLabel": "Походження",
       "textureLabel": "Структура",
+      "colorToneLabel": "Тон кольору",
       "lengthsLabel": "Довжини",
       "shadesLabel": "Відтінки",
       "shadesCount": "{count, plural, one {1 колір} few {# кольори} other {# кольорів}}",

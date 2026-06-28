@@ -132,6 +132,7 @@ model Product {
   processingType ProcessingType
   origin         String?
   texture        String?
+  colorTone      String?
   photos         String          @default("[]")
   archived       Boolean         @default(false)
   slug           String?         @unique

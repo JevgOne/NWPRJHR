@@ -14,6 +14,7 @@ import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
+import { getColorToneInfo } from "@/lib/color-tones";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -33,6 +34,7 @@ const productSelect = {
   processingType: true,
   origin: true,
   texture: true,
+  colorTone: true,
   photos: true,
   archived: true,
   variants: {
@@ -105,8 +107,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const processingLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? PROCESSING_LABELS.cs[product.processingType] ?? "";
   const originLabel = product.origin ?? "";
   const textureLabel = product.texture ?? "";
-  // Title: "Panenské vlasy Clip-in — Rovné — Ukrajina" — unique per product
-  const titleParts = [productName, processingLabel, textureLabel, originLabel].filter(Boolean);
+  const colorToneLabel = product.colorTone ?? "";
+  // Title: "Panenské vlasy Clip-in — Rovné — Blond — Ukrajina" — unique per product
+  const titleParts = [productName, processingLabel, textureLabel, colorToneLabel, originLabel].filter(Boolean);
   const title = titleParts.join(" — ");
   const categoryLabel = tCategory(product.category.toLowerCase());
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
@@ -119,6 +122,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     processingType: product.processingType,
     origin: product.origin,
     texture: product.texture,
+    colorTone: product.colorTone,
     lengths,
     colorCount,
   });
@@ -240,6 +244,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
     processingType: product.processingType,
     origin: product.origin,
     texture: product.texture,
+    colorTone: product.colorTone,
     lengths,
     colorCount: new Set(product.variants.map((v) => v.color)).size,
   });
@@ -363,6 +368,18 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.textureLabel")}</div>
                   <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.texture}</div>
+                </div>
+              </Link>
+            )}
+            {product.colorTone && (
+              <Link
+                href={`/offer?colorTone=${encodeURIComponent(product.colorTone)}`}
+                className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
+              >
+                <span className="w-8 h-8 rounded-full border border-line/50 flex-shrink-0" style={{ backgroundColor: getColorToneInfo(product.colorTone).hex }} />
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.colorToneLabel")}</div>
+                  <div className="text-sm font-semibold text-ink underline decoration-line underline-offset-2">{product.colorTone}</div>
                 </div>
               </Link>
             )}

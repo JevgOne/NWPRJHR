@@ -96,7 +96,17 @@
     "texture": "Структура волос",
     "texturePlaceholder": "Выберите или введите структуру...",
     "generatePost": "Сгенерировать пост",
-    "generateBio": "Сгенерировать описание"
+    "generateBio": "Сгенерировать описание",
+    "colorTone": "Тон цвета",
+    "colorTonePlaceholder": "Выберите или введите тон..."
+  },
+  "colorTone": {
+    "blond": "Блонд",
+    "brown": "Каштановые",
+    "darkBrown": "Тёмно-каштановые",
+    "red": "Рыжие",
+    "unknown": "Не указано",
+    "custom": "Своё"
   },
   "texture": {
     "straight": "Прямые",
@@ -605,6 +615,7 @@
       "lengthLabel": "Длина",
       "colorLabel": "Цвет",
       "textureLabel": "Структура",
+      "colorToneLabel": "Тон цвета",
       "activeFilters": "Активные фильтры:",
       "clearAll": "Сбросить все",
       "clearFilters": "Сбросить фильтры",
@@ -617,6 +628,7 @@
       "offer": "Предложение",
       "originLabel": "Происхождение",
       "textureLabel": "Структура",
+      "colorToneLabel": "Тон цвета",
       "lengthsLabel": "Длины",
       "shadesLabel": "Оттенки",
       "shadesCount": "{count, plural, one {1 цвет} few {# цвета} other {# цветов}}",

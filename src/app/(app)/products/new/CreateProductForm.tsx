@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
+import { COLOR_TONE_OPTIONS } from "@/lib/color-tones";
 import { PhotoUpload } from "@/components/products/PhotoUpload";
 import { slugify } from "@/lib/slugify";
 
@@ -31,9 +32,13 @@ export function CreateProductForm() {
   const [texture, setTexture] = useState("");
   const [textureOpen, setTextureOpen] = useState(false);
   const [dbTextures, setDbTextures] = useState<string[]>([]);
+  const [colorTone, setColorTone] = useState("");
+  const [colorToneOpen, setColorToneOpen] = useState(false);
+  const [dbColorTones, setDbColorTones] = useState<string[]>([]);
   const [photos, setPhotos] = useState<string[]>([]);
   const originRef = useRef<HTMLDivElement>(null);
   const textureRef = useRef<HTMLDivElement>(null);
+  const colorToneRef = useRef<HTMLDivElement>(null);
 
   const filteredOrigins = ORIGIN_OPTIONS.filter((o) =>
     o.name.toLowerCase().includes(origin.toLowerCase())
@@ -50,11 +55,23 @@ export function CreateProductForm() {
       return { name: n, icon: opt?.icon ?? "?" };
     });
 
+  const allColorToneNames = [...new Set([
+    ...COLOR_TONE_OPTIONS.map((t) => t.name),
+    ...dbColorTones,
+  ])];
+  const filteredColorTones = allColorToneNames
+    .filter((n) => n.toLowerCase().includes(colorTone.toLowerCase()))
+    .map((n) => {
+      const opt = COLOR_TONE_OPTIONS.find((t) => t.name === n);
+      return { name: n, hex: opt?.hex ?? "#9CA3AF" };
+    });
+
   useEffect(() => {
     fetch("/api/products/options")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.textures) setDbTextures(data.textures);
+        if (data?.colorTones) setDbColorTones(data.colorTones);
       })
       .catch(() => {});
   }, []);
@@ -66,6 +83,9 @@ export function CreateProductForm() {
       }
       if (textureRef.current && !textureRef.current.contains(e.target as Node)) {
         setTextureOpen(false);
+      }
+      if (colorToneRef.current && !colorToneRef.current.contains(e.target as Node)) {
+        setColorToneOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -87,6 +107,7 @@ export function CreateProductForm() {
       processingType: form.get("processingType") as string,
       origin: origin || undefined,
       texture: texture || undefined,
+      colorTone: colorTone || undefined,
       photos: photos.length > 0 ? JSON.stringify(photos) : undefined,
       slug:
         (form.get("slug") as string) ||
@@ -227,6 +248,44 @@ export function CreateProductForm() {
                     }}
                   >
                     <span>{opt.icon}</span>
+                    <span>{opt.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div ref={colorToneRef} className="relative">
+          <label htmlFor="colorTone" className="block text-sm font-medium text-espresso mb-1">
+            {t("product.colorTone")}
+          </label>
+          <input
+            id="colorTone"
+            type="text"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
+            value={colorTone}
+            onChange={(e) => {
+              setColorTone(e.target.value);
+              setColorToneOpen(true);
+            }}
+            onFocus={() => setColorToneOpen(true)}
+            placeholder={t("product.colorTonePlaceholder")}
+            autoComplete="off"
+          />
+          {colorToneOpen && filteredColorTones.length > 0 && (
+            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-line bg-white shadow-lg">
+              {filteredColorTones.map((opt) => (
+                <li key={opt.name}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-rose/10 text-left"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setColorTone(opt.name);
+                      setColorToneOpen(false);
+                    }}
+                  >
+                    <span className="w-4 h-4 rounded-full inline-block border border-line/50" style={{ backgroundColor: opt.hex }} />
                     <span>{opt.name}</span>
                   </button>
                 </li>

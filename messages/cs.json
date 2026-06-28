@@ -96,7 +96,17 @@
     "texture": "Struktura vlasu",
     "texturePlaceholder": "Vyberte nebo zadejte strukturu...",
     "generatePost": "Generovat příspěvek",
-    "generateBio": "Vygenerovat popis"
+    "generateBio": "Vygenerovat popis",
+    "colorTone": "Tón barvy",
+    "colorTonePlaceholder": "Vyberte nebo zadejte tón..."
+  },
+  "colorTone": {
+    "blond": "Blond",
+    "brown": "Hnědá",
+    "darkBrown": "Tmavě hnědá",
+    "red": "Zrzavá",
+    "unknown": "Nespecifikováno",
+    "custom": "Vlastní"
   },
   "texture": {
     "straight": "Rovné",
@@ -605,6 +615,7 @@
       "lengthLabel": "Délka",
       "colorLabel": "Barva",
       "textureLabel": "Struktura",
+      "colorToneLabel": "Tón barvy",
       "activeFilters": "Aktivní filtry:",
       "clearAll": "Zrušit vše",
       "clearFilters": "Zrušit filtry",
@@ -617,6 +628,7 @@
       "offer": "Nabídka",
       "originLabel": "Původ",
       "textureLabel": "Struktura",
+      "colorToneLabel": "Tón barvy",
       "lengthsLabel": "Délky",
       "shadesLabel": "Odstíny",
       "shadesCount": "{count, plural, one {1 barva} few {# barvy} other {# barev}}",

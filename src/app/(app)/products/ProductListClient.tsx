@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { CategoryBadge } from "@/components/products/CategoryBadge";
 import { Card } from "@/components/ui/Card";
 import { TextureSwatch } from "@/components/TextureSwatch";
+import { getColorToneInfo } from "@/lib/color-tones";
 
 interface ProductItem {
   id: string;
@@ -47,6 +48,12 @@ export function ProductListClient({ products }: { products: ProductItem[] }) {
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-100 text-violet-700">
                   <TextureSwatch texture={product.texture} size={16} />
                   {product.texture}
+                </span>
+              )}
+              {typeof product.colorTone === "string" && product.colorTone && (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
+                  <span className="w-2.5 h-2.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(product.colorTone).hex }} />
+                  {product.colorTone}
                 </span>
               )}
             </div>

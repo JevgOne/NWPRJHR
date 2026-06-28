@@ -10,6 +10,20 @@ const nextConfig: NextConfig = {
       { hostname: "randomuser.me" },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/advice",
+        destination: "/poradna",
+        permanent: true,
+      },
+      {
+        source: "/cooperation",
+        destination: "/pro",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

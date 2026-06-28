@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { roundHalereUp } from "@/lib/rounding";
-import { getStockNumbers } from "@/lib/stock";
+import { getAllStockNumbers } from "@/lib/stock";
 
 export async function GET() {
   const session = await auth();
@@ -42,57 +42,56 @@ export async function GET() {
     orderBy: { name: "asc" },
   });
 
+  // Single bulk query for all stock — 2 SQL queries instead of N per variant
+  const stockMap = await getAllStockNumbers();
+
   // Add role-specific prices, filter to in-stock variants only
-  const allProducts = await Promise.all(
-    products.map(async (product) => {
-      const allVariants = await Promise.all(
-        product.variants.map(async (v) => {
-          const stock = await getStockNumbers(v.id);
+  const allProducts = products.map((product) => {
+    const variants = product.variants
+      .map((v) => {
+        const stock = stockMap.get(v.id);
 
-          let price: number;
-          if (isHairdresser) {
-            price = roundHalereUp(
-              (v.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
-            );
-          } else {
-            price =
-              loyaltyDiscount > 0
-                ? roundHalereUp(
-                    (v.wholesalePricePerGram * (10000 - loyaltyDiscount)) /
-                      10000
-                  )
-                : v.wholesalePricePerGram;
-          }
+        let price: number;
+        if (isHairdresser) {
+          price = roundHalereUp(
+            (v.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
+          );
+        } else {
+          price =
+            loyaltyDiscount > 0
+              ? roundHalereUp(
+                  (v.wholesalePricePerGram * (10000 - loyaltyDiscount)) /
+                    10000
+                )
+              : v.wholesalePricePerGram;
+        }
 
-          return {
-            id: v.id,
-            lengthCm: v.lengthCm,
-            color: v.color,
-            pricePerGram: price,
-            availableGrams: stock.availableGrams,
-            availablePieces: stock.availablePieces,
-          };
-        })
-      );
+        return {
+          id: v.id,
+          lengthCm: v.lengthCm,
+          color: v.color,
+          pricePerGram: price,
+          availableGrams: stock?.availableGrams ?? 0,
+          availablePieces: stock?.availablePieces ?? 0,
+        };
+      })
+      .filter((v) => v.availableGrams > 0);
 
-      // Only show variants that are in stock
-      const variants = allVariants.filter((v) => v.availableGrams > 0);
-      if (variants.length === 0) return null;
+    if (variants.length === 0) return null;
 
-      return {
-        id: product.id,
-        name: product.name,
-        nameUk: product.nameUk,
-        nameRu: product.nameRu,
-        category: product.category,
-        processingType: product.processingType,
-        origin: product.origin,
-        texture: product.texture,
-        photos: JSON.parse(product.photos || "[]") as string[],
-        variants,
-      };
-    })
-  );
+    return {
+      id: product.id,
+      name: product.name,
+      nameUk: product.nameUk,
+      nameRu: product.nameRu,
+      category: product.category,
+      processingType: product.processingType,
+      origin: product.origin,
+      texture: product.texture,
+      photos: JSON.parse(product.photos || "[]") as string[],
+      variants,
+    };
+  });
 
   // Filter out products with no in-stock variants
   const result = allProducts.filter(Boolean);

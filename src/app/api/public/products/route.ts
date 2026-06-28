@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
     }
     const texture = sp.get("texture");
     if (texture) where.texture = texture;
+    const colorTone = sp.get("colorTone");
+    if (colorTone) where.colorTone = colorTone;
     if (search) {
       where.OR = [
         { name: { contains: search } },
@@ -56,6 +58,7 @@ export async function GET(request: NextRequest) {
         processingType: true,
         origin: true,
         texture: true,
+        colorTone: true,
         photos: true,
         variants: {
           where: { active: true },
@@ -100,6 +103,7 @@ export async function GET(request: NextRequest) {
           processingType: p.processingType,
           origin: p.origin,
           texture: p.texture,
+          colorTone: p.colorTone,
           photos: JSON.parse(p.photos || "[]"),
           variants: variantsWithStock,
         };

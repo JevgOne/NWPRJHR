@@ -4,6 +4,7 @@ interface BioProductData {
   processingType: string;
   origin?: string | null;
   texture?: string | null;
+  colorTone?: string | null;
   lengths?: number[];
   colorCount?: number;
 }
@@ -45,6 +46,10 @@ export function generateProductBio(data: BioProductData): string {
     if (texDesc) {
       parts.push(`${texDesc}.`);
     }
+  }
+
+  if (data.colorTone) {
+    parts.push(`Tón: ${data.colorTone}.`);
   }
 
   if (data.origin) {
@@ -91,6 +96,7 @@ export function generateProductBioShort(data: BioProductData): string {
   }
 
   if (data.texture) parts.push(data.texture.toLowerCase());
+  if (data.colorTone) parts.push(data.colorTone.toLowerCase());
   if (data.origin) parts.push(data.origin);
 
   if (data.lengths && data.lengths.length > 1) {
