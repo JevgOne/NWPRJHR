@@ -95,7 +95,8 @@
     "originPlaceholder": "Почніть вводити назву країни...",
     "texture": "Структура волосся",
     "texturePlaceholder": "Оберіть або введіть структуру...",
-    "generatePost": "Згенерувати пост"
+    "generatePost": "Згенерувати пост",
+    "generateBio": "Згенерувати опис"
   },
   "texture": {
     "straight": "Рівне",

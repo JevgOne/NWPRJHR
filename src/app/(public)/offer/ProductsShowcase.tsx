@@ -8,6 +8,7 @@ import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
 import { getTextureInfo, TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { TextureSwatch } from "@/components/TextureSwatch";
+import { generateProductBioShort } from "@/lib/product-bio";
 
 interface PublicVariant {
   lengthCm: number;
@@ -495,10 +496,19 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
 
                   {/* Product name */}
                   <Link href={`/offer/${p.slug ?? p.id}`}>
-                    <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1">
+                    <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-0.5">
                       {localizedName(p)}
                     </h3>
                   </Link>
+                  <p className="text-[10px] text-muted line-clamp-1 mb-1">
+                    {generateProductBioShort({
+                      name: localizedName(p),
+                      category: p.category,
+                      processingType: p.processingType,
+                      origin: p.origin,
+                      texture: p.texture,
+                    })}
+                  </p>
 
                   {/* Exact length + color */}
                   <div className="flex items-center gap-1.5 mb-1.5">

@@ -95,7 +95,8 @@
     "originPlaceholder": "Начните вводить название страны...",
     "texture": "Структура волос",
     "texturePlaceholder": "Выберите или введите структуру...",
-    "generatePost": "Сгенерировать пост"
+    "generatePost": "Сгенерировать пост",
+    "generateBio": "Сгенерировать описание"
   },
   "texture": {
     "straight": "Прямые",

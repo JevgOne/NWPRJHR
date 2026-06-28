@@ -12,6 +12,7 @@ import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
+import { generateProductBio } from "@/lib/product-bio";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -110,9 +111,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const colorCount = new Set(product.variants.map((v) => v.color)).size;
   const minLength = lengths[0];
   const maxLength = lengths[lengths.length - 1];
-  const originPart = product.origin ? `Původ: ${product.origin}. ` : "";
-  const texturePart = product.texture ? `Struktura: ${product.texture}. ` : "";
-  const description = `${productName} ${processingLabel} — ${categoryLabel} vlasy k prodloužení. ${originPart}${texturePart}Délky ${minLength}–${maxLength} cm, ${colorCount} odstínů. Skladem v Praze | Hairland`;
+  const metaBio = generateProductBio({
+    name: productName,
+    category: product.category,
+    processingType: product.processingType,
+    origin: product.origin,
+    texture: product.texture,
+    lengths,
+    colorCount,
+  });
+  const description = (metaBio.length > 155 ? metaBio.slice(0, 152) + "..." : metaBio) + " | Hairland";
   const firstPhoto = product.photos[0];
   return {
     title,
@@ -214,7 +222,16 @@ export default async function ProductDetailPage({ params }: Props) {
     t(`categoryInfo.${catKey}Feature3`),
     t(`categoryInfo.${catKey}Feature4`),
   ];
-  const description = localizedDesc || catDesc;
+  const autoBio = generateProductBio({
+    name: productName,
+    category: product.category,
+    processingType: product.processingType,
+    origin: product.origin,
+    texture: product.texture,
+    lengths,
+    colorCount: new Set(product.variants.map((v) => v.color)).size,
+  });
+  const description = localizedDesc || autoBio;
 
   // Product schema JSON-LD
   const productJsonLd = {

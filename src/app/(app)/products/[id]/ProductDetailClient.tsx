@@ -13,6 +13,7 @@ import Link from "next/link";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { SocialPostModal } from "@/components/products/SocialPostModal";
+import { generateProductBio } from "@/lib/product-bio";
 
 interface ProductDetail {
   id: string;
@@ -75,6 +76,30 @@ export function ProductDetailClient({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [editingTexture]);
 
+  const [generatingBio, setGeneratingBio] = useState(false);
+
+  const handleGenerateBio = useCallback(async () => {
+    const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
+    const colorCount = new Set((product.variants ?? []).map((v) => v.color)).size;
+    const bio = generateProductBio({
+      name: product.name,
+      category: product.category,
+      processingType: product.processingType,
+      origin: product.origin,
+      texture: product.texture,
+      lengths,
+      colorCount,
+    });
+    setGeneratingBio(true);
+    await fetch(`/api/products/${product.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description: bio }),
+    });
+    setGeneratingBio(false);
+    router.refresh();
+  }, [product, router]);
+
   const parsedPhotos: string[] = (() => {
     try {
       return product.photos ? JSON.parse(product.photos) : [];
@@ -118,9 +143,17 @@ export function ProductDetailClient({
             {product.nameRu && (
               <p className="text-sm text-muted">RU: {product.nameRu}</p>
             )}
-            {product.description && (
+            {product.description ? (
               <p className="mt-2 text-gray-600">{product.description}</p>
-            )}
+            ) : isOwner ? (
+              <button
+                onClick={handleGenerateBio}
+                disabled={generatingBio}
+                className="mt-2 text-sm text-rose hover:text-rose/70 transition-colors disabled:opacity-50"
+              >
+                {generatingBio ? "..." : t("product.generateBio")}
+              </button>
+            ) : null}
           </div>
           <div className="flex items-center gap-2">
             <CategoryBadge

@@ -95,7 +95,8 @@
     "originPlaceholder": "Začněte psát název země...",
     "texture": "Struktura vlasu",
     "texturePlaceholder": "Vyberte nebo zadejte strukturu...",
-    "generatePost": "Generovat příspěvek"
+    "generatePost": "Generovat příspěvek",
+    "generateBio": "Vygenerovat popis"
   },
   "texture": {
     "straight": "Rovné",
