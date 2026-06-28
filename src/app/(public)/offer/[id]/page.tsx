@@ -7,11 +7,11 @@ import { auth } from "@/lib/auth";
 import { roundHalereUp } from "@/lib/rounding";
 import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
-import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
+import { getStockNumbers } from "@/lib/stock";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -37,6 +37,7 @@ async function getProduct(id: string) {
       variants: {
         where: { active: true },
         select: {
+          id: true,
           lengthCm: true,
           color: true,
           retailPricePerGram: true,
@@ -47,8 +48,17 @@ async function getProduct(id: string) {
   });
   if (!product) return null;
 
+  // Fetch stock for all variants
+  const variantsWithStock = await Promise.all(
+    product.variants.map(async (v) => {
+      const stock = await getStockNumbers(v.id);
+      return { ...v, availableGrams: stock.availableGrams };
+    })
+  );
+
   return {
     ...product,
+    variants: variantsWithStock,
     photos: JSON.parse(product.photos || "[]") as string[],
   };
 }
@@ -112,44 +122,48 @@ export default async function ProductDetailPage({ params }: Props) {
   const tCategory = await getTranslations("category");
   const locale = await getLocale();
 
-  // Calculate per-gram price based on user tier
-  let pricePerGram: number | null = null;
-  let priceTip100g: number | null = null;
+  // Calculate per-variant prices based on user tier
+  const role = session?.user?.role;
+  let discountPct = 0;
   let tierBadge: string | null = null;
-  let retailPricePerGram: number | null = null;
-  const variantsWithPrices = product.variants.filter(
-    (v) => v.retailPricePerGram > 0
-  );
 
-  if (variantsWithPrices.length > 0) {
-    const role = session?.user?.role;
-    const retailPrices = variantsWithPrices.map((v) => v.retailPricePerGram);
-    const minRetail = Math.min(...retailPrices);
-
-    if (role === "HAIRDRESSER") {
-      const settings = await prisma.b2BSettings.findFirst();
-      const discountPct = settings?.hairdresserDiscountPct ?? 2000;
-      const prices = variantsWithPrices.map((v) =>
-        roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000)
-      );
-      pricePerGram = Math.min(...prices);
-      priceTip100g = pricePerGram * 100;
-      tierBadge = t("productDetail.yourPrice");
-      retailPricePerGram = minRetail;
-    } else if (role === "SALON") {
-      const prices = variantsWithPrices.map((v) => v.wholesalePricePerGram);
-      pricePerGram = Math.min(...prices);
-      priceTip100g = pricePerGram * 100;
-      tierBadge = t("productDetail.yourPrice");
-      retailPricePerGram = minRetail;
-    } else {
-      // Guest / OWNER / EMPLOYEE — show retail price
-      pricePerGram = minRetail;
-      priceTip100g = pricePerGram * 100;
-    }
+  if (role === "HAIRDRESSER") {
+    const settings = await prisma.b2BSettings.findFirst();
+    discountPct = settings?.hairdresserDiscountPct ?? 2000;
+    tierBadge = t("productDetail.yourPrice");
+  } else if (role === "SALON") {
+    tierBadge = t("productDetail.yourPrice");
   }
 
-  const colorName = (nameKey: string) => t(`colors.${nameKey}`);
+  // Build variant data with resolved prices for the picker
+  const pickerVariants = product.variants
+    .filter((v) => v.retailPricePerGram > 0)
+    .map((v) => {
+      let displayPrice: number;
+      if (role === "HAIRDRESSER") {
+        displayPrice = roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000);
+      } else if (role === "SALON") {
+        displayPrice = v.wholesalePricePerGram;
+      } else {
+        displayPrice = v.retailPricePerGram;
+      }
+      return {
+        lengthCm: v.lengthCm,
+        color: v.color,
+        pricePerGram: displayPrice,
+        retailPricePerGram: v.retailPricePerGram,
+        availableGrams: v.availableGrams,
+      };
+    });
+
+  // Min price for display
+  const pricePerGram = pickerVariants.length > 0
+    ? Math.min(...pickerVariants.map((v) => v.pricePerGram))
+    : null;
+  const priceTip100g = pricePerGram ? pricePerGram * 100 : null;
+  const retailPricePerGram = (tierBadge && pickerVariants.length > 0)
+    ? Math.min(...pickerVariants.map((v) => v.retailPricePerGram))
+    : null;
 
   // Localized product name
   const productName = locale === "ru" && product.nameRu
@@ -173,8 +187,6 @@ export default async function ProductDetailPage({ params }: Props) {
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort(
     (a, b) => a - b
   );
-  const colors = [...new Set(product.variants.map((v) => v.color))];
-
   const categoryLabel = tCategory(product.category.toLowerCase());
   const originFlag = product.origin ? getOriginFlag(product.origin) : null;
 
@@ -321,13 +333,6 @@ export default async function ProductDetailPage({ params }: Props) {
               </div>
             )}
             <div className="flex items-center gap-2.5">
-              <span className="text-xl">🎨</span>
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.shadesLabel")}</div>
-                <div className="text-sm font-semibold text-ink">{t("productDetail.shadesCount", { count: colors.length })}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2.5">
               <span className="text-xl">✅</span>
               <div>
                 <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
@@ -335,69 +340,6 @@ export default async function ProductDetailPage({ params }: Props) {
               </div>
             </div>
           </div>
-
-          {/* Available lengths */}
-          <div>
-            <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{t("productDetail.availableLengths")}</div>
-            <div className="flex flex-wrap gap-1.5">
-              {lengths.map((len) => (
-                <Link
-                  key={len}
-                  href={`/offer?lengthCm=${len}`}
-                  className="px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-espresso border border-line hover:border-blush-300 hover:bg-blush-100 hover:text-rose-deep transition-colors"
-                >
-                  {len} cm
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Variant table — compact */}
-          {lengths.length > 0 && (
-            <div className="rounded-xl border border-line overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-nude-50">
-                    <th className="text-left px-4 py-2 text-xs text-muted font-medium uppercase tracking-wider">{t("productDetail.lengthTableLength")}</th>
-                    <th className="text-left px-4 py-2 text-xs text-muted font-medium uppercase tracking-wider">{t("productDetail.lengthTableColors")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lengths.map((len, i) => {
-                    const variantColors = [...new Set(
-                      product.variants.filter((v) => v.lengthCm === len).map((v) => v.color)
-                    )];
-                    return (
-                      <tr key={len} className={i > 0 ? "border-t border-line" : ""}>
-                        <td className="px-4 py-2 font-medium text-ink">
-                          <Link href={`/offer?lengthCm=${len}`} className="hover:text-rose transition-colors">
-                            {len} cm
-                          </Link>
-                        </td>
-                        <td className="px-4 py-2">
-                          <div className="flex flex-wrap gap-1.5">
-                            {variantColors.map((code) => {
-                              const { nameKey } = getHairColor(code);
-                              return (
-                                <Link
-                                  key={code}
-                                  href={`/offer?color=${encodeURIComponent(code)}`}
-                                  className="inline-flex items-center gap-1 text-xs text-muted hover:text-rose transition-colors"
-                                >
-                                  <img src={`/swatches/color-${code}.png`} alt={colorName(nameKey)} className="w-4 h-4 rounded-full object-cover border border-line flex-shrink-0" />
-                                  {colorName(nameKey)}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
 
           {/* Category features */}
           <div className="bg-amber-50 rounded-2xl p-4">
@@ -414,11 +356,11 @@ export default async function ProductDetailPage({ params }: Props) {
             </ul>
           </div>
 
-          {/* Add to inquiry */}
+          {/* Add to inquiry — interactive picker */}
           <AddToInquiryForm
             productId={product.id}
             productName={product.name}
-            variants={product.variants}
+            variants={pickerVariants}
           />
 
           {/* Delivery perks — tight row */}

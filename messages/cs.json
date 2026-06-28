@@ -635,7 +635,8 @@
       "quantityLabel": "Množství (gramy)",
       "addButton": "Přidat do poptávky",
       "addedButton": "Přidáno do poptávky!",
-      "selectLengthAndColor": "Vyberte délku a barvu",
+      "selectLengthAndColor": "Vyberte barvu a délku",
+      "selectColorFirst": "Nejdříve vyberte barvu",
       "cartTitle": "Poptávkový košík",
       "emptyTitle": "Poptávkový košík je prázdný",
       "emptyText": "Prohlédněte si naši nabídku a přidejte vlasy do poptávky.",
@@ -654,7 +655,8 @@
       "submitButton": "Odeslat poptávku ({count} položek)",
       "submitting": "Odesílám...",
       "submitError": "Chyba při odesílání",
-      "disclaimer": "Neplatíte nic online. Domluvíme schůzku kde si vlasy prohlédnete osobně."
+      "disclaimer": "Neplatíte nic online. Domluvíme schůzku kde si vlasy prohlédnete osobně.",
+      "outOfStock": "Vyprodáno"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",
