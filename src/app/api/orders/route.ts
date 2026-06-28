@@ -102,9 +102,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(order, { status: 201 });
   } catch (e) {
+    console.error("Order creation failed:", { salonId, items: parsed.data.items, error: e });
     if (e instanceof Error && e.message.startsWith("Insufficient stock")) {
       return NextResponse.json({ error: e.message }, { status: 400 });
     }
-    throw e;
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Order creation failed" },
+      { status: 500 }
+    );
   }
 }
