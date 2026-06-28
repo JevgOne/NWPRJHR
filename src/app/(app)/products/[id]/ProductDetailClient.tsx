@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
+import { SocialPostModal } from "@/components/products/SocialPostModal";
 
 interface ProductDetail {
   id: string;
@@ -47,6 +48,7 @@ export function ProductDetailClient({
   const t = useTranslations();
   const router = useRouter();
   const [showBatchCreate, setShowBatchCreate] = useState(false);
+  const [showSocialPost, setShowSocialPost] = useState(false);
   const [editingTexture, setEditingTexture] = useState(false);
   const [textureValue, setTextureValue] = useState(product.texture ?? "");
   const textureRef = useRef<HTMLDivElement>(null);
@@ -191,6 +193,18 @@ export function ProductDetailClient({
       </Card>
 
       {isOwner && (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setShowSocialPost(true)}
+          >
+            {t("product.generatePost")}
+          </Button>
+        </div>
+      )}
+
+      {isOwner && (
         <Card>
           <PhotoUpload
             photos={parsedPhotos}
@@ -244,6 +258,13 @@ export function ProductDetailClient({
           isOwner={isOwner}
         />
       </Card>
+
+      {showSocialPost && (
+        <SocialPostModal
+          product={product}
+          onClose={() => setShowSocialPost(false)}
+        />
+      )}
     </div>
   );
 }
