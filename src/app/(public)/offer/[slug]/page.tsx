@@ -327,6 +327,36 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         ? "https://schema.org/Discontinued"
         : "https://schema.org/InStock",
       url: `https://www.hairland.cz/offer/${product.slug ?? product.id}`,
+      seller: {
+        "@type": "Organization",
+        name: "Hairland",
+        url: "https://www.hairland.cz",
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "CZ",
+        },
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "CZK",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "d" },
+          transitTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 3, unitCode: "d" },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "CZ",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
+      },
     },
     ...(reviewStats._count > 0 && {
       aggregateRating: {
