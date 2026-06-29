@@ -28,13 +28,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await prisma.blogPost.findUnique({
     where: { slug },
-    select: { title: true, excerpt: true },
+    select: { title: true, excerpt: true, coverImage: true },
   });
   if (!post) return {};
   return {
     title: `${post.title} | Blog | Hairland`,
     description: post.excerpt ?? post.title,
     alternates: { canonical: `/blog/${slug}` },
+    openGraph: post.coverImage
+      ? { images: [{ url: post.coverImage, alt: post.title }] }
+      : undefined,
   };
 }
 

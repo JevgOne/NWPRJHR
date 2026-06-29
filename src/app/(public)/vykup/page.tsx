@@ -29,11 +29,28 @@ const jsonLd = {
 export default async function BuybackPage() {
   const t = await getTranslations("buyback");
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [1, 2, 3, 4, 5].map((i) => ({
+      "@type": "Question",
+      name: t(`faq${i}Q` as "faq1Q"),
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: t(`faq${i}A` as "faq1A"),
+      },
+    })),
+  };
+
   return (
     <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {/* Hero */}

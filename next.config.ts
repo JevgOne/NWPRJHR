@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: "randomuser.me" },
+      { hostname: "usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" },
     ],
   },
   async redirects() {

@@ -102,10 +102,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  const products = await prisma.product.findMany({
-    where: { archived: false },
-    select: { id: true, slug: true, updatedAt: true },
-  });
+  const [products, stylists] = await Promise.all([
+    prisma.product.findMany({
+      where: { archived: false },
+      select: { id: true, slug: true, updatedAt: true },
+    }),
+    prisma.stylist.findMany({
+      where: { active: true },
+      select: { slug: true, updatedAt: true },
+    }),
+  ]);
 
   const productPages: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${BASE_URL}/offer/${product.slug ?? product.id}`,
@@ -114,5 +120,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...articlePages, ...blogPages, ...productPages];
+  const stylistPages: MetadataRoute.Sitemap = stylists.map((s) => ({
+    url: `${BASE_URL}/kadernice/${s.slug}`,
+    lastModified: s.updatedAt,
+    changeFrequency: "monthly",
+    priority: 0.5,
+  }));
+
+  return [...staticPages, ...articlePages, ...blogPages, ...productPages, ...stylistPages];
 }

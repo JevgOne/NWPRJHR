@@ -91,7 +91,8 @@ export default async function ArticlePage({ params }: Props) {
     description: t(article.descKey as "typesDesc"),
     author: { "@type": "Organization", name: "Hairland" },
     publisher: { "@type": "Organization", name: "Hairland", url: "https://www.hairland.cz" },
-    datePublished: "2025-01-01",
+    datePublished: "2025-06-01",
+    dateModified: "2026-06-01",
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.hairland.cz/poradna/${slug}` },
   };
 

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${stylist.name} — spolupracující kadeřnice Hairland`,
     alternates: { canonical: `/kadernice/${slug}` },
     openGraph: stylist.photo
-      ? { images: [{ url: stylist.photo }] }
+      ? { images: [{ url: stylist.photo, alt: stylist.name, width: 400, height: 400 }] }
       : undefined,
   };
 }

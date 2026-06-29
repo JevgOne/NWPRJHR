@@ -4,21 +4,10 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public routes - no auth check needed in proxy
-  if (
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/icons") ||
-    pathname === "/manifest.json" ||
-    pathname === "/sw.js" ||
-    /\.(svg|png|ico|jpg|jpeg|webp)$/.test(pathname)
-  ) {
-    return NextResponse.next();
-  }
+  const response = NextResponse.next();
+  response.headers.set("x-pathname", pathname);
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
