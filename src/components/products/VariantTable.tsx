@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatCZK } from "@/lib/pricing";
+import { getHairColor } from "@/lib/hair-colors";
 
 interface VariantData {
   id: string;
@@ -35,6 +36,7 @@ export function VariantTable({
   isOwner,
 }: VariantTableProps) {
   const t = useTranslations();
+  const tColors = useTranslations("public.colors");
   const router = useRouter();
   const [saving, setSaving] = useState<string | null>(null);
   const [editingCell, setEditingCell] = useState<string | null>(null);
@@ -58,7 +60,6 @@ export function VariantTable({
       .catch(() => {});
   }, [productId]);
 
-  // Group variants by length and color
   const lengths = [...new Set(variants.map((v) => v.lengthCm))].sort(
     (a, b) => a - b
   );
@@ -96,6 +97,15 @@ export function VariantTable({
     }
   }
 
+  function colorName(code: string): string {
+    const { nameKey } = getHairColor(code);
+    try {
+      return tColors(nameKey as "c1");
+    } catch {
+      return code;
+    }
+  }
+
   if (variants.length === 0) {
     return (
       <div className="text-center py-8 text-muted">
@@ -104,215 +114,192 @@ export function VariantTable({
     );
   }
 
+  function PriceInput({ variantId, field, cellKey, currentValue }: {
+    variantId: string; field: string; cellKey: string; currentValue: number;
+  }) {
+    if (editingCell !== cellKey) return null;
+    return (
+      <input
+        type="number"
+        className="w-20 border border-line rounded-lg px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-rose/30"
+        value={editValue}
+        onChange={(e) => setEditValue(e.target.value)}
+        onBlur={() => {
+          const val = Math.round(parseFloat(editValue) * 100);
+          if (val >= 0) handleSavePrice(variantId, field, val);
+          else setEditingCell(null);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            const val = Math.round(parseFloat(editValue) * 100);
+            if (val >= 0) handleSavePrice(variantId, field, val);
+          }
+          if (e.key === "Escape") setEditingCell(null);
+        }}
+        autoFocus
+        disabled={saving === variantId}
+      />
+    );
+  }
+
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border border-line text-sm">
+    <div className="overflow-x-auto -mx-6 px-6">
+      <table className="w-full text-sm">
+        {/* Header with color circles */}
         <thead>
-          <tr className="bg-nude-50">
-            <th className="border border-line px-3 py-2 text-left font-medium text-espresso">
-              {t("product.length")} \ {t("product.color")}
+          <tr>
+            <th className="pb-4 pr-4 text-left">
+              <span className="text-xs font-medium text-muted uppercase tracking-wider">
+                {t("product.length")}
+              </span>
             </th>
-            {colors.map((color) => (
-              <th
-                key={color}
-                className="border border-line px-3 py-2 text-center font-medium text-espresso"
-              >
-                {color}
-              </th>
-            ))}
+            {colors.map((color) => {
+              const hc = getHairColor(color);
+              return (
+                <th key={color} className="pb-4 px-2 text-center min-w-[100px]">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span
+                      className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                      style={{ backgroundColor: hc.hex }}
+                    />
+                    <span className="text-xs font-medium text-espresso">
+                      {colorName(color)}
+                    </span>
+                  </div>
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
-          {lengths.map((length) => (
-            <tr key={length}>
-              <td className="border border-line px-3 py-2 font-medium text-espresso bg-nude-50">
-                {length} cm
+          {lengths.map((length, li) => (
+            <tr
+              key={length}
+              className={li % 2 === 0 ? "bg-nude-50/50" : "bg-white"}
+            >
+              {/* Length label */}
+              <td className="py-3 pr-4">
+                <span className="inline-flex items-center justify-center w-16 h-8 rounded-lg bg-espresso/5 text-sm font-semibold text-espresso">
+                  {length} cm
+                </span>
               </td>
+
+              {/* Variant cells */}
               {colors.map((color) => {
                 const variant = getVariant(length, color);
-                if (!variant)
+                const cellKey = `${length}-${color}`;
+
+                if (!variant) {
                   return (
-                    <td
-                      key={color}
-                      className="border border-line px-3 py-2 text-center text-gray-300"
-                    >
-                      —
+                    <td key={color} className="py-3 px-2 text-center">
+                      <span className="text-gray-200">—</span>
                     </td>
                   );
+                }
 
-                const cellKey = `${length}-${color}`;
                 const isSaving = saving === variant.id;
+                const stock = stockMap.get(variant.id);
+                const hasStock = stock && stock.availableGrams > 0;
 
                 return (
                   <td
                     key={color}
-                    className={`border border-line px-3 py-2 text-center ${
-                      !variant.active ? "opacity-40" : ""
-                    }`}
+                    className={`py-3 px-2 ${!variant.active ? "opacity-30" : ""}`}
                   >
-                    {isOwner && variant.costPricePerGram !== undefined && (
-                      <div>
-                        {editingCell === `cost-${cellKey}` ? (
-                          <input
-                            type="number"
-                            className="w-20 border rounded px-1 py-0.5 text-center text-sm"
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            onBlur={() => {
-                              const val = Math.round(
-                                parseFloat(editValue) * 100
-                              );
-                              if (val >= 0)
-                                handleSavePrice(variant.id, "costPricePerGram", val);
-                              else setEditingCell(null);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                const val = Math.round(
-                                  parseFloat(editValue) * 100
-                                );
-                                if (val >= 0)
-                                  handleSavePrice(variant.id, "costPricePerGram", val);
-                              }
-                              if (e.key === "Escape") setEditingCell(null);
-                            }}
-                            autoFocus
-                            disabled={isSaving}
+                    <div className="flex flex-col items-center gap-1">
+                      {/* Wholesale price (main, editable) */}
+                      {variant.wholesalePricePerGram !== undefined && (
+                        editingCell === cellKey ? (
+                          <PriceInput
+                            variantId={variant.id}
+                            field="wholesalePricePerGram"
+                            cellKey={cellKey}
+                            currentValue={variant.wholesalePricePerGram}
                           />
                         ) : (
                           <button
-                            className="text-xs text-red-600 cursor-pointer hover:text-red-800"
-                            onClick={() => {
-                              setEditingCell(`cost-${cellKey}`);
-                              setEditValue(
-                                (variant.costPricePerGram! / 100).toString()
-                              );
-                            }}
-                            disabled={isSaving}
-                            title={t("variant.costPrice")}
-                          >
-                            {t("variant.costShort")}: {formatCZK(variant.costPricePerGram!)}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                    {variant.wholesalePricePerGram !== undefined && (
-                      <div>
-                        {isOwner && editingCell === cellKey ? (
-                          <input
-                            type="number"
-                            className="w-20 border rounded px-1 py-0.5 text-center text-sm"
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            onBlur={() => {
-                              const val = Math.round(
-                                parseFloat(editValue) * 100
-                              );
-                              if (val > 0)
-                                handleSavePrice(variant.id, "wholesalePricePerGram", val);
-                              else setEditingCell(null);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                const val = Math.round(
-                                  parseFloat(editValue) * 100
-                                );
-                                if (val > 0)
-                                  handleSavePrice(variant.id, "wholesalePricePerGram", val);
-                              }
-                              if (e.key === "Escape") setEditingCell(null);
-                            }}
-                            autoFocus
-                            disabled={isSaving}
-                          />
-                        ) : (
-                          <button
-                            className={`font-medium ${
-                              isOwner
-                                ? "cursor-pointer hover:text-espresso"
-                                : "cursor-default"
+                            className={`text-base font-bold text-ink ${
+                              isOwner ? "hover:text-rose transition-colors" : ""
                             }`}
                             onClick={() => {
                               if (!isOwner) return;
                               setEditingCell(cellKey);
-                              setEditValue(
-                                (
-                                  variant.wholesalePricePerGram! / 100
-                                ).toString()
-                              );
+                              setEditValue((variant.wholesalePricePerGram! / 100).toString());
                             }}
                             disabled={isSaving}
                           >
                             {formatCZK(variant.wholesalePricePerGram!)}
                           </button>
-                        )}
-                      </div>
-                    )}
-                    {variant.retailPricePerGram !== undefined && (
-                      <div className="mt-0.5">
-                        <span
-                          className={`text-xs ${
-                            variant.retailManualOverride
-                              ? "text-orange-600"
-                              : "text-green-600"
-                          }`}
-                        >
-                          {formatCZK(variant.retailPricePerGram!)}
-                          {variant.retailManualOverride && (
-                            <span className="ml-1 text-[10px]">
-                              ({t("variant.manualOverride")})
-                            </span>
-                          )}
-                        </span>
-                        {isOwner && variant.retailManualOverride && (
-                          <button
-                            onClick={() => handleResetOverride(variant.id)}
-                            className="ml-1 text-[10px] text-muted hover:text-red-500"
-                            disabled={isSaving}
-                          >
-                            {t("variant.resetOverride")}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                    {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && variant.wholesalePricePerGram !== undefined && (
-                      <div className="mt-0.5">
-                        <span className={`text-[10px] font-medium ${
-                          variant.wholesalePricePerGram - variant.costPricePerGram > 0
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}>
-                          {t("variant.margin")}: {formatCZK(variant.wholesalePricePerGram - variant.costPricePerGram)}
-                        </span>
-                      </div>
-                    )}
-                    {variant.pricePerGram !== undefined && (
-                      <div className="font-medium">
-                        {formatCZK(variant.pricePerGram)}
-                        <span className="text-muted text-xs">/g</span>
-                      </div>
-                    )}
-                    {/* Stock indicator */}
-                    {stockMap.has(variant.id) && (() => {
-                      const stock = stockMap.get(variant.id)!;
-                      return (
-                        <div className="mt-1 border-t border-line/50 pt-1">
-                          <span className={`inline-flex items-center gap-1 text-[10px] font-medium ${
-                            stock.availableGrams > 0 ? "text-emerald-700" : "text-red-500"
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              stock.availableGrams > 0 ? "bg-emerald-500" : "bg-red-400"
-                            }`} />
-                            {stock.availableGrams} g
+                        )
+                      )}
+
+                      {/* Retail price */}
+                      {variant.retailPricePerGram !== undefined && (
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-muted line-through">
+                            {formatCZK(variant.retailPricePerGram!)}
                           </span>
-                          {isOwner && stock.physicalGrams !== undefined && stock.reservedGrams !== undefined && stock.reservedGrams > 0 && (
-                            <div className="text-[9px] text-muted">
-                              {stock.physicalGrams}g - {stock.reservedGrams}g rez.
-                            </div>
+                          {isOwner && variant.retailManualOverride && (
+                            <button
+                              onClick={() => handleResetOverride(variant.id)}
+                              className="text-[9px] text-orange-500 hover:text-red-500"
+                              disabled={isSaving}
+                              title={t("variant.resetOverride")}
+                            >
+                              ✕
+                            </button>
                           )}
                         </div>
-                      );
-                    })()}
+                      )}
+
+                      {/* Cost + margin (owner only) */}
+                      {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && (
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {editingCell === `cost-${cellKey}` ? (
+                            <PriceInput
+                              variantId={variant.id}
+                              field="costPricePerGram"
+                              cellKey={`cost-${cellKey}`}
+                              currentValue={variant.costPricePerGram}
+                            />
+                          ) : (
+                            <button
+                              className="text-[10px] text-muted hover:text-espresso transition-colors"
+                              onClick={() => {
+                                setEditingCell(`cost-${cellKey}`);
+                                setEditValue((variant.costPricePerGram! / 100).toString());
+                              }}
+                              disabled={isSaving}
+                            >
+                              N: {formatCZK(variant.costPricePerGram!)}
+                            </button>
+                          )}
+                          {variant.wholesalePricePerGram !== undefined && (
+                            <span className={`text-[10px] font-medium ${
+                              variant.wholesalePricePerGram - variant.costPricePerGram > 0
+                                ? "text-emerald-600"
+                                : "text-red-500"
+                            }`}>
+                              +{formatCZK(variant.wholesalePricePerGram - variant.costPricePerGram)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Stock badge */}
+                      {stock && (
+                        <span className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                          hasStock
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-red-50 text-red-400"
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${
+                            hasStock ? "bg-emerald-500" : "bg-red-300"
+                          }`} />
+                          {stock.availableGrams} g
+                        </span>
+                      )}
+                    </div>
                   </td>
                 );
               })}
@@ -320,6 +307,17 @@ export function VariantTable({
           ))}
         </tbody>
       </table>
+
+      {/* Legend */}
+      {isOwner && (
+        <div className="flex items-center gap-4 mt-4 pt-3 border-t border-line/50 text-[10px] text-muted">
+          <span><strong className="text-ink">63 Kč</strong> = B2B cena</span>
+          <span><span className="line-through">114 Kč</span> = běžná cena</span>
+          <span>N: 46 Kč = nákup</span>
+          <span className="text-emerald-600">+17 Kč = marže</span>
+          <span>Klikni na cenu pro úpravu</span>
+        </div>
+      )}
     </div>
   );
 }
