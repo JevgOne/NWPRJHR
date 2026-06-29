@@ -227,7 +227,7 @@ async function seed() {
     const now = new Date().toISOString();
 
     await client.execute({
-      sql: `INSERT OR IGNORE INTO blog_posts (id, slug, title, excerpt, content, cover_image, category, published, published_at, created_at, updated_at)
+      sql: `INSERT OR IGNORE INTO blog_posts (id, slug, title, excerpt, content, coverImage, category, published, publishedAt, createdAt, updatedAt)
             VALUES (?, ?, ?, ?, '', NULL, ?, 0, ?, ?, ?)`,
       args: [
         id,
