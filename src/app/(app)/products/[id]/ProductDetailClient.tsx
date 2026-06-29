@@ -180,9 +180,11 @@ export function ProductDetailClient({
                 product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"
               }
             />
-            <span className="text-sm text-muted">
-              {product.processingType.replace(/_/g, "-")}
-            </span>
+            {product.processingType !== "OTHER" && (
+              <span className="text-sm text-muted">
+                {product.processingType.replace(/_/g, "-")}
+              </span>
+            )}
             {product.origin && (
               <span className="text-sm text-muted">
                 🌍 {product.origin}
@@ -331,7 +333,7 @@ export function ProductDetailClient({
                 key={url}
                 src={url}
                 alt={`${t("photos.photo")} ${i + 1}`}
-                className="w-20 h-20 object-cover rounded-lg border border-line"
+                className="w-32 h-32 object-cover rounded-lg border border-line"
               />
             ))}
           </div>

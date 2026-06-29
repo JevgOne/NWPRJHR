@@ -825,7 +825,9 @@
     "photo": "Фото",
     "uploading": "Завантаження...",
     "dragOrClick": "Перетягніть фото сюди або натисніть для вибору",
-    "formats": "JPG, PNG, WebP (макс 5 МБ)"
+    "formats": "JPG, PNG, WebP (макс 5 МБ)",
+    "addWatermark": "Додати водяний знак на фото",
+    "watermarking": "Додаю водяний знак..."
   },
   "productForm": {
     "description": "Опис",

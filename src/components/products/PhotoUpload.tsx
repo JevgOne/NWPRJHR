@@ -39,7 +39,7 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
         if (!res.ok) return;
 
         const data = await res.json();
-        onChange([...photos, ...data.urls]);
+        onChange([...photos, ...(data.photoUrls ?? data.urls ?? [])]);
       } finally {
         setUploading(false);
       }
@@ -71,7 +71,7 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
               <img
                 src={url}
                 alt={`${t("photo")} ${i + 1}`}
-                className="w-20 h-20 object-cover rounded-lg border border-line"
+                className="w-32 h-32 object-cover rounded-lg border border-line"
               />
               {!disabled && (
                 <button
@@ -140,7 +140,7 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
           disabled={watermarking}
           className="mt-2 text-xs text-muted hover:text-espresso transition-colors disabled:opacity-50"
         >
-          {watermarking ? "Přidávám vodoznak..." : "Přidat vodoznak na fotky"}
+          {watermarking ? t("watermarking") : t("addWatermark")}
         </button>
       )}
     </div>
