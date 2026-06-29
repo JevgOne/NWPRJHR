@@ -134,6 +134,7 @@ model Product {
   texture        String?
   colorTone      String?
   photos         String          @default("[]")
+  video          String?
   archived       Boolean         @default(false)
   slug           String?         @unique
   createdAt      DateTime        @default(now())
