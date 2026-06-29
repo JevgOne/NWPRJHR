@@ -178,6 +178,12 @@ export function ProductDetailClient({
   const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
   const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
   const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ");
+  const autoDescParts: string[] = [product.name];
+  if (product.origin) autoDescParts.push(`původ ${product.origin}`);
+  if (product.texture) autoDescParts.push(product.texture.toLowerCase());
+  if (lengthStr) autoDescParts.push(lengthStr);
+  autoDescParts.push("Osobní odběr Praha zdarma, zpracování na zakázku.");
+  const autoDescription = autoDescParts.join(". ").slice(0, 155);
   const previewTitle = metaTitleValue || autoTitle;
 
   return (
@@ -411,14 +417,14 @@ export function ProductDetailClient({
           <div className="mb-4">
             <label className="block text-sm font-medium text-espresso mb-1">
               Meta Description
-              <span className={`ml-2 text-xs ${(metaDescValue).length > 155 ? "text-red-500" : "text-muted"}`}>
-                {metaDescValue.length}/155
+              <span className={`ml-2 text-xs ${(metaDescValue || autoDescription).length > 155 ? "text-red-500" : "text-muted"}`}>
+                {(metaDescValue || autoDescription).length}/155
               </span>
             </label>
             <textarea
               value={metaDescValue}
               onChange={(e) => setMetaDescValue(e.target.value)}
-              placeholder="Automaticky: název, původ, barvy, struktura..."
+              placeholder={autoDescription}
               rows={3}
               className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose resize-none"
             />
@@ -445,7 +451,7 @@ export function ProductDetailClient({
             <p className="text-blue-700 text-sm font-medium truncate">{previewTitle}</p>
             <p className="text-green-700 text-xs">hairland.cz/offer/{product.slug ?? product.id}</p>
             <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">
-              {metaDescValue || "Automaticky generovaný popis z atributů produktu"}
+              {metaDescValue || autoDescription}
             </p>
           </div>
 

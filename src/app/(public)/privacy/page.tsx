@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "Ochrana osobních údajů — zásady GDPR | Hairland",
+  title: "Ochrana osobních údajů — zásady GDPR",
   description: "Zásady ochrany osobních údajů — Hairland.cz",
   alternates: { canonical: "/privacy" },
   openGraph: {

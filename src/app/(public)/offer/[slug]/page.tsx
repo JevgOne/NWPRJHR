@@ -311,9 +311,14 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   } : null;
 
   // Product schema JSON-LD
+  const descParts: string[] = [productName];
+  if (product.origin) descParts.push(`původ ${product.origin}`);
+  if (product.texture) descParts.push(product.texture.toLowerCase());
+  descParts.push("Prémiové vlasy Hairland.");
+  const fallbackDesc = descParts.join(". ").slice(0, 160);
   const schemaDesc = description
     ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "…")
-    : undefined;
+    : fallbackDesc;
   const schemaImage = product.photos.length > 0
     ? product.photos
     : [`https://www.hairland.cz/offer/${product.slug ?? product.id}/opengraph-image`];
@@ -325,9 +330,10 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
     image: schemaImage,
     brand: { "@type": "Brand", name: "Hairland" },
     sku: product.id,
+    ...(priceTip100g && {
     offers: {
       "@type": "Offer",
-      price: priceTip100g ? (priceTip100g / 100).toFixed(2) : undefined,
+      price: (priceTip100g / 100).toFixed(2),
       priceCurrency: "CZK",
       availability: product.archived
         ? "https://schema.org/Discontinued"
@@ -364,6 +370,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         returnFees: "https://schema.org/FreeReturn",
       },
     },
+    }),
     ...(reviewStats._count > 0 && {
       aggregateRating: {
         "@type": "AggregateRating",
