@@ -9,22 +9,23 @@ export default async function InventoryPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const t = await getTranslations();
   const role = session.user.role;
 
   if (role === "SALON" || role === "HAIRDRESSER") redirect("/dashboard");
 
-  const variants = await prisma.variant.findMany({
-    where: { active: true },
-    include: {
-      product: {
-        select: { id: true, name: true, category: true, processingType: true },
+  const [t, variants, allStock] = await Promise.all([
+    getTranslations(),
+    prisma.variant.findMany({
+      where: { active: true },
+      include: {
+        product: {
+          select: { id: true, name: true, category: true, processingType: true },
+        },
       },
-    },
-    orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
-  });
-
-  const allStock = await getAllStockNumbers();
+      orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
+    }),
+    getAllStockNumbers(),
+  ]);
 
   const items = variants.map((v) => {
     const stock = allStock.get(v.id);

@@ -9,12 +9,13 @@ export default async function StockInPage() {
   if (!session) redirect("/login");
   if (session.user.role !== "OWNER") redirect("/dashboard");
 
-  const t = await getTranslations();
-
-  const suppliers = await prisma.supplier.findMany({
-    where: { archived: false },
-    orderBy: { name: "asc" },
-  });
+  const [t, suppliers] = await Promise.all([
+    getTranslations(),
+    prisma.supplier.findMany({
+      where: { archived: false },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   const supplierOptions = suppliers.map((s) => ({
     id: s.id,

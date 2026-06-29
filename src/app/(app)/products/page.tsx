@@ -9,13 +9,14 @@ export default async function ProductsPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const t = await getTranslations();
-
-  const products = await prisma.product.findMany({
-    where: { archived: false },
-    include: { variants: { where: { active: true } } },
-    orderBy: { createdAt: "desc" },
-  });
+  const [t, products] = await Promise.all([
+    getTranslations(),
+    prisma.product.findMany({
+      where: { archived: false },
+      include: { variants: { where: { active: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   const serialized = products.map((p) =>
     serializeProductForRole(p, session.user.role)

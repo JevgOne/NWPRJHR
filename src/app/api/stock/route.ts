@@ -40,17 +40,18 @@ export async function GET(request: NextRequest) {
   }
 
   // All variants stock overview
-  const allStock = await getAllStockNumbers();
-
   // Get variant info for display
   const variantWhere: Record<string, unknown> = { active: true };
   if (productId) variantWhere.productId = productId;
 
-  const variants = await prisma.variant.findMany({
-    where: variantWhere,
-    include: { product: { select: { id: true, name: true, category: true, processingType: true } } },
-    orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
-  });
+  const [allStock, variants] = await Promise.all([
+    getAllStockNumbers(),
+    prisma.variant.findMany({
+      where: variantWhere,
+      include: { product: { select: { id: true, name: true, category: true, processingType: true } } },
+      orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
+    }),
+  ]);
 
   const result = variants.map((v) => {
     const stock = allStock.get(v.id) ?? {

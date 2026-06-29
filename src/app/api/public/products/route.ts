@@ -42,39 +42,40 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    const products = await prisma.product.findMany({
-      where,
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        nameUk: true,
-        nameRu: true,
-        description: true,
-        descriptionUk: true,
-        descriptionRu: true,
-        category: true,
-        processingType: true,
-        origin: true,
-        texture: true,
-        colorTone: true,
-        photos: true,
-        variants: {
-          where: { active: true },
-          select: {
-            id: true,
-            lengthCm: true,
-            color: true,
-            retailPricePerGram: true,
-            wholesalePricePerGram: true,
+    const [products, stockMap] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          nameUk: true,
+          nameRu: true,
+          description: true,
+          descriptionUk: true,
+          descriptionRu: true,
+          category: true,
+          processingType: true,
+          origin: true,
+          texture: true,
+          colorTone: true,
+          photos: true,
+          variants: {
+            where: { active: true },
+            select: {
+              id: true,
+              lengthCm: true,
+              color: true,
+              retailPricePerGram: true,
+              wholesalePricePerGram: true,
+            },
           },
         },
-      },
-      orderBy: { name: "asc" },
-    });
-
-    // Single bulk query for all stock — 2 SQL queries instead of 468
-    const stockMap = await getAllStockNumbers();
+        orderBy: { name: "asc" },
+      }),
+      // Single bulk query for all stock — 2 SQL queries instead of 468
+      getAllStockNumbers(),
+    ]);
 
     const parsed = products
       .map((p) => {

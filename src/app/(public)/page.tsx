@@ -34,15 +34,16 @@ const jsonLd = {
 };
 
 export default async function LandingPage() {
-  const t = await getTranslations("public");
-  const tCategory = await getTranslations("category");
-
-  const stylists = await prisma.stylist.findMany({
-    where: { active: true },
-    orderBy: [{ featured: "desc" }, { name: "asc" }],
-    take: 6,
-    include: { salon: { select: { name: true } } },
-  });
+  const [t, tCategory, stylists] = await Promise.all([
+    getTranslations("public"),
+    getTranslations("category"),
+    prisma.stylist.findMany({
+      where: { active: true },
+      orderBy: [{ featured: "desc" }, { name: "asc" }],
+      take: 6,
+      include: { salon: { select: { name: true } } },
+    }),
+  ]);
 
   return (
     <div>

@@ -21,9 +21,11 @@ export async function POST(request: NextRequest) {
 
   const { variantId, customerType, salonId, grams } = parsed.data;
 
-  const { pricePerGram } = await getSalePrice(variantId, customerType, salonId);
+  const [{ pricePerGram }, stock] = await Promise.all([
+    getSalePrice(variantId, customerType, salonId),
+    getStockNumbers(variantId),
+  ]);
   const lineTotal = calculateLineTotal(pricePerGram, grams);
-  const stock = await getStockNumbers(variantId);
 
   return NextResponse.json({
     pricePerGram,

@@ -9,13 +9,14 @@ export default async function SuppliersPage() {
   if (!session) redirect("/login");
   if (session.user.role !== "OWNER") redirect("/dashboard");
 
-  const t = await getTranslations();
-
-  const suppliers = await prisma.supplier.findMany({
-    where: { archived: false },
-    include: { _count: { select: { deliveries: true } } },
-    orderBy: { name: "asc" },
-  });
+  const [t, suppliers] = await Promise.all([
+    getTranslations(),
+    prisma.supplier.findMany({
+      where: { archived: false },
+      include: { _count: { select: { deliveries: true } } },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   const serialized = suppliers.map((s) => ({
     id: s.id,

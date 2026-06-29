@@ -33,13 +33,15 @@ const langFlags: Record<string, { flag: string; label: string }> = {
 };
 
 export default async function StylistProfilePage({ params }: { params: Promise<{ slug: string }> }) {
-  const t = await getTranslations("public.stylists");
   const { slug } = await params;
 
-  const stylist = await prisma.stylist.findUnique({
-    where: { slug },
-    include: { salon: { select: { name: true, city: true } } },
-  });
+  const [t, stylist] = await Promise.all([
+    getTranslations("public.stylists"),
+    prisma.stylist.findUnique({
+      where: { slug },
+      include: { salon: { select: { name: true, city: true } } },
+    }),
+  ]);
 
   if (!stylist || !stylist.active) notFound();
 

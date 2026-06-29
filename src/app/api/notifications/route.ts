@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   const where: any = { recipientId: session.user.id };
   if (unreadOnly) where.read = false;
 
-  const [total, notifications] = await Promise.all([
+  const [total, notifications, unreadCount] = await Promise.all([
     prisma.notification.count({ where }),
     prisma.notification.findMany({
       where,
@@ -24,11 +24,10 @@ export async function GET(request: NextRequest) {
       take: limit,
       skip: offset,
     }),
+    prisma.notification.count({
+      where: { recipientId: session.user.id, read: false },
+    }),
   ]);
-
-  const unreadCount = await prisma.notification.count({
-    where: { recipientId: session.user.id, read: false },
-  });
 
   return NextResponse.json({ data: notifications, total, unreadCount });
 }
