@@ -3,9 +3,22 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "Obchodní podmínky",
+  title: "Obchodní podmínky e-shopu Hairland.cz",
   description: "Obchodní podmínky e-shopu Hairland.cz — prodej prémiových vlasů k prodloužení.",
   alternates: { canonical: "/obchodni-podminky" },
+  openGraph: {
+    type: "website",
+    title: "Obchodní podmínky e-shopu Hairland.cz",
+    description: "Obchodní podmínky e-shopu Hairland.cz — prodej prémiových vlasů k prodloužení.",
+    url: "https://www.hairland.cz/obchodni-podminky",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Obchodní podmínky e-shopu Hairland.cz",
+    description: "Obchodní podmínky e-shopu Hairland.cz — prodej prémiových vlasů k prodloužení.",
+  },
 };
 
 export default async function ObchodniPodminkyPage() {

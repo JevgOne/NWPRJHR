@@ -3,10 +3,25 @@ import { getTranslations } from "next-intl/server";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Kontakt",
+  title: "Kontakt — osobní konzultace v Praze",
   description:
     "Kontaktujte nás — prémiové vlasy k prodloužení, osobní konzultace v Praze. Dovoz zdarma po Praze.",
   alternates: { canonical: "/contact" },
+  openGraph: {
+    type: "website",
+    title: "Kontakt — osobní konzultace v Praze | Hairland",
+    description:
+      "Kontaktujte nás — prémiové vlasy k prodloužení, osobní konzultace v Praze. Dovoz zdarma po Praze.",
+    url: "https://www.hairland.cz/contact",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kontakt — osobní konzultace v Praze | Hairland",
+    description:
+      "Kontaktujte nás — prémiové vlasy k prodloužení, osobní konzultace v Praze. Dovoz zdarma po Praze.",
+  },
 };
 
 const jsonLd = {
@@ -27,6 +42,20 @@ const jsonLd = {
   priceRange: "500 Kč - 17 000 Kč",
   description:
     "Prémiové surové vlasy k prodloužení. Zpracování na zakázku — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "18:00",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 50.0804,
+    longitude: 14.4261,
+  },
+  hasMap: "https://maps.google.com/?q=Školská+660/3,+Praha",
+  currenciesAccepted: "CZK",
+  paymentAccepted: "Hotově, Kartou, Převodem",
 };
 
 export default async function ContactPage() {

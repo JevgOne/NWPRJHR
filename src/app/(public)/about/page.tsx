@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "O nás",
+  title: "O nás — prémiové vlasy z přímého importu",
   description:
     "Hairland — prémiové přírodní vlasy k prodloužení. Přímý import z Ukrajiny, Ruska a Kazachstánu. Kvalita, důvěra a osobní přístup.",
   alternates: { canonical: "/about" },
+  openGraph: {
+    type: "website",
+    title: "O nás — prémiové vlasy z přímého importu | Hairland",
+    description:
+      "Hairland — prémiové přírodní vlasy k prodloužení. Přímý import z Ukrajiny, Ruska a Kazachstánu. Kvalita, důvěra a osobní přístup.",
+    url: "https://www.hairland.cz/about",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "O nás — prémiové vlasy z přímého importu | Hairland",
+    description:
+      "Hairland — prémiové přírodní vlasy k prodloužení. Přímý import z Ukrajiny, Ruska a Kazachstánu. Kvalita, důvěra a osobní přístup.",
+  },
 };
 
 export default async function AboutPage() {

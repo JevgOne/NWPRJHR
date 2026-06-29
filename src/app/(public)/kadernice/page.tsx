@@ -4,10 +4,25 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "Spolupracující kadeřnice",
+  title: "Spolupracující kadeřnice a salony v Praze",
   description:
     "Najděte spolupracující kadeřnice a salony Hairland v Praze a okolí. Odborné prodlužování vlasů.",
   alternates: { canonical: "/kadernice" },
+  openGraph: {
+    type: "website",
+    title: "Spolupracující kadeřnice a salony v Praze | Hairland",
+    description:
+      "Najděte spolupracující kadeřnice a salony Hairland v Praze a okolí. Odborné prodlužování vlasů.",
+    url: "https://www.hairland.cz/kadernice",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Spolupracující kadeřnice a salony v Praze | Hairland",
+    description:
+      "Najděte spolupracující kadeřnice a salony Hairland v Praze a okolí. Odborné prodlužování vlasů.",
+  },
 };
 
 const langFlags: Record<string, string> = {

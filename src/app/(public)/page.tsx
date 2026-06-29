@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const BLOB = "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair";
 
-const jsonLd = {
+const storeJsonLd = {
   "@context": "https://schema.org",
   "@type": "Store",
   name: "Hairland",
@@ -20,6 +20,7 @@ const jsonLd = {
   description:
     "Prémiové surové vlasy k prodloužení. Zpracování na zakázku — clip-in, tape-in, micro ring. Přímý import, skladem v Praze.",
   image: "https://www.hairland.cz/icons/icon-512x512.png",
+  logo: "https://www.hairland.cz/icons/icon-512x512.png",
   telephone: "+420608553103",
   priceRange: "500 Kč - 17 000 Kč",
   address: {
@@ -29,8 +30,41 @@ const jsonLd = {
     postalCode: "110 00",
     addressCountry: "CZ",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 50.0804,
+    longitude: 14.4261,
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+  ],
   email: "info@hairland.cz",
   sameAs: ["https://www.instagram.com/hairland.cz"],
+};
+
+const webSiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Hairland",
+  url: "https://www.hairland.cz",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://www.hairland.cz/offer?search={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Hairland",
+  url: "https://www.hairland.cz",
+  logo: "https://www.hairland.cz/icons/icon-512x512.png",
 };
 
 export default async function LandingPage() {
@@ -49,7 +83,15 @@ export default async function LandingPage() {
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       {/* Hero — text + benefits + product slider */}
       <section className="bg-white pt-12 pb-8">

@@ -10,6 +10,21 @@ export const metadata: Metadata = {
   description:
     "Široký výběr prémiových surových vlasů k prodloužení. Zpracování na zakázku — clip-in, tape-in, keratin. Virgin, premium i standard kvalita. Skladem v Praze.",
   alternates: { canonical: "/offer" },
+  openGraph: {
+    type: "website",
+    title: "Nabídka prémiových vlasů | Hairland",
+    description:
+      "Široký výběr prémiových surových vlasů k prodloužení. Clip-in, tape-in, keratin. Skladem v Praze.",
+    url: "https://www.hairland.cz/offer",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nabídka prémiových vlasů | Hairland",
+    description:
+      "Široký výběr prémiových surových vlasů k prodloužení. Clip-in, tape-in, keratin. Skladem v Praze.",
+  },
 };
 
 export default async function ProductsPage() {

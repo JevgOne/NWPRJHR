@@ -2,9 +2,22 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "Ochrana osobních údajů",
+  title: "Ochrana osobních údajů — zásady GDPR | Hairland",
   description: "Zásady ochrany osobních údajů — Hairland.cz",
   alternates: { canonical: "/privacy" },
+  openGraph: {
+    type: "website",
+    title: "Ochrana osobních údajů — zásady GDPR | Hairland",
+    description: "Zásady ochrany osobních údajů — Hairland.cz",
+    url: "https://www.hairland.cz/privacy",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ochrana osobních údajů — zásady GDPR | Hairland",
+    description: "Zásady ochrany osobních údajů — Hairland.cz",
+  },
 };
 
 export default async function PrivacyPage() {

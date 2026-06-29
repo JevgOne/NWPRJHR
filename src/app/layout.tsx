@@ -77,6 +77,7 @@ export default async function RootLayout({
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
         <HreflangTags />
+        <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
       </head>
       <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)]">
         <NextIntlClientProvider messages={messages}>

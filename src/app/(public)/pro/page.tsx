@@ -4,10 +4,25 @@ import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("b2b");
+  const title = t("pageTitle");
+  const desc = t("pageDescription");
   return {
-    title: t("pageTitle"),
-    description: t("pageDescription"),
+    title,
+    description: desc,
     alternates: { canonical: "/pro" },
+    openGraph: {
+      type: "website",
+      title: `${title} | Hairland`,
+      description: desc,
+      url: "https://www.hairland.cz/pro",
+      siteName: "Hairland",
+      locale: "cs_CZ",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Hairland`,
+      description: desc,
+    },
   };
 }
 

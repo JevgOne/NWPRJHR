@@ -131,10 +131,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: `/offer/${product.slug ?? slug}` },
-    openGraph: firstPhoto ? {
-      images: [{ url: firstPhoto, alt: title }],
+    openGraph: {
       type: "website",
-    } : undefined,
+      title,
+      description,
+      url: `https://www.hairland.cz/offer/${product.slug ?? slug}`,
+      siteName: "Hairland",
+      locale: "cs_CZ",
+      ...(firstPhoto && {
+        images: [{ url: firstPhoto, alt: title, width: 1200, height: 630 }],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(firstPhoto && { images: [firstPhoto] }),
+    },
   };
 }
 
@@ -252,13 +265,20 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   });
   const description = localizedDesc || autoBio;
 
+  // Aggregate review stats for JSON-LD
+  const reviewStats = await prisma.review.aggregate({
+    where: { productId: product.id, active: true },
+    _avg: { rating: true },
+    _count: true,
+  });
+
   // Product schema JSON-LD
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: productName,
     description: description || undefined,
-    image: product.photos.length > 0 ? product.photos[0] : undefined,
+    image: product.photos.length > 0 ? product.photos : undefined,
     brand: { "@type": "Brand", name: "Hairland" },
     sku: product.id,
     offers: {
@@ -270,6 +290,13 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         : "https://schema.org/InStock",
       url: `https://www.hairland.cz/offer/${product.slug ?? product.id}`,
     },
+    ...(reviewStats._count > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: reviewStats._avg.rating?.toFixed(1),
+        reviewCount: reviewStats._count,
+      },
+    }),
   };
 
   // BreadcrumbList JSON-LD
