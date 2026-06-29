@@ -53,7 +53,7 @@ export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
 
   const spacingX = wmW + 60;
   const spacingY = wmH + 80;
-  const composites: sharp.OverlayOptions[] = [];
+  const composites: Array<{ input: Buffer; left: number; top: number }> = [];
 
   for (let y = 0; y < canvasSize; y += spacingY) {
     const row = Math.floor(y / spacingY);
