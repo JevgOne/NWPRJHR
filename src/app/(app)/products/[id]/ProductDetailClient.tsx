@@ -176,12 +176,8 @@ export function ProductDetailClient({
 
   // Auto-generated SEO preview
   const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
-  const lengthStr = lengths.length > 1
-    ? `${lengths[0]}–${lengths[lengths.length - 1]}cm`
-    : lengths.length === 1
-      ? `${lengths[0]}cm`
-      : "";
-  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ") + " | Hairland";
+  const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
+  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ");
   const previewTitle = metaTitleValue || autoTitle;
 
   return (

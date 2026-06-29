@@ -95,27 +95,27 @@ const PROCESSING_LABELS: Record<string, Record<string, string>> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
-  const t = await getTranslations("public.productDetail");
+  const t = await getTranslations("public");
   if (!product) {
-    return { title: t("notFound") };
+    return { title: t("productDetail.notFound") };
   }
 
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
-  const colors = [...new Set(product.variants.map((v) => v.color))];
+  const colorCodes = [...new Set(product.variants.map((v) => v.color))];
 
-  // Title: "{name} {cm} | Hairland" — e.g. "Panenské vlasy 40–60cm | Hairland"
-  const lengthStr = lengths.length > 1
-    ? `${lengths[0]}–${lengths[lengths.length - 1]}cm`
-    : lengths.length === 1
-      ? `${lengths[0]}cm`
-      : "";
-  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ") + " | Hairland";
+  // Title: "{name} {cm}" — layout adds "| Hairland" via template
+  const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
+  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ");
   const title = product.metaTitle || autoTitle;
 
-  // Description: name, origin, colors, structure — compact for 155 chars
+  // Description: name, origin, color names, structure — compact for 155 chars
+  const colorNames = colorCodes.map((c) => {
+    const key = getHairColor(c).nameKey;
+    try { return t(`colors.${key}`); } catch { return c; }
+  });
   const descParts: string[] = [product.name];
   if (product.origin) descParts.push(`původ ${product.origin}`);
-  if (colors.length > 0) descParts.push(colors.length <= 3 ? colors.join(", ") : `${colors.length} barev`);
+  if (colorNames.length > 0) descParts.push(colorNames.length <= 4 ? colorNames.join(", ") : `${colorNames.length} barev`);
   if (product.texture) descParts.push(product.texture.toLowerCase());
   if (lengthStr) descParts.push(lengthStr);
   descParts.push("Osobní odběr Praha zdarma, zpracování na zakázku.");
@@ -523,9 +523,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                     <div>
                       <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.lengthsLabel")}</div>
                       <div className="text-sm font-semibold text-ink">
-                        {lengths.length === 1
-                          ? `${lengths[0]} cm`
-                          : `${lengths[0]}–${lengths[lengths.length - 1]} cm`}
+                        {lengths.map((l) => `${l} cm`).join(", ")}
                       </div>
                     </div>
                   </div>
