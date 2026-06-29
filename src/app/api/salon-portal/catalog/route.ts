@@ -21,29 +21,25 @@ export async function GET() {
 
   const isHairdresser = session.user.role === "HAIRDRESSER";
 
-  // For hairdressers, get the B2B discount; for salons, use loyalty discount
-  let hairdresserDiscountPct = 0;
-  let loyaltyDiscount = 0;
-  if (isHairdresser) {
-    const b2bSettings = await prisma.b2BSettings.findFirst();
-    hairdresserDiscountPct = b2bSettings?.hairdresserDiscountPct ?? 2000;
-  } else {
-    loyaltyDiscount = await getLoyaltyDiscount(salon.tier);
-  }
-
-  const products = await prisma.product.findMany({
-    where: { archived: false },
-    include: {
-      variants: {
-        where: { active: true },
-        orderBy: [{ lengthCm: "asc" }, { color: "asc" }],
+  // Parallel fetch: discount + products + stock (3 queries at once)
+  const [discountData, products, stockMap] = await Promise.all([
+    isHairdresser
+      ? prisma.b2BSettings.findFirst().then(s => ({ hairdresserDiscountPct: s?.hairdresserDiscountPct ?? 2000, loyaltyDiscount: 0 }))
+      : getLoyaltyDiscount(salon.tier).then(d => ({ hairdresserDiscountPct: 0, loyaltyDiscount: d })),
+    prisma.product.findMany({
+      where: { archived: false },
+      include: {
+        variants: {
+          where: { active: true },
+          orderBy: [{ lengthCm: "asc" }, { color: "asc" }],
+        },
       },
-    },
-    orderBy: { name: "asc" },
-  });
+      orderBy: { name: "asc" },
+    }),
+    getAllStockNumbers(),
+  ]);
 
-  // Single bulk query for all stock — 2 SQL queries instead of N per variant
-  const stockMap = await getAllStockNumbers();
+  const { hairdresserDiscountPct, loyaltyDiscount } = discountData;
 
   // Add role-specific prices, filter to in-stock variants only
   const allProducts = products.map((product) => {
