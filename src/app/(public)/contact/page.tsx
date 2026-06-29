@@ -14,7 +14,7 @@ const jsonLd = {
   "@type": "LocalBusiness",
   name: "Hairland",
   url: "https://www.hairland.cz",
-  telephone: "+420728729666",
+  telephone: "+420608553103",
   email: "info@hairland.cz",
   image: "https://www.hairland.cz/icons/icon-512x512.png",
   address: {
@@ -91,8 +91,8 @@ export default async function ContactPage() {
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
-              <a href="tel:+420728729666" className="hover:text-ink transition-colors">
-                +420 728 729 666
+              <a href="tel:+420608553103" className="hover:text-ink transition-colors">
+                +420 608 553 103
               </a>
             </div>
 

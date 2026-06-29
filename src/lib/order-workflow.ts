@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { getStockNumbers } from "./stock";
+import { getAllStockNumbers } from "./stock";
 import { getLoyaltyDiscount } from "./loyalty";
 import { roundHalereUp } from "./rounding";
 import type { Order } from "@prisma/client";
@@ -30,68 +30,86 @@ export async function createOrder(
   items: { variantId: string; grams: number; pieces: number }[],
   note?: string
 ): Promise<Order> {
-  return prisma.$transaction(async (tx) => {
-    const salon = await tx.salon.findUniqueOrThrow({
-      where: { id: salonId },
+  // Pre-fetch salon + loyalty OUTSIDE transaction to reduce tx duration
+  const salon = await prisma.salon.findUniqueOrThrow({
+    where: { id: salonId },
+  });
+
+  if (salon.archived) {
+    throw new InvalidStateError("Salon is archived");
+  }
+
+  const variantIds = items.map(i => i.variantId);
+
+  // Parallel: loyalty discount + all variants + all stock in 3 queries
+  const [loyaltyDiscount, variants, stockMap] = await Promise.all([
+    getLoyaltyDiscount(salon.tier),
+    prisma.variant.findMany({
+      where: { id: { in: variantIds } },
+    }),
+    getAllStockNumbers(),
+  ]);
+
+  const variantMap = new Map(variants.map(v => [v.id, v]));
+
+  // Validate stock + build order data before transaction
+  let estimatedTotal = 0;
+  const orderItems: {
+    variantId: string;
+    grams: number;
+    pieces: number;
+    pricePerGram: number;
+    lineTotal: number;
+  }[] = [];
+  const reservations: {
+    variantId: string;
+    grams: number;
+    pieces: number;
+    active: boolean;
+  }[] = [];
+
+  for (const item of items) {
+    const variant = variantMap.get(item.variantId);
+    if (!variant) {
+      throw new Error(`Variant ${item.variantId} not found`);
+    }
+
+    const stock = stockMap.get(item.variantId);
+    const availableGrams = stock?.availableGrams ?? 0;
+    const availablePieces = stock?.availablePieces ?? 0;
+
+    if (availableGrams < item.grams) {
+      throw new InsufficientStockError("grams", item.grams, availableGrams);
+    }
+    if (item.pieces > 0 && availablePieces < item.pieces) {
+      throw new InsufficientStockError("pieces", item.pieces, availablePieces);
+    }
+
+    const pricePerGram = loyaltyDiscount > 0
+      ? roundHalereUp(variant.wholesalePricePerGram * (10000 - loyaltyDiscount) / 10000)
+      : variant.wholesalePricePerGram;
+    const lineTotal = roundHalereUp(pricePerGram * item.grams);
+    estimatedTotal += lineTotal;
+
+    orderItems.push({
+      variantId: item.variantId,
+      grams: item.grams,
+      pieces: item.pieces,
+      pricePerGram,
+      lineTotal,
     });
 
-    if (salon.archived) {
-      throw new InvalidStateError("Salon is archived");
-    }
+    reservations.push({
+      variantId: item.variantId,
+      grams: item.grams,
+      pieces: item.pieces,
+      active: true,
+    });
+  }
 
-    const loyaltyDiscount = await getLoyaltyDiscount(salon.tier);
-
-    let estimatedTotal = 0;
-    const orderItems: {
-      variantId: string;
-      grams: number;
-      pieces: number;
-      pricePerGram: number;
-      lineTotal: number;
-    }[] = [];
-    const reservations: {
-      variantId: string;
-      grams: number;
-      pieces: number;
-      active: boolean;
-    }[] = [];
-
-    for (const item of items) {
-      const variant = await tx.variant.findUniqueOrThrow({
-        where: { id: item.variantId },
-      });
-
-      const stock = await getStockNumbers(item.variantId, tx);
-      if (stock.availableGrams < item.grams) {
-        throw new InsufficientStockError("grams", item.grams, stock.availableGrams);
-      }
-      if (item.pieces > 0 && stock.availablePieces < item.pieces) {
-        throw new InsufficientStockError("pieces", item.pieces, stock.availablePieces);
-      }
-
-      const pricePerGram = loyaltyDiscount > 0
-        ? roundHalereUp(variant.wholesalePricePerGram * (10000 - loyaltyDiscount) / 10000)
-        : variant.wholesalePricePerGram;
-      const lineTotal = roundHalereUp(pricePerGram * item.grams);
-      estimatedTotal += lineTotal;
-
-      orderItems.push({
-        variantId: item.variantId,
-        grams: item.grams,
-        pieces: item.pieces,
-        pricePerGram,
-        lineTotal,
-      });
-
-      reservations.push({
-        variantId: item.variantId,
-        grams: item.grams,
-        pieces: item.pieces,
-        active: true,
-      });
-    }
-
-    const order = await tx.order.create({
+  // Transaction only for the write — single create query
+  return prisma.$transaction(async (tx) => {
+    return tx.order.create({
       data: {
         salonId,
         status: "NEW",
@@ -102,8 +120,6 @@ export async function createOrder(
       },
       include: { items: true },
     });
-
-    return order;
   }, { timeout: TX_TIMEOUT });
 }
 
