@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -79,10 +80,9 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
       <div className="bg-gradient-to-br from-rose via-rose-deep to-pink-500 pb-16 pt-10">
         <div className="max-w-md mx-auto px-4 text-center">
           {/* Avatar */}
-          <div className="w-24 h-24 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden">
+          <div className="w-24 h-24 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden relative">
             {stylist.photo ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={stylist.photo} alt={stylist.name} className="w-full h-full object-cover" />
+              <Image src={stylist.photo} alt={stylist.name} fill className="object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-4xl">💇‍♀️</div>
             )}

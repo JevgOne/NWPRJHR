@@ -73,6 +73,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.6,
     },
+    {
+      url: `${BASE_URL}/doprava`,
+      lastModified: STATIC_DATE,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/pruvodce-gramazi`,
+      lastModified: STATIC_DATE,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
   ];
 
   const articlePages: MetadataRoute.Sitemap = articles.map((article) => ({

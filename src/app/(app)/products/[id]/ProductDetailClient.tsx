@@ -30,6 +30,9 @@ interface ProductDetail {
   colorTone?: string | null;
   photos?: string;
   video?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  ogImage?: string | null;
   variants?: Array<{
     id: string;
     lengthCm: number;
@@ -54,6 +57,10 @@ export function ProductDetailClient({
   const router = useRouter();
   const [showBatchCreate, setShowBatchCreate] = useState(false);
   const [showSocialPost, setShowSocialPost] = useState(false);
+  const [metaTitleValue, setMetaTitleValue] = useState(product.metaTitle ?? "");
+  const [metaDescValue, setMetaDescValue] = useState(product.metaDescription ?? "");
+  const [ogImageValue, setOgImageValue] = useState(product.ogImage ?? "");
+  const [savingSeo, setSavingSeo] = useState(false);
   const [editingTexture, setEditingTexture] = useState(false);
   const [textureValue, setTextureValue] = useState(product.texture ?? "");
   const textureRef = useRef<HTMLDivElement>(null);
@@ -151,6 +158,31 @@ export function ProductDetailClient({
     },
     [product.id, router]
   );
+
+  const handleSaveSeo = useCallback(async () => {
+    setSavingSeo(true);
+    await fetch(`/api/products/${product.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        metaTitle: metaTitleValue || null,
+        metaDescription: metaDescValue || null,
+        ogImage: ogImageValue || null,
+      }),
+    });
+    setSavingSeo(false);
+    router.refresh();
+  }, [product.id, metaTitleValue, metaDescValue, ogImageValue, router]);
+
+  // Auto-generated SEO preview
+  const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
+  const lengthStr = lengths.length > 1
+    ? `${lengths[0]}–${lengths[lengths.length - 1]}cm`
+    : lengths.length === 1
+      ? `${lengths[0]}cm`
+      : "";
+  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ") + " | Hairland";
+  const previewTitle = metaTitleValue || autoTitle;
 
   return (
     <div className="space-y-6">
@@ -351,6 +383,83 @@ export function ProductDetailClient({
             onVideoChange={handleVideoChange}
             productId={product.id}
           />
+        </Card>
+      )}
+
+      {/* SEO section — owner only */}
+      {isOwner && (
+        <Card>
+          <h2 className="text-lg font-semibold text-ink mb-4">SEO</h2>
+
+          {/* Meta Title */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-espresso mb-1">
+              Meta Title
+              <span className={`ml-2 text-xs ${(metaTitleValue || autoTitle).length > 60 ? "text-red-500" : "text-muted"}`}>
+                {(metaTitleValue || autoTitle).length}/60
+              </span>
+            </label>
+            <input
+              type="text"
+              value={metaTitleValue}
+              onChange={(e) => setMetaTitleValue(e.target.value)}
+              placeholder={autoTitle}
+              className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose"
+            />
+            <p className="text-xs text-muted mt-1">
+              Auto: {autoTitle}
+            </p>
+          </div>
+
+          {/* Meta Description */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-espresso mb-1">
+              Meta Description
+              <span className={`ml-2 text-xs ${(metaDescValue).length > 155 ? "text-red-500" : "text-muted"}`}>
+                {metaDescValue.length}/155
+              </span>
+            </label>
+            <textarea
+              value={metaDescValue}
+              onChange={(e) => setMetaDescValue(e.target.value)}
+              placeholder="Automaticky: název, původ, barvy, struktura..."
+              rows={3}
+              className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose resize-none"
+            />
+          </div>
+
+          {/* OG Image */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-espresso mb-1">
+              OG Image URL
+            </label>
+            <input
+              type="text"
+              value={ogImageValue}
+              onChange={(e) => setOgImageValue(e.target.value)}
+              placeholder="Automaticky: první fotka produktu"
+              className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose"
+            />
+            <p className="text-xs text-muted mt-1">1200x630px pro sociální sítě</p>
+          </div>
+
+          {/* Google Preview */}
+          <div className="p-3 bg-nude-50 rounded-lg border border-line mb-4">
+            <p className="text-xs text-muted mb-1">Google</p>
+            <p className="text-blue-700 text-sm font-medium truncate">{previewTitle}</p>
+            <p className="text-green-700 text-xs">hairland.cz/offer/{product.slug ?? product.id}</p>
+            <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">
+              {metaDescValue || "Automaticky generovaný popis z atributů produktu"}
+            </p>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={handleSaveSeo}
+            disabled={savingSeo}
+          >
+            {savingSeo ? "..." : "Uložit SEO"}
+          </Button>
         </Card>
       )}
 

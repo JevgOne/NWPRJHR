@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
@@ -163,8 +164,8 @@ export default async function BlogPostPage({ params }: Props) {
       {/* ===== HERO ===== */}
       {post.coverImage ? (
         <div className="relative bg-ink">
-          <div className="aspect-[3/1] sm:aspect-[3/1] max-h-[420px] overflow-hidden">
-            <img src={post.coverImage} alt={title} className="w-full h-full object-cover opacity-75" />
+          <div className="aspect-[3/1] sm:aspect-[3/1] max-h-[420px] overflow-hidden relative">
+            <Image src={post.coverImage} alt={title} fill className="object-cover opacity-75" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/5" />
           </div>
           <div className="absolute bottom-0 left-0 right-0">
@@ -317,11 +318,12 @@ export default async function BlogPostPage({ params }: Props) {
                   className="group block bg-white rounded-2xl border border-line hover:border-rose/20 hover:shadow-lg transition-all overflow-hidden"
                 >
                   {r.coverImage ? (
-                    <div className="aspect-[16/9] overflow-hidden">
-                      <img
+                    <div className="aspect-[16/9] overflow-hidden relative">
+                      <Image
                         src={r.coverImage}
                         alt={localized(r, "title", locale)}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                   ) : (

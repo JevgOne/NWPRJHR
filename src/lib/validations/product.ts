@@ -21,6 +21,9 @@ export const createProductSchema = z.object({
   colorTone: z.string().max(200).nullable().optional(),
   photos: z.string().optional(),
   video: z.string().url().nullable().optional(),
+  metaTitle: z.string().max(70).nullable().optional(),
+  metaDescription: z.string().max(200).nullable().optional(),
+  ogImage: z.string().url().nullable().optional(),
   slug: z
     .string()
     .regex(/^[a-z0-9-]+$/)

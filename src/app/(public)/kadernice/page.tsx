@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
@@ -83,10 +84,9 @@ export default async function StylistsPublicPage() {
                     ⭐ Top
                   </span>
                 )}
-                <div className="w-20 h-20 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line">
+                <div className="w-20 h-20 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line relative">
                   {s.photo ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={s.photo} alt={s.name} className="w-full h-full object-cover" />
+                    <Image src={s.photo} alt={s.name} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full bg-blush-100 flex items-center justify-center text-3xl">💇‍♀️</div>
                   )}

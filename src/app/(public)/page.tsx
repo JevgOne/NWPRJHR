@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/db";
 import { getHairColor } from "@/lib/hair-colors";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
@@ -154,7 +155,7 @@ export default async function LandingPage() {
                 className="group block overflow-hidden rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all"
               >
                 <div className="relative h-32">
-                  <img src={img} alt={tCategory(key)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src={img} alt={tCategory(key)} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-3 bg-white text-center">
                   <h3 className="font-semibold text-ink text-sm">
@@ -202,11 +203,14 @@ export default async function LandingPage() {
           </div>
 
           <div className="flex justify-center">
-            <img
-              src={`${BLOB}/odstiny-prehled.jpg`}
-              alt={t("landing.colorPaletteAlt")}
-              className="w-full max-w-2xl h-48 md:h-56 object-cover rounded-xl shadow-md"
-            />
+            <div className="relative w-full max-w-2xl h-48 md:h-56 rounded-xl shadow-md overflow-hidden">
+              <Image
+                src={`${BLOB}/odstiny-prehled.jpg`}
+                alt={t("landing.colorPaletteAlt")}
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -292,9 +296,9 @@ export default async function LandingPage() {
                     href={`/kadernice/${s.slug}`}
                     className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-md hover:border-blush-300 transition-all p-3"
                   >
-                    <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2">
+                    <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2 relative">
                       {s.photo ? (
-                        <img src={s.photo} alt={s.name} className="w-full h-full object-cover" />
+                        <Image src={s.photo} alt={s.name} fill className="object-cover" />
                       ) : (
                         <div className="w-full h-full bg-blush-100 flex items-center justify-center text-2xl">💇‍♀️</div>
                       )}

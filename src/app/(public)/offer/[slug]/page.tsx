@@ -36,6 +36,9 @@ const productSelect = {
   colorTone: true,
   photos: true,
   archived: true,
+  metaTitle: true,
+  metaDescription: true,
+  ogImage: true,
   variants: {
     where: { active: true },
     select: {
@@ -93,40 +96,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
   const t = await getTranslations("public.productDetail");
-  const tCategory = await getTranslations("category");
-  const locale = await getLocale();
   if (!product) {
     return { title: t("notFound") };
   }
-  const productName = locale === "ru" && product.nameRu
-    ? product.nameRu
-    : locale === "uk" && product.nameUk
-      ? product.nameUk
-      : product.name;
-  const processingLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? PROCESSING_LABELS.cs[product.processingType] ?? "";
-  const originLabel = product.origin ?? "";
-  const textureLabel = product.texture ?? "";
-  const colorToneLabel = product.colorTone ?? "";
-  // Title: "Panenské vlasy Clip-in — Rovné — Blond — Ukrajina" — unique per product
-  const titleParts = [productName, processingLabel, textureLabel, colorToneLabel, originLabel].filter(Boolean);
-  const title = titleParts.join(" — ");
-  const categoryLabel = tCategory(product.category.toLowerCase());
+
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
-  const colorCount = new Set(product.variants.map((v) => v.color)).size;
-  const minLength = lengths[0];
-  const maxLength = lengths[lengths.length - 1];
-  const metaBio = generateProductBio({
-    name: productName,
-    category: product.category,
-    processingType: product.processingType,
-    origin: product.origin,
-    texture: product.texture,
-    colorTone: product.colorTone,
-    lengths,
-    colorCount,
-  });
-  const description = (metaBio.length > 155 ? metaBio.slice(0, 152) + "..." : metaBio) + " | Hairland";
-  const firstPhoto = product.photos[0];
+  const colors = [...new Set(product.variants.map((v) => v.color))];
+
+  // Title: "{name} {cm} | Hairland" — e.g. "Panenské vlasy 40–60cm | Hairland"
+  const lengthStr = lengths.length > 1
+    ? `${lengths[0]}–${lengths[lengths.length - 1]}cm`
+    : lengths.length === 1
+      ? `${lengths[0]}cm`
+      : "";
+  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ") + " | Hairland";
+  const title = product.metaTitle || autoTitle;
+
+  // Description: name, origin, colors, structure — compact for 155 chars
+  const descParts: string[] = [product.name];
+  if (product.origin) descParts.push(`původ ${product.origin}`);
+  if (colors.length > 0) descParts.push(colors.length <= 3 ? colors.join(", ") : `${colors.length} barev`);
+  if (product.texture) descParts.push(product.texture.toLowerCase());
+  if (lengthStr) descParts.push(lengthStr);
+  descParts.push("Osobní odběr Praha zdarma, zpracování na zakázku.");
+  const autoDescription = descParts.join(". ").slice(0, 155);
+  const description = product.metaDescription || autoDescription;
+
+  const ogImg = product.ogImage || product.photos[0];
   return {
     title,
     description,
@@ -138,15 +134,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://www.hairland.cz/offer/${product.slug ?? slug}`,
       siteName: "Hairland",
       locale: "cs_CZ",
-      ...(firstPhoto && {
-        images: [{ url: firstPhoto, alt: title, width: 1200, height: 630 }],
+      ...(ogImg && {
+        images: [{ url: ogImg, alt: product.name, width: 1200, height: 630 }],
       }),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      ...(firstPhoto && { images: [firstPhoto] }),
+      ...(ogImg && { images: [ogImg] }),
     },
   };
 }
@@ -272,6 +268,47 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
     _count: true,
   });
 
+  // FAQ data by category
+  const faqByCategory: Record<string, Array<{ q: string; a: string }>> = {
+    VIRGIN: [
+      { q: "Co jsou panenské (virgin) vlasy?", a: "Panenské vlasy jsou nejvyšší kvalita lidských vlasů, které nebyly chemicky ošetřeny ani barveny. Kutikula je zachována v původním směru, což zajišťuje přirozený lesk a minimální zamotávání." },
+      { q: "Jak dlouho vydrží panenské vlasy?", a: "Při správné péči vydrží panenské vlasy 2 a více let. Díky neporušené kutikule si dlouho zachovávají hebkost a lesk." },
+      { q: "Mohu panenské vlasy barvit?", a: "Ano, panenské vlasy lze barvit, odbarvovat i jinak chemicky upravovat. Díky tomu, že nebyly dříve ošetřeny, reagují na barvení velmi dobře a výsledek je přirozený." },
+      { q: "Jak pečovat o panenské vlasy?", a: "Používejte šampony bez sulfátů, pravidelně aplikujte kondicionér a vlasový olej. Před spaním vlasy spleťte do volného copu. Vyhněte se nadměrnému tepelnému stylingu." },
+    ],
+    PREMIUM: [
+      { q: "Jaký je rozdíl mezi premium a panenskými vlasy?", a: "Premium vlasy prošly šetrným zpracováním (např. barvením), zatímco panenské vlasy jsou zcela neošetřené. Premium vlasy nabízejí skvělou kvalitu za příznivější cenu." },
+      { q: "Jak dlouho vydrží premium vlasy?", a: "Premium vlasy při správné péči vydrží 1 až 2 roky. Životnost závisí na intenzitě nošení a péči." },
+      { q: "Jaké možnosti stylování mají premium vlasy?", a: "Premium vlasy lze kulmovat, žehlit, fénovat i natáčet. Doporučujeme používat termoochranný sprej pro delší životnost vlasů." },
+    ],
+    STANDARD: [
+      { q: "Pro koho jsou standardní vlasy vhodné?", a: "Standardní vlasy jsou ideální volbou pro ty, kteří hledají kvalitní prodloužení za dostupnou cenu. Hodí se pro příležitostné nošení nebo jako první zkušenost s prodlužováním." },
+      { q: "Jaká je výhoda standardních vlasů oproti dražším variantám?", a: "Hlavní výhodou je příznivá cena při zachování dobré kvality. Standardní vlasy vypadají přirozeně a jsou vhodné pro běžné nošení." },
+      { q: "Jak dlouho vydrží standardní vlasy?", a: "Standardní vlasy vydrží přibližně 6 až 12 měsíců v závislosti na frekvenci nošení a péči." },
+    ],
+  };
+  const generalFaq: Array<{ q: string; a: string }> = [
+    { q: "Jak aplikovat clip-in a tape-in vlasy?", a: "Clip-in vlasy se jednoduše připínají sponkami k vlastním vlasům — zvládnete to samy doma za pár minut. Tape-in vlasy se lepí speciální páskou k vlastním vlasům a aplikaci doporučujeme u kadeřníka." },
+    { q: "Kolik gramů vlasů potřebuji?", a: "Záleží na požadovaném objemu a délce. Pro jemné doplnění stačí 100 g, pro střední objem 150 g a pro plný objem 200 g a více. Podrobný průvodce najdete na naší stránce." },
+    { q: "Nabízíte dopravu zdarma v Praze?", a: "Ano, v Praze nabízíme osobní doručení zdarma. Pro ostatní lokality v ČR zasíláme Českou poštou." },
+  ];
+  const categoryFaq = faqByCategory[product.category] ?? [];
+  const allFaq = [...categoryFaq, ...generalFaq];
+
+  // FAQPage JSON-LD
+  const faqJsonLd = allFaq.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFaq.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
+      },
+    })),
+  } : null;
+
   // Product schema JSON-LD
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -335,6 +372,12 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-muted mb-4">
         <Link href="/" className="hover:text-rose transition-colors">{t("productDetail.home")}</Link>
