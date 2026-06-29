@@ -141,16 +141,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const sp = await searchParams;
-  const product = await getProduct(slug);
+
+  // Parallel: product + auth + translations
+  const [product, session, t, tCategory, locale] = await Promise.all([
+    getProduct(slug),
+    auth(),
+    getTranslations("public"),
+    getTranslations("category"),
+    getLocale(),
+  ]);
 
   if (!product) {
     notFound();
   }
-
-  const session = await auth();
-  const t = await getTranslations("public");
-  const tCategory = await getTranslations("category");
-  const locale = await getLocale();
 
   // Calculate per-variant prices based on user tier
   const role = session?.user?.role;

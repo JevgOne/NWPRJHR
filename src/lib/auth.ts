@@ -45,20 +45,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!user) return null;
 
-        const isValid = await compare(
-          credentials.password as string,
-          user.hashedPassword
-        );
-        if (!isValid) return null;
+        // Parallel: bcrypt compare + salon approval check
+        const needsSalonCheck = (user.role === "SALON" || user.role === "HAIRDRESSER") && user.salonId;
+        const [isValid, salon] = await Promise.all([
+          compare(credentials.password as string, user.hashedPassword),
+          needsSalonCheck
+            ? prisma.salon.findUnique({ where: { id: user.salonId! }, select: { approved: true } })
+            : null,
+        ]);
 
-        // Block unapproved salons and hairdressers
-        if ((user.role === "SALON" || user.role === "HAIRDRESSER") && user.salonId) {
-          const salon = await prisma.salon.findUnique({
-            where: { id: user.salonId },
-            select: { approved: true },
-          });
-          if (salon && !salon.approved) return null;
-        }
+        if (!isValid) return null;
+        if (needsSalonCheck && salon && !salon.approved) return null;
 
         return {
           id: user.id,
