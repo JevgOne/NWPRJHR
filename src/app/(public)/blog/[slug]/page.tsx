@@ -10,15 +10,6 @@ const CATEGORY_LABELS: Record<string, Record<string, string>> = {
   ru: { general: "Общее", care: "Уход", guide: "Гид", trends: "Тренды", tips: "Советы", news: "Новости" },
 };
 
-const CATEGORY_COLORS: Record<string, { badge: string; accent: string }> = {
-  general: { badge: "bg-nude-100 text-espresso", accent: "from-amber-400 to-amber-200" },
-  care: { badge: "bg-green-100 text-green-700", accent: "from-green-400 to-green-200" },
-  guide: { badge: "bg-amber-100 text-amber-700", accent: "from-blue-400 to-blue-200" },
-  trends: { badge: "bg-purple-100 text-purple-700", accent: "from-purple-400 to-purple-200" },
-  tips: { badge: "bg-blue-100 text-blue-700", accent: "from-sky-400 to-sky-200" },
-  news: { badge: "bg-rose-100 text-rose-700", accent: "from-rose-400 to-rose-200" },
-};
-
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -47,23 +38,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function renderMarkdown(md: string, accentGradient: string): string {
+function renderMarkdown(md: string): string {
   return md
     .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold text-ink mt-8 mb-3">$1</h3>')
-    .replace(/^## (.+)$/gm, `<h2 class="relative text-xl font-bold text-ink mt-12 mb-4 pl-4 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-full before:bg-gradient-to-b before:${accentGradient}">$1</h2>`)
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-ink font-semibold">$1</strong>')
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-rose hover:underline font-medium">$1</a>')
-    .replace(/^- (.+)$/gm, '<li class="relative pl-6 before:absolute before:left-0 before:top-[0.6em] before:w-2 before:h-2 before:rounded-full before:bg-blush-200">$1</li>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
     .split(/\n\n+/)
     .map((block) => {
       const trimmed = block.trim();
       if (!trimmed) return "";
       if (trimmed.startsWith("<h") || trimmed.startsWith("<li")) return trimmed;
-      if (trimmed.includes("before:bg-blush")) {
-        return `<ul class="space-y-3 my-6 list-none pl-0">${trimmed}</ul>`;
+      if (trimmed.includes("<li>")) {
+        return `<ul>${trimmed}</ul>`;
       }
-      return `<p class="mb-5">${trimmed.replace(/\n/g, "<br/>")}</p>`;
+      return `<p>${trimmed.replace(/\n/g, "<br/>")}</p>`;
     })
     .join("\n");
 }
@@ -78,11 +69,10 @@ export default async function BlogPostPage({ params }: Props) {
   const excerpt = localized(post, "excerpt", locale);
   const content = localized(post, "content", locale);
   const dateLocale = locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs";
-  const catStyle = CATEGORY_COLORS[post.category] ?? CATEGORY_COLORS.general;
 
   const wordCount = content.split(/\s+/).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
-  const readLabel = locale === "uk" ? "хв читання" : locale === "ru" ? "мин чтения" : "min čtení";
+  const readLabel = locale === "uk" ? "хв" : locale === "ru" ? "мин" : "min";
 
   const related = await prisma.blogPost.findMany({
     where: { published: true, id: { not: post.id }, category: post.category },
@@ -113,13 +103,15 @@ export default async function BlogPostPage({ params }: Props) {
   };
 
   const breadcrumbHome = locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů";
-  const ctaTitle = locale === "uk" ? "Цікавить преміальне волосся?" : locale === "ru" ? "Интересуют премиальные волосы?" : "Máte zájem o prémiové vlasy?";
-  const ctaDesc = locale === "uk" ? "Перегляньте нашу пропозицію або зв\u2019яжіться з нами." : locale === "ru" ? "Посмотрите наше предложение или свяжитесь с нами." : "Prohlédněte si naši nabídku nebo nás kontaktujte.";
-  const ctaOfferBtn = locale === "uk" ? "Переглянути" : locale === "ru" ? "Смотреть" : "Prohlédnout nabídku";
-  const ctaContactBtn = locale === "uk" ? "Зв\u2019язатися" : locale === "ru" ? "Связаться" : "Kontaktujte nás";
-  const relatedLabel = locale === "uk" ? "Схожі статті" : locale === "ru" ? "Похожие статьи" : "Čtěte také";
+  const ctaTitle = locale === "uk" ? "Готові до змін?" : locale === "ru" ? "Готовы к переменам?" : "Připravená na proměnu?";
+  const ctaDesc = locale === "uk" ? "Перегляньте наші преміальні волосся або замовте безкоштовну консультацію." : locale === "ru" ? "Посмотрите наши премиальные волосы или закажите бесплатную консультацию." : "Prohlédněte si naše prémiové vlasy nebo si objednejte bezplatnou konzultaci.";
+  const ctaOfferBtn = locale === "uk" ? "Переглянути колекцію" : locale === "ru" ? "Смотреть коллекцию" : "Prohlédnout kolekci";
+  const ctaContactBtn = locale === "uk" ? "Безкоштовна консультація" : locale === "ru" ? "Бесплатная консультация" : "Bezplatná konzultace";
+  const relatedLabel = locale === "uk" ? "Читайте також" : locale === "ru" ? "Читайте также" : "Čtěte také";
   const backLabel = locale === "uk" ? "Усі статті" : locale === "ru" ? "Все статьи" : "Zpět na blog";
+  const shareLabel = locale === "uk" ? "Поділіться з подругою" : locale === "ru" ? "Поделитесь с подругой" : "Sdílejte s kamarádkou";
   const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
+  const articleUrl = `https://www.hairland.cz/blog/${slug}`;
 
   return (
     <>
@@ -132,96 +124,140 @@ export default async function BlogPostPage({ params }: Props) {
       {post.coverImage ? (
         <div className="relative bg-ink">
           <div className="aspect-[3/1] sm:aspect-[3/1] max-h-[420px] overflow-hidden">
-            <img src={post.coverImage} alt={title} className="w-full h-full object-cover opacity-80" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+            <img src={post.coverImage} alt={title} className="w-full h-full object-cover opacity-75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/5" />
           </div>
           <div className="absolute bottom-0 left-0 right-0">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm border border-white/10">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/15 text-white backdrop-blur-sm border border-white/10">
                   {catLabels[post.category] ?? post.category}
                 </span>
                 {post.publishedAt && (
-                  <span className="text-sm text-white/70">
+                  <span className="text-sm text-white/60">
                     {new Date(post.publishedAt).toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" })}
                   </span>
                 )}
-                <span className="text-sm text-white/50">{readMin} {readLabel}</span>
+                <span className="text-sm text-white/40">{readMin} {readLabel}</span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-[1.15] tracking-tight drop-shadow-md">{title}</h1>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-md" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{title}</h1>
             </div>
           </div>
         </div>
       ) : (
-        <div className="bg-gradient-to-b from-blush-50 via-rose/5 to-white border-b border-black/5">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
-            <nav className="flex items-center gap-2 text-sm text-muted mb-8">
-              <Link href="/" className="hover:text-ink transition-colors">{breadcrumbHome}</Link>
-              <svg className="w-3 h-3 text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
-              <svg className="w-3 h-3 text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              <span className="text-ink truncate">{title}</span>
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#fdf2f0] via-[#fef6f3] to-[#fdf8f5]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-rose/10 to-transparent rounded-full -translate-y-1/3 translate-x-1/4 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-blush-100/60 to-transparent rounded-full translate-y-1/3 -translate-x-1/4 blur-3xl" />
+
+          <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14">
+            <nav className="flex items-center gap-2 text-sm text-muted/70 mb-10">
+              <Link href="/" className="hover:text-rose transition-colors">{breadcrumbHome}</Link>
+              <span className="text-rose/30">/</span>
+              <Link href="/blog" className="hover:text-rose transition-colors">Blog</Link>
+              <span className="text-rose/30">/</span>
+              <span className="text-ink/60 truncate">{title}</span>
             </nav>
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold ${catStyle.badge}`}>
+            <div className="flex flex-wrap items-center gap-3 mb-5">
+              <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-white/80 text-rose border border-rose/10 shadow-sm">
                 {catLabels[post.category] ?? post.category}
               </span>
               {post.publishedAt && (
-                <span className="text-sm text-muted">
+                <span className="text-sm text-muted/60">
                   {new Date(post.publishedAt).toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" })}
                 </span>
               )}
-              <span className="text-sm text-muted/50">{readMin} {readLabel}</span>
+              <span className="text-sm text-muted/40">{readMin} {readLabel}</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-ink leading-[1.15] tracking-tight">{title}</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-ink leading-[1.1] tracking-tight" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{title}</h1>
           </div>
+          <svg className="absolute bottom-0 w-full h-8 text-white" viewBox="0 0 1440 32" preserveAspectRatio="none">
+            <path d="M0,32 L0,16 Q360,0 720,16 Q1080,32 1440,12 L1440,32 Z" fill="currentColor" />
+          </svg>
         </div>
       )}
 
       {/* ===== BODY ===== */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb below cover */}
         {post.coverImage && (
-          <nav className="flex items-center gap-2 text-sm text-muted mt-6">
-            <Link href="/" className="hover:text-ink transition-colors">{breadcrumbHome}</Link>
-            <svg className="w-3 h-3 text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-            <Link href="/blog" className="hover:text-ink transition-colors">Blog</Link>
-            <svg className="w-3 h-3 text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-            <span className="text-ink truncate">{title}</span>
+          <nav className="flex items-center gap-2 text-sm text-muted/70 mt-6">
+            <Link href="/" className="hover:text-rose transition-colors">{breadcrumbHome}</Link>
+            <span className="text-rose/30">/</span>
+            <Link href="/blog" className="hover:text-rose transition-colors">Blog</Link>
+            <span className="text-rose/30">/</span>
+            <span className="text-ink/60 truncate">{title}</span>
           </nav>
         )}
 
-        {/* Excerpt */}
         {excerpt && (
           <div className="mt-6 mb-2 flex gap-3">
-            <div className={`w-1 flex-shrink-0 rounded-full bg-gradient-to-b ${catStyle.accent}`} />
-            <p className="text-lg text-muted leading-relaxed italic">{excerpt}</p>
+            <div className="w-[3px] flex-shrink-0 rounded-full bg-gradient-to-b from-rose to-blush-200" />
+            <p className="text-lg text-[#7a6b66] leading-relaxed italic">{excerpt}</p>
           </div>
         )}
 
         {/* Content */}
-        <article
-          className="py-8 max-w-none text-[15px] text-muted/90 leading-[1.85]"
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(content, catStyle.accent) }}
+        <article className="py-8 max-w-none text-[15.5px] text-[#6b5e5a] leading-[1.9]
+          [&_h2]:text-[1.35rem] [&_h2]:font-bold [&_h2]:text-ink
+          [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:pl-5
+          [&_h2]:relative [&_h2]:before:absolute [&_h2]:before:left-0 [&_h2]:before:top-0 [&_h2]:before:bottom-0
+          [&_h2]:before:w-[3px] [&_h2]:before:rounded-full [&_h2]:before:bg-gradient-to-b [&_h2]:before:from-rose [&_h2]:before:to-blush-200
+          [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-ink [&_h3]:mt-8 [&_h3]:mb-3
+          [&_p]:mb-5
+          [&_ul]:mb-6 [&_ul]:list-none [&_ul]:pl-0 [&_ul]:space-y-2.5
+          [&_li]:relative [&_li]:pl-5 [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-[0.65em]
+          [&_li]:before:w-1.5 [&_li]:before:h-1.5 [&_li]:before:rounded-full [&_li]:before:bg-rose/40
+          [&_strong]:text-ink [&_strong]:font-semibold
+          [&_a]:text-rose [&_a]:hover:underline [&_a]:font-medium"
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
         />
 
-        {/* CTA */}
-        <div className="relative overflow-hidden p-8 bg-gradient-to-br from-nude-50 via-blush-50 to-rose/5 rounded-2xl border border-blush-100 text-center">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose/5 rounded-full blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blush-100/50 rounded-full blur-2xl" />
-          <div className="relative">
-            <p className="text-ink font-bold text-lg mb-1">{ctaTitle}</p>
-            <p className="text-sm text-muted mb-5">{ctaDesc}</p>
-            <div className="flex justify-center gap-3">
+        {/* ===== SHARE ===== */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-[#fdf8f6] border border-rose/8">
+          <span className="text-sm text-muted/60">{shareLabel}</span>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`https://wa.me/?text=${encodeURIComponent(title + " — " + articleUrl)}`}
+              target="_blank"
+              className="w-9 h-9 rounded-full bg-white border border-rose/10 flex items-center justify-center text-muted/50 hover:text-green-600 hover:border-green-200 transition-all"
+              title="WhatsApp"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </Link>
+            <Link
+              href={`https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(title)}`}
+              target="_blank"
+              className="w-9 h-9 rounded-full bg-white border border-rose/10 flex items-center justify-center text-muted/50 hover:text-[#229ED9] hover:border-[#229ED9]/30 transition-all"
+              title="Telegram"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </Link>
+            <button
+              className="w-9 h-9 rounded-full bg-white border border-rose/10 flex items-center justify-center text-muted/50 hover:text-rose hover:border-rose/30 transition-all"
+              title="Copy link"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* ===== CTA ===== */}
+        <div className="mt-10 relative overflow-hidden rounded-2xl border border-rose/10">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#fdf2f0] via-[#fef6f3] to-rose/5" />
+          <div className="absolute -top-20 -right-20 w-56 h-56 bg-rose/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-44 h-44 bg-blush-100/50 rounded-full blur-3xl" />
+          <div className="relative px-6 py-10 sm:py-12 text-center">
+            <p className="font-extrabold text-ink text-xl sm:text-2xl mb-2" style={{ fontFamily: "Georgia, serif" }}>{ctaTitle}</p>
+            <p className="text-sm text-muted/60 mb-7 max-w-md mx-auto">{ctaDesc}</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
               <Link
                 href="/offer"
-                className="px-6 py-3 bg-rose text-white rounded-xl font-semibold hover:bg-rose-deep transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                className="px-7 py-3.5 bg-rose hover:bg-rose-deep text-white font-semibold rounded-full transition-all shadow-lg shadow-rose/20 hover:shadow-xl hover:shadow-rose/30 hover:-translate-y-0.5"
               >
                 {ctaOfferBtn}
               </Link>
               <Link
                 href="/contact"
-                className="px-6 py-3 bg-white text-espresso border border-line rounded-xl font-medium hover:bg-nude-50 transition-colors"
+                className="px-7 py-3.5 bg-white text-ink border border-rose/15 rounded-full font-medium hover:border-rose/30 hover:bg-rose/[0.02] transition-all"
               >
                 {ctaContactBtn}
               </Link>
@@ -229,54 +265,51 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Related */}
+        {/* ===== RELATED ===== */}
         {relatedPosts.length > 0 && (
           <div className="mt-14">
-            <h2 className="text-xl font-bold text-ink mb-5">{relatedLabel}</h2>
+            <h2 className="text-xl font-bold text-ink mb-5" style={{ fontFamily: "Georgia, serif" }}>{relatedLabel}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {relatedPosts.map((r) => {
-                const rStyle = CATEGORY_COLORS[r.category] ?? CATEGORY_COLORS.general;
-                return (
-                  <Link
-                    key={r.id}
-                    href={`/blog/${r.slug}`}
-                    className="group block bg-white rounded-2xl border border-line hover:border-blush-200 hover:shadow-lg transition-all overflow-hidden"
-                  >
-                    {r.coverImage ? (
-                      <div className="aspect-[16/9] overflow-hidden">
-                        <img
-                          src={r.coverImage}
-                          alt={localized(r, "title", locale)}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-[16/9] bg-gradient-to-br from-nude-50 to-blush-50 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-blush-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                        </svg>
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mb-2 ${rStyle.badge}`}>
-                        {catLabels[r.category] ?? r.category}
-                      </span>
-                      <h3 className="font-semibold text-sm text-ink group-hover:text-rose transition-colors line-clamp-2">
-                        {localized(r, "title", locale)}
-                      </h3>
+              {relatedPosts.map((r) => (
+                <Link
+                  key={r.id}
+                  href={`/blog/${r.slug}`}
+                  className="group block bg-white rounded-2xl border border-line hover:border-rose/20 hover:shadow-lg transition-all overflow-hidden"
+                >
+                  {r.coverImage ? (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <img
+                        src={r.coverImage}
+                        alt={localized(r, "title", locale)}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
-                  </Link>
-                );
-              })}
+                  ) : (
+                    <div className="aspect-[16/9] bg-gradient-to-br from-[#fdf2f0] to-[#fef8f6] flex items-center justify-center">
+                      <svg className="w-8 h-8 text-rose/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-rose/8 text-rose mb-2">
+                      {catLabels[r.category] ?? r.category}
+                    </span>
+                    <h3 className="font-semibold text-sm text-ink group-hover:text-rose transition-colors line-clamp-2" style={{ fontFamily: "Georgia, serif" }}>
+                      {localized(r, "title", locale)}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Back link */}
+        {/* Back */}
         <div className="mt-10 mb-16 text-center">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-muted hover:text-rose bg-nude-50 hover:bg-nude-100 rounded-xl transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-muted/60 hover:text-rose bg-[#fdf8f6] hover:bg-rose/5 rounded-full border border-rose/8 transition-all"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
