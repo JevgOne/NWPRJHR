@@ -5,9 +5,15 @@ import { z } from "zod";
 
 const updateBlogSchema = z.object({
   title: z.string().min(1).max(200).optional(),
+  titleUk: z.string().max(200).nullable().optional(),
+  titleRu: z.string().max(200).nullable().optional(),
   slug: z.string().min(1).max(200).regex(/^[a-z0-9-]+$/).optional(),
   excerpt: z.string().max(500).nullable().optional(),
+  excerptUk: z.string().max(500).nullable().optional(),
+  excerptRu: z.string().max(500).nullable().optional(),
   content: z.string().optional(),
+  contentUk: z.string().nullable().optional(),
+  contentRu: z.string().nullable().optional(),
   coverImage: z.string().url().nullable().optional(),
   category: z.string().max(50).optional(),
   published: z.boolean().optional(),
@@ -52,9 +58,15 @@ export async function PUT(
 
   const updateData: Record<string, unknown> = {};
   if (data.title !== undefined) updateData.title = data.title;
+  if (data.titleUk !== undefined) updateData.titleUk = data.titleUk;
+  if (data.titleRu !== undefined) updateData.titleRu = data.titleRu;
   if (data.slug !== undefined) updateData.slug = data.slug;
   if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
+  if (data.excerptUk !== undefined) updateData.excerptUk = data.excerptUk;
+  if (data.excerptRu !== undefined) updateData.excerptRu = data.excerptRu;
   if (data.content !== undefined) updateData.content = data.content;
+  if (data.contentUk !== undefined) updateData.contentUk = data.contentUk;
+  if (data.contentRu !== undefined) updateData.contentRu = data.contentRu;
   if (data.coverImage !== undefined) updateData.coverImage = data.coverImage;
   if (data.category !== undefined) updateData.category = data.category;
   if (data.published !== undefined) {

@@ -1365,8 +1365,14 @@ model BlogPost {
   id          String    @id @default(cuid())
   slug        String    @unique
   title       String
+  titleUk     String?
+  titleRu     String?
   excerpt     String?
+  excerptUk   String?
+  excerptRu   String?
   content     String    @default("")
+  contentUk   String?
+  contentRu   String?
   coverImage  String?
   category    String    @default("general")
   published   Boolean   @default(false)

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 
 export const metadata: Metadata = {
@@ -9,13 +10,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  general: "Obecné",
-  care: "Péče o vlasy",
-  guide: "Průvodce",
-  trends: "Trendy",
-  tips: "Tipy",
-  news: "Novinky",
+const CATEGORY_LABELS: Record<string, Record<string, string>> = {
+  cs: { general: "Obecné", care: "Péče o vlasy", guide: "Průvodce", trends: "Trendy", tips: "Tipy", news: "Novinky" },
+  uk: { general: "Загальне", care: "Догляд", guide: "Гід", trends: "Тренди", tips: "Поради", news: "Новини" },
+  ru: { general: "Общее", care: "Уход", guide: "Гид", trends: "Тренды", tips: "Советы", news: "Новости" },
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -27,79 +25,165 @@ const CATEGORY_COLORS: Record<string, string> = {
   news: "bg-rose-100 text-rose-700",
 };
 
+function localized<T extends Record<string, unknown>>(
+  post: T,
+  field: string,
+  locale: string
+): string {
+  if (locale === "ru" && post[`${field}Ru`]) return post[`${field}Ru`] as string;
+  if (locale === "uk" && post[`${field}Uk`]) return post[`${field}Uk`] as string;
+  return (post[field] as string) ?? "";
+}
+
 export default async function BlogPage() {
+  const locale = await getLocale();
   const posts = await prisma.blogPost.findMany({
     where: { published: true },
     orderBy: { publishedAt: "desc" },
   });
+  const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
+  const dateLocale = locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs";
+
+  const subtitle = locale === "uk"
+    ? "Тренди, поради та новини зі світу преміального волосся"
+    : locale === "ru"
+      ? "Тренды, советы и новости из мира премиальных волос"
+      : "Trendy, tipy a novinky ze světa prémiových vlasů";
+  const emptyMsg = locale === "uk"
+    ? "Ми готуємо для вас статті. Слідкуйте за нами!"
+    : locale === "ru"
+      ? "Мы готовим для вас статьи. Следите за нами!"
+      : "Připravujeme pro vás články. Sledujte nás!";
+  const readMore = locale === "uk" ? "Читати" : locale === "ru" ? "Читать" : "Číst více";
+  const poradnaLabel = locale === "uk" ? "Шукаєте практичні поради?" : locale === "ru" ? "Ищете практические советы?" : "Hledáte praktické návody?";
+  const poradnaCta = locale === "uk" ? "Poradna — гід з нарощування" : locale === "ru" ? "Poradna — гид по наращиванию" : "Poradna — průvodce prodloužením";
+
+  // Split into featured (first) and rest
+  const [featured, ...rest] = posts;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-ink mb-3">Blog</h1>
-        <p className="text-muted max-w-xl mx-auto">
-          Tipy, trendy a odborné rady z&nbsp;oblasti prodloužení a péče o vlasy.
-        </p>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Header */}
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold text-ink mb-2">Blog</h1>
+        <p className="text-muted text-lg">{subtitle}</p>
       </div>
 
       {posts.length === 0 ? (
-        <p className="text-center text-muted py-12">
-          Připravujeme pro vás články. Sledujte nás!
-        </p>
+        <p className="text-center text-muted py-12">{emptyMsg}</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {posts.map((post) => (
+        <>
+          {/* Featured article — large hero card */}
+          {featured && (
             <Link
-              key={post.id}
-              href={`/blog/${post.slug}`}
-              className="group block bg-white rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all overflow-hidden"
+              href={`/blog/${featured.slug}`}
+              className="group block mb-10 rounded-2xl overflow-hidden bg-white border border-line hover:border-blush-300 hover:shadow-lg transition-all"
             >
-              {post.coverImage && (
-                <div className="aspect-[16/9] overflow-hidden">
-                  <img
-                    src={post.coverImage}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              )}
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                      CATEGORY_COLORS[post.category] ?? CATEGORY_COLORS.general
-                    }`}
-                  >
-                    {CATEGORY_LABELS[post.category] ?? post.category}
-                  </span>
-                  {post.publishedAt && (
-                    <span className="text-[10px] text-muted">
-                      {new Date(post.publishedAt).toLocaleDateString("cs")}
-                    </span>
-                  )}
-                </div>
-                <h2 className="font-semibold text-ink group-hover:text-rose transition-colors mb-1">
-                  {post.title}
-                </h2>
-                {post.excerpt && (
-                  <p className="text-sm text-muted line-clamp-2">
-                    {post.excerpt}
-                  </p>
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                {featured.coverImage ? (
+                  <div className="aspect-[4/3] md:aspect-auto overflow-hidden">
+                    <img
+                      src={featured.coverImage}
+                      alt={localized(featured, "title", locale)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-[4/3] md:aspect-auto bg-gradient-to-br from-blush-50 to-nude-100 flex items-center justify-center">
+                    <svg className="w-16 h-16 text-blush-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                  </div>
                 )}
+                <div className="p-6 md:p-8 flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${CATEGORY_COLORS[featured.category] ?? CATEGORY_COLORS.general}`}>
+                      {catLabels[featured.category] ?? featured.category}
+                    </span>
+                    {featured.publishedAt && (
+                      <span className="text-xs text-muted">
+                        {new Date(featured.publishedAt).toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" })}
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-2xl font-bold text-ink group-hover:text-rose transition-colors mb-3 leading-snug">
+                    {localized(featured, "title", locale)}
+                  </h2>
+                  {localized(featured, "excerpt", locale) && (
+                    <p className="text-muted leading-relaxed mb-4 line-clamp-3">
+                      {localized(featured, "excerpt", locale)}
+                    </p>
+                  )}
+                  <span className="inline-flex items-center gap-1 text-sm font-medium text-rose group-hover:gap-2 transition-all">
+                    {readMore}
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
               </div>
             </Link>
-          ))}
-        </div>
+          )}
+
+          {/* Rest of articles — grid */}
+          {rest.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {rest.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className="group flex flex-col bg-white rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all overflow-hidden"
+                >
+                  {post.coverImage ? (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <img
+                        src={post.coverImage}
+                        alt={localized(post, "title", locale)}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/9] bg-gradient-to-br from-nude-50 to-blush-50 flex items-center justify-center">
+                      <svg className="w-10 h-10 text-blush-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className="p-4 flex flex-col flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${CATEGORY_COLORS[post.category] ?? CATEGORY_COLORS.general}`}>
+                        {catLabels[post.category] ?? post.category}
+                      </span>
+                      {post.publishedAt && (
+                        <span className="text-[10px] text-muted">
+                          {new Date(post.publishedAt).toLocaleDateString(dateLocale)}
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="font-semibold text-ink group-hover:text-rose transition-colors mb-1 line-clamp-2">
+                      {localized(post, "title", locale)}
+                    </h2>
+                    {localized(post, "excerpt", locale) && (
+                      <p className="text-sm text-muted line-clamp-2 flex-1">
+                        {localized(post, "excerpt", locale)}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Link to poradna */}
-      <div className="mt-12 text-center">
-        <p className="text-muted mb-3">Hledáte praktické návody?</p>
+      <div className="mt-14 text-center">
+        <p className="text-muted mb-3">{poradnaLabel}</p>
         <Link
           href="/poradna"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-nude-100 text-espresso rounded-lg font-medium hover:bg-nude-200 transition-colors"
         >
-          Poradna — průvodce prodloužením vlasů
+          {poradnaCta}
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>

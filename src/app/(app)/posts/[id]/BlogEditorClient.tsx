@@ -19,6 +19,14 @@ const CATEGORIES = [
   { value: "news", label: "Novinky" },
 ];
 
+const LANGS = [
+  { code: "cs", flag: "🇨🇿", label: "Čeština" },
+  { code: "uk", flag: "🇺🇦", label: "Українська" },
+  { code: "ru", flag: "🇷🇺", label: "Русский" },
+] as const;
+
+type LangCode = (typeof LANGS)[number]["code"];
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -31,12 +39,19 @@ function slugify(text: string): string {
 export function BlogEditorClient({ postId }: BlogEditorProps) {
   const router = useRouter();
   const isNew = !postId;
+  const [lang, setLang] = useState<LangCode>("cs");
 
   const [title, setTitle] = useState("");
+  const [titleUk, setTitleUk] = useState("");
+  const [titleRu, setTitleRu] = useState("");
   const [slug, setSlug] = useState("");
   const [slugManual, setSlugManual] = useState(false);
   const [excerpt, setExcerpt] = useState("");
+  const [excerptUk, setExcerptUk] = useState("");
+  const [excerptRu, setExcerptRu] = useState("");
   const [content, setContent] = useState("");
+  const [contentUk, setContentUk] = useState("");
+  const [contentRu, setContentRu] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [category, setCategory] = useState("general");
   const [published, setPublished] = useState(false);
@@ -55,10 +70,16 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
       })
       .then((post) => {
         setTitle(post.title);
+        setTitleUk(post.titleUk ?? "");
+        setTitleRu(post.titleRu ?? "");
         setSlug(post.slug);
         setSlugManual(true);
         setExcerpt(post.excerpt ?? "");
+        setExcerptUk(post.excerptUk ?? "");
+        setExcerptRu(post.excerptRu ?? "");
         setContent(post.content ?? "");
+        setContentUk(post.contentUk ?? "");
+        setContentRu(post.contentRu ?? "");
         setCoverImage(post.coverImage ?? "");
         setCategory(post.category);
         setPublished(post.published);
@@ -95,6 +116,26 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
     setUploading(false);
   };
 
+  // Get/set by current lang
+  const currentTitle = lang === "uk" ? titleUk : lang === "ru" ? titleRu : title;
+  const setCurrentTitle = (v: string) => {
+    if (lang === "uk") setTitleUk(v);
+    else if (lang === "ru") setTitleRu(v);
+    else handleTitleChange(v);
+  };
+  const currentExcerpt = lang === "uk" ? excerptUk : lang === "ru" ? excerptRu : excerpt;
+  const setCurrentExcerpt = (v: string) => {
+    if (lang === "uk") setExcerptUk(v);
+    else if (lang === "ru") setExcerptRu(v);
+    else setExcerpt(v);
+  };
+  const currentContent = lang === "uk" ? contentUk : lang === "ru" ? contentRu : content;
+  const setCurrentContent = (v: string) => {
+    if (lang === "uk") setContentUk(v);
+    else if (lang === "ru") setContentRu(v);
+    else setContent(v);
+  };
+
   const save = async (pub?: boolean) => {
     setSaving(true);
     setError("");
@@ -102,9 +143,15 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
     const shouldPublish = pub !== undefined ? pub : published;
     const payload = {
       title,
+      titleUk: titleUk || undefined,
+      titleRu: titleRu || undefined,
       slug,
       excerpt: excerpt || undefined,
+      excerptUk: excerptUk || undefined,
+      excerptRu: excerptRu || undefined,
       content,
+      contentUk: contentUk || undefined,
+      contentRu: contentRu || undefined,
       coverImage: coverImage || undefined,
       category,
       published: shouldPublish,
@@ -163,123 +210,152 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         </div>
       )}
 
+      {/* Language tabs */}
+      <div className="flex gap-1 mb-4">
+        {LANGS.map((l) => (
+          <button
+            key={l.code}
+            onClick={() => setLang(l.code)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              lang === l.code
+                ? "bg-rose text-white"
+                : "bg-nude-50 text-muted hover:bg-nude-100"
+            }`}
+          >
+            <span>{l.flag}</span>
+            {l.label}
+            {l.code !== "cs" && (
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                (l.code === "uk" ? titleUk : titleRu) ? "bg-green-400" : "bg-gray-300"
+              }`} />
+            )}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-4">
         <Card>
           <div className="space-y-4">
             <Input
-              label="Název článku"
-              value={title}
-              onChange={(e) => handleTitleChange(e.target.value)}
-              placeholder="Jak správně pečovat o prodloužené vlasy"
+              label={lang === "cs" ? "Název článku" : lang === "uk" ? "Назва статті (UA)" : "Название статьи (RU)"}
+              value={currentTitle}
+              onChange={(e) => setCurrentTitle(e.target.value)}
+              placeholder={lang === "cs" ? "Jak správně pečovat o prodloužené vlasy" : lang === "uk" ? "Як правильно доглядати за нарощеним волоссям" : "Как правильно ухаживать за наращенными волосами"}
             />
 
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <Input
-                  label="Slug (URL)"
-                  value={slug}
-                  onChange={(e) => {
-                    setSlug(e.target.value);
-                    setSlugManual(true);
-                  }}
-                  placeholder="jak-pecovat-o-vlasy"
-                />
-                <p className="text-xs text-muted mt-1">
-                  /blog/{slug || "..."}
-                </p>
+            {lang === "cs" && (
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <Input
+                    label="Slug (URL)"
+                    value={slug}
+                    onChange={(e) => {
+                      setSlug(e.target.value);
+                      setSlugManual(true);
+                    }}
+                    placeholder="jak-pecovat-o-vlasy"
+                  />
+                  <p className="text-xs text-muted mt-1">
+                    /blog/{slug || "..."}
+                  </p>
+                </div>
+                <div className="w-48">
+                  <label className="block text-sm font-medium text-espresso mb-1">
+                    Kategorie
+                  </label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="block w-full rounded-lg border border-line px-3 py-2 text-ink sm:text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-48">
+                  <Input
+                    label="Datum publikace"
+                    type="date"
+                    value={publishedAt}
+                    onChange={(e) => setPublishedAt(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="w-48">
-                <label className="block text-sm font-medium text-espresso mb-1">
-                  Kategorie
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="block w-full rounded-lg border border-line px-3 py-2 text-ink sm:text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="w-48">
-                <Input
-                  label="Datum publikace"
-                  type="date"
-                  value={publishedAt}
-                  onChange={(e) => setPublishedAt(e.target.value)}
-                />
-              </div>
-            </div>
+            )}
           </div>
         </Card>
 
-        <Card>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-espresso mb-1">
-                Náhledový obrázek
-              </label>
-              <div className="flex items-center gap-4">
-                {coverImage && (
-                  <img
-                    src={coverImage}
-                    alt="Cover"
-                    className="w-32 h-20 object-cover rounded-lg border border-line"
-                  />
-                )}
-                <label className="cursor-pointer px-4 py-2 bg-nude-50 border border-line rounded-lg text-sm font-medium text-espresso hover:bg-nude-100 transition-colors">
-                  {uploading ? "Nahrávám..." : coverImage ? "Změnit" : "Nahrát obrázek"}
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={handleCoverUpload}
-                    className="hidden"
-                  />
+        {lang === "cs" && (
+          <Card>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-1">
+                  Náhledový obrázek
                 </label>
-                {coverImage && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCoverImage("")}
-                  >
-                    Odebrat
-                  </Button>
-                )}
+                <div className="flex items-center gap-4">
+                  {coverImage && (
+                    <img
+                      src={coverImage}
+                      alt="Cover"
+                      className="w-32 h-20 object-cover rounded-lg border border-line"
+                    />
+                  )}
+                  <label className="cursor-pointer px-4 py-2 bg-nude-50 border border-line rounded-lg text-sm font-medium text-espresso hover:bg-nude-100 transition-colors">
+                    {uploading ? "Nahrávám..." : coverImage ? "Změnit" : "Nahrát obrázek"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleCoverUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  {coverImage && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCoverImage("")}
+                    >
+                      Odebrat
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
+          </Card>
+        )}
 
-            <div>
-              <label className="block text-sm font-medium text-espresso mb-1">
-                Popis (excerpt)
-              </label>
-              <textarea
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                rows={2}
-                className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
-                placeholder="Krátký popis pro náhled v seznamu článků a pro SEO..."
-              />
-            </div>
+        <Card>
+          <div>
+            <label className="block text-sm font-medium text-espresso mb-1">
+              {lang === "cs" ? "Popis (excerpt)" : lang === "uk" ? "Опис (UA)" : "Описание (RU)"}
+            </label>
+            <textarea
+              value={currentExcerpt}
+              onChange={(e) => setCurrentExcerpt(e.target.value)}
+              rows={2}
+              className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
+              placeholder={lang === "cs" ? "Krátký popis pro náhled..." : ""}
+            />
           </div>
         </Card>
 
         <Card>
           <div>
             <label className="block text-sm font-medium text-espresso mb-1">
-              Obsah článku
+              {lang === "cs" ? "Obsah článku" : lang === "uk" ? "Зміст статті (UA)" : "Содержание статьи (RU)"}
             </label>
             <p className="text-xs text-muted mb-2">
-              Podporuje Markdown: **tučné**, *kurzíva*, ## nadpisy, - seznamy, [odkaz](url)
+              Markdown: **tučné**, *kurzíva*, ## nadpisy, - seznamy, [odkaz](url)
             </p>
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={currentContent}
+              onChange={(e) => setCurrentContent(e.target.value)}
               rows={20}
               className="block w-full rounded-lg border border-line px-3 py-2 text-ink font-mono text-sm placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
-              placeholder={"## Jak správně pečovat o prodloužené vlasy\n\nProdloužené vlasy vyžadují speciální péči..."}
+              placeholder={lang === "cs" ? "## Nadpis\n\nObsah článku..." : ""}
             />
           </div>
         </Card>
