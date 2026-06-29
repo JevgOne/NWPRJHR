@@ -18,6 +18,7 @@ interface PhotoUploadProps {
 export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, productId }: PhotoUploadProps) {
   const t = useTranslations("photos");
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [watermarking, setWatermarking] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +31,7 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
       if (fileArray.length === 0) return;
 
       setUploading(true);
+      setUploadError("");
       try {
         const formData = new FormData();
         for (const file of fileArray) {
@@ -41,7 +43,11 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
           body: formData,
         });
 
-        if (!res.ok) return;
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: "Upload selhal" }));
+          setUploadError(err.error || `Upload selhal (${res.status})`);
+          return;
+        }
 
         const data = await res.json();
         const newPhotos = data.photoUrls ?? data.urls ?? [];
@@ -51,6 +57,8 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
         if (data.videoUrl && onVideoChange) {
           onVideoChange(data.videoUrl);
         }
+      } catch (e) {
+        setUploadError(e instanceof Error ? e.message : "Upload selhal");
       } finally {
         setUploading(false);
       }
@@ -117,6 +125,10 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
             </div>
           ))}
         </div>
+      )}
+
+      {uploadError && (
+        <p className="text-xs text-red-600 mb-2">{uploadError}</p>
       )}
 
       {/* Upload area */}

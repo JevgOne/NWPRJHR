@@ -97,6 +97,7 @@
     "texturePlaceholder": "Выберите или введите структуру...",
     "generatePost": "Сгенерировать пост",
     "generateBio": "Сгенерировать описание",
+    "regenerateBio": "Перегенерировать описание",
     "colorTone": "Тон цвета",
     "colorTonePlaceholder": "Выберите или введите тон..."
   },

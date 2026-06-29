@@ -97,6 +97,7 @@
     "texturePlaceholder": "Оберіть або введіть структуру...",
     "generatePost": "Згенерувати пост",
     "generateBio": "Згенерувати опис",
+    "regenerateBio": "Перегенерувати опис",
     "colorTone": "Тон кольору",
     "colorTonePlaceholder": "Виберіть або введіть тон..."
   },

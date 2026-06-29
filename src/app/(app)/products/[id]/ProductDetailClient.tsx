@@ -306,7 +306,18 @@ export function ProductDetailClient({
 
           {/* Description */}
           {product.description ? (
-            <div className="mt-4 text-sm text-gray-600 whitespace-pre-line">{product.description}</div>
+            <div className="mt-4">
+              <div className="text-sm text-gray-600 whitespace-pre-line">{product.description}</div>
+              {isOwner && (
+                <button
+                  onClick={handleGenerateBio}
+                  disabled={generatingBio}
+                  className="mt-2 text-xs text-muted hover:text-rose transition-colors disabled:opacity-50"
+                >
+                  {generatingBio ? "..." : t("product.regenerateBio")}
+                </button>
+              )}
+            </div>
           ) : isOwner ? (
             <button
               onClick={handleGenerateBio}
