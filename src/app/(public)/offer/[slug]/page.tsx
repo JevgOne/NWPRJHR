@@ -333,8 +333,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                 </p>
               )}
               {retailPricePerGram && (
-                <p className="text-xs text-muted">
-                  <span className="line-through">{formatCZK(retailPricePerGram)}/g</span>
+                <p className="text-sm text-muted">
+                  <span className="line-through text-ink/50">{formatCZK(retailPricePerGram)}/g</span>
                   {" "}
                   <span>({t("productDetail.regularPrice")})</span>
                 </p>
