@@ -315,6 +315,7 @@ export function ProductDetailClient({
           <PhotoUpload
             photos={parsedPhotos}
             onChange={handlePhotosChange}
+            productId={product.id}
           />
         </Card>
       )}

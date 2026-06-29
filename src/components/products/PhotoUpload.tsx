@@ -7,11 +7,13 @@ interface PhotoUploadProps {
   photos: string[];
   onChange: (photos: string[]) => void;
   disabled?: boolean;
+  productId?: string;
 }
 
-export function PhotoUpload({ photos, onChange, disabled }: PhotoUploadProps) {
+export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUploadProps) {
   const t = useTranslations("photos");
   const [uploading, setUploading] = useState(false);
+  const [watermarking, setWatermarking] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -119,6 +121,28 @@ export function PhotoUpload({ photos, onChange, disabled }: PhotoUploadProps) {
         }}
         disabled={disabled || uploading}
       />
+
+      {productId && photos.length > 0 && !disabled && (
+        <button
+          type="button"
+          onClick={async () => {
+            setWatermarking(true);
+            try {
+              const res = await fetch(`/api/products/${productId}/watermark`, { method: "POST" });
+              if (res.ok) {
+                const data = await res.json();
+                onChange(data.photos);
+              }
+            } finally {
+              setWatermarking(false);
+            }
+          }}
+          disabled={watermarking}
+          className="mt-2 text-xs text-muted hover:text-espresso transition-colors disabled:opacity-50"
+        >
+          {watermarking ? "Přidávám vodoznak..." : "Přidat vodoznak na fotky"}
+        </button>
+      )}
     </div>
   );
 }
