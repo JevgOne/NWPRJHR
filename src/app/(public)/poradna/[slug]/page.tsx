@@ -1,12 +1,21 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { articles } from "../articles";
+import { ArticleLikeButton } from "@/components/public/ArticleLikeButton";
+import { CommentSection } from "@/components/public/CommentSection";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
+
+const categoryColors: Record<string, string> = {
+  types: "bg-nude-100 text-espresso",
+  care: "bg-green-100 text-green-700",
+  guide: "bg-amber-100 text-amber-700",
+  quality: "bg-purple-100 text-purple-700",
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -30,29 +39,22 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
 
   const t = await getTranslations("advice");
+  const locale = await getLocale();
   const contentKey = `${slug.replace(/-/g, "_")}_content` as "typesTitle";
 
   const currentIdx = articles.findIndex((a) => a.slug === slug);
   const prev = currentIdx > 0 ? articles[currentIdx - 1] : null;
   const next = currentIdx < articles.length - 1 ? articles[currentIdx + 1] : null;
 
-  // Article JSON-LD
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: t(article.titleKey as "typesTitle"),
     description: t(article.descKey as "typesDesc"),
     author: { "@type": "Organization", name: "Hairland" },
-    publisher: {
-      "@type": "Organization",
-      name: "Hairland",
-      url: "https://www.hairland.cz",
-    },
+    publisher: { "@type": "Organization", name: "Hairland", url: "https://www.hairland.cz" },
     datePublished: "2025-01-01",
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://www.hairland.cz/poradna/${slug}`,
-    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.hairland.cz/poradna/${slug}` },
   };
 
   return (
@@ -61,19 +63,44 @@ export default async function ArticlePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-      <Link
-        href="/poradna"
-        className="text-sm text-rose hover:text-rose-deep transition-colors mb-6 inline-block"
-      >
-        &larr; {t("backToList")}
-      </Link>
+
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-muted mb-6">
+        <Link href="/" className="hover:text-ink transition-colors">
+          {locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů"}
+        </Link>
+        <span>/</span>
+        <Link href="/poradna" className="hover:text-ink transition-colors">
+          {t("heroTitle")}
+        </Link>
+        <span>/</span>
+        <span className="text-ink truncate">{t(article.titleKey as "typesTitle")}</span>
+      </nav>
 
       <article>
-        <h1 className="text-2xl lg:text-3xl font-bold text-ink mb-4">
+        {/* Category badge + reading time */}
+        <div className="flex items-center gap-3 mb-4">
+          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${categoryColors[article.category]}`}>
+            {t(`cat.${article.category}` as "cat.types")}
+          </span>
+          <span className="text-xs text-muted flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {article.readMin} min
+          </span>
+        </div>
+
+        <h1 className="text-2xl lg:text-3xl font-bold text-ink mb-3 leading-tight">
           {t(article.titleKey as "typesTitle")}
         </h1>
-        <div className="flex items-center gap-3 mb-8 text-sm text-muted">
-          <span>{article.readMin} min</span>
+        <p className="text-muted mb-6 leading-relaxed">
+          {t(article.descKey as "typesDesc")}
+        </p>
+
+        {/* Like button */}
+        <div className="mb-8">
+          <ArticleLikeButton articleSlug={slug} />
         </div>
 
         <div className="prose prose-sm max-w-none text-muted [&_h2]:text-ink [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:text-ink [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1 [&_strong]:text-ink">
@@ -87,51 +114,51 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       </article>
 
+      {/* Like again at bottom */}
+      <div className="mt-8 flex items-center gap-3">
+        <ArticleLikeButton articleSlug={slug} />
+        <span className="text-sm text-muted">
+          {locale === "uk" ? "Корисна стаття?" : locale === "ru" ? "Полезная статья?" : "Užitečný článek?"}
+        </span>
+      </div>
+
       {/* Navigation */}
-      <div className="flex justify-between items-center mt-12 pt-6 border-t border-line">
+      <div className="flex justify-between items-center mt-8 pt-6 border-t border-line">
         {prev ? (
-          <Link href={`/poradna/${prev.slug}`} className="text-sm text-rose hover:text-rose-deep transition-colors">
-            &larr; {t(prev.titleKey as "typesTitle")}
+          <Link href={`/poradna/${prev.slug}`} className="group flex items-center gap-2 text-sm text-muted hover:text-rose transition-colors max-w-[45%]">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="truncate">{t(prev.titleKey as "typesTitle")}</span>
           </Link>
         ) : <span />}
         {next ? (
-          <Link href={`/poradna/${next.slug}`} className="text-sm text-rose hover:text-rose-deep transition-colors text-right">
-            {t(next.titleKey as "typesTitle")} &rarr;
+          <Link href={`/poradna/${next.slug}`} className="group flex items-center gap-2 text-sm text-muted hover:text-rose transition-colors text-right max-w-[45%]">
+            <span className="truncate">{t(next.titleKey as "typesTitle")}</span>
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
           </Link>
         ) : <span />}
       </div>
 
-      {/* CTA — contextual per article category */}
+      {/* Comments */}
+      <CommentSection articleSlug={slug} locale={locale} />
+
+      {/* CTA */}
       {(() => {
         const ctaMap: Record<string, { text: string; button: string; href: string }> = {
-          types: {
-            text: t("articleCtaTypes"),
-            button: t("articleCtaTypesButton"),
-            href: "/offer",
-          },
-          care: {
-            text: t("articleCtaCare"),
-            button: t("articleCtaCareButton"),
-            href: "/offer",
-          },
-          quality: {
-            text: t("articleCtaQuality"),
-            button: t("articleCtaQualityButton"),
-            href: "/offer?category=VIRGIN",
-          },
-          guide: {
-            text: t("articleCtaGuide"),
-            button: t("articleCtaGuideButton"),
-            href: "/offer",
-          },
+          types: { text: t("articleCtaTypes"), button: t("articleCtaTypesButton"), href: "/offer" },
+          care: { text: t("articleCtaCare"), button: t("articleCtaCareButton"), href: "/offer" },
+          quality: { text: t("articleCtaQuality"), button: t("articleCtaQualityButton"), href: "/offer?category=VIRGIN" },
+          guide: { text: t("articleCtaGuide"), button: t("articleCtaGuideButton"), href: "/offer" },
         };
-        // Special case for clip-in-vs-tape-in article
         const cta = slug === "clip-in-vs-tape-in"
           ? { text: t("articleCtaClip"), button: t("articleCtaClipButton"), href: "/offer?search=clip" }
           : ctaMap[article.category] ?? { text: t("articleCta"), button: t("articleCtaButton"), href: "/offer" };
 
         return (
-          <div className="mt-12 bg-nude-50 rounded-xl p-6 text-center">
+          <div className="mt-10 bg-gradient-to-br from-nude-50 to-blush-50 rounded-2xl p-6 text-center border border-blush-100">
             <p className="font-semibold text-ink mb-2">{cta.text}</p>
             <Link
               href={cta.href}

@@ -37,6 +37,10 @@ model User {
   complaintsCreated      Complaint[]         @relation("ComplaintsCreated")
   notificationsReceived  Notification[]      @relation("NotificationsReceived")
 
+  comments               Comment[]
+  articleLikes           ArticleLike[]
+  commentLikes           CommentLike[]
+
   @@map("users")
 }
 
@@ -1383,4 +1387,62 @@ model BlogPost {
   @@index([published, publishedAt])
   @@index([category])
   @@map("blog_posts")
+}
+
+// ============================================================
+// COMMENT -- komentáře pod články v poradně
+// ============================================================
+
+model Comment {
+  id          String    @id @default(cuid())
+  articleSlug String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  parentId    String?
+  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[] @relation("CommentReplies")
+  content     String
+  editedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  likes       CommentLike[]
+
+  @@index([articleSlug, createdAt])
+  @@index([parentId])
+  @@index([userId])
+  @@map("comments")
+}
+
+// ============================================================
+// ARTICLE_LIKE -- lajky na články v poradně
+// ============================================================
+
+model ArticleLike {
+  id          String   @id @default(cuid())
+  articleSlug String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@unique([articleSlug, userId])
+  @@index([articleSlug])
+  @@map("article_likes")
+}
+
+// ============================================================
+// COMMENT_LIKE -- lajky na komentáře
+// ============================================================
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@map("comment_likes")
 }
