@@ -164,55 +164,46 @@ export function ProductDetailClient({
       </div>
 
       <Card>
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-ink">
-              {product.name}
-            </h1>
-            {product.nameUk && (
-              <p className="text-sm text-muted">UK: {product.nameUk}</p>
-            )}
-            {product.nameRu && (
-              <p className="text-sm text-muted">RU: {product.nameRu}</p>
-            )}
-            {product.description ? (
-              <p className="mt-2 text-gray-600">{product.description}</p>
-            ) : isOwner ? (
-              <button
-                onClick={handleGenerateBio}
-                disabled={generatingBio}
-                className="mt-2 text-sm text-rose hover:text-rose/70 transition-colors disabled:opacity-50"
-              >
-                {generatingBio ? "..." : t("product.generateBio")}
-              </button>
-            ) : null}
-          </div>
-          <div className="flex items-center gap-2">
+        <div>
+          <h1 className="text-2xl font-bold text-ink">
+            {product.name}
+          </h1>
+          {product.nameUk && (
+            <p className="text-sm text-muted">UK: {product.nameUk}</p>
+          )}
+          {product.nameRu && (
+            <p className="text-sm text-muted">RU: {product.nameRu}</p>
+          )}
+
+          {/* Product attributes row */}
+          <div className="flex flex-wrap items-center gap-2 mt-3">
             <CategoryBadge
               category={
                 product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"
               }
             />
             {product.processingType !== "OTHER" && (
-              <span className="text-sm text-muted">
+              <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
                 {product.processingType.replace(/_/g, "-")}
               </span>
             )}
             {product.origin && (
-              <span className="text-sm text-muted">
-                🌍 {product.origin}
+              <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">
+                {product.origin}
               </span>
             )}
+
+            {/* Texture */}
             {isOwner ? (
               <div ref={textureRef} className="relative">
                 <button
                   type="button"
                   onClick={() => setEditingTexture(!editingTexture)}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
                 >
                   {textureValue ? (
                     <>
-                      <TextureSwatch texture={textureValue} size={20} />
+                      <TextureSwatch texture={textureValue} size={16} />
                       {textureValue}
                     </>
                   ) : (
@@ -220,7 +211,7 @@ export function ProductDetailClient({
                   )}
                 </button>
                 {editingTexture && (
-                  <div className="absolute right-0 top-full mt-1 z-20 w-48 bg-white rounded-lg border border-line shadow-lg">
+                  <div className="absolute left-0 top-full mt-1 z-20 w-48 bg-white rounded-lg border border-line shadow-lg">
                     {TEXTURE_OPTIONS.map((opt) => (
                       <button
                         key={opt.name}
@@ -251,21 +242,23 @@ export function ProductDetailClient({
                 )}
               </div>
             ) : product.texture ? (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-100 text-violet-700">
-                <TextureSwatch texture={product.texture} size={20} />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-violet-50 text-violet-700">
+                <TextureSwatch texture={product.texture} size={16} />
                 {product.texture}
               </span>
             ) : null}
+
+            {/* Color tone */}
             {isOwner ? (
               <div ref={colorToneRef} className="relative">
                 <button
                   type="button"
                   onClick={() => setEditingColorTone(!editingColorTone)}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
                 >
                   {colorToneValue ? (
                     <>
-                      <span className="w-3.5 h-3.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(colorToneValue).hex }} />
+                      <span className="w-3 h-3 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(colorToneValue).hex }} />
                       {colorToneValue}
                     </>
                   ) : (
@@ -273,7 +266,7 @@ export function ProductDetailClient({
                   )}
                 </button>
                 {editingColorTone && (
-                  <div className="absolute right-0 top-full mt-1 z-20 w-48 bg-white rounded-lg border border-line shadow-lg">
+                  <div className="absolute left-0 top-full mt-1 z-20 w-48 bg-white rounded-lg border border-line shadow-lg">
                     {COLOR_TONE_OPTIONS.map((opt) => (
                       <button
                         key={opt.name}
@@ -304,12 +297,25 @@ export function ProductDetailClient({
                 )}
               </div>
             ) : product.colorTone ? (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
-                <span className="w-3.5 h-3.5 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(product.colorTone).hex }} />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">
+                <span className="w-3 h-3 rounded-full inline-block border border-amber-300/50" style={{ backgroundColor: getColorToneInfo(product.colorTone).hex }} />
                 {product.colorTone}
               </span>
             ) : null}
           </div>
+
+          {/* Description */}
+          {product.description ? (
+            <div className="mt-4 text-sm text-gray-600 whitespace-pre-line">{product.description}</div>
+          ) : isOwner ? (
+            <button
+              onClick={handleGenerateBio}
+              disabled={generatingBio}
+              className="mt-3 text-sm text-rose hover:text-rose/70 transition-colors disabled:opacity-50"
+            >
+              {generatingBio ? "..." : t("product.generateBio")}
+            </button>
+          ) : null}
         </div>
       </Card>
 
