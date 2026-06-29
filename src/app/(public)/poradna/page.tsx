@@ -6,10 +6,25 @@ import { articles } from "./articles";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("advice");
+  const title = t("pageTitle");
+  const desc = t("pageDescription");
   return {
-    title: t("pageTitle"),
-    description: t("pageDescription"),
+    title,
+    description: desc,
     alternates: { canonical: "/poradna" },
+    openGraph: {
+      type: "website",
+      title: `${title} | Hairland`,
+      description: desc,
+      url: "https://www.hairland.cz/poradna",
+      siteName: "Hairland",
+      locale: "cs_CZ",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Hairland`,
+      description: desc,
+    },
   };
 }
 
@@ -43,8 +58,29 @@ export default async function AdvicePage() {
   const blogLabel = locale === "uk" ? "Шукаєте новини та тренди?" : locale === "ru" ? "Ищете новости и тренды?" : "Hledáte novinky a trendy?";
   const blogCta = locale === "uk" ? "Читати блог" : locale === "ru" ? "Читать блог" : "Číst blog";
 
+  const poradnaJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: t("pageTitle"),
+    description: t("pageDescription"),
+    url: "https://www.hairland.cz/poradna",
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: articles.map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://www.hairland.cz/poradna/${a.slug}`,
+        name: t(a.titleKey as "typesTitle"),
+      })),
+    },
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(poradnaJsonLd) }}
+      />
       {/* Header — distinct from blog */}
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-3">

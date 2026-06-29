@@ -31,13 +31,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     select: { title: true, excerpt: true, coverImage: true },
   });
   if (!post) return {};
+  const desc = post.excerpt ?? post.title;
   return {
-    title: `${post.title} | Blog | Hairland`,
-    description: post.excerpt ?? post.title,
+    title: `${post.title} | Blog`,
+    description: desc,
     alternates: { canonical: `/blog/${slug}` },
-    openGraph: post.coverImage
-      ? { images: [{ url: post.coverImage, alt: post.title }] }
-      : undefined,
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: desc,
+      url: `https://www.hairland.cz/blog/${slug}`,
+      siteName: "Hairland",
+      locale: "cs_CZ",
+      ...(post.coverImage && {
+        images: [{ url: post.coverImage, alt: post.title, width: 1200, height: 630 }],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: desc,
+      ...(post.coverImage && { images: [post.coverImage] }),
+    },
   };
 }
 
@@ -92,19 +107,6 @@ export default async function BlogPostPage({ params }: Props) {
     relatedPosts = [...related, ...more];
   }
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: title,
-    description: excerpt || title,
-    image: post.coverImage ?? undefined,
-    author: { "@type": "Organization", name: "Hairland" },
-    publisher: { "@type": "Organization", name: "Hairland", url: "https://www.hairland.cz" },
-    datePublished: post.publishedAt?.toISOString() ?? post.createdAt.toISOString(),
-    dateModified: post.updatedAt.toISOString(),
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.hairland.cz/blog/${slug}` },
-  };
-
   const breadcrumbHome = locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů";
   const ctaTitle = locale === "uk" ? "Готові до змін?" : locale === "ru" ? "Готовы к переменам?" : "Připravená na proměnu?";
   const ctaDesc = locale === "uk" ? "Перегляньте наші преміальні волосся або замовте безкоштовну консультацію." : locale === "ru" ? "Посмотрите наши премиальные волосы или закажите бесплатную консультацию." : "Prohlédněte si naše prémiové vlasy nebo si objednejte bezplatnou konzultaci.";
@@ -115,6 +117,39 @@ export default async function BlogPostPage({ params }: Props) {
   const shareLabel = locale === "uk" ? "Поділіться з подругою" : locale === "ru" ? "Поделитесь с подругой" : "Sdílejte s kamarádkou";
   const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
   const articleUrl = `https://www.hairland.cz/blog/${slug}`;
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: title,
+      description: excerpt || title,
+      image: post.coverImage ?? undefined,
+      author: { "@type": "Organization", name: "Hairland", url: "https://www.hairland.cz" },
+      publisher: {
+        "@type": "Organization",
+        name: "Hairland",
+        url: "https://www.hairland.cz",
+        logo: { "@type": "ImageObject", url: "https://www.hairland.cz/og-image.jpg" },
+      },
+      datePublished: post.publishedAt?.toISOString() ?? post.createdAt.toISOString(),
+      dateModified: post.updatedAt.toISOString(),
+      mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
+      url: articleUrl,
+      inLanguage: locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs",
+      wordCount,
+      articleSection: catLabels[post.category] ?? post.category,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: breadcrumbHome, item: "https://www.hairland.cz" },
+        { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.hairland.cz/blog" },
+        { "@type": "ListItem", position: 3, name: title, item: articleUrl },
+      ],
+    },
+  ];
 
   return (
     <>

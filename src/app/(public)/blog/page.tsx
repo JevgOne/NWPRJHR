@@ -4,10 +4,23 @@ import { getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 
 export const metadata: Metadata = {
-  title: "Blog | Hairland",
+  title: "Blog",
   description:
     "Články a tipy o prodloužení vlasů, péči, trendech a kvalitě. Rady od odborníků na prémiové vlasy.",
   alternates: { canonical: "/blog" },
+  openGraph: {
+    type: "website",
+    title: "Blog | Hairland",
+    description: "Články a tipy o prodloužení vlasů, péči, trendech a kvalitě.",
+    url: "https://www.hairland.cz/blog",
+    siteName: "Hairland",
+    locale: "cs_CZ",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog | Hairland",
+    description: "Články a tipy o prodloužení vlasů, péči, trendech a kvalitě.",
+  },
 };
 
 const CATEGORY_LABELS: Record<string, Record<string, string>> = {
@@ -58,11 +71,32 @@ export default async function BlogPage() {
   const poradnaLabel = locale === "uk" ? "Шукаєте практичні поради?" : locale === "ru" ? "Ищете практические советы?" : "Hledáte praktické návody?";
   const poradnaCta = locale === "uk" ? "Poradna — гід з нарощування" : locale === "ru" ? "Poradna — гид по наращиванию" : "Poradna — průvodce prodloužením";
 
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Blog | Hairland",
+    description: "Články a tipy o prodloužení vlasů, péči, trendech a kvalitě.",
+    url: "https://www.hairland.cz/blog",
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: posts.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://www.hairland.cz/blog/${p.slug}`,
+        name: localized(p, "title", locale),
+      })),
+    },
+  };
+
   // Split into featured (first) and rest
   const [featured, ...rest] = posts;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-ink mb-2">Blog</h1>

@@ -21,10 +21,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = articles.find((a) => a.slug === slug);
   if (!article) return {};
   const t = await getTranslations("advice");
+  const title = t(article.titleKey as "typesTitle");
+  const desc = t(article.descKey as "typesDesc");
   return {
-    title: t(article.titleKey as "typesTitle"),
-    description: t(article.descKey as "typesDesc"),
+    title,
+    description: desc,
     alternates: { canonical: `/poradna/${slug}` },
+    openGraph: {
+      type: "article",
+      title,
+      description: desc,
+      url: `https://www.hairland.cz/poradna/${slug}`,
+      siteName: "Hairland",
+      locale: "cs_CZ",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: desc,
+    },
   };
 }
 
@@ -84,17 +99,36 @@ export default async function ArticlePage({ params }: Props) {
 
   const shareLabel = locale === "uk" ? "Поділіться з подругою" : locale === "ru" ? "Поделитесь с подругой" : "Sdílejte s kamarádkou";
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: t(article.titleKey as "typesTitle"),
-    description: t(article.descKey as "typesDesc"),
-    author: { "@type": "Organization", name: "Hairland" },
-    publisher: { "@type": "Organization", name: "Hairland", url: "https://www.hairland.cz" },
-    datePublished: "2025-06-01",
-    dateModified: "2026-06-01",
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.hairland.cz/poradna/${slug}` },
-  };
+  const articleJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: t(article.titleKey as "typesTitle"),
+      description: t(article.descKey as "typesDesc"),
+      author: { "@type": "Organization", name: "Hairland", url: "https://www.hairland.cz" },
+      publisher: {
+        "@type": "Organization",
+        name: "Hairland",
+        url: "https://www.hairland.cz",
+        logo: { "@type": "ImageObject", url: "https://www.hairland.cz/og-image.jpg" },
+      },
+      datePublished: "2025-06-01",
+      dateModified: "2026-06-01",
+      mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.hairland.cz/poradna/${slug}` },
+      url: `https://www.hairland.cz/poradna/${slug}`,
+      inLanguage: locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs",
+      articleSection: catLabel,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: homeLabel, item: "https://www.hairland.cz" },
+        { "@type": "ListItem", position: 2, name: t("heroTitle"), item: "https://www.hairland.cz/poradna" },
+        { "@type": "ListItem", position: 3, name: t(article.titleKey as "typesTitle"), item: `https://www.hairland.cz/poradna/${slug}` },
+      ],
+    },
+  ];
 
   return (
     <>
