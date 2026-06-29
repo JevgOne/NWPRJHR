@@ -19,7 +19,7 @@ export default async function InventoryPage() {
       where: { active: true },
       include: {
         product: {
-          select: { id: true, name: true, category: true, processingType: true },
+          select: { id: true, name: true, category: true, origin: true },
         },
       },
       orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],

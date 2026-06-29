@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
+import { getHairColor } from "@/lib/hair-colors";
+import { getOriginFlag } from "@/lib/origin-flags";
 
 interface StockItem {
   variantId: string;
-  product: { id: string; name: string; category: string; processingType: string };
+  product: { id: string; name: string; category: string; origin?: string | null };
   lengthCm: number;
   color: string;
   physicalGrams: number;
@@ -18,6 +19,8 @@ interface StockItem {
   availableGrams: number;
   availablePieces: number;
 }
+
+const CATEGORIES = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
 
 function stockClass(grams: number): string {
   if (grams <= 0) return "text-red-600 font-semibold";
@@ -35,107 +38,215 @@ export function InventoryClient({
   const router = useRouter();
   const t = useTranslations("stock");
   const tCat = useTranslations("category");
+  const tColors = useTranslations("public.colors");
+
   const [search, setSearch] = useState("");
   const [showSoldOut, setShowSoldOut] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
+  const [originFilter, setOriginFilter] = useState<string>("");
+  const [productFilter, setProductFilter] = useState<string>("");
 
-  const filtered = items.filter(
-    (item) =>
-      (showSoldOut || item.availableGrams > 0) &&
-      (item.product.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.color.toLowerCase().includes(search.toLowerCase()))
-  );
+  // Extract filter options
+  const filterOptions = useMemo(() => {
+    const origins = new Set<string>();
+    const productNames = new Map<string, string>(); // id -> name
+    items.forEach((item) => {
+      if (item.product.origin) origins.add(item.product.origin);
+      productNames.set(item.product.id, item.product.name);
+    });
+    return {
+      origins: [...origins].sort(),
+      products: [...productNames.entries()].sort((a, b) => a[1].localeCompare(b[1])),
+    };
+  }, [items]);
+
+  const filtered = useMemo(() => {
+    return items.filter((item) => {
+      if (!showSoldOut && item.availableGrams <= 0) return false;
+      if (categoryFilter !== "ALL" && item.product.category !== categoryFilter) return false;
+      if (originFilter && item.product.origin !== originFilter) return false;
+      if (productFilter && item.product.id !== productFilter) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        if (
+          !item.product.name.toLowerCase().includes(q) &&
+          !item.color.toLowerCase().includes(q)
+        ) return false;
+      }
+      return true;
+    });
+  }, [items, showSoldOut, categoryFilter, originFilter, productFilter, search]);
+
+  // Summary stats
+  const totalGrams = filtered.reduce((s, i) => s + i.availableGrams, 0);
+  const totalReserved = filtered.reduce((s, i) => s + i.reservedGrams, 0);
+
+  const colorName = (code: string) => {
+    try { return tColors(getHairColor(code).nameKey); } catch { return code; }
+  };
 
   return (
-    <Card padding="sm">
-      <div className="mb-4 flex items-center gap-4">
-        <div className="flex-1">
-          <Input
-            placeholder={`${t("barcode")} / ${t("selectVariant")}...`}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+    <div>
+      {/* Filters */}
+      <div className="mb-4 space-y-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={`${t("barcode")} / ${t("selectVariant")}...`}
+          className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-1 focus:ring-rose focus:border-rose"
+        />
+
+        {/* Category tabs */}
+        <div className="flex flex-wrap gap-1.5">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setCategoryFilter(cat)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                categoryFilter === cat
+                  ? "border-rose bg-blush-100 text-rose-deep"
+                  : "border-line text-muted hover:bg-nude-50"
+              }`}
+            >
+              {cat === "ALL" ? "Vše" : tCat(cat.toLowerCase())}
+            </button>
+          ))}
         </div>
-        <label className="flex items-center gap-2 text-sm text-muted cursor-pointer whitespace-nowrap">
-          <input
-            type="checkbox"
-            checked={showSoldOut}
-            onChange={(e) => setShowSoldOut(e.target.checked)}
-            className="rounded border-line text-rose focus:ring-rose"
-          />
-          {t("showSoldOut")}
-        </label>
+
+        {/* Secondary filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          {filterOptions.origins.length > 1 && (
+            <select
+              value={originFilter}
+              onChange={(e) => setOriginFilter(e.target.value)}
+              className="px-2 py-1.5 border border-line rounded-lg text-xs text-espresso bg-white"
+            >
+              <option value="">Původ — vše</option>
+              {filterOptions.origins.map((o) => (
+                <option key={o} value={o}>{getOriginFlag(o)} {o}</option>
+              ))}
+            </select>
+          )}
+          {filterOptions.products.length > 1 && (
+            <select
+              value={productFilter}
+              onChange={(e) => setProductFilter(e.target.value)}
+              className="px-2 py-1.5 border border-line rounded-lg text-xs text-espresso bg-white"
+            >
+              <option value="">Produkt — vše</option>
+              {filterOptions.products.map(([id, name]) => (
+                <option key={id} value={id}>{name}</option>
+              ))}
+            </select>
+          )}
+          <label className="flex items-center gap-2 text-xs text-muted cursor-pointer whitespace-nowrap ml-auto">
+            <input
+              type="checkbox"
+              checked={showSoldOut}
+              onChange={(e) => setShowSoldOut(e.target.checked)}
+              className="rounded border-line text-rose focus:ring-rose"
+            />
+            {t("showSoldOut")}
+          </label>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-line text-left text-muted">
-              <th className="py-3 px-2 font-medium">{t("selectVariant")}</th>
-              <th className="py-3 px-2 font-medium text-right">
-                {t("physical")} ({t("grams")})
-              </th>
-              <th className="py-3 px-2 font-medium text-right">
-                {t("physical")} ({t("pieces")})
-              </th>
-              {role === "OWNER" && (
+      {/* Summary bar */}
+      <div className="flex items-center gap-4 mb-3 text-xs">
+        <span className="text-muted">{filtered.length} variant</span>
+        <span className="text-emerald-600 font-medium">{totalGrams} g skladem</span>
+        {totalReserved > 0 && (
+          <span className="text-amber-600 font-medium">{totalReserved} g rezervováno</span>
+        )}
+      </div>
+
+      {/* Table */}
+      <Card padding="sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-line text-left text-muted">
+                <th className="py-3 px-2 font-medium">{t("selectVariant")}</th>
+                <th className="py-3 px-2 font-medium">Barva</th>
+                <th className="py-3 px-2 font-medium">Délka</th>
                 <th className="py-3 px-2 font-medium text-right">
-                  {t("reserved")} ({t("grams")})
+                  {t("physical")}
                 </th>
-              )}
-              <th className="py-3 px-2 font-medium text-right">
-                {t("availableShort")} ({t("grams")})
-              </th>
-              <th className="py-3 px-2 font-medium text-right">
-                {t("availableShort")} ({t("pieces")})
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-8 text-center text-muted">
-                  {t("noStock")}
-                </td>
+                {role === "OWNER" && (
+                  <th className="py-3 px-2 font-medium text-right">
+                    {t("reserved")}
+                  </th>
+                )}
+                <th className="py-3 px-2 font-medium text-right">
+                  {t("availableShort")}
+                </th>
               </tr>
-            ) : (
-              filtered.map((item) => (
-                <tr
-                  key={item.variantId}
-                  className="border-b border-gray-100 hover:bg-nude-50 cursor-pointer"
-                  onClick={() => router.push(`/products/${item.product.id}`)}
-                >
-                  <td className="py-3 px-2">
-                    <div className="font-medium text-ink">
-                      {item.product.name}
-                    </div>
-                    <div className="text-xs text-muted">
-                      {item.lengthCm} cm / {item.color} /{" "}
-                      {tCat(item.product.category.toLowerCase() as "virgin" | "premium" | "standard" | "sale")}
-                    </div>
-                  </td>
-                  <td className={`py-3 px-2 text-right ${stockClass(item.physicalGrams)}`}>
-                    {item.physicalGrams} {t("grams")}
-                  </td>
-                  <td className="py-3 px-2 text-right text-espresso">
-                    {item.physicalPieces} {t("pieces")}
-                  </td>
-                  {role === "OWNER" && (
-                    <td className="py-3 px-2 text-right text-muted">
-                      {item.reservedGrams} {t("grams")}
-                    </td>
-                  )}
-                  <td className={`py-3 px-2 text-right ${stockClass(item.availableGrams)}`}>
-                    {item.availableGrams} {t("grams")}
-                  </td>
-                  <td className="py-3 px-2 text-right text-espresso">
-                    {item.availablePieces} {t("pieces")}
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-muted">
+                    {t("noStock")}
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </Card>
+              ) : (
+                filtered.map((item) => (
+                  <tr
+                    key={item.variantId}
+                    className="border-b border-gray-100 hover:bg-nude-50 cursor-pointer"
+                    onClick={() => router.push(`/products/${item.product.id}`)}
+                  >
+                    <td className="py-2.5 px-2">
+                      <div className="font-medium text-ink text-sm">
+                        {item.product.name}
+                      </div>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                          item.product.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
+                          item.product.category === "PREMIUM" ? "bg-mauve/10 text-mauve" :
+                          item.product.category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
+                          "bg-red-100 text-red-700"
+                        }`}>
+                          {tCat(item.product.category.toLowerCase() as "virgin")}
+                        </span>
+                        {item.product.origin && (
+                          <span className="text-[10px] text-muted">
+                            {getOriginFlag(item.product.origin)} {item.product.origin}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-2.5 px-2">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-4 h-4 rounded-full border border-line flex-shrink-0"
+                          style={{ backgroundColor: getHairColor(item.color).hex }}
+                        />
+                        <span className="text-xs text-espresso">{colorName(item.color)}</span>
+                      </div>
+                    </td>
+                    <td className="py-2.5 px-2 text-xs text-espresso">
+                      {item.lengthCm} cm
+                    </td>
+                    <td className={`py-2.5 px-2 text-right ${stockClass(item.physicalGrams)}`}>
+                      {item.physicalGrams} g
+                    </td>
+                    {role === "OWNER" && (
+                      <td className="py-2.5 px-2 text-right text-amber-600">
+                        {item.reservedGrams > 0 ? `${item.reservedGrams} g` : "—"}
+                      </td>
+                    )}
+                    <td className={`py-2.5 px-2 text-right font-medium ${stockClass(item.availableGrams)}`}>
+                      {item.availableGrams} g
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
   );
 }

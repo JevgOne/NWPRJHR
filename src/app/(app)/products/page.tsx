@@ -3,24 +3,32 @@ import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
+import { getAllStockNumbers } from "@/lib/stock";
 import { ProductListClient } from "./ProductListClient";
 
 export default async function ProductsPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const [t, products] = await Promise.all([
+  const [t, products, allStock] = await Promise.all([
     getTranslations(),
     prisma.product.findMany({
       where: { archived: false },
       include: { variants: { where: { active: true } } },
       orderBy: { createdAt: "desc" },
     }),
+    getAllStockNumbers(),
   ]);
 
   const serialized = products.map((p) =>
     serializeProductForRole(p, session.user.role)
   );
+
+  // Build stock map keyed by variant ID
+  const stockMap: Record<string, number> = {};
+  allStock.forEach((val, key) => {
+    stockMap[key] = val.availableGrams;
+  });
 
   return (
     <div>
@@ -37,7 +45,7 @@ export default async function ProductsPage() {
           </a>
         )}
       </div>
-      <ProductListClient products={serialized} />
+      <ProductListClient products={serialized} stockMap={stockMap} />
     </div>
   );
 }
