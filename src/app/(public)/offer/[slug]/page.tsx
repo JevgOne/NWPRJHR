@@ -311,12 +311,18 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   } : null;
 
   // Product schema JSON-LD
+  const schemaDesc = description
+    ? description.split("\n")[0].slice(0, 300)
+    : undefined;
+  const schemaImage = product.photos.length > 0
+    ? product.photos
+    : [`https://www.hairland.cz/offer/${product.slug ?? product.id}/opengraph-image`];
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: productName,
-    description: description || undefined,
-    image: product.photos.length > 0 ? product.photos : undefined,
+    description: schemaDesc,
+    image: schemaImage,
     brand: { "@type": "Brand", name: "Hairland" },
     sku: product.id,
     offers: {
