@@ -14,6 +14,7 @@ import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
+import { ProductGridCard } from "@/components/public/ProductGridCard";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -585,28 +586,54 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
       {/* Related products */}
       {await (async () => {
-        const related = await prisma.product.findMany({
+        const candidates = await prisma.product.findMany({
           where: {
-            category: product.category,
             archived: false,
             id: { not: product.id },
-            variants: { some: { active: true } },
+            variants: { some: { active: true, retailPricePerGram: { gt: 0 } } },
           },
           select: {
+            id: true,
             slug: true,
             name: true,
             nameUk: true,
             nameRu: true,
+            category: true,
+            origin: true,
+            texture: true,
+            colorTone: true,
             photos: true,
             variants: {
               where: { active: true },
-              select: { retailPricePerGram: true },
+              select: { id: true, lengthCm: true, color: true, retailPricePerGram: true },
             },
           },
-          take: 4,
+          take: 20,
         });
 
+        // Score by similarity: same category +3, same origin +2, same texture +1, same colorTone +1
+        const scored = candidates.map((rp) => {
+          let score = 0;
+          if (rp.category === product.category) score += 3;
+          if (rp.origin && rp.origin === product.origin) score += 2;
+          if (rp.texture && rp.texture === product.texture) score += 1;
+          if (rp.colorTone && rp.colorTone === product.colorTone) score += 1;
+          return { ...rp, score };
+        });
+        scored.sort((a, b) => b.score - a.score);
+        const related = scored.slice(0, 4);
+
         if (related.length === 0) return null;
+
+        const stockMap = await getAllStockNumbers();
+        const cards = related.map((rp) => ({
+          ...rp,
+          photos: JSON.parse(rp.photos || "[]") as string[],
+          variants: rp.variants.map((v) => ({
+            ...v,
+            availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
+          })),
+        }));
 
         return (
           <section className="mt-12 pt-8 border-t border-line">
@@ -614,54 +641,9 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
               {t("productDetail.relatedProducts")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {related.map((rp) => {
-                const rpName = locale === "ru" && rp.nameRu
-                  ? rp.nameRu
-                  : locale === "uk" && rp.nameUk
-                    ? rp.nameUk
-                    : rp.name;
-                const rpPhotos = JSON.parse(rp.photos || "[]") as string[];
-                const rpPrices = rp.variants
-                  .map((v) => v.retailPricePerGram)
-                  .filter((p) => p > 0);
-                const minPrice = rpPrices.length > 0 ? Math.min(...rpPrices) : null;
-                const maxPrice = rpPrices.length > 0 ? Math.max(...rpPrices) : null;
-
-                return (
-                  <Link
-                    key={rp.slug}
-                    href={`/offer/${rp.slug}`}
-                    className="block bg-white rounded-xl border border-line overflow-hidden hover:shadow-md transition-shadow"
-                  >
-                    <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center">
-                      {rpPhotos.length > 0 ? (
-                        <img
-                          src={rpPhotos[0]}
-                          alt={rpName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <svg className="w-8 h-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="p-2.5">
-                      <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 mb-1">
-                        {rpName}
-                      </h3>
-                      {minPrice && (
-                        <div className="text-sm font-bold text-ink">
-                          {minPrice === maxPrice
-                            ? formatCZK(minPrice)
-                            : `${formatCZK(minPrice)} – ${formatCZK(maxPrice!)}`}
-                          <span className="text-[10px] font-normal text-muted">/g</span>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                );
-              })}
+              {cards.map((rp) => (
+                <ProductGridCard key={rp.id} product={rp} />
+              ))}
             </div>
           </section>
         );
