@@ -86,9 +86,15 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    // 1. Find or create Product
+    // 1. Find or create Product (unique per category+origin+texture+color+length)
     let product = await prisma.product.findFirst({
-      where: { category: data.category, origin: data.origin, texture: data.texture, archived: false },
+      where: {
+        category: data.category,
+        origin: data.origin,
+        texture: data.texture,
+        archived: false,
+        variants: { some: { color: data.color, lengthCm: data.lengthCm } },
+      },
     });
 
     if (!product) {
@@ -103,7 +109,7 @@ export async function POST(request: NextRequest) {
           origin: data.origin,
           texture: data.texture,
           colorTone: autoColorTone(data.color),
-          slug: slugify(`${data.category}-${data.origin}-${data.texture}`),
+          slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm`),
           photos: "[]",
         },
       });
