@@ -131,6 +131,9 @@ export function PublicNavbar() {
   const mainLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/offer", label: t("nav.products") },
+  ];
+
+  const inspiraceItems = [
     { href: "/poradna", label: t("navbar.advice") },
     { href: "/blog", label: "Blog" },
   ];
@@ -151,6 +154,7 @@ export function PublicNavbar() {
   const allMobileLinks = [
     ...mainLinks,
     ...cooperationItems,
+    ...inspiraceItems,
     ...endLinks,
   ];
 
@@ -197,6 +201,12 @@ export function PublicNavbar() {
             <NavDropdown
               label={t("navbar.cooperation")}
               items={cooperationItems}
+              pathname={pathname}
+            />
+
+            <NavDropdown
+              label="Inspirace"
+              items={inspiraceItems}
               pathname={pathname}
             />
 
