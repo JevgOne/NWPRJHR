@@ -1,65 +1,86 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
+import { articles } from "./(public)/poradna/articles";
 
 const BASE_URL = "https://www.hairland.cz";
+const STATIC_DATE = "2026-06-01";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
       url: `${BASE_URL}/offer`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
+      url: `${BASE_URL}/poradna`,
+      lastModified: STATIC_DATE,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       url: `${BASE_URL}/pro`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/contact`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/about`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/vykup`,
+      lastModified: STATIC_DATE,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/kadernice`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "weekly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/registrace`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/obchodni-podminky`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "yearly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/privacy`,
-      lastModified: new Date(),
+      lastModified: STATIC_DATE,
       changeFrequency: "yearly",
       priority: 0.6,
     },
   ];
+
+  const articlePages: MetadataRoute.Sitemap = articles.map((article) => ({
+    url: `${BASE_URL}/poradna/${article.slug}`,
+    lastModified: STATIC_DATE,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
 
   const products = await prisma.product.findMany({
     where: { archived: false },
@@ -73,5 +94,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...productPages];
+  return [...staticPages, ...articlePages, ...productPages];
 }

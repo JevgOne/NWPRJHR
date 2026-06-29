@@ -656,7 +656,8 @@
       "metaDesc": "{name} - {category} премиальные волосы на продажу",
       "yourPrice": "Ваша цена",
       "priceTip": "💡 100g ≈ {price}",
-      "regularPrice": "обычная цена"
+      "regularPrice": "обычная цена",
+      "relatedProducts": "Похожие продукты"
     },
     "inquiry": {
       "addToInquiry": "Добавить в запрос",
@@ -1194,6 +1195,16 @@
     "backToList": "Назад к советам",
     "articleCta": "Заинтересовали наши волосы?",
     "articleCtaButton": "Посмотреть предложение",
+    "articleCtaTypes": "Посмотрите наше предложение по типу наращивания",
+    "articleCtaTypesButton": "Смотреть все типы",
+    "articleCtaClip": "Ищете clip-in или tape-in волосы?",
+    "articleCtaClipButton": "Смотреть clip-in волосы",
+    "articleCtaCare": "Нужны качественные волосы, которые прослужат долго?",
+    "articleCtaCareButton": "Смотреть премиальные волосы",
+    "articleCtaQuality": "Интересуют самые качественные волосы?",
+    "articleCtaQualityButton": "Смотреть натуральные волосы",
+    "articleCtaGuide": "Готовы выбрать свои волосы?",
+    "articleCtaGuideButton": "Смотреть всё предложение",
     "cat": {
       "types": "Типы наращивания",
       "care": "Уход",

@@ -656,7 +656,8 @@
       "metaDesc": "{name} - {category} преміальне волосся на продаж",
       "yourPrice": "Ваша ціна",
       "priceTip": "💡 100g ≈ {price}",
-      "regularPrice": "звичайна ціна"
+      "regularPrice": "звичайна ціна",
+      "relatedProducts": "Схожі продукти"
     },
     "inquiry": {
       "addToInquiry": "Додати до запиту",
@@ -1194,6 +1195,16 @@
     "backToList": "Назад до порад",
     "articleCta": "Зацікавило наше волосся?",
     "articleCtaButton": "Переглянути пропозицію",
+    "articleCtaTypes": "Перегляньте нашу пропозицію за типом нарощування",
+    "articleCtaTypesButton": "Переглянути всі типи",
+    "articleCtaClip": "Шукаєте clip-in або tape-in волосся?",
+    "articleCtaClipButton": "Переглянути clip-in волосся",
+    "articleCtaCare": "Потрібне якісне волосся, яке прослужить довго?",
+    "articleCtaCareButton": "Переглянути преміальне волосся",
+    "articleCtaQuality": "Цікавить найякісніше волосся?",
+    "articleCtaQualityButton": "Переглянути незаймане волосся",
+    "articleCtaGuide": "Готові обрати своє волосся?",
+    "articleCtaGuideButton": "Переглянути всю пропозицію",
     "cat": {
       "types": "Типи нарощування",
       "care": "Догляд",

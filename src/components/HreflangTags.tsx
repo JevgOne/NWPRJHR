@@ -1,14 +1,12 @@
-"use client";
+import { headers } from "next/headers";
 
-import { usePathname } from "next/navigation";
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://hairland.cz";
+const SITE_URL = "https://www.hairland.cz";
 
 const LOCALES = ["cs", "uk", "ru"] as const;
 
-export function HreflangTags() {
-  const pathname = usePathname();
+export async function HreflangTags() {
+  const headersList = await headers();
+  const pathname = headersList.get("x-invoke-path") || "/";
   const url = `${SITE_URL}${pathname}`;
 
   return (

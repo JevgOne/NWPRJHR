@@ -36,8 +36,31 @@ export default async function ArticlePage({ params }: Props) {
   const prev = currentIdx > 0 ? articles[currentIdx - 1] : null;
   const next = currentIdx < articles.length - 1 ? articles[currentIdx + 1] : null;
 
+  // Article JSON-LD
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: t(article.titleKey as "typesTitle"),
+    description: t(article.descKey as "typesDesc"),
+    author: { "@type": "Organization", name: "Hairland" },
+    publisher: {
+      "@type": "Organization",
+      name: "Hairland",
+      url: "https://www.hairland.cz",
+    },
+    datePublished: "2025-01-01",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.hairland.cz/poradna/${slug}`,
+    },
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Link
         href="/poradna"
         className="text-sm text-rose hover:text-rose-deep transition-colors mb-6 inline-block"
@@ -78,16 +101,47 @@ export default async function ArticlePage({ params }: Props) {
         ) : <span />}
       </div>
 
-      {/* CTA */}
-      <div className="mt-12 bg-nude-50 rounded-xl p-6 text-center">
-        <p className="font-semibold text-ink mb-2">{t("articleCta")}</p>
-        <Link
-          href="/offer"
-          className="inline-block px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
-        >
-          {t("articleCtaButton")}
-        </Link>
-      </div>
+      {/* CTA — contextual per article category */}
+      {(() => {
+        const ctaMap: Record<string, { text: string; button: string; href: string }> = {
+          types: {
+            text: t("articleCtaTypes"),
+            button: t("articleCtaTypesButton"),
+            href: "/offer",
+          },
+          care: {
+            text: t("articleCtaCare"),
+            button: t("articleCtaCareButton"),
+            href: "/offer",
+          },
+          quality: {
+            text: t("articleCtaQuality"),
+            button: t("articleCtaQualityButton"),
+            href: "/offer?category=VIRGIN",
+          },
+          guide: {
+            text: t("articleCtaGuide"),
+            button: t("articleCtaGuideButton"),
+            href: "/offer",
+          },
+        };
+        // Special case for clip-in-vs-tape-in article
+        const cta = slug === "clip-in-vs-tape-in"
+          ? { text: t("articleCtaClip"), button: t("articleCtaClipButton"), href: "/offer?search=clip" }
+          : ctaMap[article.category] ?? { text: t("articleCta"), button: t("articleCtaButton"), href: "/offer" };
+
+        return (
+          <div className="mt-12 bg-nude-50 rounded-xl p-6 text-center">
+            <p className="font-semibold text-ink mb-2">{cta.text}</p>
+            <Link
+              href={cta.href}
+              className="inline-block px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              {cta.button}
+            </Link>
+          </div>
+        );
+      })()}
     </div>
   );
 }
