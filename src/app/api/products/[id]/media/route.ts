@@ -72,8 +72,13 @@ export async function POST(
     let contentType = file.type;
     if (isPhoto) {
       const arrayBuffer = await file.arrayBuffer();
-      fileData = await addWatermark(Buffer.from(arrayBuffer));
-      contentType = "image/jpeg";
+      try {
+        fileData = await addWatermark(Buffer.from(arrayBuffer));
+        contentType = "image/jpeg";
+      } catch {
+        // If watermark fails, upload original photo
+        fileData = Buffer.from(arrayBuffer);
+      }
     }
 
     const blob = await put(safeName, fileData, {

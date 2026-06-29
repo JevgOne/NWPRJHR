@@ -1,14 +1,29 @@
 import sharp from "sharp";
 import path from "path";
+import fs from "fs";
 
-const WM_DARK = path.join(process.cwd(), "public", "watermark-dark.png");
-const WM_LIGHT = path.join(process.cwd(), "public", "watermark-light.png");
+/**
+ * Load watermark buffer — tries local filesystem first, falls back to HTTP fetch.
+ * On Vercel serverless, public/ files may not be in the function's filesystem.
+ */
+async function loadWatermark(filename: string): Promise<Buffer> {
+  const localPath = path.join(process.cwd(), "public", filename);
+  try {
+    return fs.readFileSync(localPath);
+  } catch {
+    // Fallback: fetch from public URL
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.hairland.cz";
+    const res = await fetch(`${baseUrl}/${filename}`);
+    if (!res.ok) throw new Error(`Failed to load watermark: ${filename}`);
+    return Buffer.from(await res.arrayBuffer());
+  }
+}
 
 /**
  * Detect average brightness of an image (0 = black, 255 = white).
  */
 async function averageBrightness(buffer: Buffer): Promise<number> {
-  const { data, info } = await sharp(buffer)
+  const { data } = await sharp(buffer)
     .resize(100, 100, { fit: "cover" })
     .grayscale()
     .raw()
@@ -34,11 +49,12 @@ export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
 
   // Pick watermark based on brightness
   const brightness = await averageBrightness(imageBuffer);
-  const wmPath = brightness > 140 ? WM_DARK : WM_LIGHT;
+  const wmFilename = brightness > 140 ? "watermark-dark.png" : "watermark-light.png";
+  const wmBuffer = await loadWatermark(wmFilename);
 
   // Scale watermark to ~30% of image width
   const wmTargetW = Math.round(imgW * 0.3);
-  const watermarkBase = await sharp(wmPath)
+  const watermarkBase = await sharp(wmBuffer)
     .resize(wmTargetW)
     .ensureAlpha()
     .toBuffer();

@@ -41,8 +41,14 @@ export async function POST(
 
     const buffer = Buffer.from(await res.arrayBuffer());
 
-    // Apply watermark
-    const watermarked = await addWatermark(buffer);
+    // Apply watermark (skip if it fails)
+    let watermarked: Buffer;
+    try {
+      watermarked = await addWatermark(buffer);
+    } catch {
+      newUrls.push(url);
+      continue;
+    }
 
     // Upload watermarked version
     const safeName = `products/${id}-wm-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.jpg`;
