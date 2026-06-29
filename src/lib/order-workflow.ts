@@ -4,7 +4,7 @@ import { getLoyaltyDiscount } from "./loyalty";
 import { roundHalereUp } from "./rounding";
 import type { Order } from "@prisma/client";
 
-const TX_TIMEOUT = 15000;
+const TX_TIMEOUT = 30000;
 
 export class InsufficientStockError extends Error {
   constructor(
