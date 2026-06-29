@@ -56,10 +56,14 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
   const [category, setCategory] = useState("general");
   const [published, setPublished] = useState(false);
   const [publishedAt, setPublishedAt] = useState("");
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [ogImage, setOgImage] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [uploading, setUploading] = useState(false);
+  const [uploadingOg, setUploadingOg] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -81,6 +85,9 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         setContentUk(post.contentUk ?? "");
         setContentRu(post.contentRu ?? "");
         setCoverImage(post.coverImage ?? "");
+        setMetaTitle(post.metaTitle ?? "");
+        setMetaDescription(post.metaDescription ?? "");
+        setOgImage(post.ogImage ?? "");
         setCategory(post.category);
         setPublished(post.published);
         setPublishedAt(
@@ -156,6 +163,9 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
       category,
       published: shouldPublish,
       publishedAt: publishedAt || undefined,
+      metaTitle: metaTitle || undefined,
+      metaDescription: metaDescription || undefined,
+      ogImage: ogImage || undefined,
     };
 
     const url = isNew ? "/api/blog" : `/api/blog/${postId}`;
@@ -341,6 +351,100 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
             />
           </div>
         </Card>
+
+        {lang === "cs" && (
+          <Card>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-1">
+                <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-sm font-semibold text-espresso">SEO & Open Graph</span>
+              </div>
+              <Input
+                label="Meta Title"
+                value={metaTitle}
+                onChange={(e) => setMetaTitle(e.target.value)}
+                placeholder={title || "Vlastní titulek pro vyhledávače..."}
+              />
+              <p className="text-xs text-muted -mt-3">
+                {metaTitle.length}/60 znaků {metaTitle.length > 60 && "— příliš dlouhý"}
+              </p>
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-1">
+                  Meta Description
+                </label>
+                <textarea
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  rows={2}
+                  className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
+                  placeholder={excerpt || "Vlastní popis pro vyhledávače a sdílení..."}
+                />
+                <p className="text-xs text-muted mt-1">
+                  {metaDescription.length}/155 znaků {metaDescription.length > 155 && "— příliš dlouhý"}
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-1">
+                  OG Image (pro sdílení na soc. sítích)
+                </label>
+                <div className="flex items-center gap-4">
+                  {ogImage && (
+                    <img
+                      src={ogImage}
+                      alt="OG"
+                      className="w-32 h-20 object-cover rounded-lg border border-line"
+                    />
+                  )}
+                  <label className="cursor-pointer px-4 py-2 bg-nude-50 border border-line rounded-lg text-sm font-medium text-espresso hover:bg-nude-100 transition-colors">
+                    {uploadingOg ? "Nahrávám..." : ogImage ? "Změnit" : "Nahrát OG obrázek"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setUploadingOg(true);
+                        const formData = new FormData();
+                        formData.append("files", file);
+                        const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
+                        if (res.ok) {
+                          const data = await res.json();
+                          const url = data.photoUrls?.[0] ?? data.urls?.[0];
+                          if (url) setOgImage(url);
+                        }
+                        setUploadingOg(false);
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                  {ogImage && (
+                    <Button variant="ghost" size="sm" onClick={() => setOgImage("")}>
+                      Odebrat
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted mt-1">
+                  Doporučeno 1200×630 px. Pokud prázdné, použije se náhledový obrázek.
+                </p>
+              </div>
+              {/* Preview */}
+              {(metaTitle || metaDescription) && (
+                <div className="mt-2 p-3 bg-nude-50 rounded-lg border border-line">
+                  <p className="text-xs text-muted mb-1.5 font-medium">Náhled ve vyhledávači:</p>
+                  <p className="text-sm text-blue-700 font-medium truncate">
+                    {metaTitle || title || "Název článku"} | Hairland
+                  </p>
+                  <p className="text-xs text-green-700 truncate">www.hairland.cz/blog/{slug}</p>
+                  <p className="text-xs text-muted line-clamp-2 mt-0.5">
+                    {metaDescription || excerpt || "Popis článku..."}
+                  </p>
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
 
         <Card>
           <div>

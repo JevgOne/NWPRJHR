@@ -28,30 +28,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await prisma.blogPost.findUnique({
     where: { slug },
-    select: { title: true, excerpt: true, coverImage: true },
+    select: { title: true, excerpt: true, coverImage: true, metaTitle: true, metaDescription: true, ogImage: true },
   });
   if (!post) return {};
-  const desc = post.excerpt ?? post.title;
+  const seoTitle = post.metaTitle || post.title;
+  const seoDesc = post.metaDescription || post.excerpt || post.title;
+  const seoImage = post.ogImage || post.coverImage;
   return {
-    title: `${post.title} | Blog`,
-    description: desc,
+    title: `${seoTitle} | Blog`,
+    description: seoDesc,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       type: "article",
-      title: post.title,
-      description: desc,
+      title: seoTitle,
+      description: seoDesc,
       url: `https://www.hairland.cz/blog/${slug}`,
       siteName: "Hairland",
       locale: "cs_CZ",
-      ...(post.coverImage && {
-        images: [{ url: post.coverImage, alt: post.title, width: 1200, height: 630 }],
+      ...(seoImage && {
+        images: [{ url: seoImage, alt: seoTitle, width: 1200, height: 630 }],
       }),
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: desc,
-      ...(post.coverImage && { images: [post.coverImage] }),
+      title: seoTitle,
+      description: seoDesc,
+      ...(seoImage && { images: [seoImage] }),
     },
   };
 }

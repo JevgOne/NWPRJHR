@@ -18,6 +18,9 @@ const createBlogSchema = z.object({
   category: z.string().max(50).optional(),
   published: z.boolean().optional(),
   publishedAt: z.string().optional(),
+  metaTitle: z.string().max(200).optional(),
+  metaDescription: z.string().max(500).optional(),
+  ogImage: z.string().url().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -83,6 +86,9 @@ export async function POST(request: NextRequest) {
       category: data.category ?? "general",
       published: data.published ?? false,
       publishedAt: data.published ? (data.publishedAt ? new Date(data.publishedAt) : new Date()) : null,
+      metaTitle: data.metaTitle,
+      metaDescription: data.metaDescription,
+      ogImage: data.ogImage,
     },
   });
 
