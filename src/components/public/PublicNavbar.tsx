@@ -132,6 +132,7 @@ export function PublicNavbar() {
     { href: "/", label: t("nav.home") },
     { href: "/offer", label: t("nav.products") },
     { href: "/poradna", label: t("navbar.advice") },
+    { href: "/blog", label: "Blog" },
   ];
 
   const cooperationItems = [

@@ -98,6 +98,12 @@ export function AppShell({ session, children }: AppShellProps) {
       ],
     },
     {
+      label: "Marketing",
+      items: [
+        { href: "/blog", label: "Blog", roles: ["OWNER"] },
+      ],
+    },
+    {
       label: "Systém",
       items: [
         { href: "/settings/loyalty", label: "Věrnostní program", roles: ["OWNER"] },

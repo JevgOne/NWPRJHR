@@ -6,6 +6,81 @@ import { useTranslations } from "next-intl";
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
 
+/**
+ * Client-side watermark: draws tiled "HAIRLAND" text across image using Canvas.
+ * Returns a new blob URL after uploading the watermarked version.
+ */
+async function addClientWatermark(photoUrl: string): Promise<string> {
+  // Load image
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const el = new Image();
+    el.crossOrigin = "anonymous";
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error("Nelze načíst obrázek"));
+    el.src = photoUrl;
+  });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext("2d")!;
+
+  // Draw original image
+  ctx.drawImage(img, 0, 0);
+
+  // Detect brightness for text color
+  const sample = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let sum = 0;
+  for (let i = 0; i < sample.data.length; i += 16) {
+    sum += (sample.data[i] + sample.data[i + 1] + sample.data[i + 2]) / 3;
+  }
+  const brightness = sum / (sample.data.length / 16);
+  const textColor = brightness > 140 ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.15)";
+
+  // Setup watermark text
+  const fontSize = Math.max(24, Math.round(canvas.width * 0.06));
+  ctx.font = `bold ${fontSize}px Georgia, serif`;
+  ctx.fillStyle = textColor;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // Tile watermark with -30° rotation
+  const text = "HAIRLAND";
+  const spacingX = fontSize * 8;
+  const spacingY = fontSize * 4;
+  const diagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
+
+  ctx.save();
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate((-30 * Math.PI) / 180);
+
+  for (let y = -diagonal; y < diagonal; y += spacingY) {
+    const row = Math.round(y / spacingY);
+    const offsetX = row % 2 === 0 ? 0 : spacingX / 2;
+    for (let x = -diagonal; x < diagonal; x += spacingX) {
+      ctx.fillText(text, x + offsetX, y);
+    }
+  }
+  ctx.restore();
+
+  // Convert to blob and upload
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error("Canvas export failed"))),
+      "image/jpeg",
+      0.9
+    );
+  });
+
+  const formData = new FormData();
+  formData.append("files", blob, "watermarked.jpg");
+  const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
+  if (!res.ok) throw new Error("Upload vodoznaku selhal");
+  const data = await res.json();
+  const urls = data.photoUrls ?? data.urls ?? [];
+  return urls[0] ?? photoUrl;
+}
+
 interface PhotoUploadProps {
   photos: string[];
   onChange: (photos: string[]) => void;
@@ -167,17 +242,21 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
         disabled={disabled || uploading}
       />
 
-      {productId && photos.length > 0 && !disabled && (
+      {photos.length > 0 && !disabled && (
         <button
           type="button"
           onClick={async () => {
             setWatermarking(true);
+            setUploadError("");
             try {
-              const res = await fetch(`/api/products/${productId}/watermark`, { method: "POST" });
-              if (res.ok) {
-                const data = await res.json();
-                onChange(data.photos);
+              const watermarked: string[] = [];
+              for (const url of photos) {
+                const wmUrl = await addClientWatermark(url);
+                watermarked.push(wmUrl);
               }
+              onChange(watermarked);
+            } catch (e) {
+              setUploadError(e instanceof Error ? e.message : "Vodoznak se nepodařilo přidat");
             } finally {
               setWatermarking(false);
             }

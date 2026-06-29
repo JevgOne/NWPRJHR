@@ -52,6 +52,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/blog" className="hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
                 <Link href="/kadernice" className="hover:text-white transition-colors">
                   {t("footer.hairdressers")}
                 </Link>
