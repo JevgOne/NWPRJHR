@@ -123,7 +123,13 @@ export function PublicFooter() {
               </li>
               <li className="flex items-center gap-2">
                 <span>💬</span>
-                <span>WhatsApp · Telegram</span>
+                <a href="https://wa.me/420608553103" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  WhatsApp
+                </a>
+                <span className="text-nude-200/40">·</span>
+                <a href="https://t.me/+420608553103" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  Telegram
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <span>📍</span>

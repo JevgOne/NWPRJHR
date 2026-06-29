@@ -739,6 +739,10 @@
       "tagline": "Преміальне волосся — продаж натурального волосся + обробка на замовлення (clip-in, tape-in, micro ring)",
       "hairdressers": "Майстри"
     },
+    "batchPopup": {
+      "title": "Нова партія волосся вже в дорозі!",
+      "availableFrom": "Буде доступно з"
+    },
     "navbar": {
       "hairdressers": "Майстри",
       "buyback": "Викуп волосся",

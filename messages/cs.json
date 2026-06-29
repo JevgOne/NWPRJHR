@@ -739,6 +739,10 @@
       "tagline": "Prémiové vlasy — prodej surových vlasů + zpracování na zakázku (clip-in, tape-in, micro ring)",
       "hairdressers": "Kadeřnice"
     },
+    "batchPopup": {
+      "title": "Nová várka vlasů na cestě!",
+      "availableFrom": "K dispozici od"
+    },
     "navbar": {
       "hairdressers": "Kadeřnice",
       "buyback": "Výkup vlasů",

@@ -1340,3 +1340,19 @@ model PaymentReminder {
   @@index([sentAt])
   @@map("payment_reminders")
 }
+
+// ============================================================
+// BATCH_ANNOUNCEMENT -- popup o příjezdu nové várky vlasů
+// arrivalDate = datum příjezdu, zobrazí se +24h na naskladnění
+// ============================================================
+
+model BatchAnnouncement {
+  id          String   @id @default(cuid())
+  arrivalDate DateTime
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("batch_announcements")
+}

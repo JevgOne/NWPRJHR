@@ -739,6 +739,10 @@
       "tagline": "Премиальные волосы — продажа натуральных волос + обработка на заказ (clip-in, tape-in, micro ring)",
       "hairdressers": "Мастера"
     },
+    "batchPopup": {
+      "title": "Новая партия волос уже в пути!",
+      "availableFrom": "Будет доступно с"
+    },
     "navbar": {
       "hairdressers": "Мастера",
       "buyback": "Выкуп волос",

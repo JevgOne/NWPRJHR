@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 interface NotificationItem {
@@ -13,9 +14,45 @@ interface NotificationItem {
   data?: Record<string, unknown>;
 }
 
+function getNotificationUrl(n: NotificationItem): string | null {
+  const d = n.data;
+  if (!d) return null;
+
+  switch (n.type) {
+    case "NEW_ORDER":
+    case "ORDER_CONFIRMED":
+    case "ORDER_READY":
+    case "ORDER_IN_TRANSIT":
+    case "ORDER_REJECTED":
+      return d.orderId ? `/orders/${d.orderId}` : "/orders";
+    case "NEW_INQUIRY":
+      return d.inquiryId ? `/orders?tab=inquiries` : "/orders";
+    case "INVOICE_ISSUED":
+    case "INVOICE_PAID":
+    case "INCOMING_PAYMENT":
+    case "PAYMENT_REMINDER":
+      return d.invoiceId ? `/invoices/${d.invoiceId}` : "/invoices";
+    case "SAMPLE_REQUEST":
+      return "/samples";
+    case "RETURN_REQUEST":
+      return "/returns";
+    case "NEW_COMPLAINT":
+      return "/complaints";
+    case "REGISTRATION":
+      return d.salonId ? `/salons/${d.salonId}` : "/registrations";
+    case "NEW_REVIEW":
+      return "/reviews";
+    case "NEW_CONTACT":
+      return "/notifications";
+    default:
+      return null;
+  }
+}
+
 export function NotificationsClient() {
   const t = useTranslations("notificationsMgmt");
   const tc = useTranslations("common");
+  const router = useRouter();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -37,9 +74,19 @@ export function NotificationsClient() {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  async function handleMarkRead(id: string) {
-    await fetch(`/api/notifications/${id}`, { method: "PUT" });
-    fetchNotifications();
+  async function handleClick(n: NotificationItem) {
+    // Mark as read if unread
+    if (!n.read) {
+      await fetch(`/api/notifications/${n.id}`, { method: "PUT" });
+    }
+    // Navigate to relevant page
+    const url = getNotificationUrl(n);
+    if (url) {
+      router.push(url);
+    } else {
+      // Just refresh to update read state
+      fetchNotifications();
+    }
   }
 
   async function handleMarkAllRead() {
@@ -94,32 +141,42 @@ export function NotificationsClient() {
         <p className="text-muted">{t("noNotifications")}</p>
       ) : (
         <div className="space-y-2">
-          {notifications.map((n) => (
-            <div
-              key={n.id}
-              className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                n.read
-                  ? "bg-white border-line"
-                  : "bg-rose/10 border-rose/30"
-              }`}
-              onClick={() => !n.read && handleMarkRead(n.id)}
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    {!n.read && (
-                      <span className="w-2 h-2 bg-rose rounded-full" />
-                    )}
-                    <span className="font-medium text-sm">{n.title}</span>
+          {notifications.map((n) => {
+            const url = getNotificationUrl(n);
+            return (
+              <div
+                key={n.id}
+                className={`p-4 rounded-lg border cursor-pointer transition-colors hover:shadow-sm ${
+                  n.read
+                    ? "bg-white border-line hover:bg-nude-50"
+                    : "bg-rose/10 border-rose/30 hover:bg-rose/15"
+                }`}
+                onClick={() => handleClick(n)}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      {!n.read && (
+                        <span className="w-2 h-2 bg-rose rounded-full flex-shrink-0" />
+                      )}
+                      <span className="font-medium text-sm">{n.title}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">{n.message}</p>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">{n.message}</p>
+                  <div className="flex items-center gap-2 ml-4">
+                    <span className="text-xs text-muted whitespace-nowrap">
+                      {formatRelativeTime(n.createdAt)}
+                    </span>
+                    {url && (
+                      <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
-                <span className="text-xs text-muted whitespace-nowrap ml-4">
-                  {formatRelativeTime(n.createdAt)}
-                </span>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {total > notifications.length && (
             <p className="text-center text-sm text-muted py-2">
               {t("showing")} {notifications.length} / {total}

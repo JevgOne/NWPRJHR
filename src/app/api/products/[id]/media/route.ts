@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { put } from "@vercel/blob";
+import { addWatermark } from "@/lib/watermark";
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
@@ -66,9 +67,18 @@ export async function POST(
     const folder = isVideo ? "videos" : "products";
     const safeName = `${folder}/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
 
-    const blob = await put(safeName, file, {
+    // Apply watermark to photos
+    let fileData: Buffer | File = file;
+    let contentType = file.type;
+    if (isPhoto) {
+      const arrayBuffer = await file.arrayBuffer();
+      fileData = await addWatermark(Buffer.from(arrayBuffer));
+      contentType = "image/jpeg";
+    }
+
+    const blob = await put(safeName, fileData, {
       access: "public",
-      contentType: file.type,
+      contentType,
     });
 
     if (isVideo) {

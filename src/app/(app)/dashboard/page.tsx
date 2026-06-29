@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { BatchAnnouncementCard } from "@/components/admin/BatchAnnouncementCard";
 
 function fmtCZK(halere: number): string {
   const czk = halere / 100;
@@ -284,6 +285,9 @@ export default async function DashboardPage() {
           </table>
         </div>
       </div>
+
+      {/* ── ROW 3.5: Batch announcement ── */}
+      <BatchAnnouncementCard />
 
       {/* ── ROW 4: Quick info badges ── */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
