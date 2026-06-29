@@ -144,9 +144,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     }
 
     const result = await res.json();
-    const productUrl = `${window.location.origin}/offer/${result.productSlug ?? result.productId}`;
+    const saleUrl = `${window.location.origin}/sales/new?variantId=${result.variantId}`;
     const QRCode = await import("qrcode");
-    const dataUrl = await QRCode.toDataURL(productUrl, {
+    const dataUrl = await QRCode.toDataURL(saleUrl, {
       errorCorrectionLevel: "M",
       width: 200,
       margin: 2,
