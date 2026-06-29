@@ -312,7 +312,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
   // Product schema JSON-LD
   const schemaDesc = description
-    ? description.split("\n")[0].slice(0, 300)
+    ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "…")
     : undefined;
   const schemaImage = product.photos.length > 0
     ? product.photos
