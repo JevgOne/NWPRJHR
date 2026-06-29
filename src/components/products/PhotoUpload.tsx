@@ -3,14 +3,19 @@
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
+const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
+
 interface PhotoUploadProps {
   photos: string[];
   onChange: (photos: string[]) => void;
+  video?: string | null;
+  onVideoChange?: (videoUrl: string | null) => void;
   disabled?: boolean;
   productId?: string;
 }
 
-export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUploadProps) {
+export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, productId }: PhotoUploadProps) {
   const t = useTranslations("photos");
   const [uploading, setUploading] = useState(false);
   const [watermarking, setWatermarking] = useState(false);
@@ -20,7 +25,7 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
   const uploadFiles = useCallback(
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files).filter((f) =>
-        ["image/jpeg", "image/png", "image/webp"].includes(f.type)
+        [...PHOTO_TYPES, ...VIDEO_TYPES].includes(f.type)
       );
       if (fileArray.length === 0) return;
 
@@ -39,12 +44,18 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
         if (!res.ok) return;
 
         const data = await res.json();
-        onChange([...photos, ...(data.photoUrls ?? data.urls ?? [])]);
+        const newPhotos = data.photoUrls ?? data.urls ?? [];
+        if (newPhotos.length > 0) {
+          onChange([...photos, ...newPhotos]);
+        }
+        if (data.videoUrl && onVideoChange) {
+          onVideoChange(data.videoUrl);
+        }
       } finally {
         setUploading(false);
       }
     },
-    [photos, onChange]
+    [photos, onChange, onVideoChange]
   );
 
   function handleRemove(index: number) {
@@ -64,6 +75,27 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
         {t("title")}
       </label>
 
+      {/* Video display */}
+      {video && (
+        <div className="relative group mb-3">
+          <video
+            src={video}
+            controls
+            className="w-full max-w-md rounded-lg border border-line"
+          />
+          {!disabled && onVideoChange && (
+            <button
+              type="button"
+              onClick={() => onVideoChange(null)}
+              className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              x
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Photo thumbnails */}
       {photos.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {photos.map((url, i) => (
@@ -87,6 +119,7 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
         </div>
       )}
 
+      {/* Upload area */}
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -112,7 +145,7 @@ export function PhotoUpload({ photos, onChange, disabled, productId }: PhotoUplo
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
         multiple
         className="hidden"
         onChange={(e) => {

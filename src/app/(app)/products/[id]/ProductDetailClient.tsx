@@ -29,6 +29,7 @@ interface ProductDetail {
   texture?: string | null;
   colorTone?: string | null;
   photos?: string;
+  video?: string | null;
   variants?: Array<{
     id: string;
     lengthCm: number;
@@ -133,6 +134,18 @@ export function ProductDetailClient({
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photos: JSON.stringify(newPhotos) }),
+      });
+      router.refresh();
+    },
+    [product.id, router]
+  );
+
+  const handleVideoChange = useCallback(
+    async (videoUrl: string | null) => {
+      await fetch(`/api/products/${product.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ video: videoUrl }),
       });
       router.refresh();
     },
@@ -317,16 +330,27 @@ export function ProductDetailClient({
           <PhotoUpload
             photos={parsedPhotos}
             onChange={handlePhotosChange}
+            video={product.video}
+            onVideoChange={handleVideoChange}
             productId={product.id}
           />
         </Card>
       )}
 
-      {!isOwner && parsedPhotos.length > 0 && (
+      {!isOwner && (parsedPhotos.length > 0 || product.video) && (
         <Card>
           <label className="block text-sm font-medium text-espresso mb-2">
             {t("photos.title")}
           </label>
+          {product.video && (
+            <div className="mb-3">
+              <video
+                src={product.video}
+                controls
+                className="w-full max-w-md rounded-lg border border-line"
+              />
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
             {parsedPhotos.map((url, i) => (
               <img

@@ -20,6 +20,7 @@ export const createProductSchema = z.object({
   texture: z.string().max(200).nullable().optional(),
   colorTone: z.string().max(200).nullable().optional(),
   photos: z.string().optional(),
+  video: z.string().url().nullable().optional(),
   slug: z
     .string()
     .regex(/^[a-z0-9-]+$/)

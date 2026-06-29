@@ -825,7 +825,7 @@
     "photo": "Foto",
     "uploading": "Nahrávání...",
     "dragOrClick": "Přetáhněte fotky sem nebo klikněte pro výběr",
-    "formats": "JPG, PNG, WebP (max 5 MB)",
+    "formats": "JPG, PNG, WebP (max 5 MB) · MP4, MOV, WebM (max 50 MB)",
     "addWatermark": "Přidat vodoznak na fotky",
     "watermarking": "Přidávám vodoznak..."
   },

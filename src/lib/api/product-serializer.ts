@@ -79,6 +79,7 @@ export function serializeProductForRole(
     texture: product.texture,
     colorTone: product.colorTone,
     photos: product.photos,
+    video: product.video,
     archived: product.archived,
     slug: product.slug,
     createdAt: product.createdAt,
