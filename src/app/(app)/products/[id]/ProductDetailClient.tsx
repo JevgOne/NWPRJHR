@@ -15,6 +15,7 @@ import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { COLOR_TONE_OPTIONS, getColorToneInfo } from "@/lib/color-tones";
 import { SocialPostModal } from "@/components/products/SocialPostModal";
 import { generateProductBio } from "@/lib/product-bio";
+import { getHairColor } from "@/lib/hair-colors";
 
 interface ProductDetail {
   id: string;
@@ -177,7 +178,15 @@ export function ProductDetailClient({
   // Auto-generated SEO preview
   const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
   const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
-  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ");
+  const colorCodes = [...new Set((product.variants ?? []).map((v) => v.color))];
+  const tColors = useTranslations("public.colors");
+  const colorNames = colorCodes.map((c) => {
+    try { return tColors(getHairColor(c).nameKey); } catch { return c; }
+  });
+  const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
+  const baseTitle = [product.name, lengthStr].filter(Boolean).join(" ");
+  const titleWithColor = colorStr ? `${baseTitle} ${colorStr}` : baseTitle;
+  const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
   const autoDescParts: string[] = [product.name];
   if (product.origin) autoDescParts.push(`původ ${product.origin}`);
   if (product.texture) autoDescParts.push(product.texture.toLowerCase());

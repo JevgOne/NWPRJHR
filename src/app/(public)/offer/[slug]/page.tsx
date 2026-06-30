@@ -104,16 +104,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
   const colorCodes = [...new Set(product.variants.map((v) => v.color))];
 
-  // Title: "{name} {cm}" — layout adds "| Hairland" via template
+  // Title: "{name} {cm} {barva}" — layout adds "| Hairland" (11 chars) via template
   const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
-  const autoTitle = [product.name, lengthStr].filter(Boolean).join(" ");
-  const title = product.metaTitle || autoTitle;
-
-  // Description: name, origin, color names, structure — compact for 155 chars
   const colorNames = colorCodes.map((c) => {
     const key = getHairColor(c).nameKey;
     try { return t(`colors.${key}`); } catch { return c; }
   });
+  const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
+  const baseTitle = [product.name, lengthStr].filter(Boolean).join(" ");
+  // Add color only if total (incl. " | Hairland" = 11 chars) fits in 60
+  const titleWithColor = colorStr ? `${baseTitle} ${colorStr}` : baseTitle;
+  const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
+  const title = product.metaTitle || autoTitle;
+
   const descParts: string[] = [product.name];
   if (product.origin) descParts.push(`původ ${product.origin}`);
   if (colorNames.length > 0) descParts.push(colorNames.length <= 4 ? colorNames.join(", ") : `${colorNames.length} barev`);
