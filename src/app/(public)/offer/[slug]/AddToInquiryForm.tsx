@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import confetti from "canvas-confetti";
 import { useInquiryCart } from "@/lib/inquiry-cart";
@@ -12,6 +12,9 @@ interface PickerVariant {
   pricePerGram: number;
   retailPricePerGram: number;
   availableGrams: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
+  pricePerPiece?: number;
+  availablePieces?: number;
 }
 
 interface AddToInquiryFormProps {
@@ -64,11 +67,27 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
       .sort((a, b) => a.lengthCm - b.lengthCm);
   }, [variants, selectedColor]);
 
-  // Max grams for selected variant
+  // Max quantity for selected variant
   const selectedVariant = (selectedColor && selectedLength)
     ? variants.find(v => v.color === selectedColor && v.lengthCm === selectedLength)
     : null;
-  const maxGrams = selectedVariant?.availableGrams ?? Infinity;
+  const isByPiece = selectedVariant?.sellingMode === "BY_PIECE";
+  const maxQty = isByPiece
+    ? (selectedVariant?.availablePieces ?? Infinity)
+    : (selectedVariant?.availableGrams ?? Infinity);
+  const qtyStep = isByPiece ? 1 : 50;
+  const minQty = isByPiece ? 1 : 50;
+  const unitLabel = isByPiece ? "ks" : "g";
+
+  // Reset quantity when variant changes
+  const prevVariantRef = useRef(selectedVariant);
+  useEffect(() => {
+    if (selectedVariant && selectedVariant !== prevVariantRef.current) {
+      const isBP = selectedVariant.sellingMode === "BY_PIECE";
+      setQuantity(isBP ? 1 : 100);
+      prevVariantRef.current = selectedVariant;
+    }
+  }, [selectedVariant]);
 
   const handleAdd = () => {
     if (!selectedLength || !selectedColor) return;
@@ -78,7 +97,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
       lengthCm: selectedLength,
       color: selectedColor,
       quantity,
-      unit: "g",
+      unit: isByPiece ? "ks" : "g",
     });
     setAdded(true);
     confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
@@ -134,7 +153,8 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
           <div className="flex flex-wrap gap-2">
             {availableLengths.map((v) => {
               const isSelected = selectedLength === v.lengthCm;
-              const inStock = v.availableGrams > 0;
+              const vIsByPiece = v.sellingMode === "BY_PIECE";
+              const inStock = vIsByPiece ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0;
               return (
                 <button
                   key={v.lengthCm}
@@ -151,10 +171,14 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
                 >
                   <div className="font-medium text-ink">{v.lengthCm} cm</div>
                   <div className="text-xs text-muted">
-                    {formatPrice(v.pricePerGram)} Kč/g
+                    {vIsByPiece
+                      ? `${formatPrice(v.pricePerPiece ?? 0)} Kc/ks`
+                      : `${formatPrice(v.pricePerGram)} Kc/g`}
                   </div>
                   <div className={`text-[11px] ${inStock ? "text-emerald-600" : "text-red-400"}`}>
-                    {inStock ? `${v.availableGrams}g` : t("inquiry.outOfStock")}
+                    {inStock
+                      ? (vIsByPiece ? `${v.availablePieces} ks` : `${v.availableGrams}g`)
+                      : t("inquiry.outOfStock")}
                   </div>
                 </button>
               );
@@ -171,7 +195,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
           <div className="text-xs text-muted mb-1.5">{t("inquiry.quantityLabel")}</div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setQuantity(Math.max(50, quantity - 50))}
+              onClick={() => setQuantity(Math.max(minQty, quantity - qtyStep))}
               className="w-8 h-8 rounded-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-50"
             >
               -
@@ -181,31 +205,32 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
               value={quantity}
               onChange={(e) => {
                 const val = Math.max(1, parseInt(e.target.value) || 1);
-                setQuantity(maxGrams !== Infinity ? Math.min(val, maxGrams) : val);
+                setQuantity(maxQty !== Infinity ? Math.min(val, maxQty) : val);
               }}
-              max={maxGrams !== Infinity ? maxGrams : undefined}
+              max={maxQty !== Infinity ? maxQty : undefined}
+              step={qtyStep}
               className="w-20 text-center text-sm border border-line rounded-lg py-1.5 focus:outline-none focus:ring-2 focus:ring-rose"
             />
             <button
-              onClick={() => setQuantity(Math.min(quantity + 50, maxGrams !== Infinity ? maxGrams : quantity + 50))}
+              onClick={() => setQuantity(Math.min(quantity + qtyStep, maxQty !== Infinity ? maxQty : quantity + qtyStep))}
               className="w-8 h-8 rounded-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-50"
             >
               +
             </button>
-            <span className="text-xs text-muted">g</span>
-            {maxGrams !== Infinity && (
-              <span className="text-[11px] text-muted">max {maxGrams}g</span>
+            <span className="text-xs text-muted">{unitLabel}</span>
+            {maxQty !== Infinity && (
+              <span className="text-[11px] text-muted">max {maxQty}{unitLabel}</span>
             )}
           </div>
         </div>
 
         <button
           onClick={handleAdd}
-          disabled={!selectedLength || !selectedColor || quantity > maxGrams}
+          disabled={!selectedLength || !selectedColor || quantity > maxQty}
           className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
             added
               ? "bg-emerald-600 text-white"
-              : !selectedLength || !selectedColor || quantity > maxGrams
+              : !selectedLength || !selectedColor || quantity > maxQty
                 ? "bg-nude-100 text-muted cursor-not-allowed"
                 : "bg-rose text-white hover:bg-rose-deep"
           }`}

@@ -37,26 +37,61 @@ export async function completeSale(
 ): Promise<Sale> {
   const sale = await prisma.$transaction(
     async (tx) => {
-      // 1. DETERMINE PRICE PER GRAM for each item
+      // 1. DETERMINE PRICE for each item (per-gram or per-piece)
       const pricedItems = await Promise.all(
         input.items.map(async (item) => {
           const variant = await tx.variant.findUniqueOrThrow({
             where: { id: item.variantId },
           });
 
+          const sellingMode = (variant.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE";
+          const isByPiece = sellingMode === "BY_PIECE";
+
           let pricePerGram: number;
+          let pricePerUnit: number;
+
+          // Hairdresser discount (loaded once, cached for all items)
+          let hairdresserDiscountPct = 0;
+          if (input.customerType === "HAIRDRESSER") {
+            const settings = await tx.b2BSettings.findFirst();
+            hairdresserDiscountPct = settings?.hairdresserDiscountPct ?? 2000;
+          }
 
           if (input.customerType === "SALON") {
-            // Wholesale price (loyalty discounts added in Step 6)
             pricePerGram = variant.wholesalePricePerGram;
+          } else if (input.customerType === "HAIRDRESSER") {
+            pricePerGram = roundHalereUp(
+              (variant.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
+            );
           } else {
             pricePerGram = variant.retailPricePerGram;
           }
 
+          if (isByPiece) {
+            if (input.customerType === "SALON") {
+              pricePerUnit = variant.pricePerPiece ?? 0;
+            } else if (input.customerType === "HAIRDRESSER") {
+              const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+              pricePerUnit = roundHalereUp(
+                (retailPerPiece * (10000 - hairdresserDiscountPct)) / 10000
+              );
+            } else {
+              pricePerUnit = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+            }
+          } else {
+            pricePerUnit = pricePerGram;
+          }
+
+          const lineTotal = isByPiece
+            ? roundHalereUp(pricePerUnit * item.pieces)
+            : roundHalereUp(pricePerUnit * item.grams);
+
           return {
             ...item,
             pricePerGram,
-            lineTotal: roundHalereUp(pricePerGram * item.grams),
+            pricePerUnit,
+            sellingMode,
+            lineTotal,
           };
         })
       );
@@ -106,14 +141,18 @@ export async function completeSale(
           const itemCost = fifo.purchasePricePerGramCZK * fifo.grams;
           totalCostOfGoods += itemCost;
 
+          const fifoLineTotal = item.sellingMode === "BY_PIECE"
+            ? roundHalereUp(item.pricePerUnit * fifo.pieces)
+            : roundHalereUp(item.pricePerUnit * fifo.grams);
+
           saleItemsData.push({
             variantId: item.variantId,
             grams: fifo.grams,
             pieces: fifo.pieces,
-            pricePerGramUsed: item.pricePerGram,
+            pricePerGramUsed: item.pricePerUnit,
             deliveryId: fifo.deliveryId,
             purchasePricePerGramCZK: fifo.purchasePricePerGramCZK,
-            lineTotal: roundHalereUp(item.pricePerGram * fifo.grams),
+            lineTotal: fifoLineTotal,
           });
         }
       }

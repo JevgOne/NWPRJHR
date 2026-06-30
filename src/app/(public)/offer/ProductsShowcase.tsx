@@ -15,6 +15,9 @@ interface PublicVariant {
   retailPricePerGram: number;
   wholesalePricePerGram: number;
   availableGrams: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
+  retailPricePerPiece?: number;
+  availablePieces?: number;
 }
 
 interface PublicProduct {
@@ -162,10 +165,10 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
   // Sort products by total stock (descending)
   const sortedProducts = useMemo(() => {
     return [...products]
-      .filter((p) => p.variants.some((v) => v.retailPricePerGram > 0))
+      .filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 || (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0)))
       .sort((a, b) => {
-        const stockA = a.variants.reduce((s, v) => s + v.availableGrams, 0);
-        const stockB = b.variants.reduce((s, v) => s + v.availableGrams, 0);
+        const stockA = a.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
+        const stockB = b.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
         return stockB - stockA;
       });
   }, [products]);

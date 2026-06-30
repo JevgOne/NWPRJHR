@@ -63,14 +63,17 @@ export async function createComplaint(
           });
 
           if (saleItem) {
-            const refundAmount = saleItem.pricePerGramUsed * input.grams;
+            const isByPiece = saleItem.pieces > 0 && input.pieces > 0;
+            const refundAmount = isByPiece
+              ? saleItem.pricePerGramUsed * input.pieces
+              : saleItem.pricePerGramUsed * input.grams;
             const creditNote = await createCreditNoteInTx(
               sale.invoice.id,
               [
                 {
                   description: `Reklamace: ${input.description}`,
-                  quantity: input.grams,
-                  unit: "g",
+                  quantity: isByPiece ? input.pieces : input.grams,
+                  unit: isByPiece ? "ks" : "g",
                   pricePerUnit: saleItem.pricePerGramUsed,
                   lineTotal: refundAmount,
                 },

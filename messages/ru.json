@@ -181,7 +181,14 @@
     "wizOrigin": "Выберите происхождение",
     "wizTexture": "Выберите текстуру",
     "wizCustomLength": "Другая длина",
-    "wizDetails": "Детали поставки"
+    "wizDetails": "Детали поставки",
+    "sellingMode": "Тип продажи",
+    "byGram": "На граммы",
+    "byPiece": "На штуки (хвостики)",
+    "pricePerPieceCzk": "Опт цена за шт (Kč)",
+    "retailPricePerPieceCzk": "Розн цена за шт (Kč)",
+    "autoGrams": "Всего граммов (авто)",
+    "perPiece": "шт"
   },
   "order": {
     "order": "Заказ",

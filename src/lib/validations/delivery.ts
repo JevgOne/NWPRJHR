@@ -30,21 +30,52 @@ export const stockInSchema = z
     { message: "For CZK currency, exchangeRate must be 10000 (1:1)" }
   );
 
-export const newStockInSchema = z.object({
-  category: z.enum(["VIRGIN", "PREMIUM", "STANDARD", "SALE"]),
-  origin: z.string().min(1),
-  texture: z.string().min(1),
-  color: z.string().min(1),
-  lengthCm: z.number().int().positive().max(150),
-  supplierId: z.string().min(1),
-  purchasePricePerGramRaw: z.number().int().positive(),
-  currency: z.enum(["CZK", "USD", "EUR", "UAH"]),
-  exchangeRate: z.number().int().positive(),
-  totalGrams: z.number().int().positive(),
-  totalPieces: z.number().int().min(0).default(0),
-  stockedAt: z.string().datetime().optional(),
-  note: z.string().max(1000).optional(),
-});
+export const newStockInSchema = z
+  .object({
+    category: z.enum(["VIRGIN", "PREMIUM", "STANDARD", "SALE"]),
+    origin: z.string().min(1),
+    texture: z.string().min(1),
+    color: z.string().min(1),
+    lengthCm: z.number().int().positive().max(150),
+    supplierId: z.string().min(1),
+    purchasePricePerGramRaw: z.number().int().positive(),
+    currency: z.enum(["CZK", "USD", "EUR", "UAH"]),
+    exchangeRate: z.number().int().positive(),
+    totalGrams: z.number().int().min(0),
+    totalPieces: z.number().int().min(0).default(0),
+    pieceWeightGrams: z.number().int().positive().optional(),
+    sellingMode: z.enum(["BY_GRAM", "BY_PIECE"]).default("BY_GRAM"),
+    pricePerPiece: z.number().int().positive().optional(),
+    retailPricePerPiece: z.number().int().positive().optional(),
+    stockedAt: z.string().datetime().optional(),
+    note: z.string().max(1000).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.sellingMode === "BY_PIECE") {
+        return (
+          data.pricePerPiece != null &&
+          data.retailPricePerPiece != null &&
+          data.totalPieces > 0 &&
+          data.pieceWeightGrams != null
+        );
+      }
+      return true;
+    },
+    {
+      message:
+        "BY_PIECE mode requires pricePerPiece, retailPricePerPiece, totalPieces > 0, and pieceWeightGrams",
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.sellingMode === "BY_GRAM") {
+        return data.totalGrams > 0;
+      }
+      return true;
+    },
+    { message: "BY_GRAM mode requires totalGrams > 0" }
+  );
 
 export const supplierSchema = z.object({
   name: z.string().min(1).max(200),

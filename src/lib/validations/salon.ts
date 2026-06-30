@@ -30,7 +30,7 @@ export const createOrderSchema = z.object({
     .array(
       z.object({
         variantId: z.string(),
-        grams: z.number().int().positive(),
+        grams: z.number().int().min(0),
         pieces: z.number().int().min(0),
       })
     )

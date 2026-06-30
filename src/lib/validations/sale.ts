@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const saleItemSchema = z.object({
   variantId: z.string().min(1),
-  grams: z.number().int().positive(),
+  grams: z.number().int().min(0),
   pieces: z.number().int().min(0),
 });
 
@@ -51,6 +51,6 @@ export const pricePreviewSchema = z.object({
   variantId: z.string().min(1),
   customerType: z.enum(["SALON", "RETAIL"]),
   salonId: z.string().min(1).optional(),
-  grams: z.number().int().positive(),
+  grams: z.number().int().min(0),
   pieces: z.number().int().min(0),
 });

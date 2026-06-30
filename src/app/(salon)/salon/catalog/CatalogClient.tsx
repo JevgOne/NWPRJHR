@@ -12,6 +12,8 @@ interface CatalogVariant {
   pricePerGram: number;
   availableGrams: number;
   availablePieces: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
+  pricePerPiece?: number;
 }
 
 interface CatalogProduct {
@@ -30,10 +32,13 @@ interface CatalogProduct {
 interface CartItem {
   variantId: string;
   grams: number;
+  pieces: number;
   productName: string;
   lengthCm: number;
   color: string;
   pricePerGram: number;
+  pricePerPiece?: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
 }
 
 function formatCZK(halere: number): string {
@@ -89,7 +94,7 @@ export function CatalogClient({ role }: { role: Role }) {
   const updateCart = useCallback((variantId: string, grams: number, meta: Omit<CartItem, "variantId" | "grams">) => {
     setCart((prev) => {
       const next = new Map(prev);
-      if (grams <= 0) {
+      if (grams <= 0 && (meta.pieces ?? 0) <= 0) {
         next.delete(variantId);
       } else {
         next.set(variantId, { variantId, grams, ...meta });
@@ -99,8 +104,12 @@ export function CatalogClient({ role }: { role: Role }) {
   }, []);
 
   const cartItems = Array.from(cart.values());
-  const cartTotal = cartItems.reduce((sum, item) => sum + item.grams * item.pricePerGram, 0);
+  const cartTotal = cartItems.reduce((sum, item) => {
+    if (item.sellingMode === "BY_PIECE") return sum + item.pieces * (item.pricePerPiece ?? 0);
+    return sum + item.grams * item.pricePerGram;
+  }, 0);
   const cartTotalGrams = cartItems.reduce((sum, item) => sum + item.grams, 0);
+  const cartTotalPieces = cartItems.reduce((sum, item) => sum + item.pieces, 0);
 
   const submitOrder = async () => {
     if (cartItems.length === 0) return;
@@ -113,8 +122,8 @@ export function CatalogClient({ role }: { role: Role }) {
         body: JSON.stringify({
           items: cartItems.map((item) => ({
             variantId: item.variantId,
-            grams: item.grams,
-            pieces: 0,
+            grams: item.sellingMode === "BY_PIECE" ? 0 : item.grams,
+            pieces: item.sellingMode === "BY_PIECE" ? item.pieces : 0,
           })),
           note: orderNote || undefined,
         }),
@@ -254,7 +263,7 @@ export function CatalogClient({ role }: { role: Role }) {
                   {product.variants.map((v) => {
                     const { nameKey } = getHairColor(v.color);
                     const cartItem = cart.get(v.id);
-                    const inCart = cartItem ? cartItem.grams : 0;
+                    const inCart = cartItem ? (v.sellingMode === "BY_PIECE" ? cartItem.pieces : cartItem.grams) : 0;
                     return (
                       <tr key={v.id} className={`hover:bg-nude-50/50 ${inCart > 0 ? "bg-rose/5" : ""}`}>
                         <td className="px-4 py-2 text-ink font-medium whitespace-nowrap">
@@ -267,34 +276,63 @@ export function CatalogClient({ role }: { role: Role }) {
                           </span>
                         </td>
                         <td className="px-4 py-2 text-right text-ink font-medium whitespace-nowrap">
-                          {formatCZK(v.pricePerGram)} Kč/g
+                          {v.sellingMode === "BY_PIECE"
+                            ? `${formatCZK(v.pricePerPiece ?? 0)} Kc/ks`
+                            : `${formatCZK(v.pricePerGram)} Kc/g`}
                         </td>
                         <td className="px-4 py-2 text-right whitespace-nowrap">
                           <span className="inline-flex items-center gap-1 text-emerald-700">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                            {v.availableGrams} g
+                            {v.sellingMode === "BY_PIECE"
+                              ? `${v.availablePieces} ks`
+                              : `${v.availableGrams} g`}
                           </span>
                         </td>
                         <td className="px-4 py-2 text-right">
                           <div className="inline-flex items-center gap-1">
-                            <input
-                              type="number"
-                              min={0}
-                              max={v.availableGrams}
-                              value={inCart || ""}
-                              placeholder="g"
-                              onChange={(e) => {
-                                const val = Math.min(parseInt(e.target.value) || 0, v.availableGrams);
-                                updateCart(v.id, val, {
-                                  productName: product.name,
-                                  lengthCm: v.lengthCm,
-                                  color: v.color,
-                                  pricePerGram: v.pricePerGram,
-                                });
-                              }}
-                              className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
-                            />
-                            <span className="text-xs text-muted">g</span>
+                            {v.sellingMode === "BY_PIECE" ? (
+                              <input
+                                type="number"
+                                min={0}
+                                max={v.availablePieces}
+                                value={inCart || ""}
+                                placeholder="ks"
+                                onChange={(e) => {
+                                  const val = Math.min(parseInt(e.target.value) || 0, v.availablePieces);
+                                  updateCart(v.id, 0, {
+                                    productName: product.name,
+                                    lengthCm: v.lengthCm,
+                                    color: v.color,
+                                    pricePerGram: 0,
+                                    pricePerPiece: v.pricePerPiece,
+                                    pieces: val,
+                                    sellingMode: "BY_PIECE",
+                                  });
+                                }}
+                                className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
+                              />
+                            ) : (
+                              <input
+                                type="number"
+                                min={0}
+                                max={v.availableGrams}
+                                value={inCart || ""}
+                                placeholder="g"
+                                onChange={(e) => {
+                                  const val = Math.min(parseInt(e.target.value) || 0, v.availableGrams);
+                                  updateCart(v.id, val, {
+                                    productName: product.name,
+                                    lengthCm: v.lengthCm,
+                                    color: v.color,
+                                    pricePerGram: v.pricePerGram,
+                                    pieces: 0,
+                                    sellingMode: "BY_GRAM",
+                                  });
+                                }}
+                                className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
+                              />
+                            )}
+                            <span className="text-xs text-muted">{v.sellingMode === "BY_PIECE" ? "ks" : "g"}</span>
                           </div>
                         </td>
                       </tr>
@@ -320,7 +358,9 @@ export function CatalogClient({ role }: { role: Role }) {
               {/* Cart summary */}
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-ink">
-                  {t("cartItems", { count: cartItems.length })} &middot; {cartTotalGrams} g
+                  {t("cartItems", { count: cartItems.length })}
+                  {cartTotalGrams > 0 && ` \u00b7 ${cartTotalGrams} g`}
+                  {cartTotalPieces > 0 && ` \u00b7 ${cartTotalPieces} ks`}
                 </div>
                 <div className="text-xs text-muted">
                   {t("cartTotal")}: {formatCZK(cartTotal)} Kč

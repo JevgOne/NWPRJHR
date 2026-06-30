@@ -46,20 +46,35 @@ export async function GET() {
     const variants = product.variants
       .map((v) => {
         const stock = stockMap.get(v.id);
+        const isByPiece = v.sellingMode === "BY_PIECE";
 
         let price: number;
-        if (isHairdresser) {
-          price = roundHalereUp(
-            (v.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
-          );
+        let pricePerPiece: number | undefined;
+
+        if (isByPiece) {
+          const basePiece = v.pricePerPiece ?? 0;
+          const retailPiece = v.retailPricePerPiece ?? basePiece;
+          if (isHairdresser) {
+            pricePerPiece = roundHalereUp((retailPiece * (10000 - hairdresserDiscountPct)) / 10000);
+          } else {
+            pricePerPiece = loyaltyDiscount > 0
+              ? roundHalereUp((basePiece * (10000 - loyaltyDiscount)) / 10000)
+              : basePiece;
+          }
+          price = 0; // not used for BY_PIECE
         } else {
-          price =
-            loyaltyDiscount > 0
-              ? roundHalereUp(
-                  (v.wholesalePricePerGram * (10000 - loyaltyDiscount)) /
-                    10000
-                )
-              : v.wholesalePricePerGram;
+          if (isHairdresser) {
+            price = roundHalereUp(
+              (v.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
+            );
+          } else {
+            price =
+              loyaltyDiscount > 0
+                ? roundHalereUp(
+                    (v.wholesalePricePerGram * (10000 - loyaltyDiscount)) / 10000
+                  )
+                : v.wholesalePricePerGram;
+          }
         }
 
         return {
@@ -69,9 +84,11 @@ export async function GET() {
           pricePerGram: price,
           availableGrams: stock?.availableGrams ?? 0,
           availablePieces: stock?.availablePieces ?? 0,
+          sellingMode: v.sellingMode ?? "BY_GRAM",
+          pricePerPiece,
         };
       })
-      .filter((v) => v.availableGrams > 0);
+      .filter((v) => v.sellingMode === "BY_PIECE" ? v.availablePieces > 0 : v.availableGrams > 0);
 
     if (variants.length === 0) return null;
 

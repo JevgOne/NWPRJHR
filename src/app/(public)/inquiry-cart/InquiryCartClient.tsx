@@ -186,6 +186,8 @@ function CartItemRow({
   onRemove: () => void;
   onUpdateQty: (qty: number) => void;
 }) {
+  const step = item.unit === "ks" ? 1 : 50;
+  const minQty = item.unit === "ks" ? 1 : 50;
   return (
     <div className="flex items-center gap-3 bg-white rounded-xl border border-line p-3">
       <span className="w-8 h-8 rounded-full border border-line flex-shrink-0" style={{ backgroundColor: getHairColor(item.color).hex }} />
@@ -197,14 +199,14 @@ function CartItemRow({
       </div>
       <div className="flex items-center gap-1.5">
         <button
-          onClick={() => onUpdateQty(Math.max(50, item.quantity - 50))}
+          onClick={() => onUpdateQty(Math.max(minQty, item.quantity - step))}
           className="w-7 h-7 rounded-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-50 text-sm"
         >
           −
         </button>
-        <span className="text-sm font-medium w-12 text-center">{item.quantity}g</span>
+        <span className="text-sm font-medium w-12 text-center">{item.quantity}{item.unit}</span>
         <button
-          onClick={() => onUpdateQty(item.quantity + 50)}
+          onClick={() => onUpdateQty(item.quantity + step)}
           className="w-7 h-7 rounded-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-50 text-sm"
         >
           +

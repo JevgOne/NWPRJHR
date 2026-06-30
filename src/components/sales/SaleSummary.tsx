@@ -7,6 +7,8 @@ interface SummaryItem {
   grams: number;
   pieces: number;
   pricePerGram: number;
+  pricePerPiece?: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
   lineTotal: number;
 }
 
@@ -51,10 +53,15 @@ export function SaleSummary({
             <div>
               <div className="font-medium">{item.variantLabel}</div>
               <div className="text-muted">
-                {item.grams} {tStock("grams")}
-                {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
-                {" @ "}
-                {formatCZK(item.pricePerGram)} CZK/{tStock("grams")}
+                {item.sellingMode === "BY_PIECE"
+                  ? `${item.pieces} ${tStock("pieces")} @ ${formatCZK(item.pricePerPiece ?? 0)} CZK/${tStock("pieces")}`
+                  : <>
+                      {item.grams} {tStock("grams")}
+                      {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
+                      {" @ "}
+                      {formatCZK(item.pricePerGram)} CZK/{tStock("grams")}
+                    </>
+                }
               </div>
             </div>
             <div className="font-medium">{formatCZK(item.lineTotal)} CZK</div>

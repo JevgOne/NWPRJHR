@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { pricePreviewSchema } from "@/lib/validations/sale";
-import { getSalePrice, calculateLineTotal } from "@/lib/sale-pricing";
+import { getSalePrice } from "@/lib/sale-pricing";
+import { roundHalereUp } from "@/lib/rounding";
 import { getStockNumbers } from "@/lib/stock";
 
 export async function POST(request: NextRequest) {
@@ -19,20 +20,34 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
 
-  const { variantId, customerType, salonId, grams } = parsed.data;
+  const { variantId, customerType, salonId, grams, pieces } = parsed.data;
 
-  const [{ pricePerGram }, stock] = await Promise.all([
+  const [pricing, stock] = await Promise.all([
     getSalePrice(variantId, customerType, salonId),
     getStockNumbers(variantId),
   ]);
-  const lineTotal = calculateLineTotal(pricePerGram, grams);
 
+  const availableStock = {
+    grams: stock.availableGrams,
+    pieces: stock.availablePieces,
+  };
+
+  if (pricing.sellingMode === "BY_PIECE") {
+    const lineTotal = roundHalereUp((pricing.pricePerPiece ?? 0) * (pieces ?? 0));
+    return NextResponse.json({
+      sellingMode: "BY_PIECE",
+      pricePerPiece: pricing.pricePerPiece,
+      pricePerGram: pricing.pricePerGram,
+      lineTotal,
+      availableStock,
+    });
+  }
+
+  const lineTotal = roundHalereUp(pricing.pricePerGram * grams);
   return NextResponse.json({
-    pricePerGram,
+    sellingMode: "BY_GRAM",
+    pricePerGram: pricing.pricePerGram,
     lineTotal,
-    availableStock: {
-      grams: stock.availableGrams,
-      pieces: stock.availablePieces,
-    },
+    availableStock,
   });
 }

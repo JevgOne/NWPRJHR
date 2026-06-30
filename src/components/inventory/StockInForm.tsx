@@ -19,6 +19,8 @@ interface SuccessData {
   productId: string;
   productName: string;
   totalGrams: number;
+  totalPieces: number;
+  sellingMode: "BY_GRAM" | "BY_PIECE";
   barcode: string;
 }
 
@@ -40,6 +42,13 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [color, setColor] = useState("");
   const [lengthCm, setLengthCm] = useState<number | null>(null);
   const [customLength, setCustomLength] = useState("");
+
+  // Selling mode
+  const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
+  const [totalPieces, setTotalPieces] = useState("");
+  const [pieceWeightGrams, setPieceWeightGrams] = useState("");
+  const [pricePerPieceCzk, setPricePerPieceCzk] = useState("");
+  const [retailPricePerPieceCzk, setRetailPricePerPieceCzk] = useState("");
 
   // Details form state
   const [supplierId, setSupplierId] = useState("");
@@ -112,6 +121,13 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     setSubmitting(true);
     setError("");
 
+    const isByPiece = sellingMode === "BY_PIECE";
+    const parsedPieces = isByPiece ? parseInt(totalPieces) : 0;
+    const parsedPieceWeight = isByPiece ? parseInt(pieceWeightGrams) : undefined;
+    const computedGrams = isByPiece && parsedPieceWeight
+      ? parsedPieces * parsedPieceWeight
+      : parseInt(totalGrams);
+
     const body = {
       category,
       origin,
@@ -119,11 +135,19 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       color,
       lengthCm,
       supplierId,
-      purchasePricePerGramRaw: Math.round(parseFloat(purchasePrice) * 100),
+      purchasePricePerGramRaw: isByPiece ? 0 : Math.round(parseFloat(purchasePrice) * 100),
       currency: "CZK" as const,
       exchangeRate: 10000,
-      totalGrams: parseInt(totalGrams),
-      totalPieces: 0,
+      totalGrams: computedGrams,
+      totalPieces: parsedPieces,
+      sellingMode,
+      ...(isByPiece ? {
+        pieceWeightGrams: parsedPieceWeight,
+        pricePerPiece: Math.round(parseFloat(pricePerPieceCzk) * 100),
+        ...(retailPricePerPieceCzk
+          ? { retailPricePerPiece: Math.round(parseFloat(retailPricePerPieceCzk) * 100) }
+          : {}),
+      } : {}),
       stockedAt: new Date(stockedAt).toISOString(),
       ...(note ? { note } : {}),
     };
@@ -155,7 +179,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     setSuccessData({
       productId: result.productId,
       productName: result.productName ?? "",
-      totalGrams: parseInt(totalGrams),
+      totalGrams: computedGrams,
+      totalPieces: parsedPieces,
+      sellingMode,
       barcode: result.barcode ?? "",
     });
     setSubmitting(false);
@@ -212,7 +238,10 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             {t("stockedSuccess")}
           </h2>
           <p className="text-sm text-muted">
-            {successData.productName} &mdash; {successData.totalGrams} g
+            {successData.productName} &mdash;{" "}
+            {successData.sellingMode === "BY_PIECE"
+              ? `${successData.totalPieces} ${t("perPiece")} (${successData.totalGrams} g)`
+              : `${successData.totalGrams} g`}
           </p>
           {qrDataUrl && (
             <img
@@ -300,6 +329,11 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setColor("");
                 setLengthCm(null);
                 setCustomLength("");
+                setSellingMode("BY_GRAM");
+                setTotalPieces("");
+                setPieceWeightGrams("");
+                setPricePerPieceCzk("");
+                setRetailPricePerPieceCzk("");
                 setSupplierId("");
                 setPurchasePrice("");
                 setTotalGrams("");
@@ -483,7 +517,40 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
           </div>
         )}
 
-        {/* Details — after length */}
+        {/* Selling mode — after length */}
+        {category && origin && texture && color && lengthCm && (
+          <div>
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              {t("sellingMode")}
+            </h2>
+            <div className="grid grid-cols-2 gap-3 max-w-lg">
+              <button
+                type="button"
+                onClick={() => setSellingMode("BY_GRAM")}
+                className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
+                  sellingMode === "BY_GRAM"
+                    ? "border-rose bg-rose/5 text-ink"
+                    : "border-line bg-white text-muted hover:border-espresso/30"
+                }`}
+              >
+                {t("byGram")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSellingMode("BY_PIECE")}
+                className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
+                  sellingMode === "BY_PIECE"
+                    ? "border-rose bg-rose/5 text-ink"
+                    : "border-line bg-white text-muted hover:border-espresso/30"
+                }`}
+              >
+                {t("byPiece")}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Details — after selling mode */}
         {category && origin && texture && color && lengthCm && (
           <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
             <h2 className="text-sm font-medium text-espresso mb-1">
@@ -510,27 +577,78 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
               </select>
             </div>
 
-            {/* Purchase price */}
-            <Input
-              label={`${t("purchasePrice")} (Kc/g)`}
-              type="number"
-              value={purchasePrice}
-              onChange={(e) => setPurchasePrice(e.target.value)}
-              required
-              min={1}
-              step="0.01"
-            />
-
-            {/* Grams + Date */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Purchase price (per gram — needed for COGS in BY_GRAM mode) */}
+            {sellingMode === "BY_GRAM" && (
               <Input
-                label={t("totalGrams")}
+                label={`${t("purchasePrice")} (Kc/g)`}
                 type="number"
-                value={totalGrams}
-                onChange={(e) => setTotalGrams(e.target.value)}
+                value={purchasePrice}
+                onChange={(e) => setPurchasePrice(e.target.value)}
                 required
                 min={1}
+                step="0.01"
               />
+            )}
+
+            {/* BY_PIECE fields */}
+            {sellingMode === "BY_PIECE" && (
+              <div className="space-y-4 p-4 rounded-xl border-2 border-rose/20 bg-rose/5">
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label={t("totalPieces")}
+                    type="number"
+                    value={totalPieces}
+                    onChange={(e) => setTotalPieces(e.target.value)}
+                    required
+                    min={1}
+                  />
+                  <Input
+                    label={t("pieceWeight")}
+                    type="number"
+                    value={pieceWeightGrams}
+                    onChange={(e) => setPieceWeightGrams(e.target.value)}
+                    required
+                    min={1}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label={t("pricePerPieceCzk")}
+                    type="number"
+                    value={pricePerPieceCzk}
+                    onChange={(e) => setPricePerPieceCzk(e.target.value)}
+                    required
+                    min={1}
+                    step="0.01"
+                  />
+                  <Input
+                    label={t("retailPricePerPieceCzk")}
+                    type="number"
+                    value={retailPricePerPieceCzk}
+                    onChange={(e) => setRetailPricePerPieceCzk(e.target.value)}
+                    step="0.01"
+                  />
+                </div>
+                {totalPieces && pieceWeightGrams && (
+                  <p className="text-xs text-muted">
+                    {t("autoGrams")}: {parseInt(totalPieces) * parseInt(pieceWeightGrams)} g
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Grams (manual) — only for BY_GRAM + Date */}
+            <div className="grid grid-cols-2 gap-4">
+              {sellingMode === "BY_GRAM" && (
+                <Input
+                  label={t("totalGrams")}
+                  type="number"
+                  value={totalGrams}
+                  onChange={(e) => setTotalGrams(e.target.value)}
+                  required
+                  min={1}
+                />
+              )}
               <Input
                 label={t("stockedAt")}
                 type="date"

@@ -68,6 +68,9 @@ export async function GET(request: NextRequest) {
               color: true,
               retailPricePerGram: true,
               wholesalePricePerGram: true,
+              sellingMode: true,
+              pricePerPiece: true,
+              retailPricePerPiece: true,
             },
           },
         },
@@ -87,6 +90,11 @@ export async function GET(request: NextRequest) {
             retailPricePerGram: v.retailPricePerGram,
             wholesalePricePerGram: v.wholesalePricePerGram,
             availableGrams: stock?.availableGrams ?? 0,
+            sellingMode: v.sellingMode ?? "BY_GRAM",
+            retailPricePerPiece: v.retailPricePerPiece,
+            pricePerPiece: v.pricePerPiece,
+            wholesalePricePerPiece: v.pricePerPiece,
+            availablePieces: stock?.availablePieces ?? 0,
           };
         });
 

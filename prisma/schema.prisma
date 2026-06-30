@@ -172,6 +172,9 @@ model Variant {
   wholesalePricePerGram Int
   retailPricePerGram    Int
   retailManualOverride  Boolean  @default(false)
+  sellingMode           String   @default("BY_GRAM")
+  pricePerPiece         Int?
+  retailPricePerPiece   Int?
   active                Boolean  @default(true)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt

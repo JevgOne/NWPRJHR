@@ -82,7 +82,11 @@ export async function approveReturn(
       const ret = await tx.return.findUniqueOrThrow({
         where: { id: returnId },
         include: {
-          saleItem: true,
+          saleItem: {
+            include: {
+              variant: { select: { sellingMode: true } },
+            },
+          },
           sale: {
             include: {
               invoice: true,
@@ -104,21 +108,27 @@ export async function approveReturn(
       let returnValue = 0;
 
       if (ret.sale.invoice) {
-        returnValue = ret.saleItem.pricePerGramUsed * ret.grams;
+        const isByPiece = ret.saleItem.variant?.sellingMode === "BY_PIECE";
+        if (isByPiece) {
+          returnValue = ret.saleItem.pricePerGramUsed * ret.pieces;
+        } else {
+          returnValue = ret.saleItem.pricePerGramUsed * ret.grams;
+        }
         const creditNoteItems: CreditNoteItem[] = [
           {
             description: `Vratka: ${ret.reason}`,
-            quantity: ret.grams,
-            unit: "g",
+            quantity: isByPiece ? ret.pieces : ret.grams,
+            unit: isByPiece ? "ks" : "g",
             pricePerUnit: ret.saleItem.pricePerGramUsed,
             lineTotal: returnValue,
           },
         ];
 
+        const quantityLabel = isByPiece ? `${ret.pieces}ks` : `${ret.grams}g`;
         const creditNote = await createCreditNoteInTx(
           ret.sale.invoice.id,
           creditNoteItems,
-          `Vratka ${ret.grams}g k fakture ${ret.sale.invoice.number}`,
+          `Vratka ${quantityLabel} k fakture ${ret.sale.invoice.number}`,
           tx
         );
         creditNoteId = creditNote.id;

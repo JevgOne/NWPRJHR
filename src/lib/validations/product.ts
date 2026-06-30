@@ -40,6 +40,9 @@ export const createVariantsSchema = z.object({
         color: z.string().min(1).max(100),
         wholesalePricePerGram: z.number().int().positive(),
         costPricePerGram: z.number().int().min(0).optional(),
+        sellingMode: z.enum(["BY_GRAM", "BY_PIECE"]).optional(),
+        pricePerPiece: z.number().int().positive().optional(),
+        retailPricePerPiece: z.number().int().positive().optional(),
       })
     )
     .min(1)
@@ -51,6 +54,9 @@ export const updateVariantSchema = z.object({
   wholesalePricePerGram: z.number().int().positive().optional(),
   retailPricePerGram: z.number().int().positive().optional(),
   retailManualOverride: z.boolean().optional(),
+  sellingMode: z.enum(["BY_GRAM", "BY_PIECE"]).optional(),
+  pricePerPiece: z.number().int().positive().optional(),
+  retailPricePerPiece: z.number().int().positive().optional(),
   active: z.boolean().optional(),
 });
 

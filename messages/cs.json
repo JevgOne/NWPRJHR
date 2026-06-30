@@ -181,7 +181,14 @@
     "wizOrigin": "Vyberte původ",
     "wizTexture": "Vyberte texturu",
     "wizCustomLength": "Jiná délka",
-    "wizDetails": "Detaily dodávky"
+    "wizDetails": "Detaily dodávky",
+    "sellingMode": "Typ prodeje",
+    "byGram": "Na gramy",
+    "byPiece": "Na kusy (culíky)",
+    "pricePerPieceCzk": "VO cena za kus (Kč)",
+    "retailPricePerPieceCzk": "MO cena za kus (Kč)",
+    "autoGrams": "Celkem gramů (auto)",
+    "perPiece": "ks"
   },
   "order": {
     "order": "Objednávka",

@@ -34,9 +34,11 @@ interface SaleDetail {
     deliveryId?: string;
     purchasePricePerGramCZK?: number;
     itemMargin?: number;
+    sellingMode?: string;
     variant?: {
       lengthCm: number;
       color: string;
+      sellingMode?: string;
       product: { name: string; category: string };
     };
   }[];
@@ -128,10 +130,15 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
               </div>
               <div className="flex justify-between text-muted mt-1">
                 <span>
-                  {item.grams} {tStock("grams")}
-                  {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
-                  {" @ "}
-                  {formatCZK(item.pricePerGramUsed)} CZK/{tStock("grams")}
+                  {(item.variant?.sellingMode === "BY_PIECE" || item.sellingMode === "BY_PIECE" || (item.pieces > 0 && item.grams === 0))
+                    ? `${item.pieces} ${tStock("pieces")} @ ${formatCZK(item.pricePerGramUsed)} CZK/${tStock("pieces")}`
+                    : <>
+                        {item.grams} {tStock("grams")}
+                        {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
+                        {" @ "}
+                        {formatCZK(item.pricePerGramUsed)} CZK/{tStock("grams")}
+                      </>
+                  }
                 </span>
                 <span className="font-medium text-ink">
                   {formatCZK(item.lineTotal)} CZK

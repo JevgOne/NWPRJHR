@@ -26,6 +26,8 @@ interface SaleItem {
   grams: number;
   pieces: number;
   pricePerGram: number;
+  pricePerPiece?: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
   lineTotal: number;
   availableGrams: number;
   availablePieces: number;
@@ -80,7 +82,7 @@ export function NewSaleWizard({
 
   const fetchPricePreview = useCallback(
     async (variantId: string, grams: number, pieces: number) => {
-      if (!customerType || grams <= 0) return null;
+      if (!customerType || (grams <= 0 && pieces <= 0)) return null;
       const res = await fetch("/api/sales/price-preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -110,22 +112,44 @@ export function NewSaleWizard({
         }
       }
 
-      const defaultGrams = 50;
-      const preview = await fetchPricePreview(variantId, defaultGrams, 0);
+      // First fetch with grams to get sellingMode info
+      const preview = await fetchPricePreview(variantId, 50, 0);
+      const isByPiece = preview?.sellingMode === "BY_PIECE";
 
-      setItems((prev) => [
-        ...prev,
-        {
-          variantId,
-          variantLabel: label,
-          grams: defaultGrams,
-          pieces: 0,
-          pricePerGram: preview?.pricePerGram ?? 0,
-          lineTotal: preview?.lineTotal ?? 0,
-          availableGrams: preview?.availableStock?.grams ?? 0,
-          availablePieces: preview?.availableStock?.pieces ?? 0,
-        },
-      ]);
+      if (isByPiece) {
+        // Re-fetch with pieces for BY_PIECE
+        const piecePreview = await fetchPricePreview(variantId, 0, 1);
+        setItems((prev) => [
+          ...prev,
+          {
+            variantId,
+            variantLabel: label,
+            grams: 0,
+            pieces: 1,
+            pricePerGram: 0,
+            pricePerPiece: piecePreview?.pricePerPiece ?? preview?.pricePerPiece ?? 0,
+            sellingMode: "BY_PIECE",
+            lineTotal: piecePreview?.lineTotal ?? 0,
+            availableGrams: 0,
+            availablePieces: piecePreview?.availableStock?.pieces ?? preview?.availableStock?.pieces ?? 0,
+          },
+        ]);
+      } else {
+        setItems((prev) => [
+          ...prev,
+          {
+            variantId,
+            variantLabel: label,
+            grams: 50,
+            pieces: 0,
+            pricePerGram: preview?.pricePerGram ?? 0,
+            sellingMode: "BY_GRAM",
+            lineTotal: preview?.lineTotal ?? 0,
+            availableGrams: preview?.availableStock?.grams ?? 0,
+            availablePieces: preview?.availableStock?.pieces ?? 0,
+          },
+        ]);
+      }
     },
     [products, fetchPricePreview]
   );
@@ -153,7 +177,13 @@ export function NewSaleWizard({
         updated[index] = { ...updated[index], ...updates };
 
         // Recalculate line total
-        if (updates.grams !== undefined) {
+        if (updated[index].sellingMode === "BY_PIECE") {
+          if (updates.pieces !== undefined) {
+            updated[index].lineTotal = roundUp(
+              (updated[index].pricePerPiece ?? 0) * updated[index].pieces
+            );
+          }
+        } else if (updates.grams !== undefined) {
           updated[index].lineTotal = roundUp(
             updated[index].pricePerGram * updated[index].grams
           );
@@ -162,11 +192,12 @@ export function NewSaleWizard({
         return updated;
       });
 
-      // Refetch preview if grams changed
-      if (updates.grams !== undefined) {
-        const item = items[index];
+      // Refetch preview if quantity changed
+      const item = items[index];
+      if (updates.grams !== undefined || updates.pieces !== undefined) {
         const grams = updates.grams ?? item.grams;
-        const preview = await fetchPricePreview(item.variantId, grams, item.pieces);
+        const pieces = updates.pieces ?? item.pieces;
+        const preview = await fetchPricePreview(item.variantId, grams, pieces);
         if (preview) {
           setItems((prev) => {
             const updated = [...prev];
@@ -174,6 +205,7 @@ export function NewSaleWizard({
               updated[index] = {
                 ...updated[index],
                 pricePerGram: preview.pricePerGram,
+                pricePerPiece: preview.pricePerPiece,
                 lineTotal: preview.lineTotal,
                 availableGrams: preview.availableStock.grams,
                 availablePieces: preview.availableStock.pieces,
@@ -258,7 +290,7 @@ export function NewSaleWizard({
           (customerType === "SALON" ? !!salonId : true)
         );
       case 1:
-        return items.length > 0 && items.every((i) => i.grams > 0);
+        return items.length > 0 && items.every((i) => i.sellingMode === "BY_PIECE" ? i.pieces > 0 : i.grams > 0);
       case 2:
         return true;
       case 3:
@@ -409,6 +441,8 @@ export function NewSaleWizard({
               grams: i.grams,
               pieces: i.pieces,
               pricePerGram: i.pricePerGram,
+              pricePerPiece: i.pricePerPiece,
+              sellingMode: i.sellingMode,
               lineTotal: i.lineTotal,
             }))}
             subtotal={subtotal}

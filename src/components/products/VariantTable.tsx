@@ -15,11 +15,15 @@ interface VariantData {
   retailPricePerGram?: number;
   retailManualOverride?: boolean;
   pricePerGram?: number;
+  sellingMode?: string;
+  pricePerPiece?: number;
+  retailPricePerPiece?: number;
   active: boolean;
 }
 
 interface StockInfo {
   availableGrams: number;
+  availablePieces?: number;
   physicalGrams?: number;
   reservedGrams?: number;
 }
@@ -46,11 +50,12 @@ export function VariantTable({
   useEffect(() => {
     fetch(`/api/stock?productId=${productId}`)
       .then((r) => r.json())
-      .then((data: Array<{ variantId: string; availableGrams: number; physicalGrams?: number; reservedGrams?: number }>) => {
+      .then((data: Array<{ variantId: string; availableGrams: number; availablePieces?: number; physicalGrams?: number; reservedGrams?: number }>) => {
         const map = new Map<string, StockInfo>();
         for (const item of data) {
           map.set(item.variantId, {
             availableGrams: item.availableGrams,
+            availablePieces: item.availablePieces,
             physicalGrams: item.physicalGrams,
             reservedGrams: item.reservedGrams,
           });
@@ -162,7 +167,8 @@ export function VariantTable({
                 const cellKey = `${length}-${variant.color}`;
                 const isSaving = saving === variant.id;
                 const stock = stockMap.get(variant.id);
-                const hasStock = stock && stock.availableGrams > 0;
+                const isByPiece = variant.sellingMode === "BY_PIECE";
+                const hasStock = stock && (isByPiece ? (stock.availablePieces ?? 0) > 0 : stock.availableGrams > 0);
 
                 return (
                   <div
@@ -208,7 +214,7 @@ export function VariantTable({
                     )}
 
                     {/* Retail price */}
-                    {variant.retailPricePerGram !== undefined && (
+                    {variant.retailPricePerGram !== undefined && !isByPiece && (
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-muted line-through">
                           {formatCZK(variant.retailPricePerGram!)}
@@ -223,6 +229,18 @@ export function VariantTable({
                             ✕
                           </button>
                         )}
+                      </div>
+                    )}
+
+                    {/* Piece prices for BY_PIECE */}
+                    {isByPiece && variant.pricePerPiece !== undefined && (
+                      <div className="text-xs text-ink font-medium">
+                        {formatCZK(variant.pricePerPiece)} /ks
+                      </div>
+                    )}
+                    {isByPiece && variant.retailPricePerPiece !== undefined && (
+                      <div className="text-xs text-muted line-through">
+                        {formatCZK(variant.retailPricePerPiece)} /ks
                       </div>
                     )}
 
@@ -259,6 +277,13 @@ export function VariantTable({
                       </div>
                     )}
 
+                    {/* Selling mode badge */}
+                    {isByPiece && (
+                      <span className="inline-flex items-center mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose/10 text-rose">
+                        ks
+                      </span>
+                    )}
+
                     {/* Stock badge */}
                     {stock && (
                       <span className={`inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
@@ -269,7 +294,9 @@ export function VariantTable({
                         <span className={`w-1.5 h-1.5 rounded-full ${
                           hasStock ? "bg-emerald-500" : "bg-red-300"
                         }`} />
-                        {stock.availableGrams} g
+                        {isByPiece
+                          ? `${stock.availablePieces ?? 0} ks`
+                          : `${stock.availableGrams} g`}
                       </span>
                     )}
                   </div>

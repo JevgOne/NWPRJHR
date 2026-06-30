@@ -21,17 +21,23 @@ export function serializeVariantForRole(
     case "OWNER":
       return {
         ...base,
+        sellingMode: variant.sellingMode,
         costPricePerGram: variant.costPricePerGram,
         wholesalePricePerGram: variant.wholesalePricePerGram,
         retailPricePerGram: variant.retailPricePerGram,
         retailManualOverride: variant.retailManualOverride,
+        pricePerPiece: variant.pricePerPiece,
+        retailPricePerPiece: variant.retailPricePerPiece,
       };
 
     case "EMPLOYEE":
       return {
         ...base,
+        sellingMode: variant.sellingMode,
         wholesalePricePerGram: variant.wholesalePricePerGram,
         retailPricePerGram: variant.retailPricePerGram,
+        pricePerPiece: variant.pricePerPiece,
+        retailPricePerPiece: variant.retailPricePerPiece,
       };
 
     case "SALON": {
@@ -42,7 +48,9 @@ export function serializeVariantForRole(
         : variant.wholesalePricePerGram;
       return {
         ...base,
+        sellingMode: variant.sellingMode,
         pricePerGram: salonPrice,
+        pricePerPiece: variant.pricePerPiece,
       };
     }
 
@@ -54,7 +62,9 @@ export function serializeVariantForRole(
         : roundHalereUp(variant.retailPricePerGram * 0.8);
       return {
         ...base,
+        sellingMode: variant.sellingMode,
         pricePerGram: hairdresserPrice,
+        pricePerPiece: variant.retailPricePerPiece ?? variant.pricePerPiece,
       };
     }
   }

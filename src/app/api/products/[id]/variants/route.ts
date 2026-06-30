@@ -72,6 +72,9 @@ export async function POST(
         v.wholesalePricePerGram,
         markupPercent
       ),
+      sellingMode: v.sellingMode ?? "BY_GRAM",
+      pricePerPiece: v.pricePerPiece,
+      retailPricePerPiece: v.retailPricePerPiece,
     }));
 
   const created = newVariants.length > 0

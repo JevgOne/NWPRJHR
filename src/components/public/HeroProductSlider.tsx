@@ -19,6 +19,9 @@ interface SliderProduct {
     color: string;
     retailPricePerGram: number;
     availableGrams: number;
+    sellingMode?: "BY_GRAM" | "BY_PIECE";
+    retailPricePerPiece?: number;
+    availablePieces?: number;
   }[];
 }
 
@@ -35,10 +38,13 @@ export function HeroProductSlider() {
   // Top 4 products by total stock
   const topProducts = useMemo(() => {
     return products
-      .filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 && v.availableGrams > 0))
+      .filter((p) => p.variants.some((v) =>
+        (v.retailPricePerGram > 0 && v.availableGrams > 0) ||
+        (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0 && (v.availablePieces ?? 0) > 0)
+      ))
       .sort((a, b) => {
-        const stockA = a.variants.reduce((s, v) => s + v.availableGrams, 0);
-        const stockB = b.variants.reduce((s, v) => s + v.availableGrams, 0);
+        const stockA = a.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
+        const stockB = b.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
         return stockB - stockA;
       })
       .slice(0, 4);

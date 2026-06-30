@@ -120,26 +120,48 @@ export async function POST(request: NextRequest) {
       where: { productId_lengthCm_color: { productId: product.id, lengthCm: data.lengthCm, color: data.color } },
     });
 
+    const isByPiece = data.sellingMode === "BY_PIECE";
+
     if (!variant) {
       // Get markup from PriceSettings for retail price calculation
       const priceSetting = await prisma.priceSettings.findUnique({ where: { category: data.category } });
       const markupPercent = priceSetting?.markupPercent ?? 200;
       const retailPrice = Math.round(data.purchasePricePerGramRaw * (10000 + markupPercent * 100) / 10000);
+      const retailPricePerPiece = isByPiece && data.pricePerPiece
+        ? Math.round(data.pricePerPiece * (10000 + markupPercent * 100) / 10000)
+        : undefined;
 
       variant = await prisma.variant.create({
         data: {
           productId: product.id,
           lengthCm: data.lengthCm,
           color: data.color,
+          sellingMode: data.sellingMode ?? "BY_GRAM",
+          pricePerPiece: isByPiece ? data.pricePerPiece : undefined,
+          retailPricePerPiece: isByPiece ? (data.retailPricePerPiece ?? retailPricePerPiece) : undefined,
           costPricePerGram: data.purchasePricePerGramRaw,
           wholesalePricePerGram: data.purchasePricePerGramRaw,
           retailPricePerGram: retailPrice,
           active: true,
         },
       });
+    } else if (isByPiece && variant.sellingMode !== "BY_PIECE") {
+      // Update existing variant to BY_PIECE mode
+      variant = await prisma.variant.update({
+        where: { id: variant.id },
+        data: {
+          sellingMode: "BY_PIECE",
+          pricePerPiece: data.pricePerPiece,
+          retailPricePerPiece: data.retailPricePerPiece,
+        },
+      });
     }
 
-    // 3. Stock in
+    // For BY_PIECE: compute totalGrams from pieces * pieceWeight
+    const effectiveTotalGrams = isByPiece && data.pieceWeightGrams
+      ? data.totalPieces * data.pieceWeightGrams
+      : data.totalGrams;
+
     const delivery = await stockIn(
       {
         variantId: variant.id,
@@ -147,8 +169,9 @@ export async function POST(request: NextRequest) {
         purchasePricePerGramRaw: data.purchasePricePerGramRaw,
         currency: data.currency,
         exchangeRate: data.exchangeRate,
-        totalGrams: data.totalGrams,
+        totalGrams: effectiveTotalGrams,
         totalPieces: data.totalPieces,
+        pieceWeightGrams: isByPiece ? data.pieceWeightGrams : undefined,
         barcode: generateBarcode(),
         stockedAt: data.stockedAt ? new Date(data.stockedAt) : undefined,
         note: data.note,

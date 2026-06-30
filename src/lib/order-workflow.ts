@@ -78,24 +78,45 @@ export async function createOrder(
     const availableGrams = stock?.availableGrams ?? 0;
     const availablePieces = stock?.availablePieces ?? 0;
 
-    if (availableGrams < item.grams) {
-      throw new InsufficientStockError("grams", item.grams, availableGrams);
-    }
-    if (item.pieces > 0 && availablePieces < item.pieces) {
-      throw new InsufficientStockError("pieces", item.pieces, availablePieces);
+    const sellingMode = (variant.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE";
+    const isByPiece = sellingMode === "BY_PIECE";
+
+    if (isByPiece) {
+      // BY_PIECE: check pieces primarily
+      if (item.pieces > 0 && availablePieces < item.pieces) {
+        throw new InsufficientStockError("pieces", item.pieces, availablePieces);
+      }
+    } else {
+      if (availableGrams < item.grams) {
+        throw new InsufficientStockError("grams", item.grams, availableGrams);
+      }
+      if (item.pieces > 0 && availablePieces < item.pieces) {
+        throw new InsufficientStockError("pieces", item.pieces, availablePieces);
+      }
     }
 
-    const pricePerGram = loyaltyDiscount > 0
-      ? roundHalereUp(variant.wholesalePricePerGram * (10000 - loyaltyDiscount) / 10000)
-      : variant.wholesalePricePerGram;
-    const lineTotal = roundHalereUp(pricePerGram * item.grams);
+    let pricePerUnit: number;
+    let lineTotal: number;
+
+    if (isByPiece) {
+      const basePiecePrice = variant.pricePerPiece ?? 0;
+      pricePerUnit = loyaltyDiscount > 0
+        ? roundHalereUp(basePiecePrice * (10000 - loyaltyDiscount) / 10000)
+        : basePiecePrice;
+      lineTotal = roundHalereUp(pricePerUnit * item.pieces);
+    } else {
+      pricePerUnit = loyaltyDiscount > 0
+        ? roundHalereUp(variant.wholesalePricePerGram * (10000 - loyaltyDiscount) / 10000)
+        : variant.wholesalePricePerGram;
+      lineTotal = roundHalereUp(pricePerUnit * item.grams);
+    }
     estimatedTotal += lineTotal;
 
     orderItems.push({
       variantId: item.variantId,
       grams: item.grams,
       pieces: item.pieces,
-      pricePerGram,
+      pricePerGram: pricePerUnit,
       lineTotal,
     });
 

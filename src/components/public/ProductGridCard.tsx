@@ -14,6 +14,10 @@ interface ProductGridCardVariant {
   retailPricePerGram: number;
   wholesalePricePerGram?: number;
   availableGrams: number;
+  sellingMode?: "BY_GRAM" | "BY_PIECE";
+  retailPricePerPiece?: number;
+  wholesalePricePerPiece?: number;
+  availablePieces?: number;
 }
 
 export interface ProductGridCardProduct {
@@ -72,13 +76,20 @@ export function ProductGridCard({
   const textureLabel = p.texture ? tTexture(textureInfo.nameKey) : null;
 
   // Aggregate variants — show only stocked lengths/colors
-  const stockedVariants = p.variants.filter(v => v.availableGrams > 0);
+  const stockedVariants = p.variants.filter(v => v.sellingMode === "BY_PIECE" ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0);
   const uniqueLengths = [...new Set(stockedVariants.map(v => v.lengthCm))].sort((a, b) => a - b);
   const uniqueColors = [...new Set(stockedVariants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
   const priceVariants = p.variants.filter(v => v.retailPricePerGram > 0);
   const minRetailPrice = priceVariants.length > 0 ? Math.min(...priceVariants.map(v => v.retailPricePerGram)) : 0;
   const totalStock = p.variants.reduce((sum, v) => sum + v.availableGrams, 0);
   const inStock = totalStock > 0;
+  // Check if any variant is BY_PIECE
+  const hasPieceVariants = p.variants.some(v => v.sellingMode === "BY_PIECE");
+  const totalPieces = p.variants.reduce((sum, v) => sum + (v.availablePieces ?? 0), 0);
+
+  // For BY_PIECE variants, find min piece price
+  const pieceVariants = p.variants.filter(v => v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0);
+  const minPiecePrice = pieceVariants.length > 0 ? Math.min(...pieceVariants.map(v => v.retailPricePerPiece!)) : 0;
 
   const href = `/offer/${p.slug ?? p.id}`;
 
@@ -199,6 +210,40 @@ export function ProductGridCard({
       {/* Price + total stock */}
       <div className="flex items-baseline justify-between">
         {(() => {
+          // BY_PIECE variant price
+          if (hasPieceVariants && minPiecePrice > 0) {
+            const priceDisplay = (minPiecePrice / 100).toFixed(0);
+            if (userRole === "SALON") {
+              const wholesalePieceVariants = pieceVariants.filter(v => v.wholesalePricePerPiece && v.wholesalePricePerPiece > 0);
+              if (wholesalePieceVariants.length > 0) {
+                const minB2B = Math.min(...wholesalePieceVariants.map(v => v.wholesalePricePerPiece!));
+                const b2bDisplay = (minB2B / 100).toFixed(0);
+                return (
+                  <div>
+                    <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/ks</span>
+                    <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/ks</span></div>
+                  </div>
+                );
+              }
+            }
+            if (userRole === "HAIRDRESSER" && discountPct > 0) {
+              const b2bMin = Math.ceil(minPiecePrice * (10000 - discountPct) / 10000);
+              const b2bDisplay = (b2bMin / 100).toFixed(0);
+              return (
+                <div>
+                  <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/ks</span>
+                  <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/ks</span></div>
+                </div>
+              );
+            }
+            return (
+              <div className="text-sm font-bold text-ink">
+                {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/ks</span>
+              </div>
+            );
+          }
+
+          // BY_GRAM variant price (existing logic)
           if (minRetailPrice === 0) return null;
           const priceDisplay = (minRetailPrice / 100).toFixed(0);
 
@@ -236,8 +281,10 @@ export function ProductGridCard({
             </div>
           );
         })()}
-        <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
-          {inStock ? `${totalStock} g` : t("inquiry.outOfStock")}
+        <span className={`text-[10px] font-medium ${inStock || totalPieces > 0 ? "text-emerald-600" : "text-red-400"}`}>
+          {hasPieceVariants
+            ? (totalPieces > 0 ? `${totalPieces} ks` : t("inquiry.outOfStock"))
+            : (inStock ? `${totalStock} g` : t("inquiry.outOfStock"))}
         </span>
       </div>
     </div>
@@ -248,7 +295,7 @@ export function ProductGridCard({
     return (
       <Link
         href={href}
-        className={`block bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock ? "border-line" : "border-line opacity-60"}`}
+        className={`block bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock || totalPieces > 0 ? "border-line" : "border-line opacity-60"}`}
       >
         {imageBlock}
         {infoBlock}
@@ -258,7 +305,7 @@ export function ProductGridCard({
 
   // Interactive card (offer page): only image and title are links, badges are filter buttons
   return (
-    <div className={`bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock ? "border-line" : "border-line opacity-60"}`}>
+    <div className={`bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock || totalPieces > 0 ? "border-line" : "border-line opacity-60"}`}>
       <Link href={href}>
         {imageBlock}
       </Link>

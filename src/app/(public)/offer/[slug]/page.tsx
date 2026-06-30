@@ -48,6 +48,9 @@ const productSelect = {
       color: true,
       retailPricePerGram: true,
       wholesalePricePerGram: true,
+      sellingMode: true,
+      pricePerPiece: true,
+      retailPricePerPiece: true,
     },
   },
 } as const;
@@ -78,6 +81,7 @@ async function getProduct(slugOrId: string) {
   const variantsWithStock = product.variants.map((v) => ({
     ...v,
     availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
+    availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
   }));
 
   return {
@@ -183,15 +187,27 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
   // Build variant data with resolved prices for the picker
   const pickerVariants = product.variants
-    .filter((v) => v.retailPricePerGram > 0)
+    .filter((v) => v.retailPricePerGram > 0 || (v.pricePerPiece ?? 0) > 0)
     .map((v) => {
+      const isByPiece = v.sellingMode === "BY_PIECE";
       let displayPrice: number;
-      if (role === "HAIRDRESSER") {
-        displayPrice = roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000);
-      } else if (role === "SALON") {
-        displayPrice = v.wholesalePricePerGram;
+      if (isByPiece) {
+        const piecePrice = v.pricePerPiece ?? 0;
+        if (role === "HAIRDRESSER") {
+          displayPrice = roundHalereUp((v.retailPricePerPiece! * (10000 - discountPct)) / 10000);
+        } else if (role === "SALON") {
+          displayPrice = piecePrice;
+        } else {
+          displayPrice = v.retailPricePerPiece ?? piecePrice;
+        }
       } else {
-        displayPrice = v.retailPricePerGram;
+        if (role === "HAIRDRESSER") {
+          displayPrice = roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000);
+        } else if (role === "SALON") {
+          displayPrice = v.wholesalePricePerGram;
+        } else {
+          displayPrice = v.retailPricePerGram;
+        }
       }
       return {
         lengthCm: v.lengthCm,
@@ -199,6 +215,9 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         pricePerGram: displayPrice,
         retailPricePerGram: v.retailPricePerGram,
         availableGrams: v.availableGrams,
+        sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
+        pricePerPiece: isByPiece ? displayPrice : undefined,
+        availablePieces: v.availablePieces,
       };
     });
 
@@ -214,6 +233,10 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
       ? Math.min(...pickerVariants.map((v) => v.pricePerGram))
       : null;
   const priceTip100g = pricePerGram ? pricePerGram * 100 : null;
+  const isByPiece = focusedVariant
+    ? focusedVariant.sellingMode === "BY_PIECE"
+    : pickerVariants.some(v => v.sellingMode === "BY_PIECE");
+  const priceUnit = isByPiece ? "/ks" : "/g";
   const retailPricePerGram = focusedVariant
     ? (tierBadge ? focusedVariant.retailPricePerGram : null)
     : (tierBadge && pickerVariants.length > 0)
@@ -467,14 +490,14 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           {pricePerGram && (
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-ink">{formatCZK(pricePerGram)}/g</span>
+                <span className="text-xl font-bold text-ink">{formatCZK(pricePerGram)}{priceUnit}</span>
                 {tierBadge && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-xs font-medium">
                     {tierBadge}
                   </span>
                 )}
               </div>
-              {priceTip100g && (
+              {priceTip100g && !isByPiece && (
                 <p className="text-sm text-muted">
                   {t("productDetail.priceTip", { price: formatCZK(priceTip100g) })}
                 </p>
@@ -556,8 +579,12 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                   <span className="text-xl">✅</span>
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
-                    <div className={`text-sm font-semibold ${focusedVariant.availableGrams > 0 ? "text-emerald-700" : "text-red-500"}`}>
-                      {focusedVariant.availableGrams > 0 ? `${focusedVariant.availableGrams} g ${t("productDetail.inStock").toLowerCase()}` : t("inquiry.outOfStock")}
+                    <div className={`text-sm font-semibold ${focusedVariant.availableGrams > 0 || (focusedVariant.availablePieces ?? 0) > 0 ? "text-emerald-700" : "text-red-500"}`}>
+                      {(() => {
+                        if (focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.availablePieces ?? 0) > 0) return `${focusedVariant.availablePieces} ks ${t("productDetail.inStock").toLowerCase()}`;
+                        if (focusedVariant.availableGrams > 0) return `${focusedVariant.availableGrams} g ${t("productDetail.inStock").toLowerCase()}`;
+                        return t("inquiry.outOfStock");
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -577,13 +604,19 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                 )}
                 {(() => {
                   const totalStock = product.variants.reduce((sum, v) => sum + v.availableGrams, 0);
+                  const totalPieces = product.variants.reduce((sum, v) => sum + (v.availablePieces ?? 0), 0);
+                  const hasPieces = product.variants.some(v => v.sellingMode === "BY_PIECE");
                   return (
                     <div className="flex items-center gap-2.5">
                       <span className="text-xl">✅</span>
                       <div>
                         <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
-                        <div className={`text-sm font-semibold ${totalStock > 0 ? "text-emerald-700" : "text-red-500"}`}>
-                          {totalStock > 0 ? `${totalStock} g ${t("productDetail.inStock").toLowerCase()}` : t("inquiry.outOfStock")}
+                        <div className={`text-sm font-semibold ${totalStock > 0 || totalPieces > 0 ? "text-emerald-700" : "text-red-500"}`}>
+                          {(() => {
+                            if (hasPieces && totalPieces > 0) return `${totalPieces} ks ${t("productDetail.inStock").toLowerCase()}`;
+                            if (totalStock > 0) return `${totalStock} g ${t("productDetail.inStock").toLowerCase()}`;
+                            return t("inquiry.outOfStock");
+                          })()}
                         </div>
                       </div>
                     </div>
