@@ -701,7 +701,11 @@
       "disclaimer": "Neplatíte nic online. Domluvíme schůzku kde si vlasy prohlédnete osobně.",
       "outOfStock": "Vyprodáno",
       "promoCodeLabel": "Slevový kód",
-      "promoCodePlaceholder": "Máte slevový kód?"
+      "promoCodePlaceholder": "Máte slevový kód?",
+      "promoApply": "Použít",
+      "promoApplied": "Kód bude aplikován",
+      "promoRemove": "Odebrat",
+      "promoInvalid": "Neplatný kód"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",

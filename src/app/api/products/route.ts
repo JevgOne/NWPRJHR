@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createProductSchema } from "@/lib/validations/product";
@@ -64,5 +65,6 @@ export async function POST(request: NextRequest) {
     ipAddress: getClientIp(request),
   });
 
+  revalidateTag("products", "max");
   return NextResponse.json(product, { status: 201 });
 }

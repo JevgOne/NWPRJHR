@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createVariantsSchema } from "@/lib/validations/product";
@@ -94,5 +95,6 @@ export async function POST(
     });
   }
 
+  revalidateTag("products", "max");
   return NextResponse.json({ created: created.count }, { status: 201 });
 }

@@ -16,6 +16,7 @@ import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { Fragment } from "react";
+import { cache } from "react";
 
 /** Parse **bold** markers into React elements */
 function renderBold(text: string): React.ReactNode {
@@ -67,7 +68,7 @@ const productSelect = {
   },
 } as const;
 
-async function getProduct(slugOrId: string) {
+const getProduct = cache(async function getProduct(slugOrId: string) {
   // Try slug first
   let product = await prisma.product.findUnique({
     where: { slug: slugOrId },
@@ -101,7 +102,7 @@ async function getProduct(slugOrId: string) {
     variants: variantsWithStock,
     photos: JSON.parse(product.photos || "[]") as string[],
   };
-}
+});
 
 const PROCESSING_LABELS: Record<string, Record<string, string>> = {
   cs: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Keratin", WEFT: "Tresový", MICRO_RING: "Micro ring", OTHER: "" },

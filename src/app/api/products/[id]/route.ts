@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateProductSchema } from "@/lib/validations/product";
@@ -54,6 +55,7 @@ export async function PUT(
     ipAddress: getClientIp(request),
   });
 
+  revalidateTag("products", "max");
   return NextResponse.json(product);
 }
 
@@ -81,5 +83,6 @@ export async function DELETE(
     ipAddress: getClientIp(_request),
   });
 
+  revalidateTag("products", "max");
   return NextResponse.json(product);
 }

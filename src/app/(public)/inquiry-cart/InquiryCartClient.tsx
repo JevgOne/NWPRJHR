@@ -60,7 +60,11 @@ export function InquiryCartClient() {
       const res = await fetch("/api/public/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, items }),
+        body: JSON.stringify({
+          ...form,
+          promoCode: promoResult?.valid ? promoResult.code : form.promoCode || undefined,
+          items,
+        }),
       });
 
       if (!res.ok) {

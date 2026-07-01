@@ -135,32 +135,46 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
     setFilter("search", searchInput.trim());
   }
 
-  // Fetch all products once for filter options
-  useEffect(() => {
-    fetch("/api/public/products")
-      .then((r) => r.json())
-      .then((data) => setAllProducts(data.data ?? []))
-      .catch(() => {});
-  }, []);
-
-  // Fetch filtered products
+  // Fetch all products once — filter client-side to avoid duplicate requests
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (activeCategory !== "ALL") params.set("category", activeCategory);
-    if (activeOrigin) params.set("origin", activeOrigin);
-    if (activeColor) params.set("color", activeColor);
-    if (activeLength) params.set("lengthCm", activeLength);
-    if (activeTexture) params.set("texture", activeTexture);
-    if (activeColorTone) params.set("colorTone", activeColorTone);
-    if (activeSearch) params.set("search", activeSearch);
-
-    fetch(`/api/public/products?${params}`)
+    fetch("/api/public/products")
       .then((r) => r.json())
-      .then((data) => setProducts(data.data ?? []))
+      .then((data) => {
+        setAllProducts(data.data ?? []);
+        setProducts(data.data ?? []);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch]);
+  }, []);
+
+  // Apply filters client-side from allProducts (no extra fetch)
+  useEffect(() => {
+    if (allProducts.length === 0) return;
+    const filtered = allProducts.filter((p) => {
+      if (activeCategory !== "ALL" && p.category !== activeCategory) return false;
+      if (activeOrigin && p.origin !== activeOrigin) return false;
+      if (activeTexture && p.texture !== activeTexture) return false;
+      if (activeColorTone && p.colorTone !== activeColorTone) return false;
+      if (activeColor || activeLength) {
+        const hasMatch = p.variants.some(
+          (v: PublicVariant) =>
+            (!activeColor || v.color === activeColor) &&
+            (!activeLength || v.lengthCm === parseInt(activeLength, 10))
+        );
+        if (!hasMatch) return false;
+      }
+      if (activeSearch) {
+        const haystack = [p.name, p.nameUk, p.nameRu, p.origin, p.description]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(activeSearch.toLowerCase())) return false;
+      }
+      return true;
+    });
+    setProducts(filtered);
+  }, [allProducts, activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch]);
 
   // Sort products by total stock (descending)
   const sortedProducts = useMemo(() => {
