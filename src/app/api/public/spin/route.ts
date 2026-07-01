@@ -7,18 +7,19 @@ const MAX_ATTEMPTS = 3;
 const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 const SEGMENTS = [
-  { id: 0, discount: 5,  weight: 18, label: "5%" },
-  { id: 1, discount: 0,  weight: 15, label: "miss" },
-  { id: 2, discount: 10, weight: 12, label: "10%" },
-  { id: 3, discount: 0,  weight: 15, label: "miss" },
-  { id: 4, discount: 0,  weight: 13, label: "miss" },
-  { id: 5, discount: 15, weight: 5,  label: "15%" },
-  { id: 6, discount: 0,  weight: 12, label: "miss" },
-  { id: 7, discount: 20, weight: 3,  label: "20%" },
-  { id: 8, discount: 0,  weight: 6,  label: "miss" },
-  { id: 9, discount: 25, weight: 1,  label: "25%" },
+  { id: 0, discount: 5,  weight: 25, label: "5%" },
+  { id: 1, discount: 0,  weight: 18, label: "miss" },
+  { id: 2, discount: 10, weight: 15, label: "10%" },
+  { id: 3, discount: 0,  weight: 18, label: "miss" },
+  { id: 4, discount: 15, weight: 6,  label: "15%" },
+  { id: 5, discount: 0,  weight: 18, label: "miss" },
+  { id: 6, discount: 20, weight: 3,  label: "20%" },
+  { id: 7, discount: 0,  weight: 18, label: "miss" },
 ];
 
+const WIN_SEGMENTS = SEGMENTS.filter((s) => s.discount > 0);
+
+/** Normal pick — can land on miss or win */
 function pickSegment(): (typeof SEGMENTS)[number] {
   const total = SEGMENTS.reduce((s, seg) => s + seg.weight, 0);
   let rand = Math.random() * total;
@@ -27,6 +28,17 @@ function pickSegment(): (typeof SEGMENTS)[number] {
     if (rand <= 0) return seg;
   }
   return SEGMENTS[0];
+}
+
+/** Guaranteed win pick — only discount segments (for 3rd attempt) */
+function pickWinningSegment(): (typeof SEGMENTS)[number] {
+  const total = WIN_SEGMENTS.reduce((s, seg) => s + seg.weight, 0);
+  let rand = Math.random() * total;
+  for (const seg of WIN_SEGMENTS) {
+    rand -= seg.weight;
+    if (rand <= 0) return seg;
+  }
+  return WIN_SEGMENTS[0]; // fallback: 5%
 }
 
 function generateCode(): string {
@@ -99,7 +111,9 @@ export async function POST(request: NextRequest) {
   }
 
   // Pick segment (server-side RNG)
-  const segment = pickSegment();
+  // 3rd attempt (last chance) → guaranteed win (min 5%)
+  const isLastAttempt = existing ? existing.attemptCount + 1 >= MAX_ATTEMPTS : false;
+  const segment = isLastAttempt && !existing?.won ? pickWinningSegment() : pickSegment();
   const won = segment.discount > 0;
 
   let promoCodeId: string | null = null;

@@ -4,21 +4,19 @@ import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import confetti from "canvas-confetti";
 
-const SEGMENT_COUNT = 10;
+const SEGMENT_COUNT = 8;
 const SEGMENT_ANGLE = 360 / SEGMENT_COUNT;
 
-// Premium brand palette — alternating warm tones
+// Premium brand palette — alternating win/miss tones
 const SEGMENT_COLORS = [
   "#c98b88", // 5%  — rose
   "#f7efe8", // miss — nude-100
   "#dba8a6", // 10% — blush-300
   "#efe0d6", // miss — nude-200
-  "#f6e3e0", // miss — blush-100
   "#a96d6c", // 15% — rose-deep
   "#f7efe8", // miss — nude-100
   "#c2a36b", // 20% — gold
   "#efe0d6", // miss — nude-200
-  "#7d5a5c", // 25% — mauve
 ];
 
 const SEGMENT_TEXT_COLORS = [
@@ -26,12 +24,10 @@ const SEGMENT_TEXT_COLORS = [
   "#3a2c2a", // on nude
   "#3a2c2a", // on blush
   "#3a2c2a", // on nude
-  "#3a2c2a", // on blush
   "#ffffff", // on rose-deep
   "#3a2c2a", // on nude
   "#3a2c2a", // on gold
   "#3a2c2a", // on nude
-  "#ffffff", // on mauve
 ];
 
 type SpinState = "idle" | "spinning" | "decelerating" | "result-win" | "result-lose" | "already-won" | "max-attempts" | "cooldown" | "error";
@@ -53,8 +49,8 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
   const resultRef = useRef<{ won: boolean; discountPercent: number } | null>(null);
 
   const segmentLabels = [
-    t("seg5"), t("segMiss"), t("seg10"), t("segMiss"), t("segMiss"),
-    t("seg15"), t("segMiss"), t("seg20"), t("segMiss"), t("seg25"),
+    t("seg5"), t("segMiss"), t("seg10"), t("segMiss"),
+    t("seg15"), t("segMiss"), t("seg20"), t("segMiss"),
   ];
 
   const showResult = (won: boolean, discountPercent: number, remaining: number) => {
