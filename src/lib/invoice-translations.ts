@@ -28,6 +28,8 @@ interface InvoiceTranslations {
   gram: string;
   piece: string;
   bankAccount: string;
+  iban: string;
+  bankName: string;
   page: string;
   referencesInvoice: string;
 }
@@ -58,6 +60,8 @@ const translations: Record<string, InvoiceTranslations> = {
     gram: "g",
     piece: "ks",
     bankAccount: "Bankovni ucet",
+    iban: "IBAN",
+    bankName: "Banka",
     page: "Strana",
     referencesInvoice: "Opravny doklad k fakture",
   },
@@ -86,6 +90,8 @@ const translations: Record<string, InvoiceTranslations> = {
     gram: "г",
     piece: "шт",
     bankAccount: "Банківський рахунок",
+    iban: "IBAN",
+    bankName: "Банк",
     page: "Сторінка",
     referencesInvoice: "Коригування до рахунку",
   },
@@ -114,6 +120,8 @@ const translations: Record<string, InvoiceTranslations> = {
     gram: "г",
     piece: "шт",
     bankAccount: "Банковский счёт",
+    iban: "IBAN",
+    bankName: "Банк",
     page: "Страница",
     referencesInvoice: "Корректировка к счёту",
   },

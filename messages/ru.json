@@ -234,6 +234,7 @@
     "dic": "DIČ",
     "address": "Адрес",
     "bankAccount": "Банковский счёт",
+    "bankNameLabel": "Название банка",
     "default": "По умолчанию",
     "setDefault": "Установить по умолчанию",
     "noCompanies": "Нет компаний"

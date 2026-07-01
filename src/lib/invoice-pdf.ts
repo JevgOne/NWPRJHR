@@ -33,6 +33,7 @@ export interface InvoicePdfData {
     address: string;
     bankAccount: string;
     bankIban?: string | null;
+    bankName?: string | null;
   };
   items: {
     description: string;
@@ -214,6 +215,24 @@ export async function generateInvoicePdf(
     { size: 8 }
   );
   y -= 13;
+  if (data.company.bankIban) {
+    drawText(
+      `${toAscii(t.iban)}: ${data.company.bankIban}`,
+      margin,
+      y,
+      { size: 8 }
+    );
+    y -= 13;
+  }
+  if (data.company.bankName) {
+    drawText(
+      `${toAscii(t.bankName)}: ${data.company.bankName}`,
+      margin,
+      y,
+      { size: 8 }
+    );
+    y -= 13;
+  }
 
   // Buyer details (same Y start)
   let bY = sY;

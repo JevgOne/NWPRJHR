@@ -234,6 +234,7 @@
     "dic": "DIČ",
     "address": "Адреса",
     "bankAccount": "Банківський рахунок",
+    "bankNameLabel": "Назва банку",
     "default": "За замовчуванням",
     "setDefault": "Встановити за замовчуванням",
     "noCompanies": "Немає компаній"

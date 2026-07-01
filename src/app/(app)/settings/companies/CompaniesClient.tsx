@@ -14,6 +14,10 @@ interface CompanyRow {
   address: string;
   bankAccount: string;
   bankIban?: string;
+  bankBic?: string;
+  bankName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
   isDefault: boolean;
   active: boolean;
 }
@@ -60,10 +64,10 @@ export function CompaniesClient() {
       address: c.address,
       bankAccount: c.bankAccount,
       bankIban: c.bankIban ?? "",
-      bankBic: "",
-      bankName: "",
-      contactEmail: "",
-      contactPhone: "",
+      bankBic: c.bankBic ?? "",
+      bankName: c.bankName ?? "",
+      contactEmail: c.contactEmail ?? "",
+      contactPhone: c.contactPhone ?? "",
     });
     setShowForm(true);
   };
@@ -148,6 +152,7 @@ export function CompaniesClient() {
               <div className="text-muted">{c.address}</div>
               <div className="text-muted">
                 {t("bankAccount")}: {c.bankAccount}
+                {c.bankName && ` (${c.bankName})`}
               </div>
               {c.bankIban && (
                 <div className="text-muted">IBAN: {c.bankIban}</div>
@@ -223,11 +228,18 @@ export function CompaniesClient() {
                 onChange={(e) => setField("bankAccount", e.target.value)}
               />
               <Input
-                label="IBAN"
-                value={form.bankIban}
-                onChange={(e) => setField("bankIban", e.target.value)}
+                label={t("bankNameLabel")}
+                value={form.bankName}
+                onChange={(e) => setField("bankName", e.target.value)}
+                placeholder="Raiffeisenbank"
               />
             </div>
+            <Input
+              label="IBAN"
+              value={form.bankIban}
+              onChange={(e) => setField("bankIban", e.target.value)}
+              placeholder="CZ6155000000007141812004"
+            />
             <div className="flex gap-2 pt-2">
               <Button size="sm" onClick={handleSave} disabled={saving}>
                 {tCommon("save")}

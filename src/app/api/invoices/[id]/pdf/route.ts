@@ -57,6 +57,7 @@ export async function GET(
       address: invoice.company.address,
       bankAccount: invoice.company.bankAccount,
       bankIban: invoice.company.bankIban,
+      bankName: invoice.company.bankName,
     },
     items: invoice.items.map((item) => ({
       description: item.description,

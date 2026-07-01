@@ -234,6 +234,7 @@
     "dic": "DIČ",
     "address": "Adresa",
     "bankAccount": "Bankovní účet",
+    "bankNameLabel": "Název banky",
     "default": "Výchozí",
     "setDefault": "Nastavit jako výchozí",
     "noCompanies": "Žádné firmy"
