@@ -140,24 +140,24 @@ export function translateNotification(
   > = {
     cs: {
       NEW_ORDER: {
-        title: "Nova objednavka",
-        message: `Prisla nova objednavka od salonu ${data?.salonName ?? ""}`,
+        title: "Nová objednávka",
+        message: `Přišla nová objednávka od salonu ${data?.salonName ?? ""}`,
       },
       ORDER_CONFIRMED: {
-        title: "Objednavka potvrzena",
-        message: `Vase objednavka ${data?.orderNumber ?? ""} byla potvrzena`,
+        title: "Objednávka potvrzena",
+        message: `Vaše objednávka ${data?.orderNumber ?? ""} byla potvrzena`,
       },
       ORDER_READY: {
-        title: "Objednavka pripravena",
-        message: `Vase objednavka ${data?.orderNumber ?? ""} je pripravena`,
+        title: "Objednávka připravena",
+        message: `Vaše objednávka ${data?.orderNumber ?? ""} je připravena`,
       },
       ORDER_IN_TRANSIT: {
-        title: "Objednavka na ceste",
-        message: `Vase objednavka ${data?.orderNumber ?? ""} je na ceste`,
+        title: "Objednávka na cestě",
+        message: `Vaše objednávka ${data?.orderNumber ?? ""} je na cestě`,
       },
       ORDER_REJECTED: {
-        title: "Objednavka zamitnuta",
-        message: `Vase objednavka ${data?.orderNumber ?? ""} byla zamitnuta`,
+        title: "Objednávka zamítnuta",
+        message: `Vaše objednávka ${data?.orderNumber ?? ""} byla zamítnuta`,
       },
       INVOICE_ISSUED: {
         title: "Faktura vystavena",
@@ -168,40 +168,40 @@ export function translateNotification(
         message: `Faktura ${data?.invoiceNumber ?? ""} byla uhrazena`,
       },
       SAMPLE_REQUEST: {
-        title: "Zadost o vzorek",
-        message: `Salon ${data?.salonName ?? ""} zada o vzorek`,
+        title: "Žádost o vzorek",
+        message: `Salon ${data?.salonName ?? ""} žádá o vzorek`,
       },
       INCOMING_PAYMENT: {
-        title: "Platba prijata",
-        message: `Prijata platba k fakture ${data?.invoiceNumber ?? ""}`,
+        title: "Platba přijata",
+        message: `Přijata platba k faktuře ${data?.invoiceNumber ?? ""}`,
       },
       RETURN_REQUEST: {
-        title: "Vratka ke schvaleni",
-        message: `Nova vratka ke schvaleni od salonu ${data?.salonName ?? ""}`,
+        title: "Vratka ke schválení",
+        message: `Nová vratka ke schválení od salonu ${data?.salonName ?? ""}`,
       },
       PAYMENT_REMINDER: {
-        title: "Upominka",
+        title: "Upomínka",
         message: `Faktura ${data?.invoiceNumber ?? ""} je po splatnosti`,
       },
       NEW_INQUIRY: {
-        title: "Nova poptavka",
-        message: `Prisla nova poptavka od ${data?.name ?? ""} (${data?.itemCount ?? 0} polozek)`,
+        title: "Nová poptávka",
+        message: `Přišla nová poptávka od ${data?.name ?? ""} (${data?.itemCount ?? 0} položek)`,
       },
       REGISTRATION: {
-        title: "Nova registrace",
-        message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" zada o schvaleni.`,
+        title: "Nová registrace",
+        message: `${data?.type ?? "Salon"} "${data?.name ?? ""}" žádá o schválení.`,
       },
       NEW_REVIEW: {
-        title: "Nova recenze",
-        message: `${data?.authorName ?? ""} pridal/a recenzi (${data?.rating ?? ""}★)`,
+        title: "Nová recenze",
+        message: `${data?.authorName ?? ""} přidal/a recenzi (${data?.rating ?? ""}★)`,
       },
       NEW_CONTACT: {
-        title: "Nova zprava z kontaktniho formulare",
-        message: `${data?.name ?? ""} (${data?.email ?? ""}) poslal/a zpravu`,
+        title: "Nová zpráva z kontaktního formuláře",
+        message: `${data?.name ?? ""} (${data?.email ?? ""}) poslal/a zprávu`,
       },
       NEW_COMPLAINT: {
-        title: "Nova reklamace",
-        message: `Nova reklamace${data?.salonName ? ` od salonu ${data.salonName}` : ""}`,
+        title: "Nová reklamace",
+        message: `Nová reklamace${data?.salonName ? ` od salonu ${data.salonName}` : ""}`,
       },
     },
     uk: {

@@ -58,24 +58,24 @@ export async function generateAccountingExport(
   workbook.created = new Date();
 
   // Sheet 1: Vydane faktury (Issued Invoices)
-  const sheet1 = workbook.addWorksheet("Vydane faktury");
+  const sheet1 = workbook.addWorksheet("Vydané faktury");
   sheet1.columns = [
-    { header: "Cislo faktury", key: "number", width: 18 },
+    { header: "Číslo faktury", key: "number", width: 18 },
     { header: "Typ", key: "type", width: 14 },
-    { header: "Datum vystaveni", key: "issueDate", width: 14 },
-    { header: "DUZP", key: "taxDate", width: 14 },
+    { header: "Datum vystavení", key: "issueDate", width: 14 },
+    { header: "DÚZP", key: "taxDate", width: 14 },
     { header: "Datum splatnosti", key: "dueDate", width: 14 },
-    { header: "Odberatel", key: "buyerName", width: 30 },
-    { header: "ICO", key: "buyerICO", width: 12 },
-    { header: "DIC", key: "buyerDIC", width: 14 },
-    { header: "Zaklad (CZK)", key: "subtotal", width: 14 },
+    { header: "Odběratel", key: "buyerName", width: 30 },
+    { header: "IČO", key: "buyerICO", width: 12 },
+    { header: "DIČ", key: "buyerDIC", width: 14 },
+    { header: "Základ (CZK)", key: "subtotal", width: 14 },
     { header: "Sazba DPH (%)", key: "vatRate", width: 12 },
     { header: "DPH (CZK)", key: "vatAmount", width: 12 },
     { header: "Celkem (CZK)", key: "totalAmount", width: 14 },
     { header: "Stav", key: "status", width: 12 },
     { header: "Uhrazeno", key: "paidDate", width: 14 },
     { header: "VS", key: "variableSymbol", width: 14 },
-    { header: "Fakturujici firma", key: "companyName", width: 25 },
+    { header: "Fakturující firma", key: "companyName", width: 25 },
   ];
 
   for (const inv of invoices) {
@@ -101,16 +101,16 @@ export async function generateAccountingExport(
   }
 
   // Sheet 2: Prijate faktury (Received Invoices from suppliers)
-  const sheet2 = workbook.addWorksheet("Prijate faktury");
+  const sheet2 = workbook.addWorksheet("Přijaté faktury");
   sheet2.columns = [
     { header: "Dodavatel", key: "supplierName", width: 25 },
-    { header: "Datum prijeti", key: "receivedDate", width: 14 },
-    { header: "Castka (orig.)", key: "originalAmount", width: 14 },
-    { header: "Mena", key: "currency", width: 8 },
+    { header: "Datum přijetí", key: "receivedDate", width: 14 },
+    { header: "Částka (orig.)", key: "originalAmount", width: 14 },
+    { header: "Měna", key: "currency", width: 8 },
     { header: "Kurz", key: "exchangeRate", width: 10 },
-    { header: "Castka (CZK)", key: "amountCZK", width: 14 },
+    { header: "Částka (CZK)", key: "amountCZK", width: 14 },
     { header: "Soubor", key: "invoiceFile", width: 30 },
-    { header: "Dodavka", key: "deliveryBarcode", width: 18 },
+    { header: "Dodávka", key: "deliveryBarcode", width: 18 },
   ];
 
   for (const del of deliveries) {
@@ -131,11 +131,11 @@ export async function generateAccountingExport(
   }
 
   // Sheet 3: Provozni naklady (Operating Costs)
-  const sheet3 = workbook.addWorksheet("Provozni naklady");
+  const sheet3 = workbook.addWorksheet("Provozní náklady");
   sheet3.columns = [
     { header: "Datum", key: "date", width: 14 },
     { header: "Kategorie", key: "category", width: 18 },
-    { header: "Castka (CZK)", key: "amount", width: 14 },
+    { header: "Částka (CZK)", key: "amount", width: 14 },
     { header: "Popis", key: "description", width: 40 },
     { header: "Doklad", key: "receiptFile", width: 30 },
   ];
@@ -151,10 +151,10 @@ export async function generateAccountingExport(
   }
 
   // Sheet 4: Prehled DPH (VAT Overview)
-  const sheet4 = workbook.addWorksheet("Prehled DPH");
+  const sheet4 = workbook.addWorksheet("Přehled DPH");
   sheet4.columns = [
-    { header: "Polozka", key: "item", width: 40 },
-    { header: "Castka (CZK)", key: "amount", width: 18 },
+    { header: "Položka", key: "item", width: 40 },
+    { header: "Částka (CZK)", key: "amount", width: 18 },
   ];
 
   const issuedInvoices = invoices.filter((i) => i.type === "INVOICE");
@@ -170,17 +170,17 @@ export async function generateAccountingExport(
   );
   const inputCosts = operatingCosts.reduce((s, c) => s + c.amountHalere, 0);
 
-  sheet4.addRow({ item: "VYSTUPY", amount: "" });
+  sheet4.addRow({ item: "VÝSTUPY", amount: "" });
   sheet4.addRow({
-    item: "Zaklad DPH z vydanych faktur",
+    item: "Základ DPH z vydaných faktur",
     amount: halereToCZK(outputBase),
   });
   sheet4.addRow({
-    item: "DPH z vydanych faktur",
+    item: "DPH z vydaných faktur",
     amount: halereToCZK(outputVat),
   });
   sheet4.addRow({
-    item: "Zaklad DPH z dobropisů (-)  ",
+    item: "Základ DPH z dobropisů (-)",
     amount: halereToCZK(creditBase),
   });
   sheet4.addRow({
@@ -190,11 +190,11 @@ export async function generateAccountingExport(
   sheet4.addRow({ item: "", amount: "" });
   sheet4.addRow({ item: "VSTUPY", amount: "" });
   sheet4.addRow({
-    item: "Prijate faktury (dodavatele)",
+    item: "Přijaté faktury (dodavatelé)",
     amount: halereToCZK(inputDeliveries),
   });
   sheet4.addRow({
-    item: "Provozni naklady",
+    item: "Provozní náklady",
     amount: halereToCZK(inputCosts),
   });
 
