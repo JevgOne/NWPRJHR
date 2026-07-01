@@ -100,6 +100,7 @@ export function AppShell({ session, children }: AppShellProps) {
     {
       label: "Marketing",
       items: [
+        { href: "/promo-codes", label: t("promoCodes"), roles: ["OWNER"] },
         { href: "/posts", label: "Blog", roles: ["OWNER"] },
       ],
     },

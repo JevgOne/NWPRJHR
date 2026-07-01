@@ -67,7 +67,8 @@
     "export": "Експорт",
     "auditLog": "Журнал дій",
     "registrations": "Реєстрації",
-    "complaintTickets": "Тікети рекламацій"
+    "complaintTickets": "Тікети рекламацій",
+    "promoCodes": "Промокоди"
   },
   "dashboard": {
     "title": "Огляд",
@@ -1500,5 +1501,33 @@
     "reject": "Відхилити",
     "registeredAt": "Зареєстровано",
     "all": "Усі"
+  },
+  "promoCodes": {
+    "title": "Промокоди",
+    "createCode": "Новий код",
+    "code": "Код",
+    "description": "Опис",
+    "descriptionPlaceholder": "Літня акція, VIP знижка...",
+    "discountType": "Тип знижки",
+    "percent": "Відсотки",
+    "fixedAmount": "Фіксована сума",
+    "discountPercent": "Знижка (%)",
+    "discountCZK": "Знижка (CZK)",
+    "minOrder": "Мінімальне замовлення",
+    "noMinimum": "Без мінімуму",
+    "maxUses": "Макс. використань",
+    "unlimited": "Необмежено",
+    "validFrom": "Дійсний з",
+    "validTo": "Дійсний до",
+    "used": "використано",
+    "active": "Активний",
+    "inactive": "Неактивний",
+    "expired": "Закінчився",
+    "usedUp": "Вичерпано",
+    "activate": "Активувати",
+    "deactivate": "Деактивувати",
+    "noCodes": "Немає промокодів",
+    "fillRequired": "Заповніть код та знижку",
+    "codeExists": "Код вже існує"
   }
 }

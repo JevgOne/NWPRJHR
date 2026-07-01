@@ -67,7 +67,8 @@
     "export": "Экспорт",
     "auditLog": "Журнал действий",
     "registrations": "Регистрации",
-    "complaintTickets": "Тикеты рекламаций"
+    "complaintTickets": "Тикеты рекламаций",
+    "promoCodes": "Промокоды"
   },
   "dashboard": {
     "title": "Обзор",
@@ -1500,5 +1501,33 @@
     "reject": "Отклонить",
     "registeredAt": "Зарегистрировано",
     "all": "Все"
+  },
+  "promoCodes": {
+    "title": "Промокоды",
+    "createCode": "Новый код",
+    "code": "Код",
+    "description": "Описание",
+    "descriptionPlaceholder": "Летняя акция, VIP скидка...",
+    "discountType": "Тип скидки",
+    "percent": "Проценты",
+    "fixedAmount": "Фиксированная сумма",
+    "discountPercent": "Скидка (%)",
+    "discountCZK": "Скидка (CZK)",
+    "minOrder": "Минимальный заказ",
+    "noMinimum": "Без минимума",
+    "maxUses": "Макс. использований",
+    "unlimited": "Без ограничений",
+    "validFrom": "Действует с",
+    "validTo": "Действует до",
+    "used": "использовано",
+    "active": "Активный",
+    "inactive": "Неактивный",
+    "expired": "Истёк",
+    "usedUp": "Исчерпан",
+    "activate": "Активировать",
+    "deactivate": "Деактивировать",
+    "noCodes": "Нет промокодов",
+    "fillRequired": "Заполните код и скидку",
+    "codeExists": "Код уже существует"
   }
 }

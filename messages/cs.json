@@ -67,7 +67,8 @@
     "export": "Export",
     "auditLog": "Audit log",
     "registrations": "Registrace",
-    "complaintTickets": "Tikety reklamací"
+    "complaintTickets": "Tikety reklamací",
+    "promoCodes": "Slevové kódy"
   },
   "dashboard": {
     "title": "Přehled",
@@ -1500,5 +1501,33 @@
     "reject": "Zamítnout",
     "registeredAt": "Registrováno",
     "all": "Vše"
+  },
+  "promoCodes": {
+    "title": "Slevové kódy",
+    "createCode": "Nový kód",
+    "code": "Kód",
+    "description": "Popis",
+    "descriptionPlaceholder": "Letní akce, VIP sleva...",
+    "discountType": "Typ slevy",
+    "percent": "Procenta",
+    "fixedAmount": "Fixní částka",
+    "discountPercent": "Sleva (%)",
+    "discountCZK": "Sleva (CZK)",
+    "minOrder": "Minimální objednávka",
+    "noMinimum": "Bez minima",
+    "maxUses": "Max. použití",
+    "unlimited": "Neomezeno",
+    "validFrom": "Platný od",
+    "validTo": "Platný do",
+    "used": "použito",
+    "active": "Aktivní",
+    "inactive": "Neaktivní",
+    "expired": "Vypršel",
+    "usedUp": "Vyčerpán",
+    "activate": "Aktivovat",
+    "deactivate": "Deaktivovat",
+    "noCodes": "Žádné slevové kódy",
+    "fillRequired": "Vyplňte kód a slevu",
+    "codeExists": "Kód již existuje"
   }
 }

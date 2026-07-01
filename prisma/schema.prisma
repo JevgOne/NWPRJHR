@@ -1487,3 +1487,32 @@ model CommentLike {
   @@index([commentId])
   @@map("comment_likes")
 }
+
+// ============================================================
+// PROMO_CODE -- slevové kódy pro B2B objednávky
+// ============================================================
+
+model PromoCode {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  description   String?
+  discountType  PromoDiscountType
+  discountValue Int       // basis points for PERCENT (3000 = 30%), halere for FIXED
+  minOrderValue Int?      // minimum order amount in halere (null = no minimum)
+  maxUses       Int?      // null = unlimited
+  usedCount     Int       @default(0)
+  validFrom     DateTime?
+  validTo       DateTime?
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([code])
+  @@index([active])
+  @@map("promo_codes")
+}
+
+enum PromoDiscountType {
+  PERCENT
+  FIXED
+}
