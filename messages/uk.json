@@ -1138,7 +1138,11 @@
     "recordRefund": "Записати відшкодування",
     "refundAmount": "Сума відшкодування",
     "refundNote": "Примітка",
-    "creditNote": "Коригувальний документ"
+    "creditNote": "Коригувальний документ",
+    "internalComplaints": "Внутрішні рекламації",
+    "saleNumber": "Номер продажу",
+    "createdBy": "Створив",
+    "resolvedAt": "Вирішено"
   },
   "complaintTickets": {
     "title": "Тікети рекламацій",

@@ -1138,7 +1138,11 @@
     "recordRefund": "Записать возврат",
     "refundAmount": "Сумма возврата",
     "refundNote": "Примечание",
-    "creditNote": "Корректировочный документ"
+    "creditNote": "Корректировочный документ",
+    "internalComplaints": "Внутренние рекламации",
+    "saleNumber": "Номер продажи",
+    "createdBy": "Создал",
+    "resolvedAt": "Решено"
   },
   "complaintTickets": {
     "title": "Тикеты рекламаций",

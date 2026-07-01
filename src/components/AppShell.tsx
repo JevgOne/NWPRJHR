@@ -85,7 +85,6 @@ export function AppShell({ session, children }: AppShellProps) {
       items: [
         { href: "/reviews", label: "Recenze", roles: ["OWNER", "EMPLOYEE"] },
         { href: "/complaints", label: t("complaints"), roles: ["OWNER"] },
-        { href: "/complaint-tickets", label: t("complaintTickets"), roles: ["OWNER"] },
         { href: "/returns", label: t("returns"), roles: ["OWNER"] },
         { href: "/samples", label: t("samples"), roles: ["OWNER"] },
       ],

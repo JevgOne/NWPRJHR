@@ -1138,7 +1138,11 @@
     "recordRefund": "Zaznamenat vrácení",
     "refundAmount": "Částka vrácení",
     "refundNote": "Poznámka",
-    "creditNote": "Dobropis"
+    "creditNote": "Dobropis",
+    "internalComplaints": "Interní reklamace",
+    "saleNumber": "Číslo prodeje",
+    "createdBy": "Vytvořil",
+    "resolvedAt": "Vyřešeno"
   },
   "complaintTickets": {
     "title": "Tikety reklamací",
