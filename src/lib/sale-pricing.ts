@@ -1,6 +1,7 @@
 import type { CustomerType } from "@prisma/client";
 import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
+import { getLoyaltyDiscount } from "./loyalty";
 
 export interface SalePriceResult {
   pricePerGram: number;
@@ -10,12 +11,13 @@ export interface SalePriceResult {
 
 /**
  * Get effective price for a sale, supporting both BY_GRAM and BY_PIECE modes.
- * Returns sellingMode so callers know which price to use for lineTotal.
+ * SALON/HAIRDRESSER: retail price minus loyalty tier discount.
+ * RETAIL: full retail price.
  */
 export async function getSalePrice(
   variantId: string,
   customerType: CustomerType,
-  _salonId?: string
+  salonId?: string
 ): Promise<SalePriceResult> {
   const variant = await prisma.variant.findUniqueOrThrow({
     where: { id: variantId },
@@ -23,35 +25,37 @@ export async function getSalePrice(
 
   const sellingMode = (variant.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE";
 
-  // Always compute pricePerGram (needed for COGS even in BY_PIECE mode)
+  // Get loyalty discount for B2B customers
+  let discountPct = 0;
+  if ((customerType === "SALON" || customerType === "HAIRDRESSER") && salonId) {
+    const salon = await prisma.salon.findUnique({
+      where: { id: salonId },
+      select: { tier: true, type: true },
+    });
+    if (salon) {
+      discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
+    }
+  }
+
+  // Always compute pricePerGram from retail price
   let pricePerGram: number;
-  if (customerType === "RETAIL") {
+  if (customerType === "RETAIL" || discountPct === 0) {
     pricePerGram = variant.retailPricePerGram;
-  } else if (customerType === "HAIRDRESSER") {
-    const settings = await prisma.b2BSettings.findFirst();
-    const discountPct = settings?.hairdresserDiscountPct ?? 2000;
+  } else {
     pricePerGram = roundHalereUp(
       (variant.retailPricePerGram * (10000 - discountPct)) / 10000
     );
-  } else {
-    // SALON: wholesale price
-    pricePerGram = variant.wholesalePricePerGram;
   }
 
   if (sellingMode === "BY_PIECE") {
+    const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
     let piecePrice: number;
-    if (customerType === "RETAIL") {
-      piecePrice = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
-    } else if (customerType === "HAIRDRESSER") {
-      const settings = await prisma.b2BSettings.findFirst();
-      const discountPct = settings?.hairdresserDiscountPct ?? 2000;
-      const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+    if (customerType === "RETAIL" || discountPct === 0) {
+      piecePrice = retailPerPiece;
+    } else {
       piecePrice = roundHalereUp(
         (retailPerPiece * (10000 - discountPct)) / 10000
       );
-    } else {
-      // SALON: wholesale per piece
-      piecePrice = variant.pricePerPiece ?? 0;
     }
     return { pricePerGram, pricePerPiece: piecePrice, sellingMode: "BY_PIECE" };
   }

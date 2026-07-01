@@ -340,9 +340,11 @@
   },
   "loyaltySettings": {
     "title": "Věrnostní program",
+    "salons": "Salony",
+    "hairdressers": "Kadeřnice",
     "revenueThreshold": "Obratový práh",
     "discountPercent": "Sleva (%)",
-    "warning": "Toto přepočítá úrovně všech salonů"
+    "warning": "Toto přepočítá úrovně všech salonů/kadeřnic daného typu"
   },
   "finance": {
     "title": "Finance",

@@ -5,6 +5,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { roundHalereUp } from "@/lib/rounding";
+import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
 import { getOriginFlag } from "@/lib/origin-flags";
@@ -190,37 +191,33 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   let discountPct = 0;
   let tierBadge: string | null = null;
 
-  if (role === "HAIRDRESSER") {
-    const settings = await prisma.b2BSettings.findFirst();
-    discountPct = settings?.hairdresserDiscountPct ?? 2000;
-    tierBadge = t("productDetail.yourPrice");
-  } else if (role === "SALON") {
+  if ((role === "HAIRDRESSER" || role === "SALON") && session?.user?.salonId) {
+    const salon = await prisma.salon.findUnique({
+      where: { id: session.user.salonId },
+      select: { tier: true, type: true },
+    });
+    if (salon) {
+      discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
+    }
     tierBadge = t("productDetail.yourPrice");
   }
 
   // Build variant data with resolved prices for the picker
+  // B2B: loyalty discount from retail price. Retail: full retail price.
   const pickerVariants = product.variants
     .filter((v) => v.retailPricePerGram > 0 || (v.pricePerPiece ?? 0) > 0)
     .map((v) => {
       const isByPiece = v.sellingMode === "BY_PIECE";
       let displayPrice: number;
       if (isByPiece) {
-        const piecePrice = v.pricePerPiece ?? 0;
-        if (role === "HAIRDRESSER") {
-          displayPrice = roundHalereUp((v.retailPricePerPiece! * (10000 - discountPct)) / 10000);
-        } else if (role === "SALON") {
-          displayPrice = piecePrice;
-        } else {
-          displayPrice = v.retailPricePerPiece ?? piecePrice;
-        }
+        const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+        displayPrice = discountPct > 0
+          ? roundHalereUp((retailPiece * (10000 - discountPct)) / 10000)
+          : retailPiece;
       } else {
-        if (role === "HAIRDRESSER") {
-          displayPrice = roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000);
-        } else if (role === "SALON") {
-          displayPrice = v.wholesalePricePerGram;
-        } else {
-          displayPrice = v.retailPricePerGram;
-        }
+        displayPrice = discountPct > 0
+          ? roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000)
+          : v.retailPricePerGram;
       }
       return {
         lengthCm: v.lengthCm,

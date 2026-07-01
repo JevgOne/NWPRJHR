@@ -340,9 +340,11 @@
   },
   "loyaltySettings": {
     "title": "Програма лояльності",
+    "salons": "Салони",
+    "hairdressers": "Перукарі",
     "revenueThreshold": "Поріг обороту",
     "discountPercent": "Знижка (%)",
-    "warning": "Це перерахує рівні всіх салонів"
+    "warning": "Це перерахує рівні всіх салонів/перукарів даного типу"
   },
   "finance": {
     "title": "Фінанси",

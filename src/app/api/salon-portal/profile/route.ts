@@ -15,6 +15,7 @@ export async function GET() {
     select: {
       id: true,
       name: true,
+      type: true,
       tier: true,
       points: true,
       totalRevenue: true,
@@ -27,10 +28,11 @@ export async function GET() {
     },
   });
 
-  const discountPercent = await getLoyaltyDiscount(salon.tier);
+  const discountPercent = await getLoyaltyDiscount(salon.tier, salon.type);
 
-  // Get next tier info
+  // Get next tier info for this salon type
   const allSettings = await prisma.loyaltySettings.findMany({
+    where: { salonType: salon.type },
     orderBy: { revenueThreshold: "asc" },
   });
 

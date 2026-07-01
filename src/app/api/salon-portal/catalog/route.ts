@@ -19,13 +19,11 @@ export async function GET() {
     where: { id: session.user.salonId },
   });
 
-  const isHairdresser = session.user.role === "HAIRDRESSER";
+  const salonType = salon.type as "SALON" | "HAIRDRESSER";
 
   // Parallel fetch: discount + products + stock (3 queries at once)
-  const [discountData, products, stockMap] = await Promise.all([
-    isHairdresser
-      ? prisma.b2BSettings.findFirst().then(s => ({ hairdresserDiscountPct: s?.hairdresserDiscountPct ?? 2000, loyaltyDiscount: 0 }))
-      : getLoyaltyDiscount(salon.tier).then(d => ({ hairdresserDiscountPct: 0, loyaltyDiscount: d })),
+  const [loyaltyDiscount, products, stockMap] = await Promise.all([
+    getLoyaltyDiscount(salon.tier, salonType),
     prisma.product.findMany({
       where: { archived: false },
       include: {
@@ -39,9 +37,8 @@ export async function GET() {
     getAllStockNumbers(),
   ]);
 
-  const { hairdresserDiscountPct, loyaltyDiscount } = discountData;
-
   // Add role-specific prices, filter to in-stock variants only
+  // Both salon and hairdresser: loyalty discount applied to retail price
   const allProducts = products.map((product) => {
     const variants = product.variants
       .map((v) => {
@@ -52,29 +49,15 @@ export async function GET() {
         let pricePerPiece: number | undefined;
 
         if (isByPiece) {
-          const basePiece = v.pricePerPiece ?? 0;
-          const retailPiece = v.retailPricePerPiece ?? basePiece;
-          if (isHairdresser) {
-            pricePerPiece = roundHalereUp((retailPiece * (10000 - hairdresserDiscountPct)) / 10000);
-          } else {
-            pricePerPiece = loyaltyDiscount > 0
-              ? roundHalereUp((basePiece * (10000 - loyaltyDiscount)) / 10000)
-              : basePiece;
-          }
+          const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+          pricePerPiece = loyaltyDiscount > 0
+            ? roundHalereUp((retailPiece * (10000 - loyaltyDiscount)) / 10000)
+            : retailPiece;
           price = 0; // not used for BY_PIECE
         } else {
-          if (isHairdresser) {
-            price = roundHalereUp(
-              (v.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
-            );
-          } else {
-            price =
-              loyaltyDiscount > 0
-                ? roundHalereUp(
-                    (v.wholesalePricePerGram * (10000 - loyaltyDiscount)) / 10000
-                  )
-                : v.wholesalePricePerGram;
-          }
+          price = loyaltyDiscount > 0
+            ? roundHalereUp((v.retailPricePerGram * (10000 - loyaltyDiscount)) / 10000)
+            : v.retailPricePerGram;
         }
 
         return {

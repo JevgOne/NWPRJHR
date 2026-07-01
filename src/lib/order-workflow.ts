@@ -44,7 +44,7 @@ export async function createOrder(
 
   // Parallel: loyalty discount + all variants + all stock in 3 queries
   const [loyaltyDiscount, variants, stockMap] = await Promise.all([
-    getLoyaltyDiscount(salon.tier),
+    getLoyaltyDiscount(salon.tier, salon.type),
     prisma.variant.findMany({
       where: { id: { in: variantIds } },
     }),
@@ -100,15 +100,15 @@ export async function createOrder(
     let lineTotal: number;
 
     if (isByPiece) {
-      const basePiecePrice = variant.pricePerPiece ?? 0;
+      const retailPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
       pricePerUnit = loyaltyDiscount > 0
-        ? roundHalereUp(basePiecePrice * (10000 - loyaltyDiscount) / 10000)
-        : basePiecePrice;
+        ? roundHalereUp(retailPiece * (10000 - loyaltyDiscount) / 10000)
+        : retailPiece;
       lineTotal = roundHalereUp(pricePerUnit * item.pieces);
     } else {
       pricePerUnit = loyaltyDiscount > 0
-        ? roundHalereUp(variant.wholesalePricePerGram * (10000 - loyaltyDiscount) / 10000)
-        : variant.wholesalePricePerGram;
+        ? roundHalereUp(variant.retailPricePerGram * (10000 - loyaltyDiscount) / 10000)
+        : variant.retailPricePerGram;
       lineTotal = roundHalereUp(pricePerUnit * item.grams);
     }
     estimatedTotal += lineTotal;

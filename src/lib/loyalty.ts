@@ -1,33 +1,35 @@
 import { prisma, type TransactionClient } from "./db";
-import type { LoyaltyTier, LoyaltySettings } from "@prisma/client";
+import type { LoyaltyTier, LoyaltySettings, SalonType } from "@prisma/client";
 
-// In-memory cache for loyalty settings (5min TTL)
-let cachedSettings: LoyaltySettings[] | null = null;
-let cachedSettingsAt = 0;
+// In-memory cache for loyalty settings (5min TTL), keyed by salonType
+const cachedSettingsMap = new Map<SalonType, { data: LoyaltySettings[]; at: number }>();
 const LOYALTY_CACHE_TTL = 300_000;
 
 export function invalidateLoyaltyCache() {
-  cachedSettings = null;
+  cachedSettingsMap.clear();
 }
 
-async function getCachedSettings(): Promise<LoyaltySettings[]> {
-  if (cachedSettings && Date.now() - cachedSettingsAt < LOYALTY_CACHE_TTL) {
-    return cachedSettings;
+async function getCachedSettings(salonType: SalonType = "SALON"): Promise<LoyaltySettings[]> {
+  const cached = cachedSettingsMap.get(salonType);
+  if (cached && Date.now() - cached.at < LOYALTY_CACHE_TTL) {
+    return cached.data;
   }
-  cachedSettings = await prisma.loyaltySettings.findMany({
+  const data = await prisma.loyaltySettings.findMany({
+    where: { salonType },
     orderBy: { revenueThreshold: "desc" },
   });
-  cachedSettingsAt = Date.now();
-  return cachedSettings;
+  cachedSettingsMap.set(salonType, { data, at: Date.now() });
+  return data;
 }
 
 /**
  * Determine salon's loyalty tier based on cumulative revenue.
  */
 export async function calculateTier(
-  totalRevenue: number
+  totalRevenue: number,
+  salonType: SalonType = "SALON"
 ): Promise<LoyaltyTier> {
-  const settings = await getCachedSettings();
+  const settings = await getCachedSettings(salonType);
 
   for (const setting of settings) {
     if (totalRevenue >= setting.revenueThreshold) {
@@ -42,9 +44,10 @@ export async function calculateTier(
  * e.g. 300 = 3.00%
  */
 export async function getLoyaltyDiscount(
-  tier: LoyaltyTier
+  tier: LoyaltyTier,
+  salonType: SalonType = "SALON"
 ): Promise<number> {
-  const settings = await getCachedSettings();
+  const settings = await getCachedSettings(salonType);
   const setting = settings.find(s => s.tier === tier);
   return setting?.discountPercent ?? 0;
 }
@@ -91,7 +94,7 @@ export async function addSalonRevenueInTx(
     },
   });
 
-  const newTier = await calculateTier(salon.totalRevenue);
+  const newTier = await calculateTier(salon.totalRevenue, salon.type);
   if (newTier !== salon.tier) {
     await tx.salon.update({
       where: { id: salonId },
@@ -128,7 +131,7 @@ export async function reduceSalonRevenue(
     });
   }
 
-  const newTier = await calculateTier(Math.max(0, salon.totalRevenue));
+  const newTier = await calculateTier(Math.max(0, salon.totalRevenue), salon.type);
   if (newTier !== salon.tier) {
     await prisma.salon.update({
       where: { id: salonId },

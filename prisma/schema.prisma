@@ -777,13 +777,15 @@ model Payment {
 
 model LoyaltySettings {
   id                String      @id @default(cuid())
-  tier              LoyaltyTier @unique
+  tier              LoyaltyTier
+  salonType         SalonType   @default(SALON)
   revenueThreshold  Int
   discountPercent   Int
   pointsThreshold   Int         @default(10000)
 
   updatedAt         DateTime    @updatedAt
 
+  @@unique([tier, salonType])
   @@map("loyalty_settings")
 }
 

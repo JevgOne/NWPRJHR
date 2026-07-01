@@ -4,6 +4,7 @@ import { roundHalereUp } from "./rounding";
 import { fifoDeduct } from "./fifo";
 import { invalidateStockCache } from "./stock";
 import { notifyLowStock } from "./telegram";
+import { getLoyaltyDiscount } from "./loyalty";
 
 export interface SaleItemInput {
   variantId: string;
@@ -51,33 +52,34 @@ export async function completeSale(
           let pricePerGram: number;
           let pricePerUnit: number;
 
-          // Hairdresser discount (loaded once, cached for all items)
-          let hairdresserDiscountPct = 0;
-          if (input.customerType === "HAIRDRESSER") {
-            const settings = await tx.b2BSettings.findFirst();
-            hairdresserDiscountPct = settings?.hairdresserDiscountPct ?? 2000;
+          // Loyalty discount for B2B customers (from retail price)
+          let discountPct = 0;
+          if ((input.customerType === "SALON" || input.customerType === "HAIRDRESSER") && input.salonId) {
+            const salon = await tx.salon.findUnique({
+              where: { id: input.salonId },
+              select: { tier: true, type: true },
+            });
+            if (salon) {
+              discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
+            }
           }
 
-          if (input.customerType === "SALON") {
-            pricePerGram = variant.wholesalePricePerGram;
-          } else if (input.customerType === "HAIRDRESSER") {
-            pricePerGram = roundHalereUp(
-              (variant.retailPricePerGram * (10000 - hairdresserDiscountPct)) / 10000
-            );
-          } else {
+          if (input.customerType === "RETAIL" || discountPct === 0) {
             pricePerGram = variant.retailPricePerGram;
+          } else {
+            pricePerGram = roundHalereUp(
+              (variant.retailPricePerGram * (10000 - discountPct)) / 10000
+            );
           }
 
           if (isByPiece) {
-            if (input.customerType === "SALON") {
-              pricePerUnit = variant.pricePerPiece ?? 0;
-            } else if (input.customerType === "HAIRDRESSER") {
-              const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
-              pricePerUnit = roundHalereUp(
-                (retailPerPiece * (10000 - hairdresserDiscountPct)) / 10000
-              );
+            const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+            if (input.customerType === "RETAIL" || discountPct === 0) {
+              pricePerUnit = retailPerPiece;
             } else {
-              pricePerUnit = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+              pricePerUnit = roundHalereUp(
+                (retailPerPiece * (10000 - discountPct)) / 10000
+              );
             }
           } else {
             pricePerUnit = pricePerGram;

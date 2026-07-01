@@ -53,6 +53,7 @@ export const sampleRequestSchema = z.object({
 
 export const loyaltySettingsSchema = z.object({
   tier: z.enum(["BRONZE", "SILVER", "GOLD", "PLATINUM"]),
+  salonType: z.enum(["SALON", "HAIRDRESSER"]).default("SALON"),
   revenueThreshold: z.number().int().min(0),
   discountPercent: z.number().int().min(0).max(10000),
 });
