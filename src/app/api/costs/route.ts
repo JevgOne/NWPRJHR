@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createOperatingCostSchema } from "@/lib/validations/finance";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -75,6 +76,16 @@ export async function POST(request: NextRequest) {
       note: parsed.data.note,
       createdByUserId: session.user.id,
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "OperatingCost",
+    entityId: cost.id,
+    detail: { category: parsed.data.category, amountHalere: parsed.data.amountHalere },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(cost, { status: 201 });

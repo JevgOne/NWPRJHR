@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -35,6 +36,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     },
   });
 
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Stylist",
+    entityId: id,
+    detail: { name: stylist.name },
+    ipAddress: getClientIp(req),
+  });
+
   return NextResponse.json(stylist);
 }
 
@@ -46,5 +57,15 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
   const { id } = await params;
   await prisma.stylist.delete({ where: { id } });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "Stylist",
+    entityId: id,
+    ipAddress: getClientIp(req),
+  });
+
   return NextResponse.json({ ok: true });
 }

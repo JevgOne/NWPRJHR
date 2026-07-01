@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { rejectReturn } from "@/lib/returns";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function POST(
   _request: NextRequest,
@@ -16,6 +17,16 @@ export async function POST(
 
   try {
     const ret = await rejectReturn(id, session.user.id);
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "REJECT",
+      entity: "Return",
+      entityId: id,
+      ipAddress: getClientIp(_request),
+    });
+
     return NextResponse.json(ret);
   } catch (e) {
     if (e instanceof Error) {

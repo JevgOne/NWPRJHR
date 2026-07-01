@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { createVariantsSchema } from "@/lib/validations/product";
 import { serializeVariantForRole } from "@/lib/api/product-serializer";
 import { calculateRetailPrice } from "@/lib/pricing";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -80,6 +81,18 @@ export async function POST(
   const created = newVariants.length > 0
     ? await prisma.variant.createMany({ data: newVariants })
     : { count: 0 };
+
+  if (created.count > 0) {
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "CREATE",
+      entity: "Variant",
+      entityId: productId,
+      detail: { count: created.count, variants: newVariants.map(v => ({ lengthCm: v.lengthCm, color: v.color })) },
+      ipAddress: getClientIp(request),
+    });
+  }
 
   return NextResponse.json({ created: created.count }, { status: 201 });
 }

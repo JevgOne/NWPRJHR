@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 const createBlogSchema = z.object({
   title: z.string().min(1).max(200),
@@ -90,6 +91,16 @@ export async function POST(request: NextRequest) {
       metaDescription: data.metaDescription,
       ogImage: data.ogImage,
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "BlogPost",
+    entityId: post.id,
+    detail: { title: post.title, slug: post.slug },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(post, { status: 201 });

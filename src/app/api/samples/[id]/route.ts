@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createSalonNotification } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function PUT(
   request: NextRequest,
@@ -41,6 +42,16 @@ export async function PUT(
   const updated = await prisma.sampleRequest.update({
     where: { id },
     data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "SampleRequest",
+    entityId: id,
+    detail: { status: body.status },
+    ipAddress: getClientIp(request),
   });
 
   // Notify salon when sample is sent

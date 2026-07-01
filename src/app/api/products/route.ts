@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createProductSchema } from "@/lib/validations/product";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -51,6 +52,16 @@ export async function POST(request: NextRequest) {
 
   const product = await prisma.product.create({
     data: parsed.data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "Product",
+    entityId: product.id,
+    detail: { name: product.name, category: product.category },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(product, { status: 201 });

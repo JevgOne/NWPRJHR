@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateProductSchema } from "@/lib/validations/product";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -43,6 +44,16 @@ export async function PUT(
     data: parsed.data,
   });
 
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Product",
+    entityId: id,
+    detail: { changes: parsed.data },
+    ipAddress: getClientIp(request),
+  });
+
   return NextResponse.json(product);
 }
 
@@ -59,6 +70,15 @@ export async function DELETE(
   const product = await prisma.product.update({
     where: { id },
     data: { archived: true },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "ARCHIVE",
+    entity: "Product",
+    entityId: id,
+    ipAddress: getClientIp(_request),
   });
 
   return NextResponse.json(product);

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { companySchema } from "@/lib/validations/invoice";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET() {
   const session = await auth();
@@ -40,6 +41,16 @@ export async function POST(request: NextRequest) {
 
   const company = await prisma.company.create({
     data: parsed.data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "Company",
+    entityId: company.id,
+    detail: { name: company.name },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(company, { status: 201 });

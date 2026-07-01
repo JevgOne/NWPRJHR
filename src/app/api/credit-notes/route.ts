@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { creditNoteSchema } from "@/lib/validations/invoice";
 import { createCreditNote } from "@/lib/invoicing";
 import { reduceSalonRevenue } from "@/lib/loyalty";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -81,6 +82,16 @@ export async function POST(request: NextRequest) {
     const returnAmount = Math.abs(creditNote.subtotal);
     await reduceSalonRevenue(creditNote.salonId, returnAmount);
   }
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "CreditNote",
+    entityId: creditNote.id,
+    detail: { number: creditNote.number, total: creditNote.total, originalInvoiceId: parsed.data.originalInvoiceId },
+    ipAddress: getClientIp(request),
+  });
 
   return NextResponse.json(creditNote, { status: 201 });
 }

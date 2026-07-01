@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { loyaltySettingsSchema } from "@/lib/validations/salon";
 import { calculateTier } from "@/lib/loyalty";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET() {
   const session = await auth();
@@ -57,6 +58,15 @@ export async function PUT(request: NextRequest) {
       });
     }
   }
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "LoyaltySettings",
+    detail: { tier: parsed.data.tier, revenueThreshold: parsed.data.revenueThreshold, discountPercent: parsed.data.discountPercent },
+    ipAddress: getClientIp(request),
+  });
 
   return NextResponse.json(setting);
 }

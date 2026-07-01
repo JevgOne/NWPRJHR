@@ -10,6 +10,7 @@ import {
 import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale } from "@/lib/invoicing";
 import { createSalonNotification } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -69,6 +70,16 @@ export async function POST(
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         const order = await confirmOrder(id, session.user.id);
 
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "CONFIRM",
+          entity: "Order",
+          entityId: id,
+          detail: { orderNumber: order.orderNumber },
+          ipAddress: getClientIp(request),
+        });
+
         // Notify salon about confirmation
         createSalonNotification({
           salonId: order.salonId,
@@ -89,6 +100,16 @@ export async function POST(
           );
         const order = await rejectOrder(id, body.reason);
 
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "REJECT",
+          entity: "Order",
+          entityId: id,
+          detail: { reason: body.reason, orderNumber: order.orderNumber },
+          ipAddress: getClientIp(request),
+        });
+
         // Notify salon about rejection
         createSalonNotification({
           salonId: order.salonId,
@@ -108,6 +129,16 @@ export async function POST(
             { status: 400 }
           );
         const order = await updateOrderStatus(id, body.status);
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "STATUS_CHANGE",
+          entity: "Order",
+          entityId: id,
+          detail: { newStatus: body.status, orderNumber: order.orderNumber },
+          ipAddress: getClientIp(request),
+        });
 
         // Notify salon about status change
         const notifType = body.status === "READY" ? "ORDER_READY" as const : "ORDER_IN_TRANSIT" as const;
@@ -188,6 +219,16 @@ export async function POST(
           data: { invoiceId: invoice.id, invoiceNumber: invoice.number },
         }).catch(() => {});
 
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "COMPLETE",
+          entity: "Order",
+          entityId: id,
+          detail: { saleId: sale.id, saleNumber: sale.saleNumber, invoiceNumber: invoice.number },
+          ipAddress: getClientIp(request),
+        });
+
         return NextResponse.json({
           order: result.order,
           sale: { id: sale.id, saleNumber: sale.saleNumber },
@@ -217,6 +258,16 @@ export async function POST(
         }
 
         const order = await cancelOrder(id);
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "CANCEL",
+          entity: "Order",
+          entityId: id,
+          detail: { orderNumber: order.orderNumber },
+          ipAddress: getClientIp(request),
+        });
 
         // Notify salon about cancellation
         createSalonNotification({

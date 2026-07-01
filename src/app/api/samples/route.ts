@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { sampleRequestSchema } from "@/lib/validations/salon";
 import { createNotificationForRole } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -59,6 +60,16 @@ export async function POST(request: NextRequest) {
       productId: parsed.data.productId,
       note: parsed.data.note,
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "SampleRequest",
+    entityId: sample.id,
+    detail: { salonName: parsed.data.salonName },
+    ipAddress: getClientIp(request),
   });
 
   // Notify owners about sample request

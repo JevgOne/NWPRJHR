@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 const updateSchema = z.object({
   hairdresserDiscountPct: z.number().int().min(0).max(10000),
@@ -63,6 +64,15 @@ export async function PUT(request: NextRequest) {
       hairdresserDiscountPct: parsed.data.hairdresserDiscountPct,
       salonDiscountPct: parsed.data.salonDiscountPct,
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "B2BSettings",
+    detail: { hairdresserDiscountPct: parsed.data.hairdresserDiscountPct, salonDiscountPct: parsed.data.salonDiscountPct },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(settings);

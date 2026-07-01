@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { notifyNegativeReview } from "@/lib/telegram";
 import { z } from "zod";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 const updateSchema = z.object({
   authorName: z.string().min(1).max(200).optional(),
@@ -52,6 +53,16 @@ export async function PUT(request: NextRequest, { params }: Props) {
     },
   });
 
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Review",
+    entityId: id,
+    detail: { authorName: review.authorName, rating: review.rating },
+    ipAddress: getClientIp(request),
+  });
+
   if (review.rating <= 3) {
     notifyNegativeReview({
       authorName: review.authorName,
@@ -73,5 +84,15 @@ export async function DELETE(_request: NextRequest, { params }: Props) {
 
   const { id } = await params;
   await prisma.review.delete({ where: { id } });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "Review",
+    entityId: id,
+    ipAddress: getClientIp(_request),
+  });
+
   return NextResponse.json({ success: true });
 }

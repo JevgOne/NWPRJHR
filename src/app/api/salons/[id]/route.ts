@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateSalonSchema } from "@/lib/validations/salon";
 import { createSalonNotification } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -112,6 +113,16 @@ export async function PUT(
   const salon = await prisma.salon.update({
     where: { id },
     data: parsed.data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: isApproval ? "APPROVE" : "UPDATE",
+    entity: "Salon",
+    entityId: id,
+    detail: { changes: parsed.data, salonName: salon.name },
+    ipAddress: getClientIp(request),
   });
 
   // Notify salon user when approved

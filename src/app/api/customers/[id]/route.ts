@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { customerSchema } from "@/lib/validations/sale";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -77,6 +78,16 @@ export async function PUT(
   const customer = await prisma.customer.update({
     where: { id },
     data: parsed.data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Customer",
+    entityId: id,
+    detail: { changes: parsed.data },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(customer);

@@ -252,7 +252,7 @@ export function VariantTable({
                           }}
                           disabled={isSaving}
                         >
-                          VO: {formatCZK(variant.pricePerPiece)} /ks
+                          B2B: {formatCZK(variant.pricePerPiece)} /ks
                         </button>
                       )
                     )}
@@ -275,7 +275,7 @@ export function VariantTable({
                           }}
                           disabled={isSaving}
                         >
-                          MO: {formatCZK(variant.retailPricePerPiece)} /ks
+                          Zákazník: {formatCZK(variant.retailPricePerPiece)} /ks
                         </button>
                       )
                     )}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { supplierSchema } from "@/lib/validations/delivery";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET() {
   const session = await auth();
@@ -33,6 +34,16 @@ export async function POST(request: NextRequest) {
 
   const supplier = await prisma.supplier.create({
     data: parsed.data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "Supplier",
+    entityId: supplier.id,
+    detail: { name: parsed.data.name },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(supplier, { status: 201 });

@@ -15,12 +15,19 @@ export async function GET(request: NextRequest) {
   const entity = url.searchParams.get("entity") || undefined;
   const action = url.searchParams.get("action") || undefined;
   const userId = url.searchParams.get("userId") || undefined;
+  const from = url.searchParams.get("from") || undefined;
+  const to = url.searchParams.get("to") || undefined;
 
-  const where = {
-    ...(entity && { entity }),
-    ...(action && { action }),
-    ...(userId && { userId }),
-  };
+  const where: Record<string, unknown> = {};
+  if (entity) where.entity = entity;
+  if (action) where.action = action;
+  if (userId) where.userId = userId;
+  if (from || to) {
+    where.createdAt = {
+      ...(from ? { gte: new Date(from) } : {}),
+      ...(to ? { lte: new Date(to + "T23:59:59.999Z") } : {}),
+    };
+  }
 
   const [logs, total] = await Promise.all([
     prisma.auditLog.findMany({

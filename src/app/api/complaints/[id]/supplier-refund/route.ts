@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { recordSupplierRefund } from "@/lib/complaints";
 import { supplierRefundSchema } from "@/lib/validations/returns";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function POST(
   request: NextRequest,
@@ -25,6 +26,17 @@ export async function POST(
       parsed.data.refundHalere,
       parsed.data.note
     );
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "SUPPLIER_REFUND",
+      entity: "Complaint",
+      entityId: id,
+      detail: { refundHalere: parsed.data.refundHalere },
+      ipAddress: getClientIp(request),
+    });
+
     return NextResponse.json(complaint);
   } catch (e) {
     if (e instanceof Error) {

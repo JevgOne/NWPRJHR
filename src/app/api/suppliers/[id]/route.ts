@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { supplierSchema } from "@/lib/validations/delivery";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -51,6 +52,16 @@ export async function PUT(
     data: parsed.data,
   });
 
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Supplier",
+    entityId: id,
+    detail: { changes: parsed.data },
+    ipAddress: getClientIp(request),
+  });
+
   return NextResponse.json(supplier);
 }
 
@@ -80,9 +91,31 @@ export async function DELETE(
       where: { id },
       data: { archived: true },
     });
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "ARCHIVE",
+      entity: "Supplier",
+      entityId: id,
+      detail: { name: supplier.name },
+      ipAddress: getClientIp(_request),
+    });
+
     return NextResponse.json({ archived: true });
   }
 
   await prisma.supplier.delete({ where: { id } });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "Supplier",
+    entityId: id,
+    detail: { name: supplier.name },
+    ipAddress: getClientIp(_request),
+  });
+
   return NextResponse.json({ deleted: true });
 }

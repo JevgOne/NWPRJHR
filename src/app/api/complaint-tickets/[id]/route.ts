@@ -3,8 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit, getClientIp } from "@/lib/audit";
 
-export async function POST(
-  _request: NextRequest,
+export async function PUT(
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
@@ -14,28 +14,29 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { id } = await params;
+  const body = await request.json();
 
-  const salon = await prisma.salon.findUnique({ where: { id } });
-  if (!salon)
+  const ticket = await prisma.complaintTicket.findUnique({ where: { id } });
+  if (!ticket)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const newArchived = !salon.archived;
-  const updated = await prisma.salon.update({
+  const updated = await prisma.complaintTicket.update({
     where: { id },
     data: {
-      archived: newArchived,
-      archivedAt: newArchived ? new Date() : null,
+      ...(body.status && { status: body.status }),
+      ...(body.assignedTo !== undefined && { assignedTo: body.assignedTo }),
+      ...(body.adminNote !== undefined && { adminNote: body.adminNote }),
     },
   });
 
   logAudit({
     userId: session.user.id,
     userEmail: session.user.email ?? undefined,
-    action: newArchived ? "ARCHIVE" : "UNARCHIVE",
-    entity: "Salon",
+    action: "UPDATE",
+    entity: "ComplaintTicket",
     entityId: id,
-    detail: { salonName: salon.name },
-    ipAddress: getClientIp(_request),
+    detail: { status: body.status, ticketNumber: ticket.ticketNumber },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(updated);

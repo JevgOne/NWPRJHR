@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updatePriceSettingsSchema } from "@/lib/validations/product";
 import { calculateRetailPrice } from "@/lib/pricing";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET() {
   const session = await auth();
@@ -57,6 +58,15 @@ export async function PUT(request: NextRequest) {
     }
 
     return { setting, recalculated: variants.length };
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "PriceSettings",
+    detail: { category, markupPercent, recalculated: result.recalculated },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(result);

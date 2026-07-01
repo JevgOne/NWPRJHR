@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { createOrderSchema } from "@/lib/validations/salon";
 import { createOrder } from "@/lib/order-workflow";
 import { createNotificationForRole } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -89,6 +90,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const order = await createOrder(salonId, parsed.data.items, parsed.data.note);
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "CREATE",
+      entity: "Order",
+      entityId: order.id,
+      detail: { salonId, itemCount: parsed.data.items.length, orderNumber: order.orderNumber },
+      ipAddress: getClientIp(request),
+    });
 
     // Notify owners about new order
     const salon = await prisma.salon.findUnique({ where: { id: salonId }, select: { name: true } });

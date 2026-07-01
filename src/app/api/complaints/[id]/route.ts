@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -57,6 +58,16 @@ export async function PUT(
       ...(body.supplierNote && { supplierNote: body.supplierNote }),
       ...(body.status === "RESOLVED" && { resolvedAt: new Date() }),
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Complaint",
+    entityId: id,
+    detail: { status: body.status },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(complaint);

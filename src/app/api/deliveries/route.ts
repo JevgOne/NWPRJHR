@@ -5,6 +5,7 @@ import { stockInSchema, newStockInSchema } from "@/lib/validations/delivery";
 import { serializeDeliveryForRole } from "@/lib/api/delivery-serializer";
 import { stockIn } from "@/lib/stock-in";
 import { generateBarcode } from "@/lib/barcode";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -179,6 +180,16 @@ export async function POST(request: NextRequest) {
       session.user.id
     );
 
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "STOCK_IN",
+      entity: "Delivery",
+      entityId: delivery.id,
+      detail: { productName: product.name, variantId: variant.id, totalGrams: effectiveTotalGrams, totalPieces: data.totalPieces, sellingMode: data.sellingMode },
+      ipAddress: getClientIp(request),
+    });
+
     return NextResponse.json(
       { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },
       { status: 201 }
@@ -213,6 +224,16 @@ export async function POST(request: NextRequest) {
   const variant = await prisma.variant.findUnique({
     where: { id: delivery.variantId },
     select: { productId: true, product: { select: { name: true, slug: true } } },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "STOCK_IN",
+    entity: "Delivery",
+    entityId: delivery.id,
+    detail: { variantId: data.variantId, totalGrams: data.totalGrams, productName: variant?.product.name },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(

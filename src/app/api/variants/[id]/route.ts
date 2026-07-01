@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateVariantSchema } from "@/lib/validations/product";
 import { calculateRetailPrice } from "@/lib/pricing";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function PUT(
   request: NextRequest,
@@ -53,6 +54,16 @@ export async function PUT(
     data,
   });
 
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Variant",
+    entityId: id,
+    detail: { changes: parsed.data, productId: existing.productId },
+    ipAddress: getClientIp(request),
+  });
+
   return NextResponse.json(variant);
 }
 
@@ -69,6 +80,15 @@ export async function DELETE(
   const variant = await prisma.variant.update({
     where: { id },
     data: { active: false },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DEACTIVATE",
+    entity: "Variant",
+    entityId: id,
+    ipAddress: getClientIp(_request),
   });
 
   return NextResponse.json(variant);

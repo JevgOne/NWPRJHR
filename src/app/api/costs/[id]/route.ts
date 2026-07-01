@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateOperatingCostSchema } from "@/lib/validations/finance";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -52,6 +53,16 @@ export async function PUT(
     },
   });
 
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "OperatingCost",
+    entityId: id,
+    detail: { changes: parsed.data },
+    ipAddress: getClientIp(request),
+  });
+
   return NextResponse.json(cost);
 }
 
@@ -71,5 +82,16 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await prisma.operatingCost.delete({ where: { id } });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "OperatingCost",
+    entityId: id,
+    detail: { category: existing.category, amountHalere: existing.amountHalere },
+    ipAddress: getClientIp(_request),
+  });
+
   return NextResponse.json({ success: true });
 }

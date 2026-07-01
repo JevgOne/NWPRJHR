@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { initiateReturn } from "@/lib/returns";
 import { initiateReturnSchema } from "@/lib/validations/returns";
 import { createNotificationForRole } from "@/lib/notifications";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -69,6 +70,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const ret = await initiateReturn(parsed.data, session.user.id);
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "CREATE",
+      entity: "Return",
+      entityId: ret.id,
+      detail: { saleId: parsed.data.saleId },
+      ipAddress: getClientIp(request),
+    });
 
     // Notify owners about return request
     const sale = await prisma.sale.findUnique({

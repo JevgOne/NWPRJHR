@@ -38,7 +38,7 @@ export const newStockInSchema = z
     color: z.string().min(1),
     lengthCm: z.number().int().positive().max(150),
     supplierId: z.string().min(1),
-    purchasePricePerGramRaw: z.number().int().positive(),
+    purchasePricePerGramRaw: z.number().int().min(0),
     currency: z.enum(["CZK", "USD", "EUR", "UAH"]),
     exchangeRate: z.number().int().positive(),
     totalGrams: z.number().int().min(0),
@@ -55,7 +55,6 @@ export const newStockInSchema = z
       if (data.sellingMode === "BY_PIECE") {
         return (
           data.pricePerPiece != null &&
-          data.retailPricePerPiece != null &&
           data.totalPieces > 0 &&
           data.pieceWeightGrams != null
         );
@@ -64,7 +63,7 @@ export const newStockInSchema = z
     },
     {
       message:
-        "BY_PIECE mode requires pricePerPiece, retailPricePerPiece, totalPieces > 0, and pieceWeightGrams",
+        "BY_PIECE mode requires pricePerPiece, totalPieces > 0, and pieceWeightGrams",
     }
   )
   .refine(
@@ -75,6 +74,15 @@ export const newStockInSchema = z
       return true;
     },
     { message: "BY_GRAM mode requires totalGrams > 0" }
+  )
+  .refine(
+    (data) => {
+      if (data.sellingMode === "BY_GRAM") {
+        return data.purchasePricePerGramRaw > 0;
+      }
+      return true;
+    },
+    { message: "BY_GRAM mode requires purchasePricePerGramRaw > 0" }
   );
 
 export const supplierSchema = z.object({

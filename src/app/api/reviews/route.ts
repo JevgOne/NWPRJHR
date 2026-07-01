@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { notifyNegativeReview } from "@/lib/telegram";
 import { z } from "zod";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 const reviewSchema = z.object({
   authorName: z.string().min(1).max(200),
@@ -78,6 +79,16 @@ export async function POST(request: NextRequest) {
       featured: data.featured,
       active: data.active,
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "Review",
+    entityId: review.id,
+    detail: { authorName: data.authorName, rating: data.rating },
+    ipAddress: getClientIp(request),
   });
 
   if (data.rating <= 3) {

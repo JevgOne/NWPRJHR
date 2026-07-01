@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -32,6 +33,16 @@ export async function POST(req: Request) {
       certifications: body.certifications ?? "[]",
       portfolio: body.portfolio ?? "[]",
     },
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "CREATE",
+    entity: "Stylist",
+    entityId: stylist.id,
+    detail: { name: stylist.name },
+    ipAddress: getClientIp(req),
   });
 
   return NextResponse.json(stylist, { status: 201 });

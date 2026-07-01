@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 const updateBlogSchema = z.object({
   title: z.string().min(1).max(200).optional(),
@@ -88,6 +89,17 @@ export async function PUT(
   }
 
   const post = await prisma.blogPost.update({ where: { id }, data: updateData });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "BlogPost",
+    entityId: id,
+    detail: { title: post.title },
+    ipAddress: getClientIp(request),
+  });
+
   return NextResponse.json(post);
 }
 
@@ -103,5 +115,15 @@ export async function DELETE(
 
   const { id } = await params;
   await prisma.blogPost.delete({ where: { id } });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "BlogPost",
+    entityId: id,
+    ipAddress: getClientIp(_request),
+  });
+
   return NextResponse.json({ ok: true });
 }

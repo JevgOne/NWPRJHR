@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { deliveryUpdateSchema } from "@/lib/validations/delivery";
 import { serializeDeliveryForRole } from "@/lib/api/delivery-serializer";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -90,6 +91,16 @@ export async function PUT(
   const delivery = await prisma.delivery.update({
     where: { id },
     data: parsed.data,
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "UPDATE",
+    entity: "Delivery",
+    entityId: id,
+    detail: { changes: parsed.data },
+    ipAddress: getClientIp(request),
   });
 
   return NextResponse.json(delivery);
