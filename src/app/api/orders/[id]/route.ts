@@ -9,7 +9,7 @@ import {
 } from "@/lib/order-workflow";
 import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale } from "@/lib/invoicing";
-import { createSalonNotification } from "@/lib/notifications";
+import { createSalonNotification, createNotificationForRole } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
@@ -239,10 +239,13 @@ export async function POST(
       case "cancel": {
         const orderCheck = await prisma.order.findUniqueOrThrow({
           where: { id },
+          include: { salon: { select: { name: true } } },
         });
 
+        const isSalonCancel = session.user.role === "SALON" || session.user.role === "HAIRDRESSER";
+
         // SALON/HAIRDRESSER can only cancel their own NEW orders
-        if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
+        if (isSalonCancel) {
           if (orderCheck.salonId !== session.user.salonId)
             return NextResponse.json(
               { error: "Forbidden" },
@@ -265,16 +268,27 @@ export async function POST(
           action: "CANCEL",
           entity: "Order",
           entityId: id,
-          detail: { orderNumber: order.orderNumber },
+          detail: { orderNumber: order.orderNumber, cancelledBy: isSalonCancel ? "salon" : "admin" },
           ipAddress: getClientIp(request),
         });
 
-        // Notify salon about cancellation
-        createSalonNotification({
-          salonId: orderCheck.salonId,
-          type: "ORDER_REJECTED",
-          data: { orderId: order.id, orderNumber: order.orderNumber },
-        }).catch(() => {});
+        if (isSalonCancel) {
+          // Notify admin that salon cancelled their order
+          createNotificationForRole({
+            role: "OWNER",
+            type: "ORDER_REJECTED",
+            title: `Objednávka zrušena salonem`,
+            message: `Salon ${orderCheck.salon.name} zrušil objednávku ${order.orderNumber ?? id.slice(0, 8)}`,
+            data: { orderId: order.id, orderNumber: order.orderNumber, salonName: orderCheck.salon.name },
+          }).catch(() => {});
+        } else {
+          // Notify salon that admin cancelled their order
+          createSalonNotification({
+            salonId: orderCheck.salonId,
+            type: "ORDER_REJECTED",
+            data: { orderId: order.id, orderNumber: order.orderNumber },
+          }).catch(() => {});
+        }
 
         return NextResponse.json(order);
       }
