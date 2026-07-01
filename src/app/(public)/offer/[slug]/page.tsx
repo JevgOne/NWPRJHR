@@ -15,6 +15,18 @@ import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
+import { Fragment } from "react";
+
+/** Parse **bold** markers into React elements */
+function renderBold(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={i} className="text-ink font-semibold">{part.slice(2, -2)}</strong>
+      : <Fragment key={i}>{part}</Fragment>
+  );
+}
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -513,9 +525,41 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           )}
 
           {/* Description */}
-          <p className="text-sm text-muted leading-relaxed">
-            {description}
-          </p>
+          <div className="text-sm text-muted leading-relaxed space-y-4">
+            {description.split("\n\n").map((block, i) => {
+              // Bullet list block
+              if (block.includes("\n•")) {
+                const [heading, ...bullets] = block.split("\n");
+                return (
+                  <div key={i}>
+                    {heading && <p className="font-semibold text-ink mb-2">{renderBold(heading)}</p>}
+                    <ul className="space-y-1.5 ml-1">
+                      {bullets.map((b, j) => (
+                        <li key={j} className="flex items-start gap-2">
+                          <span className="text-rose mt-0.5 shrink-0">&#x2022;</span>
+                          <span>{renderBold(b.replace(/^•\s*/, ""))}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              }
+              // Block with heading (first line is **bold**)
+              if (block.startsWith("**") && block.includes("\n")) {
+                const [heading, ...rest] = block.split("\n");
+                return (
+                  <div key={i}>
+                    <p className="font-semibold text-ink mb-1">{renderBold(heading)}</p>
+                    {rest.map((line, j) => (
+                      <p key={j} className="mt-1">{renderBold(line)}</p>
+                    ))}
+                  </div>
+                );
+              }
+              // Regular paragraph
+              return <p key={i}>{renderBold(block)}</p>;
+            })}
+          </div>
 
           {/* Specs row — compact, clickable */}
           <div className="bg-nude-50 rounded-2xl p-4 grid grid-cols-2 gap-3">

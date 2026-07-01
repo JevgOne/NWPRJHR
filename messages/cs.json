@@ -836,6 +836,78 @@
       "section7Text": "7.1. Prodávající rozhodne o reklamaci bez zbytečného odkladu, nejpozději do 30 dnů od jejího uplatnění. Do této lhůty se nezapočítává doba potřebná k odeslání zboží kupujícím.\n\n7.2. V případě oprávněné reklamace má spotřebitel právo na:\n  a) bezplatnou opravu nebo úpravu zboží, je-li to možné,\n  b) výměnu zboží za bezvadné stejného druhu,\n  c) přiměřenou slevu z kupní ceny,\n  d) odstoupení od smlouvy a vrácení kupní ceny — pouze pokud oprava ani výměna nejsou možné nebo by byly nepřiměřené.\n\n7.3. Způsob vyřízení reklamace volí kupující, prodávající však může zvolit jiný způsob, pokud je zvolený způsob nepřiměřený povaze vady.\n\n7.4. Podnikatel (B2B) má v případě oprávněné reklamace právo na opravu, výměnu nebo přiměřenou slevu. Odstoupení od smlouvy je možné pouze při podstatném porušení.\n\n7.5. Náklady na dopravu reklamovaného zboží k prodávajícímu nese kupující. V případě uznané reklamace prodávající tyto náklady uhradí.",
       "section8Title": "8. Odstoupení od kupní smlouvy",
       "section8Text": "8.1. Spotřebitel má právo odstoupit od kupní smlouvy bez udání důvodu ve lhůtě 14 dnů od převzetí zboží.\n\n8.2. Odstoupení je nutné oznámit e-mailem na info@hairland.cz. Zboží je nutné odeslat zpět do 14 dnů od oznámení odstoupení.\n\n8.3. Vrátit lze pouze nepoužité, neaplikované a nijak nezpracované vlasy v původním stavu a originálním obalu.\n\n8.4. Nelze vrátit:\n  a) zboží, se kterým bylo jakkoliv manipulováno (viz bod 6.1),\n  b) zboží vyrobené na zakázku (clip-in sady, tape-in pásky, keratinové bondy zhotovené dle individuálních požadavků),\n  c) zboží, u něhož byl porušen originální obal, pečeť nebo označení.\n\n8.5. Prodávající vrátí kupní cenu do 14 dnů od přijetí vráceného zboží, a to stejným způsobem, jakým platbu přijal.\n\n8.6. Náklady na vrácení zboží nese kupující.\n\n8.7. Podnikatel (B2B odběratel) nemá ze zákona právo na odstoupení od smlouvy bez udání důvodu. Vrácení zboží B2B odběrateli je možné pouze po individuální dohodě."
+    },
+    "complaintForm": {
+      "formTitle": "Podat reklamaci",
+      "formSubtitle": "Vyplňte formulář krok po kroku. Po odeslání obdržíte číslo tiketu a potvrzení na e-mail.",
+      "stepOf": "Krok {current} z {total}",
+      "terms": {
+        "title": "Seznámení s reklamačním řádem",
+        "description": "Před podáním reklamace se prosím seznamte s naším reklamačním řádem a obchodními podmínkami.",
+        "summary": "Reklamaci lze uplatnit do 24 měsíců (spotřebitel) nebo 6 měsíců (B2B). Reklamaci podáte vyplněním tohoto formuláře s popisem vady a fotodokumentací. Prodávající rozhodne do 30 dnů. Reklamace se nevztahuje na běžné opotřebení, chemicky či mechanicky poškozené vlasy a zboží vyrobené na zakázku. Spotřebitel může odstoupit od smlouvy do 14 dnů u nepoužitého zboží.",
+        "accept": "Seznámil/a jsem se s",
+        "linkText": "reklamačním řádem",
+        "and": "a",
+        "termsLinkText": "obchodními podmínkami"
+      },
+      "type": {
+        "title": "Typ zákazníka",
+        "description": "Zvolte, zda nakupujete jako koncový zákazník nebo salon.",
+        "RETAIL": "Koncový zákazník",
+        "RETAILDesc": "Fyzická osoba, která nenakupuje v rámci podnikání",
+        "SALON": "Salon / Studio",
+        "SALONDesc": "Registrovaný B2B odběratel — salon, studio, kadeřnictví",
+        "HAIRDRESSER": "Kadeřnice",
+        "HAIRDRESSERDesc": "Samostatná kadeřnice / freelancer"
+      },
+      "contact": {
+        "title": "Kontaktní údaje",
+        "name": "Jméno a příjmení",
+        "email": "E-mail",
+        "phone": "Telefon",
+        "salonName": "Název salonu"
+      },
+      "details": {
+        "title": "Detail reklamace",
+        "complaintType": "Typ reklamace",
+        "DEFECT": "Reklamace vady",
+        "DEFECTDesc": "Zboží má vadu — neodpovídá popisu, špatná kvalita, poškození",
+        "RETURN": "Vrácení zboží",
+        "RETURNDesc": "Chci vrátit nepoužité zboží ve lhůtě 14 dnů",
+        "WITHDRAWAL": "Odstoupení od smlouvy",
+        "WITHDRAWALDesc": "Chci odstoupit od kupní smlouvy bez udání důvodu",
+        "orderNumber": "Číslo objednávky / faktury",
+        "orderNumberPlaceholder": "např. OBJ-2026-001 nebo FA-2026-001",
+        "description": "Popis problému",
+        "descriptionPlaceholder": "Popište co nejpodrobněji zjištěnou vadu, kdy jste ji objevili a jak se projevuje...",
+        "desiredResolution": "Požadované řešení",
+        "selectResolution": "— vyberte —",
+        "REPAIR": "Oprava / úprava",
+        "REPLACEMENT": "Výměna za nové",
+        "DISCOUNT": "Sleva z ceny",
+        "REFUND": "Vrácení peněz"
+      },
+      "photos": {
+        "title": "Fotodokumentace",
+        "description": "Přiložte fotografie vady — celkový pohled, detail vady a etiketu/obal. Fotky nejsou povinné, ale urychlí vyřízení.",
+        "clickToUpload": "Klikněte pro výběr fotografií",
+        "uploading": "Nahrávání...",
+        "count": "{current} z {max} fotografií"
+      },
+      "summary": {
+        "title": "Shrnutí a odeslání",
+        "error": "Nepodařilo se odeslat reklamaci. Zkuste to prosím znovu."
+      },
+      "success": {
+        "title": "Reklamace odeslána",
+        "message": "Vaše reklamace byla úspěšně přijata. Číslo vašeho tiketu:",
+        "emailSent": "Potvrzení jsme odeslali na váš e-mail. Budeme vás kontaktovat do 2 pracovních dnů."
+      },
+      "nav": {
+        "back": "Zpět",
+        "next": "Pokračovat",
+        "submit": "Odeslat reklamaci"
+      }
     }
   },
   "variant": {

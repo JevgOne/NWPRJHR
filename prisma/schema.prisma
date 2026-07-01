@@ -1185,6 +1185,38 @@ model Complaint {
 }
 
 // ============================================================
+// COMPLAINT TICKET -- customer-submitted complaint/return form
+// ============================================================
+
+model ComplaintTicket {
+  id                String   @id @default(cuid())
+  ticketNumber      String   @unique
+
+  customerType      String   // RETAIL, SALON, HAIRDRESSER
+  name              String
+  email             String
+  phone             String?
+  salonName         String?
+
+  complaintType     String   // DEFECT, RETURN, WITHDRAWAL
+  orderNumber       String?
+  description       String
+  photos            String   @default("[]") // JSON array of URLs
+  desiredResolution String?  // REPAIR, REPLACEMENT, DISCOUNT, REFUND
+
+  status            String   @default("NEW") // NEW, IN_PROGRESS, RESOLVED, REJECTED
+  assignedTo        String?
+  adminNote         String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("complaint_tickets")
+}
+
+// ============================================================
 // NOTIFICATION -- in-app + email notification
 // ============================================================
 

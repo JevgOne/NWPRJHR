@@ -62,6 +62,11 @@ export async function handleTelegramCallback(callbackQuery: {
           where: { id: recordId },
           data: { assignedTo: name, assignedAt: new Date() },
         });
+      } else if (type === "complaint") {
+        await prisma.complaintTicket.update({
+          where: { id: recordId },
+          data: { assignedTo: name, status: "IN_PROGRESS" },
+        });
       }
     } catch {
       // Record might not exist — continue with message update
@@ -300,6 +305,55 @@ export async function notifyNegativeReview(data: {
     .join("\n");
 
   await sendTelegramMessage(lines);
+}
+
+/**
+ * Notify about new complaint ticket.
+ */
+export async function notifyComplaintTicket(ticketId: string, data: {
+  ticketNumber: string;
+  customerType: string;
+  name: string;
+  email: string;
+  phone?: string;
+  salonName?: string;
+  complaintType: string;
+  orderNumber?: string;
+  description: string;
+  photoCount: number;
+}): Promise<void> {
+  const typeLabels: Record<string, string> = {
+    RETAIL: "Koncový zákazník / Конечный покупатель",
+    SALON: "Salon / Салон",
+    HAIRDRESSER: "Kadeřnice / Парикмахер",
+  };
+  const complaintLabels: Record<string, string> = {
+    DEFECT: "Reklamace vady / Рекламация дефекта",
+    RETURN: "Vrácení zboží / Возврат товара",
+    WITHDRAWAL: "Odstoupení od smlouvy / Отказ от договора",
+  };
+
+  const lines = [
+    `🚨 <b>NOVÁ REKLAMACE / НОВАЯ РЕКЛАМАЦИЯ</b>`,
+    `Ticket: ${esc(data.ticketNumber)}`,
+    ``,
+    `${esc(data.name)}`,
+    `${esc(data.email)}`,
+    data.phone ? `${esc(data.phone)}` : null,
+    `Typ zákazníka: ${typeLabels[data.customerType] ?? data.customerType}`,
+    data.salonName ? `Salon/Салон: ${esc(data.salonName)}` : null,
+    ``,
+    `Typ: ${complaintLabels[data.complaintType] ?? data.complaintType}`,
+    data.orderNumber ? `Objednávka/Заказ: ${esc(data.orderNumber)}` : null,
+    ``,
+    `${esc(data.description.length > 300 ? data.description.slice(0, 300) + "…" : data.description)}`,
+    data.photoCount > 0 ? `\n📷 ${data.photoCount} foto` : null,
+    `\n🔗 https://www.hairland.cz/complaints`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  await sendWithClaimButton(lines, "complaint", ticketId);
 }
 
 /** Map color code to emoji + name (CZ/RU) */
