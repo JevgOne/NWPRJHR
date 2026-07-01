@@ -192,16 +192,16 @@ export async function POST(request: NextRequest) {
 
     sendNotificationEmail({
       to: email,
-      subject: `Vase vyhra z Kolecka stesti — ${segment.discount}% sleva!`,
+      subject: `Vaše výhra z Kolečka štěstí — ${segment.discount}% sleva!`,
       body: [
         "Gratulujeme!",
         "",
-        `Vyhrali jste ${segment.discount}% slevu na nakup vlasu.`,
+        `Vyhráli jste ${segment.discount}% slevu na nákup vlasů.`,
         "",
-        `Vas slevovy kod: ${code}`,
-        `Platny do: ${validTo}`,
+        `Váš slevový kód: ${code}`,
+        `Platný do: ${validTo}`,
         "",
-        "Pouzijte kod pri objednavce nebo poptavce na hairland.cz.",
+        "Použijte kód při objednávce nebo poptávce na hairland.cz.",
         "",
         "Hairland.cz",
       ].join("\n"),
