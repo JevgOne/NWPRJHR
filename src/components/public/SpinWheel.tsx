@@ -91,28 +91,63 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
           setDiscount(data.discountPercent);
           setState("result-win");
           localStorage.setItem("spin-played", "1");
-          confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+          // Celebratory burst — gold & rose brand confetti
+          const winColors = ["#c2a36b", "#c98b88", "#dbc5a0", "#a96d6c", "#fdfaf7"];
+          confetti({
+            particleCount: 120,
+            spread: 70,
+            origin: { y: 0.5 },
+            colors: winColors,
+          });
           setTimeout(
             () =>
               confetti({
-                particleCount: 80,
-                spread: 100,
-                origin: { x: 0.3, y: 0.4 },
+                particleCount: 60,
+                spread: 90,
+                origin: { x: 0.25, y: 0.45 },
+                colors: winColors,
               }),
-            300
+            250
           );
           setTimeout(
             () =>
               confetti({
-                particleCount: 80,
-                spread: 100,
-                origin: { x: 0.7, y: 0.4 },
+                particleCount: 60,
+                spread: 90,
+                origin: { x: 0.75, y: 0.45 },
+                colors: winColors,
               }),
-            600
+            500
           );
         } else {
           setState("result-lose");
           localStorage.setItem("spin-played", "1");
+          // Gentle falling particles — muted nude/blush tones
+          const loseColors = ["#efe0d6", "#f6e3e0", "#ecc9c6", "#dba8a6", "#f7efe8"];
+          confetti({
+            particleCount: 40,
+            spread: 120,
+            origin: { y: 0.3 },
+            colors: loseColors,
+            gravity: 0.6,
+            drift: 0.5,
+            scalar: 0.8,
+            ticks: 150,
+          });
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 25,
+                spread: 140,
+                origin: { x: 0.4, y: 0.25 },
+                colors: loseColors,
+                gravity: 0.5,
+                drift: -0.3,
+                scalar: 0.7,
+                ticks: 120,
+              }),
+            400
+          );
         }
       }, 4200);
     } catch {
