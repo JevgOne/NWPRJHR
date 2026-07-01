@@ -10,6 +10,7 @@ import { useTransition } from "react";
 import { setUserLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/config";
 import { useInquiryCart } from "@/lib/inquiry-cart";
+import { signOut } from "next-auth/react";
 
 interface NavSession {
   user?: { name?: string; role?: string };
@@ -237,15 +238,26 @@ export function PublicNavbar() {
             </Link>
             <LocaleSwitcher />
             {isLoggedIn ? (
-              <Link
-                href={portalHref}
-                className="ml-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-espresso bg-nude-100 rounded-lg hover:bg-nude-200 transition-colors"
-              >
-                <span>{session.user?.name ?? tAuth("loginButton")}</span>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+              <div className="ml-2 flex items-center gap-1">
+                <Link
+                  href={portalHref}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-espresso bg-nude-100 rounded-l-lg hover:bg-nude-200 transition-colors"
+                >
+                  <span>{session.user?.name ?? tAuth("loginButton")}</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="px-3 py-2 text-sm text-muted bg-nude-100 rounded-r-lg hover:bg-red-50 hover:text-red-600 transition-colors border-l border-line"
+                  title={tAuth("logout")}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login"
@@ -295,13 +307,21 @@ export function PublicNavbar() {
               <MobileLocaleSwitcher />
             </div>
             {isLoggedIn ? (
-              <Link
-                href={portalHref}
-                className="block mx-3 px-4 py-2 text-sm font-medium text-center text-espresso bg-nude-100 rounded-lg hover:bg-nude-200"
-                onClick={() => setMenuOpen(false)}
-              >
-                {session.user?.name ?? tAuth("loginButton")}
-              </Link>
+              <div className="mx-3 flex gap-2">
+                <Link
+                  href={portalHref}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-center text-espresso bg-nude-100 rounded-lg hover:bg-nude-200"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {session.user?.name ?? tAuth("loginButton")}
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                >
+                  {tAuth("logout")}
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login"
