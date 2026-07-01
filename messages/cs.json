@@ -918,9 +918,14 @@
     "commaSeparated": "oddělené čárkou",
     "manualOverride": "ruční",
     "resetOverride": "obnovit",
-    "costPrice": "Nákupní cena za gram",
+    "costPrice": "Nákupní cena",
     "costShort": "Nákup",
-    "margin": "Marže"
+    "margin": "Marže",
+    "sellingMode": "Režim prodeje",
+    "byGram": "Za gramy",
+    "byPiece": "Za kusy",
+    "retailPricePerPiece": "MO cena za kus",
+    "pieceNote": "VO cena pro salony a kadeřnice se dopočítá automaticky ze slev nastavených v B2B nastavení."
   },
   "photos": {
     "title": "Fotografie produktu",

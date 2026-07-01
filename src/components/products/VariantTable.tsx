@@ -232,16 +232,52 @@ export function VariantTable({
                       </div>
                     )}
 
-                    {/* Piece prices for BY_PIECE */}
+                    {/* Piece prices for BY_PIECE — editable */}
                     {isByPiece && variant.pricePerPiece !== undefined && (
-                      <div className="text-xs text-ink font-medium">
-                        {formatCZK(variant.pricePerPiece)} /ks
-                      </div>
+                      editingCell === `piece-${cellKey}` ? (
+                        <PriceInput
+                          variantId={variant.id}
+                          field="pricePerPiece"
+                          cellKey={`piece-${cellKey}`}
+                        />
+                      ) : (
+                        <button
+                          className={`text-xs text-ink font-medium block ${
+                            isOwner ? "hover:text-rose transition-colors" : ""
+                          }`}
+                          onClick={() => {
+                            if (!isOwner) return;
+                            setEditingCell(`piece-${cellKey}`);
+                            setEditValue((variant.pricePerPiece! / 100).toString());
+                          }}
+                          disabled={isSaving}
+                        >
+                          VO: {formatCZK(variant.pricePerPiece)} /ks
+                        </button>
+                      )
                     )}
                     {isByPiece && variant.retailPricePerPiece !== undefined && (
-                      <div className="text-xs text-muted line-through">
-                        {formatCZK(variant.retailPricePerPiece)} /ks
-                      </div>
+                      editingCell === `retailPiece-${cellKey}` ? (
+                        <PriceInput
+                          variantId={variant.id}
+                          field="retailPricePerPiece"
+                          cellKey={`retailPiece-${cellKey}`}
+                        />
+                      ) : (
+                        <button
+                          className={`text-xs text-muted block ${
+                            isOwner ? "hover:text-rose transition-colors" : ""
+                          }`}
+                          onClick={() => {
+                            if (!isOwner) return;
+                            setEditingCell(`retailPiece-${cellKey}`);
+                            setEditValue((variant.retailPricePerPiece! / 100).toString());
+                          }}
+                          disabled={isSaving}
+                        >
+                          MO: {formatCZK(variant.retailPricePerPiece)} /ks
+                        </button>
+                      )
                     )}
 
                     {/* Cost + margin (owner only) */}
