@@ -7,30 +7,31 @@ import confetti from "canvas-confetti";
 const SEGMENT_COUNT = 10;
 const SEGMENT_ANGLE = 360 / SEGMENT_COUNT;
 
+// Premium brand palette — alternating warm tones
 const SEGMENT_COLORS = [
-  "#fce4ec", // 5% — rose light
-  "#f5f0eb", // miss — nude
-  "#f8bbd0", // 10% — rose medium
-  "#ede8e2", // miss — nude darker
-  "#e8e0d8", // miss — espresso light
-  "#e91e63", // 15% — rose strong
-  "#f5f0eb", // miss — nude
-  "#ffd700", // 20% — gold
-  "#ede8e2", // miss — nude darker
-  "#ffb300", // 25% — gold deep
+  "#c98b88", // 5%  — rose
+  "#f7efe8", // miss — nude-100
+  "#dba8a6", // 10% — blush-300
+  "#efe0d6", // miss — nude-200
+  "#f6e3e0", // miss — blush-100
+  "#a96d6c", // 15% — rose-deep
+  "#f7efe8", // miss — nude-100
+  "#c2a36b", // 20% — gold
+  "#efe0d6", // miss — nude-200
+  "#7d5a5c", // 25% — mauve
 ];
 
 const SEGMENT_TEXT_COLORS = [
-  "#880e4f",
-  "#5d4e37",
-  "#880e4f",
-  "#5d4e37",
-  "#5d4e37",
-  "#ffffff",
-  "#5d4e37",
-  "#5d4037",
-  "#5d4e37",
-  "#5d4037",
+  "#ffffff", // on rose
+  "#3a2c2a", // on nude
+  "#3a2c2a", // on blush
+  "#3a2c2a", // on nude
+  "#3a2c2a", // on blush
+  "#ffffff", // on rose-deep
+  "#3a2c2a", // on nude
+  "#3a2c2a", // on gold
+  "#3a2c2a", // on nude
+  "#ffffff", // on mauve
 ];
 
 type SpinState = "idle" | "spinning" | "result-win" | "result-lose" | "already-played" | "error";
@@ -81,20 +82,15 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
       const data = await res.json();
       const segment = data.segment as number;
 
-      // Calculate target rotation: 5 full spins + land on segment
-      // Pointer is at top (0deg), wheel rotates clockwise
-      // Segment 0 starts at top, going clockwise
       const targetAngle =
         360 * 5 + (360 - (SEGMENT_ANGLE * segment + SEGMENT_ANGLE / 2));
       setRotation(targetAngle);
 
-      // Wait for animation to finish (4s)
       setTimeout(() => {
         if (data.won) {
           setDiscount(data.discountPercent);
           setState("result-win");
           localStorage.setItem("spin-played", "1");
-          // Confetti!
           confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
           setTimeout(
             () =>
@@ -124,11 +120,10 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
     }
   };
 
-  // Generate SVG wheel segments
   const renderWheel = () => {
-    const cx = 150;
-    const cy = 150;
-    const r = 140;
+    const cx = 160;
+    const cy = 160;
+    const r = 148;
     const segments = [];
 
     for (let i = 0; i < SEGMENT_COUNT; i++) {
@@ -142,25 +137,40 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
       const largeArc = SEGMENT_ANGLE > 180 ? 1 : 0;
       const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc} 1 ${x2},${y2} Z`;
 
-      // Text position (middle of segment)
       const midAngle = ((i + 0.5) * SEGMENT_ANGLE - 90) * (Math.PI / 180);
-      const textR = r * 0.65;
+      const textR = r * 0.68;
       const tx = cx + textR * Math.cos(midAngle);
       const ty = cy + textR * Math.sin(midAngle);
       const textRotation = (i + 0.5) * SEGMENT_ANGLE;
 
       segments.push(
         <g key={i}>
-          <path d={path} fill={SEGMENT_COLORS[i]} stroke="#fff" strokeWidth="2" />
+          <path
+            d={path}
+            fill={SEGMENT_COLORS[i]}
+            stroke="rgba(255,255,255,0.5)"
+            strokeWidth="1.5"
+          />
+          {/* Thin inner separator lines for depth */}
+          <line
+            x1={cx}
+            y1={cy}
+            x2={x1}
+            y2={y1}
+            stroke="rgba(255,255,255,0.3)"
+            strokeWidth="0.5"
+          />
           <text
             x={tx}
             y={ty}
             fill={SEGMENT_TEXT_COLORS[i]}
             fontSize="11"
-            fontWeight="bold"
+            fontWeight="600"
+            fontFamily="inherit"
             textAnchor="middle"
             dominantBaseline="central"
             transform={`rotate(${textRotation}, ${tx}, ${ty})`}
+            style={{ letterSpacing: "0.05em" }}
           >
             {segmentLabels[i]}
           </text>
@@ -172,53 +182,121 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
-      {/* Pointer (triangle at top) */}
+    <div className="flex flex-col items-center gap-5 px-5 pt-6 pb-5">
+      {/* Pointer */}
       <div className="relative">
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-          <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-rose" />
+        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 drop-shadow-md">
+          <svg width="24" height="20" viewBox="0 0 24 20">
+            <polygon
+              points="12,20 0,0 24,0"
+              fill="#c2a36b"
+              stroke="#a96d6c"
+              strokeWidth="1"
+            />
+          </svg>
         </div>
 
-        {/* Wheel */}
-        <svg
-          ref={wheelRef}
-          width="300"
-          height="300"
-          viewBox="0 0 300 300"
-          className="max-w-[280px] sm:max-w-[300px]"
+        {/* Wheel with outer ring */}
+        <div
+          className="rounded-full p-[6px]"
           style={{
-            transform: `rotate(${rotation}deg)`,
-            transition: state === "spinning" ? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)" : "none",
+            background: "linear-gradient(135deg, #c2a36b 0%, #dbc5a0 40%, #c2a36b 60%, #a88f5a 100%)",
+            boxShadow: "0 8px 32px rgba(58,44,42,0.18), 0 2px 8px rgba(201,139,136,0.2), inset 0 1px 1px rgba(255,255,255,0.3)",
           }}
         >
-          {renderWheel()}
-          {/* Center circle */}
-          <circle cx="150" cy="150" r="28" fill="#fff" stroke="#e11d48" strokeWidth="3" />
-          <text
-            x="150"
-            y="150"
-            fill="#e11d48"
-            fontSize="13"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="central"
+          <div
+            className="rounded-full p-[2px]"
+            style={{ background: "linear-gradient(135deg, #3a2c2a, #7d5a5c)" }}
           >
-            SPIN
-          </text>
-        </svg>
+            <svg
+              ref={wheelRef}
+              width="320"
+              height="320"
+              viewBox="0 0 320 320"
+              className="max-w-[280px] sm:max-w-[320px] rounded-full"
+              style={{
+                transform: `rotate(${rotation}deg)`,
+                transition: state === "spinning" ? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)" : "none",
+              }}
+            >
+              <defs>
+                <radialGradient id="wheelSheen" cx="35%" cy="35%" r="65%">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0.12)" />
+                  <stop offset="100%" stopColor="rgba(0,0,0,0.05)" />
+                </radialGradient>
+                <filter id="innerShadow">
+                  <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                  <feOffset dx="0" dy="2" />
+                  <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" />
+                  <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+                  <feBlend in2="SourceGraphic" />
+                </filter>
+              </defs>
+              {/* Outer decorative ring */}
+              <circle cx="160" cy="160" r="158" fill="none" stroke="rgba(194,163,107,0.15)" strokeWidth="1" />
+              {renderWheel()}
+              {/* Sheen overlay */}
+              <circle cx="160" cy="160" r="148" fill="url(#wheelSheen)" pointerEvents="none" />
+              {/* Center hub */}
+              <circle
+                cx="160"
+                cy="160"
+                r="30"
+                fill="url(#centerGrad)"
+                stroke="#c2a36b"
+                strokeWidth="2.5"
+                filter="url(#innerShadow)"
+              />
+              <defs>
+                <radialGradient id="centerGrad" cx="40%" cy="35%">
+                  <stop offset="0%" stopColor="#fdfaf7" />
+                  <stop offset="100%" stopColor="#f7efe8" />
+                </radialGradient>
+              </defs>
+              {/* Decorative dots around center */}
+              {Array.from({ length: 12 }).map((_, i) => {
+                const angle = (i * 30 - 90) * (Math.PI / 180);
+                const dotR = 22;
+                return (
+                  <circle
+                    key={`dot-${i}`}
+                    cx={160 + dotR * Math.cos(angle)}
+                    cy={160 + dotR * Math.sin(angle)}
+                    r="1.2"
+                    fill="#c2a36b"
+                    opacity="0.6"
+                  />
+                );
+              })}
+              <text
+                x="160"
+                y="160"
+                fill="#a96d6c"
+                fontSize="11"
+                fontWeight="700"
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontFamily="inherit"
+                style={{ letterSpacing: "0.15em" }}
+              >
+                SPIN
+              </text>
+            </svg>
+          </div>
+        </div>
       </div>
 
       {/* State-dependent content */}
       {state === "idle" && (
         <div className="w-full max-w-xs space-y-3 text-center">
-          <h3 className="text-lg font-bold text-ink">{t("title")}</h3>
-          <p className="text-sm text-muted">{t("subtitle")}</p>
+          <h3 className="text-lg font-semibold tracking-tight text-ink">{t("title")}</h3>
+          <p className="text-sm text-muted leading-relaxed">{t("subtitle")}</p>
           <input
             type="email"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setEmailError(false); }}
             placeholder={t("emailPlaceholder")}
-            className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose ${
+            className={`w-full px-4 py-2.5 border rounded-xl text-sm bg-nude-50 focus:outline-none focus:ring-2 focus:ring-rose/40 focus:border-rose transition-all ${
               emailError ? "border-red-400 ring-1 ring-red-400" : "border-line"
             }`}
           />
@@ -227,7 +305,11 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
           )}
           <button
             onClick={handleSpin}
-            className="w-full py-3 bg-rose text-white font-semibold rounded-xl hover:bg-rose-deep transition-colors text-sm"
+            className="w-full py-3 text-sm font-semibold rounded-xl text-white transition-all"
+            style={{
+              background: "linear-gradient(135deg, #c98b88 0%, #a96d6c 100%)",
+              boxShadow: "0 2px 8px rgba(169,109,108,0.3)",
+            }}
           >
             {t("spinButton")}
           </button>
@@ -236,19 +318,23 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
 
       {state === "spinning" && (
         <div className="text-center">
-          <p className="text-sm font-medium text-muted animate-pulse">{t("spinning")}</p>
+          <p className="text-sm font-medium text-muted animate-pulse tracking-wide">{t("spinning")}</p>
         </div>
       )}
 
       {state === "result-win" && (
         <div className="w-full max-w-xs text-center space-y-3">
-          <h3 className="text-lg font-bold text-emerald-600">
-            {t("won", { discount })}
-          </h3>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20">
+            <span className="text-lg font-bold text-gold">{t("won", { discount })}</span>
+          </div>
           <p className="text-sm text-muted">{t("wonSub")}</p>
           <a
             href="/offer"
-            className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
+            className="inline-flex px-6 py-2.5 text-sm font-semibold rounded-xl text-white transition-all"
+            style={{
+              background: "linear-gradient(135deg, #c98b88 0%, #a96d6c 100%)",
+              boxShadow: "0 2px 8px rgba(169,109,108,0.3)",
+            }}
           >
             {t("viewOffer")}
           </a>
@@ -257,11 +343,15 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
 
       {state === "result-lose" && (
         <div className="w-full max-w-xs text-center space-y-3">
-          <h3 className="text-lg font-bold text-ink">{t("lost")}</h3>
+          <h3 className="text-lg font-semibold text-ink">{t("lost")}</h3>
           <p className="text-sm text-muted">{t("lostSub")}</p>
           <a
             href="/offer"
-            className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
+            className="inline-flex px-6 py-2.5 text-sm font-semibold rounded-xl text-white transition-all"
+            style={{
+              background: "linear-gradient(135deg, #c98b88 0%, #a96d6c 100%)",
+              boxShadow: "0 2px 8px rgba(169,109,108,0.3)",
+            }}
           >
             {t("viewOffer")}
           </a>
@@ -270,7 +360,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
 
       {state === "already-played" && (
         <div className="w-full max-w-xs text-center space-y-3">
-          <h3 className="text-lg font-bold text-ink">{t("alreadyPlayed")}</h3>
+          <h3 className="text-lg font-semibold text-ink">{t("alreadyPlayed")}</h3>
           <p className="text-sm text-muted">{t("alreadyPlayedSub")}</p>
           <button
             onClick={onClose}
@@ -283,7 +373,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
 
       {state === "error" && (
         <div className="w-full max-w-xs text-center space-y-3">
-          <h3 className="text-lg font-bold text-ink">{t("tooManyAttempts")}</h3>
+          <h3 className="text-lg font-semibold text-ink">{t("tooManyAttempts")}</h3>
           <button
             onClick={onClose}
             className="px-5 py-2.5 text-sm text-muted hover:text-ink transition-colors"
