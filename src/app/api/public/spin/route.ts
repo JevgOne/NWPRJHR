@@ -3,6 +3,9 @@ import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
 import { z } from "zod";
 
+const MAX_ATTEMPTS = 3;
+const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 const SEGMENTS = [
   { id: 0, discount: 5,  weight: 18, label: "5%" },
   { id: 1, discount: 0,  weight: 15, label: "miss" },
@@ -39,31 +42,9 @@ const spinSchema = z.object({
   email: z.string().email().max(200),
 });
 
-// Rate limit: 5 per hour per IP
-const rateLimitMap = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW = 3600_000;
-const RATE_LIMIT_MAX = 5;
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const timestamps = rateLimitMap.get(ip) ?? [];
-  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW);
-  if (recent.length >= RATE_LIMIT_MAX) return true;
-  recent.push(now);
-  rateLimitMap.set(ip, recent);
-  return false;
-}
-
 export async function POST(request: NextRequest) {
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-
-  if (isRateLimited(ip)) {
-    return NextResponse.json(
-      { error: "too_many_attempts" },
-      { status: 429 }
-    );
-  }
 
   let body;
   try {
@@ -79,12 +60,42 @@ export async function POST(request: NextRequest) {
 
   const email = parsed.data.email.toLowerCase();
 
-  // Check if already played
+  // Check existing entry for this email
   const existing = await prisma.spinEntry.findUnique({
     where: { email },
   });
+
   if (existing) {
-    return NextResponse.json({ error: "already_played" }, { status: 409 });
+    // Already won — no more attempts
+    if (existing.won) {
+      return NextResponse.json(
+        { error: "already_won", attemptsUsed: existing.attemptCount, maxAttempts: MAX_ATTEMPTS },
+        { status: 409 }
+      );
+    }
+
+    // All attempts used
+    if (existing.attemptCount >= MAX_ATTEMPTS) {
+      return NextResponse.json(
+        { error: "max_attempts", attemptsUsed: existing.attemptCount, maxAttempts: MAX_ATTEMPTS },
+        { status: 409 }
+      );
+    }
+
+    // Cooldown not elapsed (24h since last attempt)
+    const elapsed = Date.now() - new Date(existing.lastAttemptAt).getTime();
+    if (elapsed < COOLDOWN_MS) {
+      const retryAfterMs = COOLDOWN_MS - elapsed;
+      return NextResponse.json(
+        {
+          error: "cooldown",
+          retryAfterMs,
+          attemptsUsed: existing.attemptCount,
+          maxAttempts: MAX_ATTEMPTS,
+        },
+        { status: 429 }
+      );
+    }
   }
 
   // Pick segment (server-side RNG)
@@ -126,17 +137,38 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Create spin entry
-  await prisma.spinEntry.create({
-    data: {
-      email,
-      segment: segment.id,
-      won,
-      discountPercent: won ? segment.discount : null,
-      promoCodeId,
-      ipAddress: ip,
-    },
-  });
+  const now = new Date();
+  const attemptCount = existing ? existing.attemptCount + 1 : 1;
+
+  if (existing) {
+    // Update existing entry with new attempt
+    await prisma.spinEntry.update({
+      where: { email },
+      data: {
+        segment: segment.id,
+        won,
+        discountPercent: won ? segment.discount : null,
+        promoCodeId: promoCodeId ?? existing.promoCodeId,
+        ipAddress: ip,
+        attemptCount,
+        lastAttemptAt: now,
+      },
+    });
+  } else {
+    // Create new spin entry
+    await prisma.spinEntry.create({
+      data: {
+        email,
+        segment: segment.id,
+        won,
+        discountPercent: won ? segment.discount : null,
+        promoCodeId,
+        ipAddress: ip,
+        attemptCount: 1,
+        lastAttemptAt: now,
+      },
+    });
+  }
 
   // Send email with code if won
   if (won && code) {
@@ -176,9 +208,14 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
   }
 
+  const remainingAttempts = MAX_ATTEMPTS - attemptCount;
+
   return NextResponse.json({
     segment: segment.id,
     won,
     discountPercent: won ? segment.discount : undefined,
+    attemptsUsed: attemptCount,
+    maxAttempts: MAX_ATTEMPTS,
+    remainingAttempts,
   });
 }

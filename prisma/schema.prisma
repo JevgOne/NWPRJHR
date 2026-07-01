@@ -1527,14 +1527,17 @@ enum PromoDiscountType {
 
 model SpinEntry {
   id              String    @id @default(cuid())
-  email           String    @unique
+  email           String
   segment         Int
   won             Boolean   @default(false)
   discountPercent Int?
   promoCodeId     String?
   ipAddress       String?
+  attemptCount    Int       @default(1)
+  lastAttemptAt   DateTime  @default(now())
   createdAt       DateTime  @default(now())
 
+  @@unique([email])
   @@index([createdAt])
   @@map("spin_entries")
 }

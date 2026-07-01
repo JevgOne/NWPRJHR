@@ -9,8 +9,13 @@ export function SpinWheelPopup() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Don't show if already played
-    if (localStorage.getItem("spin-played")) return;
+    // Don't show if permanently blocked (won or all 3 attempts used)
+    const played = localStorage.getItem("spin-played");
+    if (played === "won" || played === "exhausted") return;
+
+    // Don't show during 24h cooldown between attempts
+    const cooldownUntil = parseInt(localStorage.getItem("spin-cooldown-until") ?? "0");
+    if (cooldownUntil && Date.now() < cooldownUntil) return;
 
     // Don't show if dismissed within 7 days
     const dismissedAt = parseInt(localStorage.getItem("spin-dismissed") ?? "0");

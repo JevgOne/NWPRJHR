@@ -34,10 +34,11 @@ const SEGMENT_TEXT_COLORS = [
   "#ffffff", // on mauve
 ];
 
-type SpinState = "idle" | "spinning" | "decelerating" | "result-win" | "result-lose" | "already-played" | "error";
+type SpinState = "idle" | "spinning" | "decelerating" | "result-win" | "result-lose" | "already-won" | "max-attempts" | "cooldown" | "error";
 
 // Duration of the deceleration phase (targeted rotation to final segment)
 const DECEL_DURATION_MS = 3000;
+const COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 export function SpinWheel({ onClose }: { onClose: () => void }) {
   const t = useTranslations("spinWheel");
@@ -46,6 +47,8 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
   const [rotation, setRotation] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [emailError, setEmailError] = useState(false);
+  const [remainingAttempts, setRemainingAttempts] = useState(3);
+  const [cooldownHours, setCooldownHours] = useState(0);
   const wheelRef = useRef<SVGSVGElement>(null);
   const resultRef = useRef<{ won: boolean; discountPercent: number } | null>(null);
 
@@ -54,18 +57,29 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
     t("seg15"), t("segMiss"), t("seg20"), t("segMiss"), t("seg25"),
   ];
 
-  const showResult = (won: boolean, discountPercent: number) => {
+  const showResult = (won: boolean, discountPercent: number, remaining: number) => {
     if (won) {
       setDiscount(discountPercent);
       setState("result-win");
-      localStorage.setItem("spin-played", "1");
+      // Won — permanent localStorage block
+      localStorage.setItem("spin-played", "won");
+      localStorage.removeItem("spin-cooldown-until");
       const winColors = ["#c2a36b", "#c98b88", "#dbc5a0", "#a96d6c", "#fdfaf7"];
       confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: winColors });
       setTimeout(() => confetti({ particleCount: 60, spread: 90, origin: { x: 0.25, y: 0.45 }, colors: winColors }), 250);
       setTimeout(() => confetti({ particleCount: 60, spread: 90, origin: { x: 0.75, y: 0.45 }, colors: winColors }), 500);
     } else {
       setState("result-lose");
-      localStorage.setItem("spin-played", "1");
+      setRemainingAttempts(remaining);
+      if (remaining > 0) {
+        // Set 24h cooldown in localStorage
+        localStorage.setItem("spin-cooldown-until", String(Date.now() + COOLDOWN_MS));
+        localStorage.removeItem("spin-played");
+      } else {
+        // All attempts used — permanent block
+        localStorage.setItem("spin-played", "exhausted");
+        localStorage.removeItem("spin-cooldown-until");
+      }
       const loseColors = ["#efe0d6", "#f6e3e0", "#ecc9c6", "#dba8a6", "#f7efe8"];
       confetti({ particleCount: 40, spread: 120, origin: { y: 0.3 }, colors: loseColors, gravity: 0.6, drift: 0.5, scalar: 0.8, ticks: 150 });
       setTimeout(() => confetti({ particleCount: 25, spread: 140, origin: { x: 0.4, y: 0.25 }, colors: loseColors, gravity: 0.5, drift: -0.3, scalar: 0.7, ticks: 120 }), 400);
@@ -90,22 +104,32 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
         body: JSON.stringify({ email }),
       });
 
-      if (res.status === 409) {
-        setState("already-played");
-        localStorage.setItem("spin-played", "1");
-        return;
-      }
-      if (res.status === 429) {
-        setState("error");
-        return;
-      }
       if (!res.ok) {
+        const data = await res.json();
+
+        if (data.error === "already_won") {
+          setState("already-won");
+          localStorage.setItem("spin-played", "won");
+          return;
+        }
+        if (data.error === "max_attempts") {
+          setState("max-attempts");
+          localStorage.setItem("spin-played", "exhausted");
+          return;
+        }
+        if (data.error === "cooldown") {
+          const hours = Math.ceil((data.retryAfterMs ?? COOLDOWN_MS) / (60 * 60 * 1000));
+          setCooldownHours(hours);
+          setState("cooldown");
+          return;
+        }
         setState("error");
         return;
       }
 
       const data = await res.json();
       const segment = data.segment as number;
+      const remaining = data.remainingAttempts ?? 0;
 
       // Phase 2: capture current visual rotation, then decelerate to target
       const svg = wheelRef.current;
@@ -134,7 +158,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
       setTimeout(() => {
         const result = resultRef.current;
         if (result) {
-          showResult(result.won, result.discountPercent);
+          showResult(result.won, result.discountPercent, remaining);
         }
       }, DECEL_DURATION_MS + 200);
     } catch {
@@ -376,7 +400,11 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
       {state === "result-lose" && (
         <div className="w-full max-w-xs text-center space-y-3">
           <h3 className="text-lg font-semibold text-ink">{t("lost")}</h3>
-          <p className="text-sm text-muted">{t("lostSub")}</p>
+          {remainingAttempts > 0 ? (
+            <p className="text-sm text-muted">{t("lostTryTomorrow", { remaining: remainingAttempts })}</p>
+          ) : (
+            <p className="text-sm text-muted">{t("lostAllUsed")}</p>
+          )}
           <a
             href="/offer"
             className="inline-flex px-6 py-2.5 text-sm font-semibold rounded-xl text-white transition-all"
@@ -390,10 +418,36 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
         </div>
       )}
 
-      {state === "already-played" && (
+      {state === "already-won" && (
         <div className="w-full max-w-xs text-center space-y-3">
-          <h3 className="text-lg font-semibold text-ink">{t("alreadyPlayed")}</h3>
-          <p className="text-sm text-muted">{t("alreadyPlayedSub")}</p>
+          <h3 className="text-lg font-semibold text-ink">{t("alreadyWon")}</h3>
+          <p className="text-sm text-muted">{t("alreadyWonSub")}</p>
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 text-sm text-muted hover:text-ink transition-colors"
+          >
+            {t("close")}
+          </button>
+        </div>
+      )}
+
+      {state === "max-attempts" && (
+        <div className="w-full max-w-xs text-center space-y-3">
+          <h3 className="text-lg font-semibold text-ink">{t("maxAttempts")}</h3>
+          <p className="text-sm text-muted">{t("maxAttemptsSub")}</p>
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 text-sm text-muted hover:text-ink transition-colors"
+          >
+            {t("close")}
+          </button>
+        </div>
+      )}
+
+      {state === "cooldown" && (
+        <div className="w-full max-w-xs text-center space-y-3">
+          <h3 className="text-lg font-semibold text-ink">{t("cooldownTitle")}</h3>
+          <p className="text-sm text-muted">{t("cooldownSub", { hours: cooldownHours })}</p>
           <button
             onClick={onClose}
             className="px-5 py-2.5 text-sm text-muted hover:text-ink transition-colors"
@@ -405,7 +459,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
 
       {state === "error" && (
         <div className="w-full max-w-xs text-center space-y-3">
-          <h3 className="text-lg font-semibold text-ink">{t("tooManyAttempts")}</h3>
+          <h3 className="text-lg font-semibold text-ink">{t("errorGeneric")}</h3>
           <button
             onClick={onClose}
             className="px-5 py-2.5 text-sm text-muted hover:text-ink transition-colors"
