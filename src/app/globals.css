@@ -43,3 +43,8 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+@keyframes wheelSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

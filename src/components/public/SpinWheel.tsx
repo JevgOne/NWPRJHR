@@ -34,7 +34,10 @@ const SEGMENT_TEXT_COLORS = [
   "#ffffff", // on mauve
 ];
 
-type SpinState = "idle" | "spinning" | "result-win" | "result-lose" | "already-played" | "error";
+type SpinState = "idle" | "spinning" | "decelerating" | "result-win" | "result-lose" | "already-played" | "error";
+
+// Duration of the deceleration phase (targeted rotation to final segment)
+const DECEL_DURATION_MS = 3000;
 
 export function SpinWheel({ onClose }: { onClose: () => void }) {
   const t = useTranslations("spinWheel");
@@ -44,11 +47,30 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
   const [discount, setDiscount] = useState(0);
   const [emailError, setEmailError] = useState(false);
   const wheelRef = useRef<SVGSVGElement>(null);
+  const resultRef = useRef<{ won: boolean; discountPercent: number } | null>(null);
 
   const segmentLabels = [
     t("seg5"), t("segMiss"), t("seg10"), t("segMiss"), t("segMiss"),
     t("seg15"), t("segMiss"), t("seg20"), t("segMiss"), t("seg25"),
   ];
+
+  const showResult = (won: boolean, discountPercent: number) => {
+    if (won) {
+      setDiscount(discountPercent);
+      setState("result-win");
+      localStorage.setItem("spin-played", "1");
+      const winColors = ["#c2a36b", "#c98b88", "#dbc5a0", "#a96d6c", "#fdfaf7"];
+      confetti({ particleCount: 120, spread: 70, origin: { y: 0.5 }, colors: winColors });
+      setTimeout(() => confetti({ particleCount: 60, spread: 90, origin: { x: 0.25, y: 0.45 }, colors: winColors }), 250);
+      setTimeout(() => confetti({ particleCount: 60, spread: 90, origin: { x: 0.75, y: 0.45 }, colors: winColors }), 500);
+    } else {
+      setState("result-lose");
+      localStorage.setItem("spin-played", "1");
+      const loseColors = ["#efe0d6", "#f6e3e0", "#ecc9c6", "#dba8a6", "#f7efe8"];
+      confetti({ particleCount: 40, spread: 120, origin: { y: 0.3 }, colors: loseColors, gravity: 0.6, drift: 0.5, scalar: 0.8, ticks: 150 });
+      setTimeout(() => confetti({ particleCount: 25, spread: 140, origin: { x: 0.4, y: 0.25 }, colors: loseColors, gravity: 0.5, drift: -0.3, scalar: 0.7, ticks: 120 }), 400);
+    }
+  };
 
   const handleSpin = async () => {
     if (!email || !email.includes("@")) {
@@ -56,6 +78,9 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
       return;
     }
     setEmailError(false);
+    resultRef.current = null;
+
+    // Phase 1: immediately start fast infinite CSS spin
     setState("spinning");
 
     try {
@@ -82,74 +107,36 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
       const data = await res.json();
       const segment = data.segment as number;
 
-      const targetAngle =
-        360 * 5 + (360 - (SEGMENT_ANGLE * segment + SEGMENT_ANGLE / 2));
+      // Phase 2: capture current visual rotation, then decelerate to target
+      const svg = wheelRef.current;
+      if (!svg) return;
+
+      // Read the current animated rotation so the deceleration starts seamlessly
+      const computed = window.getComputedStyle(svg);
+      const matrix = new DOMMatrix(computed.transform);
+      const currentAngle = Math.round(
+        Math.atan2(matrix.b, matrix.a) * (180 / Math.PI)
+      );
+      // Normalize to positive
+      const normalizedCurrent = ((currentAngle % 360) + 360) % 360;
+
+      // Target: at least 3 full extra spins + land on segment
+      const segmentTarget = 360 - (SEGMENT_ANGLE * segment + SEGMENT_ANGLE / 2);
+      const targetAngle = normalizedCurrent + 360 * 3 + ((segmentTarget - normalizedCurrent % 360) + 360) % 360;
+
+      // Store result for after deceleration
+      resultRef.current = { won: data.won, discountPercent: data.discountPercent ?? 0 };
+
+      // Switch from infinite animation to targeted transition
       setRotation(targetAngle);
+      setState("decelerating");
 
       setTimeout(() => {
-        if (data.won) {
-          setDiscount(data.discountPercent);
-          setState("result-win");
-          localStorage.setItem("spin-played", "1");
-          // Celebratory burst — gold & rose brand confetti
-          const winColors = ["#c2a36b", "#c98b88", "#dbc5a0", "#a96d6c", "#fdfaf7"];
-          confetti({
-            particleCount: 120,
-            spread: 70,
-            origin: { y: 0.5 },
-            colors: winColors,
-          });
-          setTimeout(
-            () =>
-              confetti({
-                particleCount: 60,
-                spread: 90,
-                origin: { x: 0.25, y: 0.45 },
-                colors: winColors,
-              }),
-            250
-          );
-          setTimeout(
-            () =>
-              confetti({
-                particleCount: 60,
-                spread: 90,
-                origin: { x: 0.75, y: 0.45 },
-                colors: winColors,
-              }),
-            500
-          );
-        } else {
-          setState("result-lose");
-          localStorage.setItem("spin-played", "1");
-          // Gentle falling particles — muted nude/blush tones
-          const loseColors = ["#efe0d6", "#f6e3e0", "#ecc9c6", "#dba8a6", "#f7efe8"];
-          confetti({
-            particleCount: 40,
-            spread: 120,
-            origin: { y: 0.3 },
-            colors: loseColors,
-            gravity: 0.6,
-            drift: 0.5,
-            scalar: 0.8,
-            ticks: 150,
-          });
-          setTimeout(
-            () =>
-              confetti({
-                particleCount: 25,
-                spread: 140,
-                origin: { x: 0.4, y: 0.25 },
-                colors: loseColors,
-                gravity: 0.5,
-                drift: -0.3,
-                scalar: 0.7,
-                ticks: 120,
-              }),
-            400
-          );
+        const result = resultRef.current;
+        if (result) {
+          showResult(result.won, result.discountPercent);
         }
-      }, 4200);
+      }, DECEL_DURATION_MS + 200);
     } catch {
       setState("error");
     }
@@ -250,8 +237,18 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
               viewBox="0 0 320 320"
               className="max-w-[280px] sm:max-w-[320px] rounded-full"
               style={{
-                transform: `rotate(${rotation}deg)`,
-                transition: state === "spinning" ? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)" : "none",
+                ...(state === "spinning"
+                  ? {
+                      animation: "wheelSpin 0.5s linear infinite",
+                    }
+                  : {
+                      animation: "none",
+                      transform: `rotate(${rotation}deg)`,
+                      transition:
+                        state === "decelerating"
+                          ? `transform ${DECEL_DURATION_MS}ms cubic-bezier(0.12, 0.6, 0.08, 1)`
+                          : "none",
+                    }),
               }}
             >
               <defs>
@@ -351,7 +348,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
         </div>
       )}
 
-      {state === "spinning" && (
+      {(state === "spinning" || state === "decelerating") && (
         <div className="text-center">
           <p className="text-sm font-medium text-muted animate-pulse tracking-wide">{t("spinning")}</p>
         </div>
