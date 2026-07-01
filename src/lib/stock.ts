@@ -67,13 +67,25 @@ interface RawReservationRow {
   reservedPieces: bigint;
 }
 
+// In-memory cache for bulk stock numbers (30s TTL)
+let cachedStock: { data: Map<string, StockNumbers>; timestamp: number } | null = null;
+const STOCK_CACHE_TTL = 30_000;
+
+export function invalidateStockCache() {
+  cachedStock = null;
+}
+
 /**
  * Bulk stock numbers for all variants (stock overview page).
  * Uses raw SQL GROUP BY for efficiency.
+ * Cached in-memory with 30s TTL to avoid repeated DB roundtrips.
  */
 export async function getAllStockNumbers(): Promise<
   Map<string, StockNumbers>
 > {
+  if (cachedStock && Date.now() - cachedStock.timestamp < STOCK_CACHE_TTL) {
+    return cachedStock.data;
+  }
   const physicalRows = await prisma.$queryRawUnsafe<RawStockRow[]>(
     `SELECT variantId,
             COALESCE(SUM(remainingGrams), 0) as physicalGrams,
@@ -125,5 +137,6 @@ export async function getAllStockNumbers(): Promise<
     }
   }
 
+  cachedStock = { data: map, timestamp: Date.now() };
   return map;
 }

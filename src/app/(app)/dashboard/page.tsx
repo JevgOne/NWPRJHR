@@ -53,7 +53,7 @@ export default async function DashboardPage() {
 
   const [
     salesThisMonth,
-    deliveriesWithProduct,
+    stockByCategory,
     openInvoices,
     activeSalonsCount,
     totalSalesEver,
@@ -71,19 +71,19 @@ export default async function DashboardPage() {
       _sum: { totalAmount: true },
     }),
 
-    prisma.delivery.findMany({
-      where: { remainingGrams: { gt: 0 } },
-      select: {
-        remainingGrams: true,
-        purchasePricePerGramCZK: true,
-        variant: {
-          select: {
-            retailPricePerGram: true,
-            product: { select: { category: true } },
-          },
-        },
-      },
-    }),
+    prisma.$queryRawUnsafe<
+      Array<{ category: string; totalGrams: number; purchaseValue: number; retailValue: number }>
+    >(
+      `SELECT p.category,
+              COALESCE(SUM(d.remainingGrams), 0) as totalGrams,
+              COALESCE(SUM(d.remainingGrams * d.purchasePricePerGramCZK), 0) as purchaseValue,
+              COALESCE(SUM(d.remainingGrams * v.retailPricePerGram), 0) as retailValue
+       FROM deliveries d
+       JOIN variants v ON d.variantId = v.id
+       JOIN products p ON v.productId = p.id
+       WHERE d.remainingGrams > 0
+       GROUP BY p.category`
+    ),
 
     prisma.invoice.aggregate({
       where: { type: "INVOICE", status: { in: ["ISSUED", "AWAITING", "OVERDUE"] } },
@@ -131,18 +131,15 @@ export default async function DashboardPage() {
     prisma.salon.count({ where: { approved: false, archived: false } }),
   ]);
 
-  // Compute stats
-  const totalStockGrams = deliveriesWithProduct.reduce((a, d) => a + d.remainingGrams, 0);
-  const stockValuePurchase = deliveriesWithProduct.reduce((a, d) => a + d.remainingGrams * d.purchasePricePerGramCZK, 0);
-  const stockValueRetail = deliveriesWithProduct.reduce((a, d) => a + d.remainingGrams * d.variant.retailPricePerGram, 0);
+  // Compute stats from pre-aggregated SQL results
+  const totalStockGrams = stockByCategory.reduce((a, r) => a + Number(r.totalGrams), 0);
+  const stockValuePurchase = stockByCategory.reduce((a, r) => a + Number(r.purchaseValue), 0);
+  const stockValueRetail = stockByCategory.reduce((a, r) => a + Number(r.retailValue), 0);
 
   // Stock by category
   const catMap: Record<string, { grams: number; value: number }> = {};
-  for (const d of deliveriesWithProduct) {
-    const cat = d.variant.product.category;
-    if (!catMap[cat]) catMap[cat] = { grams: 0, value: 0 };
-    catMap[cat].grams += d.remainingGrams;
-    catMap[cat].value += d.remainingGrams * d.variant.retailPricePerGram;
+  for (const r of stockByCategory) {
+    catMap[r.category] = { grams: Number(r.totalGrams), value: Number(r.retailValue) };
   }
   const maxCatGrams = Math.max(...Object.values(catMap).map((c) => c.grams), 1);
 

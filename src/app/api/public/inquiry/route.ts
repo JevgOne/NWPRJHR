@@ -19,6 +19,7 @@ const inquirySchema = z.object({
   phone: z.string().max(30).optional().default(""),
   salonName: z.string().max(200).optional().default(""),
   message: z.string().max(5000).optional().default(""),
+  promoCode: z.string().max(50).optional().default(""),
   items: z.array(inquiryItemSchema).min(1).max(50),
 });
 
@@ -59,7 +60,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, phone, salonName, message, items } = parsed.data;
+  const { name, email, phone, salonName, message, promoCode, items } = parsed.data;
+
+  // Validate and increment promo code usage
+  let appliedPromoCode: string | null = null;
+  if (promoCode) {
+    const promo = await prisma.promoCode.findUnique({
+      where: { code: promoCode.toUpperCase() },
+    });
+    if (promo && promo.active) {
+      const now = new Date();
+      const isValid =
+        (!promo.validFrom || now >= promo.validFrom) &&
+        (!promo.validTo || now <= promo.validTo) &&
+        (!promo.maxUses || promo.usedCount < promo.maxUses);
+      if (isValid) {
+        appliedPromoCode = promo.code;
+        await prisma.promoCode.update({
+          where: { code: promo.code },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+    }
+  }
 
   try {
     const inquiry = await prisma.inquiry.create({
@@ -69,6 +92,7 @@ export async function POST(request: NextRequest) {
         phone: phone || null,
         salonName: salonName || null,
         message: message || null,
+        promoCode: appliedPromoCode,
         items: {
           create: items.map((item) => ({
             productId: item.productId,
@@ -98,6 +122,7 @@ export async function POST(request: NextRequest) {
         `Email: ${email}`,
         phone ? `Telefon: ${phone}` : null,
         salonName ? `Salon: ${salonName}` : null,
+        appliedPromoCode ? `Slevový kód: ${appliedPromoCode}` : null,
         "",
         `Položky (${items.length}):`,
         itemLines,

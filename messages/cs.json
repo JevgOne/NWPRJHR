@@ -320,7 +320,9 @@
     "status": "Stav",
     "quantity": "Množství",
     "pricePerGram": "CZK/g",
-    "product": "Produkt"
+    "product": "Produkt",
+    "subtotal": "Mezisoučet",
+    "promoCode": "Slevový kód"
   },
   "sampleManagement": {
     "title": "Vzorky",
@@ -697,7 +699,9 @@
       "submitting": "Odesílám...",
       "submitError": "Chyba při odesílání",
       "disclaimer": "Neplatíte nic online. Domluvíme schůzku kde si vlasy prohlédnete osobně.",
-      "outOfStock": "Vyprodáno"
+      "outOfStock": "Vyprodáno",
+      "promoCodeLabel": "Slevový kód",
+      "promoCodePlaceholder": "Máte slevový kód?"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",
@@ -1105,7 +1109,10 @@
     "submitOrder": "Odeslat objednávku",
     "submitting": "Odesílám...",
     "length": "Délka",
-    "color": "Barva"
+    "color": "Barva",
+    "promoCodePlaceholder": "Slevový kód",
+    "applyPromo": "Použít",
+    "promoInvalid": "Neplatný kód"
   },
   "returnsMgmt": {
     "title": "Vratky",
@@ -1529,5 +1536,29 @@
     "noCodes": "Žádné slevové kódy",
     "fillRequired": "Vyplňte kód a slevu",
     "codeExists": "Kód již existuje"
+  },
+  "spinWheel": {
+    "title": "Zatocte a vyhrajte slevu!",
+    "subtitle": "Zadejte e-mail a zkuste stesti",
+    "emailPlaceholder": "vas@email.cz",
+    "spinButton": "Zatocit!",
+    "spinning": "Toci se...",
+    "won": "Gratulujeme! Vyhrali jste {discount}% slevu!",
+    "wonSub": "Kod byl odeslan na vas e-mail",
+    "lost": "Tentokrat to nevyslo",
+    "lostSub": "Zkuste to priste!",
+    "alreadyPlayed": "Uz jste tocili",
+    "alreadyPlayedSub": "Kazdy e-mail muze tocit pouze jednou",
+    "tooManyAttempts": "Prilis mnoho pokusu, zkuste pozdeji",
+    "invalidEmail": "Zadejte platny e-mail",
+    "viewOffer": "Prohlednout nabidku",
+    "yourCode": "Vas slevovy kod",
+    "seg5": "5% sleva",
+    "seg10": "10% sleva",
+    "seg15": "15% sleva",
+    "seg20": "20% sleva",
+    "seg25": "25% sleva",
+    "segMiss": "Priste",
+    "close": "Zavrit"
   }
 }

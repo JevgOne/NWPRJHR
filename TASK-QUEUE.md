@@ -2,100 +2,97 @@
 
 ## AKTIVNÍ
 
-## TASK-004: Struktura vlasů + tóny barev — celý systém
+## TASK-070: Slevový kód při objednávce/poptávce
 Priorita: 1
-Stav: plánování
+Stav: čeká
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:
-Přidat do celého systému (DB, admin, public web) dvě nové vlastnosti produktu:
+Slevový kód musí být možné vložit při:
+1. **B2B objednávce** (salon/kadeřnice) — pole pro zadání kódu v objednávkovém formuláři, validace přes `/api/promo-codes/validate`, přepočet ceny, uložení použitého kódu k objednávce
+2. **Poptávce** (koncový zákazník) — pole pro zadání kódu v inquiry formuláři
 
-**1. Struktura vlasu (hair texture):**
-- Přesný seznam struktur musí potvrdit majitel (zatím zmínil: rovné, vlnité)
-- Musí být na: kartě produktu, homepage slideru, detailu produktu, při naskladnění
-- Překlady do 3 jazyků (cs/uk/ru)
-
-**2. Tóny barev (zjednodušené):**
-- Majitel chce jednodušší systém než profesionální vzorník — jen základní tóny:
-  - Blond, Hnědá, Tmavě hnědá, Zrzavá (+ černá TBD)
-- Nahrazuje/doplňuje stávající 1-10 škálu v `src/lib/hair-colors.ts`
-- Překlady do 3 jazyků (cs/uk/ru)
-
-**Kde všude přidat:**
-- DB: nový enum `HairTexture` + pole `texture` na modelu Product
-- Prisma schema + Turso ALTER TABLE (nelze prisma db push s libsql://)
-- Public API: `/api/public/products` — vracet texture
-- Product card (`src/app/(public)/offer/ProductsShowcase.tsx`) — zobrazit texturu
-- Homepage slider (`src/components/public/HeroProductSlider.tsx`) — zobrazit texturu
-- Product detail (`src/app/(public)/offer/[id]/page.tsx`) — zobrazit texturu ve specích
-- Filtrování na offer stránce — filtr podle textury
-- Admin create form (`src/app/(app)/products/new/CreateProductForm.tsx`) — select textury
-- Admin detail (`src/app/(app)/products/[id]/ProductDetailClient.tsx`) — zobrazit texturu
-- Admin list (`src/app/(app)/products/ProductListClient.tsx`) — zobrazit texturu
-- Stock-in form (`src/components/inventory/StockInForm.tsx`) — texturu u produktu
-- Product serializer (`src/lib/api/product-serializer.ts`) — přidat texture
-- Validation schema (`src/lib/validations/product.ts`) — přidat texture enum
-- SEO metadata: texture v titulku/popisu produktu
+Admin stránka pro zakládání kódů už existuje: `/promo-codes` (Marketing → Slevové kódy).
+DB model `PromoCode` je v schema.prisma (ještě NEpushnuto do Turso — potřeba ALTER TABLE).
+API: `/api/promo-codes` (CRUD), `/api/promo-codes/validate` (validace).
 
 ### Kontext:
-- Hairland prodává SUROVÉ vlasy (ne hotové clip-in/keratin), zpracování je volitelná služba
-- Stávající `processingType` na Product je méně relevantní pro primární klasifikaci
-- Barvy jsou teď kódy 1-10 v `src/lib/hair-colors.ts` → možná přejít na tóny
-- Turso DB vyžaduje ALTER TABLE přes CLI, ne prisma db push
-- 3 jazyky: cs/uk/ru (next-intl, cookie HAIRLAND_LOCALE)
+- Objednávkový formulář salonu: hledat v `src/app/(salon)/`
+- Poptávkový formulář: `src/app/(public)/inquiry-cart/`
+- PromoCode model: `prisma/schema.prisma` (na konci)
+- Turso DB: ALTER TABLE přes CLI, nelze prisma db push
+- Při použití kódu inkrementovat `usedCount` na PromoCode
 
 ---
 
-## TASK-005: SEO automatizace pro nové produkty
+## TASK-071: Performance — pomalé načítání produktů a admin panelu
 Priorita: 1
-Stav: plánování
+Stav: čeká
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:
-Zajistit že při přidání nového produktu se automaticky generuje:
-- Unikátní SEO title z: název + textura + původ + typ (generateMetadata)
-- Meta description z popisu produktu
-- OG image z první fotky produktu
-- Produkt se automaticky objeví v sitemap.xml
-- Product JSON-LD schema (schema.org)
-- Canonical URL
+Uživatel reportuje:
+- "produkty se načítají hrooozne pomalu ale fakt"
+- "to same když se přihlašují do admin panelu hrozne dlouho se to načíta"
 
-Aktuální stav: základní SEO je implementováno (sitemap.ts, robots.txt, generateMetadata na offer/[id]/page.tsx), ale:
-- Title používá processingType + origin → přidat texture
-- Description je generická → přidat specifický popis s texturou, barvami, délkami
-- JSON-LD schema je na detail page → rozšířit o texture
+Potřeba analyzovat:
+1. Proč jsou API endpointy pomalé (Turso remote SQLite latence?)
+2. Optimalizace DB dotazů (select only needed fields, indexy)
+3. Cachování (Next.js cache, unstable_cache, revalidate)
+4. Lazy loading komponent v admin panelu
+5. Connection pooling k Turso
 
 ### Kontext:
-- SEO strategie dokument: `.claude-context/tasks/SEO-STRATEGY-2026.md`
-- Sitemap: `src/app/sitemap.ts` (dynamický, čte z DB)
-- Meta: `src/app/(public)/offer/[id]/page.tsx` (generateMetadata)
-- Root layout: `src/app/layout.tsx` (metadataBase, title template)
+- DB: Turso (libsql remote SQLite)
+- Prisma 7 s Turso adapterem
+- Next.js 16 s Turbopack
+- Produkce: hairland.cz
+
+---
+
+## TASK-072: DB migrace — PromoCode tabulka do Turso
+Priorita: 1
+Stav: čeká
+Projekt: /Users/zen/hairora
+
+### Kompletní zadání:
+Prisma schema obsahuje nový model `PromoCode` ale tabulka `promo_codes` ještě neexistuje v Turso DB.
+Spustit ALTER TABLE / CREATE TABLE přes Turso CLI nebo SQL.
+
+### Kontext:
+- Turso vyžaduje manuální migrace (ne prisma db push)
+- Schema: `prisma/schema.prisma` model PromoCode na konci souboru
 
 ---
 
 ## BACKLOG
 
-## TASK-001: B2B/Dropshipping systém s třemi cenovými úrovněmi
+## TASK-004: Struktura vlasů + tóny barev — celý systém
 Priorita: 2
-Stav: hotovo (základní implementace)
+Stav: odloženo
+
+## TASK-005: SEO automatizace pro nové produkty
+Priorita: 2
+Stav: odloženo
 
 ## TASK-002: Blog/Poradna
-Priorita: 2
+Priorita: 3
 Stav: čeká
-
-### Kompletní zadání:
-Vytvořit blog/poradnu jako SEO magnet. Stránka `/blog` s články typu "Jak vybrat správné vlasy", "Péče o extenze", "Clip-in vs Tape-in". Admin panel pro správu článků. Články v CZ/UA/RU.
 
 ## TASK-003: Referral program
 Priorita: 3
 Stav: čeká
-
-### Kompletní zadání:
-Každá zákaznice dostane unikátní referral kód/odkaz. Když jej sdílí a někdo nakoupí, obě dostanou slevu. Tabulka referral_codes v DB + logika při checkout.
 
 ---
 
 ## ČEKÁ
 
 ## HOTOVÉ
-- SEO základy (sitemap, robots.txt, schema markup, OG tags, meta tags) — commit b5f1c24
+- SEO základy (sitemap, robots.txt, schema markup, OG tags, meta tags)
+- Audit log rozšíření (35+ API routes, filtrování, barevné badge)
+- Reklamace sloučení (interní + tikety → jen tikety)
+- Order detail redesign (červený cancel s potvrzením, status banner)
+- Logout v public navbar
+- Reklamace odkaz v salon panelu
+- Slevové kódy admin CRUD (/promo-codes)
+- Cancel notifikace obousměrně (salon→admin, admin→salon)

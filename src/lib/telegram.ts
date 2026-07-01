@@ -356,6 +356,43 @@ export async function notifyComplaintTicket(ticketId: string, data: {
   await sendWithClaimButton(lines, "complaint", ticketId);
 }
 
+/**
+ * Notify about order cancellation.
+ */
+export async function notifyOrderCancelled(data: {
+  orderNumber: string | null;
+  orderId: string;
+  salonName: string;
+  cancelledBy: "salon" | "admin";
+  itemCount: number;
+}): Promise<void> {
+  const orderLabel = data.orderNumber ?? data.orderId.slice(0, 8);
+
+  const lines = data.cancelledBy === "salon"
+    ? [
+        `❌ <b>OBJEDNÁVKA ZRUŠENA SALONEM / ЗАКАЗ ОТМЕНЁН САЛОНОМ</b>`,
+        ``,
+        `Objednávka/Заказ: ${esc(orderLabel)}`,
+        `Salon/Салон: ${esc(data.salonName)}`,
+        `Položek/Позиций: ${data.itemCount}`,
+        ``,
+        `Salon zrušil svou objednávku.`,
+        `Салон отменил свой заказ.`,
+      ]
+    : [
+        `❌ <b>OBJEDNÁVKA ZRUŠENA ADMINEM / ЗАКАЗ ОТМЕНЁН АДМИНОМ</b>`,
+        ``,
+        `Objednávka/Заказ: ${esc(orderLabel)}`,
+        `Salon/Салон: ${esc(data.salonName)}`,
+        `Položek/Позиций: ${data.itemCount}`,
+        ``,
+        `Admin zrušil objednávku salonu.`,
+        `Админ отменил заказ салона.`,
+      ];
+
+  await sendTelegramMessage(lines.join("\n"));
+}
+
 /** Map color code to emoji + name (CZ/RU) */
 function formatColor(color: string): string {
   const map: Record<string, [string, string, string]> = {

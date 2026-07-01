@@ -320,7 +320,9 @@
     "status": "Статус",
     "quantity": "Кількість",
     "pricePerGram": "CZK/г",
-    "product": "Товар"
+    "product": "Товар",
+    "subtotal": "Проміжний підсумок",
+    "promoCode": "Промокод"
   },
   "sampleManagement": {
     "title": "Зразки",
@@ -697,7 +699,9 @@
       "submitting": "Надсилаю...",
       "submitError": "Помилка при відправці",
       "disclaimer": "Ви нічого не оплачуєте онлайн. Ми домовимося про зустріч, де ви зможете особисто оглянути волосся.",
-      "outOfStock": "Немає в наявності"
+      "outOfStock": "Немає в наявності",
+      "promoCodeLabel": "Промокод",
+      "promoCodePlaceholder": "Маєте промокод?"
     },
     "categoryInfo": {
       "virginDesc": "Найвища якість натурального волосся. 100% необроблене, повна кутикула збережена у правильному напрямку. Природно блискуче, шовковисте та міцне.",
@@ -1105,7 +1109,10 @@
     "submitOrder": "Надіслати замовлення",
     "submitting": "Надсилаю...",
     "length": "Довжина",
-    "color": "Колір"
+    "color": "Колір",
+    "promoCodePlaceholder": "Промокод",
+    "applyPromo": "Застосувати",
+    "promoInvalid": "Недійсний код"
   },
   "returnsMgmt": {
     "title": "Повернення",
@@ -1529,5 +1536,29 @@
     "noCodes": "Немає промокодів",
     "fillRequired": "Заповніть код та знижку",
     "codeExists": "Код вже існує"
+  },
+  "spinWheel": {
+    "title": "Крутiть та вигравайте знижку!",
+    "subtitle": "Введiть e-mail та спробуйте удачу",
+    "emailPlaceholder": "vash@email.com",
+    "spinButton": "Крутити!",
+    "spinning": "Крутиться...",
+    "won": "Вiтаємо! Ви виграли {discount}% знижку!",
+    "wonSub": "Код надiслано на ваш e-mail",
+    "lost": "Цього разу не вдалося",
+    "lostSub": "Спробуйте наступного разу!",
+    "alreadyPlayed": "Ви вже крутили",
+    "alreadyPlayedSub": "Кожен e-mail може крутити лише один раз",
+    "tooManyAttempts": "Забагато спроб, спробуйте пiзнiше",
+    "invalidEmail": "Введiть дiйсний e-mail",
+    "viewOffer": "Переглянути пропозицiю",
+    "yourCode": "Ваш промокод",
+    "seg5": "5% знижка",
+    "seg10": "10% знижка",
+    "seg15": "15% знижка",
+    "seg20": "20% знижка",
+    "seg25": "25% знижка",
+    "segMiss": "Наступного разу",
+    "close": "Закрити"
   }
 }

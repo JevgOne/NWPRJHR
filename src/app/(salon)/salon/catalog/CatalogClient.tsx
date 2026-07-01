@@ -70,6 +70,17 @@ export function CatalogClient({ role }: { role: Role }) {
   const [submitting, setSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderError, setOrderError] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [promoValidating, setPromoValidating] = useState(false);
+  const [promoResult, setPromoResult] = useState<{
+    valid: boolean;
+    code?: string;
+    discountType?: string;
+    discountValue?: number;
+    discountAmount?: number;
+    description?: string;
+    reason?: string;
+  } | null>(null);
 
   const colorName = (nameKey: string) => {
     try { return tColors(nameKey as "c1"); } catch { return nameKey; }
@@ -111,6 +122,29 @@ export function CatalogClient({ role }: { role: Role }) {
   const cartTotalGrams = cartItems.reduce((sum, item) => sum + item.grams, 0);
   const cartTotalPieces = cartItems.reduce((sum, item) => sum + item.pieces, 0);
 
+  const validatePromoCode = async () => {
+    if (!promoCode.trim()) return;
+    setPromoValidating(true);
+    try {
+      const res = await fetch("/api/promo-codes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode.trim(), orderTotal: cartTotal }),
+      });
+      const data = await res.json();
+      setPromoResult(data);
+    } catch {
+      setPromoResult({ valid: false, reason: "error" });
+    } finally {
+      setPromoValidating(false);
+    }
+  };
+
+  const removePromoCode = () => {
+    setPromoCode("");
+    setPromoResult(null);
+  };
+
   const submitOrder = async () => {
     if (cartItems.length === 0) return;
     setSubmitting(true);
@@ -126,6 +160,7 @@ export function CatalogClient({ role }: { role: Role }) {
             pieces: item.sellingMode === "BY_PIECE" ? item.pieces : 0,
           })),
           note: orderNote || undefined,
+          promoCode: promoResult?.valid ? promoResult.code : undefined,
         }),
       });
       if (!res.ok) {
@@ -135,6 +170,8 @@ export function CatalogClient({ role }: { role: Role }) {
       setOrderSuccess(true);
       setCart(new Map());
       setOrderNote("");
+      setPromoCode("");
+      setPromoResult(null);
     } catch (e) {
       setOrderError(e instanceof Error ? e.message : t("orderError"));
     } finally {
@@ -354,6 +391,50 @@ export function CatalogClient({ role }: { role: Role }) {
                 {orderError}
               </div>
             )}
+
+            {/* Promo code row */}
+            <div className="flex items-center gap-2 mb-2">
+              {promoResult?.valid ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-lg text-sm">
+                  <svg className="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-emerald-700 font-medium">{promoResult.code}</span>
+                  <span className="text-emerald-600">
+                    {promoResult.discountType === "PERCENT"
+                      ? `-${(promoResult.discountValue ?? 0) / 100}%`
+                      : `-${formatCZK(promoResult.discountAmount ?? 0)} Kč`}
+                  </span>
+                  <button onClick={removePromoCode} className="text-emerald-400 hover:text-red-500 ml-1">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    value={promoCode}
+                    onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoResult(null); }}
+                    placeholder={t("promoCodePlaceholder")}
+                    className="w-36 px-3 py-1.5 text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose uppercase"
+                    onKeyDown={(e) => { if (e.key === "Enter") validatePromoCode(); }}
+                  />
+                  <button
+                    onClick={validatePromoCode}
+                    disabled={promoValidating || !promoCode.trim()}
+                    className="px-3 py-1.5 text-sm font-medium text-rose border border-rose rounded-lg hover:bg-rose/5 transition-colors disabled:opacity-50"
+                  >
+                    {promoValidating ? "..." : t("applyPromo")}
+                  </button>
+                  {promoResult && !promoResult.valid && (
+                    <span className="text-xs text-red-500">{t("promoInvalid")}</span>
+                  )}
+                </>
+              )}
+            </div>
+
             <div className="flex items-center gap-3">
               {/* Cart summary */}
               <div className="flex-1 min-w-0">
@@ -363,7 +444,14 @@ export function CatalogClient({ role }: { role: Role }) {
                   {cartTotalPieces > 0 && ` \u00b7 ${cartTotalPieces} ks`}
                 </div>
                 <div className="text-xs text-muted">
-                  {t("cartTotal")}: {formatCZK(cartTotal)} Kč
+                  {promoResult?.valid && promoResult.discountAmount ? (
+                    <>
+                      <span className="line-through mr-1">{formatCZK(cartTotal)} Kč</span>
+                      <span className="text-emerald-600 font-medium">{formatCZK(cartTotal - promoResult.discountAmount)} Kč</span>
+                    </>
+                  ) : (
+                    <>{t("cartTotal")}: {formatCZK(cartTotal)} Kč</>
+                  )}
                 </div>
               </div>
 
@@ -378,7 +466,7 @@ export function CatalogClient({ role }: { role: Role }) {
 
               {/* Clear */}
               <button
-                onClick={() => setCart(new Map())}
+                onClick={() => { setCart(new Map()); removePromoCode(); }}
                 className="px-3 py-2 text-sm text-muted hover:text-ink transition-colors"
               >
                 {t("clearCart")}

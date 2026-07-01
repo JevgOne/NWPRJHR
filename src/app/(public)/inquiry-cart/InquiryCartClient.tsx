@@ -11,12 +11,44 @@ import { getHairColor } from "@/lib/hair-colors";
 export function InquiryCartClient() {
   const t = useTranslations("public.inquiry");
   const { items, removeItem, updateQuantity, clearCart, itemCount } = useInquiryCart();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: "", promoCode: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [promoValidating, setPromoValidating] = useState(false);
+  const [promoResult, setPromoResult] = useState<{
+    valid: boolean;
+    code?: string;
+    discountType?: string;
+    discountValue?: number;
+    description?: string;
+  } | null>(null);
 
   const setField = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
+
+  const validatePromoCode = async () => {
+    if (!form.promoCode.trim()) return;
+    setPromoValidating(true);
+    setPromoResult(null);
+    try {
+      const res = await fetch("/api/public/promo-codes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: form.promoCode.trim() }),
+      });
+      const data = await res.json();
+      setPromoResult(data);
+    } catch {
+      setPromoResult({ valid: false });
+    } finally {
+      setPromoValidating(false);
+    }
+  };
+
+  const removePromoCode = () => {
+    setForm((f) => ({ ...f, promoCode: "" }));
+    setPromoResult(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,6 +191,50 @@ export function InquiryCartClient() {
               className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose resize-none"
               placeholder={t("notePlaceholder")}
             />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-muted mb-1">{t("promoCodeLabel")}</label>
+            {promoResult?.valid ? (
+              <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <svg className="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm text-emerald-700 font-medium">{promoResult.code}</span>
+                <span className="text-xs text-emerald-600">
+                  {promoResult.discountType === "PERCENT"
+                    ? `−${(promoResult.discountValue ?? 0) / 100}%`
+                    : t("promoApplied")}
+                </span>
+                <button
+                  type="button"
+                  onClick={removePromoCode}
+                  className="ml-auto text-xs text-muted hover:text-red-500 transition-colors"
+                >
+                  {t("promoRemove")}
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={form.promoCode}
+                  onChange={(e) => { setField("promoCode", e.target.value.toUpperCase()); setPromoResult(null); }}
+                  className="flex-1 px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose uppercase"
+                  placeholder={t("promoCodePlaceholder")}
+                />
+                <button
+                  type="button"
+                  onClick={validatePromoCode}
+                  disabled={promoValidating || !form.promoCode.trim()}
+                  className="px-4 py-2 bg-ink text-white text-sm font-medium rounded-lg hover:bg-ink/90 transition-colors disabled:opacity-50"
+                >
+                  {promoValidating ? "..." : t("promoApply")}
+                </button>
+              </div>
+            )}
+            {promoResult && !promoResult.valid && (
+              <p className="text-xs text-red-500 mt-1">{t("promoInvalid")}</p>
+            )}
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button

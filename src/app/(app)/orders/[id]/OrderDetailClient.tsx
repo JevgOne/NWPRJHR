@@ -15,6 +15,8 @@ interface OrderDetail {
   note?: string;
   internalNote?: string;
   rejectedReason?: string;
+  promoCode?: string;
+  promoDiscount?: number;
   createdAt: string;
   confirmedAt?: string;
   completedAt?: string;
@@ -172,9 +174,30 @@ export function OrderDetailClient({
             ))}
           </tbody>
         </table>
-        <div className="px-4 py-3 bg-nude-50 border-t border-line flex justify-between items-center">
-          <span className="text-sm font-bold text-ink">{t("estimatedTotal")}</span>
-          <span className="text-lg font-bold text-ink">{formatCZK(order.estimatedTotal)} CZK</span>
+        <div className="px-4 py-3 bg-nude-50 border-t border-line">
+          {order.promoCode && order.promoDiscount ? (
+            <div className="space-y-1">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted">{t("subtotal")}</span>
+                <span className="text-muted">{formatCZK(order.estimatedTotal + order.promoDiscount)} CZK</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-emerald-600">
+                  {t("promoCode")}: {order.promoCode}
+                </span>
+                <span className="text-emerald-600">-{formatCZK(order.promoDiscount)} CZK</span>
+              </div>
+              <div className="flex justify-between items-center pt-1 border-t border-line/50">
+                <span className="text-sm font-bold text-ink">{t("estimatedTotal")}</span>
+                <span className="text-lg font-bold text-ink">{formatCZK(order.estimatedTotal)} CZK</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-bold text-ink">{t("estimatedTotal")}</span>
+              <span className="text-lg font-bold text-ink">{formatCZK(order.estimatedTotal)} CZK</span>
+            </div>
+          )}
         </div>
       </div>
 

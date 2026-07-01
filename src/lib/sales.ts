@@ -2,6 +2,7 @@ import type { Sale, CustomerType, DiscountType } from "@prisma/client";
 import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
 import { fifoDeduct } from "./fifo";
+import { invalidateStockCache } from "./stock";
 import { notifyLowStock } from "./telegram";
 
 export interface SaleItemInput {
@@ -255,5 +256,6 @@ export async function completeSale(
     }
   } catch {}
 
+  invalidateStockCache();
   return sale;
 }

@@ -10,6 +10,7 @@ import {
 import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale } from "@/lib/invoicing";
 import { createSalonNotification, createNotificationForRole } from "@/lib/notifications";
+import { notifyOrderCancelled } from "@/lib/telegram";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
@@ -239,7 +240,10 @@ export async function POST(
       case "cancel": {
         const orderCheck = await prisma.order.findUniqueOrThrow({
           where: { id },
-          include: { salon: { select: { name: true } } },
+          include: {
+            salon: { select: { name: true } },
+            _count: { select: { items: true } },
+          },
         });
 
         const isSalonCancel = session.user.role === "SALON" || session.user.role === "HAIRDRESSER";
@@ -289,6 +293,15 @@ export async function POST(
             data: { orderId: order.id, orderNumber: order.orderNumber },
           }).catch(() => {});
         }
+
+        // Telegram notification
+        notifyOrderCancelled({
+          orderNumber: order.orderNumber,
+          orderId: order.id,
+          salonName: orderCheck.salon.name,
+          cancelledBy: isSalonCancel ? "salon" : "admin",
+          itemCount: orderCheck._count.items,
+        }).catch(() => {});
 
         return NextResponse.json(order);
       }

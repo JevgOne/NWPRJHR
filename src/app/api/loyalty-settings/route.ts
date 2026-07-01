@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { loyaltySettingsSchema } from "@/lib/validations/salon";
-import { calculateTier } from "@/lib/loyalty";
+import { calculateTier, invalidateLoyaltyCache } from "@/lib/loyalty";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET() {
@@ -34,6 +34,7 @@ export async function PUT(request: NextRequest) {
       { status: 400 }
     );
 
+  invalidateLoyaltyCache();
   const setting = await prisma.loyaltySettings.upsert({
     where: { tier: parsed.data.tier },
     update: {

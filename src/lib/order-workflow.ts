@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { getAllStockNumbers } from "./stock";
+import { getAllStockNumbers, invalidateStockCache } from "./stock";
 import { getLoyaltyDiscount } from "./loyalty";
 import { roundHalereUp } from "./rounding";
 import type { Order } from "@prisma/client";
@@ -28,7 +28,8 @@ export class InvalidStateError extends Error {
 export async function createOrder(
   salonId: string,
   items: { variantId: string; grams: number; pieces: number }[],
-  note?: string
+  note?: string,
+  promoCode?: string
 ): Promise<Order> {
   // Pre-fetch salon + loyalty OUTSIDE transaction to reduce tx duration
   const salon = await prisma.salon.findUniqueOrThrow({
@@ -128,20 +129,60 @@ export async function createOrder(
     });
   }
 
+  // Validate and apply promo code
+  let promoDiscount = 0;
+  let appliedPromoCode: string | undefined;
+  if (promoCode) {
+    const promo = await prisma.promoCode.findUnique({
+      where: { code: promoCode.toUpperCase() },
+    });
+    if (promo && promo.active) {
+      const now = new Date();
+      const isValid =
+        (!promo.validFrom || now >= promo.validFrom) &&
+        (!promo.validTo || now <= promo.validTo) &&
+        (!promo.maxUses || promo.usedCount < promo.maxUses) &&
+        (!promo.minOrderValue || estimatedTotal >= promo.minOrderValue);
+
+      if (isValid) {
+        if (promo.discountType === "PERCENT") {
+          promoDiscount = Math.round((estimatedTotal * promo.discountValue) / 10000);
+        } else {
+          promoDiscount = Math.min(promo.discountValue, estimatedTotal);
+        }
+        appliedPromoCode = promo.code;
+        estimatedTotal = Math.max(0, estimatedTotal - promoDiscount);
+      }
+    }
+  }
+
   // Transaction only for the write — single create query
-  return prisma.$transaction(async (tx) => {
+  const order = await prisma.$transaction(async (tx) => {
+    // Increment usedCount if promo was applied
+    if (appliedPromoCode) {
+      await tx.promoCode.update({
+        where: { code: appliedPromoCode },
+        data: { usedCount: { increment: 1 } },
+      });
+    }
+
     return tx.order.create({
       data: {
         salonId,
         status: "NEW",
         estimatedTotal,
         note,
+        promoCode: appliedPromoCode || null,
+        promoDiscount: promoDiscount || null,
         items: { create: orderItems },
         reservations: { create: reservations },
       },
       include: { items: true },
     });
   }, { timeout: TX_TIMEOUT });
+
+  invalidateStockCache();
+  return order;
 }
 
 /**
@@ -178,13 +219,13 @@ export async function rejectOrder(
   orderId: string,
   reason: string
 ): Promise<Order> {
-  return prisma.$transaction(async (tx) => {
-    const order = await tx.order.findUniqueOrThrow({
+  const order = await prisma.$transaction(async (tx) => {
+    const o = await tx.order.findUniqueOrThrow({
       where: { id: orderId },
     });
 
-    if (order.status !== "NEW") {
-      throw new InvalidStateError(`Cannot reject order in status ${order.status}`);
+    if (o.status !== "NEW") {
+      throw new InvalidStateError(`Cannot reject order in status ${o.status}`);
     }
 
     await tx.reservation.updateMany({
@@ -201,6 +242,9 @@ export async function rejectOrder(
       },
     });
   }, { timeout: TX_TIMEOUT });
+
+  invalidateStockCache();
+  return order;
 }
 
 /**
@@ -235,13 +279,13 @@ export async function updateOrderStatus(
  * Cancel an order. Releases reservations.
  */
 export async function cancelOrder(orderId: string): Promise<Order> {
-  return prisma.$transaction(async (tx) => {
-    const order = await tx.order.findUniqueOrThrow({
+  const order = await prisma.$transaction(async (tx) => {
+    const o = await tx.order.findUniqueOrThrow({
       where: { id: orderId },
     });
 
-    if (["COMPLETED", "CANCELLED", "REJECTED"].includes(order.status)) {
-      throw new InvalidStateError(`Cannot cancel order in status ${order.status}`);
+    if (["COMPLETED", "CANCELLED", "REJECTED"].includes(o.status)) {
+      throw new InvalidStateError(`Cannot cancel order in status ${o.status}`);
     }
 
     await tx.reservation.updateMany({
@@ -254,4 +298,7 @@ export async function cancelOrder(orderId: string): Promise<Order> {
       data: { status: "CANCELLED" },
     });
   }, { timeout: TX_TIMEOUT });
+
+  invalidateStockCache();
+  return order;
 }

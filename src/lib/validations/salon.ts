@@ -37,6 +37,7 @@ export const createOrderSchema = z.object({
     .min(1)
     .max(100),
   note: z.string().max(2000).optional(),
+  promoCode: z.string().max(50).optional(),
 });
 
 export const rejectOrderSchema = z.object({

@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const order = await createOrder(salonId, parsed.data.items, parsed.data.note);
+    const order = await createOrder(salonId, parsed.data.items, parsed.data.note, parsed.data.promoCode);
 
     logAudit({
       userId: session.user.id,

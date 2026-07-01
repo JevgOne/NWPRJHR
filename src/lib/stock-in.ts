@@ -1,5 +1,6 @@
 import type { Delivery, Currency } from "@prisma/client";
 import { prisma } from "./db";
+import { invalidateStockCache } from "./stock";
 import { notifyRestock, notifyLowStock } from "./telegram";
 
 export interface StockInInput {
@@ -90,5 +91,6 @@ export async function stockIn(
     }
   } catch {}
 
+  invalidateStockCache();
   return delivery;
 }

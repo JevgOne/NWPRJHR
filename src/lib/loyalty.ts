@@ -1,5 +1,25 @@
 import { prisma, type TransactionClient } from "./db";
-import type { LoyaltyTier } from "@prisma/client";
+import type { LoyaltyTier, LoyaltySettings } from "@prisma/client";
+
+// In-memory cache for loyalty settings (5min TTL)
+let cachedSettings: LoyaltySettings[] | null = null;
+let cachedSettingsAt = 0;
+const LOYALTY_CACHE_TTL = 300_000;
+
+export function invalidateLoyaltyCache() {
+  cachedSettings = null;
+}
+
+async function getCachedSettings(): Promise<LoyaltySettings[]> {
+  if (cachedSettings && Date.now() - cachedSettingsAt < LOYALTY_CACHE_TTL) {
+    return cachedSettings;
+  }
+  cachedSettings = await prisma.loyaltySettings.findMany({
+    orderBy: { revenueThreshold: "desc" },
+  });
+  cachedSettingsAt = Date.now();
+  return cachedSettings;
+}
 
 /**
  * Determine salon's loyalty tier based on cumulative revenue.
@@ -7,9 +27,7 @@ import type { LoyaltyTier } from "@prisma/client";
 export async function calculateTier(
   totalRevenue: number
 ): Promise<LoyaltyTier> {
-  const settings = await prisma.loyaltySettings.findMany({
-    orderBy: { revenueThreshold: "desc" },
-  });
+  const settings = await getCachedSettings();
 
   for (const setting of settings) {
     if (totalRevenue >= setting.revenueThreshold) {
@@ -26,9 +44,8 @@ export async function calculateTier(
 export async function getLoyaltyDiscount(
   tier: LoyaltyTier
 ): Promise<number> {
-  const setting = await prisma.loyaltySettings.findUnique({
-    where: { tier },
-  });
+  const settings = await getCachedSettings();
+  const setting = settings.find(s => s.tier === tier);
   return setting?.discountPercent ?? 0;
 }
 

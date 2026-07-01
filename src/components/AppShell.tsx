@@ -39,7 +39,7 @@ export function AppShell({ session, children }: AppShellProps) {
         .catch(() => {});
     };
     fetchUnread();
-    const interval = setInterval(fetchUnread, 30000);
+    const interval = setInterval(fetchUnread, 60000);
     return () => clearInterval(interval);
   }, []);
 

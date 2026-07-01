@@ -813,6 +813,9 @@ model Order {
   note           String?
   internalNote   String?
 
+  promoCode      String?
+  promoDiscount  Int?        // discount amount in halere
+
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
@@ -1022,6 +1025,7 @@ model Inquiry {
   salonName    String?
   message      String?
   locale       String        @default("cs")
+  promoCode    String?
 
   status       InquiryStatus @default(NEW)
 
@@ -1515,4 +1519,22 @@ model PromoCode {
 enum PromoDiscountType {
   PERCENT
   FIXED
+}
+
+// ============================================================
+// SPIN_ENTRY -- spin-to-win wheel entries
+// ============================================================
+
+model SpinEntry {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  segment         Int
+  won             Boolean   @default(false)
+  discountPercent Int?
+  promoCodeId     String?
+  ipAddress       String?
+  createdAt       DateTime  @default(now())
+
+  @@index([createdAt])
+  @@map("spin_entries")
 }
