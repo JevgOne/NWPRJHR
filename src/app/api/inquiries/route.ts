@@ -24,5 +24,37 @@ export async function GET(request: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json(inquiries);
+  // Look up promo code discounts for inquiries that have one
+  const promoCodes = new Set(
+    inquiries.map((i) => i.promoCode).filter(Boolean) as string[]
+  );
+  const promoMap = new Map<string, { discountType: string; discountValue: number }>();
+  if (promoCodes.size > 0) {
+    const promos = await prisma.promoCode.findMany({
+      where: { code: { in: [...promoCodes] } },
+      select: { code: true, discountType: true, discountValue: true },
+    });
+    for (const p of promos) {
+      promoMap.set(p.code, { discountType: p.discountType, discountValue: p.discountValue });
+    }
+  }
+
+  const result = inquiries.map((inq) => {
+    const promo = inq.promoCode ? promoMap.get(inq.promoCode) : null;
+    return {
+      ...inq,
+      promoDiscount: promo
+        ? {
+            type: promo.discountType,
+            value: promo.discountValue,
+            label:
+              promo.discountType === "PERCENT"
+                ? `${promo.discountValue / 100}%`
+                : `${(promo.discountValue / 100).toLocaleString("cs-CZ")} Kč`,
+          }
+        : null,
+    };
+  });
+
+  return NextResponse.json(result);
 }

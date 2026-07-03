@@ -21,6 +21,7 @@ interface Inquiry {
   message: string | null;
   locale: string;
   promoCode: string | null;
+  promoDiscount: { type: string; value: number; label: string } | null;
   status: string;
   assignedTo: string | null;
   assignedAt: string | null;
@@ -44,6 +45,25 @@ const STATUS_LABELS: Record<string, string> = {
   COMPLETED: "Dokončeno",
   CANCELLED: "Zrušeno",
 };
+
+const COLOR_NAMES: Record<string, string> = {
+  "1": "Platinová blond",
+  "2": "Světlá blond",
+  "3": "Zlatá blond",
+  "4": "Přírodní hnědá",
+  "5": "Karamelová",
+  "6": "Tmavá blond",
+  "7": "Středně hnědá",
+  "8": "Tmavě hnědá",
+  "9": "Tmavá",
+  "10": "Černá",
+};
+
+function itemCount(n: number): string {
+  if (n === 1) return "1 položka";
+  if (n >= 2 && n <= 4) return `${n} položky`;
+  return `${n} položek`;
+}
 
 export function InquiriesClient() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -140,21 +160,35 @@ export function InquiriesClient() {
               >
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : inq.id)}
-                  className="w-full px-4 py-3 flex items-center gap-4 text-left hover:bg-nude-50 transition-colors"
+                  className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-nude-50 transition-colors"
                 >
-                  <span className="text-sm font-medium text-ink flex-1 truncate">
-                    {inq.name}
-                  </span>
-                  <span className="text-xs text-muted hidden sm:inline">
-                    {inq.items.length} položek
-                  </span>
-                  {inq.assignedTo && (
-                    <span className="text-xs text-muted hidden md:inline">
-                      {inq.assignedTo}
-                    </span>
-                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-ink truncate">
+                        {inq.name}
+                      </span>
+                      <span className="text-xs text-muted truncate hidden sm:inline">
+                        {inq.email}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-muted">
+                        {itemCount(inq.items.length)}
+                      </span>
+                      {inq.salonName && (
+                        <span className="text-xs text-muted">
+                          · {inq.salonName}
+                        </span>
+                      )}
+                      {inq.assignedTo && (
+                        <span className="text-xs text-green-700 font-medium">
+                          · Vyřizuje: {inq.assignedTo}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
                       STATUS_COLORS[inq.status] ?? "bg-gray-100 text-gray-800"
                     }`}
                   >
@@ -164,7 +198,7 @@ export function InquiriesClient() {
                     {new Date(inq.createdAt).toLocaleDateString("cs-CZ")}
                   </span>
                   <svg
-                    className={`w-4 h-4 text-muted transition-transform ${
+                    className={`w-4 h-4 text-muted transition-transform flex-shrink-0 ${
                       isExpanded ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -182,35 +216,40 @@ export function InquiriesClient() {
 
                 {isExpanded && (
                   <div className="px-4 pb-4 border-t border-line">
+                    {/* Contact info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div className="space-y-2">
-                        <Detail label="Jméno" value={inq.name} />
+                        <Detail label="Zákazník" value={inq.name} />
                         <Detail label="E-mail" value={inq.email} />
-                        <Detail label="Telefon" value={inq.phone ?? "—"} />
-                        {inq.salonName && (
-                          <Detail label="Salon" value={inq.salonName} />
-                        )}
+                        {inq.phone && <Detail label="Telefon" value={inq.phone} />}
+                        {inq.salonName && <Detail label="Salon" value={inq.salonName} />}
                         {inq.promoCode && (
-                          <Detail label="Promo kód" value={inq.promoCode} />
+                          <Detail
+                            label="Promo kód"
+                            value={`${inq.promoCode}${inq.promoDiscount ? ` (sleva ${inq.promoDiscount.label})` : ""}`}
+                          />
                         )}
                       </div>
                       <div className="space-y-2">
                         <Detail
-                          label="Vytvořeno"
+                          label="Datum poptávky"
                           value={new Date(inq.createdAt).toLocaleString("cs-CZ")}
                         />
                         {inq.assignedTo && (
-                          <Detail label="Přiřazeno" value={`${inq.assignedTo} (${inq.assignedAt ? new Date(inq.assignedAt).toLocaleString("cs-CZ") : "—"})`} />
+                          <Detail
+                            label="Vyřizuje"
+                            value={`${inq.assignedTo}${inq.assignedAt ? ` od ${new Date(inq.assignedAt).toLocaleString("cs-CZ")}` : ""}`}
+                          />
                         )}
                         {inq.contactedAt && (
                           <Detail
-                            label="Kontaktováno"
+                            label="Kontaktováno dne"
                             value={new Date(inq.contactedAt).toLocaleString("cs-CZ")}
                           />
                         )}
                         {inq.completedAt && (
                           <Detail
-                            label="Dokončeno"
+                            label="Dokončeno dne"
                             value={new Date(inq.completedAt).toLocaleString("cs-CZ")}
                           />
                         )}
@@ -220,27 +259,27 @@ export function InquiriesClient() {
                     {/* Items */}
                     <div className="mt-4">
                       <p className="text-xs font-medium text-muted uppercase mb-2">
-                        Položky ({inq.items.length})
+                        Poptávané vlasy ({itemCount(inq.items.length)})
                       </p>
                       <div className="space-y-1">
                         {inq.items.map((item) => {
                           const hc = getHairColor(item.color);
+                          const colorName = COLOR_NAMES[item.color] ?? `Odstín ${item.color}`;
                           return (
                             <div
                               key={item.id}
-                              className="flex items-center gap-2 text-sm bg-nude-50 rounded-lg px-3 py-2"
+                              className="flex items-center gap-3 text-sm bg-nude-50 rounded-lg px-3 py-2"
                             >
                               <span
-                                className="w-4 h-4 rounded-full border border-line flex-shrink-0"
+                                className="w-5 h-5 rounded-full border-2 border-white shadow-sm flex-shrink-0"
                                 style={{ backgroundColor: hc.hex }}
                               />
-                              <span className="flex-1">{item.productName}</span>
-                              <span className="text-muted">
-                                {item.lengthCm}cm
-                              </span>
-                              <span className="text-muted">
-                                {item.quantity}{item.unit}
-                              </span>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium truncate">{item.productName}</div>
+                                <div className="text-xs text-muted">
+                                  {item.lengthCm} cm · {colorName} (#{item.color}) · {item.quantity} {item.unit}
+                                </div>
+                              </div>
                             </div>
                           );
                         })}
@@ -250,7 +289,7 @@ export function InquiriesClient() {
                     {inq.message && (
                       <div className="mt-4">
                         <p className="text-xs font-medium text-muted uppercase mb-1">
-                          Poznámka zákazníka
+                          Poznámka od zákazníka
                         </p>
                         <p className="text-sm text-ink whitespace-pre-wrap bg-nude-50 rounded-lg p-3">
                           {inq.message}
@@ -258,12 +297,13 @@ export function InquiriesClient() {
                       </div>
                     )}
 
+                    {/* Edit / Note */}
                     <div className="mt-4 pt-4 border-t border-line">
                       {isEditing ? (
                         <div className="space-y-3">
                           <div>
                             <label className="block text-xs font-medium text-muted uppercase mb-1">
-                              Stav
+                              Stav poptávky
                             </label>
                             <select
                               value={editStatus}
@@ -278,13 +318,13 @@ export function InquiriesClient() {
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-muted uppercase mb-1">
-                              Přiřazeno
+                              Kdo vyřizuje
                             </label>
                             <input
                               value={editAssigned}
                               onChange={(e) => setEditAssigned(e.target.value)}
                               className="border border-line rounded-lg px-3 py-2 text-sm w-full max-w-xs"
-                              placeholder="Jméno"
+                              placeholder="Jméno pracovníka"
                             />
                           </div>
                           <div>
@@ -296,6 +336,7 @@ export function InquiriesClient() {
                               onChange={(e) => setEditNote(e.target.value)}
                               className="w-full border border-line rounded-lg px-3 py-2 text-sm"
                               rows={3}
+                              placeholder="Poznámka viditelná pouze pro adminy..."
                             />
                           </div>
                           <div className="flex gap-2">
