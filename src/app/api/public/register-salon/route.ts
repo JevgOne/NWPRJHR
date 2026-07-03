@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { sendNotificationEmail } from "@/lib/email";
+import { getRegistrationConfirmationEmail } from "@/lib/email-templates";
 import { notifySalonRegistration } from "@/lib/telegram";
 import { z } from "zod";
 
@@ -146,6 +147,21 @@ export async function POST(request: NextRequest) {
       ]
         .filter(Boolean)
         .join("\n"),
+    }).catch(() => {});
+
+    // Confirmation email to the registrant
+    const confirmationEmail = getRegistrationConfirmationEmail(language, {
+      contactPerson,
+      salonName,
+      email,
+      type: typeLabel,
+    });
+    sendNotificationEmail({
+      to: email,
+      toName: contactPerson,
+      subject: confirmationEmail.subject,
+      body: confirmationEmail.text,
+      html: confirmationEmail.html,
     }).catch(() => {});
 
     // Telegram notification

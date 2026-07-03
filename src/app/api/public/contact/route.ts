@@ -92,8 +92,8 @@ export async function POST(request: NextRequest) {
   createNotificationForRole({
     role: "OWNER",
     type: "NEW_CONTACT",
-    title: `Kontaktni formular: ${name}`,
-    message: `${name}${salonName ? ` (${salonName})` : ""} odeslal/a zpravu pres kontaktni formular.`,
+    title: `Kontaktní formulář: ${name}`,
+    message: `${name}${salonName ? ` (${salonName})` : ""} odeslal/a zprávu přes kontaktní formulář.`,
     data: { contactMessageId: contactMsg.id, name, email },
   }).catch(() => {});
 

@@ -39,8 +39,8 @@ export async function sendPaymentReminder(invoiceId: string) {
 
   const templates: Record<string, { subject: string; body: string }> = {
     cs: {
-      subject: `Upominka: faktura ${invoice.number} po splatnosti`,
-      body: `Dobry den,\n\nfaktura c. ${invoice.number} ze dne ${formatDate(invoice.issueDate, "cs")} se splatnosti ${formatDate(invoice.dueDate, "cs")} je ${daysOverdue} dni po splatnosti.\n\nZbyva uhradit: ${remainingCZK} Kc.\n\nProsime o uhradu na ucet uvedeny na fakture.\n\nDekujeme,\nHairland.cz`,
+      subject: `Upomínka: faktura ${invoice.number} po splatnosti`,
+      body: `Dobrý den,\n\nfaktura č. ${invoice.number} ze dne ${formatDate(invoice.issueDate, "cs")} se splatností ${formatDate(invoice.dueDate, "cs")} je ${daysOverdue} dní po splatnosti.\n\nZbývá uhradit: ${remainingCZK} Kč.\n\nProsíme o úhradu na účet uvedený na faktuře.\n\nDěkujeme,\nHairland.cz`,
     },
     uk: {
       subject: `\u041d\u0430\u0433\u0430\u0434\u0443\u0432\u0430\u043d\u043d\u044f: \u0440\u0430\u0445\u0443\u043d\u043e\u043a ${invoice.number} \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u0438\u0439`,

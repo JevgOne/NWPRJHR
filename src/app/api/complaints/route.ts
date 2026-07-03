@@ -74,8 +74,8 @@ export async function POST(request: NextRequest) {
     createNotificationForRole({
       role: "OWNER",
       type: "NEW_COMPLAINT",
-      title: "Nova reklamace",
-      message: `Nova reklamace: ${parsed.data.description?.slice(0, 100) ?? ""}`,
+      title: "Nová reklamace",
+      message: `Nová reklamace: ${parsed.data.description?.slice(0, 100) ?? ""}`,
       data: { complaintId: complaint.id },
     }).catch(() => {});
 

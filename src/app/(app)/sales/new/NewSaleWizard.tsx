@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/Button";
 import { CustomerSelect } from "@/components/sales/CustomerSelect";
 import { SaleItemRow } from "@/components/sales/SaleItemRow";
 import { DiscountForm } from "@/components/sales/DiscountForm";
-import { SaleSummary } from "@/components/sales/SaleSummary";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
 import type { Role } from "@prisma/client";
+import { getHairColor } from "@/lib/hair-colors";
 
 interface ProductOption {
   id: string;
@@ -44,7 +44,12 @@ function roundUp(halere: number): number {
   return Math.ceil(halere / 100) * 100;
 }
 
-const STEPS = ["step1", "step2", "step3", "step4"] as const;
+function formatCZK(halere: number): string {
+  return (halere / 100).toLocaleString("cs-CZ", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 
 export function NewSaleWizard({
   products,
@@ -55,9 +60,9 @@ export function NewSaleWizard({
 }) {
   const t = useTranslations("sale");
   const tCommon = useTranslations("common");
+  const tStock = useTranslations("stock");
   const router = useRouter();
 
-  const [step, setStep] = useState(0);
   const [customerType, setCustomerType] = useState<"SALON" | "RETAIL" | null>(null);
   const [salonId, setSalonId] = useState<string | null>(null);
   const [customerId, setCustomerId] = useState<string | null>(null);
@@ -102,7 +107,6 @@ export function NewSaleWizard({
 
   const addItemFromVariantId = useCallback(
     async (variantId: string) => {
-      // Find variant in products
       let label = variantId;
       for (const p of products) {
         const v = p.variants.find((v) => v.id === variantId);
@@ -112,12 +116,10 @@ export function NewSaleWizard({
         }
       }
 
-      // First fetch with grams to get sellingMode info
       const preview = await fetchPricePreview(variantId, 50, 0);
       const isByPiece = preview?.sellingMode === "BY_PIECE";
 
       if (isByPiece) {
-        // Re-fetch with pieces for BY_PIECE
         const piecePreview = await fetchPricePreview(variantId, 0, 1);
         setItems((prev) => [
           ...prev,
@@ -176,7 +178,6 @@ export function NewSaleWizard({
         const updated = [...prev];
         updated[index] = { ...updated[index], ...updates };
 
-        // Recalculate line total
         if (updated[index].sellingMode === "BY_PIECE") {
           if (updates.pieces !== undefined) {
             updated[index].lineTotal = roundUp(
@@ -192,7 +193,6 @@ export function NewSaleWizard({
         return updated;
       });
 
-      // Refetch preview if quantity changed
       const item = items[index];
       if (updates.grams !== undefined || updates.pieces !== undefined) {
         const grams = updates.grams ?? item.grams;
@@ -282,23 +282,12 @@ export function NewSaleWizard({
     }
   };
 
-  const canProceed = () => {
-    switch (step) {
-      case 0:
-        return (
-          customerType &&
-          (customerType === "SALON" ? !!salonId : true)
-        );
-      case 1:
-        return items.length > 0 && items.every((i) => i.sellingMode === "BY_PIECE" ? i.pieces > 0 : i.grams > 0);
-      case 2:
-        return true;
-      case 3:
-        return !submitting;
-      default:
-        return false;
-    }
-  };
+  const canSubmit =
+    customerType &&
+    (customerType === "SALON" ? !!salonId : true) &&
+    items.length > 0 &&
+    items.every((i) => (i.sellingMode === "BY_PIECE" ? i.pieces > 0 : i.grams > 0)) &&
+    !submitting;
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
 
@@ -306,122 +295,107 @@ export function NewSaleWizard({
     <div className="max-w-lg mx-auto space-y-4">
       <h1 className="text-xl font-bold">{t("newSale")}</h1>
 
-      {/* Step indicator */}
-      <div className="flex gap-1">
-        {STEPS.map((s, i) => (
-          <div
-            key={s}
-            className={`flex-1 h-1 rounded-full ${
-              i <= step ? "bg-rose" : "bg-gray-200"
-            }`}
-          />
-        ))}
-      </div>
-      <p className="text-sm text-muted">{t(STEPS[step])}</p>
-
       {error && (
         <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
           {error}
         </div>
       )}
 
-      {/* Step 1: Customer */}
-      {step === 0 && (
+      {/* Customer */}
+      <Card>
+        <CustomerSelect
+          customerType={customerType}
+          onCustomerTypeChange={setCustomerType}
+          selectedSalonId={salonId}
+          onSalonSelect={setSalonId}
+          selectedCustomerId={customerId}
+          onCustomerSelect={setCustomerId}
+          onNewCustomer={handleNewCustomer}
+        />
+      </Card>
+
+      {/* Items */}
+      {customerType && (
         <Card>
-          <CustomerSelect
-            customerType={customerType}
-            onCustomerTypeChange={setCustomerType}
-            selectedSalonId={salonId}
-            onSalonSelect={setSalonId}
-            selectedCustomerId={customerId}
-            onCustomerSelect={setCustomerId}
-            onNewCustomer={handleNewCustomer}
-          />
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Button
+                size="lg"
+                className="flex-1"
+                onClick={() => setScannerOpen(true)}
+              >
+                {t("scanBarcode")}
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="flex-1"
+                onClick={() => setShowProductPicker(!showProductPicker)}
+              >
+                {t("manualSelect")}
+              </Button>
+            </div>
+
+            {showProductPicker && (
+              <div className="border rounded-lg p-2">
+                <select
+                  className="w-full border rounded-lg p-2 mb-2 text-sm"
+                  value={selectedProductId}
+                  onChange={(e) => setSelectedProductId(e.target.value)}
+                >
+                  <option value="">{tCommon("search")}...</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+                {selectedProduct && (
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {selectedProduct.variants.map((v) => (
+                      <button
+                        key={v.id}
+                        type="button"
+                        className="w-full text-left p-2 rounded border border-line hover:bg-nude-50 text-sm flex items-center gap-2"
+                        onClick={() => {
+                          addItemFromVariantId(v.id);
+                          setShowProductPicker(false);
+                          setSelectedProductId("");
+                        }}
+                      >
+                        <span
+                          className="inline-block w-4 h-4 rounded-full border border-line flex-shrink-0"
+                          style={{ backgroundColor: getHairColor(v.color).hex }}
+                        />
+                        {v.lengthCm}cm - {v.color}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {items.map((item, i) => (
+              <SaleItemRow
+                key={`${item.variantId}-${i}`}
+                item={item}
+                onGramsChange={(g) => updateItem(i, { grams: g })}
+                onPiecesChange={(p) => updateItem(i, { pieces: p })}
+                onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
+              />
+            ))}
+
+            <BarcodeScanner
+              active={scannerOpen}
+              onScan={handleBarcodeScan}
+              onClose={() => setScannerOpen(false)}
+            />
+          </div>
         </Card>
       )}
 
-      {/* Step 2: Items */}
-      {step === 1 && (
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <Button
-              size="lg"
-              className="flex-1"
-              onClick={() => setScannerOpen(true)}
-            >
-              {t("scanBarcode")}
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              className="flex-1"
-              onClick={() => setShowProductPicker(true)}
-            >
-              {t("manualSelect")}
-            </Button>
-          </div>
-
-          {showProductPicker && (
-            <Card padding="sm">
-              <select
-                className="w-full border rounded-lg p-2 mb-2 text-sm"
-                value={selectedProductId}
-                onChange={(e) => setSelectedProductId(e.target.value)}
-              >
-                <option value="">{tCommon("search")}...</option>
-                {products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-              {selectedProduct && (
-                <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {selectedProduct.variants.map((v) => (
-                    <button
-                      key={v.id}
-                      type="button"
-                      className="w-full text-left p-2 rounded border border-line hover:bg-nude-50 text-sm"
-                      onClick={() => {
-                        addItemFromVariantId(v.id);
-                        setShowProductPicker(false);
-                        setSelectedProductId("");
-                      }}
-                    >
-                      {v.lengthCm}cm - {v.color}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </Card>
-          )}
-
-          {items.map((item, i) => (
-            <SaleItemRow
-              key={`${item.variantId}-${i}`}
-              item={item}
-              onGramsChange={(g) => updateItem(i, { grams: g })}
-              onPiecesChange={(p) => updateItem(i, { pieces: p })}
-              onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
-            />
-          ))}
-
-          {items.length > 0 && (
-            <div className="text-right font-medium">
-              {t("subtotal")}: {(subtotal / 100).toLocaleString("cs-CZ", { minimumFractionDigits: 2 })} CZK
-            </div>
-          )}
-
-          <BarcodeScanner
-            active={scannerOpen}
-            onScan={handleBarcodeScan}
-            onClose={() => setScannerOpen(false)}
-          />
-        </div>
-      )}
-
-      {/* Step 3: Discount */}
-      {step === 2 && (
+      {/* Discount */}
+      {items.length > 0 && (
         <Card>
           <DiscountForm
             discount={discount}
@@ -432,55 +406,66 @@ export function NewSaleWizard({
         </Card>
       )}
 
-      {/* Step 4: Summary */}
-      {step === 3 && (
+      {/* Summary + Submit */}
+      {items.length > 0 && (
         <Card>
-          <SaleSummary
-            items={items.map((i) => ({
-              variantLabel: i.variantLabel,
-              grams: i.grams,
-              pieces: i.pieces,
-              pricePerGram: i.pricePerGram,
-              pricePerPiece: i.pricePerPiece,
-              sellingMode: i.sellingMode,
-              lineTotal: i.lineTotal,
-            }))}
-            subtotal={subtotal}
-            discountAmount={discountAmount}
-            totalBeforeVat={totalBeforeVat}
-            vatAmount={vatAmount}
-            totalAmount={totalAmount}
-            isOwner={isOwner}
-          />
+          <div className="space-y-2">
+            {items.map((item, i) => (
+              <div key={i} className="flex justify-between text-sm border-b pb-2">
+                <div>
+                  <div className="font-medium">{item.variantLabel}</div>
+                  <div className="text-muted">
+                    {item.sellingMode === "BY_PIECE"
+                      ? `${item.pieces} ${tStock("pieces")} @ ${formatCZK(item.pricePerPiece ?? 0)} CZK`
+                      : <>
+                          {item.grams} {tStock("grams")}
+                          {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}
+                          {" @ "}
+                          {formatCZK(item.pricePerGram)} CZK/{tStock("grams")}
+                        </>
+                    }
+                  </div>
+                </div>
+                <div className="font-medium whitespace-nowrap">{formatCZK(item.lineTotal)} CZK</div>
+              </div>
+            ))}
+
+            <div className="space-y-1 text-sm pt-2">
+              <div className="flex justify-between">
+                <span>{t("subtotal")}</span>
+                <span>{formatCZK(subtotal)} CZK</span>
+              </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-red-600">
+                  <span>{t("discount")}</span>
+                  <span>-{formatCZK(discountAmount)} CZK</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span>{t("beforeVat")}</span>
+                <span>{formatCZK(totalBeforeVat)} CZK</span>
+              </div>
+              <div className="flex justify-between">
+                <span>{t("vat")}</span>
+                <span>{formatCZK(vatAmount)} CZK</span>
+              </div>
+              <div className="flex justify-between font-bold text-base pt-2 border-t">
+                <span>{t("totalAmount")}</span>
+                <span>{formatCZK(totalAmount)} CZK</span>
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              className="w-full mt-4 bg-green-600 hover:bg-green-700"
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+            >
+              {submitting ? tCommon("loading") : t("completeSale")}
+            </Button>
+          </div>
         </Card>
       )}
-
-      {/* Navigation */}
-      <div className="flex gap-3">
-        {step > 0 && (
-          <Button variant="secondary" onClick={() => setStep(step - 1)}>
-            {tCommon("back")}
-          </Button>
-        )}
-        <div className="flex-1" />
-        {step < 3 ? (
-          <Button
-            onClick={() => setStep(step + 1)}
-            disabled={!canProceed()}
-          >
-            {tCommon("next")}
-          </Button>
-        ) : (
-          <Button
-            size="lg"
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            {submitting ? tCommon("loading") : t("completeSale")}
-          </Button>
-        )}
-      </div>
     </div>
   );
 }

@@ -25,6 +25,7 @@ export async function sendNotificationEmail(
 
   await resend.emails.send({
     from: process.env.EMAIL_FROM ?? "info@hairland.cz",
+    replyTo: "info@hairland.cz",
     to: recipients,
     subject: input.subject,
     text: input.body,

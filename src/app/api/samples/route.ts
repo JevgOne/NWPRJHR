@@ -76,8 +76,8 @@ export async function POST(request: NextRequest) {
   createNotificationForRole({
     role: "OWNER",
     type: "SAMPLE_REQUEST",
-    title: `Zadost o vzorek: ${parsed.data.salonName ?? ""}`,
-    message: `Salon "${parsed.data.salonName ?? ""}" zada o vzorek.`,
+    title: `Žádost o vzorek: ${parsed.data.salonName ?? ""}`,
+    message: `Salon "${parsed.data.salonName ?? ""}" žádá o vzorek.`,
     data: { sampleId: sample.id, salonName: parsed.data.salonName },
   }).catch(() => {});
 

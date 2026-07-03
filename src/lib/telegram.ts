@@ -39,11 +39,19 @@ export async function handleTelegramCallback(callbackQuery: {
   message?: { message_id: number; chat: { id: number }; text?: string };
   data?: string;
 }): Promise<void> {
-  if (!BOT_TOKEN || !callbackQuery.data || !callbackQuery.message) return;
+  if (!BOT_TOKEN || !callbackQuery.data || !callbackQuery.message) {
+    console.error("[Telegram] Callback skipped — missing:", {
+      hasBotToken: !!BOT_TOKEN,
+      hasData: !!callbackQuery.data,
+      hasMessage: !!callbackQuery.message,
+    });
+    return;
+  }
 
   const parts = callbackQuery.data.split(":");
   const type = parts[1];
   const recordId = parts[2];
+  console.log(`[Telegram] Assigning ${type}:${recordId}`);
 
   const firstName = callbackQuery.from?.first_name ?? "Někdo";
   const lastName = callbackQuery.from?.last_name ?? "";
@@ -68,8 +76,8 @@ export async function handleTelegramCallback(callbackQuery: {
           data: { assignedTo: name, status: "IN_PROGRESS" },
         });
       }
-    } catch {
-      // Record might not exist — continue with message update
+    } catch (err) {
+      console.error(`[Telegram] Failed to assign ${type}:${recordId}:`, err);
     }
   }
 

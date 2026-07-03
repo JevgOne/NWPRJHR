@@ -74,6 +74,16 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/reklamacni-rad" className="text-nude-200/80 hover:text-white transition-colors">
+                  {t("footer.complaintsLink")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/doprava" className="text-nude-200/80 hover:text-white transition-colors">
+                  {t("footer.shippingLink")}
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="text-nude-200/80 hover:text-white transition-colors">
                   {t("nav.privacy")}
                 </Link>

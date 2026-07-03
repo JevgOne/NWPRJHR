@@ -59,8 +59,8 @@ export async function PUT(
     createSalonNotification({
       salonId: sample.salonId,
       type: "SAMPLE_REQUEST",
-      title: "Vzorek odeslan",
-      message: "Vas vzorek byl odeslan.",
+      title: "Vzorek odeslán",
+      message: "Váš vzorek byl odeslán.",
       data: { sampleId: id },
     }).catch(() => {});
   }

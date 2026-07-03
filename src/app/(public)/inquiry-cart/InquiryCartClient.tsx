@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import confetti from "canvas-confetti";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
@@ -10,6 +10,7 @@ import { getHairColor } from "@/lib/hair-colors";
 
 export function InquiryCartClient() {
   const t = useTranslations("public.inquiry");
+  const locale = useLocale();
   const { items, removeItem, updateQuantity, clearCart, itemCount } = useInquiryCart();
   const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: "", promoCode: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -62,6 +63,7 @@ export function InquiryCartClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          locale,
           promoCode: promoResult?.valid ? promoResult.code : form.promoCode || undefined,
           items,
         }),

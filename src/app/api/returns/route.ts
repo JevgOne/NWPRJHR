@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
     createNotificationForRole({
       role: "OWNER",
       type: "RETURN_REQUEST",
-      title: `Vratka ke schvaleni`,
-      message: `Nova vratka ke schvaleni od salonu ${sale?.salon?.name ?? ""}.`,
+      title: `Vratka ke schválení`,
+      message: `Nová vratka ke schválení od salonu ${sale?.salon?.name ?? ""}.`,
       data: { returnId: ret.id, salonName: sale?.salon?.name },
     }).catch(() => {});
 

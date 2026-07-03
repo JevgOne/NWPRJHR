@@ -44,6 +44,14 @@ export default async function ObchodniPodminkyPage() {
             <p className="text-sm text-muted leading-relaxed whitespace-pre-line">
               {t(`section${num}Text`)}
             </p>
+            {num === 6 && (
+              <Link
+                href="/reklamacni-rad"
+                className="inline-block mt-2 text-sm text-rose hover:text-rose-deep underline"
+              >
+                {t("section6Link")}
+              </Link>
+            )}
             {num === 9 && (
               <Link
                 href="/privacy"

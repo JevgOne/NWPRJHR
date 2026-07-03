@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
+import { getInquiryConfirmationEmail } from "@/lib/email-templates";
 import { notifyInquiry } from "@/lib/telegram";
 import { z } from "zod";
 
@@ -20,6 +21,7 @@ const inquirySchema = z.object({
   salonName: z.string().max(200).optional().default(""),
   message: z.string().max(5000).optional().default(""),
   promoCode: z.string().max(50).optional().default(""),
+  locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
   items: z.array(inquiryItemSchema).min(1).max(50),
 });
 
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, phone, salonName, message, promoCode, items } = parsed.data;
+  const { name, email, phone, salonName, message, promoCode, locale, items } = parsed.data;
 
   // Validate and increment promo code usage
   let appliedPromoCode: string | null = null;
@@ -160,6 +162,21 @@ export async function POST(request: NextRequest) {
       salonName: salonName || undefined,
       message: message || undefined,
       items,
+    }).catch(() => {});
+
+    // Confirmation email to customer
+    const inquiryEmailData = getInquiryConfirmationEmail(locale, {
+      name,
+      items,
+      promoCode: appliedPromoCode ?? undefined,
+      inquiryId: inquiry.id,
+    });
+    sendNotificationEmail({
+      to: email,
+      toName: name,
+      subject: inquiryEmailData.subject,
+      body: inquiryEmailData.text,
+      html: inquiryEmailData.html,
     }).catch(() => {});
 
     return NextResponse.json({ success: true, inquiryId: inquiry.id });

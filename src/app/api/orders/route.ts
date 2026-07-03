@@ -106,8 +106,8 @@ export async function POST(request: NextRequest) {
     createNotificationForRole({
       role: "OWNER",
       type: "NEW_ORDER",
-      title: `Nova objednavka: ${salon?.name ?? ""}`,
-      message: `Salon "${salon?.name ?? ""}" vytvoril novou objednavku (${parsed.data.items.length} polozek).`,
+      title: `Nová objednávka: ${salon?.name ?? ""}`,
+      message: `Salon "${salon?.name ?? ""}" vytvořil novou objednávku (${parsed.data.items.length} položek).`,
       data: { orderId: order.id, salonName: salon?.name, itemCount: parsed.data.items.length },
     }).catch(() => {});
 

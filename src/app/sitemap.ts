@@ -80,6 +80,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: `${BASE_URL}/reklamacni-rad`,
+      lastModified: STATIC_DATE,
+      changeFrequency: "yearly",
+      priority: 0.5,
+    },
+    {
       url: `${BASE_URL}/pruvodce-gramazi`,
       lastModified: STATIC_DATE,
       changeFrequency: "monthly",

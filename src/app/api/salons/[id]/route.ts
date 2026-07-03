@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateSalonSchema } from "@/lib/validations/salon";
 import { createSalonNotification } from "@/lib/notifications";
+import { sendNotificationEmail } from "@/lib/email";
+import { getApprovalConfirmationEmail } from "@/lib/email-templates";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
@@ -130,10 +132,36 @@ export async function PUT(
     createSalonNotification({
       salonId: id,
       type: "REGISTRATION",
-      title: "Registrace schvalena",
-      message: "Vas B2B ucet byl schvalen. Nyni muzete objednavat.",
+      title: "Registrace schválena",
+      message: "Váš B2B účet byl schválen. Nyní můžete objednávat.",
       data: { approved: true },
     }).catch(() => {});
+
+    // Email confirmation to salon users
+    const salonData = await prisma.salon.findUnique({
+      where: { id },
+      select: { language: true, name: true },
+    });
+    const salonUsers = await prisma.user.findMany({
+      where: { salonId: id, role: { in: ["SALON", "HAIRDRESSER"] } },
+      select: { email: true, name: true },
+    });
+
+    const lang = salonData?.language ?? "cs";
+    for (const user of salonUsers) {
+      if (!user.email) continue;
+      const emailData = getApprovalConfirmationEmail(lang, {
+        name: user.name ?? undefined,
+        salonName: salonData?.name ?? "",
+      });
+      sendNotificationEmail({
+        to: user.email,
+        toName: user.name ?? undefined,
+        subject: emailData.subject,
+        body: emailData.text,
+        html: emailData.html,
+      }).catch(() => {});
+    }
   }
 
   return NextResponse.json(salon);

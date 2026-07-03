@@ -26,6 +26,8 @@ export interface InvoicePdfData {
   roundingAmount: number;
   note?: string | null;
   originalInvoiceNumber?: string | null;
+  /** When true, skip QR payment code (e.g. invoice already paid). */
+  skipQr?: boolean;
   company: {
     name: string;
     ico: string;
@@ -362,7 +364,8 @@ export async function generateInvoicePdf(
   if (
     data.type === "INVOICE" &&
     data.company.bankIban &&
-    data.total > 0
+    data.total > 0 &&
+    !data.skipQr
   ) {
     try {
       const spayd = generateSpayd({

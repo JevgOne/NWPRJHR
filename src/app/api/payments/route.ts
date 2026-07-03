@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
       await createNotificationForRole({
         role: "OWNER",
         type: "INCOMING_PAYMENT",
-        title: "Platba prijata",
-        message: `Prijata platba k fakture ${invoice.number}`,
+        title: "Platba přijata",
+        message: `Přijata platba k faktuře ${invoice.number}`,
         data: { invoiceId: parsed.data.invoiceId, amount: parsed.data.amount, invoiceNumber: invoice.number },
         sendEmail: false,
       });

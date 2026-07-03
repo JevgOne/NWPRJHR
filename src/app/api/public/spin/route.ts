@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
+import { getSpinWinEmail } from "@/lib/email-templates";
 import { z } from "zod";
 
 const MAX_ATTEMPTS = 3;
@@ -190,35 +191,17 @@ export async function POST(request: NextRequest) {
       Date.now() + 30 * 24 * 60 * 60 * 1000
     ).toLocaleDateString("cs-CZ");
 
+    const spinEmail = getSpinWinEmail("cs", {
+      discount: segment.discount,
+      code,
+      validTo,
+    });
+
     sendNotificationEmail({
       to: email,
-      subject: `Vaše výhra z Kolečka štěstí — ${segment.discount}% sleva!`,
-      body: [
-        "Gratulujeme!",
-        "",
-        `Vyhráli jste ${segment.discount}% slevu na nákup vlasů.`,
-        "",
-        `Váš slevový kód: ${code}`,
-        `Platný do: ${validTo}`,
-        "",
-        "Použijte kód při objednávce nebo poptávce na hairland.cz.",
-        "",
-        "Hairland.cz",
-      ].join("\n"),
-      html: [
-        "<div style=\"font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;\">",
-        "<h2 style=\"color: #1a1a1a; margin-bottom: 16px;\">Gratulujeme!</h2>",
-        `<p style="color: #333; font-size: 16px;">Vyhr&aacute;li jste <strong>${segment.discount}%</strong> slevu na n&aacute;kup vlas&#367;.</p>`,
-        `<div style="background: #fdf2f4; border: 2px dashed #e11d48; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">`,
-        `<p style="color: #666; font-size: 12px; margin: 0 0 8px;">V&aacute;&#353; slevov&yacute; k&oacute;d</p>`,
-        `<p style="color: #e11d48; font-size: 28px; font-weight: bold; letter-spacing: 3px; margin: 0;">${code}</p>`,
-        "</div>",
-        `<p style="color: #666; font-size: 14px;">Platn&yacute; do: <strong>${validTo}</strong></p>`,
-        `<p style="color: #666; font-size: 14px;">Pou&#382;ijte k&oacute;d p&#345;i objedn&aacute;vce nebo popt&aacute;vce na <a href="https://hairland.cz" style="color: #e11d48;">hairland.cz</a>.</p>`,
-        "<hr style=\"border: none; border-top: 1px solid #eee; margin: 24px 0;\">",
-        "<p style=\"color: #999; font-size: 12px;\">Hairland.cz</p>",
-        "</div>",
-      ].join("\n"),
+      subject: spinEmail.subject,
+      body: spinEmail.text,
+      html: spinEmail.html,
     }).catch(() => {});
   }
 

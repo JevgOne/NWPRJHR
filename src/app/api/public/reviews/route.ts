@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
   createNotificationForRole({
     role: "OWNER",
     type: "NEW_REVIEW",
-    title: `Nova recenze: ${data.authorName} (${data.rating}★)`,
-    message: `${data.authorName} pridal/a recenzi (${data.rating}★): "${data.text.slice(0, 100)}${data.text.length > 100 ? "..." : ""}"`,
+    title: `Nová recenze: ${data.authorName} (${data.rating}★)`,
+    message: `${data.authorName} přidal/a recenzi (${data.rating}★): "${data.text.slice(0, 100)}${data.text.length > 100 ? "..." : ""}"`,
     data: { reviewId: review.id, authorName: data.authorName, rating: data.rating },
   }).catch(() => {});
 

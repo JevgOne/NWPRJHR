@@ -8,6 +8,7 @@ import { roundHalereUp } from "@/lib/rounding";
 interface Partner {
   id: string;
   name: string;
+  user?: { id: string; name: string | null; email: string };
 }
 
 interface DiscountFormData {
@@ -153,7 +154,7 @@ export function DiscountForm({
                       }}
                       className="w-4 h-4 rounded border-line"
                     />
-                    <span className="text-sm">{p.name}</span>
+                    <span className="text-sm">{p.user?.name ?? p.name}</span>
                   </label>
                 ))}
               </div>

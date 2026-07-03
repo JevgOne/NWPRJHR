@@ -21,6 +21,7 @@ export function AppShell({ session, children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [pendingRegCount, setPendingRegCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [newInquiryCount, setNewInquiryCount] = useState(0);
   const role = session.user.role;
 
   useEffect(() => {
@@ -28,6 +29,10 @@ export function AppShell({ session, children }: AppShellProps) {
     fetch("/api/salons?archived=false&approved=false")
       .then((r) => r.json())
       .then((data) => setPendingRegCount(data.total ?? 0))
+      .catch(() => {});
+    fetch("/api/inquiries?status=NEW")
+      .then((r) => r.json())
+      .then((data) => setNewInquiryCount(Array.isArray(data) ? data.length : 0))
       .catch(() => {});
   }, [role]);
 
@@ -67,6 +72,7 @@ export function AppShell({ session, children }: AppShellProps) {
       items: [
         { href: "/sales", label: t("sales"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/orders", label: t("orders"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
+        { href: "/inquiries", label: "Poptávky", roles: ["OWNER", "EMPLOYEE"], badge: newInquiryCount, badgeColor: "bg-blue-500" },
         { href: "/invoices", label: t("invoices"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
         { href: "/payments", label: t("payments"), roles: ["OWNER"] },
       ],
