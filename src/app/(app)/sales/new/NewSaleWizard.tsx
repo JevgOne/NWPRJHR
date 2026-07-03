@@ -71,6 +71,7 @@ export function NewSaleWizard({
   const [scannerOpen, setScannerOpen] = useState(false);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "PROMO" | "WRITEOFF">("TRANSFER");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -242,6 +243,7 @@ export function NewSaleWizard({
       customerType,
       salonId: salonId ?? undefined,
       customerId: customerId ?? undefined,
+      paymentType,
       items: items.map((item) => ({
         variantId: item.variantId,
         grams: item.grams,
@@ -400,6 +402,45 @@ export function NewSaleWizard({
           subtotal={subtotal}
           isOwner={isOwner}
         />
+      </Card>
+
+      {/* Payment type */}
+      <Card>
+        <div>
+          <label className="block text-sm font-medium text-espresso mb-2">
+            Typ platby
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {([
+              { key: "TRANSFER", label: "Převod" },
+              { key: "CASH", label: "Hotovost" },
+              { key: "PROMO", label: "Promo" },
+              { key: "WRITEOFF", label: "Odpis" },
+            ] as const).map((pt) => (
+              <button
+                key={pt.key}
+                type="button"
+                className={`py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
+                  paymentType === pt.key
+                    ? "border-rose bg-rose/10 text-espresso"
+                    : "border-line hover:bg-nude-50"
+                }`}
+                onClick={() => setPaymentType(pt.key)}
+              >
+                {pt.label}
+              </button>
+            ))}
+          </div>
+          {paymentType === "CASH" && (
+            <p className="text-xs text-muted mt-2">Paragon/pokladní doklad vystavíte ručně.</p>
+          )}
+          {paymentType === "PROMO" && (
+            <p className="text-xs text-muted mt-2">Interní promo — bez fakturace.</p>
+          )}
+          {paymentType === "WRITEOFF" && (
+            <p className="text-xs text-muted mt-2">Interní odpis — bez fakturace.</p>
+          )}
+        </div>
       </Card>
 
       {/* Summary + Submit */}

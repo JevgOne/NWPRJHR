@@ -25,6 +25,7 @@ export interface CompleteSaleInput {
   customerId?: string;
   items: SaleItemInput[];
   discount?: DiscountInput;
+  paymentType?: "TRANSFER" | "CASH" | "PROMO" | "WRITEOFF";
   orderId?: string;
   note?: string;
 }
@@ -167,6 +168,7 @@ export async function completeSale(
           salonId: input.salonId,
           customerId: input.customerId,
           status: "COMPLETED",
+          paymentType: input.paymentType ?? "TRANSFER",
           subtotal,
           discountAmount,
           totalBeforeVat,

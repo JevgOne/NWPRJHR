@@ -29,6 +29,7 @@ export const completeSaleSchema = z
     customerId: z.string().min(1).optional(),
     items: z.array(saleItemSchema).min(1).max(100),
     discount: discountSchema.optional(),
+    paymentType: z.enum(["TRANSFER", "CASH", "PROMO", "WRITEOFF"]).optional(),
     orderId: z.string().min(1).optional(),
     note: z.string().max(2000).optional(),
   })
