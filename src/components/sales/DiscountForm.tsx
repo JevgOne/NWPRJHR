@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/Input";
 import { roundHalereUp } from "@/lib/rounding";
 
-interface Partner {
+interface AdminUser {
   id: string;
   name: string;
-  user?: { id: string; name: string | null; email: string };
+  email: string;
 }
 
 interface DiscountFormData {
@@ -42,13 +42,13 @@ export function DiscountForm({
 }: DiscountFormProps) {
   const t = useTranslations("sale");
   const [enabled, setEnabled] = useState(!!discount);
-  const [partners, setPartners] = useState<Partner[]>([]);
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
 
   useEffect(() => {
     if (isOwner) {
-      fetch("/api/partners")
+      fetch("/api/admin-users")
         .then((r) => r.json())
-        .then(setPartners)
+        .then((data: AdminUser[]) => setAdminUsers(Array.isArray(data) ? data : []))
         .catch(() => {});
     }
   }, [isOwner]);
@@ -141,20 +141,20 @@ export function DiscountForm({
                 {t("selectBearers")}
               </label>
               <div className="space-y-1">
-                {partners.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 p-2 rounded hover:bg-nude-50">
+                {adminUsers.map((u) => (
+                  <label key={u.id} className="flex items-center gap-2 p-2 rounded hover:bg-nude-50">
                     <input
                       type="checkbox"
-                      checked={current.bearerPartnerIds.includes(p.id)}
+                      checked={current.bearerPartnerIds.includes(u.id)}
                       onChange={(e) => {
                         const ids = e.target.checked
-                          ? [...current.bearerPartnerIds, p.id]
-                          : current.bearerPartnerIds.filter((id) => id !== p.id);
+                          ? [...current.bearerPartnerIds, u.id]
+                          : current.bearerPartnerIds.filter((id) => id !== u.id);
                         onChange({ ...current, bearerPartnerIds: ids });
                       }}
                       className="w-4 h-4 rounded border-line"
                     />
-                    <span className="text-sm">{p.user?.name ?? p.name}</span>
+                    <span className="text-sm">{u.name}</span>
                   </label>
                 ))}
               </div>
