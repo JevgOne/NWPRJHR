@@ -10,6 +10,8 @@ interface InquiryItem {
   color: string;
   quantity: number;
   unit: string;
+  pricePerGram: number;
+  itemTotal: number;
 }
 
 interface Inquiry {
@@ -30,6 +32,16 @@ interface Inquiry {
   completedAt: string | null;
   createdAt: string;
   items: InquiryItem[];
+  subtotal: number;
+  discountAmount: number;
+  estimatedTotal: number;
+}
+
+function formatCZK(halere: number): string {
+  return (halere / 100).toLocaleString("cs-CZ", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -175,9 +187,9 @@ export function InquiriesClient() {
                       <span className="text-xs text-muted">
                         {itemCount(inq.items.length)}
                       </span>
-                      {inq.salonName && (
-                        <span className="text-xs text-muted">
-                          · {inq.salonName}
+                      {inq.estimatedTotal > 0 && (
+                        <span className="text-xs font-medium text-ink">
+                          · {formatCZK(inq.estimatedTotal)} Kč
                         </span>
                       )}
                       {inq.assignedTo && (
@@ -278,13 +290,38 @@ export function InquiriesClient() {
                                 <div className="font-medium truncate">{item.productName}</div>
                                 <div className="text-xs text-muted">
                                   {item.lengthCm} cm · {colorName} (#{item.color}) · {item.quantity} {item.unit}
+                                  {item.pricePerGram > 0 && ` · ${formatCZK(item.pricePerGram)} Kč/{item.unit}`}
                                 </div>
                               </div>
+                              {item.itemTotal > 0 && (
+                                <span className="text-sm font-medium whitespace-nowrap">
+                                  {formatCZK(item.itemTotal)} Kč
+                                </span>
+                              )}
                             </div>
                           );
                         })}
                       </div>
                     </div>
+
+                    {inq.subtotal > 0 && (
+                      <div className="mt-3 pt-2 border-t border-line space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted">Mezisoučet (bez DPH)</span>
+                          <span>{formatCZK(inq.subtotal)} Kč</span>
+                        </div>
+                        {inq.discountAmount > 0 && (
+                          <div className="flex justify-between text-red-600">
+                            <span>Sleva {inq.promoDiscount?.label}</span>
+                            <span>-{formatCZK(inq.discountAmount)} Kč</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between font-bold">
+                          <span>Odhadovaná cena (bez DPH)</span>
+                          <span>{formatCZK(inq.estimatedTotal)} Kč</span>
+                        </div>
+                      </div>
+                    )}
 
                     {inq.message && (
                       <div className="mt-4">

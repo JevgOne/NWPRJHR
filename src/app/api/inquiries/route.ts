@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
-  // Look up promo code discounts for inquiries that have one
+  // Look up promo code discounts
   const promoCodes = new Set(
     inquiries.map((i) => i.promoCode).filter(Boolean) as string[]
   );
@@ -39,10 +39,61 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // Look up variant prices for all items
+  const allProductIds = [
+    ...new Set(inquiries.flatMap((inq) => inq.items.map((i) => i.productId))),
+  ];
+  const variants = allProductIds.length > 0
+    ? await prisma.variant.findMany({
+        where: { productId: { in: allProductIds } },
+        select: {
+          productId: true,
+          lengthCm: true,
+          color: true,
+          retailPricePerGram: true,
+          wholesalePricePerGram: true,
+        },
+      })
+    : [];
+
+  // Key: productId-lengthCm-color
+  const variantPriceMap = new Map<string, { retail: number; wholesale: number }>();
+  for (const v of variants) {
+    variantPriceMap.set(`${v.productId}-${v.lengthCm}-${v.color}`, {
+      retail: v.retailPricePerGram,
+      wholesale: v.wholesalePricePerGram,
+    });
+  }
+
   const result = inquiries.map((inq) => {
     const promo = inq.promoCode ? promoMap.get(inq.promoCode) : null;
+    const discountPercent =
+      promo?.discountType === "PERCENT" ? promo.discountValue / 100 : 0;
+
+    const itemsWithPrices = inq.items.map((item) => {
+      const key = `${item.productId}-${item.lengthCm}-${item.color}`;
+      const prices = variantPriceMap.get(key);
+      const pricePerGram = prices?.retail ?? 0;
+      const itemTotal = pricePerGram * item.quantity;
+      return {
+        ...item,
+        pricePerGram,
+        itemTotal,
+      };
+    });
+
+    const subtotal = itemsWithPrices.reduce((s, i) => s + i.itemTotal, 0);
+    const discountAmount = discountPercent > 0
+      ? Math.ceil((subtotal * discountPercent) / 100)
+      : 0;
+    const estimatedTotal = subtotal - discountAmount;
+
     return {
       ...inq,
+      items: itemsWithPrices,
+      subtotal,
+      discountAmount,
+      estimatedTotal,
       promoDiscount: promo
         ? {
             type: promo.discountType,
