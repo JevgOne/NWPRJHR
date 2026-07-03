@@ -315,96 +315,92 @@ export function NewSaleWizard({
       </Card>
 
       {/* Items */}
-      {customerType && (
-        <Card>
-          <div className="space-y-3">
-            <div className="flex gap-2">
-              <Button
-                size="lg"
-                className="flex-1"
-                onClick={() => setScannerOpen(true)}
-              >
-                {t("scanBarcode")}
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                className="flex-1"
-                onClick={() => setShowProductPicker(!showProductPicker)}
-              >
-                {t("manualSelect")}
-              </Button>
-            </div>
-
-            {showProductPicker && (
-              <div className="border rounded-lg p-2">
-                <select
-                  className="w-full border rounded-lg p-2 mb-2 text-sm"
-                  value={selectedProductId}
-                  onChange={(e) => setSelectedProductId(e.target.value)}
-                >
-                  <option value="">{tCommon("search")}...</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-                {selectedProduct && (
-                  <div className="space-y-1 max-h-40 overflow-y-auto">
-                    {selectedProduct.variants.map((v) => (
-                      <button
-                        key={v.id}
-                        type="button"
-                        className="w-full text-left p-2 rounded border border-line hover:bg-nude-50 text-sm flex items-center gap-2"
-                        onClick={() => {
-                          addItemFromVariantId(v.id);
-                          setShowProductPicker(false);
-                          setSelectedProductId("");
-                        }}
-                      >
-                        <span
-                          className="inline-block w-4 h-4 rounded-full border border-line flex-shrink-0"
-                          style={{ backgroundColor: getHairColor(v.color).hex }}
-                        />
-                        {v.lengthCm}cm - {v.color}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {items.map((item, i) => (
-              <SaleItemRow
-                key={`${item.variantId}-${i}`}
-                item={item}
-                onGramsChange={(g) => updateItem(i, { grams: g })}
-                onPiecesChange={(p) => updateItem(i, { pieces: p })}
-                onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
-              />
-            ))}
-
-            <BarcodeScanner
-              active={scannerOpen}
-              onScan={handleBarcodeScan}
-              onClose={() => setScannerOpen(false)}
-            />
+      <Card>
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <Button
+              size="lg"
+              className="flex-1"
+              onClick={() => setScannerOpen(true)}
+            >
+              {t("scanBarcode")}
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              className="flex-1"
+              onClick={() => setShowProductPicker(!showProductPicker)}
+            >
+              {t("manualSelect")}
+            </Button>
           </div>
-        </Card>
-      )}
+
+          {showProductPicker && (
+            <div className="border rounded-lg p-2">
+              <select
+                className="w-full border rounded-lg p-2 mb-2 text-sm"
+                value={selectedProductId}
+                onChange={(e) => setSelectedProductId(e.target.value)}
+              >
+                <option value="">{tCommon("search")}...</option>
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              {selectedProduct && (
+                <div className="space-y-1 max-h-40 overflow-y-auto">
+                  {selectedProduct.variants.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      className="w-full text-left p-2 rounded border border-line hover:bg-nude-50 text-sm flex items-center gap-2"
+                      onClick={() => {
+                        addItemFromVariantId(v.id);
+                        setShowProductPicker(false);
+                        setSelectedProductId("");
+                      }}
+                    >
+                      <span
+                        className="inline-block w-4 h-4 rounded-full border border-line flex-shrink-0"
+                        style={{ backgroundColor: getHairColor(v.color).hex }}
+                      />
+                      {v.lengthCm}cm - {v.color}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {items.map((item, i) => (
+            <SaleItemRow
+              key={`${item.variantId}-${i}`}
+              item={item}
+              onGramsChange={(g) => updateItem(i, { grams: g })}
+              onPiecesChange={(p) => updateItem(i, { pieces: p })}
+              onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
+            />
+          ))}
+
+          <BarcodeScanner
+            active={scannerOpen}
+            onScan={handleBarcodeScan}
+            onClose={() => setScannerOpen(false)}
+          />
+        </div>
+      </Card>
 
       {/* Discount */}
-      {items.length > 0 && (
-        <Card>
-          <DiscountForm
-            discount={discount}
-            onChange={setDiscount}
-            subtotal={subtotal}
-            isOwner={isOwner}
-          />
-        </Card>
-      )}
+      <Card>
+        <DiscountForm
+          discount={discount}
+          onChange={setDiscount}
+          subtotal={subtotal}
+          isOwner={isOwner}
+        />
+      </Card>
 
       {/* Summary + Submit */}
       {items.length > 0 && (
