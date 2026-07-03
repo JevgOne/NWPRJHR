@@ -26,6 +26,7 @@ export interface CompleteSaleInput {
   items: SaleItemInput[];
   discount?: DiscountInput;
   paymentType?: "TRANSFER" | "CASH" | "PROMO" | "WRITEOFF";
+  receiptNumber?: string;
   orderId?: string;
   note?: string;
 }
@@ -179,6 +180,7 @@ export async function completeSale(
           grossMargin: totalBeforeVat - totalCostOfGoods,
           userId,
           orderId: input.orderId,
+          receiptNumber: input.receiptNumber,
           note: input.note,
           completedAt: new Date(),
           items: {

@@ -471,6 +471,7 @@ model Sale {
 
   orderId        String?      @unique
 
+  receiptNumber  String?
   note           String?
   completedAt    DateTime?
   createdAt      DateTime     @default(now())

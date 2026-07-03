@@ -14,6 +14,8 @@ interface SaleDetail {
   salonName?: string;
   customerName?: string;
   status: string;
+  paymentType?: string;
+  receiptNumber?: string;
   subtotal: number;
   discountAmount: number;
   totalBeforeVat: number;
@@ -109,6 +111,22 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
           </span>
           <span className="text-muted">{t("status")}</span>
           <span>{t(sale.status.toLowerCase() as "completed" | "cancelled" | "draft")}</span>
+          {sale.paymentType && (
+            <>
+              <span className="text-muted">Typ platby</span>
+              <span>
+                {sale.paymentType === "TRANSFER" ? "Převod" :
+                 sale.paymentType === "CASH" ? "Hotovost" :
+                 sale.paymentType === "PROMO" ? "Promo" : "Odpis"}
+              </span>
+            </>
+          )}
+          {sale.receiptNumber && (
+            <>
+              <span className="text-muted">Číslo paragonu</span>
+              <span>{sale.receiptNumber}</span>
+            </>
+          )}
           {isOwner && sale.userName && (
             <>
               <span className="text-muted">{t("saleNumber")}</span>

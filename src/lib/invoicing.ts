@@ -138,6 +138,111 @@ export async function createInvoiceFromSale(
   );
 }
 
+/**
+ * Create an internal document (interní doklad) for PROMO / WRITEOFF sales.
+ * Zero-total invoice used for accounting purposes.
+ */
+export async function createInternalDocument(
+  saleId: string,
+  reason: "PROMO" | "WRITEOFF",
+  companyId?: string
+): Promise<Invoice> {
+  return prisma.$transaction(
+    async (tx) => {
+      const sale = await tx.sale.findUniqueOrThrow({
+        where: { id: saleId },
+        include: {
+          items: { include: { variant: { include: { product: true } } } },
+          salon: true,
+          customer: true,
+        },
+      }) as SaleWithRelations;
+
+      const existing = await tx.invoice.findUnique({
+        where: { saleId },
+      });
+      if (existing) {
+        throw new Error("Document already exists for this sale");
+      }
+
+      const company = companyId
+        ? await tx.company.findUniqueOrThrow({ where: { id: companyId } })
+        : await tx.company.findFirstOrThrow({ where: { isDefault: true } });
+
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx);
+
+      const buyer =
+        sale.customerType === "SALON" && sale.salon
+          ? {
+              buyerName: sale.salon.name,
+              buyerIco: sale.salon.ico,
+              buyerDic: sale.salon.dic,
+              buyerAddress: sale.salon.city ?? "",
+              buyerEmail: sale.salon.email,
+              buyerLanguage: sale.salon.language ?? "cs",
+            }
+          : {
+              buyerName: sale.customer?.name ?? "Interní",
+              buyerIco: null as string | null,
+              buyerDic: null as string | null,
+              buyerAddress: "",
+              buyerEmail: sale.customer?.email ?? null,
+              buyerLanguage: "cs",
+            };
+
+      const lang = buyer.buyerLanguage;
+      const t = getInvoiceTranslations(lang);
+
+      const reasonLabel = reason === "PROMO" ? "Promo" : "Odpis";
+
+      const invoiceItems = sale.items.map((item) => {
+        const description = formatItemDescription(
+          item.variant.product,
+          item.variant,
+          lang
+        );
+        const isPiece = item.pieces > 0;
+
+        return {
+          description: `${description} (${reasonLabel})`,
+          quantity: isPiece ? item.pieces : item.grams,
+          unit: isPiece ? t.piece : t.gram,
+          pricePerUnit: 0,
+          lineTotal: 0,
+          vatRate: 2100,
+        };
+      });
+
+      const invoice = await tx.invoice.create({
+        data: {
+          type: "CREDIT_NOTE",
+          number,
+          companyId: company.id,
+          salonId: sale.salonId,
+          customerId: sale.customerId,
+          ...buyer,
+          saleId: sale.id,
+          issueDate: new Date(),
+          dueDate: new Date(),
+          variableSymbol,
+          subtotal: 0,
+          vatRate: 2100,
+          vatAmount: 0,
+          total: 0,
+          status: "ISSUED",
+          note: `Interní doklad — ${reasonLabel}`,
+          items: {
+            create: invoiceItems,
+          },
+        },
+      });
+
+      return invoice;
+    },
+    { timeout: 15000 }
+  );
+}
+
 export interface CreditNoteItem {
   description: string;
   quantity: number;

@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { completeSaleSchema } from "@/lib/validations/sale";
 import { completeSale } from "@/lib/sales";
+import { createInvoiceFromSale, createInternalDocument } from "@/lib/invoicing";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
 
@@ -22,6 +23,20 @@ export async function POST(request: NextRequest) {
     );
 
   const sale = await completeSale(parsed.data, session.user.id);
+
+  // Post-sale document creation based on payment type
+  const pt = parsed.data.paymentType ?? "TRANSFER";
+  try {
+    if (pt === "TRANSFER") {
+      await createInvoiceFromSale(sale.id);
+    } else if (pt === "PROMO" || pt === "WRITEOFF") {
+      await createInternalDocument(sale.id, pt);
+    }
+    // CASH — no auto-document, receiptNumber already stored on sale
+  } catch (docErr) {
+    console.error("[Sales API] Failed to create post-sale document:", docErr);
+    // Sale is already completed, don't fail the request
+  }
 
   const full = await prisma.sale.findUniqueOrThrow({
     where: { id: sale.id },

@@ -52,6 +52,8 @@ export function serializeSaleForRole(
     salonName: sale.salon?.name,
     customerName: sale.customer?.name,
     status: sale.status,
+    paymentType: sale.paymentType,
+    receiptNumber: sale.receiptNumber,
     subtotal: sale.subtotal,
     discountAmount: sale.discountAmount,
     totalBeforeVat: sale.totalBeforeVat,

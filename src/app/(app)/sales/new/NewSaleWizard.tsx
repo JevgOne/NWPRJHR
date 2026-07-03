@@ -72,6 +72,7 @@ export function NewSaleWizard({
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "PROMO" | "WRITEOFF">("TRANSFER");
+  const [receiptNumber, setReceiptNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -244,6 +245,7 @@ export function NewSaleWizard({
       salonId: salonId ?? undefined,
       customerId: customerId ?? undefined,
       paymentType,
+      receiptNumber: paymentType === "CASH" && receiptNumber ? receiptNumber : undefined,
       items: items.map((item) => ({
         variantId: item.variantId,
         grams: item.grams,
@@ -432,13 +434,25 @@ export function NewSaleWizard({
             ))}
           </div>
           {paymentType === "CASH" && (
-            <p className="text-xs text-muted mt-2">Paragon/pokladní doklad vystavíte ručně.</p>
+            <div className="mt-2 space-y-2">
+              <input
+                type="text"
+                placeholder="Číslo paragonu (nepovinné)"
+                value={receiptNumber}
+                onChange={(e) => setReceiptNumber(e.target.value)}
+                className="w-full border border-line rounded-lg px-3 py-2 text-sm"
+              />
+              <p className="text-xs text-muted">Paragon/pokladní doklad vystavíte ručně.</p>
+            </div>
+          )}
+          {paymentType === "TRANSFER" && (
+            <p className="text-xs text-muted mt-2">Faktura se vytvoří automaticky.</p>
           )}
           {paymentType === "PROMO" && (
-            <p className="text-xs text-muted mt-2">Interní promo — bez fakturace.</p>
+            <p className="text-xs text-muted mt-2">Interní promo — vytvoří se interní doklad.</p>
           )}
           {paymentType === "WRITEOFF" && (
-            <p className="text-xs text-muted mt-2">Interní odpis — bez fakturace.</p>
+            <p className="text-xs text-muted mt-2">Interní odpis — vytvoří se interní doklad.</p>
           )}
         </div>
       </Card>
