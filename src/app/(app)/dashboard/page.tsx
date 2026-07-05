@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { unstable_cache } from "next/cache";
 import { BatchAnnouncementCard } from "@/components/admin/BatchAnnouncementCard";
 
 function fmtCZK(halere: number): string {
@@ -42,16 +43,118 @@ const movementTypeColors: Record<string, { bg: string; text: string; label: stri
   SAMPLE: { bg: "bg-purple-100", text: "text-purple-700", label: "Vzorek" },
 };
 
+const getCachedDashboardData = unstable_cache(
+  async (userId: string) => {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [
+      salesThisMonth,
+      stockByCategory,
+      openInvoices,
+      activeSalonsCount,
+      totalSalesEver,
+      totalGramsSoldAgg,
+      lowStockVariants,
+      recentMovements,
+      pendingReturns,
+      newOrders,
+      unreadNotifications,
+      pendingRegistrations,
+    ] = await Promise.all([
+      prisma.sale.aggregate({
+        where: { status: "COMPLETED", completedAt: { gte: monthStart } },
+        _count: { id: true },
+        _sum: { totalAmount: true },
+      }),
+
+      prisma.$queryRawUnsafe<
+        Array<{ category: string; totalGrams: number; purchaseValue: number; retailValue: number }>
+      >(
+        `SELECT p.category,
+                COALESCE(SUM(d.remainingGrams), 0) as totalGrams,
+                COALESCE(SUM(d.remainingGrams * d.purchasePricePerGramCZK), 0) as purchaseValue,
+                COALESCE(SUM(d.remainingGrams * v.retailPricePerGram), 0) as retailValue
+         FROM deliveries d
+         JOIN variants v ON d.variantId = v.id
+         JOIN products p ON v.productId = p.id
+         WHERE d.remainingGrams > 0
+         GROUP BY p.category`
+      ),
+
+      prisma.invoice.aggregate({
+        where: { type: "INVOICE", status: { in: ["ISSUED", "AWAITING", "OVERDUE"] } },
+        _count: { id: true },
+        _sum: { total: true },
+      }),
+
+      prisma.salon.count({ where: { approved: true, archived: false } }),
+
+      prisma.sale.aggregate({
+        where: { status: "COMPLETED" },
+        _count: { id: true },
+        _sum: { totalAmount: true, totalCostOfGoods: true },
+      }),
+
+      prisma.saleItem.aggregate({
+        where: { sale: { status: "COMPLETED" } },
+        _sum: { grams: true },
+      }),
+
+      prisma.$queryRawUnsafe<
+        Array<{ variantId: string; totalRemaining: number; productName: string; lengthCm: number; color: string; category: string }>
+      >(
+        `SELECT v.id as variantId, COALESCE(SUM(d.remainingGrams), 0) as totalRemaining,
+          p.name as productName, v.lengthCm, v.color, p.category
+        FROM variants v JOIN products p ON v.productId = p.id
+        LEFT JOIN deliveries d ON d.variantId = v.id
+        WHERE v.active = 1 AND p.archived = 0
+        GROUP BY v.id HAVING COALESCE(SUM(d.remainingGrams), 0) < 200 AND COALESCE(SUM(d.remainingGrams), 0) > 0
+        ORDER BY totalRemaining ASC LIMIT 8`
+      ),
+
+      prisma.stockMovement.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        select: {
+          id: true, type: true, grams: true, pieces: true, createdAt: true, note: true,
+          variant: { select: { lengthCm: true, color: true, product: { select: { name: true } } } },
+        },
+      }),
+
+      prisma.return.count({ where: { status: "PENDING" } }),
+      prisma.order.count({ where: { status: "NEW" } }),
+      prisma.notification.count({ where: { recipientId: userId, read: false } }),
+      prisma.salon.count({ where: { approved: false, archived: false } }),
+    ]);
+
+    return {
+      salesThisMonth,
+      stockByCategory,
+      openInvoices,
+      activeSalonsCount,
+      totalSalesEver,
+      totalGramsSoldAgg,
+      lowStockVariants,
+      recentMovements,
+      pendingReturns,
+      newOrders,
+      unreadNotifications,
+      pendingRegistrations,
+    };
+  },
+  ["dashboard-data"],
+  { revalidate: 30, tags: ["dashboard"] }
+);
+
 export default async function DashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/salon/catalog");
 
   const t = await getTranslations("dashboard");
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const [
+  const {
     salesThisMonth,
     stockByCategory,
     openInvoices,
@@ -64,72 +167,7 @@ export default async function DashboardPage() {
     newOrders,
     unreadNotifications,
     pendingRegistrations,
-  ] = await Promise.all([
-    prisma.sale.aggregate({
-      where: { status: "COMPLETED", completedAt: { gte: monthStart } },
-      _count: { id: true },
-      _sum: { totalAmount: true },
-    }),
-
-    prisma.$queryRawUnsafe<
-      Array<{ category: string; totalGrams: number; purchaseValue: number; retailValue: number }>
-    >(
-      `SELECT p.category,
-              COALESCE(SUM(d.remainingGrams), 0) as totalGrams,
-              COALESCE(SUM(d.remainingGrams * d.purchasePricePerGramCZK), 0) as purchaseValue,
-              COALESCE(SUM(d.remainingGrams * v.retailPricePerGram), 0) as retailValue
-       FROM deliveries d
-       JOIN variants v ON d.variantId = v.id
-       JOIN products p ON v.productId = p.id
-       WHERE d.remainingGrams > 0
-       GROUP BY p.category`
-    ),
-
-    prisma.invoice.aggregate({
-      where: { type: "INVOICE", status: { in: ["ISSUED", "AWAITING", "OVERDUE"] } },
-      _count: { id: true },
-      _sum: { total: true },
-    }),
-
-    prisma.salon.count({ where: { approved: true, archived: false } }),
-
-    prisma.sale.aggregate({
-      where: { status: "COMPLETED" },
-      _count: { id: true },
-      _sum: { totalAmount: true, totalCostOfGoods: true },
-    }),
-
-    prisma.saleItem.aggregate({
-      where: { sale: { status: "COMPLETED" } },
-      _sum: { grams: true },
-    }),
-
-    prisma.$queryRawUnsafe<
-      Array<{ variantId: string; totalRemaining: number; productName: string; lengthCm: number; color: string; category: string }>
-    >(
-      `SELECT v.id as variantId, COALESCE(SUM(d.remainingGrams), 0) as totalRemaining,
-        p.name as productName, v.lengthCm, v.color, p.category
-      FROM variants v JOIN products p ON v.productId = p.id
-      LEFT JOIN deliveries d ON d.variantId = v.id
-      WHERE v.active = 1 AND p.archived = 0
-      GROUP BY v.id HAVING COALESCE(SUM(d.remainingGrams), 0) < 200 AND COALESCE(SUM(d.remainingGrams), 0) > 0
-      ORDER BY totalRemaining ASC LIMIT 8`
-    ),
-
-    prisma.stockMovement.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 6,
-      select: {
-        id: true, type: true, grams: true, pieces: true, createdAt: true, note: true,
-        variant: { select: { lengthCm: true, color: true, product: { select: { name: true } } } },
-      },
-    }),
-
-    prisma.return.count({ where: { status: "PENDING" } }),
-    prisma.order.count({ where: { status: "NEW" } }),
-    prisma.notification.count({ where: { recipientId: session.user.id, read: false } }),
-    prisma.salon.count({ where: { approved: false, archived: false } }),
-  ]);
+  } = await getCachedDashboardData(session.user.id);
 
   // Compute stats from pre-aggregated SQL results
   const totalStockGrams = stockByCategory.reduce((a, r) => a + Number(r.totalGrams), 0);

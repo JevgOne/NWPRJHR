@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -9,44 +9,26 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 import { NotificationBell } from "./NotificationBell";
 import type { Session } from "next-auth";
 
+interface BadgeCounts {
+  pendingRegCount: number;
+  newInquiryCount: number;
+  unreadCount: number;
+}
+
 interface AppShellProps {
   session: Session;
   children: React.ReactNode;
+  badgeCounts: BadgeCounts;
 }
 
-export function AppShell({ session, children }: AppShellProps) {
+export function AppShell({ session, children, badgeCounts }: AppShellProps) {
   const t = useTranslations("nav");
   const tAuth = useTranslations("auth");
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [pendingRegCount, setPendingRegCount] = useState(0);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [newInquiryCount, setNewInquiryCount] = useState(0);
   const role = session.user.role;
 
-  useEffect(() => {
-    if (role !== "OWNER" && role !== "EMPLOYEE") return;
-    fetch("/api/salons?archived=false&approved=false")
-      .then((r) => r.json())
-      .then((data) => setPendingRegCount(data.total ?? 0))
-      .catch(() => {});
-    fetch("/api/inquiries?status=NEW")
-      .then((r) => r.json())
-      .then((data) => setNewInquiryCount(Array.isArray(data) ? data.length : 0))
-      .catch(() => {});
-  }, [role]);
-
-  useEffect(() => {
-    const fetchUnread = () => {
-      fetch("/api/notifications?unread=true&limit=1")
-        .then((r) => r.json())
-        .then((data) => setUnreadCount(data.total ?? 0))
-        .catch(() => {});
-    };
-    fetchUnread();
-    const interval = setInterval(fetchUnread, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  const { pendingRegCount, newInquiryCount, unreadCount } = badgeCounts;
 
   type NavItem = { href: string; label: string; roles: string[]; badge?: number; badgeColor?: string };
   type NavGroup = { label: string | null; items: NavItem[] };

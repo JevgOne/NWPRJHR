@@ -15,9 +15,9 @@ interface ProductGridCardVariant {
   wholesalePricePerGram?: number;
   availableGrams: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
-  retailPricePerPiece?: number;
-  wholesalePricePerPiece?: number;
-  availablePieces?: number;
+  retailPricePerPiece?: number | null;
+  wholesalePricePerPiece?: number | null;
+  availablePieces?: number | null;
 }
 
 export interface ProductGridCardProduct {

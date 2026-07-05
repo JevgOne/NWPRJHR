@@ -16,8 +16,8 @@ interface PublicVariant {
   wholesalePricePerGram: number;
   availableGrams: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
-  retailPricePerPiece?: number;
-  availablePieces?: number;
+  retailPricePerPiece?: number | null;
+  availablePieces?: number | null;
 }
 
 interface PublicProduct {
@@ -41,18 +41,19 @@ interface PublicProduct {
 interface ShowcaseProps {
   userRole?: string | null;
   discountPct?: number;
+  initialProducts?: PublicProduct[];
 }
 
-export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
+export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }: ShowcaseProps) {
   const t = useTranslations("public");
   const tCategory = useTranslations("category");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [products, setProducts] = useState<PublicProduct[]>([]);
-  const [allProducts, setAllProducts] = useState<PublicProduct[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<PublicProduct[]>(initialProducts ?? []);
+  const [allProducts, setAllProducts] = useState<PublicProduct[]>(initialProducts ?? []);
+  const [loading, setLoading] = useState(!initialProducts);
   const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
 
   const activeCategory = searchParams.get("category") ?? "ALL";
@@ -135,8 +136,9 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
     setFilter("search", searchInput.trim());
   }
 
-  // Fetch all products once — filter client-side to avoid duplicate requests
+  // Fetch all products once — skip if initialProducts provided from server
   useEffect(() => {
+    if (initialProducts) return;
     setLoading(true);
     fetch("/api/public/products")
       .then((r) => r.json())
@@ -146,7 +148,7 @@ export function ProductsShowcase({ userRole, discountPct = 0 }: ShowcaseProps) {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [initialProducts]);
 
   // Apply filters client-side from allProducts (no extra fetch)
   useEffect(() => {

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLoyaltyDiscount } from "@/lib/loyalty";
+import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductsShowcase } from "./ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
@@ -30,40 +31,23 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPage() {
-  const [t, session] = await Promise.all([
+  const [t, session, allProducts] = await Promise.all([
     getTranslations("public"),
     auth(),
+    getCachedAllProducts(),
   ]);
-
-  // Fetch products for ItemList schema
-  const schemaProducts = await prisma.product.findMany({
-    where: { archived: false, variants: { some: { active: true } } },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      photos: true,
-      variants: {
-        where: { active: true },
-        select: { retailPricePerGram: true },
-        take: 1,
-      },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  });
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Nabídka prémiových vlasů",
-    numberOfItems: schemaProducts.length,
-    itemListElement: schemaProducts.map((p, i) => ({
+    numberOfItems: allProducts.length,
+    itemListElement: allProducts.slice(0, 50).map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `https://www.hairland.cz/offer/${p.slug ?? p.id}`,
       name: p.name,
-      ...((() => { const photos = JSON.parse(p.photos || "[]"); return photos.length > 0 ? { image: photos[0] } : {}; })()),
+      ...(p.photos.length > 0 ? { image: p.photos[0] } : {}),
     })),
   };
 
@@ -109,7 +93,7 @@ export default async function ProductsPage() {
       </div>
 
       <Suspense fallback={<p className="text-muted">{t("offer.loadingProducts")}</p>}>
-        <ProductsShowcase userRole={userRole} discountPct={discountPct} />
+        <ProductsShowcase userRole={userRole} discountPct={discountPct} initialProducts={allProducts} />
       </Suspense>
     </div>
   );
