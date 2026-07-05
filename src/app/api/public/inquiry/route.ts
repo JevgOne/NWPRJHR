@@ -21,6 +21,7 @@ const inquirySchema = z.object({
   salonName: z.string().max(200).optional().default(""),
   message: z.string().max(5000).optional().default(""),
   promoCode: z.string().max(50).optional().default(""),
+  referralCode: z.string().max(50).optional().default(""),
   locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
   items: z.array(inquiryItemSchema).min(1).max(50),
 });
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, phone, salonName, message, promoCode, locale, items } = parsed.data;
+  const { name, email, phone, salonName, message, promoCode, referralCode, locale, items } = parsed.data;
 
   // Validate and increment promo code usage
   let appliedPromoCode: string | null = null;
@@ -95,6 +96,7 @@ export async function POST(request: NextRequest) {
         salonName: salonName || null,
         message: message || null,
         promoCode: appliedPromoCode,
+        referralCode: referralCode || null,
         items: {
           create: items.map((item) => ({
             productId: item.productId,
@@ -107,6 +109,27 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Track referral conversion
+    if (referralCode) {
+      const referral = await prisma.referral.findUnique({
+        where: { code: referralCode.toUpperCase() },
+      });
+      if (referral && referral.active) {
+        await prisma.referralConversion.create({
+          data: {
+            referralId: referral.id,
+            refereeType: "INQUIRY",
+            refereeInquiryId: inquiry.id,
+            status: "PENDING",
+          },
+        });
+        await prisma.referral.update({
+          where: { id: referral.id },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+    }
 
     // Notify owner
     const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";

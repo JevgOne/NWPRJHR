@@ -16,9 +16,42 @@ import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
-import { Fragment } from "react";
+import { Fragment, Suspense } from "react";
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage } from "./CategoryPage";
+
+const getCachedReviewData = unstable_cache(
+  async (productId: string) => {
+    let stats = await prisma.review.aggregate({
+      where: { productId, active: true },
+      _avg: { rating: true },
+      _count: true,
+    });
+
+    if (stats._count === 0) {
+      stats = await prisma.review.aggregate({
+        where: { active: true },
+        _avg: { rating: true },
+        _count: true,
+      });
+    }
+
+    const reviews = await prisma.review.findMany({
+      where: {
+        active: true,
+        OR: [{ productId }, { productId: null }],
+      },
+      select: { authorName: true, rating: true, text: true },
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: 5,
+    });
+
+    return { stats, reviews };
+  },
+  ["product-review-data"],
+  { revalidate: 300, tags: ["reviews"] }
+);
 
 /** Parse **bold** markers into React elements */
 function renderBold(text: string): React.ReactNode {
@@ -309,12 +342,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   });
   const description = localizedDesc || autoBio;
 
-  // Aggregate review stats for JSON-LD
-  const reviewStats = await prisma.review.aggregate({
-    where: { productId: product.id, active: true },
-    _avg: { rating: true },
-    _count: true,
-  });
+  // Cached review stats + snippets for JSON-LD
+  const { stats: reviewStats, reviews: reviewsForSchema } = await getCachedReviewData(product.id);
 
   // FAQ data by category
   const faqByCategory: Record<string, Array<{ q: string; a: string }>> = {
@@ -459,6 +488,14 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         ratingValue: reviewStats._avg.rating?.toFixed(1),
         reviewCount: reviewStats._count,
       },
+    }),
+    ...(reviewsForSchema.length > 0 && {
+      review: reviewsForSchema.map((r) => ({
+        "@type": "Review",
+        author: { "@type": "Person", name: r.authorName },
+        reviewRating: { "@type": "Rating", ratingValue: String(r.rating) },
+        reviewBody: r.text.slice(0, 200),
+      })),
     }),
   };
 
@@ -749,7 +786,9 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
       </div>
 
       {/* Reviews */}
-      <ProductReviews productId={product.id} />
+      <Suspense fallback={<div className="mt-10 border-t border-line pt-8 h-40 animate-pulse bg-nude-50 rounded-2xl" />}>
+        <ProductReviews productId={product.id} />
+      </Suspense>
 
       {/* Related products */}
       {await (async () => {

@@ -24,6 +24,7 @@ export function SalonShell({ session, children }: SalonShellProps) {
     { href: "/salon/invoices", label: t("myInvoices") },
     { href: "/salon/samples", label: t("mySamples") },
     { href: "/reklamacni-rad", label: t("complaints") },
+    { href: "/salon/referral", label: t("referral") },
     { href: "/salon/profile", label: t("profile") },
   ];
 

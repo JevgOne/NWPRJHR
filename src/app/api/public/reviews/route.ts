@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { notifyNegativeReview } from "@/lib/telegram";
 import { createNotificationForRole } from "@/lib/notifications";
@@ -67,6 +68,8 @@ export async function POST(request: NextRequest) {
       text: data.text,
     }).catch(() => {});
   }
+
+  revalidateTag("reviews", "max");
 
   return NextResponse.json({ success: true, id: review.id });
 }

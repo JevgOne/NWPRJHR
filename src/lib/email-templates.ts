@@ -378,3 +378,375 @@ export function getSpinWinEmail(
 
   return { subject: t.subject(data.discount), text, html: hairlandEmailTemplate(content) };
 }
+
+// --- Order Confirmation Email ---
+
+const orderConfirmT: Record<Lang, {
+  subject: (orderNumber: string) => string;
+  greeting: (name: string) => string;
+  body1: (orderNumber: string) => string;
+  body2: string;
+  itemsHeader: string;
+  productHeader: string;
+  detailsHeader: string;
+  totalLabel: string;
+  promoLabel: string;
+  discountLabel: string;
+  cta: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: (n) => `Objednávka #${n} potvrzena — Hairland`,
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: (n) => `Vaše objednávka #${n} byla potvrzena.`,
+    body2: "Objednávku připravíme a budeme vás informovat o odeslání.",
+    itemsHeader: "Položky objednávky:",
+    productHeader: "Produkt",
+    detailsHeader: "Detaily",
+    totalLabel: "Celkem",
+    promoLabel: "Slevový kód:",
+    discountLabel: "Sleva:",
+    cta: "Sledovat objednávku",
+    footer: "Máte dotaz? Odpovězte na tento email.",
+  },
+  uk: {
+    subject: (n) => `Замовлення #${n} підтверджено — Hairland`,
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: (n) => `Ваше замовлення #${n} підтверджено.`,
+    body2: "Ми підготуємо замовлення та повідомимо вас про відправку.",
+    itemsHeader: "Товари замовлення:",
+    productHeader: "Продукт",
+    detailsHeader: "Деталі",
+    totalLabel: "Всього",
+    promoLabel: "Промокод:",
+    discountLabel: "Знижка:",
+    cta: "Відстежити замовлення",
+    footer: "Маєте запитання? Відповідайте на цей лист.",
+  },
+  ru: {
+    subject: (n) => `Заказ #${n} подтверждён — Hairland`,
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: (n) => `Ваш заказ #${n} подтверждён.`,
+    body2: "Мы подготовим заказ и сообщим вам об отправке.",
+    itemsHeader: "Товары заказа:",
+    productHeader: "Продукт",
+    detailsHeader: "Детали",
+    totalLabel: "Итого",
+    promoLabel: "Промокод:",
+    discountLabel: "Скидка:",
+    cta: "Отследить заказ",
+    footer: "Есть вопрос? Ответьте на это письмо.",
+  },
+};
+
+export function getOrderConfirmationEmail(
+  lang: string,
+  data: {
+    salonName: string;
+    orderNumber: string;
+    items: Array<{ productName: string; lengthCm: number; color: string; grams: number; pieces: number }>;
+    estimatedTotal: number;
+    promoCode?: string;
+    promoDiscount?: number;
+  }
+): { subject: string; text: string; html: string } {
+  const t = orderConfirmT[resolveLang(lang)];
+
+  const itemLines = data.items
+    .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`}`)
+    .join("\n");
+
+  const totalCzk = (data.estimatedTotal / 100).toLocaleString("cs-CZ");
+
+  const text = [
+    t.greeting(data.salonName),
+    "",
+    t.body1(data.orderNumber),
+    "",
+    t.itemsHeader,
+    itemLines,
+    data.promoCode ? `\n${t.promoLabel} ${data.promoCode}` : null,
+    data.promoDiscount ? `${t.discountLabel} -${(data.promoDiscount / 100).toLocaleString("cs-CZ")} Kč` : null,
+    "",
+    `${t.totalLabel}: ${totalCzk} Kč`,
+    "",
+    t.body2,
+    "",
+    t.footer,
+  ].filter(Boolean).join("\n");
+
+  const itemRows = data.items
+    .map(
+      (i) => `<tr style="border-bottom:1px solid #ead9cf;">
+        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;">${esc(i.productName)}</td>
+        <td style="padding:8px 0;color:#9c8682;font-size:14px;text-align:right;">${i.lengthCm} cm, ${esc(i.color)}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`}</td>
+      </tr>`
+    )
+    .join("");
+
+  const promoHtml = data.promoCode
+    ? `<p style="color:#3a2c2a;font-size:14px;margin:12px 0 0;"><strong>${esc(t.promoLabel)}</strong> ${esc(data.promoCode)}</p>`
+    : "";
+  const discountHtml = data.promoDiscount
+    ? `<p style="color:#c98b88;font-size:14px;margin:4px 0 0;">${esc(t.discountLabel)} -${(data.promoDiscount / 100).toLocaleString("cs-CZ")} Kč</p>`
+    : "";
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.salonName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body1(data.orderNumber))}</p>
+    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
+      <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 8px;">${esc(t.itemsHeader)}</p>
+      <table style="width:100%;border-collapse:collapse;margin:4px 0;">
+        <tr style="border-bottom:2px solid #ead9cf;">
+          <th style="padding:6px 0;color:#9c8682;font-size:12px;text-align:left;text-transform:uppercase;letter-spacing:0.5px;">${esc(t.productHeader)}</th>
+          <th style="padding:6px 0;color:#9c8682;font-size:12px;text-align:right;text-transform:uppercase;letter-spacing:0.5px;">${esc(t.detailsHeader)}</th>
+        </tr>
+        ${itemRows}
+      </table>
+      ${promoHtml}
+      ${discountHtml}
+      <p style="color:#3a2c2a;font-size:16px;font-weight:700;margin:16px 0 0;text-align:right;">${esc(t.totalLabel)}: ${totalCzk} Kč</p>
+    </div>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="https://hairland.cz/app/orders"
+         style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
+        ${esc(t.cta)}
+      </a>
+    </div>
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Order Shipped Email ---
+
+const orderShippedT: Record<Lang, {
+  subject: (orderNumber: string) => string;
+  greeting: (name: string) => string;
+  body1: (orderNumber: string) => string;
+  body2: string;
+  cta: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: (n) => `Objednávka #${n} je na cestě — Hairland`,
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: (n) => `Vaše objednávka #${n} byla odeslána.`,
+    body2: "Osobní odběr Praha — doručíme do 24 hodin.",
+    cta: "Přihlásit se do portálu",
+    footer: "Máte dotaz? Odpovězte na tento email.",
+  },
+  uk: {
+    subject: (n) => `Замовлення #${n} в дорозі — Hairland`,
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: (n) => `Ваше замовлення #${n} відправлено.`,
+    body2: "Особистий забір Прага — доставимо протягом 24 годин.",
+    cta: "Увійти до порталу",
+    footer: "Маєте запитання? Відповідайте на цей лист.",
+  },
+  ru: {
+    subject: (n) => `Заказ #${n} в пути — Hairland`,
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: (n) => `Ваш заказ #${n} отправлен.`,
+    body2: "Самовывоз Прага — доставим в течение 24 часов.",
+    cta: "Войти в портал",
+    footer: "Есть вопрос? Ответьте на это письмо.",
+  },
+};
+
+export function getOrderShippedEmail(
+  lang: string,
+  data: {
+    salonName: string;
+    orderNumber: string;
+    estimatedTotal: number;
+  }
+): { subject: string; text: string; html: string } {
+  const t = orderShippedT[resolveLang(lang)];
+
+  const totalCzk = (data.estimatedTotal / 100).toLocaleString("cs-CZ");
+
+  const text = [
+    t.greeting(data.salonName),
+    "",
+    t.body1(data.orderNumber),
+    t.body2,
+    "",
+    `${totalCzk} Kč`,
+    "",
+    `${t.cta}: https://hairland.cz/app/orders`,
+    "",
+    t.footer,
+  ].join("\n");
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.salonName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1(data.orderNumber))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
+    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;text-align:center;">
+      <p style="color:#3a2c2a;font-size:20px;font-weight:700;margin:0;">${totalCzk} Kč</p>
+    </div>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="https://hairland.cz/app/orders"
+         style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
+        ${esc(t.cta)}
+      </a>
+    </div>
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Order Follow-up Email (3 days after completion) ---
+
+const orderFollowUpT: Record<Lang, {
+  subject: (orderNumber: string) => string;
+  greeting: (name: string) => string;
+  body1: (orderNumber: string) => string;
+  body2: string;
+  cta: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: (n) => `Jak jste spokojeni s objednávkou #${n}? — Hairland`,
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: (n) => `Vaše objednávka #${n} byla dokončena před několika dny.`,
+    body2: "Budeme rádi za vaši zpětnou vazbu.",
+    cta: "Napsat recenzi",
+    footer: "Máte dotaz? Odpovězte na tento email.",
+  },
+  uk: {
+    subject: (n) => `Як вам замовлення #${n}? — Hairland`,
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: (n) => `Ваше замовлення #${n} було виконано кілька днів тому.`,
+    body2: "Ми будемо раді вашому відгуку.",
+    cta: "Написати відгук",
+    footer: "Маєте запитання? Відповідайте на цей лист.",
+  },
+  ru: {
+    subject: (n) => `Как вам заказ #${n}? — Hairland`,
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: (n) => `Ваш заказ #${n} был выполнен несколько дней назад.`,
+    body2: "Будем рады вашему отзыву.",
+    cta: "Написать отзыв",
+    footer: "Есть вопрос? Ответьте на это письмо.",
+  },
+};
+
+export function getOrderFollowUpEmail(
+  lang: string,
+  data: {
+    salonName: string;
+    orderNumber: string;
+  }
+): { subject: string; text: string; html: string } {
+  const t = orderFollowUpT[resolveLang(lang)];
+
+  const text = [
+    t.greeting(data.salonName),
+    "",
+    t.body1(data.orderNumber),
+    t.body2,
+    "",
+    `${t.cta}: https://hairland.cz/recenze`,
+    "",
+    t.footer,
+  ].join("\n");
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.salonName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1(data.orderNumber))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="https://hairland.cz/recenze"
+         style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
+        ${esc(t.cta)}
+      </a>
+    </div>
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Inquiry Follow-up Email (3 days after inquiry completion) ---
+
+const inquiryFollowUpT: Record<Lang, {
+  subject: string;
+  greeting: (name: string) => string;
+  body1: string;
+  body2: string;
+  cta: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: "Děkujeme za váš zájem — Hairland",
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: "Děkujeme za váš zájem o naše prémiové vlasy.",
+    body2: "Chcete se na něco zeptat? Jsme tu pro vás.",
+    cta: "Kontaktovat nás",
+    footer: "Odpovězte na tento email nebo nás navštivte na hairland.cz.",
+  },
+  uk: {
+    subject: "Дякуємо за ваш інтерес — Hairland",
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: "Дякуємо за ваш інтерес до нашого преміального волосся.",
+    body2: "Хочете щось запитати? Ми тут для вас.",
+    cta: "Зв'язатися з нами",
+    footer: "Відповідайте на цей лист або відвідайте hairland.cz.",
+  },
+  ru: {
+    subject: "Благодарим за ваш интерес — Hairland",
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: "Благодарим за ваш интерес к нашим премиальным волосам.",
+    body2: "Хотите что-то спросить? Мы здесь для вас.",
+    cta: "Связаться с нами",
+    footer: "Ответьте на это письмо или посетите hairland.cz.",
+  },
+};
+
+export function getInquiryFollowUpEmail(
+  lang: string,
+  data: {
+    name: string;
+    inquiryItems: string;
+  }
+): { subject: string; text: string; html: string } {
+  const t = inquiryFollowUpT[resolveLang(lang)];
+
+  const text = [
+    t.greeting(data.name),
+    "",
+    t.body1,
+    "",
+    data.inquiryItems,
+    "",
+    t.body2,
+    "",
+    `${t.cta}: https://hairland.cz/kontakt`,
+    "",
+    t.footer,
+  ].join("\n");
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.name))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body1)}</p>
+    ${data.inquiryItems ? `
+    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
+      <p style="color:#3a2c2a;font-size:14px;line-height:1.6;margin:0;">${esc(data.inquiryItems)}</p>
+    </div>` : ""}
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="https://hairland.cz/kontakt"
+         style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
+        ${esc(t.cta)}
+      </a>
+    </div>
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
+}

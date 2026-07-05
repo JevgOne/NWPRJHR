@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -46,6 +47,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     ipAddress: getClientIp(req),
   });
 
+  revalidateTag("stylists", "max");
+
   return NextResponse.json(stylist);
 }
 
@@ -66,6 +69,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     entityId: id,
     ipAddress: getClientIp(req),
   });
+
+  revalidateTag("stylists", "max");
 
   return NextResponse.json({ ok: true });
 }

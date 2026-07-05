@@ -13,6 +13,7 @@ interface BadgeCounts {
   pendingRegCount: number;
   newInquiryCount: number;
   unreadCount: number;
+  pendingReviewCount: number;
 }
 
 interface AppShellProps {
@@ -28,7 +29,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = session.user.role;
 
-  const { pendingRegCount, newInquiryCount, unreadCount } = badgeCounts;
+  const { pendingRegCount, newInquiryCount, unreadCount, pendingReviewCount } = badgeCounts;
 
   type NavItem = { href: string; label: string; roles: string[]; badge?: number; badgeColor?: string };
   type NavGroup = { label: string | null; items: NavItem[] };
@@ -71,7 +72,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
     {
       label: "Kvalita",
       items: [
-        { href: "/reviews", label: "Recenze", roles: ["OWNER", "EMPLOYEE"] },
+        { href: "/reviews", label: "Recenze", roles: ["OWNER", "EMPLOYEE"], badge: pendingReviewCount, badgeColor: "bg-amber-500" },
         { href: "/complaints", label: t("complaints"), roles: ["OWNER"] },
         { href: "/returns", label: t("returns"), roles: ["OWNER"] },
         { href: "/samples", label: t("samples"), roles: ["OWNER"] },
@@ -89,6 +90,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       label: "Marketing",
       items: [
         { href: "/promo-codes", label: t("promoCodes"), roles: ["OWNER"] },
+        { href: "/referrals", label: "Referraly", roles: ["OWNER"] },
         { href: "/posts", label: "Blog", roles: ["OWNER"] },
       ],
     },

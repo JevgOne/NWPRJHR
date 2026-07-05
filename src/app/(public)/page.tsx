@@ -3,9 +3,23 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/db";
+import { unstable_cache } from "next/cache";
 import { getHairColor } from "@/lib/hair-colors";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
+
+const getCachedStylists = unstable_cache(
+  async () => {
+    return prisma.stylist.findMany({
+      where: { active: true },
+      orderBy: [{ featured: "desc" }, { name: "asc" }],
+      take: 6,
+      include: { salon: { select: { name: true } } },
+    });
+  },
+  ["homepage-stylists"],
+  { revalidate: 300, tags: ["stylists"] }
+);
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -72,12 +86,7 @@ export default async function LandingPage() {
   const [t, tCategory, stylists] = await Promise.all([
     getTranslations("public"),
     getTranslations("category"),
-    prisma.stylist.findMany({
-      where: { active: true },
-      orderBy: [{ featured: "desc" }, { name: "asc" }],
-      take: 6,
-      include: { salon: { select: { name: true } } },
-    }),
+    getCachedStylists(),
   ]);
 
   return (

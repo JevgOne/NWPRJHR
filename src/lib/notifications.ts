@@ -203,6 +203,10 @@ export function translateNotification(
         title: "Nová reklamace",
         message: `Nová reklamace${data?.salonName ? ` od salonu ${data.salonName}` : ""}`,
       },
+      REFERRAL_USED: {
+        title: "Nová referral konverze",
+        message: `Někdo použil referral kód${data?.code ? ` ${data.code}` : ""}`,
+      },
     },
     uk: {
       NEW_ORDER: {
@@ -269,6 +273,10 @@ export function translateNotification(
         title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0456\u044f",
         message: `\u041d\u043e\u0432\u0430 \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0456\u044f${data?.salonName ? ` \u0432\u0456\u0434 \u0441\u0430\u043b\u043e\u043d\u0443 ${data.salonName}` : ""}`,
       },
+      REFERRAL_USED: {
+        title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u0430 \u043a\u043e\u043d\u0432\u0435\u0440\u0441\u0456\u044f",
+        message: `\u0425\u0442\u043e\u0441\u044c \u0432\u0438\u043a\u043e\u0440\u0438\u0441\u0442\u0430\u0432 \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u0438\u0439 \u043a\u043e\u0434${data?.code ? ` ${data.code}` : ""}`,
+      },
     },
     ru: {
       NEW_ORDER: {
@@ -334,6 +342,10 @@ export function translateNotification(
       NEW_COMPLAINT: {
         title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0438\u044f",
         message: `\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u043a\u043b\u0430\u043c\u0430\u0446\u0438\u044f${data?.salonName ? ` \u043e\u0442 \u0441\u0430\u043b\u043e\u043d\u0430 ${data.salonName}` : ""}`,
+      },
+      REFERRAL_USED: {
+        title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u043d\u0432\u0435\u0440\u0441\u0438\u044f",
+        message: `\u041a\u0442\u043e-\u0442\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043b \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u044b\u0439 \u043a\u043e\u0434${data?.code ? ` ${data.code}` : ""}`,
       },
     },
   };

@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import confetti from "canvas-confetti";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
+import { getReferralFromStorage, clearReferralFromStorage } from "@/components/public/ReferralTracker";
 
 
 export function InquiryCartClient() {
@@ -13,6 +14,15 @@ export function InquiryCartClient() {
   const locale = useLocale();
   const { items, removeItem, updateQuantity, clearCart, itemCount } = useInquiryCart();
   const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: "", promoCode: "" });
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  // Auto-load referral code from localStorage
+  useEffect(() => {
+    const ref = getReferralFromStorage();
+    if (ref) {
+      setReferralCode(ref.code);
+    }
+  }, []);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -65,6 +75,7 @@ export function InquiryCartClient() {
           ...form,
           locale,
           promoCode: promoResult?.valid ? promoResult.code : form.promoCode || undefined,
+          referralCode: referralCode || undefined,
           items,
         }),
       });
@@ -75,6 +86,7 @@ export function InquiryCartClient() {
       }
 
       clearCart();
+      if (referralCode) clearReferralFromStorage();
       setSubmitted(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t("submitError"));

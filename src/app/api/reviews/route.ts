@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { notifyNegativeReview } from "@/lib/telegram";
@@ -20,6 +21,7 @@ const reviewSchema = z.object({
   instagramEmbed: z.string().max(10000).optional().default(""),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),
+  productId: z.string().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -40,7 +42,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const filter = sp.get("filter"); // "pending" | "active" | null (all)
+  const where: Record<string, unknown> = {};
+  if (filter === "pending") where.active = false;
+  else if (filter === "active") where.active = true;
+
   const reviews = await prisma.review.findMany({
+    where,
+    include: { product: { select: { id: true, name: true } } },
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
   });
   return NextResponse.json(reviews);
@@ -78,6 +87,7 @@ export async function POST(request: NextRequest) {
       instagramEmbed: data.instagramEmbed || null,
       featured: data.featured,
       active: data.active,
+      productId: data.productId || null,
     },
   });
 
@@ -100,6 +110,8 @@ export async function POST(request: NextRequest) {
       sourceUrl: data.sourceUrl,
     }).catch(() => {});
   }
+
+  revalidateTag("reviews", "max");
 
   return NextResponse.json(review);
 }

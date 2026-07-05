@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
+import { unstable_cache } from "next/cache";
 import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
+
+const getCachedAllStylists = unstable_cache(
+  async () => {
+    return prisma.stylist.findMany({
+      where: { active: true },
+      orderBy: [{ featured: "desc" }, { name: "asc" }],
+      include: { salon: { select: { name: true } } },
+    });
+  },
+  ["public-stylists-all"],
+  { revalidate: 300, tags: ["stylists"] }
+);
 
 export const metadata: Metadata = {
   title: "Spolupracující kadeřnice a salony v Praze",
@@ -36,11 +49,7 @@ const langFlags: Record<string, string> = {
 
 export default async function StylistsPublicPage() {
   const t = await getTranslations("public.stylists");
-  const stylists = await prisma.stylist.findMany({
-    where: { active: true },
-    orderBy: [{ featured: "desc" }, { name: "asc" }],
-    include: { salon: { select: { name: true } } },
-  });
+  const stylists = await getCachedAllStylists();
 
   const jsonLd = {
     "@context": "https://schema.org",

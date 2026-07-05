@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { notifyNegativeReview } from "@/lib/telegram";
 import { z } from "zod";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { revalidateTag } from "next/cache";
 
 const updateSchema = z.object({
   authorName: z.string().min(1).max(200).optional(),
@@ -20,6 +21,7 @@ const updateSchema = z.object({
   instagramEmbed: z.string().max(10000).optional(),
   featured: z.boolean().optional(),
   active: z.boolean().optional(),
+  productId: z.string().nullable().optional(),
 });
 
 type Props = { params: Promise<{ id: string }> };
@@ -73,6 +75,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
     }).catch(() => {});
   }
 
+  revalidateTag("reviews", "max");
+
   return NextResponse.json(review);
 }
 
@@ -93,6 +97,8 @@ export async function DELETE(_request: NextRequest, { params }: Props) {
     entityId: id,
     ipAddress: getClientIp(_request),
   });
+
+  revalidateTag("reviews", "max");
 
   return NextResponse.json({ success: true });
 }

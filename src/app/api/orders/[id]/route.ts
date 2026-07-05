@@ -12,6 +12,8 @@ import { createInvoiceFromSale } from "@/lib/invoicing";
 import { createSalonNotification, createNotificationForRole } from "@/lib/notifications";
 import { notifyOrderCancelled } from "@/lib/telegram";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { sendNotificationEmail } from "@/lib/email";
+import { getOrderConfirmationEmail, getOrderShippedEmail } from "@/lib/email-templates";
 
 export async function GET(
   _request: NextRequest,
@@ -88,6 +90,39 @@ export async function POST(
           data: { orderId: order.id, orderNumber: order.orderNumber },
         }).catch(() => {});
 
+        // Send order confirmation email
+        prisma.order.findUnique({
+          where: { id },
+          include: {
+            salon: { select: { email: true, name: true, language: true } },
+            items: {
+              include: {
+                variant: {
+                  select: { lengthCm: true, color: true, product: { select: { name: true } } },
+                },
+              },
+            },
+          },
+        }).then((fullOrder) => {
+          if (!fullOrder?.salon?.email) return;
+          const lang = fullOrder.salon.language || "cs";
+          const emailData = getOrderConfirmationEmail(lang, {
+            salonName: fullOrder.salon.name,
+            orderNumber: fullOrder.orderNumber ?? id.slice(0, 8),
+            items: fullOrder.items.map((i) => ({
+              productName: i.variant.product.name,
+              lengthCm: i.variant.lengthCm,
+              color: i.variant.color,
+              grams: i.grams,
+              pieces: i.pieces,
+            })),
+            estimatedTotal: fullOrder.estimatedTotal,
+            promoCode: fullOrder.promoCode ?? undefined,
+            promoDiscount: fullOrder.promoDiscount ?? undefined,
+          });
+          sendNotificationEmail({ to: fullOrder.salon.email, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+        }).catch(() => {});
+
         return NextResponse.json(order);
       }
 
@@ -148,6 +183,23 @@ export async function POST(
           type: notifType,
           data: { orderId: order.id, orderNumber: order.orderNumber },
         }).catch(() => {});
+
+        // Send shipped email when status changes to IN_TRANSIT
+        if (body.status === "IN_TRANSIT") {
+          prisma.salon.findUnique({
+            where: { id: order.salonId },
+            select: { email: true, name: true, language: true },
+          }).then((salon) => {
+            if (!salon?.email) return;
+            const lang = salon.language || "cs";
+            const emailData = getOrderShippedEmail(lang, {
+              salonName: salon.name,
+              orderNumber: order.orderNumber ?? id.slice(0, 8),
+              estimatedTotal: order.estimatedTotal,
+            });
+            sendNotificationEmail({ to: salon.email, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+          }).catch(() => {});
+        }
 
         return NextResponse.json(order);
       }

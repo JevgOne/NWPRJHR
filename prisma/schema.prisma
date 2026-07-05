@@ -90,6 +90,7 @@ model Salon {
   complaints      Complaint[]
   paymentReminders PaymentReminder[]
   stylists        Stylist[]
+  referrals       Referral[]  @relation("ReferrerSalon")
 
   slug            String?     @unique
 
@@ -433,6 +434,7 @@ model Customer {
 
   sales    Sale[]
   invoices Invoice[]
+  referrals Referral[] @relation("ReferrerCustomer")
 
   @@index([email])
   @@index([name])
@@ -830,6 +832,9 @@ model Order {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
+  followUpSent   Boolean     @default(false)
+  followUpSentAt DateTime?
+
   items          OrderItem[]
   reservations   Reservation[]
 
@@ -1010,6 +1015,7 @@ enum NotificationType {
   NEW_REVIEW
   NEW_CONTACT
   NEW_COMPLAINT
+  REFERRAL_USED
 }
 
 // ============================================================
@@ -1049,6 +1055,11 @@ model Inquiry {
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+
+  referralCode   String?
+
+  followUpSent   Boolean       @default(false)
+  followUpSentAt DateTime?
 
   items        InquiryItem[]
 
@@ -1530,6 +1541,72 @@ model PromoCode {
 enum PromoDiscountType {
   PERCENT
   FIXED
+}
+
+// ============================================================
+// REFERRAL -- referral program
+// ============================================================
+
+model Referral {
+  id                  String            @id @default(cuid())
+
+  // Who is referring
+  referrerType        String            // "SALON" | "CUSTOMER"
+  referrerSalonId     String?
+  referrerSalon       Salon?            @relation("ReferrerSalon", fields: [referrerSalonId], references: [id])
+  referrerCustomerId  String?
+  referrerCustomer    Customer?         @relation("ReferrerCustomer", fields: [referrerCustomerId], references: [id])
+
+  // Unique sharing code
+  code                String            @unique
+
+  // Reward for referrer
+  referrerRewardType  PromoDiscountType @default(PERCENT)
+  referrerRewardValue Int               @default(1000) // 10% in basis points
+
+  // Discount for new customer (referee)
+  refereeDiscountType  PromoDiscountType @default(PERCENT)
+  refereeDiscountValue Int               @default(500) // 5% in basis points
+
+  // Tracking
+  usedCount           Int               @default(0)
+  maxUses             Int?              // null = unlimited
+  active              Boolean           @default(true)
+
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  conversions         ReferralConversion[]
+
+  @@index([code])
+  @@index([referrerSalonId])
+  @@index([referrerCustomerId])
+  @@map("referrals")
+}
+
+model ReferralConversion {
+  id                  String    @id @default(cuid())
+
+  referralId          String
+  referral            Referral  @relation(fields: [referralId], references: [id])
+
+  // Who came through the referral
+  refereeType         String    // "SALON" | "CUSTOMER" | "INQUIRY"
+  refereeSalonId      String?
+  refereeCustomerId   String?
+  refereeInquiryId    String?
+
+  // Rewards
+  referrerPromoCodeId String?   // PromoCode generated for referrer
+  refereePromoCodeId  String?   // PromoCode used by referee
+
+  status              String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+
+  createdAt           DateTime  @default(now())
+
+  @@index([referralId])
+  @@index([status])
+  @@map("referral_conversions")
 }
 
 // ============================================================

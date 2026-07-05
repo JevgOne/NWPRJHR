@@ -8,7 +8,7 @@ const getCachedBadgeCounts = unstable_cache(
   async (userId: string, role: string) => {
     const isStaff = role === "OWNER" || role === "EMPLOYEE";
 
-    const [pendingRegCount, newInquiryCount, unreadCount] = await Promise.all([
+    const [pendingRegCount, newInquiryCount, unreadCount, pendingReviewCount] = await Promise.all([
       isStaff
         ? prisma.salon.count({ where: { approved: false, archived: false } })
         : Promise.resolve(0),
@@ -16,9 +16,12 @@ const getCachedBadgeCounts = unstable_cache(
         ? prisma.inquiry.count({ where: { status: "NEW" } })
         : Promise.resolve(0),
       prisma.notification.count({ where: { recipientId: userId, read: false } }),
+      isStaff
+        ? prisma.review.count({ where: { active: false } })
+        : Promise.resolve(0),
     ]);
 
-    return { pendingRegCount, newInquiryCount, unreadCount };
+    return { pendingRegCount, newInquiryCount, unreadCount, pendingReviewCount };
   },
   ["app-shell-badges"],
   { revalidate: 30, tags: ["badges"] }

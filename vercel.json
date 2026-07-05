@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/unassigned-reminder",
       "schedule": "0 */3 * * *"
+    },
+    {
+      "path": "/api/cron/follow-up-emails",
+      "schedule": "0 9 * * *"
     }
   ]
 }

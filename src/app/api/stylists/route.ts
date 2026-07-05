@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function POST(req: Request) {
@@ -44,6 +45,8 @@ export async function POST(req: Request) {
     detail: { name: stylist.name },
     ipAddress: getClientIp(req),
   });
+
+  revalidateTag("stylists", "max");
 
   return NextResponse.json(stylist, { status: 201 });
 }
