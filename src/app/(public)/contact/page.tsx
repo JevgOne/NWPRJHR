@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ContactForm } from "./ContactForm";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Kontakt — osobní konzultace v Praze",
@@ -67,6 +68,10 @@ export default async function ContactPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: t("nav.home"), href: "/" },
+        { label: t("nav.contact") },
+      ]} />
       <h1 className="text-3xl font-bold text-ink mb-8">
         {t("contact.title")}
       </h1>

@@ -59,6 +59,16 @@ export function PublicFooter() {
                   {t("nav.about")}
                 </Link>
               </li>
+              <li>
+                <Link href="/blog" className="text-nude-200/80 hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/pruvodce-gramazi" className="text-nude-200/80 hover:text-white transition-colors">
+                  {t("footer.weightGuide")}
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("buyback");
@@ -71,6 +72,10 @@ export default async function BuybackPage() {
       {/* Hero */}
       <section className="bg-white pt-16 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Breadcrumbs items={[
+            { label: "Domů", href: "/" },
+            { label: t("heroTitle") },
+          ]} />
           <h1 className="text-3xl lg:text-4xl font-bold text-ink mb-3">
             {t("heroTitle")}
           </h1>

@@ -582,6 +582,7 @@
       "categoryDescPremium": "Премиальное качество",
       "categoryDescStandard": "Отличное соотношение цена/качество",
       "categoryDescSale": "Выгодные цены",
+      "categoryImageAlt": "волосы для наращивания",
       "colorPaletteTitle": "Широкая палитра оттенков",
       "colorPaletteSubtitle": "От платинового блонда до глубокого чёрного. Подберём точный оттенок под ваши волосы — приедем с образцами и сравним вживую.",
       "colorPlatinum": "Платиновый",
@@ -766,7 +767,8 @@
       "hairdressers": "Мастера",
       "companyName": "Alvento Solutions s.r.o.",
       "companyId": "IČO 24111953",
-      "companyAddress": "Školská 660/3, Praha"
+      "companyAddress": "Školská 660/3, Praha",
+      "weightGuide": "Гид по граммажу"
     },
     "batchPopup": {
       "title": "Новая партия волос уже в пути!",
@@ -779,7 +781,8 @@
       "cooperation": "Сотрудничество",
       "advice": "Советы",
       "register": "Регистрация",
-      "inquiry": "🛒 Запрос"
+      "inquiry": "🛒 Запрос",
+      "weightGuide": "Гид по граммажу"
     },
     "reviews": {
       "title": "Что говорят наши клиентки",

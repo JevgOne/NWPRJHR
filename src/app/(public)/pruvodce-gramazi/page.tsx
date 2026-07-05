@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Kolik gramů vlasů potřebuji? — průvodce gramáží",
@@ -101,6 +102,10 @@ export default function PruvodceGramaziPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Průvodce gramáží" },
+      ]} />
 
       <h1 className="text-3xl font-bold text-ink mb-3">
         Kolik gramů vlasů potřebuji?

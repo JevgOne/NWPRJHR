@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Spolupracující kadeřnice a salony v Praze",
@@ -59,6 +60,10 @@ export default async function StylistsPublicPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: t("title") },
+      ]} />
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
         <p className="text-muted text-sm mt-1">

@@ -582,6 +582,7 @@
       "categoryDescPremium": "Преміальна якість",
       "categoryDescStandard": "Чудове співвідношення ціна/якість",
       "categoryDescSale": "Вигідні ціни",
+      "categoryImageAlt": "волосся для нарощування",
       "colorPaletteTitle": "Широка палітра відтінків",
       "colorPaletteSubtitle": "Від платинового блонду до глибокого чорного. Підберемо точний відтінок під ваше волосся — приїдемо зі зразками та порівняємо наживо.",
       "colorPlatinum": "Платиновий",
@@ -766,7 +767,8 @@
       "hairdressers": "Майстри",
       "companyName": "Alvento Solutions s.r.o.",
       "companyId": "IČO 24111953",
-      "companyAddress": "Školská 660/3, Praha"
+      "companyAddress": "Školská 660/3, Praha",
+      "weightGuide": "Гід з грамажу"
     },
     "batchPopup": {
       "title": "Нова партія волосся вже в дорозі!",
@@ -779,7 +781,8 @@
       "cooperation": "Співпраця",
       "advice": "Поради",
       "register": "Реєстрація",
-      "inquiry": "🛒 Запит"
+      "inquiry": "🛒 Запит",
+      "weightGuide": "Гід з грамажу"
     },
     "reviews": {
       "title": "Що кажуть наші клієнтки",

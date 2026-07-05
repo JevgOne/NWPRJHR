@@ -3,7 +3,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Geist } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
-import { HreflangTags } from "@/components/HreflangTags";
 import "./globals.css";
 
 const geist = Geist({
@@ -76,7 +75,6 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
-        <HreflangTags />
         <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
       </head>
       <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)]">

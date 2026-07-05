@@ -21,5 +21,6 @@ Disallow: /discounts/
 Disallow: /samples/
 Disallow: /audit-log
 Disallow: /export
+Disallow: /inquiry-cart
 
 Sitemap: https://www.hairland.cz/sitemap.xml

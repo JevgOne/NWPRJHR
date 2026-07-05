@@ -358,6 +358,24 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   const schemaImage = product.photos.length > 0
     ? product.photos
     : [`https://www.hairland.cz/offer/${product.slug ?? product.id}/opengraph-image`];
+  const ORIGIN_ISO: Record<string, string> = {
+    Ukrajina: "UA", Bělorusko: "BY", Moldavsko: "MD", Rusko: "RU",
+    Kazachstán: "KZ", Uzbekistán: "UZ", Turecko: "TR", Írán: "IR",
+    Indie: "IN", Vietnam: "VN", Sýrie: "SY", Čína: "CN",
+    Mongolsko: "MN", Gruzie: "GE",
+  };
+
+  const additionalProperties: Array<{ "@type": string; name: string; value: string }> = [];
+  if (product.texture) {
+    additionalProperties.push({ "@type": "PropertyValue", name: "Textura", value: product.texture });
+  }
+  if (product.colorTone) {
+    additionalProperties.push({ "@type": "PropertyValue", name: "Barva", value: product.colorTone });
+  }
+  if (lengths.length > 0) {
+    additionalProperties.push({ "@type": "PropertyValue", name: "Délka", value: lengths.map((l) => `${l} cm`).join(", ") });
+  }
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -366,6 +384,11 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
     image: schemaImage,
     brand: { "@type": "Brand", name: "Hairland" },
     sku: product.id,
+    material: "100% lidské vlasy",
+    ...(product.origin && ORIGIN_ISO[product.origin] && {
+      countryOfOrigin: { "@type": "Country", name: ORIGIN_ISO[product.origin] },
+    }),
+    ...(additionalProperties.length > 0 && { additionalProperty: additionalProperties }),
     ...(priceTip100g && {
     offers: {
       "@type": "Offer",
@@ -380,6 +403,18 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         name: "Hairland",
         url: "https://www.hairland.cz",
       },
+      ...(!isByPiece && pricePerGram && {
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: (pricePerGram / 100).toFixed(2),
+          priceCurrency: "CZK",
+          referenceQuantity: {
+            "@type": "QuantitativeValue",
+            value: 1,
+            unitCode: "GRM",
+          },
+        },
+      }),
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingDestination: {
@@ -469,7 +504,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
         {/* Left: Photo gallery */}
-        <PhotoGallery photos={product.photos} alt={productName} />
+        <PhotoGallery photos={product.photos} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
 
         {/* Right: Product info */}
         <div className="space-y-4">

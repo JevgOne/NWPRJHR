@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { articles } from "./articles";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("advice");
@@ -81,6 +82,10 @@ export default async function AdvicePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(poradnaJsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů", href: "/" },
+        { label: t("pageTitle").replace(" — Hairland", "") },
+      ]} />
       {/* Header — distinct from blog */}
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-3">

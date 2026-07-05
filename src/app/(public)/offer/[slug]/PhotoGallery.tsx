@@ -36,7 +36,7 @@ export function PhotoGallery({ photos, alt }: PhotoGalleryProps) {
       <div className="w-full aspect-[4/3] bg-nude-100 rounded-xl overflow-hidden">
         <img
           src={photos[selected]}
-          alt={`${alt} - ${selected + 1}`}
+          alt={`${alt} — foto ${selected + 1}`}
           className="w-full h-full object-cover"
         />
       </div>
@@ -56,7 +56,7 @@ export function PhotoGallery({ photos, alt }: PhotoGalleryProps) {
             >
               <img
                 src={photo}
-                alt={`${alt} - ${i + 1}`}
+                alt={`${alt} — náhled ${i + 1}`}
                 className="w-full h-full object-cover"
               />
             </button>

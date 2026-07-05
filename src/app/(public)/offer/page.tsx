@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { ProductsShowcase } from "./ProductsShowcase";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Nabídka prémiových vlasů | Virgin, Premium, Standard",
@@ -29,8 +30,42 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPage() {
-  const t = await getTranslations("public");
-  const session = await auth();
+  const [t, session] = await Promise.all([
+    getTranslations("public"),
+    auth(),
+  ]);
+
+  // Fetch products for ItemList schema
+  const schemaProducts = await prisma.product.findMany({
+    where: { archived: false, variants: { some: { active: true } } },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      photos: true,
+      variants: {
+        where: { active: true },
+        select: { retailPricePerGram: true },
+        take: 1,
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Nabídka prémiových vlasů",
+    numberOfItems: schemaProducts.length,
+    itemListElement: schemaProducts.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://www.hairland.cz/offer/${p.slug ?? p.id}`,
+      name: p.name,
+      ...((() => { const photos = JSON.parse(p.photos || "[]"); return photos.length > 0 ? { image: photos[0] } : {}; })()),
+    })),
+  };
 
   // Resolve user pricing tier
   let userRole: string | null = null;
@@ -49,6 +84,14 @@ export default async function ProductsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <Breadcrumbs items={[
+        { label: t("nav.home"), href: "/" },
+        { label: t("nav.products") },
+      ]} />
       <h1 className="text-3xl font-bold text-ink mb-4">
         {t("products.title")}
       </h1>

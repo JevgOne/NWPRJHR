@@ -1,7 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -97,6 +99,10 @@ export default async function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů", href: "/" },
+        { label: "Blog" },
+      ]} />
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-ink mb-2">Blog</h1>
@@ -115,11 +121,14 @@ export default async function BlogPage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2">
                 {featured.coverImage ? (
-                  <div className="aspect-[4/3] md:aspect-auto overflow-hidden">
-                    <img
+                  <div className="aspect-[4/3] md:aspect-auto overflow-hidden relative">
+                    <Image
                       src={featured.coverImage}
                       alt={localized(featured, "title", locale)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      priority
                     />
                   </div>
                 ) : (
@@ -169,11 +178,13 @@ export default async function BlogPage() {
                   className="group flex flex-col bg-white rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all overflow-hidden"
                 >
                   {post.coverImage ? (
-                    <div className="aspect-[16/9] overflow-hidden">
-                      <img
+                    <div className="aspect-[16/9] overflow-hidden relative">
+                      <Image
                         src={post.coverImage}
                         alt={localized(post, "title", locale)}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   ) : (

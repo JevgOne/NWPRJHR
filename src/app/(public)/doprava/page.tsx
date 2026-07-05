@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Doprava a vrácení — doručení vlasů po celé ČR",
@@ -68,6 +69,10 @@ export default function DopravaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(shippingJsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: "Domů", href: "/" },
+        { label: "Doprava a vrácení" },
+      ]} />
 
       <h1 className="text-3xl font-bold text-ink mb-8">Doprava a vrácení</h1>
 

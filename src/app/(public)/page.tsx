@@ -155,7 +155,7 @@ export default async function LandingPage() {
                 className="group block overflow-hidden rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all"
               >
                 <div className="relative h-32">
-                  <Image src={img} alt={tCategory(key)} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src={img} alt={`${tCategory(key)} — ${t("landing.categoryImageAlt")}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-3 bg-white text-center">
                   <h3 className="font-semibold text-ink text-sm">

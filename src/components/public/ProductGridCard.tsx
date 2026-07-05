@@ -167,12 +167,12 @@ export function ProductGridCard({
       {isInteractive ? (
         <Link href={href}>
           <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 hover:text-rose transition-colors mb-1">
-            {categoryLabel}
+            {localizedName}
           </h3>
         </Link>
       ) : (
         <h3 className="font-medium text-ink text-xs leading-tight line-clamp-2 mb-1">
-          {categoryLabel}
+          {localizedName}
         </h3>
       )}
 

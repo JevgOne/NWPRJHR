@@ -136,6 +136,7 @@ export function PublicNavbar() {
 
   const inspiraceItems = [
     { href: "/poradna", label: t("navbar.advice") },
+    { href: "/pruvodce-gramazi", label: t("navbar.weightGuide") },
     { href: "/blog", label: "Blog" },
   ];
 

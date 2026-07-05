@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "O nás — prémiové vlasy z přímého importu",
@@ -28,6 +29,10 @@ export default async function AboutPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Breadcrumbs items={[
+        { label: t("nav.home"), href: "/" },
+        { label: t("nav.about") },
+      ]} />
       <h1 className="text-3xl font-bold text-ink mb-8">
         {t("about.title")}
       </h1>

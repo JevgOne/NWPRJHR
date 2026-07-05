@@ -582,6 +582,7 @@
       "categoryDescPremium": "Prémiová kvalita",
       "categoryDescStandard": "Skvělý poměr cena/kvalita",
       "categoryDescSale": "Výhodné ceny",
+      "categoryImageAlt": "vlasy k prodloužení",
       "colorPaletteTitle": "Široká škála odstínů",
       "colorPaletteSubtitle": "Od platinové blond po tmavě černou. Najdeme přesný odstín, který se hodí k vašim vlasům — přijedeme s ukázkami a porovnáme naživo.",
       "colorPlatinum": "Platinová",
@@ -766,7 +767,8 @@
       "hairdressers": "Kadeřnice",
       "companyName": "Alvento Solutions s.r.o.",
       "companyId": "IČO 24111953",
-      "companyAddress": "Školská 660/3, Praha"
+      "companyAddress": "Školská 660/3, Praha",
+      "weightGuide": "Průvodce gramáží"
     },
     "batchPopup": {
       "title": "Nová várka vlasů na cestě!",
@@ -779,7 +781,8 @@
       "cooperation": "Spolupráce",
       "advice": "Poradna",
       "register": "Registrace",
-      "inquiry": "🛒 Poptávka"
+      "inquiry": "🛒 Poptávka",
+      "weightGuide": "Průvodce gramáží"
     },
     "reviews": {
       "title": "Co říkají naše zákaznice",
