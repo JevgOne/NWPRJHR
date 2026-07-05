@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
@@ -31,8 +32,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPage() {
-  const [t, session, allProducts] = await Promise.all([
+  const [t, tPt, session, allProducts] = await Promise.all([
     getTranslations("public"),
+    getTranslations("processingType"),
     auth(),
     getCachedAllProducts(),
   ]);
@@ -90,6 +92,19 @@ export default async function ProductsPage() {
             <p className="text-sm text-rose-deep" dangerouslySetInnerHTML={{ __html: t.raw("offer.bannerCta") as string }} />
           </div>
         </div>
+      </div>
+
+      {/* Processing type category links */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {(["clip-in", "tape-in", "keratin", "micro-ring", "weft"] as const).map((catSlug) => (
+          <Link
+            key={catSlug}
+            href={`/offer/${catSlug}`}
+            className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
+          >
+            {tPt(catSlug)}
+          </Link>
+        ))}
       </div>
 
       <Suspense fallback={<p className="text-muted">{t("offer.loadingProducts")}</p>}>

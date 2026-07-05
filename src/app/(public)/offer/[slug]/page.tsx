@@ -18,6 +18,7 @@ import { getHairColor } from "@/lib/hair-colors";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { Fragment } from "react";
 import { cache } from "react";
+import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage } from "./CategoryPage";
 
 /** Parse **bold** markers into React elements */
 function renderBold(text: string): React.ReactNode {
@@ -113,6 +114,11 @@ const PROCESSING_LABELS: Record<string, Record<string, string>> = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+
+  if (isCategorySlug(slug)) {
+    return generateCategoryMetadata(slug);
+  }
+
   const product = await getProduct(slug);
   const t = await getTranslations("public");
   if (!product) {
@@ -171,6 +177,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
+
+  if (isCategorySlug(slug)) {
+    return <CategoryLandingPage slug={slug} />;
+  }
+
   const sp = await searchParams;
 
   // Parallel: product + auth + translations

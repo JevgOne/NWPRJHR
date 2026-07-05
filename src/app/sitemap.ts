@@ -93,6 +93,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  const categoryPages: MetadataRoute.Sitemap = [
+    "clip-in", "tape-in", "keratin", "micro-ring", "weft",
+  ].map((slug) => ({
+    url: `${BASE_URL}/offer/${slug}`,
+    lastModified: STATIC_DATE,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   const articlePages: MetadataRoute.Sitemap = articles.map((article) => ({
     url: `${BASE_URL}/poradna/${article.slug}`,
     lastModified: STATIC_DATE,
@@ -145,5 +154,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticPages, ...articlePages, ...blogPages, ...productPages, ...stylistPages];
+  return [...staticPages, ...categoryPages, ...articlePages, ...blogPages, ...productPages, ...stylistPages];
 }
