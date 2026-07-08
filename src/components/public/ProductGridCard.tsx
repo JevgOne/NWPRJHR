@@ -208,14 +208,12 @@ export function ProductGridCard({
         );
       })()}
 
-      {/* Length — show range */}
+      {/* Length — concrete values */}
       {uniqueLengths.length > 0 && (
         <div className="flex items-center gap-1.5 mb-1.5">
           <span className="text-[10px] text-muted">📏</span>
           <span className="text-[10px] text-muted">
-            {uniqueLengths.length === 1
-              ? `${uniqueLengths[0]} cm`
-              : `${uniqueLengths[0]}–${uniqueLengths[uniqueLengths.length - 1]} cm`}
+            {uniqueLengths.map(l => `${l} cm`).join(", ")}
           </span>
         </div>
       )}
