@@ -365,7 +365,7 @@ export default async function LandingPage() {
           <p className="text-muted mb-6 max-w-lg mx-auto">
             {t("landing.ctaDesc")}
           </p>
-          <div className="flex flex-wrap gap-3 justify-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
             <Link
               href="/contact"
               className="px-6 py-3 bg-rose hover:bg-rose-deep text-white font-medium rounded-lg transition-colors"
@@ -379,26 +379,28 @@ export default async function LandingPage() {
               {t("landing.viewFullOffer")}
             </Link>
           </div>
-          <div className="border-t border-line pt-6">
-            <p className="text-sm text-muted mb-3">{t("landing.b2bTitle")}</p>
-            <div className="flex gap-3 justify-center">
+          <div className="border-t border-line pt-5">
+            <p className="text-xs text-muted mb-2">{t("landing.b2bTitle")}</p>
+            <div className="flex flex-col sm:flex-row gap-1 sm:gap-3 justify-center">
               <Link
                 href="/pro"
-                className="text-sm text-rose hover:text-rose-deep font-medium transition-colors"
+                className="text-xs text-rose hover:text-rose-deep font-medium transition-colors py-1"
               >
-                {t("landing.b2bCta")} &rarr;
+                {t("landing.b2bCta")}
               </Link>
+              <span className="hidden sm:inline text-xs text-line">·</span>
               <Link
                 href="/registrace"
-                className="text-sm text-rose hover:text-rose-deep font-medium transition-colors"
+                className="text-xs text-rose hover:text-rose-deep font-medium transition-colors py-1"
               >
-                {t("landing.b2bRegister")} &rarr;
+                {t("landing.b2bRegister")}
               </Link>
+              <span className="hidden sm:inline text-xs text-line">·</span>
               <Link
                 href="/kadernice"
-                className="text-sm text-rose hover:text-rose-deep font-medium transition-colors"
+                className="text-xs text-rose hover:text-rose-deep font-medium transition-colors py-1"
               >
-                {t("landing.ctaHairdressers")} &rarr;
+                {t("landing.ctaHairdressers")}
               </Link>
             </div>
           </div>
