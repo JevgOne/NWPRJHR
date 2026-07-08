@@ -5,6 +5,21 @@ import { notifyNegativeReview } from "@/lib/telegram";
 import { createNotificationForRole } from "@/lib/notifications";
 import { z } from "zod";
 
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 3_600_000; // 1 hour
+const RATE_LIMIT_MAX = 5;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) ?? [];
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW);
+  rateLimitMap.set(ip, recent);
+  if (recent.length >= RATE_LIMIT_MAX) return true;
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
+  return false;
+}
+
 const submitSchema = z.object({
   authorName: z.string().min(1).max(200),
   authorCity: z.string().max(100).optional(),
@@ -17,6 +32,11 @@ const submitSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const body = await request.json();
   const parsed = submitSchema.safeParse(body);
   if (!parsed.success) {

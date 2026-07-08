@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
@@ -11,9 +11,14 @@ export async function GET(request: NextRequest) {
   return new Promise<NextResponse>((resolve) => {
     const backupDir = process.env.BACKUP_DIR || "/var/backups/hairland";
 
-    exec(
-      `DATABASE_URL="${process.env.DATABASE_URL}" BACKUP_DIR="${backupDir}" bash scripts/backup.sh`,
-      { cwd: process.cwd(), timeout: 120_000 },
+    execFile(
+      "bash",
+      ["scripts/backup.sh"],
+      {
+        cwd: process.cwd(),
+        timeout: 120_000,
+        env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL ?? "", BACKUP_DIR: backupDir },
+      },
       async (error, stdout, stderr) => {
         if (error) {
           await logAudit({
