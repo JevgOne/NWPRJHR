@@ -95,15 +95,15 @@ export function ProductGridCard({
 
   const categoryLabel = tCategory(p.category.toLowerCase());
   const categoryBadgeColors: Record<string, string> = {
-    VIRGIN: "bg-amber-600 text-white",
-    PREMIUM: "bg-mauve text-white",
-    STANDARD: "bg-emerald-600 text-white",
+    VIRGIN: "bg-amber-500 text-white",
+    PREMIUM: "bg-rose-deep text-white",
+    STANDARD: "bg-espresso/80 text-white",
     SALE: "bg-red-500 text-white",
   };
   const categoryHoverColors: Record<string, string> = {
-    VIRGIN: "hover:bg-amber-700",
-    PREMIUM: "hover:bg-espresso",
-    STANDARD: "hover:bg-emerald-700",
+    VIRGIN: "hover:bg-amber-600",
+    PREMIUM: "hover:bg-rose-deep/90",
+    STANDARD: "hover:bg-espresso",
     SALE: "hover:bg-red-600",
   };
   const badgeColor = categoryBadgeColors[p.category] ?? "bg-mauve text-white";
@@ -135,6 +135,13 @@ export function ProductGridCard({
         <span className={`absolute top-2 left-2 px-2 py-1 rounded-md text-[11px] font-bold shadow-sm ${badgeColor}`}>
           {categoryLabel}
         </span>
+      )}
+      {!inStock && !totalPieces && (
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <span className="bg-white/90 text-ink text-xs font-bold px-3 py-1 rounded-md">
+            {t("inquiry.outOfStock")}
+          </span>
+        </div>
       )}
     </div>
   );
@@ -180,7 +187,7 @@ export function ProductGridCard({
       {p.texture && (
         <div className="flex items-center gap-1.5 mb-1">
           <TextureSwatch texture={p.texture} size={14} />
-          <span className="text-[10px] text-muted">{textureLabel}</span>
+          <span className="text-[11px] text-muted">{textureLabel}</span>
         </div>
       )}
 
@@ -190,10 +197,10 @@ export function ProductGridCard({
           {uniqueColors.map((code) => (
             <div key={code} className="flex items-center gap-1">
               <span
-                className="w-3.5 h-3.5 rounded-full border border-line flex-shrink-0"
+                className="w-5 h-5 rounded-full border-2 border-white shadow-sm ring-1 ring-line flex-shrink-0"
                 style={{ backgroundColor: getHairColor(code).hex }}
               />
-              <span className="text-[10px] text-muted">{t(`colors.${getHairColor(code).nameKey}`)}</span>
+              <span className="text-[11px] text-muted">{t(`colors.${getHairColor(code).nameKey}`)}</span>
             </div>
           ))}
         </div>
@@ -295,7 +302,7 @@ export function ProductGridCard({
     return (
       <Link
         href={href}
-        className={`block bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock || totalPieces > 0 ? "border-line" : "border-line opacity-60"}`}
+        className={`block bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock || totalPieces > 0 ? "border-line" : "border-line grayscale opacity-50"}`}
       >
         {imageBlock}
         {infoBlock}
@@ -305,7 +312,7 @@ export function ProductGridCard({
 
   // Interactive card (offer page): only image and title are links, badges are filter buttons
   return (
-    <div className={`bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow ${inStock || totalPieces > 0 ? "border-line" : "border-line opacity-60"}`}>
+    <div className={`bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock || totalPieces > 0 ? "border-line" : "border-line grayscale opacity-50"}`}>
       <Link href={href}>
         {imageBlock}
       </Link>

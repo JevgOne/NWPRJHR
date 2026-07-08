@@ -683,7 +683,11 @@
       "clearFilters": "Zrušit filtry",
       "priceFrom": "od",
       "productCount": "{count, plural, one {1 produkt} few {# produkty} other {# produktů}}",
-      "loadingProducts": "Načítání..."
+      "loadingProducts": "Načítání...",
+      "sellingMode": "Typ prodeje",
+      "allProducts": "Vše",
+      "byGram": "Po gramech",
+      "byPiece": "Hotové culíky"
     },
     "productDetail": {
       "home": "Domů",

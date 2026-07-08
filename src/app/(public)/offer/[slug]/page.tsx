@@ -429,10 +429,12 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
       countryOfOrigin: { "@type": "Country", name: ORIGIN_ISO[product.origin] },
     }),
     ...(additionalProperties.length > 0 && { additionalProperty: additionalProperties }),
-    ...(priceTip100g && {
+    ...(pricePerGram && {
     offers: {
       "@type": "Offer",
-      price: (priceTip100g / 100).toFixed(2),
+      price: isByPiece
+        ? (pricePerGram / 100).toFixed(2)
+        : (priceTip100g! / 100).toFixed(2),
       priceCurrency: "CZK",
       availability: product.archived
         ? "https://schema.org/Discontinued"
@@ -796,7 +798,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           where: {
             archived: false,
             id: { not: product.id },
-            variants: { some: { active: true, retailPricePerGram: { gt: 0 } } },
+            variants: { some: { active: true, OR: [{ retailPricePerGram: { gt: 0 } }, { retailPricePerPiece: { gt: 0 } }] } },
           },
           select: {
             id: true,
@@ -811,7 +813,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             photos: true,
             variants: {
               where: { active: true },
-              select: { id: true, lengthCm: true, color: true, retailPricePerGram: true },
+              select: { id: true, lengthCm: true, color: true, retailPricePerGram: true, sellingMode: true, retailPricePerPiece: true },
             },
           },
           take: 20,
@@ -837,7 +839,9 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           photos: JSON.parse(rp.photos || "[]") as string[],
           variants: rp.variants.map((v) => ({
             ...v,
+            sellingMode: v.sellingMode as "BY_GRAM" | "BY_PIECE" | undefined,
             availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
+            availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
           })),
         }));
 

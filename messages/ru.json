@@ -683,7 +683,11 @@
       "clearFilters": "Сбросить фильтры",
       "priceFrom": "от",
       "productCount": "{count, plural, one {1 продукт} few {# продукта} other {# продуктов}}",
-      "loadingProducts": "Загрузка..."
+      "loadingProducts": "Загрузка...",
+      "sellingMode": "Тип продажи",
+      "allProducts": "Все",
+      "byGram": "По граммам",
+      "byPiece": "Готовые хвосты"
     },
     "productDetail": {
       "home": "Главная",

@@ -683,7 +683,11 @@
       "clearFilters": "Скинути фільтри",
       "priceFrom": "від",
       "productCount": "{count, plural, one {1 продукт} few {# продукти} other {# продуктів}}",
-      "loadingProducts": "Завантаження..."
+      "loadingProducts": "Завантаження...",
+      "sellingMode": "Тип продажу",
+      "allProducts": "Все",
+      "byGram": "По грамах",
+      "byPiece": "Готові хвостики"
     },
     "productDetail": {
       "home": "Головна",

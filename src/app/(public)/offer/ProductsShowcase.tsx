@@ -63,6 +63,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
   const activeTexture = searchParams.get("texture") ?? "";
   const activeColorTone = searchParams.get("colorTone") ?? "";
   const activeSearch = searchParams.get("search") ?? "";
+  const activeSelling = searchParams.get("selling") ?? "";
 
   const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
 
@@ -166,6 +167,10 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
         );
         if (!hasMatch) return false;
       }
+      if (activeSelling) {
+        const hasMatchingSelling = p.variants.some(v => (v.sellingMode ?? "BY_GRAM") === activeSelling);
+        if (!hasMatchingSelling) return false;
+      }
       if (activeSearch) {
         const haystack = [p.name, p.nameUk, p.nameRu, p.origin, p.description]
           .filter(Boolean)
@@ -176,7 +181,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
       return true;
     });
     setProducts(filtered);
-  }, [allProducts, activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch]);
+  }, [allProducts, activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch, activeSelling]);
 
   // Sort products by total stock (descending)
   const sortedProducts = useMemo(() => {
@@ -194,7 +199,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
     return tCategory(cat.toLowerCase());
   };
 
-  const hasActiveFilters = activeOrigin || activeColor || activeLength || activeTexture || activeColorTone || activeSearch;
+  const hasActiveFilters = activeOrigin || activeColor || activeLength || activeTexture || activeColorTone || activeSearch || activeSelling;
 
   return (
     <div>
@@ -245,6 +250,28 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
             }`}
           >
             {categoryLabel(cat)}
+          </button>
+        ))}
+      </div>
+
+      {/* Selling mode toggle */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <span className="text-xs font-semibold text-muted uppercase tracking-wider self-center mr-1">{t("offer.sellingMode")}</span>
+        {[
+          { value: "", label: t("offer.allProducts") },
+          { value: "BY_GRAM", label: t("offer.byGram") },
+          { value: "BY_PIECE", label: t("offer.byPiece") },
+        ].map(({ value, label }) => (
+          <button
+            key={value}
+            onClick={() => setFilter("selling", value)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              activeSelling === value
+                ? "border-rose bg-blush-100 text-rose-deep"
+                : "border-line text-muted hover:bg-nude-50"
+            }`}
+          >
+            {label}
           </button>
         ))}
       </div>
@@ -397,6 +424,15 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
             >
               &quot;{activeSearch}&quot;
+              <span className="ml-0.5">&times;</span>
+            </button>
+          )}
+          {activeSelling && (
+            <button
+              onClick={() => setFilter("selling", "")}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blush-100 text-rose-deep hover:bg-blush-200 transition-colors"
+            >
+              {activeSelling === "BY_GRAM" ? t("offer.byGram") : t("offer.byPiece")}
               <span className="ml-0.5">&times;</span>
             </button>
           )}
