@@ -247,20 +247,31 @@ export default async function RecenzePage() {
           ))}
         </div>
       ) : (
-        <div className="text-center text-muted py-16">
-          {t("noReviews")}
+        <div className="text-center py-16">
+          <div className="text-4xl mb-4">💬</div>
+          <h2 className="text-lg font-semibold text-ink mb-2">{t("noReviews")}</h2>
+          <p className="text-muted text-sm max-w-md mx-auto mb-6">
+            {t("noReviewsDesc")}
+          </p>
+          <Link
+            href="/offer"
+            className="inline-block px-6 py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors"
+          >
+            {t("browseProducts")}
+          </Link>
         </div>
       )}
 
-      {/* CTA */}
-      <div className="text-center mt-12">
-        <Link
-          href="/offer"
-          className="inline-block px-6 py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors"
-        >
-          {t("writeReview")}
-        </Link>
-      </div>
+      {reviews.length > 0 && (
+        <div className="text-center mt-12">
+          <Link
+            href="/contact"
+            className="inline-block px-6 py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors"
+          >
+            {t("writeReview")}
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

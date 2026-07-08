@@ -80,6 +80,22 @@ export default async function StylistsPublicPage() {
         </p>
       </div>
 
+      {stylists.length === 0 && (
+        <div className="text-center py-16">
+          <div className="text-4xl mb-4">💇‍♀️</div>
+          <h2 className="text-lg font-semibold text-ink mb-2">{t("noStylists")}</h2>
+          <p className="text-muted text-sm max-w-md mx-auto mb-6">
+            {t("noStylistsDesc")}
+          </p>
+          <Link
+            href="/registrace"
+            className="inline-block px-6 py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors"
+          >
+            {t("registerAsStylist")}
+          </Link>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {stylists.map((s) => {
           const specs: string[] = JSON.parse(s.specializations || "[]");
