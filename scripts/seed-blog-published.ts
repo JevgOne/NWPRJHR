@@ -970,7 +970,7 @@ Praha nabízí několik možností, kde sehnat vlasy na prodloužení. Každá m
 - Vlasy označené jako "Remy" nebo "Virgin" často nejsou
 - Žádná reklamace
 - Dodání 2–4 týdny
-- Cel a DPH
+- Clo a DPH
 
 ### 5. Instagram / Facebook prodejci
 **Výhody:**
