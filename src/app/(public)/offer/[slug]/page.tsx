@@ -552,9 +552,11 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         <span className="text-espresso font-medium truncate max-w-[200px]">{productName}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
-        {/* Left: Photo gallery */}
-        <PhotoGallery photos={product.photos} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
+        {/* Left: Photo gallery — sticky on desktop */}
+        <div className="lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+          <PhotoGallery photos={product.photos} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
+        </div>
 
         {/* Right: Product info */}
         <div className="space-y-4">
@@ -784,16 +786,14 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             <span>✂️ {t("productDetail.deliveryCustom")}</span>
             <span>🧾 {t("productDetail.deliveryInvoice")}</span>
           </div>
-        </div>
-      </div>
 
-      {/* Reviews */}
-      <Suspense fallback={<div className="mt-10 border-t border-line pt-8 h-40 animate-pulse bg-nude-50 rounded-2xl" />}>
-        <ProductReviews productId={product.id} />
-      </Suspense>
+          {/* Reviews */}
+          <Suspense fallback={<div className="mt-8 border-t border-line pt-6 h-40 animate-pulse bg-nude-50 rounded-2xl" />}>
+            <ProductReviews productId={product.id} />
+          </Suspense>
 
-      {/* Related products */}
-      {await (async () => {
+          {/* Related products */}
+          {await (async () => {
         const candidates = await prisma.product.findMany({
           where: {
             archived: false,
@@ -846,7 +846,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         }));
 
         return (
-          <section className="mt-12 pt-8 border-t border-line">
+          <section className="mt-8 pt-6 border-t border-line">
             <h2 className="text-lg font-bold text-ink mb-4">
               {t("productDetail.relatedProducts")}
             </h2>
@@ -858,6 +858,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           </section>
         );
       })()}
+        </div>
+      </div>
     </div>
   );
 }
