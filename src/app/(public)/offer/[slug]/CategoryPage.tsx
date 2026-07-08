@@ -166,12 +166,10 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
   } : null;
 
   // FAQ schema
-  const faqKeys = ["faq1q", "faq1a", "faq2q", "faq2a", "faq3q", "faq3a"] as const;
-  const faqItems = [
-    { q: tPt(`${slug}.faq1q` as any), a: tPt(`${slug}.faq1a` as any) },
-    { q: tPt(`${slug}.faq2q` as any), a: tPt(`${slug}.faq2a` as any) },
-    { q: tPt(`${slug}.faq3q` as any), a: tPt(`${slug}.faq3a` as any) },
-  ];
+  const faqItems = Array.from({ length: 6 }, (_, i) => ({
+    q: tPt(`${slug}.faq${i + 1}q` as any) as string,
+    a: tPt(`${slug}.faq${i + 1}a` as any) as string,
+  })).filter((f) => !f.q.includes(".faq"));
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -194,7 +192,7 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
       <Breadcrumbs items={[
         { label: t("nav.home"), href: "/" },
         { label: t("nav.products"), href: "/offer" },
-        { label: tPt(s) },
+        { label: tPt(`${s}.name` as any) },
       ]} />
 
       {/* Hero */}
@@ -261,7 +259,7 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
           <div>
             <h2 className="font-semibold text-rose-deep mb-1">{tPt("customOrder")}</h2>
             <p className="text-sm text-espresso">
-              {tPt("customOrderDesc", { type: tPt(s).toLowerCase() })}
+              {tPt("customOrderDesc", { type: (tPt(`${s}.name` as any) as string).toLowerCase() })}
             </p>
             <Link href="/contact" className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-rose hover:text-rose-deep transition-colors">
               {tPt("contactUs")} →
@@ -315,7 +313,7 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
               href={`/offer/${catSlug}`}
               className="px-4 py-2 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
             >
-              {tPt(catSlug as "clip-in" | "tape-in" | "keratin" | "micro-ring" | "weft")}
+              {tPt(`${catSlug}.name` as any)}
             </Link>
           ))}
           <Link

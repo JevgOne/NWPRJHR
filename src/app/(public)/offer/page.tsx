@@ -102,7 +102,7 @@ export default async function ProductsPage() {
             href={`/offer/${catSlug}`}
             className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
           >
-            {tPt(catSlug)}
+            {tPt(`${catSlug}.name` as any)}
           </Link>
         ))}
       </div>
