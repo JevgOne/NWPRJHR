@@ -143,20 +143,8 @@ export function PublicFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 pt-5 border-t border-nude-200/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-nude-200/40">
-          <div className="flex items-center gap-1.5">
-            <span>{t("footer.copyright")}</span>
-            <span className="hidden sm:inline">·</span>
-            <span className="hidden sm:inline">{t("footer.companyName")}</span>
-            <span className="hidden sm:inline">·</span>
-            <span className="hidden sm:inline">{t("footer.companyId")}</span>
-          </div>
-          <div className="flex items-center gap-1.5 sm:hidden">
-            <span>{t("footer.companyName")}</span>
-            <span>·</span>
-            <span>{t("footer.companyId")}</span>
-          </div>
-          <span>{t("footer.companyAddress")}</span>
+        <div className="mt-8 pt-5 border-t border-nude-200/10 flex items-center justify-center text-[11px] text-nude-200/40">
+          <span>{t("footer.copyright")}</span>
         </div>
       </div>
     </footer>

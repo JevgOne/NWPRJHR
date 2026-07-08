@@ -45,25 +45,25 @@ export async function GET(request: NextRequest) {
   }
 
   const lines = [
-    `🔔 <b>NEVYŘÍZENÉ / НЕОБРАБОТАННЫЕ — ${REMINDER_HOURS}h+</b>`,
-    `Čekají déle než ${REMINDER_HOURS}h / Ожидают более ${REMINDER_HOURS}ч`,
+    `🔔 <b>PŘIPOMÍNKA — NEVYŘÍZENÉ ZÁLEŽITOSTI</b>`,
+    `Následující položky čekají na zpracování déle než ${REMINDER_HOURS} hodiny`,
     ``,
   ];
 
   if (inquiries.length > 0) {
-    lines.push(`<b>Poptávky/Запросы (${inquiries.length}):</b>`);
+    lines.push(`📦 <b>Nevyřízené poptávky (${inquiries.length}):</b>`);
     for (const inq of inquiries) {
       const age = getAge(inq.createdAt);
-      lines.push(`   ${inq.name} · ${inq.email} — ${age}`);
+      lines.push(`   👤 ${inq.name} · ${inq.email} — čeká ${age}`);
     }
     lines.push(``);
   }
 
   if (contacts.length > 0) {
-    lines.push(`<b>Zprávy/Сообщения (${contacts.length}):</b>`);
+    lines.push(`✉️ <b>Nezodpovězené zprávy (${contacts.length}):</b>`);
     for (const msg of contacts) {
       const age = getAge(msg.createdAt);
-      lines.push(`   ${msg.name} · ${msg.email} — ${age}`);
+      lines.push(`   👤 ${msg.name} · ${msg.email} — čeká ${age}`);
     }
   }
 

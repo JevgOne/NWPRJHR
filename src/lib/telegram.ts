@@ -145,18 +145,19 @@ export async function notifyInquiry(inquiryId: string, data: {
     .join("\n\n");
 
   const lines = [
-    `📦 <b>NOVÁ POPTÁVKA / НОВЫЙ ЗАПРОС</b>`,
-    `Zákazník má zájem o vlasy`,
-    `Клиент интересуется волосами`,
+    `📦 <b>NOVÁ POPTÁVKA</b>`,
+    `Nový zákazník odeslal poptávku přes web`,
     ``,
-    `${esc(data.name)}`,
-    `${esc(data.email)}`,
-    data.phone ? `${esc(data.phone)}` : null,
-    data.salonName ? `Salon/Салон: ${esc(data.salonName)}` : null,
+    `👤 <b>${esc(data.name)}</b>`,
+    `📧 ${esc(data.email)}`,
+    data.phone ? `📱 ${esc(data.phone)}` : null,
+    data.salonName ? `💇 Salon: ${esc(data.salonName)}` : null,
     ``,
-    `Položky/Позиции (${data.items.length}):`,
+    `🛒 <b>Položky (${data.items.length}):</b>`,
     itemLines,
-    data.message ? `\nPoznámka/Примечание: ${esc(data.message)}` : null,
+    data.message ? `\n💬 Poznámka: ${esc(data.message)}` : null,
+    ``,
+    `⏳ Čeká na zpracování — klikni BERU pro přiřazení`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -179,16 +180,19 @@ export async function notifyContact(contactId: string, data: {
   const lang = data.locale ? langMap[data.locale] ?? data.locale : null;
 
   const lines = [
-    `✉️ <b>KONTAKTNÍ FORMULÁŘ / КОНТАКТНАЯ ФОРМА</b>`,
-    `Zpráva z webu / Сообщение с сайта`,
+    `✉️ <b>NOVÁ ZPRÁVA Z WEBU</b>`,
+    `Zákazník napsal přes kontaktní formulář`,
     ``,
-    `${esc(data.name)}`,
-    `${esc(data.email)}`,
-    data.phone ? `${esc(data.phone)}` : null,
-    data.salonName ? `Salon/Салон: ${esc(data.salonName)}` : null,
-    lang ? `Jazyk/Язык: ${lang}` : null,
+    `👤 <b>${esc(data.name)}</b>`,
+    `📧 ${esc(data.email)}`,
+    data.phone ? `📱 ${esc(data.phone)}` : null,
+    data.salonName ? `💇 Salon: ${esc(data.salonName)}` : null,
+    lang ? `🌐 Jazyk: ${lang}` : null,
     ``,
+    `💬 <b>Zpráva:</b>`,
     `${esc(data.message)}`,
+    ``,
+    `⏳ Čeká na odpověď — klikni BERU pro přiřazení`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -209,18 +213,17 @@ export async function notifySalonRegistration(data: {
 }): Promise<void> {
   const typeLabel = data.type ?? "Salon";
   const lines = [
-    `💇 <b>NOVÁ REGISTRACE / НОВАЯ РЕГИСТРАЦИЯ</b>`,
-    `${esc(typeLabel)} žádá o B2B přístup`,
+    `💇 <b>NOVÁ REGISTRACE B2B</b>`,
+    `Nový ${esc(typeLabel.toLowerCase())} se zaregistroval a čeká na schválení`,
     ``,
-    `Typ: ${esc(typeLabel)}`,
-    `Název: ${esc(data.salonName)}`,
-    `Kontakt: ${esc(data.contactName)}`,
-    `E-mail: ${esc(data.email)}`,
-    data.phone ? `Telefon: ${esc(data.phone)}` : null,
-    data.city ? `Město: ${esc(data.city)}` : null,
+    `🏢 <b>${esc(data.salonName)}</b>`,
+    `👤 ${esc(data.contactName)}`,
+    `📧 ${esc(data.email)}`,
+    data.phone ? `📱 ${esc(data.phone)}` : null,
+    data.city ? `📍 ${esc(data.city)}` : null,
+    `🏷 Typ: ${esc(typeLabel)}`,
     ``,
-    `⚠️ Čeká na schválení v admin panelu.`,
-    `🔗 https://www.hairland.cz/salons`,
+    `⚠️ Čeká na schválení — otevři admin panel a zkontroluj údaje`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -258,11 +261,12 @@ async function sendRegistrationNotification(text: string): Promise<void> {
  */
 export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number): Promise<void> {
   const lines = [
-    `📥 <b>NASKLADNĚNÍ / ПОСТУПЛЕНИЕ</b>`,
+    `📥 <b>NASKLADNĚNÍ</b>`,
+    `Na sklad přibylo nové zboží`,
     ``,
-    `${esc(productName)}`,
+    `📦 <b>${esc(productName)}</b>`,
     `${esc(variant)}`,
-    `+${addedQty}g → celkem/всего ${newTotal}g`,
+    `➕ ${addedQty}g přidáno → celkem na skladě: <b>${newTotal}g</b>`,
   ].join("\n");
 
   await sendTelegramMessage(lines);
@@ -273,11 +277,12 @@ export async function notifyRestock(productName: string, variant: string, addedQ
  */
 export async function notifyLowStock(items: { productName: string; variant: string; remainingGrams: number }[]): Promise<void> {
   const itemLines = items
-    .map((i) => `   ${esc(i.productName)} · ${esc(i.variant)} — zbývá/осталось ${i.remainingGrams}g`)
+    .map((i) => `   ⚠️ ${esc(i.productName)} · ${esc(i.variant)} — zbývá <b>${i.remainingGrams}g</b>`)
     .join("\n");
 
   const lines = [
-    `⚠️ <b>NÍZKÝ STAV SKLADU / МАЛО НА СКЛАДЕ</b>`,
+    `🔴 <b>NÍZKÝ STAV SKLADU</b>`,
+    `Následující položky brzy dojdou — zvažte doobjednání`,
     ``,
     itemLines,
   ].join("\n");
@@ -300,13 +305,14 @@ export async function notifyNegativeReview(data: {
   const preview = data.text.length > 200 ? data.text.slice(0, 200) + "…" : data.text;
 
   const lines = [
-    `🚨 <b>NEGATIVNÍ RECENZE / НЕГАТИВНЫЙ ОТЗЫВ</b>`,
-    `Vyžaduje okamžitou reakci! / Требуется немедленная реакция!`,
+    `🚨 <b>NEGATIVNÍ RECENZE — VYŽADUJE REAKCI!</b>`,
+    `Zákazník zanechal hodnocení ${data.rating}/5 — je třeba reagovat co nejdříve`,
     ``,
-    `${esc(data.authorName)} — ${sourceLabel[data.source] ?? data.source}`,
+    `👤 <b>${esc(data.authorName)}</b>`,
+    `📍 Zdroj: ${sourceLabel[data.source] ?? data.source}`,
     `${stars} (${data.rating}/5)`,
     ``,
-    `${esc(preview)}`,
+    `💬 "${esc(preview)}"`,
     data.sourceUrl ? `\n🔗 ${data.sourceUrl}` : null,
   ]
     .filter(Boolean)
@@ -342,21 +348,22 @@ export async function notifyComplaintTicket(ticketId: string, data: {
   };
 
   const lines = [
-    `🚨 <b>NOVÁ REKLAMACE / НОВАЯ РЕКЛАМАЦИЯ</b>`,
-    `Ticket: ${esc(data.ticketNumber)}`,
+    `🚨 <b>NOVÁ REKLAMACE</b>`,
+    `Zákazník podal reklamaci — ticket #${esc(data.ticketNumber)}`,
     ``,
-    `${esc(data.name)}`,
-    `${esc(data.email)}`,
-    data.phone ? `${esc(data.phone)}` : null,
-    `Typ zákazníka: ${typeLabels[data.customerType] ?? data.customerType}`,
-    data.salonName ? `Salon/Салон: ${esc(data.salonName)}` : null,
+    `👤 <b>${esc(data.name)}</b>`,
+    `📧 ${esc(data.email)}`,
+    data.phone ? `📱 ${esc(data.phone)}` : null,
+    `🏷 Typ zákazníka: ${typeLabels[data.customerType] ?? data.customerType}`,
+    data.salonName ? `💇 Salon: ${esc(data.salonName)}` : null,
     ``,
-    `Typ: ${complaintLabels[data.complaintType] ?? data.complaintType}`,
-    data.orderNumber ? `Objednávka/Заказ: ${esc(data.orderNumber)}` : null,
+    `📋 <b>${complaintLabels[data.complaintType] ?? data.complaintType}</b>`,
+    data.orderNumber ? `🧾 Objednávka: ${esc(data.orderNumber)}` : null,
     ``,
-    `${esc(data.description.length > 300 ? data.description.slice(0, 300) + "…" : data.description)}`,
-    data.photoCount > 0 ? `\n📷 ${data.photoCount} foto` : null,
-    `\n🔗 https://www.hairland.cz/complaints`,
+    `💬 ${esc(data.description.length > 300 ? data.description.slice(0, 300) + "…" : data.description)}`,
+    data.photoCount > 0 ? `\n📷 Přiloženo ${data.photoCount} foto` : null,
+    ``,
+    `⏳ Čeká na zpracování — klikni BERU pro přiřazení`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -378,24 +385,20 @@ export async function notifyOrderCancelled(data: {
 
   const lines = data.cancelledBy === "salon"
     ? [
-        `❌ <b>OBJEDNÁVKA ZRUŠENA SALONEM / ЗАКАЗ ОТМЕНЁН САЛОНОМ</b>`,
+        `❌ <b>OBJEDNÁVKA ZRUŠENA SALONEM</b>`,
+        `Salon sám zrušil svou objednávku`,
         ``,
-        `Objednávka/Заказ: ${esc(orderLabel)}`,
-        `Salon/Салон: ${esc(data.salonName)}`,
-        `Položek/Позиций: ${data.itemCount}`,
-        ``,
-        `Salon zrušil svou objednávku.`,
-        `Салон отменил свой заказ.`,
+        `🧾 Objednávka: <b>${esc(orderLabel)}</b>`,
+        `💇 Salon: ${esc(data.salonName)}`,
+        `📦 Položek: ${data.itemCount}`,
       ]
     : [
-        `❌ <b>OBJEDNÁVKA ZRUŠENA ADMINEM / ЗАКАЗ ОТМЕНЁН АДМИНОМ</b>`,
+        `❌ <b>OBJEDNÁVKA ZRUŠENA ADMINEM</b>`,
+        `Admin zrušil objednávku salonu`,
         ``,
-        `Objednávka/Заказ: ${esc(orderLabel)}`,
-        `Salon/Салон: ${esc(data.salonName)}`,
-        `Položek/Позиций: ${data.itemCount}`,
-        ``,
-        `Admin zrušil objednávku salonu.`,
-        `Админ отменил заказ салона.`,
+        `🧾 Objednávka: <b>${esc(orderLabel)}</b>`,
+        `💇 Salon: ${esc(data.salonName)}`,
+        `📦 Položek: ${data.itemCount}`,
       ];
 
   await sendTelegramMessage(lines.join("\n"));
