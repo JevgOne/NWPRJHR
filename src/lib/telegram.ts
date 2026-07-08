@@ -145,19 +145,20 @@ export async function notifyInquiry(inquiryId: string, data: {
     .join("\n\n");
 
   const lines = [
-    `📦 <b>NOVÁ POPTÁVKA</b>`,
+    `📦 <b>NOVÁ POPTÁVKA / НОВЫЙ ЗАПРОС</b>`,
     `Nový zákazník odeslal poptávku přes web`,
+    `Новый клиент отправил запрос через сайт`,
     ``,
     `👤 <b>${esc(data.name)}</b>`,
     `📧 ${esc(data.email)}`,
     data.phone ? `📱 ${esc(data.phone)}` : null,
-    data.salonName ? `💇 Salon: ${esc(data.salonName)}` : null,
+    data.salonName ? `💇 Салон: ${esc(data.salonName)}` : null,
     ``,
-    `🛒 <b>Položky (${data.items.length}):</b>`,
+    `🛒 <b>Položky/Позиции (${data.items.length}):</b>`,
     itemLines,
-    data.message ? `\n💬 Poznámka: ${esc(data.message)}` : null,
+    data.message ? `\n💬 Poznámka/Примечание: ${esc(data.message)}` : null,
     ``,
-    `⏳ Čeká na zpracování — klikni BERU pro přiřazení`,
+    `⏳ Čeká na zpracování / Ожидает обработки`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -180,19 +181,20 @@ export async function notifyContact(contactId: string, data: {
   const lang = data.locale ? langMap[data.locale] ?? data.locale : null;
 
   const lines = [
-    `✉️ <b>NOVÁ ZPRÁVA Z WEBU</b>`,
+    `✉️ <b>NOVÁ ZPRÁVA / НОВОЕ СООБЩЕНИЕ</b>`,
     `Zákazník napsal přes kontaktní formulář`,
+    `Клиент написал через контактную форму`,
     ``,
     `👤 <b>${esc(data.name)}</b>`,
     `📧 ${esc(data.email)}`,
     data.phone ? `📱 ${esc(data.phone)}` : null,
-    data.salonName ? `💇 Salon: ${esc(data.salonName)}` : null,
-    lang ? `🌐 Jazyk: ${lang}` : null,
+    data.salonName ? `💇 Салон: ${esc(data.salonName)}` : null,
+    lang ? `🌐 Jazyk/Язык: ${lang}` : null,
     ``,
-    `💬 <b>Zpráva:</b>`,
+    `💬 <b>Zpráva/Сообщение:</b>`,
     `${esc(data.message)}`,
     ``,
-    `⏳ Čeká na odpověď — klikni BERU pro přiřazení`,
+    `⏳ Čeká na odpověď / Ожидает ответа`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -213,17 +215,18 @@ export async function notifySalonRegistration(data: {
 }): Promise<void> {
   const typeLabel = data.type ?? "Salon";
   const lines = [
-    `💇 <b>NOVÁ REGISTRACE B2B</b>`,
+    `💇 <b>NOVÁ REGISTRACE / НОВАЯ РЕГИСТРАЦИЯ</b>`,
     `Nový ${esc(typeLabel.toLowerCase())} se zaregistroval a čeká na schválení`,
+    `Новый ${esc(typeLabel.toLowerCase())} зарегистрировался и ожидает одобрения`,
     ``,
     `🏢 <b>${esc(data.salonName)}</b>`,
     `👤 ${esc(data.contactName)}`,
     `📧 ${esc(data.email)}`,
     data.phone ? `📱 ${esc(data.phone)}` : null,
     data.city ? `📍 ${esc(data.city)}` : null,
-    `🏷 Typ: ${esc(typeLabel)}`,
+    `🏷 Typ/Тип: ${esc(typeLabel)}`,
     ``,
-    `⚠️ Čeká na schválení — otevři admin panel a zkontroluj údaje`,
+    `⚠️ Čeká na schválení / Ожидает одобрения`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -261,12 +264,12 @@ async function sendRegistrationNotification(text: string): Promise<void> {
  */
 export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number): Promise<void> {
   const lines = [
-    `📥 <b>NASKLADNĚNÍ</b>`,
-    `Na sklad přibylo nové zboží`,
+    `📥 <b>NASKLADNĚNÍ / ПОСТУПЛЕНИЕ</b>`,
+    `Na sklad přibylo zboží / На склад поступил товар`,
     ``,
     `📦 <b>${esc(productName)}</b>`,
     `${esc(variant)}`,
-    `➕ ${addedQty}g přidáno → celkem na skladě: <b>${newTotal}g</b>`,
+    `➕ ${addedQty}g → celkem/всего: <b>${newTotal}g</b>`,
   ].join("\n");
 
   await sendTelegramMessage(lines);
@@ -281,8 +284,8 @@ export async function notifyLowStock(items: { productName: string; variant: stri
     .join("\n");
 
   const lines = [
-    `🔴 <b>NÍZKÝ STAV SKLADU</b>`,
-    `Následující položky brzy dojdou — zvažte doobjednání`,
+    `🔴 <b>NÍZKÝ STAV SKLADU / МАЛО НА СКЛАДЕ</b>`,
+    `Následující položky brzy dojdou / Следующие позиции скоро закончатся`,
     ``,
     itemLines,
   ].join("\n");
@@ -305,8 +308,9 @@ export async function notifyNegativeReview(data: {
   const preview = data.text.length > 200 ? data.text.slice(0, 200) + "…" : data.text;
 
   const lines = [
-    `🚨 <b>NEGATIVNÍ RECENZE — VYŽADUJE REAKCI!</b>`,
-    `Zákazník zanechal hodnocení ${data.rating}/5 — je třeba reagovat co nejdříve`,
+    `🚨 <b>NEGATIVNÍ RECENZE / НЕГАТИВНЫЙ ОТЗЫВ</b>`,
+    `Zákazník zanechal hodnocení ${data.rating}/5 — reagujte co nejdříve`,
+    `Клиент оставил оценку ${data.rating}/5 — реагируйте как можно скорее`,
     ``,
     `👤 <b>${esc(data.authorName)}</b>`,
     `📍 Zdroj: ${sourceLabel[data.source] ?? data.source}`,
@@ -348,22 +352,22 @@ export async function notifyComplaintTicket(ticketId: string, data: {
   };
 
   const lines = [
-    `🚨 <b>NOVÁ REKLAMACE</b>`,
-    `Zákazník podal reklamaci — ticket #${esc(data.ticketNumber)}`,
+    `🚨 <b>NOVÁ REKLAMACE / НОВАЯ РЕКЛАМАЦИЯ</b>`,
+    `Zákazník podal reklamaci / Клиент подал рекламацию — #${esc(data.ticketNumber)}`,
     ``,
     `👤 <b>${esc(data.name)}</b>`,
     `📧 ${esc(data.email)}`,
     data.phone ? `📱 ${esc(data.phone)}` : null,
-    `🏷 Typ zákazníka: ${typeLabels[data.customerType] ?? data.customerType}`,
-    data.salonName ? `💇 Salon: ${esc(data.salonName)}` : null,
+    `🏷 ${typeLabels[data.customerType] ?? data.customerType}`,
+    data.salonName ? `💇 Салон: ${esc(data.salonName)}` : null,
     ``,
     `📋 <b>${complaintLabels[data.complaintType] ?? data.complaintType}</b>`,
-    data.orderNumber ? `🧾 Objednávka: ${esc(data.orderNumber)}` : null,
+    data.orderNumber ? `🧾 Objednávka/Заказ: ${esc(data.orderNumber)}` : null,
     ``,
     `💬 ${esc(data.description.length > 300 ? data.description.slice(0, 300) + "…" : data.description)}`,
-    data.photoCount > 0 ? `\n📷 Přiloženo ${data.photoCount} foto` : null,
+    data.photoCount > 0 ? `\n📷 ${data.photoCount} foto` : null,
     ``,
-    `⏳ Čeká na zpracování — klikni BERU pro přiřazení`,
+    `⏳ Čeká na zpracování / Ожидает обработки`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -385,20 +389,20 @@ export async function notifyOrderCancelled(data: {
 
   const lines = data.cancelledBy === "salon"
     ? [
-        `❌ <b>OBJEDNÁVKA ZRUŠENA SALONEM</b>`,
-        `Salon sám zrušil svou objednávku`,
+        `❌ <b>OBJEDNÁVKA ZRUŠENA SALONEM / ЗАКАЗ ОТМЕНЁН САЛОНОМ</b>`,
+        `Salon zrušil objednávku / Салон отменил заказ`,
         ``,
-        `🧾 Objednávka: <b>${esc(orderLabel)}</b>`,
-        `💇 Salon: ${esc(data.salonName)}`,
-        `📦 Položek: ${data.itemCount}`,
+        `🧾 Objednávka/Заказ: <b>${esc(orderLabel)}</b>`,
+        `💇 Салон: ${esc(data.salonName)}`,
+        `📦 Položek/Позиций: ${data.itemCount}`,
       ]
     : [
-        `❌ <b>OBJEDNÁVKA ZRUŠENA ADMINEM</b>`,
-        `Admin zrušil objednávku salonu`,
+        `❌ <b>OBJEDNÁVKA ZRUŠENA / ЗАКАЗ ОТМЕНЁН</b>`,
+        `Admin zrušil objednávku / Админ отменил заказ`,
         ``,
-        `🧾 Objednávka: <b>${esc(orderLabel)}</b>`,
-        `💇 Salon: ${esc(data.salonName)}`,
-        `📦 Položek: ${data.itemCount}`,
+        `🧾 Objednávka/Заказ: <b>${esc(orderLabel)}</b>`,
+        `💇 Салон: ${esc(data.salonName)}`,
+        `📦 Položek/Позиций: ${data.itemCount}`,
       ];
 
   await sendTelegramMessage(lines.join("\n"));

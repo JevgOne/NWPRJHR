@@ -73,31 +73,30 @@ export async function GET(request: NextRequest) {
   const dateStr = `${yesterday.getDate()}.${yesterday.getMonth() + 1}.${yesterday.getFullYear()}`;
 
   const lines = [
-    `📊 <b>DENNÍ PŘEHLED — ${dateStr}</b>`,
-    `Shrnutí za včerejší den`,
+    `📊 <b>DENNÍ PŘEHLED / ДНЕВНАЯ СВОДКА — ${dateStr}</b>`,
     ``,
-    `📦 <b>Poptávky:</b> ${newInquiries} nových${unassignedInquiries > 0 ? ` (⚠️ ${unassignedInquiries} čeká na zpracování)` : ""}`,
-    `✉️ <b>Zprávy:</b> ${newContacts} nových${unassignedContacts > 0 ? ` (⚠️ ${unassignedContacts} bez odpovědi)` : ""}`,
-    `💰 <b>Prodeje:</b> ${salesCount} prodejů — celkem <b>${(salesTotal / 100).toLocaleString("cs-CZ")} Kč</b>`,
+    `📦 <b>Poptávky/Запросы:</b> ${newInquiries} nových/новых${unassignedInquiries > 0 ? ` (⚠️ ${unassignedInquiries} nezpracováno/необработано)` : ""}`,
+    `✉️ <b>Zprávy/Сообщения:</b> ${newContacts} nových/новых${unassignedContacts > 0 ? ` (⚠️ ${unassignedContacts} bez odpovědi/без ответа)` : ""}`,
+    `💰 <b>Prodeje/Продажи:</b> ${salesCount}x — <b>${(salesTotal / 100).toLocaleString("cs-CZ")} Kč</b>`,
     ``,
   ];
 
   if (lowStockItems.length > 0) {
-    lines.push(`🔴 <b>Nízký stav skladu (${lowStockItems.length} položek):</b>`);
+    lines.push(`🔴 <b>Nízký stav / Мало на складе (${lowStockItems.length}):</b>`);
     for (const item of lowStockItems.slice(0, 10)) {
-      lines.push(`   ⚠️ ${item.name} — zbývá <b>${item.grams}g</b>`);
+      lines.push(`   ⚠️ ${item.name} — ${item.grams}g`);
     }
     if (lowStockItems.length > 10) {
-      lines.push(`   ... a dalších ${lowStockItems.length - 10}`);
+      lines.push(`   ... a dalších/ещё ${lowStockItems.length - 10}`);
     }
   }
 
   if (outOfStockCount > 0) {
-    lines.push(`\n❌ <b>${outOfStockCount} variant úplně vyprodáno</b>`);
+    lines.push(`\n❌ <b>${outOfStockCount} variant vyprodáno/распродано</b>`);
   }
 
   if (lowStockItems.length === 0 && outOfStockCount === 0) {
-    lines.push(`✅ Sklad v pořádku — vše naskladněno`);
+    lines.push(`✅ Sklad v pořádku / Склад в порядке`);
   }
 
   await sendTelegramMessage(lines.join("\n"));

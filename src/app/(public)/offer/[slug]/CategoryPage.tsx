@@ -75,11 +75,9 @@ export async function generateCategoryMetadata(slug: string) {
 export async function CategoryLandingPage({ slug }: { slug: string }) {
   const processingType = CATEGORY_SLUG_MAP[slug];
 
-  const [t, tPt, tCategory, tPublic, session, locale] = await Promise.all([
+  const [t, tPt, session, locale] = await Promise.all([
     getTranslations("public"),
     getTranslations("processingType"),
-    getTranslations("category"),
-    getTranslations("public"),
     auth(),
     getLocale(),
   ]);
@@ -147,15 +145,13 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
   }));
 
   const titleKey = TITLE_KEYS[slug];
-  const descKey = DESC_KEYS[slug];
   const title = tPt(titleKey);
-  const description = tPt(descKey);
 
   // Other category slugs for internal linking
   const otherCategories = Object.keys(CATEGORY_SLUG_MAP).filter((s) => s !== slug);
 
-  // ItemList schema.org
-  const itemListJsonLd = {
+  // Schema.org
+  const itemListJsonLd = productsWithStock.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: title,
@@ -167,42 +163,119 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
       name: p.name,
       ...(p.photos.length > 0 ? { image: p.photos[0] } : {}),
     })),
+  } : null;
+
+  // FAQ schema
+  const faqKeys = ["faq1q", "faq1a", "faq2q", "faq2a", "faq3q", "faq3a"] as const;
+  const faqItems = [
+    { q: tPt(`${slug}.faq1q` as any), a: tPt(`${slug}.faq1a` as any) },
+    { q: tPt(`${slug}.faq2q` as any), a: tPt(`${slug}.faq2a` as any) },
+    { q: tPt(`${slug}.faq3q` as any), a: tPt(`${slug}.faq3a` as any) },
+  ];
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   };
+
+  const s = slug as "clip-in" | "tape-in" | "keratin" | "micro-ring" | "weft";
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
-      />
+      {itemListJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <Breadcrumbs items={[
         { label: t("nav.home"), href: "/" },
         { label: t("nav.products"), href: "/offer" },
-        { label: tPt(slug as "clip-in" | "tape-in" | "keratin" | "micro-ring" | "weft") },
+        { label: tPt(s) },
       ]} />
 
-      <h1 className="text-3xl font-bold text-ink mb-2">{title}</h1>
-      <p className="text-muted mb-6 max-w-2xl">{description}</p>
+      {/* Hero */}
+      <h1 className="text-3xl font-bold text-ink mb-3">{title}</h1>
+      <p className="text-muted mb-8 max-w-3xl text-lg leading-relaxed">{tPt(`${slug}.intro` as any)}</p>
+
+      {/* How it works */}
+      <section className="mb-10">
+        <h2 className="text-xl font-bold text-ink mb-4">{tPt(`${slug}.howTitle` as any)}</h2>
+        <p className="text-muted leading-relaxed max-w-3xl">{tPt(`${slug}.howText` as any)}</p>
+      </section>
+
+      {/* Advantages */}
+      <section className="mb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {(["adv1", "adv2", "adv3", "adv4"] as const).map((key) => (
+          <div key={key} className="bg-nude-50 rounded-xl p-5">
+            <div className="text-2xl mb-2">{tPt(`${slug}.${key}Icon` as any)}</div>
+            <h3 className="font-semibold text-ink text-sm mb-1">{tPt(`${slug}.${key}Title` as any)}</h3>
+            <p className="text-muted text-sm">{tPt(`${slug}.${key}Text` as any)}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Who is it for + Care tips */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div className="bg-blush-50 rounded-xl p-6">
+          <h2 className="font-bold text-ink mb-3">{tPt(`${slug}.forWhomTitle` as any)}</h2>
+          <p className="text-muted text-sm leading-relaxed">{tPt(`${slug}.forWhomText` as any)}</p>
+        </div>
+        <div className="bg-amber-50 rounded-xl p-6">
+          <h2 className="font-bold text-ink mb-3">{tPt(`${slug}.careTitle` as any)}</h2>
+          <p className="text-muted text-sm leading-relaxed">{tPt(`${slug}.careText` as any)}</p>
+        </div>
+      </div>
+
+      {/* Lifespan + Price range */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+        <div className="text-center p-4 bg-nude-50 rounded-xl">
+          <div className="text-2xl mb-1">⏳</div>
+          <div className="text-xs text-muted uppercase tracking-wider mb-1">{tPt("lifespan")}</div>
+          <div className="font-bold text-ink">{tPt(`${slug}.lifespan` as any)}</div>
+        </div>
+        <div className="text-center p-4 bg-nude-50 rounded-xl">
+          <div className="text-2xl mb-1">🔄</div>
+          <div className="text-xs text-muted uppercase tracking-wider mb-1">{tPt("reapplication")}</div>
+          <div className="font-bold text-ink">{tPt(`${slug}.reapplication` as any)}</div>
+        </div>
+        <div className="text-center p-4 bg-nude-50 rounded-xl">
+          <div className="text-2xl mb-1">⏱</div>
+          <div className="text-xs text-muted uppercase tracking-wider mb-1">{tPt("applicationTime")}</div>
+          <div className="font-bold text-ink">{tPt(`${slug}.appTime` as any)}</div>
+        </div>
+        <div className="text-center p-4 bg-nude-50 rounded-xl">
+          <div className="text-2xl mb-1">💰</div>
+          <div className="text-xs text-muted uppercase tracking-wider mb-1">{tPt("priceRange")}</div>
+          <div className="font-bold text-ink">{tPt(`${slug}.price` as any)}</div>
+        </div>
+      </div>
 
       {/* Custom order banner */}
-      <div className="bg-blush-100 border border-blush-200 rounded-xl p-5 mb-8">
+      <div className="bg-blush-100 border border-blush-200 rounded-xl p-5 mb-10">
         <div className="flex gap-4 items-start">
           <div className="text-3xl flex-shrink-0">✂️</div>
           <div>
             <h2 className="font-semibold text-rose-deep mb-1">{tPt("customOrder")}</h2>
             <p className="text-sm text-espresso">
-              {tPt("customOrderDesc", { type: tPt(slug as "clip-in" | "tape-in" | "keratin" | "micro-ring" | "weft").toLowerCase() })}
+              {tPt("customOrderDesc", { type: tPt(s).toLowerCase() })}
             </p>
+            <Link href="/contact" className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-rose hover:text-rose-deep transition-colors">
+              {tPt("contactUs")} →
+            </Link>
           </div>
         </div>
       </div>
 
-      {productsWithStock.length > 0 ? (
-        <>
-          <p className="text-sm text-muted mb-4">
+      {/* Products */}
+      {productsWithStock.length > 0 && (
+        <section className="mb-10">
+          <h2 className="text-xl font-bold text-ink mb-4">
             {tPt("productsInCategory", { count: productsWithStock.length })}
-          </p>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {productsWithStock.map((p) => (
               <ProductGridCard
@@ -213,21 +286,27 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
               />
             ))}
           </div>
-        </>
-      ) : (
-        <div className="text-center py-16">
-          <p className="text-muted mb-4">{tPt("noProducts")}</p>
-          <Link
-            href="/offer"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose text-white hover:bg-rose-deep transition-colors"
-          >
-            {tPt("noProductsCta")}
-          </Link>
-        </div>
+        </section>
       )}
 
-      {/* Other processing type categories */}
-      <section className="mt-12 pt-8 border-t border-line">
+      {/* FAQ */}
+      <section className="mb-10">
+        <h2 className="text-xl font-bold text-ink mb-4">{tPt("faqTitle")}</h2>
+        <div className="space-y-4">
+          {faqItems.map((faq, i) => (
+            <details key={i} className="group bg-nude-50 rounded-xl">
+              <summary className="cursor-pointer p-5 font-medium text-ink flex items-center justify-between">
+                {faq.q}
+                <span className="text-muted group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-5 pb-5 text-muted text-sm leading-relaxed">{faq.a}</div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* Other categories */}
+      <section className="pt-8 border-t border-line">
         <h2 className="text-lg font-bold text-ink mb-4">{tPt("otherCategories")}</h2>
         <div className="flex flex-wrap gap-3">
           {otherCategories.map((catSlug) => (
