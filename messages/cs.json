@@ -806,7 +806,8 @@
       "companyName": "Alvento Solutions s.r.o.",
       "companyId": "IČO 24111953",
       "companyAddress": "Školská 660/3, Praha",
-      "weightGuide": "Průvodce gramáží"
+      "weightGuide": "Průvodce gramáží",
+      "reviews": "Recenze"
     },
     "batchPopup": {
       "title": "Nová várka vlasů na cestě!",
@@ -820,7 +821,8 @@
       "advice": "Poradna",
       "register": "Registrace",
       "inquiry": "🛒 Poptávka",
-      "weightGuide": "Průvodce gramáží"
+      "weightGuide": "Průvodce gramáží",
+      "inspiration": "Inspirace"
     },
     "reviews": {
       "title": "Co říkají naše zákaznice",

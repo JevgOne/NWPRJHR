@@ -91,6 +91,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${BASE_URL}/recenze`,
+      lastModified: STATIC_DATE,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = [

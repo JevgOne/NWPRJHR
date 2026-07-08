@@ -207,7 +207,7 @@ export function PublicNavbar() {
             />
 
             <NavDropdown
-              label="Inspirace"
+              label={t("navbar.inspiration")}
               items={inspiraceItems}
               pathname={pathname}
             />

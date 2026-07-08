@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Blog o prodloužení vlasů — tipy, trendy a péče",
   description:
     "Články a tipy o prodloužení vlasů, péči, trendech a kvalitě. Rady od odborníků na prémiové vlasy.",
   alternates: { canonical: "/blog" },

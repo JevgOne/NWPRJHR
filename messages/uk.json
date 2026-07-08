@@ -806,7 +806,8 @@
       "companyName": "Alvento Solutions s.r.o.",
       "companyId": "IČO 24111953",
       "companyAddress": "Školská 660/3, Praha",
-      "weightGuide": "Гід з грамажу"
+      "weightGuide": "Гід з грамажу",
+      "reviews": "Відгуки"
     },
     "batchPopup": {
       "title": "Нова партія волосся вже в дорозі!",
@@ -820,7 +821,8 @@
       "advice": "Поради",
       "register": "Реєстрація",
       "inquiry": "🛒 Запит",
-      "weightGuide": "Гід з грамажу"
+      "weightGuide": "Гід з грамажу",
+      "inspiration": "Натхнення"
     },
     "reviews": {
       "title": "Що кажуть наші клієнтки",

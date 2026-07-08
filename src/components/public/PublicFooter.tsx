@@ -65,6 +65,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/recenze" className="text-nude-200/80 hover:text-white transition-colors">
+                  {t("footer.reviews")}
+                </Link>
+              </li>
+              <li>
                 <Link href="/pruvodce-gramazi" className="text-nude-200/80 hover:text-white transition-colors">
                   {t("footer.weightGuide")}
                 </Link>
