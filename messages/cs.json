@@ -495,7 +495,7 @@
       "statLanguagesLabel": "jazyky komunikace",
       "statTurnaroundValue": "7 dnů",
       "statTurnaroundLabel": "zpracování na zakázku",
-      "statDeliveryValue": "0 Kč",
+      "statDeliveryValue": "Zdarma",
       "statDeliveryLabel": "dovoz po Praze",
       "b2bTitle": "Spolupráce pro kadeřnice a salony",
       "b2bText": "Nabízíme velkoobchodní ceny, věrnostní program a přednostní zpracování zakázek. Připojte se k síti spolupracujících salonů a získejte přístup k prémiové kvalitě za B2B ceny.",
@@ -752,7 +752,8 @@
       "promoApply": "Použít",
       "promoApplied": "Kód bude aplikován",
       "promoRemove": "Odebrat",
-      "promoInvalid": "Neplatný kód"
+      "promoInvalid": "Neplatný kód",
+      "photoSoon": "Foto připravujeme"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",

@@ -120,9 +120,10 @@ export function ProductGridCard({
           className="w-full h-full object-cover"
         />
       ) : (
-        <svg className="w-8 h-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
+        <div className="flex flex-col items-center gap-2 text-muted/40">
+          <span className="text-4xl">✨</span>
+          <span className="text-[10px] font-medium uppercase tracking-wider">{t("inquiry.photoSoon")}</span>
+        </div>
       )}
       {isInteractive ? (
         <button
@@ -191,26 +192,31 @@ export function ProductGridCard({
         </div>
       )}
 
-      {/* Color */}
-      {uniqueColors.length > 0 && (
-        <div className="flex items-center gap-1.5 mb-1">
-          {uniqueColors.map((code) => (
-            <div key={code} className="flex items-center gap-1">
+      {/* Color — show only primary (first) color */}
+      {uniqueColors.length > 0 && (() => {
+        const primaryCode = uniqueColors[0];
+        return (
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="flex items-center gap-1">
               <span
                 className="w-5 h-5 rounded-full border-2 border-white shadow-sm ring-1 ring-line flex-shrink-0"
-                style={{ backgroundColor: getHairColor(code).hex }}
+                style={{ backgroundColor: getHairColor(primaryCode).hex }}
               />
-              <span className="text-[11px] text-muted">{t(`colors.${getHairColor(code).nameKey}`)}</span>
+              <span className="text-[11px] text-muted">{t(`colors.${getHairColor(primaryCode).nameKey}`)}</span>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        );
+      })()}
 
-      {/* Length */}
+      {/* Length — show range */}
       {uniqueLengths.length > 0 && (
         <div className="flex items-center gap-1.5 mb-1.5">
           <span className="text-[10px] text-muted">📏</span>
-          <span className="text-[10px] text-muted">{uniqueLengths.map(cm => `${cm} cm`).join(", ")}</span>
+          <span className="text-[10px] text-muted">
+            {uniqueLengths.length === 1
+              ? `${uniqueLengths[0]} cm`
+              : `${uniqueLengths[0]}–${uniqueLengths[uniqueLengths.length - 1]} cm`}
+          </span>
         </div>
       )}
 
