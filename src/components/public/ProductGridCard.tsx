@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
 import { getTextureInfo } from "@/lib/hair-textures";
-import { getColorToneInfo } from "@/lib/color-tones";
+
 import { TextureSwatch } from "@/components/TextureSwatch";
 
 interface ProductGridCardVariant {
@@ -75,21 +75,15 @@ export function ProductGridCard({
   const textureInfo = getTextureInfo(p.texture);
   const textureLabel = p.texture ? tTexture(textureInfo.nameKey) : null;
 
-  // Aggregate variants — show only stocked lengths/colors
-  const stockedVariants = p.variants.filter(v => v.sellingMode === "BY_PIECE" ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0);
-  const uniqueLengths = [...new Set(stockedVariants.map(v => v.lengthCm))].sort((a, b) => a - b);
-  const uniqueColors = [...new Set(stockedVariants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
-  const priceVariants = p.variants.filter(v => v.retailPricePerGram > 0);
-  const minRetailPrice = priceVariants.length > 0 ? Math.min(...priceVariants.map(v => v.retailPricePerGram)) : 0;
-  const totalStock = p.variants.reduce((sum, v) => sum + v.availableGrams, 0);
-  const inStock = totalStock > 0;
-  // Check if any variant is BY_PIECE
-  const hasPieceVariants = p.variants.some(v => v.sellingMode === "BY_PIECE");
-  const totalPieces = p.variants.reduce((sum, v) => sum + (v.availablePieces ?? 0), 0);
-
-  // For BY_PIECE variants, find min piece price
-  const pieceVariants = p.variants.filter(v => v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0);
-  const minPiecePrice = pieceVariants.length > 0 ? Math.min(...pieceVariants.map(v => v.retailPricePerPiece!)) : 0;
+  // Single variant per card (after flattenProductVariants)
+  const v0 = p.variants[0] ?? null;
+  const variantColor = v0?.color ?? null;
+  const variantLength = v0?.lengthCm ?? null;
+  const isByPiece = v0?.sellingMode === "BY_PIECE";
+  const retailPrice = isByPiece ? (v0?.retailPricePerPiece ?? 0) : (v0?.retailPricePerGram ?? 0);
+  const wholesalePrice = isByPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
+  const stock = isByPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
+  const inStock = stock > 0;
 
   const href = `/offer/${p.slug ?? p.id}`;
 
@@ -137,7 +131,7 @@ export function ProductGridCard({
           {categoryLabel}
         </span>
       )}
-      {!inStock && !totalPieces && (
+      {!inStock && (
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <span className="bg-white/90 text-ink text-xs font-bold px-3 py-1 rounded-md">
             {t("inquiry.outOfStock")}
@@ -192,110 +186,62 @@ export function ProductGridCard({
         </div>
       )}
 
-      {/* Color — show only primary (first) color */}
-      {uniqueColors.length > 0 && (() => {
-        const primaryCode = uniqueColors[0];
-        return (
-          <div className="flex items-center gap-1.5 mb-1">
-            <div className="flex items-center gap-1">
-              <span
-                className="w-5 h-5 rounded-full border-2 border-white shadow-sm ring-1 ring-line flex-shrink-0"
-                style={{ backgroundColor: getHairColor(primaryCode).hex }}
-              />
-              <span className="text-[11px] text-muted">{t(`colors.${getHairColor(primaryCode).nameKey}`)}</span>
-            </div>
+      {/* Color */}
+      {variantColor && (
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="flex items-center gap-1">
+            <span
+              className="w-5 h-5 rounded-full border-2 border-white shadow-sm ring-1 ring-line flex-shrink-0"
+              style={{ backgroundColor: getHairColor(variantColor).hex }}
+            />
+            <span className="text-[11px] text-muted">{t(`colors.${getHairColor(variantColor).nameKey}`)}</span>
           </div>
-        );
-      })()}
-
-      {/* Length — concrete values */}
-      {uniqueLengths.length > 0 && (
-        <div className="flex items-center gap-1.5 mb-1.5">
-          <span className="text-[10px] text-muted">📏</span>
-          <span className="text-[10px] text-muted">
-            {uniqueLengths.map(l => `${l} cm`).join(", ")}
-          </span>
         </div>
       )}
 
-      {/* Price + total stock */}
+      {/* Length */}
+      {variantLength && (
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <span className="text-[10px] text-muted">📏</span>
+          <span className="text-[10px] text-muted">{variantLength} cm</span>
+        </div>
+      )}
+
+      {/* Price + stock */}
       <div className="flex items-baseline justify-between">
         {(() => {
-          // BY_PIECE variant price
-          if (hasPieceVariants && minPiecePrice > 0) {
-            const priceDisplay = (minPiecePrice / 100).toFixed(0);
-            if (userRole === "SALON") {
-              const wholesalePieceVariants = pieceVariants.filter(v => v.wholesalePricePerPiece && v.wholesalePricePerPiece > 0);
-              if (wholesalePieceVariants.length > 0) {
-                const minB2B = Math.min(...wholesalePieceVariants.map(v => v.wholesalePricePerPiece!));
-                const b2bDisplay = (minB2B / 100).toFixed(0);
-                return (
-                  <div>
-                    <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/ks</span>
-                    <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/ks</span></div>
-                  </div>
-                );
-              }
-            }
-            if (userRole === "HAIRDRESSER" && discountPct > 0) {
-              const b2bMin = Math.ceil(minPiecePrice * (10000 - discountPct) / 10000);
-              const b2bDisplay = (b2bMin / 100).toFixed(0);
-              return (
-                <div>
-                  <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/ks</span>
-                  <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/ks</span></div>
-                </div>
-              );
-            }
+          if (retailPrice === 0) return null;
+          const unit = isByPiece ? "ks" : "g";
+          const priceDisplay = (retailPrice / 100).toFixed(0);
+
+          if (userRole === "SALON" && wholesalePrice > 0) {
+            const b2bDisplay = (wholesalePrice / 100).toFixed(0);
             return (
-              <div className="text-sm font-bold text-ink">
-                {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/ks</span>
+              <div>
+                <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/{unit}</span>
+                <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
               </div>
             );
           }
-
-          // BY_GRAM variant price (existing logic)
-          if (minRetailPrice === 0) return null;
-          const priceDisplay = (minRetailPrice / 100).toFixed(0);
-
-          if (userRole === "SALON") {
-            const wholesaleVariants = p.variants.filter(v => v.wholesalePricePerGram && v.wholesalePricePerGram > 0);
-            if (wholesaleVariants.length > 0) {
-              const minB2B = Math.min(...wholesaleVariants.map(v => v.wholesalePricePerGram!));
-              const b2bDisplay = (minB2B / 100).toFixed(0);
-              return (
-                <div>
-                  <span className="text-[10px] text-muted line-through">
-                    {priceDisplay} Kc/g
-                  </span>
-                  <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
-                </div>
-              );
-            }
-          }
           if (userRole === "HAIRDRESSER" && discountPct > 0) {
-            const b2bMin = Math.ceil(minRetailPrice * (10000 - discountPct) / 10000);
-            const b2bDisplay = (b2bMin / 100).toFixed(0);
+            const b2b = Math.ceil(retailPrice * (10000 - discountPct) / 10000);
+            const b2bDisplay = (b2b / 100).toFixed(0);
             return (
               <div>
-                <span className="text-[10px] text-muted line-through">
-                  {priceDisplay} Kc/g
-                </span>
-                <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/g</span></div>
+                <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/{unit}</span>
+                <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
               </div>
             );
           }
 
           return (
             <div className="text-sm font-bold text-ink">
-              {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/g</span>
+              {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
             </div>
           );
         })()}
-        <span className={`text-[10px] font-medium ${inStock || totalPieces > 0 ? "text-emerald-600" : "text-red-400"}`}>
-          {hasPieceVariants
-            ? (totalPieces > 0 ? `${totalPieces} ks` : t("inquiry.outOfStock"))
-            : (inStock ? `${totalStock} g` : t("inquiry.outOfStock"))}
+        <span className={`text-[10px] font-medium ${inStock ? "text-emerald-600" : "text-red-400"}`}>
+          {inStock ? `${stock} ${isByPiece ? "ks" : "g"}` : t("inquiry.outOfStock")}
         </span>
       </div>
     </div>
@@ -306,7 +252,7 @@ export function ProductGridCard({
     return (
       <Link
         href={href}
-        className={`block bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock || totalPieces > 0 ? "border-line" : "border-line grayscale opacity-50"}`}
+        className={`block bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock ? "border-line" : "border-line grayscale opacity-50"}`}
       >
         {imageBlock}
         {infoBlock}
@@ -316,7 +262,7 @@ export function ProductGridCard({
 
   // Interactive card (offer page): only image and title are links, badges are filter buttons
   return (
-    <div className={`bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock || totalPieces > 0 ? "border-line" : "border-line grayscale opacity-50"}`}>
+    <div className={`bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock ? "border-line" : "border-line grayscale opacity-50"}`}>
       <Link href={href}>
         {imageBlock}
       </Link>

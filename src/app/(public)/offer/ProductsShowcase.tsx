@@ -8,6 +8,7 @@ import { getOriginFlag } from "@/lib/origin-flags";
 import { getColorToneInfo } from "@/lib/color-tones";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
+import { flattenProductVariants } from "@/lib/flatten-variants";
 
 interface PublicVariant {
   lengthCm: number;
@@ -183,15 +184,17 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
     setProducts(filtered);
   }, [allProducts, activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch, activeSelling]);
 
-  // Sort products by total stock (descending)
+  // Flatten to 1 card per variant, sort by stock (descending)
   const sortedProducts = useMemo(() => {
-    return [...products]
-      .filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 || (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0)))
-      .sort((a, b) => {
-        const stockA = a.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
-        const stockB = b.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
-        return stockB - stockA;
-      });
+    const priced = [...products].filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 || (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0)));
+    const flat = flattenProductVariants(priced);
+    return flat.sort((a, b) => {
+      const va = a.variants[0];
+      const vb = b.variants[0];
+      const sa = (va?.availableGrams ?? 0) + (va?.availablePieces ?? 0);
+      const sb = (vb?.availableGrams ?? 0) + (vb?.availablePieces ?? 0);
+      return sb - sa;
+    });
   }, [products]);
 
   const categoryLabel = (cat: string) => {
@@ -518,7 +521,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {sortedProducts.map((p) => (
             <ProductGridCard
-              key={p.id}
+              key={p._variantKey}
               product={p}
               userRole={userRole}
               discountPct={discountPct}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
+import { flattenProductVariants } from "@/lib/flatten-variants";
 
 interface SliderProduct {
   id: string;
@@ -35,17 +36,24 @@ export function HeroProductSlider() {
       .catch(() => {});
   }, []);
 
-  // Top 4 products by total stock
+  // Flatten to 1 card per variant, pick top 4 by stock
   const topProducts = useMemo(() => {
-    return products
-      .filter((p) => p.variants.some((v) =>
-        (v.retailPricePerGram > 0 && v.availableGrams > 0) ||
-        (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0 && (v.availablePieces ?? 0) > 0)
-      ))
+    const inStock = products.filter((p) => p.variants.some((v) =>
+      (v.retailPricePerGram > 0 && v.availableGrams > 0) ||
+      (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0 && (v.availablePieces ?? 0) > 0)
+    ));
+    const flat = flattenProductVariants(inStock);
+    return flat
+      .filter((c) => {
+        const v = c.variants[0];
+        return v && ((v.availableGrams > 0 && v.retailPricePerGram > 0) || (v.sellingMode === "BY_PIECE" && (v.availablePieces ?? 0) > 0 && (v.retailPricePerPiece ?? 0) > 0));
+      })
       .sort((a, b) => {
-        const stockA = a.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
-        const stockB = b.variants.reduce((s, v) => s + v.availableGrams + (v.availablePieces ?? 0), 0);
-        return stockB - stockA;
+        const va = a.variants[0];
+        const vb = b.variants[0];
+        const sa = (va?.availableGrams ?? 0) + (va?.availablePieces ?? 0);
+        const sb = (vb?.availableGrams ?? 0) + (vb?.availablePieces ?? 0);
+        return sb - sa;
       })
       .slice(0, 4);
   }, [products]);
@@ -64,7 +72,7 @@ export function HeroProductSlider() {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {topProducts.map((p) => (
         <ProductGridCard
-          key={p.id}
+          key={p._variantKey}
           product={p}
         />
       ))}

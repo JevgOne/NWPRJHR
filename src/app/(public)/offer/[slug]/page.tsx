@@ -16,6 +16,7 @@ import { getAllStockNumbers } from "@/lib/stock";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
+import { flattenProductVariants } from "@/lib/flatten-variants";
 import { Fragment, Suspense } from "react";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
@@ -851,8 +852,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
               {t("productDetail.relatedProducts")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {cards.map((rp) => (
-                <ProductGridCard key={rp.id} product={rp} />
+              {flattenProductVariants(cards).slice(0, 8).map((rp) => (
+                <ProductGridCard key={rp._variantKey} product={rp} />
               ))}
             </div>
           </section>

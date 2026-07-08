@@ -7,6 +7,7 @@ import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { getAllStockNumbers } from "@/lib/stock";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
+import { flattenProductVariants } from "@/lib/flatten-variants";
 
 export const CATEGORY_SLUG_MAP: Record<string, ProcessingType> = {
   "clip-in": "CLIP_IN",
@@ -275,9 +276,9 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
             {tPt("productsInCategory", { count: productsWithStock.length })}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {productsWithStock.map((p) => (
+            {flattenProductVariants(productsWithStock).map((p) => (
               <ProductGridCard
-                key={p.id}
+                key={p._variantKey}
                 product={p}
                 userRole={userRole}
                 discountPct={discountPct}
