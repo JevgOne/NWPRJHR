@@ -58,12 +58,10 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
   const [publishedAt, setPublishedAt] = useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
-  const [ogImage, setOgImage] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [uploading, setUploading] = useState(false);
-  const [uploadingOg, setUploadingOg] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -87,7 +85,6 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         setCoverImage(post.coverImage ?? "");
         setMetaTitle(post.metaTitle ?? "");
         setMetaDescription(post.metaDescription ?? "");
-        setOgImage(post.ogImage ?? "");
         setCategory(post.category);
         setPublished(post.published);
         setPublishedAt(
@@ -165,7 +162,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
       publishedAt: publishedAt || undefined,
       metaTitle: metaTitle || undefined,
       metaDescription: metaDescription || undefined,
-      ogImage: ogImage || undefined,
+      ogImage: undefined,
     };
 
     const url = isNew ? "/api/blog" : `/api/blog/${postId}`;
@@ -385,49 +382,19 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                   {metaDescription.length}/155 znaků {metaDescription.length > 155 && "— příliš dlouhý"}
                 </p>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-espresso mb-1">
-                  OG Image (pro sdílení na soc. sítích)
-                </label>
-                <div className="flex items-center gap-4">
-                  {ogImage && (
-                    <img
-                      src={ogImage}
-                      alt="OG"
-                      className="w-32 h-20 object-cover rounded-lg border border-line"
-                    />
-                  )}
-                  <label className="cursor-pointer px-4 py-2 bg-nude-50 border border-line rounded-lg text-sm font-medium text-espresso hover:bg-nude-100 transition-colors">
-                    {uploadingOg ? "Nahrávám..." : ogImage ? "Změnit" : "Nahrát OG obrázek"}
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        setUploadingOg(true);
-                        const formData = new FormData();
-                        formData.append("files", file);
-                        const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
-                        if (res.ok) {
-                          const data = await res.json();
-                          const url = data.photoUrls?.[0] ?? data.urls?.[0];
-                          if (url) setOgImage(url);
-                        }
-                        setUploadingOg(false);
-                      }}
-                      className="hidden"
-                    />
-                  </label>
-                  {ogImage && (
-                    <Button variant="ghost" size="sm" onClick={() => setOgImage("")}>
-                      Odebrat
-                    </Button>
-                  )}
+              <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <p className="text-sm font-medium text-green-800">OG obrázek se nastaví automaticky</p>
+                  <p className="text-xs text-green-600 mt-0.5">
+                    {coverImage ? "Použije se náhledový obrázek článku." : "Nahrajte náhledový obrázek výše — automaticky se použije jako OG."}
+                  </p>
                 </div>
-                <p className="text-xs text-muted mt-1">
-                  Doporučeno 1200×630 px. Pokud prázdné, použije se náhledový obrázek.
-                </p>
+                {coverImage && (
+                  <img src={coverImage} alt="OG preview" className="w-24 h-14 object-cover rounded border border-green-200 ml-auto" />
+                )}
               </div>
               {/* Preview */}
               {(metaTitle || metaDescription) && (
