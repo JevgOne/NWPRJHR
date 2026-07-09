@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
@@ -67,6 +67,13 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [uploadedVideo, setUploadedVideo] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+
+  // Auto-scroll to the next form section after selection
+  const scrollTo = useCallback((id: string) => {
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }, []);
 
   const colorName = (code: string) => {
     const { nameKey } = getHairColor(code);
@@ -365,7 +372,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
       <div className="space-y-6">
         {/* Category — always visible */}
-        <div>
+        <div id="section-category">
           <h2 className="text-sm font-medium text-espresso mb-3">
             {t("wizCategory")}
           </h2>
@@ -374,7 +381,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
               <button
                 key={cat}
                 type="button"
-                onClick={() => { setCategory(cat); resetFrom(2); }}
+                onClick={() => { setCategory(cat); resetFrom(2); scrollTo("section-origin"); }}
                 className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
                   category === cat
                     ? "border-rose bg-rose/5 text-ink"
@@ -389,7 +396,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
         {/* Origin — after category */}
         {category && (
-          <div>
+          <div id="section-origin">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("wizOrigin")}
             </h2>
@@ -398,7 +405,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 <button
                   key={o.name}
                   type="button"
-                  onClick={() => { setOrigin(o.name); resetFrom(3); }}
+                  onClick={() => { setOrigin(o.name); resetFrom(3); scrollTo("section-texture"); }}
                   className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 text-xs font-medium transition-colors ${
                     origin === o.name
                       ? "border-rose bg-rose/5 text-ink"
@@ -415,7 +422,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
         {/* Texture — after origin */}
         {category && origin && (
-          <div>
+          <div id="section-texture">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("wizTexture")}
             </h2>
@@ -424,7 +431,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 <button
                   key={tex.name}
                   type="button"
-                  onClick={() => { setTexture(tex.name); resetFrom(4); }}
+                  onClick={() => { setTexture(tex.name); resetFrom(4); scrollTo("section-color"); }}
                   className={`flex items-center gap-3 p-4 rounded-xl border-2 text-sm font-medium transition-colors ${
                     texture === tex.name
                       ? "border-rose bg-rose/5 text-ink"
@@ -441,7 +448,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
         {/* Color — after texture */}
         {category && origin && texture && (
-          <div>
+          <div id="section-color">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("color")}
             </h2>
@@ -452,7 +459,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                   <button
                     key={code}
                     type="button"
-                    onClick={() => { setColor(code); resetFrom(5); }}
+                    onClick={() => { setColor(code); resetFrom(5); scrollTo("section-length"); }}
                     className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-colors ${
                       color === code
                         ? "border-rose bg-rose/5"
@@ -475,7 +482,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
         {/* Length — after color */}
         {category && origin && texture && color && (
-          <div>
+          <div id="section-length">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("length")}
             </h2>
@@ -484,7 +491,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 <button
                   key={cm}
                   type="button"
-                  onClick={() => { setLengthCm(cm); setCustomLength(""); }}
+                  onClick={() => { setLengthCm(cm); setCustomLength(""); scrollTo("section-selling"); }}
                   className={`px-4 py-2 rounded-xl border-2 text-sm font-medium transition-colors ${
                     lengthCm === cm
                       ? "border-rose bg-rose/5 text-ink"
@@ -509,7 +516,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 type="button"
                 variant="secondary"
                 disabled={!customLength || parseInt(customLength) < 10}
-                onClick={() => { setLengthCm(parseInt(customLength)); setCustomLength(""); }}
+                onClick={() => { setLengthCm(parseInt(customLength)); setCustomLength(""); scrollTo("section-selling"); }}
               >
                 OK
               </Button>
@@ -519,14 +526,14 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
         {/* Selling mode — after length */}
         {category && origin && texture && color && lengthCm && (
-          <div>
+          <div id="section-selling">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("sellingMode")}
             </h2>
             <div className="grid grid-cols-2 gap-3 max-w-lg">
               <button
                 type="button"
-                onClick={() => setSellingMode("BY_GRAM")}
+                onClick={() => { setSellingMode("BY_GRAM"); scrollTo("section-details"); }}
                 className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
                   sellingMode === "BY_GRAM"
                     ? "border-rose bg-rose/5 text-ink"
@@ -537,7 +544,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
               </button>
               <button
                 type="button"
-                onClick={() => setSellingMode("BY_PIECE")}
+                onClick={() => { setSellingMode("BY_PIECE"); scrollTo("section-details"); }}
                 className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
                   sellingMode === "BY_PIECE"
                     ? "border-rose bg-rose/5 text-ink"
@@ -552,7 +559,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
         {/* Details — after selling mode */}
         {category && origin && texture && color && lengthCm && (
-          <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
+          <form id="section-details" onSubmit={handleSubmit} className="space-y-5 max-w-lg">
             <h2 className="text-sm font-medium text-espresso mb-1">
               {t("wizDetails")}
             </h2>
