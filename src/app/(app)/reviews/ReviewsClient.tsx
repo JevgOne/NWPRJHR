@@ -31,7 +31,7 @@ interface ProductOption {
   name: string;
 }
 
-const RATING_EMOJIS = ["\u{1F615}", "\u{1F610}", "\u{1F642}", "\u{1F60A}", "\u{1F60D}"] as const;
+const RATING_EMOJIS = ["😕", "😐", "🙂", "😊", "😍"] as const;
 
 function EmojiRatingPicker({ label, value, onChange }: { label: string; value: number | null; onChange: (v: number | null) => void }) {
   return (
@@ -57,7 +57,7 @@ function EmojiRatingPicker({ label, value, onChange }: { label: string; value: n
 }
 
 const SOURCE_LABELS = {
-  MANUAL: "Ru\u010Dn\u00ED",
+  MANUAL: "Ruční",
   GOOGLE: "Google",
   INSTAGRAM: "Instagram",
 };
@@ -237,7 +237,7 @@ export function ReviewsClient() {
     fetchReviews(f);
   };
 
-  if (loading) return <div className="p-4 text-muted">Na\u010D\u00EDt\u00E1n\u00ED...</div>;
+  if (loading) return <div className="p-4 text-muted">Načítání...</div>;
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
@@ -250,16 +250,16 @@ export function ReviewsClient() {
             setShowForm(!showForm);
           }}
         >
-          {showForm ? "Zav\u0159\u00EDt" : "P\u0159idat recenzi"}
+          {showForm ? "Zavřít" : "Přidat recenzi"}
         </Button>
       </div>
 
       {/* Filter tabs */}
       <div className="flex gap-1 bg-nude-100 rounded-lg p-1">
         {([
-          { key: "pending" as const, label: "Ke schv\u00E1len\u00ED", count: pendingCount },
-          { key: "active" as const, label: "Aktivn\u00ED" },
-          { key: "all" as const, label: "V\u0161echny" },
+          { key: "pending" as const, label: "Ke schválení", count: pendingCount },
+          { key: "active" as const, label: "Aktivní" },
+          { key: "all" as const, label: "Všechny" },
         ]).map((tab) => (
           <button
             key={tab.key}
@@ -284,7 +284,7 @@ export function ReviewsClient() {
         <Card>
           <div className="space-y-3">
             <div className="text-sm font-semibold text-espresso">
-              {editingId ? "Upravit recenzi" : "Nov\u00E1 recenze"}
+              {editingId ? "Upravit recenzi" : "Nová recenze"}
             </div>
 
             <div>
@@ -294,7 +294,7 @@ export function ReviewsClient() {
                 onChange={(e) => setField("source", e.target.value as FormState["source"])}
                 className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               >
-                <option value="MANUAL">Ru\u010Dn\u00ED zad\u00E1n\u00ED</option>
+                <option value="MANUAL">Ruční zadání</option>
                 <option value="GOOGLE">Google recenze</option>
                 <option value="INSTAGRAM">Instagram</option>
               </select>
@@ -307,7 +307,7 @@ export function ReviewsClient() {
                 onChange={(e) => setField("productId", e.target.value)}
                 className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               >
-                <option value="">Obecn\u00E1 recenze (bez produktu)</option>
+                <option value="">Obecná recenze (bez produktu)</option>
                 {products.map((p) => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
@@ -316,12 +316,12 @@ export function ReviewsClient() {
 
             <div className="grid grid-cols-2 gap-3">
               <Input
-                label="Jm\u00E9no autora *"
+                label="Jméno autora *"
                 value={form.authorName}
                 onChange={(e) => setField("authorName", e.target.value)}
               />
               <Input
-                label="M\u011Bsto"
+                label="Město"
                 value={form.authorCity}
                 onChange={(e) => setField("authorCity", e.target.value)}
               />
@@ -343,7 +343,7 @@ export function ReviewsClient() {
 
             <div>
               <label className="block text-sm font-medium text-espresso mb-1">
-                Hodnocen\u00ED: {form.rating}/5
+                Hodnocení: {form.rating}/5
               </label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -353,7 +353,7 @@ export function ReviewsClient() {
                     onClick={() => setField("rating", star)}
                     className={`text-2xl ${star <= form.rating ? "text-yellow-400" : "text-gray-300"}`}
                   >
-                    \u2605
+                    ★
                   </button>
                 ))}
               </div>
@@ -361,17 +361,17 @@ export function ReviewsClient() {
 
             <div className="grid grid-cols-3 gap-3">
               <EmojiRatingPicker
-                label="\u2728 Kvalita vlas\u016F"
+                label="✨ Kvalita vlasů"
                 value={form.ratingQuality}
                 onChange={(v) => setField("ratingQuality", v)}
               />
               <EmojiRatingPicker
-                label="\u{1F4AC} Komunikace"
+                label="💬 Komunikace"
                 value={form.ratingCommunication}
                 onChange={(v) => setField("ratingCommunication", v)}
               />
               <EmojiRatingPicker
-                label="\u{1F4E6} Rychlost dod\u00E1n\u00ED"
+                label="📦 Rychlost dodání"
                 value={form.ratingSpeed}
                 onChange={(v) => setField("ratingSpeed", v)}
               />
@@ -415,7 +415,7 @@ export function ReviewsClient() {
                   onChange={(e) => setField("featured", e.target.checked)}
                   className="rounded"
                 />
-                Zv\u00FDrazn\u011Bn\u00E1 (homepage)
+                Zvýrazněná (homepage)
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -424,16 +424,16 @@ export function ReviewsClient() {
                   onChange={(e) => setField("active", e.target.checked)}
                   className="rounded"
                 />
-                Aktivn\u00ED
+                Aktivní
               </label>
             </div>
 
             <div className="flex gap-2 pt-1">
               <Button onClick={handleSave} disabled={saving || !form.authorName || !form.text}>
-                {saving ? "Ukl\u00E1d\u00E1n\u00ED..." : editingId ? "Ulo\u017Eit" : "P\u0159idat"}
+                {saving ? "Ukládání..." : editingId ? "Uložit" : "Přidat"}
               </Button>
               <Button variant="secondary" onClick={() => { setShowForm(false); setEditingId(null); }}>
-                Zru\u0161it
+                Zrušit
               </Button>
             </div>
           </div>
@@ -444,8 +444,8 @@ export function ReviewsClient() {
         <Card>
           <div className="text-center text-muted py-8">
             {filter === "pending"
-              ? "\u017D\u00E1dn\u00E9 recenze ke schv\u00E1len\u00ED."
-              : "Zat\u00EDm \u017E\u00E1dn\u00E9 recenze."}
+              ? "Žádné recenze ke schválení."
+              : "Zatím žádné recenze."}
           </div>
         </Card>
       ) : (
@@ -456,20 +456,20 @@ export function ReviewsClient() {
               {!r.active && filter !== "active" && (
                 <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 -mt-1">
                   <span className="text-xs font-medium text-amber-700">
-                    \u23F3 \u010Cek\u00E1 na schv\u00E1len\u00ED
+                    ⏳ Čeká na schválení
                   </span>
                   <div className="flex gap-1.5">
                     <button
                       onClick={() => handleApprove(r)}
                       className="px-2.5 py-1 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-md transition-colors"
                     >
-                      Schv\u00E1lit
+                      Schválit
                     </button>
                     <button
                       onClick={() => handleDelete(r.id)}
                       className="px-2.5 py-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
                     >
-                      Zam\u00EDtnout
+                      Zamítnout
                     </button>
                   </div>
                 </div>
@@ -485,19 +485,19 @@ export function ReviewsClient() {
                       <span className="text-xs text-muted">{r.authorCity}</span>
                     )}
                     {r.salonName && (
-                      <span className="text-xs text-muted">\u2022 {r.salonName}</span>
+                      <span className="text-xs text-muted">• {r.salonName}</span>
                     )}
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[r.source]}`}>
                       {SOURCE_LABELS[r.source]}
                     </span>
                     {r.featured && (
                       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700">
-                        \u2605 Zv\u00FDrazn\u011Bn\u00E1
+                        ★ Zvýrazněná
                       </span>
                     )}
                     {!r.active && (
                       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-700">
-                        Skryt\u00E1
+                        Skrytá
                       </span>
                     )}
                     {r.product && (
@@ -507,19 +507,19 @@ export function ReviewsClient() {
                     )}
                   </div>
                   <div className="text-yellow-400 text-sm mt-0.5">
-                    {"\u2605".repeat(r.rating)}{"\u2606".repeat(5 - r.rating)}
+                    {"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}
                   </div>
                   {(r.ratingQuality || r.ratingCommunication || r.ratingSpeed) && (
                     <div className="flex gap-3 mt-1 text-xs text-muted">
-                      {r.ratingQuality && <span>\u2728 {RATING_EMOJIS[r.ratingQuality - 1]}</span>}
-                      {r.ratingCommunication && <span>{"\u{1F4AC}"} {RATING_EMOJIS[r.ratingCommunication - 1]}</span>}
-                      {r.ratingSpeed && <span>{"\u{1F4E6}"} {RATING_EMOJIS[r.ratingSpeed - 1]}</span>}
+                      {r.ratingQuality && <span>✨ {RATING_EMOJIS[r.ratingQuality - 1]}</span>}
+                      {r.ratingCommunication && <span>💬 {RATING_EMOJIS[r.ratingCommunication - 1]}</span>}
+                      {r.ratingSpeed && <span>📦 {RATING_EMOJIS[r.ratingSpeed - 1]}</span>}
                     </div>
                   )}
                   <p className="text-sm text-espresso mt-1 line-clamp-2">{r.text}</p>
                   {r.sourceUrl && (
                     <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-espresso hover:underline mt-1 inline-block">
-                      Zdroj \u2192
+                      Zdroj →
                     </a>
                   )}
                 </div>
@@ -529,26 +529,26 @@ export function ReviewsClient() {
                     className={`p-1.5 rounded text-sm ${r.featured ? "text-yellow-600 bg-yellow-50" : "text-muted hover:text-yellow-600"}`}
                     title={r.featured ? "Odebrat z homepage" : "Zobrazit na homepage"}
                   >
-                    \u2605
+                    ★
                   </button>
                   <button
                     onClick={() => toggleActive(r)}
                     className={`p-1.5 rounded text-sm ${r.active ? "text-emerald-600" : "text-muted"}`}
-                    title={r.active ? "Skr\u00FDt" : "Zobrazit"}
+                    title={r.active ? "Skrýt" : "Zobrazit"}
                   >
-                    {r.active ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}"}
+                    {r.active ? "👁" : "👁‍🗨"}
                   </button>
                   <button
                     onClick={() => handleEdit(r)}
                     className="p-1.5 rounded text-sm text-muted hover:text-espresso"
                   >
-                    \u270F\uFE0F
+                    ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(r.id)}
                     className="p-1.5 rounded text-sm text-muted hover:text-red-600"
                   >
-                    {"\u{1F5D1}"}
+                    🗑
                   </button>
                 </div>
               </div>
