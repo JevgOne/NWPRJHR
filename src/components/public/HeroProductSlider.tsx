@@ -1,42 +1,14 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { ProductGridCard } from "@/components/public/ProductGridCard";
+import { ProductGridCard, type ProductGridCardProduct } from "@/components/public/ProductGridCard";
 import { flattenProductVariants } from "@/lib/flatten-variants";
+import { useMemo } from "react";
 
-interface SliderProduct {
-  id: string;
-  slug: string | null;
-  name: string;
-  nameUk: string | null;
-  nameRu: string | null;
-  category: string;
-  origin: string | null;
-  texture: string | null;
-  colorTone: string | null;
-  photos: string[];
-  variants: {
-    lengthCm: number;
-    color: string;
-    retailPricePerGram: number;
-    availableGrams: number;
-    sellingMode?: "BY_GRAM" | "BY_PIECE";
-    retailPricePerPiece?: number;
-    availablePieces?: number;
-  }[];
+interface HeroProductSliderProps {
+  products: ProductGridCardProduct[];
 }
 
-export function HeroProductSlider() {
-  const [products, setProducts] = useState<SliderProduct[]>([]);
-
-  useEffect(() => {
-    fetch("/api/public/products")
-      .then((r) => r.json())
-      .then((data) => setProducts(data.data ?? []))
-      .catch(() => {});
-  }, []);
-
-  // Flatten to 1 card per variant, pick top 4 by stock
+export function HeroProductSlider({ products }: HeroProductSliderProps) {
   const topProducts = useMemo(() => {
     const inStock = products.filter((p) => p.variants.some((v) =>
       (v.retailPricePerGram > 0 && v.availableGrams > 0) ||
@@ -74,6 +46,7 @@ export function HeroProductSlider() {
         <ProductGridCard
           key={p._variantKey}
           product={p}
+          priority
         />
       ))}
     </div>

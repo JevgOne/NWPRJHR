@@ -39,7 +39,29 @@
     "registerSalon": "Zaregistrujte svůj salon"
   },
   "metadata": {
-    "description": "Hairland — prodej prémiových vlasů. Přímý import, osobní přístup, trojjazyčná podpora."
+    "description": "Hairland — prodej prémiových vlasů. Přímý import, osobní přístup, trojjazyčná podpora.",
+    "homeTitle": "Prémiové vlasy k prodloužení — skladem v Praze",
+    "homeDescription": "Prémiové přírodní vlasy k prodloužení. Přímý import, osobní odběr Praha zdarma, zpracování na zakázku do 7 dnů.",
+    "blogTitle": "Blog o prodloužení vlasů — tipy, trendy a péče",
+    "blogDescription": "Články a tipy o prodloužení vlasů, péči o vlasy a nejnovějších trendech.",
+    "contactTitle": "Kontakt — osobní konzultace v Praze",
+    "contactDescription": "Kontaktujte nás pro osobní konzultaci v Praze. Přijedeme s ukázkami zdarma.",
+    "aboutTitle": "O nás — Hairland",
+    "aboutDescription": "Hairland — prémiové vlasy k prodloužení. Přímý import ze zahraničí, osobní přístup, trojjazyčná podpora.",
+    "kadernicTitle": "Kadeřnice a salony — spolupráce Hairland",
+    "kadernicDescription": "Seznam ověřených kadeřnic a salonů spolupracujících s Hairland. Najděte specialistku ve vašem okolí.",
+    "recenzeTitle": "Recenze zákazníků — Hairland",
+    "recenzeDescription": "Přečtěte si recenze zákazníků na prémiové vlasy Hairland.",
+    "dopravaTitle": "Doprava a doručení — Hairland",
+    "dopravaDescription": "Informace o dopravě a doručení. Osobní odběr Praha zdarma, zásilka Českou poštou.",
+    "obchodniTitle": "Obchodní podmínky — Hairland",
+    "obchodniDescription": "Obchodní podmínky e-shopu Hairland.",
+    "privacyTitle": "Ochrana osobních údajů — Hairland",
+    "privacyDescription": "Zásady ochrany osobních údajů e-shopu Hairland.",
+    "reklamacniTitle": "Reklamační řád — Hairland",
+    "reklamacniDescription": "Reklamační řád e-shopu Hairland. Informace o reklamacích a vrácení zboží.",
+    "inquiryCartTitle": "Poptávkový košík — Hairland",
+    "inquiryCartDescription": "Váš poptávkový košík — nezávazná poptávka prémiových vlasů k prodloužení."
   },
   "roles": {
     "owner": "Majitel",
@@ -607,12 +629,12 @@
       "registerAsStylist": "Registrovat se jako kadeřnice"
     },
     "landing": {
-      "heroTitle": "Prémiové vlasy k prodloužení — skladem v Praze",
-      "heroSubtitle": "Prodáváme přírodní vlasy z celého světa — Ukrajina, Rusko, Kazachstán, Turecko, Írán, Indie i Vietnam. Zpracování na zakázku — clip-in, tape-in, micro ring do 7 dnů.",
-      "badgeInStock": "✅ Vlasy skladem — vezmete si hned",
-      "badgeCustom": "✂️ Zpracování na zakázku — clip-in, tape-in, micro ring do 7 dnů",
-      "badgeDelivery": "🚗 Dovoz po Praze zdarma",
-      "badgeOrigin": "🌍 U každého produktu přesný původ",
+      "heroTitle": "Prémiové vlasy k prodloužení",
+      "heroSubtitle": "Přírodní vlasy z celého světa. Zpracování na zakázku — clip-in, tape-in, micro ring do 7 dnů.",
+      "badgeInStock": "Skladem v Praze",
+      "badgeCustom": "Zpracování na zakázku do 7 dnů",
+      "badgeDelivery": "Dovoz po Praze zdarma",
+      "badgeOrigin": "Přímý import bez překupníků",
       "viewFullOffer": "Zobrazit celou nabídku",
       "contactUs": "Kontaktujte nás",
       "chooseFromOffer": "Vyberte si z naší nabídky",
@@ -669,9 +691,11 @@
       "registerSalon": "Nakupujete u nás? Nechte se zde uvést"
     },
     "offer": {
+      "metaTitle": "Nabídka prémiových vlasů | Virgin, Premium, Standard",
+      "metaDescription": "Široký výběr prémiových surových vlasů k prodloužení. Zpracování na zakázku — clip-in, tape-in, keratin. Skladem v Praze.",
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
       "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete zpracování na clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
-      "bannerCta": "🤝 Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.",
+      "bannerCta": "Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.",
       "searchPlaceholder": "Hledat vlasy — název, původ, barva...",
       "originLabel": "Původ",
       "lengthLabel": "Délka",
@@ -687,7 +711,12 @@
       "sellingMode": "Typ prodeje",
       "allProducts": "Vše",
       "byGram": "Po gramech",
-      "byPiece": "Hotové culíky"
+      "byPiece": "Hotové culíky",
+      "filtersButton": "Filtry",
+      "filtersTitle": "Filtrovat produkty",
+      "showResults": "{count, plural, one {Zobrazit 1 produkt} few {Zobrazit # produkty} other {Zobrazit # produktů}}",
+      "clearAllFilters": "Smazat vše",
+      "browseByAttribute": "Procházet podle vlastností"
     },
     "productDetail": {
       "home": "Domů",
@@ -714,7 +743,7 @@
       "notFound": "Produkt nenalezen",
       "metaDesc": "{name} - {category} prémiové vlasy na prodej",
       "yourPrice": "Vaše cena",
-      "priceTip": "💡 100g ≈ {price}",
+      "priceTip": "100g ≈ {price}",
       "regularPrice": "běžná cena",
       "relatedProducts": "Podobné produkty"
     },
@@ -825,16 +854,16 @@
       "cooperation": "Spolupráce",
       "advice": "Poradna",
       "register": "Registrace",
-      "inquiry": "🛒 Poptávka",
+      "inquiry": "Poptávka",
       "weightGuide": "Průvodce gramáží",
       "inspiration": "Inspirace"
     },
     "reviews": {
       "title": "Co říkají naše zákaznice",
       "reviewCount": "{count, plural, one {recenze} few {recenze} other {recenzí}}",
-      "qualityLabel": "✨ Kvalita vlasů",
-      "communicationLabel": "💬 Komunikace",
-      "speedLabel": "📦 Rychlost dodání",
+      "qualityLabel": "Kvalita vlasů",
+      "communicationLabel": "Komunikace",
+      "speedLabel": "Rychlost dodání",
       "viewOnGoogle": "Zobrazit na Google",
       "viewOnInstagram": "Zobrazit na Instagramu",
       "verifiedPurchase": "Ověřený nákup",
@@ -842,16 +871,16 @@
       "followOnInstagram": "Sledujte na Instagramu"
     },
     "reviewForm": {
-      "writeReview": "✍️ Napsat recenzi",
+      "writeReview": "Napsat recenzi",
       "formTitle": "Napsat recenzi",
       "nameLabel": "Jméno *",
       "namePlaceholder": "Vaše jméno",
       "cityLabel": "Město",
       "cityPlaceholder": "Praha",
       "overallRating": "Celkové hodnocení *",
-      "qualityLabel": "✨ Kvalita",
-      "communicationLabel": "💬 Komunikace",
-      "speedLabel": "📦 Dodání",
+      "qualityLabel": "Kvalita",
+      "communicationLabel": "Komunikace",
+      "speedLabel": "Dodání",
       "experienceLabel": "Vaše zkušenost *",
       "experiencePlaceholder": "Popište vaši zkušenost s nákupem...",
       "sending": "Odesílám...",
@@ -1935,5 +1964,235 @@
     "priceRange": "Cenový rozsah",
     "faqTitle": "Často kladené otázky",
     "contactUs": "Kontaktujte nás"
+  },
+  "attributePages": {
+    "barva": {
+      "sectionTitle": "Barva vlasů",
+      "blond": {
+        "title": "Blond vlasy k prodloužení",
+        "description": "Široký výběr blond vlasů k prodloužení. Virgin, premium i standard kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Blond vlasy k prodloužení",
+        "intro": "Nabízíme široký výběr blond vlasů v různých délkách a texturách. Všechny naše blond vlasy jsou z prověřené kvality."
+      },
+      "hneda": {
+        "title": "Hnědé vlasy k prodloužení",
+        "description": "Hnědé vlasy k prodloužení v prémiové kvalitě. Různé délky a textury. Osobní odběr Praha zdarma.",
+        "h1": "Hnědé vlasy k prodloužení",
+        "intro": "Hnědé vlasy jsou nejpopulárnější volbou pro prodloužení. Nabízíme je v různých odstínech a délkách."
+      },
+      "tmave-hneda": {
+        "title": "Tmavě hnědé vlasy k prodloužení",
+        "description": "Tmavě hnědé vlasy k prodloužení. Přirozený vzhled, prémiová kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Tmavě hnědé vlasy k prodloužení",
+        "intro": "Tmavě hnědé vlasy dodají přirozený objem a délku. Dostupné v různých texturách a délkách."
+      },
+      "zrzava": {
+        "title": "Zrzavé vlasy k prodloužení",
+        "description": "Zrzavé vlasy k prodloužení v prémiové kvalitě. Unikátní odstíny, přirozený vzhled. Praha zdarma.",
+        "h1": "Zrzavé vlasy k prodloužení",
+        "intro": "Zrzavé vlasy jsou vzácné a unikátní. Nabízíme je v prověřené kvalitě z pečlivě vybraných zdrojů."
+      }
+    },
+    "delka": {
+      "sectionTitle": "Délka vlasů",
+      "30cm": {
+        "title": "Vlasy 30 cm k prodloužení",
+        "description": "Vlasy délky 30 cm k prodloužení. Ideální pro jemné doplnění objemu. Osobní odběr Praha zdarma.",
+        "h1": "Vlasy 30 cm k prodloužení",
+        "intro": "Vlasy 30 cm jsou ideální volbou pro jemné doplnění objemu a mírné prodloužení."
+      },
+      "40cm": {
+        "title": "Vlasy 40 cm k prodloužení",
+        "description": "Vlasy délky 40 cm k prodloužení. Přirozená délka, prémiová kvalita. Praha zdarma.",
+        "h1": "Vlasy 40 cm k prodloužení",
+        "intro": "Vlasy 40 cm nabízejí přirozenou délku vhodnou pro většinu typů prodloužení."
+      },
+      "50cm": {
+        "title": "Vlasy 50 cm k prodloužení",
+        "description": "Vlasy délky 50 cm k prodloužení. Populární délka, prémiová kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Vlasy 50 cm k prodloužení",
+        "intro": "Vlasy 50 cm jsou nejoblíbenější délkou pro prodloužení. Nabízíme je v různých barvách a texturách."
+      },
+      "60cm": {
+        "title": "Vlasy 60 cm k prodloužení",
+        "description": "Vlasy délky 60 cm k prodloužení. Luxusní délka, prémiová kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Vlasy 60 cm k prodloužení",
+        "intro": "Vlasy 60 cm poskytují luxusní délku pro výrazné prodloužení. Dostupné v prémiové kvalitě."
+      },
+      "70cm": {
+        "title": "Vlasy 70 cm k prodloužení",
+        "description": "Vlasy délky 70 cm k prodloužení. Nejdelší nabídka, prémiová kvalita. Praha zdarma.",
+        "h1": "Vlasy 70 cm k prodloužení",
+        "intro": "Vlasy 70 cm jsou naší nejdelší nabídkou. Ideální pro dramatické prodloužení a maximální objem."
+      }
+    },
+    "textura": {
+      "sectionTitle": "Textura vlasů",
+      "rovne": {
+        "title": "Rovné vlasy k prodloužení",
+        "description": "Rovné vlasy k prodloužení v prémiové kvalitě. Hladké, lesklé, přirozené. Osobní odběr Praha zdarma.",
+        "h1": "Rovné vlasy k prodloužení",
+        "intro": "Rovné vlasy jsou nejuniverzálnější volbou pro prodloužení. Snadno se stylují a udržují."
+      },
+      "mirne-vlnite": {
+        "title": "Mírně vlnité vlasy k prodloužení",
+        "description": "Mírně vlnité vlasy k prodloužení. Přirozený objem, prémiová kvalita. Praha zdarma.",
+        "h1": "Mírně vlnité vlasy k prodloužení",
+        "intro": "Mírně vlnité vlasy dodají přirozený objem a pohyb. Ideální pro každodenní nošení."
+      },
+      "vlnite": {
+        "title": "Vlnité vlasy k prodloužení",
+        "description": "Vlnité vlasy k prodloužení v prémiové kvalitě. Výrazné vlny, přirozený vzhled. Praha zdarma.",
+        "h1": "Vlnité vlasy k prodloužení",
+        "intro": "Vlnité vlasy vytvoří efektní objem a pohyb. Nabízíme je v různých délkách a barvách."
+      },
+      "kudrnate": {
+        "title": "Kudrnaté vlasy k prodloužení",
+        "description": "Kudrnaté vlasy k prodloužení. Přirozené kudrliny, prémiová kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Kudrnaté vlasy k prodloužení",
+        "intro": "Kudrnaté vlasy jsou ideální pro přirozený kudrnatý look. Dostupné v prémiové kvalitě."
+      }
+    },
+    "kategorie": {
+      "sectionTitle": "Kategorie vlasů",
+      "virgin": {
+        "title": "Virgin vlasy — nejčistší kvalita",
+        "description": "Virgin (panenské) vlasy k prodloužení. Nejvyšší kvalita, neošetřené, zachovaná kutikula. Praha zdarma.",
+        "h1": "Virgin vlasy — nejčistší kvalita",
+        "intro": "Virgin vlasy jsou nejvyšší kvalita lidských vlasů. Nebyly chemicky ošetřeny, kutikula je zachována v původním směru."
+      },
+      "premium": {
+        "title": "Premium vlasy k prodloužení",
+        "description": "Premium vlasy k prodloužení. Skvělá kvalita za příznivou cenu. Osobní odběr Praha zdarma.",
+        "h1": "Premium vlasy k prodloužení",
+        "intro": "Premium vlasy nabízejí skvělou kvalitu za příznivější cenu. Prošly šetrným zpracováním pro konzistentní barvu."
+      },
+      "standard": {
+        "title": "Standard vlasy k prodloužení",
+        "description": "Standard vlasy k prodloužení. Kvalitní prodloužení za dostupnou cenu. Osobní odběr Praha zdarma.",
+        "h1": "Standard vlasy k prodloužení",
+        "intro": "Standard vlasy jsou ideální volbou pro kvalitní prodloužení za dostupnou cenu. Vhodné pro příležitostné nošení."
+      },
+      "clip-in": {
+        "title": "Clip-in vlasy k prodloužení",
+        "description": "Clip-in vlasy k prodloužení. Snadná aplikace bez poškození vlastních vlasů. Osobní odběr Praha zdarma.",
+        "h1": "Clip-in vlasy k prodloužení",
+        "intro": "Clip-in vlasy jsou nejjednodušší způsob prodloužení. Připevňují se sponkami, snadno se nasazují i sundávají bez poškození vlastních vlasů."
+      },
+      "tape-in": {
+        "title": "Tape-in vlasy k prodloužení",
+        "description": "Tape-in vlasy k prodloužení. Šetrná metoda s plochými spoji. Osobní odběr Praha zdarma.",
+        "h1": "Tape-in vlasy k prodloužení",
+        "intro": "Tape-in vlasy se lepí pomocí speciálních pásek. Ploché spoje jsou neviditelné a šetrné k vlastním vlasům."
+      },
+      "keratin": {
+        "title": "Keratinové vlasy k prodloužení",
+        "description": "Keratinové vlasy k prodloužení. Dlouhotrvající metoda s keratinovou vazbou. Osobní odběr Praha zdarma.",
+        "h1": "Keratinové vlasy k prodloužení",
+        "intro": "Keratinové prodloužení používá keratinovou vazbu pro pevné a dlouhotrvající spojení. Ideální pro každodenní nošení."
+      },
+      "micro-ring": {
+        "title": "Micro-ring vlasy k prodloužení",
+        "description": "Micro-ring vlasy k prodloužení. Bez tepla a lepidla, šetrné k vlasům. Osobní odběr Praha zdarma.",
+        "h1": "Micro-ring vlasy k prodloužení",
+        "intro": "Micro-ring metoda spojuje vlasy pomocí malých kroužků bez tepla a lepidla. Maximálně šetrná k vlastním vlasům."
+      },
+      "weft": {
+        "title": "Weft vlasy k prodloužení",
+        "description": "Weft vlasy k prodloužení. Pásové prodloužení pro maximální objem. Osobní odběr Praha zdarma.",
+        "h1": "Weft vlasy k prodloužení",
+        "intro": "Weft vlasy jsou prošité do pásů pro rychlou aplikaci a maximální objem. Ideální pro husté a objemné účesy."
+      }
+    },
+    "zeme": {
+      "sectionTitle": "Původ vlasů",
+      "ukrajina": {
+        "title": "Ukrajinské vlasy k prodloužení",
+        "description": "Ukrajinské vlasy k prodloužení. Prémiová kvalita, přirozená textura. Osobní odběr Praha zdarma.",
+        "h1": "Ukrajinské vlasy k prodloužení",
+        "intro": "Ukrajinské vlasy jsou jedny z nejkvalitnějších na světě. Mají přirozeně jemnou texturu a krásný lesk."
+      },
+      "belorusko": {
+        "title": "Běloruské vlasy k prodloužení",
+        "description": "Běloruské vlasy k prodloužení. Prémiová kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Běloruské vlasy k prodloužení",
+        "intro": "Běloruské vlasy se vyznačují přirozenou jemností a kvalitou. Ideální pro prodloužení."
+      },
+      "moldavsko": {
+        "title": "Moldavské vlasy k prodloužení",
+        "description": "Moldavské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Moldavské vlasy k prodloužení",
+        "intro": "Moldavské vlasy nabízejí výborný poměr kvality a ceny."
+      },
+      "rusko": {
+        "title": "Ruské vlasy k prodloužení",
+        "description": "Ruské vlasy k prodloužení. Prémiová kvalita, přirozená struktura. Osobní odběr Praha zdarma.",
+        "h1": "Ruské vlasy k prodloužení",
+        "intro": "Ruské vlasy jsou proslulé svou přirozenou jemností a odolností."
+      },
+      "kazachstan": {
+        "title": "Kazašské vlasy k prodloužení",
+        "description": "Kazašské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Kazašské vlasy k prodloužení",
+        "intro": "Kazašské vlasy jsou silné a odolné, ideální pro dlouhodobé nošení."
+      },
+      "uzbekistan": {
+        "title": "Uzbecké vlasy k prodloužení",
+        "description": "Uzbecké vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Uzbecké vlasy k prodloužení",
+        "intro": "Uzbecké vlasy nabízejí kvalitní texturu a přirozený vzhled."
+      },
+      "turecko": {
+        "title": "Turecké vlasy k prodloužení",
+        "description": "Turecké vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Turecké vlasy k prodloužení",
+        "intro": "Turecké vlasy jsou silné a přirozeně lesklé."
+      },
+      "iran": {
+        "title": "Íránské vlasy k prodloužení",
+        "description": "Íránské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Íránské vlasy k prodloužení",
+        "intro": "Íránské vlasy se vyznačují přirozenou silou a leskem."
+      },
+      "indie": {
+        "title": "Indické vlasy k prodloužení",
+        "description": "Indické vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Indické vlasy k prodloužení",
+        "intro": "Indické vlasy jsou jedny z nejdostupnějších a nejkvalitnějších na trhu."
+      },
+      "vietnam": {
+        "title": "Vietnamské vlasy k prodloužení",
+        "description": "Vietnamské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Vietnamské vlasy k prodloužení",
+        "intro": "Vietnamské vlasy jsou silné a odolné, vhodné pro různé typy zpracování."
+      },
+      "syrie": {
+        "title": "Syrské vlasy k prodloužení",
+        "description": "Syrské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Syrské vlasy k prodloužení",
+        "intro": "Syrské vlasy nabízejí přirozenou kvalitu a texturu."
+      },
+      "cina": {
+        "title": "Čínské vlasy k prodloužení",
+        "description": "Čínské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Čínské vlasy k prodloužení",
+        "intro": "Čínské vlasy jsou přirozeně silné a odolné."
+      },
+      "mongolsko": {
+        "title": "Mongolské vlasy k prodloužení",
+        "description": "Mongolské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Mongolské vlasy k prodloužení",
+        "intro": "Mongolské vlasy jsou silné a přirozeně husté."
+      },
+      "gruzie": {
+        "title": "Gruzínské vlasy k prodloužení",
+        "description": "Gruzínské vlasy k prodloužení v prémiové kvalitě. Osobní odběr Praha zdarma.",
+        "h1": "Gruzínské vlasy k prodloužení",
+        "intro": "Gruzínské vlasy se vyznačují přirozenou kvalitou a leskem."
+      }
+    },
+    "relatedPages": "Související stránky",
+    "noProducts": "Momentálně žádné produkty v této kategorii",
+    "browseAll": "Zobrazit všechny produkty"
   }
 }

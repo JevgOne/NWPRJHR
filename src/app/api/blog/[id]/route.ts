@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
@@ -92,6 +93,8 @@ export async function PUT(
 
   const post = await prisma.blogPost.update({ where: { id }, data: updateData });
 
+  revalidateTag("blog", "max");
+
   logAudit({
     userId: session.user.id,
     userEmail: session.user.email ?? undefined,
@@ -117,6 +120,8 @@ export async function DELETE(
 
   const { id } = await params;
   await prisma.blogPost.delete({ where: { id } });
+
+  revalidateTag("blog", "max");
 
   logAudit({
     userId: session.user.id,

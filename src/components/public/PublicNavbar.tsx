@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useLocale } from "next-intl";
 import { useTransition } from "react";
-import { setUserLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/config";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { signOut } from "next-auth/react";
@@ -24,6 +22,8 @@ const LOCALES = [
 
 function MobileLocaleSwitcher() {
   const locale = useLocale() as Locale;
+  const router = useRouter();
+  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -32,7 +32,7 @@ function MobileLocaleSwitcher() {
         <button
           key={code}
           onClick={() => {
-            if (code !== locale) startTransition(() => setUserLocale(code));
+            if (code !== locale) startTransition(() => router.replace(pathname, { locale: code }));
           }}
           disabled={isPending}
           className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition-colors ${

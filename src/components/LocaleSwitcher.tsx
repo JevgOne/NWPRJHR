@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useTransition } from "react";
 import { useLocale } from "next-intl";
-import { setUserLocale } from "@/i18n/locale";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/config";
 
 const localeFlags: Record<Locale, { flag: string; label: string }> = {
@@ -13,6 +13,8 @@ const localeFlags: Record<Locale, { flag: string; label: string }> = {
 
 export function LocaleSwitcher() {
   const locale = useLocale() as Locale;
+  const router = useRouter();
+  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -21,7 +23,7 @@ export function LocaleSwitcher() {
     setOpen(false);
     if (newLocale === locale) return;
     startTransition(() => {
-      setUserLocale(newLocale);
+      router.replace(pathname, { locale: newLocale });
     });
   }
 

@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Geist } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
+import { OG_LOCALES } from "@/lib/seo";
 import "./globals.css";
 
 const geist = Geist({
@@ -11,15 +12,14 @@ const geist = Geist({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("metadata");
+  const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
   return {
     metadataBase: new URL("https://www.hairland.cz"),
     title: {
       template: "%s | Hairland",
-      default: "Prémiové vlasy k prodloužení — skladem v Praze | Hairland",
+      default: `${t("homeTitle")} | Hairland`,
     },
-    description:
-      "Prémiové přírodní vlasy k prodloužení — clip-in, tape-in, micro ring. Přímý import z Ukrajiny, Ruska, Kazachstánu. Skladem v Praze, dovoz zdarma.",
+    description: t("description"),
     manifest: "/manifest.json",
     icons: {
       icon: [
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       siteName: "Hairland",
-      locale: "cs_CZ",
+      locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
         {
           url: "/og-image.jpg",
@@ -51,9 +51,6 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       images: ["/og-image.jpg"],
-    },
-    alternates: {
-      canonical: "/",
     },
   };
 }

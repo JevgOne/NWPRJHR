@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
@@ -94,6 +95,8 @@ export async function POST(request: NextRequest) {
       socialPost: data.socialPost,
     },
   });
+
+  revalidateTag("blog", "max");
 
   logAudit({
     userId: session.user.id,
