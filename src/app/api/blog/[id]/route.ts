@@ -22,6 +22,7 @@ const updateBlogSchema = z.object({
   metaTitle: z.string().max(200).nullable().optional(),
   metaDescription: z.string().max(500).nullable().optional(),
   ogImage: z.string().url().nullable().optional(),
+  socialPost: z.string().max(2200).nullable().optional(),
 });
 
 export async function GET(
@@ -75,6 +76,7 @@ export async function PUT(
   if (data.metaTitle !== undefined) updateData.metaTitle = data.metaTitle;
   if (data.metaDescription !== undefined) updateData.metaDescription = data.metaDescription;
   if (data.ogImage !== undefined) updateData.ogImage = data.ogImage;
+  if (data.socialPost !== undefined) updateData.socialPost = data.socialPost;
   if (data.category !== undefined) updateData.category = data.category;
   if (data.published !== undefined) {
     updateData.published = data.published;

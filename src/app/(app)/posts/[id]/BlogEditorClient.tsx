@@ -58,6 +58,8 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
   const [publishedAt, setPublishedAt] = useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [socialPost, setSocialPost] = useState("");
+  const [socialCopied, setSocialCopied] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(!isNew);
@@ -85,6 +87,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         setCoverImage(post.coverImage ?? "");
         setMetaTitle(post.metaTitle ?? "");
         setMetaDescription(post.metaDescription ?? "");
+        setSocialPost(post.socialPost ?? "");
         setCategory(post.category);
         setPublished(post.published);
         setPublishedAt(
@@ -163,6 +166,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
       metaTitle: metaTitle || undefined,
       metaDescription: metaDescription || undefined,
       ogImage: undefined,
+      socialPost: socialPost || undefined,
     };
 
     const url = isNew ? "/api/blog" : `/api/blog/${postId}`;
@@ -409,6 +413,64 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                   </p>
                 </div>
               )}
+            </div>
+          </Card>
+        )}
+
+        {lang === "cs" && (
+          <Card>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-base">📱</span>
+                <span className="text-sm font-semibold text-espresso">Instagram / Facebook post</span>
+              </div>
+              <p className="text-xs text-muted">
+                Text k publikaci na sociální sítě. Klikni &quot;Generovat&quot; pro automatický návrh z názvu a popisu článku.
+              </p>
+              <textarea
+                value={socialPost}
+                onChange={(e) => setSocialPost(e.target.value)}
+                rows={8}
+                className="block w-full rounded-lg border border-line px-3 py-2 text-ink text-sm placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
+                placeholder="Klikni 'Generovat' nebo napiš vlastní text pro IG/FB..."
+              />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!title) return;
+                    const hashtags = "#vlasy #prodlouzenivlasu #hairextensions #praha #hairland";
+                    const cta = "\n\n👉 Celý článek na blogu — odkaz v bio";
+                    const ex = excerpt || "";
+
+                    const templates = [
+                      `💇‍♀️ ${title}\n\n${ex}\n\nTohle by měla vědět každá holka, která přemýšlí o prodloužení. Celý článek jsme sepsali na blogu — žádný bullshit, jen konkrétní info.${cta}\n\n${hashtags}`,
+                      `Holky, tohle si přečtěte 👇\n\n${title.toUpperCase()}\n\n${ex}\n\nVšechno, co potřebujete vědět, na jednom místě.${cta}\n\n${hashtags}`,
+                      `✨ Nový článek na blogu!\n\n${title}\n\n${ex}\n\nJestli řešíte prodloužení vlasů, tohle vám ušetří spoustu času a peněz.${cta}\n\n${hashtags}`,
+                    ];
+                    const pick = templates[Math.floor(Math.random() * templates.length)];
+                    setSocialPost(pick);
+                  }}
+                  className="px-3 py-1.5 text-xs font-medium bg-rose text-white rounded-lg hover:bg-rose/90 transition-colors"
+                >
+                  Generovat
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(socialPost);
+                    setSocialCopied(true);
+                    setTimeout(() => setSocialCopied(false), 2000);
+                  }}
+                  disabled={!socialPost}
+                  className="px-3 py-1.5 text-xs font-medium bg-nude-100 text-espresso rounded-lg hover:bg-nude-200 transition-colors disabled:opacity-40"
+                >
+                  {socialCopied ? "Zkopírováno!" : "Kopírovat"}
+                </button>
+                <span className="text-xs text-muted ml-auto">
+                  {socialPost.length}/2200 znaků
+                </span>
+              </div>
             </div>
           </Card>
         )}

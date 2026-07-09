@@ -22,6 +22,7 @@ const createBlogSchema = z.object({
   metaTitle: z.string().max(200).optional(),
   metaDescription: z.string().max(500).optional(),
   ogImage: z.string().url().optional(),
+  socialPost: z.string().max(2200).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -90,6 +91,7 @@ export async function POST(request: NextRequest) {
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
       ogImage: data.ogImage,
+      socialPost: data.socialPost,
     },
   });
 
