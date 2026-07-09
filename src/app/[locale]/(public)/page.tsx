@@ -36,11 +36,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://www.hairland.cz",
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
+      images: [
+        {
+          url: "https://www.hairland.cz/hero-vzornik.jpg",
+          width: 735,
+          height: 707,
+          alt: t("homeTitle"),
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${t("homeTitle")} | Hairland`,
       description: t("homeDescription"),
+      images: ["https://www.hairland.cz/hero-vzornik.jpg"],
     },
   };
 }
