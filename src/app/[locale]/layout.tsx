@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -16,5 +17,6 @@ export default async function LocaleLayout({
   if (!locale || !routing.locales.includes(locale as any)) {
     notFound();
   }
+  setRequestLocale(locale);
   return children;
 }

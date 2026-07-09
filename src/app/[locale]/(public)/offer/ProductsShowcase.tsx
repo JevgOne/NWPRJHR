@@ -45,7 +45,7 @@ interface PublicProduct {
 interface ShowcaseProps {
   userRole?: string | null;
   discountPct?: number;
-  initialProducts?: PublicProduct[];
+  initialProducts: PublicProduct[];
 }
 
 export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }: ShowcaseProps) {
@@ -55,9 +55,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [products, setProducts] = useState<PublicProduct[]>(initialProducts ?? []);
-  const [allProducts, setAllProducts] = useState<PublicProduct[]>(initialProducts ?? []);
-  const [loading, setLoading] = useState(!initialProducts);
+  const allProducts = initialProducts;
   const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -154,24 +152,9 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch all products once — skip if initialProducts provided from server
-  useEffect(() => {
-    if (initialProducts) return;
-    setLoading(true);
-    fetch("/api/public/products")
-      .then((r) => r.json())
-      .then((data) => {
-        setAllProducts(data.data ?? []);
-        setProducts(data.data ?? []);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [initialProducts]);
-
-  // Apply filters client-side from allProducts (no extra fetch)
-  useEffect(() => {
-    if (allProducts.length === 0) return;
-    const filtered = allProducts.filter((p) => {
+  // Filter products client-side via useMemo (runs during SSR too)
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((p) => {
       if (activeCategory !== "ALL" && p.category !== activeCategory) return false;
       if (activeOrigin && p.origin !== activeOrigin) return false;
       if (activeTexture && p.texture !== activeTexture) return false;
@@ -197,12 +180,11 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
       }
       return true;
     });
-    setProducts(filtered);
   }, [allProducts, activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch, activeSelling]);
 
   // Flatten to 1 card per variant, sort by stock (descending)
   const sortedProducts = useMemo(() => {
-    const priced = [...products].filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 || (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0)));
+    const priced = filteredProducts.filter((p) => p.variants.some((v) => v.retailPricePerGram > 0 || (v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0)));
     const flat = flattenProductVariants(priced);
     return flat.sort((a, b) => {
       const va = a.variants[0];
@@ -211,7 +193,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
       const sb = (vb?.availableGrams ?? 0) + (vb?.availablePieces ?? 0);
       return sb - sa;
     });
-  }, [products]);
+  }, [filteredProducts]);
 
   const categoryLabel = (cat: string) => {
     if (cat === "ALL") return tCommon("all");
@@ -422,15 +404,11 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
       </FilterDrawer>
 
       {/* Results count */}
-      {!loading && (
-        <div className="text-xs text-muted mb-3">
-          {t("offer.productCount", { count: sortedProducts.length })}
-        </div>
-      )}
+      <div className="text-xs text-muted mb-3">
+        {t("offer.productCount", { count: sortedProducts.length })}
+      </div>
 
-      {loading ? (
-        <p className="text-muted">{tCommon("loading")}</p>
-      ) : sortedProducts.length === 0 ? (
+      {sortedProducts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted mb-3">{t("products.noProducts")}</p>
           {hasActiveFilters && (

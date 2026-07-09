@@ -47,40 +47,41 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const BLOB = "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair";
 
-const storeJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Store",
-  name: "Hairland",
-  url: "https://www.hairland.cz",
-  description:
-    "Prémiové surové vlasy k prodloužení. Zpracování na zakázku — clip-in, tape-in, micro ring. Přímý import, skladem v Praze.",
-  image: "https://www.hairland.cz/icons/icon-512x512.png",
-  logo: "https://www.hairland.cz/icons/icon-512x512.png",
-  telephone: "+420608553103",
-  priceRange: "500 Kč - 17 000 Kč",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Školská 660/3",
-    addressLocality: "Praha",
-    postalCode: "110 00",
-    addressCountry: "CZ",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 50.0804,
-    longitude: 14.4261,
-  },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:00",
-      closes: "18:00",
+function buildStoreJsonLd(description: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name: "Hairland",
+    url: "https://www.hairland.cz",
+    description,
+    image: "https://www.hairland.cz/icons/icon-512x512.png",
+    logo: "https://www.hairland.cz/icons/icon-512x512.png",
+    telephone: "+420608553103",
+    priceRange: "500 Kč - 17 000 Kč",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Školská 660/3",
+      addressLocality: "Praha",
+      postalCode: "110 00",
+      addressCountry: "CZ",
     },
-  ],
-  email: "info@hairland.cz",
-  sameAs: ["https://www.instagram.com/hairland.cz"],
-};
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 50.0804,
+      longitude: 14.4261,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
+    email: "info@hairland.cz",
+    sameAs: ["https://www.instagram.com/hairland.cz"],
+  };
+}
 
 const webSiteJsonLd = {
   "@context": "https://schema.org",
@@ -114,7 +115,7 @@ export default async function LandingPage() {
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStoreJsonLd(t("landing.heroSubtitle"))) }}
       />
       <script
         type="application/ld+json"
