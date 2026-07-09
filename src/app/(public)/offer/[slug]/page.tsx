@@ -787,14 +787,16 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             <span>✂️ {t("productDetail.deliveryCustom")}</span>
             <span>🧾 {t("productDetail.deliveryInvoice")}</span>
           </div>
+        </div>
+      </div>
 
-          {/* Reviews */}
-          <Suspense fallback={<div className="mt-8 border-t border-line pt-6 h-40 animate-pulse bg-nude-50 rounded-2xl" />}>
-            <ProductReviews productId={product.id} />
-          </Suspense>
+      {/* Reviews — full width */}
+      <Suspense fallback={<div className="mt-8 border-t border-line pt-6 h-40 animate-pulse bg-nude-50 rounded-2xl" />}>
+        <ProductReviews productId={product.id} />
+      </Suspense>
 
-          {/* Related products */}
-          {await (async () => {
+      {/* Related products — full width */}
+      {await (async () => {
         const candidates = await prisma.product.findMany({
           where: {
             archived: false,
@@ -820,7 +822,6 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           take: 20,
         });
 
-        // Score by similarity: same category +3, same origin +2, same texture +1, same colorTone +1
         const scored = candidates.map((rp) => {
           let score = 0;
           if (rp.category === product.category) score += 3;
@@ -847,7 +848,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         }));
 
         return (
-          <section className="mt-8 pt-6 border-t border-line">
+          <section className="mt-12 pt-8 border-t border-line">
             <h2 className="text-lg font-bold text-ink mb-4">
               {t("productDetail.relatedProducts")}
             </h2>
@@ -859,8 +860,6 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           </section>
         );
       })()}
-        </div>
-      </div>
     </div>
   );
 }
