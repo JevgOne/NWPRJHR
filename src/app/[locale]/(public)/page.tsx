@@ -104,9 +104,10 @@ const organizationJsonLd = {
 };
 
 export default async function LandingPage() {
-  const [t, tCategory, stylists, allProducts] = await Promise.all([
+  const [t, tCategory, tPt, stylists, allProducts] = await Promise.all([
     getTranslations("public"),
     getTranslations("category"),
+    getTranslations("processingType"),
     getCachedStylists(),
     getCachedAllProducts(),
   ]);
@@ -125,39 +126,71 @@ export default async function LandingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      {/* Hero — text + benefits + product slider */}
-      <section className="bg-white pt-12 pb-8">
+      {/* Hero — compact, clean */}
+      <section className="bg-white pt-8 sm:pt-12 pb-8 sm:pb-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl lg:text-4xl font-bold text-ink mb-3">
+          <div className="text-center mb-4 sm:mb-6">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink mb-2">
               {t("landing.heroTitle")}
             </h1>
-            <p className="text-muted mb-4 max-w-xl mx-auto">
+            <p className="text-sm sm:text-base text-muted max-w-lg mx-auto">
               {t("landing.heroSubtitle")}
             </p>
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted">
-              <span>{t("landing.badgeInStock")}</span>
-              <span>{t("landing.badgeCustom")}</span>
-              <span>{t("landing.badgeDelivery")}</span>
-              <span>{t("landing.badgeOrigin")}</span>
-            </div>
           </div>
 
-          {/* Product slider — SSR: products fetched on server, passed as props */}
+          {/* Hero image */}
+          <div className="relative aspect-[4/3] sm:aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6 max-w-4xl mx-auto">
+            <Image src="/hero-vzornik.jpg" alt={t("landing.heroImageAlt")} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
+          </div>
+
+          {/* Trust badges — H2 + H3 */}
+          <h2 className="sr-only">{t("landing.whyHairland")}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-x-6 mb-4 sm:mb-6">
+            {([
+              { titleKey: "badgeNatural", descKey: "badgeNaturalDesc" },
+              { titleKey: "badgeImport", descKey: "badgeImportDesc" },
+              { titleKey: "badgeInvoice", descKey: "badgeInvoiceDesc" },
+              { titleKey: "badgeOrigin", descKey: "badgeOriginDesc" },
+            ] as const).map(({ titleKey, descKey }) => (
+              <div key={titleKey} className="text-center py-2 sm:py-3">
+                <h3 className="font-semibold text-ink text-xs sm:text-sm">
+                  {t(`landing.${titleKey}`)}
+                </h3>
+                <p className="text-[11px] text-muted">
+                  {t(`landing.${descKey}`)}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Processing type links */}
+          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+            {(["clip-in", "tape-in", "keratin", "micro-ring", "weft"] as const).map((catSlug) => (
+              <Link
+                key={catSlug}
+                href={`/offer/${catSlug}`}
+                className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-xs sm:text-sm font-medium"
+              >
+                {tPt(`${catSlug}.name` as any)}
+              </Link>
+            ))}
+          </div>
+
+          {/* Product slider */}
           <div className="px-4">
             <HeroProductSlider products={allProducts} />
           </div>
 
-          <div className="flex gap-3 justify-center mt-6">
+          <div className="flex gap-3 justify-center mt-4 sm:mt-6">
             <Link
               href="/offer"
-              className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-rose hover:bg-rose-deep text-white text-xs sm:text-sm font-medium rounded-lg transition-colors"
             >
               {t("landing.viewFullOffer")}
             </Link>
             <Link
               href="/contact"
-              className="px-5 py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-sm font-medium rounded-lg transition-colors"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-xs sm:text-sm font-medium rounded-lg transition-colors"
             >
               {t("landing.contactUs")}
             </Link>
@@ -166,9 +199,9 @@ export default async function LandingPage() {
       </section>
 
       {/* Product categories with photos */}
-      <section className="py-10 bg-nude-50">
+      <section className="py-10 sm:py-14 bg-nude-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-lg font-bold text-ink text-center mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-6">
             {t("landing.chooseFromOffer")}
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -201,10 +234,10 @@ export default async function LandingPage() {
       </section>
 
       {/* Color palette */}
-      <section className="py-16 bg-white">
+      <section className="py-10 sm:py-14 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-ink mb-3">
+            <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3">
               {t("landing.colorPaletteTitle")}
             </h2>
             <p className="text-muted max-w-xl mx-auto">
@@ -247,9 +280,9 @@ export default async function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-16 bg-nude-50">
+      <section className="py-10 sm:py-14 bg-nude-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ink text-center mb-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-3">
             {t("landing.howItWorksTitle")}
           </h2>
           <p className="text-muted text-center mb-10 max-w-xl mx-auto">
@@ -273,9 +306,9 @@ export default async function LandingPage() {
       </section>
 
       {/* Trust section — 4 items, no duplicates */}
-      <section className="py-16 bg-white">
+      <section className="py-10 sm:py-14 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ink text-center mb-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-3">
             {t("landing.trustTitle")}
           </h2>
           <p className="text-muted text-center mb-10 max-w-xl mx-auto">
@@ -319,10 +352,10 @@ export default async function LandingPage() {
 
       {/* Partner stylists */}
       {stylists.length > 0 && (
-        <section className="py-16 bg-white">
+        <section className="py-10 sm:py-14 bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-ink mb-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3">
                 {t("landing.stylistsTitle")}
               </h2>
               <p className="text-muted max-w-xl mx-auto">
