@@ -555,7 +555,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
         {/* Left: Photo gallery — sticky on desktop */}
-        <div className="lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+        <div className="lg:sticky lg:top-20 lg:self-start">
           <PhotoGallery photos={product.photos} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
         </div>
 
