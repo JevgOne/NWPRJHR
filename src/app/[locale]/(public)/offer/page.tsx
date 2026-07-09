@@ -39,11 +39,20 @@ export async function generateMetadata({
         url: "https://www.hairland.cz/offer",
         siteName: "Hairland",
         locale: OG_LOCALES[locale] ?? "cs_CZ",
+        images: [
+          {
+            url: "https://www.hairland.cz/hero-vzornik.jpg",
+            width: 735,
+            height: 707,
+            alt: "Hairland — prémiové vlasy k prodloužení",
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title: `${defaultTitle} | Hairland`,
         description: defaultDesc,
+        images: ["https://www.hairland.cz/hero-vzornik.jpg"],
       },
     };
   }

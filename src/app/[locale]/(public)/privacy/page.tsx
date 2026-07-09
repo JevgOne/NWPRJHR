@@ -15,11 +15,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://www.hairland.cz/privacy",
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
+      images: [
+        {
+          url: "https://www.hairland.cz/hero-vzornik.jpg",
+          width: 735,
+          height: 707,
+          alt: "Hairland — prémiové vlasy k prodloužení",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${t("privacyTitle")} | Hairland`,
       description: t("privacyDescription"),
+      images: ["https://www.hairland.cz/hero-vzornik.jpg"],
     },
   };
 }
