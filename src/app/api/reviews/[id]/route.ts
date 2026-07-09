@@ -76,6 +76,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
   }
 
   revalidateTag("reviews", "max");
+  revalidateTag("badges", "max");
 
   return NextResponse.json(review);
 }
@@ -99,6 +100,7 @@ export async function DELETE(_request: NextRequest, { params }: Props) {
   });
 
   revalidateTag("reviews", "max");
+  revalidateTag("badges", "max");
 
   return NextResponse.json({ success: true });
 }

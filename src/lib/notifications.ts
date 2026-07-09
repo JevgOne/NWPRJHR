@@ -1,6 +1,7 @@
 import type { Notification, NotificationType, Role, Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import { sendNotificationEmail } from "./email";
+import { revalidateTag } from "next/cache";
 
 /**
  * Create an in-app notification and optionally send email.
@@ -22,6 +23,9 @@ export async function createNotification(input: {
       data: (input.data ?? {}) as Prisma.InputJsonValue,
     },
   });
+
+  // Revalidate sidebar badge counts
+  try { revalidateTag("badges", "max"); } catch { /* may fail in non-RSC context */ }
 
   if (input.sendEmail) {
     const recipient = await prisma.user.findUniqueOrThrow({
