@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { StockInForm } from "@/components/inventory/StockInForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function StockInPage() {
   const session = await auth();
   if (!session) redirect("/login");
