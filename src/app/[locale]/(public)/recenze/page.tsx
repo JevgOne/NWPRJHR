@@ -286,18 +286,18 @@ export default async function RecenzePage({
       {/* Write review section — asymmetric: form 2/3, Google CTA 1/3 */}
       <div className="border-t border-line/50 pt-12">
         <h2 className="text-xl font-bold text-ink mb-6">{t("writeReview")}</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 items-stretch">
           {/* Our review form (only client component — needs interactivity) */}
-          <div>
+          <div className="min-h-[160px]">
             <WriteReviewForm />
           </div>
 
-          {/* Google CTA — compact sidebar */}
+          {/* Google CTA */}
           <a
             href="https://g.page/r/CdauuX262QcvEAE/review"
             target="_blank"
             rel="noopener noreferrer"
-            className="group bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 border border-blue-100/50 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center gap-4 h-fit"
+            className="group bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 border border-blue-100/50 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center gap-4 min-h-[160px]"
           >
             <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
               <svg className="w-8 h-8" viewBox="0 0 24 24">

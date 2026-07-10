@@ -100,9 +100,17 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full py-2.5 px-4 rounded-xl border-2 border-dashed border-line text-sm text-muted hover:border-blush-300 hover:text-rose transition-colors"
+        className="w-full bg-gradient-to-br from-nude-50 to-blush-50/30 rounded-2xl p-6 border border-blush-100/50 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center gap-4 h-full min-h-[160px]"
       >
-        {t("writeReview")}
+        <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+          <svg className="w-7 h-7 text-rose" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+          </svg>
+        </div>
+        <div>
+          <span className="block text-sm font-semibold text-ink">{t("writeReview")}</span>
+          <span className="block text-xs text-muted mt-1">Hairland.cz</span>
+        </div>
       </button>
     );
   }
