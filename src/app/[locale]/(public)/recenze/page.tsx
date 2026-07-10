@@ -73,10 +73,10 @@ function RatingBar({ label, avg, count }: { label: string; avg: number; count: n
   if (count === 0) return null;
   const pct = Math.round((avg / 5) * 100);
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
       <span className="text-sm text-muted w-36 flex-shrink-0">{label}</span>
-      <div className="flex-1 h-2.5 bg-nude-100 rounded-full overflow-hidden">
-        <div className="h-full bg-yellow-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
+      <div className="flex-1 h-2 bg-blush-100/50 rounded-full overflow-hidden">
+        <div className="h-full bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
       </div>
       <span className="text-sm font-semibold text-ink w-12 text-right">{avg.toFixed(1)}/5</span>
     </div>
@@ -167,29 +167,29 @@ export default async function RecenzePage({
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       )}
 
       {/* H1 */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-2">{t("title")}</h1>
-        <p className="text-muted text-sm">{t("subtitle")}</p>
+      <div className="text-center mb-10">
+        <h1 className="text-3xl sm:text-4xl font-bold text-ink mb-3 tracking-tight">{t("title")}</h1>
+        <p className="text-muted">{t("subtitle")}</p>
       </div>
 
       {/* Aggregate overview */}
       {totalCount > 0 && (
-        <div className="bg-nude-50 rounded-2xl p-6 sm:p-8 mb-8">
-          <div className="flex flex-col sm:flex-row gap-8">
+        <div className="bg-gradient-to-br from-nude-50 via-white to-blush-50/40 rounded-3xl p-8 sm:p-10 mb-10 border border-blush-100/40 shadow-sm">
+          <div className="flex flex-col sm:flex-row gap-8 items-center sm:items-start">
             <div className="text-center sm:text-left flex-shrink-0">
-              <div className="text-5xl font-bold text-ink">{avgRating.toFixed(1)}</div>
+              <div className="text-6xl font-bold text-ink tracking-tight">{avgRating.toFixed(1)}</div>
               <Stars rating={Math.round(avgRating)} size="lg" />
-              <div className="text-sm text-muted mt-1">
+              <div className="text-sm text-muted mt-2">
                 {totalCount} {t("reviewCount", { count: totalCount })}
               </div>
             </div>
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-4 w-full">
               <RatingBar label={t("qualityLabel")} avg={avgQuality} count={qualityRatings.length} />
               <RatingBar label={t("communicationLabel")} avg={avgComm} count={commRatings.length} />
               <RatingBar label={t("speedLabel")} avg={avgSpeed} count={speedRatings.length} />
@@ -199,29 +199,29 @@ export default async function RecenzePage({
       )}
 
       {/* Filters — server-side via URL params */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-8">
         {sourceFilters.map((f) => (
           <Link
             key={f.key}
             href={buildFilterUrl(f.key, starFilter)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               sourceFilter === f.key
-                ? "bg-espresso text-white"
-                : "bg-nude-50 text-muted hover:bg-nude-100"
+                ? "bg-espresso text-white shadow-sm"
+                : "bg-nude-50 text-muted hover:bg-nude-100 hover:text-ink"
             }`}
           >
             {f.label}
           </Link>
         ))}
-        <div className="w-px bg-line mx-1" />
+        <div className="w-px bg-line/50 mx-1" />
         {[5, 4, 3].map((stars) => (
           <Link
             key={stars}
             href={buildFilterUrl(sourceFilter, starFilter === stars ? null : stars)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
               starFilter === stars
-                ? "bg-espresso text-white"
-                : "bg-nude-50 text-muted hover:bg-nude-100"
+                ? "bg-espresso text-white shadow-sm"
+                : "bg-nude-50 text-muted hover:bg-nude-100 hover:text-ink"
             }`}
           >
             {stars}
@@ -234,80 +234,89 @@ export default async function RecenzePage({
 
       {/* Review cards — fully server-rendered */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
           {filtered.map((review) => (
-            <div key={review.id} className="relative bg-nude-50 rounded-2xl p-5 border border-line">
-              <svg className="absolute top-4 right-4 w-8 h-8 text-blush-100" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
-              </svg>
+            <div key={review.id} className="group relative bg-gradient-to-br from-nude-50 to-blush-50/30 rounded-2xl p-7 border border-blush-100/50 shadow-sm hover:shadow-md transition-shadow">
+              <span className="absolute top-5 left-6 text-5xl leading-none text-rose/10 font-serif select-none">&ldquo;</span>
 
-              <p className="text-sm text-espresso leading-relaxed mb-4 relative">{review.text}</p>
+              <div className="pt-5">
+                <p className="text-base text-ink leading-relaxed mb-5 italic">{review.text}</p>
 
-              <div className="flex items-center gap-2 mb-3">
-                <Stars rating={review.rating} />
-                {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
-                  <span className="text-xs text-muted">
-                    {[
-                      review.ratingQuality && `${t("qualityLabel")} ${review.ratingQuality}/5`,
-                      review.ratingCommunication && `${t("communicationLabel")} ${review.ratingCommunication}/5`,
-                      review.ratingSpeed && `${t("speedLabel")} ${review.ratingSpeed}/5`,
-                    ].filter(Boolean).join(" · ")}
-                  </span>
-                )}
-              </div>
+                <div className="flex items-center gap-3 mb-1">
+                  <Stars rating={review.rating} />
+                  {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
+                    <span className="text-[11px] text-muted">
+                      {[
+                        review.ratingQuality && `${t("qualityLabel")} ${review.ratingQuality}/5`,
+                        review.ratingCommunication && `${t("communicationLabel")} ${review.ratingCommunication}/5`,
+                        review.ratingSpeed && `${t("speedLabel")} ${review.ratingSpeed}/5`,
+                      ].filter(Boolean).join(" · ")}
+                    </span>
+                  )}
+                </div>
 
-              <div className="flex items-center gap-3 pt-3 border-t border-line/50">
-                {review.authorPhoto ? (
-                  <img src={review.authorPhoto} alt={review.authorName} className="w-9 h-9 rounded-full object-cover" />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-blush-100 flex items-center justify-center text-rose font-bold text-sm">
-                    {review.authorName.charAt(0).toUpperCase()}
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-blush-100/60">
+                  {review.authorPhoto ? (
+                    <img src={review.authorPhoto} alt={review.authorName} className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow-sm" />
+                  ) : (
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-rose/80 to-rose-deep/80 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
+                      {review.authorName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm text-ink truncate">{review.authorName}</span>
+                      <SourceBadge source={review.source} />
+                    </div>
+                    {review.authorCity && <div className="text-xs text-muted mt-0.5">{review.authorCity}</div>}
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-sm text-ink truncate">{review.authorName}</span>
-                    <SourceBadge source={review.source} />
-                  </div>
-                  {review.authorCity && <div className="text-xs text-muted">{review.authorCity}</div>}
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 mb-10">
-          <p className="text-muted text-sm">{t("noReviews")}</p>
-          <p className="text-muted text-xs mt-1">{t("noReviewsDesc")}</p>
+        <div className="text-center py-16 mb-12">
+          <div className="text-4xl mb-3 opacity-30">&#x2606;</div>
+          <p className="text-muted">{t("noReviews")}</p>
+          <p className="text-muted text-sm mt-1">{t("noReviewsDesc")}</p>
         </div>
       )}
 
-      {/* Write review section */}
-      <div className="border-t border-line pt-10">
-        <h2 className="text-lg font-bold text-ink mb-4">{t("writeReview")}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Write review section — asymmetric: form 2/3, Google CTA 1/3 */}
+      <div className="border-t border-line/50 pt-12">
+        <h2 className="text-xl font-bold text-ink mb-6">{t("writeReview")}</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
           {/* Our review form (only client component — needs interactivity) */}
           <div>
             <WriteReviewForm />
           </div>
 
-          {/* Google CTA */}
+          {/* Google CTA — compact sidebar */}
           <a
             href="https://g.page/r/CdauuX262QcvEAE/review"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white rounded-2xl p-5 border border-line hover:shadow-md transition-all flex flex-col items-center justify-center text-center gap-3"
+            className="group bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 border border-blue-100/50 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center gap-4 h-fit"
           >
-            <svg className="w-10 h-10" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-            </svg>
+            <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center group-hover:shadow-md transition-shadow">
+              <svg className="w-8 h-8" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              </svg>
+            </div>
             <div>
               <span className="block text-sm font-semibold text-ink">{t("writeOnGoogle")}</span>
-              <span className="block text-xs text-muted mt-0.5">Google recenze</span>
+              <span className="block text-xs text-muted mt-1">Google recenze</span>
             </div>
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 group-hover:gap-2 transition-all">
+              Otevřít
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </span>
           </a>
         </div>
       </div>

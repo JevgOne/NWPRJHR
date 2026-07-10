@@ -77,62 +77,61 @@ export async function ReviewsSection() {
     : null;
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-20 bg-gradient-to-b from-white to-nude-50/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-ink mb-2">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-3 tracking-tight">
             {t("reviews.title")}
           </h2>
           {hasReviews && avgRating && (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-3">
               <Stars rating={Math.round(Number(avgRating))} />
-              <span className="text-lg font-bold text-ink">{avgRating}</span>
+              <span className="text-xl font-bold text-ink">{avgRating}</span>
               <span className="text-sm text-muted">
                 ({t("reviews.reviewCount", { count: reviews.length })})
               </span>
             </div>
           )}
           {!hasReviews && (
-            <p className="text-sm text-muted">{t("reviews.beFirst")}</p>
+            <p className="text-muted">{t("reviews.beFirst")}</p>
           )}
         </div>
 
         {/* Review cards */}
         {hasReviews && (
-          <div className={`${displayed.length === 1 ? "max-w-2xl mx-auto" : displayed.length === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"} mb-10`}>
+          <div className={`${displayed.length === 1 ? "max-w-xl mx-auto" : displayed.length === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"} mb-12`}>
             {displayed.map((review) => (
               <div
                 key={review.id}
-                className="relative bg-nude-50 rounded-2xl p-6 border border-line"
+                className="group relative bg-white rounded-2xl p-7 border border-blush-100/40 shadow-sm hover:shadow-md transition-shadow"
               >
-                {/* Quotation mark */}
-                <svg className="absolute top-5 right-5 w-10 h-10 text-blush-100/60" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
-                </svg>
+                {/* Decorative top accent */}
+                <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-rose/30 to-transparent" />
 
-                <p className="text-base text-espresso leading-relaxed mb-5 relative pr-8">
-                  &ldquo;{review.text}&rdquo;
-                </p>
+                {/* Quote mark */}
+                <span className="absolute top-4 left-6 text-5xl leading-none text-rose/8 font-serif select-none">&ldquo;</span>
 
-                <div className="mb-4">
+                <div className="pt-6">
+                  <p className="text-[15px] text-ink/90 leading-relaxed mb-5 italic">
+                    {review.text}
+                  </p>
+
                   <Stars rating={review.rating} />
-                </div>
 
-                <div className="flex items-center gap-3 pt-4 border-t border-line/50">
-                  <div className="w-10 h-10 rounded-full bg-blush-100 flex items-center justify-center text-rose font-bold">
-                    {review.authorName.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-ink truncate">
+                  <div className="flex items-center gap-3 mt-5 pt-4 border-t border-nude-100">
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-rose to-rose-deep flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
+                      {review.authorName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-semibold text-ink block truncate text-sm">
                         {review.authorName}
                       </span>
-                      <SourceIcon source={review.source} />
+                      <div className="flex items-center gap-1.5 text-xs text-muted mt-0.5">
+                        {review.authorCity && <span>{review.authorCity}</span>}
+                        <SourceIcon source={review.source} />
+                      </div>
                     </div>
-                    {review.authorCity && (
-                      <div className="text-xs text-muted">{review.authorCity}</div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -141,10 +140,10 @@ export async function ReviewsSection() {
         )}
 
         {/* CTA buttons */}
-        <div className={`${hasReviews ? "" : "mt-6"} flex flex-col sm:flex-row items-center justify-center gap-3`}>
+        <div className={`${hasReviews ? "" : "mt-8"} flex flex-col sm:flex-row items-center justify-center gap-3`}>
           <Link
             href="/recenze"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 px-7 py-3 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-full shadow-sm hover:shadow-md transition-all"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -155,7 +154,7 @@ export async function ReviewsSection() {
             href="https://g.page/r/CdauuX262QcvEAE/review"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-ink text-sm font-medium rounded-xl border border-line hover:shadow-md transition-all"
+            className="inline-flex items-center gap-2 px-7 py-3 bg-white text-ink text-sm font-medium rounded-full border border-line hover:shadow-md transition-all"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -168,9 +167,9 @@ export async function ReviewsSection() {
           {hasReviews && (
             <Link
               href="/recenze"
-              className="text-sm text-rose hover:underline"
+              className="text-sm text-rose hover:text-rose-deep font-medium hover:underline underline-offset-4 transition-colors"
             >
-              {t("reviews.viewAll")}
+              {t("reviews.viewAll")} &rarr;
             </Link>
           )}
         </div>
