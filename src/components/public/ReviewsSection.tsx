@@ -210,31 +210,6 @@ export async function ReviewsSection() {
             <span className="text-sm font-medium text-ink">{t("reviews.writeGoogleReview")}</span>
           </a>
 
-          <a
-            href="https://www.instagram.com/hairland.cz/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl border border-line shadow-sm hover:border-pink-200 transition-colors"
-          >
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-              <defs>
-                <linearGradient id="ig-grad" x1="0" y1="24" x2="24" y2="0">
-                  <stop offset="0%" stopColor="#feda75" />
-                  <stop offset="25%" stopColor="#fa7e1e" />
-                  <stop offset="50%" stopColor="#d62976" />
-                  <stop offset="75%" stopColor="#962fbf" />
-                  <stop offset="100%" stopColor="#4f5bd5" />
-                </linearGradient>
-              </defs>
-              <rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig-grad)" strokeWidth="2" />
-              <circle cx="12" cy="12" r="5" stroke="url(#ig-grad)" strokeWidth="2" />
-              <circle cx="18" cy="6" r="1.5" fill="url(#ig-grad)" />
-            </svg>
-            <div>
-              <div className="font-semibold text-sm text-ink">@hairland.cz</div>
-              <div className="text-[10px] text-muted">{t("reviews.followOnInstagram")}</div>
-            </div>
-          </a>
         </div>
       </div>
     </section>
