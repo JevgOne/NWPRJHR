@@ -39,19 +39,19 @@
     "registerSalon": "Zaregistrujte svůj salon"
   },
   "metadata": {
-    "description": "Hairland — prodej prémiových vlasů. Přímý import, osobní přístup, trojjazyčná podpora.",
-    "homeTitle": "Prémiové přírodní vlasy k prodloužení",
-    "homeDescription": "Prémiové přírodní vlasy k prodloužení z přímého importu. Zpracování na zakázku do 7 dnů — clip-in, tape-in, keratin, micro ring. Osobní odběr Praha zdarma.",
-    "blogTitle": "Blog o prodloužení vlasů — tipy, trendy a péče",
-    "blogDescription": "Praktické články o prodloužení vlasů, správné péči, výběru metody a nejnovějších trendech v oboru.",
-    "contactTitle": "Kontakt — osobní konzultace zdarma",
-    "contactDescription": "Kontaktujte nás pro osobní konzultaci v Praze. Přijedeme s ukázkami vlasů zdarma a pomůžeme s výběrem.",
-    "aboutTitle": "O nás",
-    "aboutDescription": "Hairland — prodej prémiových přírodních vlasů k prodloužení. Přímý import, osobní přístup a trojjazyčná podpora.",
-    "kadernicTitle": "Spolupracující kadeřnice a salony",
-    "kadernicDescription": "Seznam ověřených kadeřnic a salonů spolupracujících s Hairland. Najděte specialistku na prodloužení vlasů ve vašem okolí.",
-    "recenzeTitle": "Recenze zákazníků",
-    "recenzeDescription": "Přečtěte si recenze zákazníků na prémiové vlasy Hairland. Zkušenosti s kvalitou, zpracováním a zákaznickým servisem.",
+    "description": "Hairland — prémiové RAW vlasy k prodloužení. Přímý import, zpracování na zakázku, osobní konzultace Praha.",
+    "homeTitle": "Prémiové RAW vlasy k prodloužení",
+    "homeDescription": "100% přírodní RAW vlasy k prodloužení — slovanské a evropské. Zpracování na zakázku do 7 dnů: clip-in, tape-in, keratin, micro ring. Osobní konzultace Praha zdarma.",
+    "blogTitle": "Poradce prodloužení vlasů — jak vybrat, péče, srovnání",
+    "blogDescription": "Jak vybrat správnou metodu prodloužení vlasů? Clip-in, tape-in nebo keratin? Rady od expertů, péče o prodloužené vlasy, srovnání kvality.",
+    "contactTitle": "Kontakt — osobní konzultace vlasů Praha",
+    "contactDescription": "Kontaktujte Hairland pro osobní konzultaci výběru vlasů k prodloužení. Osobní schůzka Praha zdarma s ukázkami. Tel, email nebo online.",
+    "aboutTitle": "O nás — prémiové vlasy z přímého importu",
+    "aboutDescription": "Hairland — prémiové RAW vlasy k prodloužení z přímého importu. Slovanské a evropské vlasy bez zprostředkovatelů. Osobní konzultace Praha.",
+    "kadernicTitle": "Kadeřnice a salony — spolupráce",
+    "kadernicDescription": "Ověřené kadeřnice a salony spolupracující s Hairland. Najděte specialistku na prodloužení vlasů ve vašem okolí.",
+    "recenzeTitle": "Recenze zákazníků na vlasy Hairland",
+    "recenzeDescription": "Recenze zákazníků na prémiové vlasy Hairland. Zkušenosti s kvalitou RAW vlasů, zpracováním na zakázku a zákaznickým servisem.",
     "dopravaTitle": "Doprava a doručení",
     "dopravaDescription": "Informace o dopravě a doručení vlasů. Osobní odběr po Praze zdarma, zásilka Českou poštou po celé ČR.",
     "obchodniTitle": "Obchodní podmínky",
@@ -538,8 +538,8 @@
     },
     "register": {
       "title": "B2B Registrace",
-      "pageTitle": "B2B Registrace",
-      "pageDescription": "Zaregistrujte se jako salon nebo kadeřnice pro velkoobchodní nákup vlasů",
+      "pageTitle": "Registrace pro kadeřnice a salony",
+      "pageDescription": "Zaregistrujte se pro velkoobchodní nákup prémiových RAW vlasů. Zvýhodněné B2B ceny pro salony a kadeřnice.",
       "subtitle": "B2B účet pro zvýhodněný nákup vlasů. Po ověření aktivujeme přístup — obvykle do 24 hodin.",
       "typeSection": "Typ účtu",
       "typeSalon": "Salon / Studio",
@@ -703,8 +703,8 @@
       "registerSalon": "Nakupujete u nás? Nechte se zde uvést"
     },
     "offer": {
-      "metaTitle": "Nabídka prémiových vlasů | Virgin, Premium, Standard",
-      "metaDescription": "Široký výběr prémiových surových vlasů k prodloužení. Zpracování na zakázku — clip-in, tape-in, keratin. Skladem v Praze.",
+      "metaTitle": "RAW vlasy k prodloužení — slovanské a evropské",
+      "metaDescription": "Prémiové RAW vlasy k prodloužení — virgin, premium, standard. Zpracování na zakázku: clip-in, tape-in, keratin, micro ring. Doručení do 7 dnů.",
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
       "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete zpracování na clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
       "bannerCta": "Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.",
@@ -1479,8 +1479,8 @@
     "deleteCustomerConfirm": "Opravdu chcete anonymizovat data tohoto zákazníka?"
   },
   "buyback": {
-    "pageTitle": "Výkup vlasů — prodejte své přírodní vlasy",
-    "pageDescription": "Vykupujeme přírodní vlasy od 40 cm. Férové ceny podle délky a barvy, okamžitá platba.",
+    "pageTitle": "Výkup vlasů Praha — férové ceny, platba ihned",
+    "pageDescription": "Vykupujeme zdravé přírodní vlasy od 40 cm. Okamžitá platba, férové ceny podle délky a barvy. Osobní schůzka Praha nebo zaslání poštou.",
     "heroTitle": "Vykoupíme vaše vlasy",
     "heroSubtitle": "Máte dlouhé přírodní vlasy a chcete je prodat? Nabídneme férovou cenu podle délky, barvy a kvality. Platba ihned.",
     "heroBadge1": "Od 40 cm",
@@ -1579,8 +1579,8 @@
     "jak_dlouho_vydrzi_content": "<h2>Životnost podle metody</h2><p><strong>Clip-in:</strong> při správné péči 1–2 roky. Záleží na frekvenci nošení.</p><p><strong>Tape-in:</strong> pásky vydrží 6–8 týdnů, vlasy samotné lze přelepit 2–3×.</p><p><strong>Keratin:</strong> spoj vydrží 3–5 měsíců. Vlasy lze znovu aplikovat.</p><p><strong>Micro ring:</strong> 2–4 měsíce mezi údržbami. Vlasy lze přesadit.</p><h2>Co ovlivňuje životnost</h2><ul><li>Kvalita vlasů — virgin a remy vydrží déle než standard.</li><li>Péče — správné mytí, česání a styling prodlužují životnost.</li><li>Frekvence tepelného stylingu — méně žehlení = delší životnost.</li><li>Typ vlastních vlasů — mastné vlasy mohou zkrátit životnost lepených spojů.</li></ul>"
   },
   "b2b": {
-    "pageTitle": "Pro kadeřníky a salony",
-    "pageDescription": "Spolupracujte s Hairland — zvýhodněné ceny na prémiové vlasy pro profesionály",
+    "pageTitle": "Vlasy pro kadeřnice — velkoobchod RAW vlasů",
+    "pageDescription": "Dodáváme prémiové RAW vlasy k prodloužení pro kadeřnické salony. Slovanské a evropské vlasy, B2B spolupráce, množstevní slevy.",
     "heroTitle": "Spolupracujte s Hairland",
     "heroSubtitle": "Získejte zvýhodněné ceny na prémiové vlasy. Program pro salony a samostatné kadeřnice.",
     "salonCard": {
