@@ -10,19 +10,20 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const [stylist, locale] = await Promise.all([
+  const [stylist, locale, t] = await Promise.all([
     prisma.stylist.findUnique({
       where: { slug },
       select: { name: true, bio: true, photo: true },
     }),
     getLocale(),
+    getTranslations("public"),
   ]);
   if (!stylist) return {};
   return {
-    title: `${stylist.name} — Kadeřnice`,
+    title: `${stylist.name} — ${t("landing.stylistMetaLabel")}`,
     description:
       stylist.bio?.slice(0, 155) ||
-      `${stylist.name} — spolupracující kadeřnice Hairland`,
+      `${stylist.name} — ${t("landing.stylistMetaFallback")}`,
     alternates: getAlternates(`/kadernice/${slug}`),
     openGraph: {
       ...(stylist.photo && { images: [{ url: stylist.photo, alt: stylist.name, width: 400, height: 400 }] }),

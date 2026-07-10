@@ -124,6 +124,13 @@ export async function generateAttributeMetadata(
       url: `https://www.hairland.cz/offer/${prefix}/${valueSlug}`,
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
+      images: [{ url: "https://www.hairland.cz/hero-vzornik.png", width: 1672, height: 941, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: `${title} | Hairland`,
+      description,
+      images: ["https://www.hairland.cz/hero-vzornik.png"],
     },
   };
 }

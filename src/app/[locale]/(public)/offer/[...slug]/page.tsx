@@ -224,11 +224,11 @@ async function generateProductMetadataFromProduct(
   const title = product.metaTitle || autoTitle;
 
   const descParts: string[] = [product.name];
-  if (product.origin) descParts.push(`původ ${product.origin}`);
-  if (colorNames.length > 0) descParts.push(colorNames.length <= 4 ? colorNames.join(", ") : `${colorNames.length} barev`);
+  if (product.origin) descParts.push(`${t("landing.metaOrigin")} ${product.origin}`);
+  if (colorNames.length > 0) descParts.push(colorNames.length <= 4 ? colorNames.join(", ") : `${colorNames.length} ${t("landing.metaColors")}`);
   if (product.texture) descParts.push(product.texture.toLowerCase());
   if (lengthStr) descParts.push(lengthStr);
-  descParts.push("Osobní odběr Praha zdarma, zpracování na zakázku.");
+  descParts.push(t("landing.metaSuffix"));
   const autoDescription = descParts.join(". ").slice(0, 155);
   const description = product.metaDescription || autoDescription;
 
@@ -471,9 +471,9 @@ async function ProductDetailView({
 
   // Product schema JSON-LD
   const descParts: string[] = [productName];
-  if (product.origin) descParts.push(`původ ${product.origin}`);
+  if (product.origin) descParts.push(`${t("landing.metaOrigin")} ${product.origin}`);
   if (product.texture) descParts.push(product.texture.toLowerCase());
-  descParts.push("Prémiové vlasy Hairland.");
+  descParts.push(t("landing.metaSuffix"));
   const fallbackDesc = descParts.join(". ").slice(0, 160);
   const schemaDesc = description
     ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "…")
