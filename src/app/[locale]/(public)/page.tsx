@@ -123,7 +123,7 @@ export default async function LandingPage() {
   ]);
 
   return (
-    <div className="overflow-x-hidden">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStoreJsonLd(t("landing.heroSubtitle"))) }}

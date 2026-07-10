@@ -58,14 +58,17 @@ body {
   animation: slideUp 0.3s ease-out;
 }
 
-/* Scroll reveal animations */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
+/* Scroll reveal animations — desktop only to avoid iOS scroll issues */
+@media (min-width: 768px) {
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
 
-.scroll-revealed {
-  opacity: 1;
-  transform: translateY(0);
+  .scroll-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
