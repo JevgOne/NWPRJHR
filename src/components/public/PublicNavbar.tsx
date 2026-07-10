@@ -112,6 +112,14 @@ export function PublicNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount } = useInquiryCart();
   const [session, setSession] = useState<NavSession | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     fetch("/api/auth/session")
@@ -161,7 +169,7 @@ export function PublicNavbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-line shadow-sm">
+    <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-xl border-b border-line shadow-sm" : "bg-white border-b border-transparent"}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex-shrink-0 flex items-center gap-2">

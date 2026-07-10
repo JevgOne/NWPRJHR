@@ -14,6 +14,6 @@ export const config = {
     // - api routes, _next/static, _next/image
     // - favicon, icon, sitemap, robots, manifest, sw, icons
     // - login, admin (app) paths, salon portal paths
-    "/((?!api|_next/static|_next/image|favicon\\.ico|icon\\.svg|logo-.*\\.svg|seal-.*\\.svg|hero-vzornik\\.jpg|sitemap\\.xml|robots\\.txt|manifest\\.json|sw\\.js|icons/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon/).*)",
+    "/((?!api|_next/static|_next/image|favicon\\.ico|icon\\.svg|logo-.*\\.svg|seal-.*\\.svg|hero-vzornik\\.png|sitemap\\.xml|robots\\.txt|manifest\\.json|sw\\.js|icons/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon/).*)",
   ],
 };

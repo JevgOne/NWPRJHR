@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
         {
-          url: "https://www.hairland.cz/hero-vzornik.jpg",
+          url: "https://www.hairland.cz/hero-vzornik.png",
           width: 735,
           height: 707,
           alt: "Hairland — prémiové vlasy k prodloužení",
@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: `${t("reklamacniTitle")} | Hairland`,
       description: t("reklamacniDescription"),
-      images: ["https://www.hairland.cz/hero-vzornik.jpg"],
+      images: ["https://www.hairland.cz/hero-vzornik.png"],
     },
   };
 }

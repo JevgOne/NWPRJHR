@@ -8,6 +8,7 @@ import { getHairColor } from "@/lib/hair-colors";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
+import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 
 const getCachedStylists = unstable_cache(
@@ -38,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
         {
-          url: "https://www.hairland.cz/hero-vzornik.jpg",
+          url: "https://www.hairland.cz/hero-vzornik.png",
           width: 735,
           height: 707,
           alt: t("homeTitle"),
@@ -49,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: `${t("homeTitle")} | Hairland`,
       description: t("homeDescription"),
-      images: ["https://www.hairland.cz/hero-vzornik.jpg"],
+      images: ["https://www.hairland.cz/hero-vzornik.png"],
     },
   };
 }
@@ -139,67 +140,91 @@ export default async function LandingPage() {
       <section className="bg-white pt-8 sm:pt-12 pb-8 sm:pb-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-4 sm:mb-6">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink mb-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink mb-2 leading-tight">
               {t("landing.heroTitle")}
             </h1>
-            <p className="text-sm sm:text-base text-muted max-w-lg mx-auto">
+            <p className="text-sm sm:text-base text-muted max-w-lg mx-auto font-light">
               {t("landing.heroSubtitle")}
             </p>
           </div>
 
           {/* Hero image */}
-          <div className="relative aspect-[4/3] sm:aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6 max-w-4xl mx-auto">
-            <Image src="/hero-vzornik.jpg" alt={t("landing.heroImageAlt")} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
+          <div className="relative aspect-[4/3] sm:aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-8 sm:mb-10 max-w-4xl mx-auto">
+            <Image src="/hero-vzornik.png" alt={t("landing.heroImageAlt")} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
           </div>
 
           {/* Trust badges — H2 + H3 */}
           <h2 className="sr-only">{t("landing.whyHairland")}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-x-6 mb-4 sm:mb-6">
             {([
-              { titleKey: "badgeNatural", descKey: "badgeNaturalDesc" },
-              { titleKey: "badgeImport", descKey: "badgeImportDesc" },
-              { titleKey: "badgeInvoice", descKey: "badgeInvoiceDesc" },
-              { titleKey: "badgeOrigin", descKey: "badgeOriginDesc" },
-            ] as const).map(({ titleKey, descKey }) => (
-              <div key={titleKey} className="text-center py-2 sm:py-3">
-                <h3 className="font-semibold text-ink text-xs sm:text-sm">
-                  {t(`landing.${titleKey}`)}
-                </h3>
-                <p className="text-[11px] text-muted">
-                  {t(`landing.${descKey}`)}
-                </p>
+              { titleKey: "badgeNatural" as const, descKey: "badgeNaturalDesc" as const, icon: (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z" />
+                </svg>
+              )},
+              { titleKey: "badgeImport" as const, descKey: "badgeImportDesc" as const, icon: (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                </svg>
+              )},
+              { titleKey: "badgeInvoice" as const, descKey: "badgeInvoiceDesc" as const, icon: (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                </svg>
+              )},
+              { titleKey: "badgeOrigin" as const, descKey: "badgeOriginDesc" as const, icon: (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+              )},
+            ]).map(({ titleKey, descKey, icon }) => (
+              <div key={titleKey} className="flex flex-col items-center text-center py-2 sm:py-3 gap-1.5">
+                <div className="text-rose/70">
+                  {icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-ink text-xs sm:text-sm">
+                    {t(`landing.${titleKey}`)}
+                  </h3>
+                  <p className="text-[11px] text-muted">
+                    {t(`landing.${descKey}`)}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
 
           {/* Processing type links */}
-          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6">
-            {(["clip-in", "tape-in", "keratin", "micro-ring", "weft"] as const).map((catSlug) => (
-              <Link
-                key={catSlug}
-                href={`/offer/${catSlug}`}
-                className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-xs sm:text-sm font-medium"
-              >
-                {tPt(`${catSlug}.name` as any)}
-              </Link>
-            ))}
+          <div className="border-t border-line pt-6 sm:pt-8 mt-2">
+            <p className="text-xs text-muted text-center mb-3">{t("landing.processingTypes")}</p>
+            <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+              {(["clip-in", "tape-in", "keratin", "micro-ring", "weft"] as const).map((catSlug) => (
+                <Link
+                  key={catSlug}
+                  href={`/offer/${catSlug}`}
+                  className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-all duration-200 text-xs sm:text-sm font-medium hover:shadow-sm"
+                >
+                  {tPt(`${catSlug}.name` as any)}
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Product slider */}
-          <div className="px-4">
+          <div className="border-t border-line pt-6 sm:pt-8 mt-6 sm:mt-8 px-4">
             <HeroProductSlider products={allProducts} />
           </div>
 
           <div className="flex gap-3 justify-center mt-4 sm:mt-6">
             <Link
               href="/offer"
-              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-rose hover:bg-rose-deep text-white text-xs sm:text-sm font-medium rounded-lg transition-colors"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-rose hover:bg-rose-deep text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-md"
             >
               {t("landing.viewFullOffer")}
             </Link>
             <Link
               href="/contact"
-              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-xs sm:text-sm font-medium rounded-lg transition-colors"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-md"
             >
               {t("landing.contactUs")}
             </Link>
@@ -208,48 +233,51 @@ export default async function LandingPage() {
       </section>
 
       {/* Product categories with photos */}
-      <section className="py-10 sm:py-14 bg-nude-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-6">
-            {t("landing.chooseFromOffer")}
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {(
-              [
-                { key: "virgin" as const, img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
-                { key: "premium" as const, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescPremium" as const },
-                { key: "standard" as const, img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
-                { key: "sale" as const, img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
-              ]
-            ).map(({ key, img, descKey }) => (
-              <Link
-                key={key}
-                href={`/offer?category=${key.toUpperCase()}`}
-                className="group block overflow-hidden rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all"
-              >
-                <div className="relative h-32">
-                  <Image src={img} alt={`${tCategory(key)} — ${t("landing.categoryImageAlt")}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                </div>
-                <div className="p-3 bg-white text-center">
-                  <h3 className="font-semibold text-ink text-sm">
-                    {tCategory(key)}
-                  </h3>
-                  <p className="text-[11px] text-muted mt-0.5">{t(descKey)}</p>
-                </div>
-              </Link>
-            ))}
+      <ScrollReveal>
+        <section className="py-10 sm:py-14 bg-nude-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-6 tracking-tight">
+              {t("landing.chooseFromOffer")}
+            </h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {(
+                [
+                  { key: "virgin" as const, img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
+                  { key: "premium" as const, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescPremium" as const },
+                  { key: "standard" as const, img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
+                  { key: "sale" as const, img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
+                ]
+              ).map(({ key, img, descKey }) => (
+                <Link
+                  key={key}
+                  href={`/offer?category=${key.toUpperCase()}`}
+                  className="group block overflow-hidden rounded-xl border border-line hover:border-blush-300 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="relative h-32">
+                    <Image src={img} alt={`${tCategory(key)} — ${t("landing.categoryImageAlt")}`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-3 bg-white text-center">
+                    <h3 className="font-semibold text-ink text-sm">
+                      {tCategory(key)}
+                    </h3>
+                    <p className="text-[11px] text-muted mt-0.5">{t(descKey)}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </ScrollReveal>
 
       {/* Color palette */}
+      <ScrollReveal>
       <section className="py-10 sm:py-14 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3">
+            <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3 tracking-tight">
               {t("landing.colorPaletteTitle")}
             </h2>
-            <p className="text-muted max-w-xl mx-auto">
+            <p className="text-muted max-w-xl mx-auto font-light">
               {t("landing.colorPaletteSubtitle")}
             </p>
           </div>
@@ -287,14 +315,16 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* How it works */}
+      <ScrollReveal>
       <section className="py-10 sm:py-14 bg-nude-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-3 tracking-tight">
             {t("landing.howItWorksTitle")}
           </h2>
-          <p className="text-muted text-center mb-10 max-w-xl mx-auto">
+          <p className="text-muted text-center mb-10 max-w-xl mx-auto font-light">
             {t("landing.howItWorksSubtitle")}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -304,7 +334,7 @@ export default async function LandingPage() {
               { step: 3, titleKey: "landing.step3Title" as const, descKey: "landing.step3Desc" as const },
               { step: 4, titleKey: "landing.step4Title" as const, descKey: "landing.step4Desc" as const },
             ].map(({ step, titleKey, descKey }) => (
-              <div key={titleKey} className="text-center p-4 bg-white rounded-xl border border-line">
+              <div key={titleKey} className="text-center p-4 bg-white rounded-xl border border-line hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                 <span className="text-xs font-medium text-rose tracking-wide">{step}.</span>
                 <h3 className="font-semibold text-ink mb-1 text-sm mt-1">{t(titleKey)}</h3>
                 <p className="text-xs text-muted">{t(descKey)}</p>
@@ -313,14 +343,16 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Trust section — 4 items, no duplicates */}
+      <ScrollReveal>
       <section className="py-10 sm:py-14 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-3 tracking-tight">
             {t("landing.trustTitle")}
           </h2>
-          <p className="text-muted text-center mb-10 max-w-xl mx-auto">
+          <p className="text-muted text-center mb-10 max-w-xl mx-auto font-light">
             {t("landing.trustSubtitle")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -342,7 +374,7 @@ export default async function LandingPage() {
                 icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" /></svg>,
               },
             ].map(({ icon, titleKey, descKey }) => (
-              <div key={titleKey} className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line">
+              <div key={titleKey} className="flex gap-4 p-5 bg-nude-50 rounded-xl border border-line hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                 <div className="w-10 h-10 rounded-full bg-rose/10 text-rose flex items-center justify-center flex-shrink-0">
                   {icon}
                 </div>
@@ -355,19 +387,21 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Reviews */}
       <ReviewsSection />
 
       {/* Partner stylists */}
       {stylists.length > 0 && (
+        <ScrollReveal>
         <section className="py-10 sm:py-14 bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
-              <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3 tracking-tight">
                 {t("landing.stylistsTitle")}
               </h2>
-              <p className="text-muted max-w-xl mx-auto">
+              <p className="text-muted max-w-xl mx-auto font-light">
                 {t("landing.stylistsSubtitle")}
               </p>
             </div>
@@ -379,7 +413,7 @@ export default async function LandingPage() {
                   <Link
                     key={s.id}
                     href={`/kadernice/${s.slug}`}
-                    className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-md hover:border-blush-300 transition-all p-3"
+                    className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-lg hover:border-blush-300 hover:-translate-y-1 transition-all duration-300 p-3"
                   >
                     <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2 relative">
                       {s.photo ? (
@@ -427,6 +461,7 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
+        </ScrollReveal>
       )}
 
       {/* Trilingual banner */}
@@ -435,9 +470,10 @@ export default async function LandingPage() {
       </div>
 
       {/* Final CTA — contact + B2B + links */}
+      <ScrollReveal>
       <section className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-ink mb-3">
+          <h2 className="text-2xl font-bold text-ink mb-3 tracking-tight">
             {t("landing.ctaTitle")}
           </h2>
           <p className="text-muted mb-6 max-w-lg mx-auto">
@@ -484,6 +520,7 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
     </div>
   );
 }
