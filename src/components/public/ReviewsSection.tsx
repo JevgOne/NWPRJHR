@@ -100,32 +100,32 @@ export async function ReviewsSection() {
 
         {/* Review cards */}
         {hasReviews && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+          <div className={`${displayed.length === 1 ? "max-w-2xl mx-auto" : displayed.length === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"} mb-10`}>
             {displayed.map((review) => (
               <div
                 key={review.id}
-                className="relative bg-nude-50 rounded-2xl p-5 border border-line"
+                className="relative bg-nude-50 rounded-2xl p-6 border border-line"
               >
                 {/* Quotation mark */}
-                <svg className="absolute top-4 right-4 w-8 h-8 text-blush-100" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute top-5 right-5 w-10 h-10 text-blush-100/60" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
                 </svg>
 
-                <p className="text-sm text-espresso leading-relaxed line-clamp-4 mb-4 relative">
-                  {review.text}
+                <p className="text-base text-espresso leading-relaxed mb-5 relative pr-8">
+                  &ldquo;{review.text}&rdquo;
                 </p>
 
-                <div className="mb-3">
+                <div className="mb-4">
                   <Stars rating={review.rating} />
                 </div>
 
-                <div className="flex items-center gap-3 pt-3 border-t border-line/50">
-                  <div className="w-9 h-9 rounded-full bg-blush-100 flex items-center justify-center text-rose font-bold text-sm">
+                <div className="flex items-center gap-3 pt-4 border-t border-line/50">
+                  <div className="w-10 h-10 rounded-full bg-blush-100 flex items-center justify-center text-rose font-bold">
                     {review.authorName.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-sm text-ink truncate">
+                      <span className="font-semibold text-ink truncate">
                         {review.authorName}
                       </span>
                       <SourceIcon source={review.source} />
