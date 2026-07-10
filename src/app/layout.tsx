@@ -70,7 +70,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${geist.variable} h-full antialiased overflow-x-hidden`}>
+    <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
         <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
       </head>
