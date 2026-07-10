@@ -19,6 +19,15 @@ export const CATEGORY_SLUG_MAP: Record<string, ProcessingType> = {
   "weft": "WEFT",
 };
 
+/** Maps old offer slug to standalone URL path */
+export const CATEGORY_STANDALONE_PATHS: Record<string, string> = {
+  "clip-in": "/clip-in",
+  "tape-in": "/tape-in",
+  "keratin": "/keratin",
+  "micro-ring": "/micro-ring",
+  "weft": "/tresove-vlasy",
+};
+
 const TITLE_KEYS: Record<string, string> = {
   "clip-in": "clipInTitle",
   "tape-in": "tapeInTitle",
@@ -55,15 +64,17 @@ export async function generateCategoryMetadata(slug: string) {
   const title = t(titleKey);
   const description = t(metaKey);
 
+  const canonicalPath = CATEGORY_STANDALONE_PATHS[slug] ?? `/offer/${slug}`;
+
   return {
     title,
     description,
-    alternates: getAlternates(`/offer/${slug}`),
+    alternates: getAlternates(canonicalPath),
     openGraph: {
       type: "website" as const,
       title: `${title} | Hairland`,
       description,
-      url: `https://www.hairland.cz/offer/${slug}`,
+      url: `https://www.hairland.cz${canonicalPath}`,
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/hero-vzornik.png", width: 1672, height: 941, alt: title }],
@@ -322,7 +333,7 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
           {otherCategories.map((catSlug) => (
             <Link
               key={catSlug}
-              href={`/offer/${catSlug}`}
+              href={CATEGORY_STANDALONE_PATHS[catSlug] ?? `/offer/${catSlug}`}
               className="px-4 py-2 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
             >
               {tPt(`${catSlug}.name` as any)}

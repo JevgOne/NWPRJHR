@@ -50,9 +50,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const categoryPages: MetadataRoute.Sitemap = [
-    "clip-in", "tape-in", "keratin", "micro-ring", "weft",
-  ].map((slug) =>
-    withAlternates(`/offer/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
+    { slug: "clip-in", path: "/clip-in" },
+    { slug: "tape-in", path: "/tape-in" },
+    { slug: "keratin", path: "/keratin" },
+    { slug: "micro-ring", path: "/micro-ring" },
+    { slug: "weft", path: "/tresove-vlasy" },
+  ].map(({ path }) =>
+    withAlternates(path, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
   );
 
   const articlePages: MetadataRoute.Sitemap = articles.map((article) =>

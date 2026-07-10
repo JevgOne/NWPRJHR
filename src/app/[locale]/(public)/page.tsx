@@ -198,10 +198,16 @@ export default async function LandingPage() {
           <div className="border-t border-line pt-6 sm:pt-8 mt-2">
             <p className="text-xs text-muted text-center mb-3">{t("landing.processingTypes")}</p>
             <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
-              {(["clip-in", "tape-in", "keratin", "micro-ring", "weft"] as const).map((catSlug) => (
+              {([
+                { slug: "clip-in", href: "/clip-in" },
+                { slug: "tape-in", href: "/tape-in" },
+                { slug: "keratin", href: "/keratin" },
+                { slug: "micro-ring", href: "/micro-ring" },
+                { slug: "weft", href: "/tresove-vlasy" },
+              ] as const).map(({ slug: catSlug, href: catHref }) => (
                 <Link
                   key={catSlug}
-                  href={`/offer/${catSlug}`}
+                  href={catHref}
                   className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-all duration-200 text-xs sm:text-sm font-medium hover:shadow-sm"
                 >
                   {tPt(`${catSlug}.name` as any)}

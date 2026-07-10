@@ -20,7 +20,7 @@ import { flattenProductVariants } from "@/lib/flatten-variants";
 import { Fragment, Suspense } from "react";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage, CATEGORY_SLUG_MAP } from "./CategoryPage";
+import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage, CATEGORY_SLUG_MAP, CATEGORY_STANDALONE_PATHS } from "./CategoryPage";
 import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_SLUG_MAP_SEO, ORIGIN_SLUG_MAP } from "@/lib/attribute-slugs";
 import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLandingPage";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
@@ -172,9 +172,14 @@ const PROCESSING_LABELS: Record<string, Record<string, string>> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
-  // Single segment: category or product
+  // Single segment: category (redirect to standalone URL) or product
   if (slug.length === 1) {
     if (isCategorySlug(slug[0])) {
+      // Old /offer/<slug> URLs → permanent redirect to standalone pages
+      const newPath = CATEGORY_STANDALONE_PATHS[slug[0]];
+      if (newPath) {
+        permanentRedirect(newPath);
+      }
       return generateCategoryMetadata(slug[0]);
     }
 
@@ -188,9 +193,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Two segments: attribute landing page
   if (slug.length === 2) {
-    // /offer/kategorie/clip-in → redirect to /offer/clip-in (processing types have dedicated pages)
+    // /offer/kategorie/clip-in → redirect to standalone page
     if (slug[0] === "kategorie" && isCategorySlug(slug[1])) {
-      return generateCategoryMetadata(slug[1]);
+      permanentRedirect(CATEGORY_STANDALONE_PATHS[slug[1]] ?? `/offer/${slug[1]}`);
     }
     const resolved = resolveAttributeSlug(slug[0], slug[1]);
     if (resolved) {
@@ -261,9 +266,14 @@ async function generateProductMetadataFromProduct(
 export default async function OfferSlugPage({ params, searchParams }: Props) {
   const { slug } = await params;
 
-  // Single segment: category or product
+  // Single segment: category (redirect to standalone URL) or product
   if (slug.length === 1) {
     if (isCategorySlug(slug[0])) {
+      // Old /offer/<slug> URLs → permanent redirect to standalone pages
+      const newPath = CATEGORY_STANDALONE_PATHS[slug[0]];
+      if (newPath) {
+        permanentRedirect(newPath);
+      }
       return <CategoryLandingPage slug={slug[0]} />;
     }
     return <ProductDetailView slugOrId={slug[0]} searchParams={searchParams} />;
@@ -271,9 +281,9 @@ export default async function OfferSlugPage({ params, searchParams }: Props) {
 
   // Two segments: attribute landing page
   if (slug.length === 2) {
-    // /offer/kategorie/clip-in → redirect to /offer/clip-in (processing types have dedicated pages)
+    // /offer/kategorie/clip-in → redirect to standalone page
     if (slug[0] === "kategorie" && isCategorySlug(slug[1])) {
-      permanentRedirect(`/offer/${slug[1]}`);
+      permanentRedirect(CATEGORY_STANDALONE_PATHS[slug[1]] ?? `/offer/${slug[1]}`);
     }
     const resolved = resolveAttributeSlug(slug[0], slug[1]);
     if (resolved) {
@@ -949,10 +959,8 @@ async function ProductDetailView({
 export async function generateStaticParams() {
   const params: { slug: string[] }[] = [];
 
-  // Processing type category pages
-  for (const catSlug of Object.keys(CATEGORY_SLUG_MAP)) {
-    params.push({ slug: [catSlug] });
-  }
+  // Processing type category pages are now standalone routes (/clip-in, /tape-in, etc.)
+  // No longer generated here — they redirect to standalone URLs
 
   // Color tones
   for (const slug of Object.keys(COLOR_TONE_SLUG_MAP)) {
