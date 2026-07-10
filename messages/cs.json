@@ -889,7 +889,7 @@
       "inspiration": "Inspirace"
     },
     "reviews": {
-      "title": "Co říkají naše zákaznice",
+      "title": "Co říkají naši zákazníci",
       "reviewCount": "{count, plural, one {recenze} few {recenze} other {recenzí}}",
       "qualityLabel": "Kvalita vlasů",
       "communicationLabel": "Komunikace",
@@ -925,8 +925,8 @@
       "adminNote": "Recenze bude zveřejněna po schválení administrátorem."
     },
     "reviewsPage": {
-      "title": "Recenze zákaznic",
-      "subtitle": "Co říkají naše zákaznice o vlasech Hairland",
+      "title": "Recenze zákazníků",
+      "subtitle": "Co říkají naši zákazníci o vlasech Hairland",
       "allReviews": "Všechny",
       "stars": "{count, plural, one {hvězda} few {hvězdy} other {hvězd}}",
       "reviewCount": "{count, plural, one {recenze} few {recenze} other {recenzí}}",

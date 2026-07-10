@@ -889,7 +889,7 @@
       "inspiration": "Вдохновение"
     },
     "reviews": {
-      "title": "Что говорят наши клиентки",
+      "title": "Что говорят наши клиенты",
       "reviewCount": "{count, plural, one {отзыв} few {отзыва} other {отзывов}}",
       "qualityLabel": "Качество волос",
       "communicationLabel": "Коммуникация",
@@ -925,8 +925,8 @@
       "adminNote": "Отзыв будет опубликован после проверки администратором."
     },
     "reviewsPage": {
-      "title": "Отзывы клиенток",
-      "subtitle": "Что говорят наши клиентки о волосах Hairland",
+      "title": "Отзывы клиентов",
+      "subtitle": "Что говорят наши клиенты о волосах Hairland",
       "allReviews": "Все",
       "stars": "{count, plural, one {звезда} few {звезды} other {звёзд}}",
       "reviewCount": "{count, plural, one {отзыв} few {отзыва} other {отзывов}}",
