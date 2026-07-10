@@ -883,36 +883,25 @@ async function ProductDetailView({
         </div>
       </div>
 
-      {/* Care instructions */}
-      {(() => {
-        const PT_SLUG_MAP: Record<string, string> = {
-          CLIP_IN: "clip-in", TAPE_IN: "tape-in", KERATIN: "keratin",
-          MICRO_RING: "micro-ring", WEFT: "weft",
-        };
-        const ptSlug = product.processingType ? PT_SLUG_MAP[product.processingType] : null;
-        let careTitle: string;
-        let careText: string;
-        if (ptSlug) {
-          const ptCareTitle = tPt(`${ptSlug}.careTitle` as any) as string;
-          const ptCareText = tPt(`${ptSlug}.careText` as any) as string;
-          if (!ptCareTitle.includes(".careTitle")) {
-            careTitle = ptCareTitle;
-            careText = ptCareText;
-          } else {
-            careTitle = t("productDetail.careTitle");
-            careText = t("productDetail.careGeneral");
-          }
-        } else {
-          careTitle = t("productDetail.careTitle");
-          careText = t("productDetail.careGeneral");
-        }
-        return (
-          <section className="mt-10 pt-8 border-t border-line">
-            <h2 className="text-lg font-bold text-ink mb-3">{careTitle}</h2>
-            <p className="text-muted text-sm leading-relaxed max-w-3xl">{careText}</p>
-          </section>
-        );
-      })()}
+      {/* Care tips + blog link */}
+      <section className="mt-10 pt-8 border-t border-line">
+        <h2 className="text-lg font-bold text-ink mb-4">{t("productDetail.careTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          {([1, 2, 3] as const).map((n) => (
+            <div key={n} className="bg-nude-50 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-6 h-6 rounded-full bg-blush-100 flex items-center justify-center text-rose-deep text-xs font-bold">{n}</span>
+                <h3 className="text-sm font-semibold text-ink">{t(`productDetail.careTip${n}Title` as any)}</h3>
+              </div>
+              <p className="text-xs text-muted leading-relaxed">{t(`productDetail.careTip${n}Text` as any)}</p>
+            </div>
+          ))}
+        </div>
+        <Link href="/blog/pece-o-prodlouzene-vlasy-kompletni-pruvodce" className="inline-flex items-center gap-1.5 text-sm text-rose hover:text-rose-deep transition-colors font-medium">
+          {t("productDetail.careReadMore")}
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+        </Link>
+      </section>
 
       {/* Reviews — full width */}
       <Suspense fallback={<div className="mt-8 border-t border-line pt-6 h-40 animate-pulse bg-nude-50 rounded-2xl" />}>

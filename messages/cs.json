@@ -764,8 +764,14 @@
       "trustReturnDesc": "Výměna nebo vrácení zdarma, bez komplikací.",
       "trustQuestion": "Poradíme vám",
       "trustQuestionDesc": "Máte dotaz? Napište nám, rádi pomůžeme s výběrem.",
-      "careTitle": "Péče o vlasy",
-      "careGeneral": "Vlasy myjte jemným šamponem bez sulfátů a používejte kondicionér na koncích. Nechte přirozeně uschnout nebo fénujte na nízkou teplotu. Před spaním vlasy spleťte do volného copu. Při tepelném stylování vždy používejte termoochranný sprej.",
+      "careTitle": "Jak pečovat o vlasy",
+      "careTip1Title": "Mytí bez sulfátů",
+      "careTip1Text": "Používejte šampon bez sulfátů a silikonů. Myjte 2–3× týdně vlažnou vodou, kondicionér jen na konečky.",
+      "careTip2Title": "Kartáčování od konečků",
+      "careTip2Text": "Češte vlasy 2× denně od konečků nahoru. Používejte kartáč bez kuliček (Tangle Teezer), který se nezachytává o spoje.",
+      "careTip3Title": "Noční rutina",
+      "careTip3Text": "Před spaním rozčesejte a zaplétejte do volného copu. Spěte na hedvábném polštáři — zabrání zamotávání.",
+      "careReadMore": "Kompletní průvodce péčí",
       "faqTitle": "Časté dotazy"
     },
     "inquiry": {
