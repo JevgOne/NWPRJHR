@@ -38,7 +38,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
   );
 }
 
-export function WriteReviewForm({ productId }: { productId: string }) {
+export function WriteReviewForm({ productId }: { productId?: string }) {
   const t = useTranslations("public.reviewForm");
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
