@@ -172,17 +172,8 @@ const PROCESSING_LABELS: Record<string, Record<string, string>> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
-  // Single segment: category (redirect to standalone URL) or product
+  // Single segment: product detail (categories redirect via middleware to standalone URLs)
   if (slug.length === 1) {
-    if (isCategorySlug(slug[0])) {
-      // Old /offer/<slug> URLs → permanent redirect to standalone pages
-      const newPath = CATEGORY_STANDALONE_PATHS[slug[0]];
-      if (newPath) {
-        permanentRedirect(newPath);
-      }
-      return generateCategoryMetadata(slug[0]);
-    }
-
     const [product, t, locale] = await Promise.all([getProduct(slug[0]), getTranslations("public"), getLocale()]);
     if (!product) {
       return { title: t("productDetail.notFound") };
@@ -193,10 +184,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Two segments: attribute landing page
   if (slug.length === 2) {
-    // /offer/kategorie/clip-in → redirect to standalone page
-    if (slug[0] === "kategorie" && isCategorySlug(slug[1])) {
-      permanentRedirect(CATEGORY_STANDALONE_PATHS[slug[1]] ?? `/offer/${slug[1]}`);
-    }
     const resolved = resolveAttributeSlug(slug[0], slug[1]);
     if (resolved) {
       return generateAttributeMetadata(slug[0], slug[1], resolved);
@@ -266,25 +253,13 @@ async function generateProductMetadataFromProduct(
 export default async function OfferSlugPage({ params, searchParams }: Props) {
   const { slug } = await params;
 
-  // Single segment: category (redirect to standalone URL) or product
+  // Single segment: product detail (categories redirect via middleware to standalone URLs)
   if (slug.length === 1) {
-    if (isCategorySlug(slug[0])) {
-      // Old /offer/<slug> URLs → permanent redirect to standalone pages
-      const newPath = CATEGORY_STANDALONE_PATHS[slug[0]];
-      if (newPath) {
-        permanentRedirect(newPath);
-      }
-      return <CategoryLandingPage slug={slug[0]} />;
-    }
     return <ProductDetailView slugOrId={slug[0]} searchParams={searchParams} />;
   }
 
   // Two segments: attribute landing page
   if (slug.length === 2) {
-    // /offer/kategorie/clip-in → redirect to standalone page
-    if (slug[0] === "kategorie" && isCategorySlug(slug[1])) {
-      permanentRedirect(CATEGORY_STANDALONE_PATHS[slug[1]] ?? `/offer/${slug[1]}`);
-    }
     const resolved = resolveAttributeSlug(slug[0], slug[1]);
     if (resolved) {
       return (

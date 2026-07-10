@@ -141,7 +141,7 @@ const getCachedCategoryProducts = unstable_cache(
   { revalidate: 60, tags: ["products"] }
 );
 
-export async function CategoryLandingPage({ slug }: { slug: string }) {
+export async function CategoryLandingPage({ slug, standalone }: { slug: string; standalone?: boolean }) {
   const processingType = CATEGORY_SLUG_MAP[slug];
 
   const [t, tPt, session, locale, productsWithStock] = await Promise.all([
@@ -212,7 +212,10 @@ export async function CategoryLandingPage({ slug }: { slug: string }) {
       )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
-      <Breadcrumbs items={[
+      <Breadcrumbs items={standalone ? [
+        { label: t("nav.home"), href: "/" },
+        { label: tPt(`${s}.name` as any) },
+      ] : [
         { label: t("nav.home"), href: "/" },
         { label: t("nav.products"), href: "/offer" },
         { label: tPt(`${s}.name` as any) },

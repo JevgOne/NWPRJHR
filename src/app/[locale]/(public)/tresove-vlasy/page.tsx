@@ -8,5 +8,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function TresoveVlasyPage() {
-  return <CategoryLandingPage slug={SLUG} />;
+  return <CategoryLandingPage slug={SLUG} standalone />;
 }
