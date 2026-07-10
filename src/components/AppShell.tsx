@@ -116,6 +116,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
         { href: "/settings/b2b", label: "B2B", roles: ["OWNER"] },
         { href: "/settings/pricing", label: "Cenotvorba", roles: ["OWNER"] },
         { href: "/settings/companies", label: "Firmy", roles: ["OWNER"] },
+        { href: "/settings/homepage", label: "Homepage", roles: ["OWNER"] },
         { href: "/audit-log", label: t("auditLog"), roles: ["OWNER"] },
       ],
     },

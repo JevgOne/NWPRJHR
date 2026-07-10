@@ -57,6 +57,30 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const BLOB = "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair";
 
+const DEFAULT_IG_PHOTOS = [
+  `${BLOB}/volne-vlasy.jpg`,
+  `${BLOB}/odstiny-prehled.jpg`,
+  `${BLOB}/extensions-techniky.jpg`,
+  `${BLOB}/keratinove-vlasy.jpg`,
+];
+
+const getCachedIgPhotos = unstable_cache(
+  async () => {
+    try {
+      const setting = await prisma.siteSetting.findUnique({
+        where: { key: "instagram_photos" },
+      });
+      if (setting?.value) {
+        const parsed = JSON.parse(setting.value);
+        if (Array.isArray(parsed) && parsed.length === 4) return parsed as string[];
+      }
+    } catch {}
+    return DEFAULT_IG_PHOTOS;
+  },
+  ["homepage-ig-photos"],
+  { revalidate: 60, tags: ["site-settings"] }
+);
+
 function buildStoreJsonLd(description: string) {
   return {
     "@context": "https://schema.org",
@@ -114,12 +138,13 @@ const organizationJsonLd = {
 };
 
 export default async function LandingPage() {
-  const [t, tCategory, tPt, stylists, allProducts] = await Promise.all([
+  const [t, tCategory, tPt, stylists, allProducts, igPhotos] = await Promise.all([
     getTranslations("public"),
     getTranslations("category"),
     getTranslations("processingType"),
     getCachedStylists(),
     getCachedAllProducts(),
+    getCachedIgPhotos(),
   ]);
 
   return (
@@ -498,12 +523,7 @@ export default async function LandingPage() {
             </a>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-            {[
-              `${BLOB}/volne-vlasy.jpg`,
-              `${BLOB}/odstiny-prehled.jpg`,
-              `${BLOB}/extensions-techniky.jpg`,
-              `${BLOB}/keratinove-vlasy.jpg`,
-            ].map((src, i) => (
+            {igPhotos.map((src, i) => (
               <a
                 key={i}
                 href="https://www.instagram.com/hairland.cz/"
