@@ -88,6 +88,7 @@ const productSelect = {
   texture: true,
   colorTone: true,
   photos: true,
+  video: true,
   archived: true,
   metaTitle: true,
   metaDescription: true,
@@ -624,7 +625,7 @@ async function ProductDetailView({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
         {/* Left: Photo gallery — sticky on desktop */}
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <PhotoGallery photos={product.photos} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
+          <PhotoGallery photos={product.photos} video={product.video} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
         </div>
 
         {/* Right: Product info */}
