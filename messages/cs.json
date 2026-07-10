@@ -757,7 +757,12 @@
       "yourPrice": "Vaše cena",
       "priceTip": "100g ≈ {price}",
       "regularPrice": "běžná cena",
-      "relatedProducts": "Podobné produkty"
+      "relatedProducts": "Podobné produkty",
+      "trustQuality": "Garantujeme kvalitu a původ produktu.",
+      "trustReturn": "Výměna a vrácení do 14 dní zdarma.",
+      "trustQuestion": "Máte dotaz? Zeptejte se nás, rádi poradíme.",
+      "careTitle": "Péče o vlasy",
+      "faqTitle": "Časté dotazy"
     },
     "inquiry": {
       "addToInquiry": "Přidat do poptávky",

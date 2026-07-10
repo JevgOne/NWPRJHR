@@ -757,7 +757,12 @@
       "yourPrice": "Ваша цена",
       "priceTip": "100g ≈ {price}",
       "regularPrice": "обычная цена",
-      "relatedProducts": "Похожие продукты"
+      "relatedProducts": "Похожие продукты",
+      "trustQuality": "Гарантируем качество и происхождение продукта.",
+      "trustReturn": "Обмен и возврат в течение 14 дней бесплатно.",
+      "trustQuestion": "Есть вопрос? Спросите нас, будем рады помочь.",
+      "careTitle": "Уход за волосами",
+      "faqTitle": "Частые вопросы"
     },
     "inquiry": {
       "addToInquiry": "Добавить в запрос",
