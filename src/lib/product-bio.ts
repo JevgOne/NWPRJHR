@@ -86,60 +86,28 @@ const TEXTURE_NOTE: Record<string, string> = {
 
 export function generateProductBio(data: BioProductData): string {
   const sections: string[] = [];
-  const cat = CAT_LABEL[data.category] ?? "";
-  const proc = PROC_LABEL[data.processingType] ?? "";
 
-  // 1. Title line
-  const titleParts = [cat, proc, "vlasy"].filter(Boolean);
-  if (data.origin) titleParts.push(`z ${data.origin}u`.replace("zánu", "zánu").replace("stánu", "stánu"));
-  sections.push(`**${data.name}**`);
-
-  // 2. Specs block
-  const specs: string[] = [];
-  if (data.colorTone) specs.push(`Barevný tón: ${data.colorTone}`);
-  if (data.texture) specs.push(`Struktura: ${data.texture}`);
-  if (data.lengths && data.lengths.length > 0) {
-    specs.push(data.lengths.length > 1
-      ? `Dostupné délky: ${data.lengths.join(", ")} cm`
-      : `Délka: ${data.lengths[0]} cm`);
-  }
-  if (data.colorCount && data.colorCount > 1) {
-    specs.push(`Dostupné odstíny: ${data.colorCount}`);
-  }
-  if (proc) {
-    const procLine = PROCESSING_STORY[data.processingType];
-    if (procLine) specs.push(procLine);
-  }
-  if (specs.length > 0) sections.push(specs.join("\n"));
-
-  // 3. "Proč si vybrat právě tyto vlasy?"
+  // 1. Category story (why these hair)
   const story = CATEGORY_STORY[data.category];
-  if (story) {
-    sections.push(`**Proč si vybrat právě tyto vlasy?**\n${story}`);
-  }
+  if (story) sections.push(story);
 
-  // 4. Origin story
+  // 2. Origin story
   if (data.origin) {
     const originStory = ORIGIN_STORY[data.origin];
-    if (originStory) {
-      sections.push(`**Proč právě ${data.origin}?**\n${originStory}`);
-    }
+    if (originStory) sections.push(originStory);
   }
 
-  // 5. Texture note
+  // 3. Texture note
   if (data.texture) {
     const texNote = TEXTURE_NOTE[data.texture];
     if (texNote) sections.push(texNote);
   }
 
-  // 6. "Co vás čeká:" — benefits
+  // 4. Benefits
   const benefits = CATEGORY_BENEFITS[data.category];
   if (benefits && benefits.length > 0) {
     sections.push("**Co vás čeká:**\n" + benefits.map(b => `• ${b}`).join("\n"));
   }
-
-  // 7. Satisfaction guarantee
-  sections.push("**Záruka spokojenosti**\nPokud vlasy neodpovídají vašim představám, můžete je vrátit. Stačí, aby byly nepoužité a nepoškozené. Osobní odběr v Praze zdarma. Zpracování na zakázku do 7 dnů. Faktura pro firmy i kadeřnice.");
 
   return sections.join("\n\n");
 }
