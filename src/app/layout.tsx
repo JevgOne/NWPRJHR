@@ -70,11 +70,11 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${geist.variable} h-full antialiased`}>
+    <html lang={locale} className={`${geist.variable} h-full antialiased overflow-x-hidden`}>
       <head>
         <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
       </head>
-      <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)]">
+      <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)] overflow-x-hidden">
         <NextIntlClientProvider messages={messages}>
           {children}
           <CookieBanner />
