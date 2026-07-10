@@ -20,11 +20,16 @@ export function VariantBatchCreate({
   const router = useRouter();
   const [lengths, setLengths] = useState("");
   const [colors, setColors] = useState("");
-  const [defaultPrice, setDefaultPrice] = useState("");
-  const [costPrice, setCostPrice] = useState("");
   const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
-  const [retailPricePerPiece, setRetailPricePerPiece] = useState("");
+
+  // BY_GRAM prices
+  const [costPricePerGram, setCostPricePerGram] = useState("");
+  const [retailPricePerGram, setRetailPricePerGram] = useState("");
+
+  // BY_PIECE prices
   const [costPricePerPiece, setCostPricePerPiece] = useState("");
+  const [retailPricePerPiece, setRetailPricePerPiece] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -42,6 +47,17 @@ export function VariantBatchCreate({
 
   const previewCount = parsedLengths.length * parsedColors.length;
 
+  // Preview calculation
+  const retailPreview = isByPiece
+    ? (parseFloat(retailPricePerPiece) || 0)
+    : (parseFloat(retailPricePerGram) || 0) * 100;
+  const costPreview = isByPiece
+    ? (parseFloat(costPricePerPiece) || 0)
+    : (parseFloat(costPricePerGram) || 0) * 100;
+  const marginPreview = retailPreview > 0 && costPreview > 0
+    ? Math.round(((retailPreview - costPreview) / retailPreview) * 100)
+    : null;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -51,32 +67,25 @@ export function VariantBatchCreate({
       return;
     }
 
-    if (isByPiece) {
-      const moHalere = Math.round(parseFloat(retailPricePerPiece) * 100);
-      if (!moHalere || moHalere <= 0) {
-        setError(t("variant.enterValidPrice"));
-        return;
-      }
-    } else {
-      const priceHalere = Math.round(parseFloat(defaultPrice) * 100);
-      if (!priceHalere || priceHalere <= 0) {
-        setError(t("variant.enterValidPrice"));
-        return;
-      }
-    }
-
     setLoading(true);
     try {
       if (isByPiece) {
         const moHalere = Math.round(parseFloat(retailPricePerPiece) * 100);
-        const costHalerePiece = costPricePerPiece ? Math.round(parseFloat(costPricePerPiece) * 100) : 0;
+        const costHalere = costPricePerPiece ? Math.round(parseFloat(costPricePerPiece) * 100) : 0;
+
+        if (!moHalere || moHalere <= 0) {
+          setError(t("variant.enterValidPrice"));
+          setLoading(false);
+          return;
+        }
 
         const variants = parsedLengths.flatMap((lengthCm) =>
           parsedColors.map((color) => ({
             lengthCm,
             color,
+            costPricePerGram: costHalere,
             wholesalePricePerGram: 0,
-            costPricePerGram: costHalerePiece,
+            retailPricePerGram: 0,
             sellingMode: "BY_PIECE" as const,
             pricePerPiece: moHalere,
             retailPricePerPiece: moHalere,
@@ -95,15 +104,23 @@ export function VariantBatchCreate({
           return;
         }
       } else {
-        const priceHalere = Math.round(parseFloat(defaultPrice) * 100);
-        const costHalere = costPrice ? Math.round(parseFloat(costPrice) * 100) : 0;
+        const retailHalere = Math.round(parseFloat(retailPricePerGram) * 100);
+        const costHalere = costPricePerGram ? Math.round(parseFloat(costPricePerGram) * 100) : 0;
+
+        if (!retailHalere || retailHalere <= 0) {
+          setError(t("variant.enterValidPrice"));
+          setLoading(false);
+          return;
+        }
 
         const variants = parsedLengths.flatMap((lengthCm) =>
           parsedColors.map((color) => ({
             lengthCm,
             color,
-            wholesalePricePerGram: priceHalere,
             costPricePerGram: costHalere,
+            wholesalePricePerGram: retailHalere,
+            retailPricePerGram: retailHalere,
+            sellingMode: "BY_GRAM" as const,
           }))
         );
 
@@ -179,45 +196,74 @@ export function VariantBatchCreate({
 
         {isByPiece ? (
           <>
-            <Input
-              label={`${t("variant.costPrice")} (CZK/ks)`}
-              type="number"
-              step="0.01"
-              placeholder="500"
-              value={costPricePerPiece}
-              onChange={(e) => setCostPricePerPiece(e.target.value)}
-            />
-            <Input
-              label={`${t("variant.retailPricePerPiece") ?? "MO cena za kus"} (CZK/ks)`}
-              type="number"
-              step="0.01"
-              placeholder="1200"
-              value={retailPricePerPiece}
-              onChange={(e) => setRetailPricePerPiece(e.target.value)}
-            />
-            <p className="text-xs text-muted">
-              {t("variant.pieceNote") ?? "VO cena pro salony a kadeřnice se dopočítá automaticky ze slev nastavených v B2B nastavení."}
-            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label="Nákupní cena (Kč/ks)"
+                type="number"
+                step="0.01"
+                placeholder="5000"
+                value={costPricePerPiece}
+                onChange={(e) => setCostPricePerPiece(e.target.value)}
+              />
+              <Input
+                label="Prodejní cena (Kč/ks)"
+                type="number"
+                step="0.01"
+                placeholder="12500"
+                value={retailPricePerPiece}
+                onChange={(e) => setRetailPricePerPiece(e.target.value)}
+              />
+            </div>
           </>
         ) : (
           <>
-            <Input
-              label={`${t("variant.costPrice")} (CZK/g)`}
-              type="number"
-              step="0.01"
-              placeholder="8.00"
-              value={costPrice}
-              onChange={(e) => setCostPrice(e.target.value)}
-            />
-            <Input
-              label={`${t("salon.wholesalePrice")} (CZK/g)`}
-              type="number"
-              step="0.01"
-              placeholder="15.00"
-              value={defaultPrice}
-              onChange={(e) => setDefaultPrice(e.target.value)}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label="Nákupní cena (Kč/g)"
+                type="number"
+                step="0.01"
+                placeholder="8.00"
+                value={costPricePerGram}
+                onChange={(e) => setCostPricePerGram(e.target.value)}
+              />
+              <Input
+                label="Prodejní cena (Kč/g)"
+                type="number"
+                step="0.01"
+                placeholder="15.00"
+                value={retailPricePerGram}
+                onChange={(e) => setRetailPricePerGram(e.target.value)}
+              />
+            </div>
           </>
+        )}
+
+        {/* Price preview */}
+        {retailPreview > 0 && (
+          <div className="bg-nude-50 rounded-lg p-3 space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted">Prodejní cena {isByPiece ? "za kus" : "za 100g"}:</span>
+              <span className="font-semibold text-ink">
+                {retailPreview.toLocaleString("cs-CZ")} Kč
+              </span>
+            </div>
+            {costPreview > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Nákupní cena {isByPiece ? "za kus" : "za 100g"}:</span>
+                <span className="text-muted">
+                  {costPreview.toLocaleString("cs-CZ")} Kč
+                </span>
+              </div>
+            )}
+            {marginPreview !== null && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Marže:</span>
+                <span className={`font-medium ${marginPreview > 30 ? "text-emerald-600" : marginPreview > 0 ? "text-amber-600" : "text-red-600"}`}>
+                  {marginPreview}%
+                </span>
+              </div>
+            )}
+          </div>
         )}
 
         {previewCount > 0 && (

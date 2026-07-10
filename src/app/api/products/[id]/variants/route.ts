@@ -49,12 +49,6 @@ export async function POST(
   if (!parsed.success)
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  // Get markup for this product's category
-  const priceSetting = await prisma.priceSettings.findUnique({
-    where: { category: product.category },
-  });
-  const markupPercent = priceSetting?.markupPercent ?? 0;
-
   // Filter out variants that already exist (SQLite doesn't support skipDuplicates)
   const existing = await prisma.variant.findMany({
     where: { productId },
@@ -70,10 +64,7 @@ export async function POST(
       color: v.color,
       costPricePerGram: v.costPricePerGram ?? 0,
       wholesalePricePerGram: v.wholesalePricePerGram,
-      retailPricePerGram: calculateRetailPrice(
-        v.wholesalePricePerGram,
-        markupPercent
-      ),
+      retailPricePerGram: v.retailPricePerGram ?? v.wholesalePricePerGram,
       sellingMode: v.sellingMode ?? "BY_GRAM",
       pricePerPiece: v.pricePerPiece,
       retailPricePerPiece: v.retailPricePerPiece,
