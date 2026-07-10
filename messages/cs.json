@@ -758,10 +758,14 @@
       "priceTip": "100g ≈ {price}",
       "regularPrice": "běžná cena",
       "relatedProducts": "Podobné produkty",
-      "trustQuality": "Garantujeme kvalitu a původ produktu.",
-      "trustReturn": "Výměna a vrácení do 14 dní zdarma.",
-      "trustQuestion": "Máte dotaz? Zeptejte se nás, rádi poradíme.",
+      "trustQuality": "Garance kvality a původu",
+      "trustQualityDesc": "Každý produkt má ověřený původ a prochází kontrolou kvality.",
+      "trustReturn": "Vrácení do 14 dní",
+      "trustReturnDesc": "Výměna nebo vrácení zdarma, bez komplikací.",
+      "trustQuestion": "Poradíme vám",
+      "trustQuestionDesc": "Máte dotaz? Napište nám, rádi pomůžeme s výběrem.",
       "careTitle": "Péče o vlasy",
+      "careGeneral": "Vlasy myjte jemným šamponem bez sulfátů a používejte kondicionér na koncích. Nechte přirozeně uschnout nebo fénujte na nízkou teplotu. Před spaním vlasy spleťte do volného copu. Při tepelném stylování vždy používejte termoochranný sprej.",
       "faqTitle": "Časté dotazy"
     },
     "inquiry": {
