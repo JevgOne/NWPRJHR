@@ -898,7 +898,10 @@
       "viewOnInstagram": "Переглянути в Instagram",
       "verifiedPurchase": "Підтверджена покупка",
       "googleReviews": "Відгуки Google",
-      "writeGoogleReview": "Написати відгук",
+      "writeGoogleReview": "Оцінити в Google",
+      "writeOurReview": "Написати відгук",
+      "viewAll": "Переглянути всі відгуки",
+      "beFirst": "Будьте першим, хто напише відгук про наше волосся.",
       "followOnInstagram": "Стежте в Instagram"
     },
     "reviewForm": {
@@ -931,9 +934,15 @@
       "communicationLabel": "Комунікація",
       "speedLabel": "Швидкість доставки",
       "writeReview": "Написати відгук",
+      "filterAll": "Всі",
+      "filterGoogle": "Google",
+      "filterInstagram": "Instagram",
+      "filterOur": "З сайту",
+      "filterStars": "{count} {count, plural, one {зірка} few {зірки} other {зірок}}",
       "noReviews": "Поки що немає відгуків.",
-      "noReviewsDesc": "Поки ми не опублікували жодних відгуків. Якщо ви купували у нас волосся, будемо раді вашому зворотному зв'язку.",
-      "browseProducts": "Переглянути пропозицію волосся"
+      "noReviewsDesc": "Будьте першим, хто напише відгук. Ваш зворотний зв'язок допомагає нам покращувати наші послуги.",
+      "browseProducts": "Переглянути пропозицію волосся",
+      "writeOnGoogle": "Оцінити в Google"
     },
     "cookie": {
       "message": "Цей сайт використовує cookies для забезпечення коректної роботи. Детальніше в",

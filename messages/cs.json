@@ -898,7 +898,10 @@
       "viewOnInstagram": "Zobrazit na Instagramu",
       "verifiedPurchase": "Ověřený nákup",
       "googleReviews": "Google recenze",
-      "writeGoogleReview": "Napsat recenzi",
+      "writeGoogleReview": "Ohodnotit na Google",
+      "writeOurReview": "Napsat recenzi",
+      "viewAll": "Zobrazit všechny recenze",
+      "beFirst": "Buďte první, kdo napíše recenzi na naše vlasy.",
       "followOnInstagram": "Sledujte na Instagramu"
     },
     "reviewForm": {
@@ -931,9 +934,15 @@
       "communicationLabel": "Komunikace",
       "speedLabel": "Rychlost dodání",
       "writeReview": "Napsat recenzi",
+      "filterAll": "Všechny",
+      "filterGoogle": "Google",
+      "filterInstagram": "Instagram",
+      "filterOur": "Z webu",
+      "filterStars": "{count} {count, plural, one {hvězda} few {hvězdy} other {hvězd}}",
       "noReviews": "Zatím žádné recenze.",
-      "noReviewsDesc": "Zatím jsme nezveřejnili žádné recenze. Pokud jste si u nás zakoupila vlasy, budeme rádi za vaši zpětnou vazbu.",
-      "browseProducts": "Prohlédnout nabídku vlasů"
+      "noReviewsDesc": "Buďte první, kdo napíše recenzi. Vaše zpětná vazba nám pomáhá zlepšovat naše služby.",
+      "browseProducts": "Prohlédnout nabídku vlasů",
+      "writeOnGoogle": "Ohodnotit na Google"
     },
     "cookie": {
       "message": "Tento web používá cookies pro zajištění správné funkčnosti. Více informací naleznete v",
