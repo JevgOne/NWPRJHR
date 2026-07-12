@@ -457,7 +457,7 @@
       "cta": "Kontaktujte nás",
       "viewOffer": "Zobrazit nabídku"
     },
-    "heroTitle": "100% pravé vlasy z celého světa",
+    "heroTitle": "Prémiové vlasy z celého světa",
     "heroSubtitle": "Prodej prémiových vlasů s osobním přístupem",
     "aboutUs": "O nás",
     "ourOffer": "Nabídka",
@@ -634,10 +634,10 @@
       "registerAsStylist": "Registrovat se jako kadeřnice"
     },
     "landing": {
-      "heroTitle": "100% pravé vlasy k prodloužení",
+      "heroTitle": "Prémiové vlasy k prodloužení",
       "heroSubtitle": "Přírodní vlasy s ověřeným původem z celého světa.",
       "whyHairland": "Proč Hairland",
-      "badgeNatural": "100% pravé vlasy",
+      "badgeNatural": "100% přírodní",
       "badgeNaturalDesc": "Jen lidské vlasy, žádná syntetika",
       "badgeImport": "Přímý import",
       "badgeImportDesc": "Bez překupníků — nejlepší cena",
@@ -863,7 +863,7 @@
     },
     "footer": {
       "copyright": "© 2026 Hairland.cz",
-      "brandDesc": "100% pravé vlasy z celého světa. Přímý import, osobní přístup.",
+      "brandDesc": "Prémiové vlasy z celého světa. Přímý import, osobní přístup.",
       "navTitle": "Navigace",
       "infoTitle": "Informace",
       "termsLink": "Obchodní podmínky",
@@ -894,7 +894,7 @@
       "weightGuide": "Průvodce gramáží",
       "inspiration": "Inspirace",
       "reviews": "Recenze",
-      "tagline": "100% PRAVÉ VLASY"
+      "tagline": "PRÉMIOVÉ VLASY"
     },
     "search": {
       "loading": "Hledám…",
