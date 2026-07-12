@@ -243,8 +243,35 @@ export default async function BlogPage() {
         </>
       )}
 
+      {/* Product type discovery */}
+      <div className="mt-14 border-t border-line/50 pt-10">
+        <h2 className="text-lg font-bold text-ink mb-5">
+          {locale === "uk" ? "Наші типи волосся" : locale === "ru" ? "Наши типы волос" : "Naše typy vlasů"}
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {([
+            { href: "/clip-in", label: { cs: "Clip-in", uk: "Clip-in", ru: "Clip-in" } as Record<string, string> },
+            { href: "/tape-in", label: { cs: "Tape-in", uk: "Tape-in", ru: "Tape-in" } as Record<string, string> },
+            { href: "/keratin", label: { cs: "Keratin", uk: "Кератин", ru: "Кератин" } as Record<string, string> },
+            { href: "/micro-ring", label: { cs: "Micro-ring", uk: "Micro-ring", ru: "Micro-ring" } as Record<string, string> },
+            { href: "/tresove-vlasy", label: { cs: "Třesové vlasy", uk: "Тресове волосся", ru: "Трессовые волосы" } as Record<string, string> },
+          ]).map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white border border-line hover:border-rose/20 hover:shadow-md transition-all text-sm font-medium text-ink hover:text-rose"
+            >
+              {item.label[locale] ?? item.label.cs}
+              <svg className="w-3.5 h-3.5 text-muted/30 group-hover:text-rose/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Link to poradna */}
-      <div className="mt-14 text-center">
+      <div className="mt-10 text-center">
         <p className="text-muted mb-3">{poradnaLabel}</p>
         <Link
           href="/poradna"
