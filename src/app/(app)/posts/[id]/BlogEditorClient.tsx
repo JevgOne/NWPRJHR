@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -10,14 +11,7 @@ interface BlogEditorProps {
   postId?: string;
 }
 
-const CATEGORIES = [
-  { value: "general", label: "Obecné" },
-  { value: "care", label: "Péče o vlasy" },
-  { value: "guide", label: "Průvodce" },
-  { value: "trends", label: "Trendy" },
-  { value: "tips", label: "Tipy" },
-  { value: "news", label: "Novinky" },
-];
+// CATEGORIES moved inside component to access translations
 
 const LANGS = [
   { code: "cs", flag: "🇨🇿", label: "Čeština" },
@@ -38,8 +32,19 @@ function slugify(text: string): string {
 
 export function BlogEditorClient({ postId }: BlogEditorProps) {
   const router = useRouter();
+  const t = useTranslations("blog");
+  const tc = useTranslations("common");
   const isNew = !postId;
   const [lang, setLang] = useState<LangCode>("cs");
+
+  const CATEGORIES = [
+    { value: "general", label: t("categoryGeneral") },
+    { value: "care", label: t("categoryCare") },
+    { value: "guide", label: t("categoryGuide") },
+    { value: "trends", label: t("categoryTrends") },
+    { value: "tips", label: t("categoryTips") },
+    { value: "news", label: t("categoryNews") },
+  ];
 
   const [title, setTitle] = useState("");
   const [titleUk, setTitleUk] = useState("");
@@ -98,7 +103,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         setLoading(false);
       })
       .catch(() => {
-        setError("Článek nenalezen");
+        setError(t("articleNotFound"));
         setLoading(false);
       });
   }, [postId]);
@@ -186,31 +191,31 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
       setError(
         typeof data.error === "string"
           ? data.error
-          : "Chyba při ukládání"
+          : t("saveError")
       );
     }
     setSaving(false);
   };
 
   if (loading) {
-    return <div className="text-muted text-center py-12">Načítám...</div>;
+    return <div className="text-muted text-center py-12">{tc("loading")}</div>;
   }
 
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-ink">
-          {isNew ? "Nový článek" : "Upravit článek"}
+          {isNew ? t("newArticle") : t("editArticle")}
         </h1>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => router.push("/posts")}>
-            Zpět
+            {tc("back")}
           </Button>
           <Button variant="secondary" onClick={() => save(false)} disabled={saving}>
-            Uložit koncept
+            {t("saveDraft")}
           </Button>
           <Button onClick={() => save(true)} disabled={saving}>
-            {saving ? "Ukládám..." : published ? "Uložit" : "Publikovat"}
+            {saving ? tc("saving") : published ? tc("save") : t("publish")}
           </Button>
         </div>
       </div>
@@ -248,7 +253,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         <Card>
           <div className="space-y-4">
             <Input
-              label={lang === "cs" ? "Název článku" : lang === "uk" ? "Назва статті (UA)" : "Название статьи (RU)"}
+              label={lang === "cs" ? t("titleCs") : lang === "uk" ? t("titleUk") : t("titleRu")}
               value={currentTitle}
               onChange={(e) => setCurrentTitle(e.target.value)}
               placeholder={lang === "cs" ? "Jak správně pečovat o prodloužené vlasy" : lang === "uk" ? "Як правильно доглядати за нарощеним волоссям" : "Как правильно ухаживать за наращенными волосами"}
@@ -258,7 +263,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
               <div className="flex gap-4">
                 <div className="flex-1">
                   <Input
-                    label="Slug (URL)"
+                    label={t("slugLabel")}
                     value={slug}
                     onChange={(e) => {
                       setSlug(e.target.value);
@@ -272,7 +277,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                 </div>
                 <div className="w-48">
                   <label className="block text-sm font-medium text-espresso mb-1">
-                    Kategorie
+                    {t("categoryLabel")}
                   </label>
                   <select
                     value={category}
@@ -288,7 +293,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                 </div>
                 <div className="w-48">
                   <Input
-                    label="Datum publikace"
+                    label={t("publishDate")}
                     type="date"
                     value={publishedAt}
                     onChange={(e) => setPublishedAt(e.target.value)}
@@ -304,7 +309,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-espresso mb-1">
-                  Náhledový obrázek
+                  {t("coverImage")}
                 </label>
                 <div className="flex items-center gap-4">
                   {coverImage && (
@@ -315,7 +320,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                     />
                   )}
                   <label className="cursor-pointer px-4 py-2 bg-nude-50 border border-line rounded-lg text-sm font-medium text-espresso hover:bg-nude-100 transition-colors">
-                    {uploading ? "Nahrávám..." : coverImage ? "Změnit" : "Nahrát obrázek"}
+                    {uploading ? t("uploading") : coverImage ? t("changeCover") : t("uploadImage")}
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
@@ -329,7 +334,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                       size="sm"
                       onClick={() => setCoverImage("")}
                     >
-                      Odebrat
+                      {t("removeCover")}
                     </Button>
                   )}
                 </div>
@@ -341,14 +346,14 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         <Card>
           <div>
             <label className="block text-sm font-medium text-espresso mb-1">
-              {lang === "cs" ? "Popis (excerpt)" : lang === "uk" ? "Опис (UA)" : "Описание (RU)"}
+              {lang === "cs" ? t("excerptLabel") : lang === "uk" ? t("excerptUk") : t("excerptRu")}
             </label>
             <textarea
               value={currentExcerpt}
               onChange={(e) => setCurrentExcerpt(e.target.value)}
               rows={2}
               className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
-              placeholder={lang === "cs" ? "Krátký popis pro náhled..." : ""}
+              placeholder={lang === "cs" ? t("excerptPlaceholder") : ""}
             />
           </div>
         </Card>
@@ -360,30 +365,30 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                 <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <span className="text-sm font-semibold text-espresso">SEO & Open Graph</span>
+                <span className="text-sm font-semibold text-espresso">{t("seoTitle")}</span>
               </div>
               <Input
-                label="Meta Title"
+                label={t("metaTitleLabel")}
                 value={metaTitle}
                 onChange={(e) => setMetaTitle(e.target.value)}
-                placeholder={title || "Vlastní titulek pro vyhledávače..."}
+                placeholder={title || t("metaTitlePlaceholder")}
               />
               <p className="text-xs text-muted -mt-3">
-                {metaTitle.length}/60 znaků {metaTitle.length > 60 && "— příliš dlouhý"}
+                {t("charsCount", { count: metaTitle.length })} {metaTitle.length > 60 && t("charsTooLong")}
               </p>
               <div>
                 <label className="block text-sm font-medium text-espresso mb-1">
-                  Meta Description
+                  {t("metaDescLabel")}
                 </label>
                 <textarea
                   value={metaDescription}
                   onChange={(e) => setMetaDescription(e.target.value)}
                   rows={2}
                   className="block w-full rounded-lg border border-line px-3 py-2 text-ink placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose sm:text-sm"
-                  placeholder={excerpt || "Vlastní popis pro vyhledávače a sdílení..."}
+                  placeholder={excerpt || t("metaDescPlaceholder")}
                 />
                 <p className="text-xs text-muted mt-1">
-                  {metaDescription.length}/155 znaků {metaDescription.length > 155 && "— příliš dlouhý"}
+                  {t("metaDescCount", { count: metaDescription.length })} {metaDescription.length > 155 && t("charsTooLong")}
                 </p>
               </div>
               <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -391,9 +396,9 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <p className="text-sm font-medium text-green-800">OG obrázek se nastaví automaticky</p>
+                  <p className="text-sm font-medium text-green-800">{t("ogAutoTitle")}</p>
                   <p className="text-xs text-green-600 mt-0.5">
-                    {coverImage ? "Použije se náhledový obrázek článku." : "Nahrajte náhledový obrázek výše — automaticky se použije jako OG."}
+                    {coverImage ? t("ogAutoDescWithCover") : t("ogAutoDescNoCover")}
                   </p>
                 </div>
                 {coverImage && (
@@ -403,13 +408,13 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
               {/* Preview */}
               {(metaTitle || metaDescription) && (
                 <div className="mt-2 p-3 bg-nude-50 rounded-lg border border-line">
-                  <p className="text-xs text-muted mb-1.5 font-medium">Náhled ve vyhledávači:</p>
+                  <p className="text-xs text-muted mb-1.5 font-medium">{t("searchPreview")}</p>
                   <p className="text-sm text-blue-700 font-medium truncate">
-                    {metaTitle || title || "Název článku"} | Hairland
+                    {metaTitle || title || t("articleTitle")} | Hairland
                   </p>
                   <p className="text-xs text-green-700 truncate">www.hairland.cz/blog/{slug}</p>
                   <p className="text-xs text-muted line-clamp-2 mt-0.5">
-                    {metaDescription || excerpt || "Popis článku..."}
+                    {metaDescription || excerpt || t("articleDesc")}
                   </p>
                 </div>
               )}
@@ -422,17 +427,17 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
             <div className="space-y-3">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-base">📱</span>
-                <span className="text-sm font-semibold text-espresso">Instagram / Facebook post</span>
+                <span className="text-sm font-semibold text-espresso">{t("socialTitle")}</span>
               </div>
               <p className="text-xs text-muted">
-                Text k publikaci na sociální sítě. Klikni &quot;Generovat&quot; pro automatický návrh z názvu a popisu článku.
+                {t("socialDesc")}
               </p>
               <textarea
                 value={socialPost}
                 onChange={(e) => setSocialPost(e.target.value)}
                 rows={8}
                 className="block w-full rounded-lg border border-line px-3 py-2 text-ink text-sm placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
-                placeholder="Klikni 'Generovat' nebo napiš vlastní text pro IG/FB..."
+                placeholder={t("socialPlaceholder")}
               />
               <div className="flex items-center gap-2">
                 <button
@@ -453,7 +458,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                   }}
                   className="px-3 py-1.5 text-xs font-medium bg-rose text-white rounded-lg hover:bg-rose/90 transition-colors"
                 >
-                  Generovat
+                  {t("generate")}
                 </button>
                 <button
                   type="button"
@@ -465,10 +470,10 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                   disabled={!socialPost}
                   className="px-3 py-1.5 text-xs font-medium bg-nude-100 text-espresso rounded-lg hover:bg-nude-200 transition-colors disabled:opacity-40"
                 >
-                  {socialCopied ? "Zkopírováno!" : "Kopírovat"}
+                  {socialCopied ? tc("copied") : tc("copy")}
                 </button>
                 <span className="text-xs text-muted ml-auto">
-                  {socialPost.length}/2200 znaků
+                  {t("socialChars", { count: socialPost.length })}
                 </span>
               </div>
             </div>
@@ -478,17 +483,17 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
         <Card>
           <div>
             <label className="block text-sm font-medium text-espresso mb-1">
-              {lang === "cs" ? "Obsah článku" : lang === "uk" ? "Зміст статті (UA)" : "Содержание статьи (RU)"}
+              {lang === "cs" ? t("contentLabel") : lang === "uk" ? t("contentUk") : t("contentRu")}
             </label>
             <p className="text-xs text-muted mb-2">
-              Markdown: **tučné**, *kurzíva*, ## nadpisy, - seznamy, [odkaz](url)
+              {t("markdownHint")}
             </p>
             <textarea
               value={currentContent}
               onChange={(e) => setCurrentContent(e.target.value)}
               rows={20}
               className="block w-full rounded-lg border border-line px-3 py-2 text-ink font-mono text-sm placeholder-muted focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
-              placeholder={lang === "cs" ? "## Nadpis\n\nObsah článku..." : ""}
+              placeholder={lang === "cs" ? t("contentPlaceholder") : ""}
             />
           </div>
         </Card>

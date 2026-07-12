@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -16,18 +17,20 @@ interface BlogPost {
   createdAt: string;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  general: "Obecné",
-  care: "Péče o vlasy",
-  guide: "Průvodce",
-  trends: "Trendy",
-  tips: "Tipy",
-  news: "Novinky",
-};
-
 export function BlogListClient() {
+  const t = useTranslations("blog");
+  const tc = useTranslations("common");
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const CATEGORY_LABELS: Record<string, string> = {
+    general: t("categoryGeneral"),
+    care: t("categoryCare"),
+    guide: t("categoryGuide"),
+    trends: t("categoryTrends"),
+    tips: t("categoryTips"),
+    news: t("categoryNews"),
+  };
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -48,28 +51,28 @@ export function BlogListClient() {
   };
 
   const deletePost = async (id: string) => {
-    if (!confirm("Opravdu smazat článek?")) return;
+    if (!confirm(t("confirmDelete"))) return;
     await fetch(`/api/blog/${id}`, { method: "DELETE" });
     fetchPosts();
   };
 
   if (loading) {
-    return <div className="text-muted text-center py-12">Načítám...</div>;
+    return <div className="text-muted text-center py-12">{tc("loading")}</div>;
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-ink">Blog</h1>
+        <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
         <Link href="/posts/new">
-          <Button>Nový článek</Button>
+          <Button>{t("newArticle")}</Button>
         </Link>
       </div>
 
       {posts.length === 0 ? (
         <Card>
           <p className="text-muted text-center py-8">
-            Zatím žádné články. Začněte prvním článkem.
+            {t("noArticles")}
           </p>
         </Card>
       ) : (
@@ -92,7 +95,7 @@ export function BlogListClient() {
                           : "bg-amber-100 text-amber-700"
                       }`}
                     >
-                      {post.published ? "Publikováno" : "Koncept"}
+                      {post.published ? t("published") : t("draft")}
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-nude-100 text-espresso">
                       {CATEGORY_LABELS[post.category] ?? post.category}
@@ -114,11 +117,11 @@ export function BlogListClient() {
                     size="sm"
                     onClick={() => togglePublish(post)}
                   >
-                    {post.published ? "Skrýt" : "Publikovat"}
+                    {post.published ? t("hide") : t("publish")}
                   </Button>
                   <Link href={`/posts/${post.id}`}>
                     <Button variant="secondary" size="sm">
-                      Upravit
+                      {tc("edit")}
                     </Button>
                   </Link>
                   <Button
@@ -126,7 +129,7 @@ export function BlogListClient() {
                     size="sm"
                     onClick={() => deletePost(post.id)}
                   >
-                    Smazat
+                    {tc("delete")}
                   </Button>
                 </div>
               </div>

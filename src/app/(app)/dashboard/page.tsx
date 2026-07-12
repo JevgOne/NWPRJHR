@@ -27,20 +27,13 @@ const categoryColors: Record<string, { bg: string; text: string; bar: string }> 
   SALE: { bg: "bg-rose-100", text: "text-rose-800", bar: "bg-rose-500" },
 };
 
-const categoryLabels: Record<string, string> = {
-  VIRGIN: "Panenské",
-  PREMIUM: "Premium",
-  STANDARD: "Standard",
-  SALE: "Výprodej",
-};
-
-const movementTypeColors: Record<string, { bg: string; text: string; label: string }> = {
-  RECEIPT: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Příjem" },
-  SALE: { bg: "bg-nude-100", text: "text-espresso", label: "Prodej" },
-  RETURN: { bg: "bg-amber-100", text: "text-amber-700", label: "Vrácení" },
-  ADJUSTMENT: { bg: "bg-nude-100", text: "text-espresso", label: "Úprava" },
-  COMPLAINT: { bg: "bg-rose-100", text: "text-rose-700", label: "Reklamace" },
-  SAMPLE: { bg: "bg-purple-100", text: "text-purple-700", label: "Vzorek" },
+const movementTypeStyles: Record<string, { bg: string; text: string }> = {
+  RECEIPT: { bg: "bg-emerald-100", text: "text-emerald-700" },
+  SALE: { bg: "bg-nude-100", text: "text-espresso" },
+  RETURN: { bg: "bg-amber-100", text: "text-amber-700" },
+  ADJUSTMENT: { bg: "bg-nude-100", text: "text-espresso" },
+  COMPLAINT: { bg: "bg-rose-100", text: "text-rose-700" },
+  SAMPLE: { bg: "bg-purple-100", text: "text-purple-700" },
 };
 
 const getCachedDashboardData = unstable_cache(
@@ -152,7 +145,11 @@ export default async function DashboardPage() {
   if (!session) redirect("/login");
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/salon/catalog");
 
-  const t = await getTranslations("dashboard");
+  const [t, tCat, tStock] = await Promise.all([
+    getTranslations("dashboard"),
+    getTranslations("category"),
+    getTranslations("stock"),
+  ]);
 
   const {
     salesThisMonth,
@@ -200,24 +197,24 @@ export default async function DashboardPage() {
           label={t("stockValue")}
           value={fmtGrams(totalStockGrams)}
           sub1={`${fmtCZK(stockValuePurchase)}`}
-          sub2={`Prodejní: ${fmtCZK(stockValueRetail)}`}
+          sub2={`${t("retailValue")}: ${fmtCZK(stockValueRetail)}`}
         />
         <StatCard
           label={t("salesThisMonth")}
           value={`${salesCount}`}
           sub1={fmtCZK(salesRevenue)}
-          sub2={`Tento měsíc`}
+          sub2={t("thisMonth")}
         />
         <StatCard
-          label="Prodáno celkem"
+          label={t("totalSold")}
           value={fmtCZK(totalSold)}
-          sub1={`${fmtGrams(totalGramsSold)} · ${totalSoldCount} prodejů`}
-          sub2={`Marže: ${fmtCZK(totalSold - totalCOGS)}`}
+          sub1={`${fmtGrams(totalGramsSold)} · ${totalSoldCount} ${t("salesCount")}`}
+          sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)}`}
         />
         <StatCard
           label={t("openInvoices")}
           value={fmtCZK(invoiceTotal)}
-          sub1={`${invoiceCount} faktur k úhradě`}
+          sub1={`${invoiceCount} ${t("invoicesToPay")}`}
         />
       </div>
 
@@ -225,7 +222,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Stock by category */}
         <div className="bg-white rounded-xl border border-line shadow-sm p-6">
-          <h2 className="text-base font-semibold text-ink mb-4">Skladem podle kategorie</h2>
+          <h2 className="text-base font-semibold text-ink mb-4">{t("stockByCategory")}</h2>
           <div className="space-y-4">
             {(["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const).map((cat) => {
               const data = catMap[cat];
@@ -236,7 +233,7 @@ export default async function DashboardPage() {
                 <div key={cat}>
                   <div className="flex items-center justify-between mb-1">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors.bg} ${colors.text}`}>
-                      {categoryLabels[cat]}
+                      {tCat(cat.toLowerCase())}
                     </span>
                     <span className="text-sm text-espresso">
                       {fmtGrams(data.grams)} · {fmtCZK(data.value)}
@@ -282,28 +279,29 @@ export default async function DashboardPage() {
 
       {/* ── ROW 3: Recent movements ── */}
       <div className="bg-white rounded-xl border border-line shadow-sm p-6">
-        <h2 className="text-base font-semibold text-ink mb-4">Poslední pohyby</h2>
+        <h2 className="text-base font-semibold text-ink mb-4">{t("recentMovements")}</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
               <tr className="text-left text-xs font-medium text-muted uppercase tracking-wider">
-                <th className="pb-3 pr-4">Datum</th>
-                <th className="pb-3 pr-4">Typ</th>
-                <th className="pb-3 pr-4">Produkt</th>
-                <th className="pb-3 pr-4 text-right">Množství</th>
-                <th className="pb-3">Poznámka</th>
+                <th className="pb-3 pr-4">{t("date")}</th>
+                <th className="pb-3 pr-4">{t("type")}</th>
+                <th className="pb-3 pr-4">{t("product")}</th>
+                <th className="pb-3 pr-4 text-right">{t("quantity")}</th>
+                <th className="pb-3">{t("note")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {recentMovements.map((m) => {
-                const mt = movementTypeColors[m.type] ?? { bg: "bg-nude-100", text: "text-espresso", label: m.type };
+                const mtStyle = movementTypeStyles[m.type] ?? { bg: "bg-nude-100", text: "text-espresso" };
+                const mtLabel = tStock(m.type.toLowerCase());
                 const sign = m.type === "RECEIPT" || m.type === "RETURN" ? "+" : "-";
                 return (
                   <tr key={m.id}>
                     <td className="py-2.5 pr-4 text-gray-600 whitespace-nowrap">{fmtDate(m.createdAt)}</td>
                     <td className="py-2.5 pr-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${mt.bg} ${mt.text}`}>
-                        {mt.label}
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${mtStyle.bg} ${mtStyle.text}`}>
+                        {mtLabel}
                       </span>
                     </td>
                     <td className="py-2.5 pr-4 text-ink">

@@ -113,17 +113,17 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
           <span>{t(sale.status.toLowerCase() as "completed" | "cancelled" | "draft")}</span>
           {sale.paymentType && (
             <>
-              <span className="text-muted">Typ platby</span>
+              <span className="text-muted">{t("paymentType")}</span>
               <span>
-                {sale.paymentType === "TRANSFER" ? "Převod" :
-                 sale.paymentType === "CASH" ? "Hotovost" :
-                 sale.paymentType === "PROMO" ? "Promo" : "Odpis"}
+                {sale.paymentType === "TRANSFER" ? t("paymentTransfer") :
+                 sale.paymentType === "CASH" ? t("paymentCash") :
+                 sale.paymentType === "PROMO" ? t("paymentPromo") : t("paymentWriteoff")}
               </span>
             </>
           )}
           {sale.receiptNumber && (
             <>
-              <span className="text-muted">Číslo paragonu</span>
+              <span className="text-muted">{t("receiptNumber")}</span>
               <span>{sale.receiptNumber}</span>
             </>
           )}

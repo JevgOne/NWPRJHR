@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { Stylist } from "@prisma/client";
 import { slugify } from "@/lib/slugify";
 
@@ -12,6 +13,8 @@ interface Props {
 
 export function StylistForm({ stylist, salons }: Props) {
   const router = useRouter();
+  const t = useTranslations("stylist");
+  const tc = useTranslations("common");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,10 +43,10 @@ export function StylistForm({ stylist, salons }: Props) {
   const [certifications, setCertifications] = useState(existingCerts.join(", "));
 
   const allLangs = [
-    { code: "cs", flag: "🇨🇿", label: "Čeština" },
-    { code: "uk", flag: "🇺🇦", label: "Ukrajinština" },
-    { code: "ru", flag: "🇷🇺", label: "Ruština" },
-    { code: "en", flag: "🇬🇧", label: "Angličtina" },
+    { code: "cs", flag: "🇨🇿", label: t("langCs") },
+    { code: "uk", flag: "🇺🇦", label: t("langUk") },
+    { code: "ru", flag: "🇷🇺", label: t("langRu") },
+    { code: "en", flag: "🇬🇧", label: t("langEn") },
   ];
 
   function handleNameChange(val: string) {
@@ -98,13 +101,13 @@ export function StylistForm({ stylist, salons }: Props) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Chyba při ukládání");
+        throw new Error(data.error || t("saveError"));
       }
 
       router.push("/stylists");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neznámá chyba");
+      setError(err instanceof Error ? err.message : t("unknownError"));
     } finally {
       setSaving(false);
     }
@@ -117,11 +120,11 @@ export function StylistForm({ stylist, salons }: Props) {
       )}
 
       <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-ink">Základní údaje</h2>
+        <h2 className="text-base font-semibold text-ink">{t("basicInfo")}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">Jméno *</label>
+            <label className="block text-sm font-medium text-espresso mb-1">{t("nameLabel")} *</label>
             <input
               type="text"
               value={name}
@@ -131,7 +134,7 @@ export function StylistForm({ stylist, salons }: Props) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">Slug (URL) *</label>
+            <label className="block text-sm font-medium text-espresso mb-1">{t("slugLabel")} *</label>
             <input
               type="text"
               value={slug}
@@ -144,7 +147,7 @@ export function StylistForm({ stylist, salons }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">📍 Město</label>
+            <label className="block text-sm font-medium text-espresso mb-1">📍 {t("cityLabel")}</label>
             <input
               type="text"
               value={city}
@@ -153,7 +156,7 @@ export function StylistForm({ stylist, salons }: Props) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">🎓 Roky praxe</label>
+            <label className="block text-sm font-medium text-espresso mb-1">🎓 {t("experienceLabel")}</label>
             <input
               type="number"
               value={experience}
@@ -164,13 +167,13 @@ export function StylistForm({ stylist, salons }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-espresso mb-1">🏠 Salon</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🏠 {t("salonLabel")}</label>
           <select
             value={salonId}
             onChange={(e) => setSalonId(e.target.value)}
             className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           >
-            <option value="">— Bez salonu —</option>
+            <option value="">{t("noSalon")}</option>
             {salons.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
@@ -180,30 +183,30 @@ export function StylistForm({ stylist, salons }: Props) {
         <div className="flex gap-4">
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-line text-espresso" />
-            ⭐ Doporučená
+            ⭐ {t("featured")}
           </label>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="rounded border-line text-espresso" />
-            ✅ Aktivní
+            ✅ {t("activeLabel")}
           </label>
         </div>
       </div>
 
       <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-ink">📝 Bio / Popis</h2>
+        <h2 className="text-base font-semibold text-ink">📝 {t("bioTitle")}</h2>
 
         <div>
-          <label className="block text-sm font-medium text-espresso mb-1">🇨🇿 Bio (čeština)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🇨🇿 {t("bioCz")}</label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
-            placeholder="Krátký popis, emoji vítány! ✨💇‍♀️"
+            placeholder={`${t("bioPlaceholder")} ✨💇‍♀️`}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-espresso mb-1">🇺🇦 Bio (ukrajinsky)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🇺🇦 {t("bioUk")}</label>
           <textarea
             value={bioUk}
             onChange={(e) => setBioUk(e.target.value)}
@@ -212,7 +215,7 @@ export function StylistForm({ stylist, salons }: Props) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-espresso mb-1">🇷🇺 Bio (rusky)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🇷🇺 {t("bioRu")}</label>
           <textarea
             value={bioRu}
             onChange={(e) => setBioRu(e.target.value)}
@@ -223,21 +226,21 @@ export function StylistForm({ stylist, salons }: Props) {
       </div>
 
       <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-ink">💼 Specializace & Jazyky</h2>
+        <h2 className="text-base font-semibold text-ink">💼 {t("specTitle")}</h2>
 
         <div>
-          <label className="block text-sm font-medium text-espresso mb-1">Specializace (oddělené čárkou)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">{t("specLabel")}</label>
           <input
             type="text"
             value={specializations}
             onChange={(e) => setSpecializations(e.target.value)}
             className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
-            placeholder="Prodlužování vlasů, Keratin, Tape-in, Barvení"
+            placeholder={t("specPlaceholder")}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-espresso mb-2">Jazyky</label>
+          <label className="block text-sm font-medium text-espresso mb-2">{t("languagesLabel")}</label>
           <div className="flex gap-3">
             {allLangs.map((l) => (
               <button
@@ -257,39 +260,39 @@ export function StylistForm({ stylist, salons }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-espresso mb-1">🏅 Certifikáty (oddělené čárkou)</label>
+          <label className="block text-sm font-medium text-espresso mb-1">🏅 {t("certsLabel")}</label>
           <input
             type="text"
             value={certifications}
             onChange={(e) => setCertifications(e.target.value)}
             className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose"
-            placeholder="Great Lengths, Hairdreams Master"
+            placeholder={t("certsPlaceholder")}
           />
         </div>
       </div>
 
       <div className="bg-white rounded-xl border border-line shadow-sm p-6 space-y-4">
-        <h2 className="text-base font-semibold text-ink">📞 Kontakty</h2>
+        <h2 className="text-base font-semibold text-ink">📞 {t("contactsTitle")}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">📱 Telefon</label>
+            <label className="block text-sm font-medium text-espresso mb-1">📱 {t("phoneLabel")}</label>
             <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">✉️ E-mail</label>
+            <label className="block text-sm font-medium text-espresso mb-1">✉️ {t("emailLabel")}</label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">📸 Instagram</label>
+            <label className="block text-sm font-medium text-espresso mb-1">📸 {t("instagramLabel")}</label>
             <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">✈️ Telegram</label>
+            <label className="block text-sm font-medium text-espresso mb-1">✈️ {t("telegramLabel")}</label>
             <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="@username" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-espresso mb-1">💬 WhatsApp</label>
+            <label className="block text-sm font-medium text-espresso mb-1">💬 {t("whatsappLabel")}</label>
             <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-2 focus:ring-rose focus:border-rose" placeholder="+420..." />
           </div>
         </div>
@@ -301,13 +304,13 @@ export function StylistForm({ stylist, salons }: Props) {
           disabled={saving}
           className="px-6 py-2.5 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose-deep disabled:opacity-50"
         >
-          {saving ? "Ukládám..." : stylist ? "Uložit změny" : "Vytvořit kadeřnici"}
+          {saving ? tc("saving") : stylist ? t("saveChanges") : t("createStylist")}
         </button>
         <a
           href="/stylists"
           className="px-6 py-2.5 bg-white text-espresso border border-line rounded-lg text-sm font-medium hover:bg-nude-50"
         >
-          Zpět
+          {tc("back")}
         </a>
       </div>
     </form>

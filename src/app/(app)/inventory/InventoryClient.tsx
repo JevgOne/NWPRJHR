@@ -37,6 +37,7 @@ export function InventoryClient({
 }) {
   const router = useRouter();
   const t = useTranslations("stock");
+  const tCommon = useTranslations("common");
   const tCat = useTranslations("category");
   const tColors = useTranslations("public.colors");
 
@@ -109,7 +110,7 @@ export function InventoryClient({
                   : "border-line text-muted hover:bg-nude-50"
               }`}
             >
-              {cat === "ALL" ? "Vše" : tCat(cat.toLowerCase())}
+              {cat === "ALL" ? tCommon("all") : tCat(cat.toLowerCase())}
             </button>
           ))}
         </div>

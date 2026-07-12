@@ -108,7 +108,7 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
               onChange={(e) => setOriginFilter(e.target.value)}
               className="px-2 py-1.5 border border-line rounded-lg text-xs text-espresso bg-white"
             >
-              <option value="">{t("product.origin") || "Původ"} — {t("common.all")}</option>
+              <option value="">{t("product.origin")} — {t("common.all")}</option>
               {filterOptions.origins.map((o) => (
                 <option key={o} value={o}>{getOriginFlag(o)} {o}</option>
               ))}

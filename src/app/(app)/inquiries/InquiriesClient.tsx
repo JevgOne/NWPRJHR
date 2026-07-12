@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
 
 interface InquiryItem {
@@ -51,33 +52,11 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-800",
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  NEW: "Nová",
-  CONTACTED: "Kontaktováno",
-  COMPLETED: "Dokončeno",
-  CANCELLED: "Zrušeno",
-};
-
-const COLOR_NAMES: Record<string, string> = {
-  "1": "Platinová blond",
-  "2": "Světlá blond",
-  "3": "Zlatá blond",
-  "4": "Přírodní hnědá",
-  "5": "Karamelová",
-  "6": "Tmavá blond",
-  "7": "Středně hnědá",
-  "8": "Tmavě hnědá",
-  "9": "Tmavá",
-  "10": "Černá",
-};
-
-function itemCount(n: number): string {
-  if (n === 1) return "1 položka";
-  if (n >= 2 && n <= 4) return `${n} položky`;
-  return `${n} položek`;
-}
+// STATUS_LABELS, COLOR_NAMES, itemCount moved inside component to access translations
 
 export function InquiriesClient() {
+  const t = useTranslations("inquiry");
+  const tc = useTranslations("common");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [filter, setFilter] = useState("ALL");
   const [loading, setLoading] = useState(true);
@@ -87,6 +66,32 @@ export function InquiriesClient() {
   const [editNote, setEditNote] = useState("");
   const [editAssigned, setEditAssigned] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const STATUS_LABELS: Record<string, string> = {
+    NEW: t("statusNew"),
+    CONTACTED: t("statusContacted"),
+    COMPLETED: t("statusCompleted"),
+    CANCELLED: t("statusCancelled"),
+  };
+
+  const COLOR_NAMES: Record<string, string> = {
+    "1": t("colorPlatinumBlonde"),
+    "2": t("colorLightBlonde"),
+    "3": t("colorGoldenBlonde"),
+    "4": t("colorNaturalBrown"),
+    "5": t("colorCaramel"),
+    "6": t("colorDarkBlonde"),
+    "7": t("colorMediumBrown"),
+    "8": t("colorDarkBrown"),
+    "9": t("colorDark"),
+    "10": t("colorBlack"),
+  };
+
+  function itemCount(n: number): string {
+    if (n === 1) return t("itemOne");
+    if (n >= 2 && n <= 4) return t("itemFew", { count: n });
+    return t("itemMany", { count: n });
+  }
 
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
@@ -128,16 +133,16 @@ export function InquiriesClient() {
   }
 
   const tabs = [
-    { key: "ALL", label: "Vše" },
-    { key: "NEW", label: "Nové" },
-    { key: "CONTACTED", label: "Kontaktováno" },
-    { key: "COMPLETED", label: "Dokončeno" },
-    { key: "CANCELLED", label: "Zrušeno" },
+    { key: "ALL", label: t("filterAll") },
+    { key: "NEW", label: t("filterNew") },
+    { key: "CONTACTED", label: t("filterContacted") },
+    { key: "COMPLETED", label: t("filterCompleted") },
+    { key: "CANCELLED", label: t("filterCancelled") },
   ];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Poptávky</h1>
+      <h1 className="text-2xl font-bold mb-6">{t("title")}</h1>
 
       <div className="flex gap-2 mb-4 flex-wrap">
         {tabs.map((tab) => (
@@ -156,9 +161,9 @@ export function InquiriesClient() {
       </div>
 
       {loading ? (
-        <p className="text-muted">Načítání...</p>
+        <p className="text-muted">{tc("loading")}</p>
       ) : inquiries.length === 0 ? (
-        <p className="text-muted">Žádné poptávky</p>
+        <p className="text-muted">{t("noInquiries")}</p>
       ) : (
         <div className="space-y-2">
           {inquiries.map((inq) => {
@@ -194,7 +199,7 @@ export function InquiriesClient() {
                       )}
                       {inq.assignedTo && (
                         <span className="text-xs text-green-700 font-medium">
-                          · Vyřizuje: {inq.assignedTo}
+                          · {t("assignedTo")}: {inq.assignedTo}
                         </span>
                       )}
                     </div>
@@ -231,37 +236,37 @@ export function InquiriesClient() {
                     {/* Contact info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div className="space-y-2">
-                        <Detail label="Zákazník" value={inq.name} />
-                        <Detail label="E-mail" value={inq.email} />
-                        {inq.phone && <Detail label="Telefon" value={inq.phone} />}
-                        {inq.salonName && <Detail label="Salon" value={inq.salonName} />}
+                        <Detail label={t("customer")} value={inq.name} />
+                        <Detail label={t("email")} value={inq.email} />
+                        {inq.phone && <Detail label={t("phone")} value={inq.phone} />}
+                        {inq.salonName && <Detail label={t("salon")} value={inq.salonName} />}
                         {inq.promoCode && (
                           <Detail
-                            label="Promo kód"
+                            label={t("promoCode")}
                             value={`${inq.promoCode}${inq.promoDiscount ? ` (sleva ${inq.promoDiscount.label})` : ""}`}
                           />
                         )}
                       </div>
                       <div className="space-y-2">
                         <Detail
-                          label="Datum poptávky"
+                          label={t("inquiryDate")}
                           value={new Date(inq.createdAt).toLocaleString("cs-CZ")}
                         />
                         {inq.assignedTo && (
                           <Detail
-                            label="Vyřizuje"
+                            label={t("assignedTo")}
                             value={`${inq.assignedTo}${inq.assignedAt ? ` od ${new Date(inq.assignedAt).toLocaleString("cs-CZ")}` : ""}`}
                           />
                         )}
                         {inq.contactedAt && (
                           <Detail
-                            label="Kontaktováno dne"
+                            label={t("contactedOn")}
                             value={new Date(inq.contactedAt).toLocaleString("cs-CZ")}
                           />
                         )}
                         {inq.completedAt && (
                           <Detail
-                            label="Dokončeno dne"
+                            label={t("completedOn")}
                             value={new Date(inq.completedAt).toLocaleString("cs-CZ")}
                           />
                         )}
@@ -271,12 +276,12 @@ export function InquiriesClient() {
                     {/* Items */}
                     <div className="mt-4">
                       <p className="text-xs font-medium text-muted uppercase mb-2">
-                        Poptávané vlasy ({itemCount(inq.items.length)})
+                        {t("inquiredHair")} ({itemCount(inq.items.length)})
                       </p>
                       <div className="space-y-1">
                         {inq.items.map((item) => {
                           const hc = getHairColor(item.color);
-                          const colorName = COLOR_NAMES[item.color] ?? `Odstín ${item.color}`;
+                          const colorName = COLOR_NAMES[item.color] ?? t("shade", { color: item.color });
                           return (
                             <div
                               key={item.id}
@@ -307,7 +312,7 @@ export function InquiriesClient() {
                     {inq.subtotal > 0 && (
                       <div className="mt-3 pt-2 border-t border-line space-y-1 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted">Mezisoučet (bez DPH)</span>
+                          <span className="text-muted">{t("subtotal")}</span>
                           <span>{formatCZK(inq.subtotal)} Kč</span>
                         </div>
                         {inq.discountAmount > 0 && (
@@ -317,7 +322,7 @@ export function InquiriesClient() {
                           </div>
                         )}
                         <div className="flex justify-between font-bold">
-                          <span>Odhadovaná cena (bez DPH)</span>
+                          <span>{t("estimatedPrice")}</span>
                           <span>{formatCZK(inq.estimatedTotal)} Kč</span>
                         </div>
                       </div>
@@ -326,7 +331,7 @@ export function InquiriesClient() {
                     {inq.message && (
                       <div className="mt-4">
                         <p className="text-xs font-medium text-muted uppercase mb-1">
-                          Poznámka od zákazníka
+                          {t("customerNote")}
                         </p>
                         <p className="text-sm text-ink whitespace-pre-wrap bg-nude-50 rounded-lg p-3">
                           {inq.message}
@@ -340,40 +345,40 @@ export function InquiriesClient() {
                         <div className="space-y-3">
                           <div>
                             <label className="block text-xs font-medium text-muted uppercase mb-1">
-                              Stav poptávky
+                              {t("inquiryStatus")}
                             </label>
                             <select
                               value={editStatus}
                               onChange={(e) => setEditStatus(e.target.value)}
                               className="border border-line rounded-lg px-3 py-2 text-sm w-full max-w-xs"
                             >
-                              <option value="NEW">Nová</option>
-                              <option value="CONTACTED">Kontaktováno</option>
-                              <option value="COMPLETED">Dokončeno</option>
-                              <option value="CANCELLED">Zrušeno</option>
+                              <option value="NEW">{t("statusNew")}</option>
+                              <option value="CONTACTED">{t("statusContacted")}</option>
+                              <option value="COMPLETED">{t("statusCompleted")}</option>
+                              <option value="CANCELLED">{t("statusCancelled")}</option>
                             </select>
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-muted uppercase mb-1">
-                              Kdo vyřizuje
+                              {t("assignedPerson")}
                             </label>
                             <input
                               value={editAssigned}
                               onChange={(e) => setEditAssigned(e.target.value)}
                               className="border border-line rounded-lg px-3 py-2 text-sm w-full max-w-xs"
-                              placeholder="Jméno pracovníka"
+                              placeholder={t("assignedPlaceholder")}
                             />
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-muted uppercase mb-1">
-                              Interní poznámka
+                              {t("internalNote")}
                             </label>
                             <textarea
                               value={editNote}
                               onChange={(e) => setEditNote(e.target.value)}
                               className="w-full border border-line rounded-lg px-3 py-2 text-sm"
                               rows={3}
-                              placeholder="Poznámka viditelná pouze pro adminy..."
+                              placeholder={t("notePlaceholder")}
                             />
                           </div>
                           <div className="flex gap-2">
@@ -382,13 +387,13 @@ export function InquiriesClient() {
                               disabled={saving}
                               className="px-4 py-2 bg-rose text-white text-sm rounded-lg hover:bg-rose-deep disabled:opacity-50"
                             >
-                              {saving ? "Ukládání..." : "Uložit"}
+                              {saving ? tc("saving") : tc("save")}
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
                               className="px-4 py-2 bg-gray-200 text-sm rounded-lg"
                             >
-                              Zrušit
+                              {tc("cancel")}
                             </button>
                           </div>
                         </div>
@@ -398,7 +403,7 @@ export function InquiriesClient() {
                             {inq.internalNote && (
                               <div>
                                 <p className="text-xs font-medium text-muted uppercase mb-1">
-                                  Interní poznámka
+                                  {t("internalNote")}
                                 </p>
                                 <p className="text-sm text-ink">
                                   {inq.internalNote}
@@ -410,7 +415,7 @@ export function InquiriesClient() {
                             onClick={() => openEdit(inq)}
                             className="px-3 py-1.5 bg-rose text-white text-xs rounded-lg hover:bg-rose-deep"
                           >
-                            Upravit
+                            {tc("edit")}
                           </button>
                         </div>
                       )}

@@ -191,7 +191,7 @@ export function ProductDetailClient({
   if (product.origin) autoDescParts.push(`původ ${product.origin}`);
   if (product.texture) autoDescParts.push(product.texture.toLowerCase());
   if (lengthStr) autoDescParts.push(lengthStr);
-  autoDescParts.push("Osobní odběr Praha zdarma, zpracování na zakázku.");
+  autoDescParts.push(t("product.autoSeoDesc"));
   const autoDescription = autoDescParts.join(". ").slice(0, 155);
   const previewTitle = metaTitleValue || autoTitle;
 
@@ -448,7 +448,7 @@ export function ProductDetailClient({
               type="text"
               value={ogImageValue}
               onChange={(e) => setOgImageValue(e.target.value)}
-              placeholder="Automaticky: první fotka produktu"
+              placeholder={t("product.ogImagePlaceholder")}
               className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose"
             />
             <p className="text-xs text-muted mt-1">1200x630px pro sociální sítě</p>
@@ -469,7 +469,7 @@ export function ProductDetailClient({
             onClick={handleSaveSeo}
             disabled={savingSeo}
           >
-            {savingSeo ? "..." : "Uložit SEO"}
+            {savingSeo ? "..." : t("product.saveSeo")}
           </Button>
         </Card>
       )}

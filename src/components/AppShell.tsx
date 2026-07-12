@@ -54,11 +54,11 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       label: null,
       items: [
         { href: "/dashboard", label: t("dashboard"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
-        { href: "/notifications", label: "Oznámení", roles: ["OWNER", "EMPLOYEE", "SALON"], badge: liveUnread, badgeColor: "bg-red-500" },
+        { href: "/notifications", label: t("notifications"), roles: ["OWNER", "EMPLOYEE", "SALON"], badge: liveUnread, badgeColor: "bg-red-500" },
       ],
     },
     {
-      label: "Produkty a sklad",
+      label: t("groupProducts"),
       items: [
         { href: "/products", label: t("products"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/inventory", label: t("inventory"), roles: ["OWNER", "EMPLOYEE"] },
@@ -66,35 +66,35 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       ],
     },
     {
-      label: "Prodej",
+      label: t("groupSales"),
       items: [
         { href: "/sales", label: t("sales"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/orders", label: t("orders"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
-        { href: "/inquiries", label: "Poptávky", roles: ["OWNER", "EMPLOYEE"], badge: newInquiryCount, badgeColor: "bg-blue-500" },
+        { href: "/inquiries", label: t("inquiries"), roles: ["OWNER", "EMPLOYEE"], badge: newInquiryCount, badgeColor: "bg-blue-500" },
         { href: "/invoices", label: t("invoices"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
         { href: "/payments", label: t("payments"), roles: ["OWNER"] },
       ],
     },
     {
-      label: "Klienti",
+      label: t("groupClients"),
       items: [
         { href: "/salons", label: t("salons"), roles: ["OWNER", "EMPLOYEE"] },
-        { href: "/stylists", label: "Kadeřnice", roles: ["OWNER", "EMPLOYEE"] },
+        { href: "/stylists", label: t("stylists"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/customers", label: t("customers"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/registrations", label: t("registrations"), roles: ["OWNER", "EMPLOYEE"], badge: pendingRegCount, badgeColor: "bg-amber-500" },
       ],
     },
     {
-      label: "Kvalita",
+      label: t("groupQuality"),
       items: [
-        { href: "/reviews", label: "Recenze", roles: ["OWNER", "EMPLOYEE"], badge: pendingReviewCount, badgeColor: "bg-amber-500" },
+        { href: "/reviews", label: t("reviews"), roles: ["OWNER", "EMPLOYEE"], badge: pendingReviewCount, badgeColor: "bg-amber-500" },
         { href: "/complaints", label: t("complaints"), roles: ["OWNER"] },
         { href: "/returns", label: t("returns"), roles: ["OWNER"] },
         { href: "/samples", label: t("samples"), roles: ["OWNER"] },
       ],
     },
     {
-      label: "Finance",
+      label: t("groupFinance"),
       items: [
         { href: "/finance", label: t("finance"), roles: ["OWNER"] },
         { href: "/discounts", label: t("discounts"), roles: ["OWNER"] },
@@ -102,21 +102,21 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       ],
     },
     {
-      label: "Marketing",
+      label: t("groupMarketing"),
       items: [
         { href: "/promo-codes", label: t("promoCodes"), roles: ["OWNER"] },
-        { href: "/referrals", label: "Referraly", roles: ["OWNER"] },
-        { href: "/posts", label: "Blog", roles: ["OWNER"] },
+        { href: "/referrals", label: t("referrals"), roles: ["OWNER"] },
+        { href: "/posts", label: t("blog"), roles: ["OWNER"] },
       ],
     },
     {
-      label: "Systém",
+      label: t("groupSystem"),
       items: [
-        { href: "/settings/loyalty", label: "Věrnostní program", roles: ["OWNER"] },
-        { href: "/settings/b2b", label: "B2B", roles: ["OWNER"] },
-        { href: "/settings/pricing", label: "Cenotvorba", roles: ["OWNER"] },
-        { href: "/settings/companies", label: "Firmy", roles: ["OWNER"] },
-        { href: "/settings/homepage", label: "Homepage", roles: ["OWNER"] },
+        { href: "/settings/loyalty", label: t("loyalty"), roles: ["OWNER"] },
+        { href: "/settings/b2b", label: t("b2b"), roles: ["OWNER"] },
+        { href: "/settings/pricing", label: t("pricing"), roles: ["OWNER"] },
+        { href: "/settings/companies", label: t("companies"), roles: ["OWNER"] },
+        { href: "/settings/homepage", label: t("homepage"), roles: ["OWNER"] },
         { href: "/audit-log", label: t("auditLog"), roles: ["OWNER"] },
       ],
     },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -56,11 +57,7 @@ function EmojiRatingPicker({ label, value, onChange }: { label: string; value: n
   );
 }
 
-const SOURCE_LABELS = {
-  MANUAL: "Ruční",
-  GOOGLE: "Google",
-  INSTAGRAM: "Instagram",
-};
+// SOURCE_LABELS moved inside component to access translations
 
 const SOURCE_COLORS = {
   MANUAL: "bg-nude-100 text-espresso",
@@ -71,6 +68,8 @@ const SOURCE_COLORS = {
 type FilterType = "pending" | "active" | "all";
 
 export function ReviewsClient() {
+  const t = useTranslations("review");
+  const tc = useTranslations("common");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,6 +78,12 @@ export function ReviewsClient() {
   const [filter, setFilter] = useState<FilterType>("pending");
   const [pendingCount, setPendingCount] = useState(0);
   const [products, setProducts] = useState<ProductOption[]>([]);
+
+  const SOURCE_LABELS = {
+    MANUAL: t("sourceManual"),
+    GOOGLE: t("sourceGoogle"),
+    INSTAGRAM: t("sourceInstagram"),
+  };
 
   type FormState = {
     authorName: string;
@@ -196,7 +201,7 @@ export function ReviewsClient() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Opravdu smazat tuto recenzi?")) return;
+    if (!confirm(t("confirmDelete"))) return;
     await fetch(`/api/reviews/${id}`, { method: "DELETE" });
     fetchReviews();
     fetchPendingCount();
@@ -237,12 +242,12 @@ export function ReviewsClient() {
     fetchReviews(f);
   };
 
-  if (loading) return <div className="p-4 text-muted">Načítání...</div>;
+  if (loading) return <div className="p-4 text-muted">{tc("loading")}</div>;
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Recenze ({reviews.length})</h1>
+        <h1 className="text-xl font-bold">{t("title")} ({reviews.length})</h1>
         <Button
           onClick={() => {
             setForm(emptyForm);
@@ -250,16 +255,16 @@ export function ReviewsClient() {
             setShowForm(!showForm);
           }}
         >
-          {showForm ? "Zavřít" : "Přidat recenzi"}
+          {showForm ? t("closeForm") : t("addReview")}
         </Button>
       </div>
 
       {/* Filter tabs */}
       <div className="flex gap-1 bg-nude-100 rounded-lg p-1">
         {([
-          { key: "pending" as const, label: "Ke schválení", count: pendingCount },
-          { key: "active" as const, label: "Aktivní" },
-          { key: "all" as const, label: "Všechny" },
+          { key: "pending" as const, label: t("filterPending"), count: pendingCount },
+          { key: "active" as const, label: t("filterActive") },
+          { key: "all" as const, label: t("filterAll") },
         ]).map((tab) => (
           <button
             key={tab.key}
@@ -284,30 +289,30 @@ export function ReviewsClient() {
         <Card>
           <div className="space-y-3">
             <div className="text-sm font-semibold text-espresso">
-              {editingId ? "Upravit recenzi" : "Nová recenze"}
+              {editingId ? t("editReview") : t("newReview")}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-espresso mb-1">Typ zdroje</label>
+              <label className="block text-sm font-medium text-espresso mb-1">{t("sourceType")}</label>
               <select
                 value={form.source}
                 onChange={(e) => setField("source", e.target.value as FormState["source"])}
                 className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               >
-                <option value="MANUAL">Ruční zadání</option>
-                <option value="GOOGLE">Google recenze</option>
-                <option value="INSTAGRAM">Instagram</option>
+                <option value="MANUAL">{t("sourceManualEntry")}</option>
+                <option value="GOOGLE">{t("sourceGoogleReview")}</option>
+                <option value="INSTAGRAM">{t("sourceInstagram")}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-espresso mb-1">Produkt</label>
+              <label className="block text-sm font-medium text-espresso mb-1">{t("product")}</label>
               <select
                 value={form.productId}
                 onChange={(e) => setField("productId", e.target.value)}
                 className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               >
-                <option value="">Obecná recenze (bez produktu)</option>
+                <option value="">{t("generalReview")}</option>
                 {products.map((p) => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
@@ -316,12 +321,12 @@ export function ReviewsClient() {
 
             <div className="grid grid-cols-2 gap-3">
               <Input
-                label="Jméno autora *"
+                label={`${t("authorName")} *`}
                 value={form.authorName}
                 onChange={(e) => setField("authorName", e.target.value)}
               />
               <Input
-                label="Město"
+                label={t("city")}
                 value={form.authorCity}
                 onChange={(e) => setField("authorCity", e.target.value)}
               />
@@ -329,12 +334,12 @@ export function ReviewsClient() {
 
             <div className="grid grid-cols-2 gap-3">
               <Input
-                label="Salon"
+                label={t("salonLabel")}
                 value={form.salonName}
                 onChange={(e) => setField("salonName", e.target.value)}
               />
               <Input
-                label="Foto URL"
+                label={t("photoUrl")}
                 value={form.authorPhoto}
                 onChange={(e) => setField("authorPhoto", e.target.value)}
                 placeholder="https://..."
@@ -343,7 +348,7 @@ export function ReviewsClient() {
 
             <div>
               <label className="block text-sm font-medium text-espresso mb-1">
-                Hodnocení: {form.rating}/5
+                {t("ratingLabel", { rating: form.rating })}
               </label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -361,24 +366,24 @@ export function ReviewsClient() {
 
             <div className="grid grid-cols-3 gap-3">
               <EmojiRatingPicker
-                label="✨ Kvalita vlasů"
+                label={`✨ ${t("ratingQuality")}`}
                 value={form.ratingQuality}
                 onChange={(v) => setField("ratingQuality", v)}
               />
               <EmojiRatingPicker
-                label="💬 Komunikace"
+                label={`💬 ${t("ratingCommunication")}`}
                 value={form.ratingCommunication}
                 onChange={(v) => setField("ratingCommunication", v)}
               />
               <EmojiRatingPicker
-                label="📦 Rychlost dodání"
+                label={`📦 ${t("ratingSpeed")}`}
                 value={form.ratingSpeed}
                 onChange={(v) => setField("ratingSpeed", v)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-espresso mb-1">Text recenze *</label>
+              <label className="block text-sm font-medium text-espresso mb-1">{t("reviewText")} *</label>
               <textarea
                 value={form.text}
                 onChange={(e) => setField("text", e.target.value)}
@@ -389,7 +394,7 @@ export function ReviewsClient() {
 
             {form.source === "INSTAGRAM" && (
               <div>
-                <label className="block text-sm font-medium text-espresso mb-1">Instagram URL</label>
+                <label className="block text-sm font-medium text-espresso mb-1">{t("instagramUrl")}</label>
                 <Input
                   value={form.sourceUrl}
                   onChange={(e) => setField("sourceUrl", e.target.value)}
@@ -400,7 +405,7 @@ export function ReviewsClient() {
 
             {form.source === "GOOGLE" && (
               <Input
-                label="Google Maps odkaz"
+                label={t("googleMapsLink")}
                 value={form.sourceUrl}
                 onChange={(e) => setField("sourceUrl", e.target.value)}
                 placeholder="https://g.co/kgs/..."
@@ -415,7 +420,7 @@ export function ReviewsClient() {
                   onChange={(e) => setField("featured", e.target.checked)}
                   className="rounded"
                 />
-                Zvýrazněná (homepage)
+                {t("featuredHomepage")}
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -424,16 +429,16 @@ export function ReviewsClient() {
                   onChange={(e) => setField("active", e.target.checked)}
                   className="rounded"
                 />
-                Aktivní
+                {t("active")}
               </label>
             </div>
 
             <div className="flex gap-2 pt-1">
               <Button onClick={handleSave} disabled={saving || !form.authorName || !form.text}>
-                {saving ? "Ukládání..." : editingId ? "Uložit" : "Přidat"}
+                {saving ? tc("saving") : editingId ? tc("save") : tc("add")}
               </Button>
               <Button variant="secondary" onClick={() => { setShowForm(false); setEditingId(null); }}>
-                Zrušit
+                {tc("cancel")}
               </Button>
             </div>
           </div>
@@ -444,8 +449,8 @@ export function ReviewsClient() {
         <Card>
           <div className="text-center text-muted py-8">
             {filter === "pending"
-              ? "Žádné recenze ke schválení."
-              : "Zatím žádné recenze."}
+              ? t("noPendingReviews")
+              : t("noReviews")}
           </div>
         </Card>
       ) : (
@@ -456,20 +461,20 @@ export function ReviewsClient() {
               {!r.active && filter !== "active" && (
                 <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 -mt-1">
                   <span className="text-xs font-medium text-amber-700">
-                    ⏳ Čeká na schválení
+                    ⏳ {t("pendingApproval")}
                   </span>
                   <div className="flex gap-1.5">
                     <button
                       onClick={() => handleApprove(r)}
                       className="px-2.5 py-1 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-md transition-colors"
                     >
-                      Schválit
+                      {t("approve")}
                     </button>
                     <button
                       onClick={() => handleDelete(r.id)}
                       className="px-2.5 py-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
                     >
-                      Zamítnout
+                      {t("reject")}
                     </button>
                   </div>
                 </div>
@@ -492,12 +497,12 @@ export function ReviewsClient() {
                     </span>
                     {r.featured && (
                       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700">
-                        ★ Zvýrazněná
+                        ★ {t("featured")}
                       </span>
                     )}
                     {!r.active && (
                       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-700">
-                        Skrytá
+                        {t("hidden")}
                       </span>
                     )}
                     {r.product && (
@@ -519,7 +524,7 @@ export function ReviewsClient() {
                   <p className="text-sm text-espresso mt-1 line-clamp-2">{r.text}</p>
                   {r.sourceUrl && (
                     <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-espresso hover:underline mt-1 inline-block">
-                      Zdroj →
+                      {t("sourceLink")}
                     </a>
                   )}
                 </div>
@@ -527,14 +532,14 @@ export function ReviewsClient() {
                   <button
                     onClick={() => toggleFeatured(r)}
                     className={`p-1.5 rounded text-sm ${r.featured ? "text-yellow-600 bg-yellow-50" : "text-muted hover:text-yellow-600"}`}
-                    title={r.featured ? "Odebrat z homepage" : "Zobrazit na homepage"}
+                    title={r.featured ? t("removeFromHomepage") : t("showOnHomepage")}
                   >
                     ★
                   </button>
                   <button
                     onClick={() => toggleActive(r)}
                     className={`p-1.5 rounded text-sm ${r.active ? "text-emerald-600" : "text-muted"}`}
-                    title={r.active ? "Skrýt" : "Zobrazit"}
+                    title={r.active ? t("hideReview") : t("showReview")}
                   >
                     {r.active ? "👁" : "👁‍🗨"}
                   </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -14,6 +15,8 @@ const DEFAULT_PHOTOS = [
 const SETTING_KEY = "instagram_photos";
 
 export function HomepageSettingsClient() {
+  const t = useTranslations("homepageSettings");
+  const tc = useTranslations("common");
   const [photos, setPhotos] = useState<string[]>(DEFAULT_PHOTOS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,7 +51,7 @@ export function HomepageSettingsClient() {
       const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: "Upload selhal" }));
-        setError(err.error || "Upload selhal");
+        setError(err.error || t("uploadFailed"));
         return;
       }
       const data = await res.json();
@@ -59,7 +62,7 @@ export function HomepageSettingsClient() {
         setPhotos(updated);
       }
     } catch {
-      setError("Upload selhal");
+      setError(t("uploadFailed"));
     } finally {
       setUploading(null);
     }
@@ -78,16 +81,16 @@ export function HomepageSettingsClient() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  if (loading) return <p className="text-muted">Načítání...</p>;
+  if (loading) return <p className="text-muted">{tc("loading")}</p>;
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold">Nastavení homepage</h1>
-      <p className="text-sm text-muted">Správa obsahu zobrazovaného na hlavní stránce.</p>
+      <h1 className="text-xl font-bold">{t("title")}</h1>
+      <p className="text-sm text-muted">{t("description")}</p>
 
       <Card>
-        <h2 className="text-sm font-semibold text-espresso mb-3">Instagram fotky</h2>
-        <p className="text-xs text-muted mb-4">4 fotky zobrazené v sekci &quot;Sledujte nás na Instagramu&quot; na homepage.</p>
+        <h2 className="text-sm font-semibold text-espresso mb-3">{t("instagramPhotos")}</h2>
+        <p className="text-xs text-muted mb-4">{t("instagramDesc")}</p>
 
         {error && <p className="text-xs text-red-600 mb-3">{error}</p>}
 
@@ -113,7 +116,7 @@ export function HomepageSettingsClient() {
                 )}
                 {uploading === i && (
                   <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                    <span className="text-xs text-muted">Nahrávám...</span>
+                    <span className="text-xs text-muted">{t("uploadingPhoto")}</span>
                   </div>
                 )}
                 {uploading !== i && url && (
@@ -136,17 +139,17 @@ export function HomepageSettingsClient() {
                   disabled={uploading !== null}
                 />
               </div>
-              <p className="text-xs text-center text-muted">Fotka {i + 1}</p>
+              <p className="text-xs text-center text-muted">{t("photoLabel", { index: i + 1 })}</p>
             </div>
           ))}
         </div>
 
         <div className="pt-4 flex items-center gap-3">
           <Button onClick={handleSave} disabled={saving || uploading !== null}>
-            {saving ? "Ukládám..." : "Uložit"}
+            {saving ? t("savingBtn") : tc("save")}
           </Button>
           {saved && (
-            <span className="text-sm text-green-600">Uloženo!</span>
+            <span className="text-sm text-green-600">{t("savedMsg")}</span>
           )}
         </div>
       </Card>

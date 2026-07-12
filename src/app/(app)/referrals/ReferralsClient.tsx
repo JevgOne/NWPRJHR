@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 
 interface ReferralRow {
@@ -18,6 +19,7 @@ interface ReferralRow {
 }
 
 export function ReferralsClient() {
+  const t = useTranslations("referral");
   const [referrals, setReferrals] = useState<ReferralRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,8 +41,8 @@ export function ReferralsClient() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-ink">Referral Program</h1>
-        <span className="text-sm text-muted">{referrals.length} referrals</span>
+        <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
+        <span className="text-sm text-muted">{t("count", { count: referrals.length })}</span>
       </div>
 
       <Card className="overflow-hidden">
@@ -48,13 +50,13 @@ export function ReferralsClient() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-line bg-nude-50">
-                <th className="text-left px-4 py-2 text-xs text-muted uppercase">Kód</th>
-                <th className="text-left px-4 py-2 text-xs text-muted uppercase">Referrer</th>
-                <th className="text-center px-4 py-2 text-xs text-muted uppercase">Odměna</th>
-                <th className="text-center px-4 py-2 text-xs text-muted uppercase">Sleva pro nové</th>
-                <th className="text-center px-4 py-2 text-xs text-muted uppercase">Konverze</th>
-                <th className="text-center px-4 py-2 text-xs text-muted uppercase">Status</th>
-                <th className="text-left px-4 py-2 text-xs text-muted uppercase">Vytvořeno</th>
+                <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t("code")}</th>
+                <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t("referrer")}</th>
+                <th className="text-center px-4 py-2 text-xs text-muted uppercase">{t("reward")}</th>
+                <th className="text-center px-4 py-2 text-xs text-muted uppercase">{t("newDiscount")}</th>
+                <th className="text-center px-4 py-2 text-xs text-muted uppercase">{t("conversions")}</th>
+                <th className="text-center px-4 py-2 text-xs text-muted uppercase">{t("status")}</th>
+                <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t("created")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -74,7 +76,7 @@ export function ReferralsClient() {
                         r.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {r.active ? "Aktivní" : "Neaktivní"}
+                      {r.active ? t("active") : t("inactive")}
                     </span>
                   </td>
                   <td className="px-4 py-2 text-muted">
@@ -85,7 +87,7 @@ export function ReferralsClient() {
               {referrals.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-4 py-8 text-center text-muted">
-                    Žádné referraly
+                    {t("noReferrals")}
                   </td>
                 </tr>
               )}

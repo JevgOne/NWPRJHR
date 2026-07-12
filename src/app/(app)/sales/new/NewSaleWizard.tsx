@@ -410,14 +410,14 @@ export function NewSaleWizard({
       <Card>
         <div>
           <label className="block text-sm font-medium text-espresso mb-2">
-            Typ platby
+            {t("paymentType")}
           </label>
           <div className="grid grid-cols-2 gap-2">
             {([
-              { key: "TRANSFER", label: "Převod" },
-              { key: "CASH", label: "Hotovost" },
-              { key: "PROMO", label: "Promo" },
-              { key: "WRITEOFF", label: "Odpis" },
+              { key: "TRANSFER", label: t("paymentTransfer") },
+              { key: "CASH", label: t("paymentCash") },
+              { key: "PROMO", label: t("paymentPromo") },
+              { key: "WRITEOFF", label: t("paymentWriteoff") },
             ] as const).map((pt) => (
               <button
                 key={pt.key}
@@ -437,16 +437,16 @@ export function NewSaleWizard({
             <div className="mt-2 space-y-2">
               <input
                 type="text"
-                placeholder="Číslo paragonu (nepovinné)"
+                placeholder={t("receiptPlaceholder")}
                 value={receiptNumber}
                 onChange={(e) => setReceiptNumber(e.target.value)}
                 className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               />
-              <p className="text-xs text-muted">Paragon/pokladní doklad vystavíte ručně.</p>
+              <p className="text-xs text-muted">{t("receiptHint")}</p>
             </div>
           )}
           {paymentType === "TRANSFER" && (
-            <p className="text-xs text-muted mt-2">Faktura se vytvoří automaticky.</p>
+            <p className="text-xs text-muted mt-2">{t("transferHint")}</p>
           )}
           {paymentType === "PROMO" && (
             <p className="text-xs text-muted mt-2">Interní promo — vytvoří se interní doklad.</p>

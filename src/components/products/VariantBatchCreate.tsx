@@ -155,7 +155,7 @@ export function VariantBatchCreate({
         {/* Selling mode toggle */}
         <div>
           <label className="block text-sm font-medium text-espresso mb-1.5">
-            {t("variant.sellingMode") ?? "Režim prodeje"}
+            {t("variant.sellingMode")}
           </label>
           <div className="flex gap-2">
             <button
@@ -199,7 +199,7 @@ export function VariantBatchCreate({
         {isByPiece ? (
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="Nákupní cena (Kč/ks)"
+              label={t("variant.purchasePricePiece")}
               type="number"
               step="0.01"
               placeholder="5000"
@@ -214,7 +214,7 @@ export function VariantBatchCreate({
             />
             <div>
               <Input
-                label="Prodejní cena (Kč/ks)"
+                label={t("variant.retailPricePiece")}
                 type="number"
                 step="0.01"
                 placeholder="10000"
@@ -232,7 +232,7 @@ export function VariantBatchCreate({
         ) : (
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="Nákupní cena (Kč/g)"
+              label={t("variant.purchasePriceGram")}
               type="number"
               step="0.01"
               placeholder="5.00"
@@ -247,7 +247,7 @@ export function VariantBatchCreate({
             />
             <div>
               <Input
-                label="Prodejní cena (Kč/g)"
+                label={t("variant.retailPriceGram")}
                 type="number"
                 step="0.01"
                 placeholder="10.00"
@@ -268,14 +268,14 @@ export function VariantBatchCreate({
         {retailPreview > 0 && (
           <div className="bg-nude-50 rounded-lg p-3 space-y-1">
             <div className="flex justify-between text-sm">
-              <span className="text-muted">Prodejní cena {isByPiece ? "za kus" : "za 100g"}:</span>
+              <span className="text-muted">{t("variant.retailPriceLabel")} {isByPiece ? t("variant.perPiece") : t("variant.per100g")}:</span>
               <span className="font-semibold text-ink">
                 {retailPreview.toLocaleString("cs-CZ")} Kč
               </span>
             </div>
             {costPreview > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Nákupní cena {isByPiece ? "za kus" : "za 100g"}:</span>
+                <span className="text-muted">{t("variant.purchasePriceLabel")} {isByPiece ? t("variant.perPiece") : t("variant.per100g")}:</span>
                 <span className="text-muted">
                   {costPreview.toLocaleString("cs-CZ")} Kč
                 </span>
