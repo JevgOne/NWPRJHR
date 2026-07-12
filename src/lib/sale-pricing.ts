@@ -1,8 +1,6 @@
 import type { CustomerType } from "@prisma/client";
 import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
-import { getLoyaltyDiscount } from "./loyalty";
-
 export interface SalePriceResult {
   pricePerGram: number;
   pricePerPiece: number | null;
@@ -11,7 +9,7 @@ export interface SalePriceResult {
 
 /**
  * Get effective price for a sale, supporting both BY_GRAM and BY_PIECE modes.
- * SALON/HAIRDRESSER: retail price minus loyalty tier discount.
+ * B2B: discount from margin (margin = retail / 2 with 100% markup).
  * RETAIL: full retail price.
  */
 export async function getSalePrice(
@@ -25,25 +23,22 @@ export async function getSalePrice(
 
   const sellingMode = (variant.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE";
 
-  // Get loyalty discount for B2B customers
+  // Get B2B discount from settings
   let discountPct = 0;
-  if ((customerType === "SALON" || customerType === "HAIRDRESSER") && salonId) {
-    const salon = await prisma.salon.findUnique({
-      where: { id: salonId },
-      select: { tier: true, type: true },
-    });
-    if (salon) {
-      discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
-    }
+  if (customerType === "SALON" || customerType === "HAIRDRESSER") {
+    const b2bSettings = await prisma.b2BSettings.findFirst();
+    discountPct = customerType === "SALON"
+      ? (b2bSettings?.salonDiscountPct ?? 3000)
+      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
   }
 
-  // Always compute pricePerGram from retail price
+  // Discount from margin (margin = retail / 2 with 100% markup)
   let pricePerGram: number;
   if (customerType === "RETAIL" || discountPct === 0) {
     pricePerGram = variant.retailPricePerGram;
   } else {
     pricePerGram = roundHalereUp(
-      (variant.retailPricePerGram * (10000 - discountPct)) / 10000
+      variant.retailPricePerGram - (variant.retailPricePerGram * discountPct) / 20000
     );
   }
 
@@ -54,7 +49,7 @@ export async function getSalePrice(
       piecePrice = retailPerPiece;
     } else {
       piecePrice = roundHalereUp(
-        (retailPerPiece * (10000 - discountPct)) / 10000
+        retailPerPiece - (retailPerPiece * discountPct) / 20000
       );
     }
     return { pricePerGram, pricePerPiece: piecePrice, sellingMode: "BY_PIECE" };

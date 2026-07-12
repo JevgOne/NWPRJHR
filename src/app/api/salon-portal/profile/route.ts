@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getLoyaltyDiscount } from "@/lib/loyalty";
 
 export async function GET() {
   const session = await auth();
@@ -28,31 +27,14 @@ export async function GET() {
     },
   });
 
-  const discountPercent = await getLoyaltyDiscount(salon.tier, salon.type);
-
-  // Get next tier info for this salon type
-  const allSettings = await prisma.loyaltySettings.findMany({
-    where: { salonType: salon.type },
-    orderBy: { revenueThreshold: "asc" },
-  });
-
-  const currentIdx = allSettings.findIndex((s) => s.tier === salon.tier);
-  const nextTier =
-    currentIdx < allSettings.length - 1
-      ? allSettings[currentIdx + 1]
-      : null;
+  const b2bSettings = await prisma.b2BSettings.findFirst();
+  const discountPercent = salon.type === "SALON"
+    ? (b2bSettings?.salonDiscountPct ?? 3000)
+    : (b2bSettings?.hairdresserDiscountPct ?? 2000);
 
   return NextResponse.json({
     ...salon,
     discountPercent,
-    nextTier: nextTier
-      ? {
-          tier: nextTier.tier,
-          revenueThreshold: nextTier.revenueThreshold,
-          remaining: Math.max(0, nextTier.revenueThreshold - salon.totalRevenue),
-          discountPercent: nextTier.discountPercent,
-        }
-      : null,
   });
 }
 

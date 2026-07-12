@@ -1,6 +1,5 @@
 import { prisma } from "./db";
 import { getAllStockNumbers, invalidateStockCache } from "./stock";
-import { getLoyaltyDiscount } from "./loyalty";
 import { roundHalereUp } from "./rounding";
 import type { Order } from "@prisma/client";
 
@@ -42,14 +41,17 @@ export async function createOrder(
 
   const variantIds = items.map(i => i.variantId);
 
-  // Parallel: loyalty discount + all variants + all stock in 3 queries
-  const [loyaltyDiscount, variants, stockMap] = await Promise.all([
-    getLoyaltyDiscount(salon.tier, salon.type),
+  // Parallel: B2B discount + all variants + all stock in 3 queries
+  const [b2bSettings, variants, stockMap] = await Promise.all([
+    prisma.b2BSettings.findFirst(),
     prisma.variant.findMany({
       where: { id: { in: variantIds } },
     }),
     getAllStockNumbers(),
   ]);
+  const b2bDiscountPct = salon.type === "SALON"
+    ? (b2bSettings?.salonDiscountPct ?? 3000)
+    : (b2bSettings?.hairdresserDiscountPct ?? 2000);
 
   const variantMap = new Map(variants.map(v => [v.id, v]));
 
@@ -101,13 +103,14 @@ export async function createOrder(
 
     if (isByPiece) {
       const retailPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
-      pricePerUnit = loyaltyDiscount > 0
-        ? roundHalereUp(retailPiece * (10000 - loyaltyDiscount) / 10000)
+      // Discount from margin (margin = retail / 2 with 100% markup)
+      pricePerUnit = b2bDiscountPct > 0
+        ? roundHalereUp(retailPiece - (retailPiece * b2bDiscountPct) / 20000)
         : retailPiece;
       lineTotal = roundHalereUp(pricePerUnit * item.pieces);
     } else {
-      pricePerUnit = loyaltyDiscount > 0
-        ? roundHalereUp(variant.retailPricePerGram * (10000 - loyaltyDiscount) / 10000)
+      pricePerUnit = b2bDiscountPct > 0
+        ? roundHalereUp(variant.retailPricePerGram - (variant.retailPricePerGram * b2bDiscountPct) / 20000)
         : variant.retailPricePerGram;
       lineTotal = roundHalereUp(pricePerUnit * item.grams);
     }

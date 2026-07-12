@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { roundHalereUp } from "@/lib/rounding";
 import { getAllStockNumbers } from "@/lib/stock";
 
@@ -21,9 +20,9 @@ export async function GET() {
 
   const salonType = salon.type as "SALON" | "HAIRDRESSER";
 
-  // Parallel fetch: discount + products + stock (3 queries at once)
-  const [loyaltyDiscount, products, stockMap] = await Promise.all([
-    getLoyaltyDiscount(salon.tier, salonType),
+  // Parallel fetch: B2B discount + products + stock (3 queries at once)
+  const [b2bSettings, products, stockMap] = await Promise.all([
+    prisma.b2BSettings.findFirst(),
     prisma.product.findMany({
       where: { archived: false },
       include: {
@@ -38,7 +37,11 @@ export async function GET() {
   ]);
 
   // Add role-specific prices, filter to in-stock variants only
-  // Both salon and hairdresser: loyalty discount applied to retail price
+  // B2B: discount from margin (margin = retail / 2 with 100% markup)
+  const b2bDiscountPct = salonType === "SALON"
+    ? (b2bSettings?.salonDiscountPct ?? 3000)
+    : (b2bSettings?.hairdresserDiscountPct ?? 2000);
+
   const allProducts = products.map((product) => {
     const variants = product.variants
       .map((v) => {
@@ -50,13 +53,13 @@ export async function GET() {
 
         if (isByPiece) {
           const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
-          pricePerPiece = loyaltyDiscount > 0
-            ? roundHalereUp((retailPiece * (10000 - loyaltyDiscount)) / 10000)
+          pricePerPiece = b2bDiscountPct > 0
+            ? roundHalereUp(retailPiece - (retailPiece * b2bDiscountPct) / 20000)
             : retailPiece;
-          price = 0; // not used for BY_PIECE
+          price = 0;
         } else {
-          price = loyaltyDiscount > 0
-            ? roundHalereUp((v.retailPricePerGram * (10000 - loyaltyDiscount)) / 10000)
+          price = b2bDiscountPct > 0
+            ? roundHalereUp(v.retailPricePerGram - (v.retailPricePerGram * b2bDiscountPct) / 20000)
             : v.retailPricePerGram;
         }
 

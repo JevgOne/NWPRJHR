@@ -1,11 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { put } from "@vercel/blob";
+import sharp from "sharp";
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
+
+/**
+ * Generate an SVG watermark overlay sized to the image.
+ * Text "hairland.cz" repeated diagonally across the image,
+ * semi-transparent white with subtle shadow.
+ */
+function createWatermarkSvg(width: number, height: number): Buffer {
+  const fontSize = Math.max(Math.round(Math.min(width, height) * 0.06), 16);
+  const gap = fontSize * 4;
+
+  // Generate repeated diagonal text
+  const texts: string[] = [];
+  for (let y = -height; y < height * 2; y += gap) {
+    for (let x = -width; x < width * 2; x += gap) {
+      texts.push(
+        `<text x="${x}" y="${y}" font-size="${fontSize}" font-family="Arial, Helvetica, sans-serif" font-weight="600" fill="white" fill-opacity="0.25" transform="rotate(-30, ${x}, ${y})">hairland.cz</text>`
+      );
+    }
+  }
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${texts.join("")}</svg>`;
+  return Buffer.from(svg);
+}
+
+async function addWatermark(fileBuffer: Buffer): Promise<Buffer> {
+  const image = sharp(fileBuffer);
+  const metadata = await image.metadata();
+  const w = metadata.width ?? 800;
+  const h = metadata.height ?? 600;
+
+  const watermarkSvg = createWatermarkSvg(w, h);
+
+  return image
+    .composite([{ input: watermarkSvg, top: 0, left: 0 }])
+    .jpeg({ quality: 90 })
+    .toBuffer();
+}
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -42,13 +80,23 @@ export async function POST(request: NextRequest) {
       throw new Error(`${file.name} je příliš velký (max ${isVideo ? "50MB" : "5MB"})`);
     }
 
-    const ext = file.name.split(".").pop() ?? (isVideo ? "mp4" : "jpg");
+    let uploadBuffer: Buffer | File = file;
+    let contentType = file.type;
+
+    // Add watermark to photos
+    if (isPhoto) {
+      const arrayBuffer = await file.arrayBuffer();
+      uploadBuffer = await addWatermark(Buffer.from(arrayBuffer));
+      contentType = "image/jpeg";
+    }
+
+    const ext = isPhoto ? "jpg" : (file.name.split(".").pop() ?? "mp4");
     const folder = isVideo ? "videos" : "products";
     const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
 
-    const blob = await put(safeName, file, {
+    const blob = await put(safeName, uploadBuffer, {
       access: "public",
-      contentType: file.type,
+      contentType,
     });
 
     return { url: blob.url, isVideo };

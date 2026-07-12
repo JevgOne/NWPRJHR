@@ -25,10 +25,12 @@ export function VariantBatchCreate({
   // BY_GRAM prices
   const [costPricePerGram, setCostPricePerGram] = useState("");
   const [retailPricePerGram, setRetailPricePerGram] = useState("");
+  const [retailManual, setRetailManual] = useState(false);
 
   // BY_PIECE prices
   const [costPricePerPiece, setCostPricePerPiece] = useState("");
   const [retailPricePerPiece, setRetailPricePerPiece] = useState("");
+  const [retailPieceManual, setRetailPieceManual] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -195,47 +197,71 @@ export function VariantBatchCreate({
         />
 
         {isByPiece ? (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="Nákupní cena (Kč/ks)"
-                type="number"
-                step="0.01"
-                placeholder="5000"
-                value={costPricePerPiece}
-                onChange={(e) => setCostPricePerPiece(e.target.value)}
-              />
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Nákupní cena (Kč/ks)"
+              type="number"
+              step="0.01"
+              placeholder="5000"
+              value={costPricePerPiece}
+              onChange={(e) => {
+                setCostPricePerPiece(e.target.value);
+                if (!retailPieceManual) {
+                  const cost = parseFloat(e.target.value);
+                  setRetailPricePerPiece(cost > 0 ? (cost * 2).toString() : "");
+                }
+              }}
+            />
+            <div>
               <Input
                 label="Prodejní cena (Kč/ks)"
                 type="number"
                 step="0.01"
-                placeholder="12500"
+                placeholder="10000"
                 value={retailPricePerPiece}
-                onChange={(e) => setRetailPricePerPiece(e.target.value)}
+                onChange={(e) => {
+                  setRetailPricePerPiece(e.target.value);
+                  setRetailPieceManual(true);
+                }}
               />
+              {!retailPieceManual && costPricePerPiece && (
+                <p className="text-[10px] text-muted mt-0.5">Auto: nákupní × 2</p>
+              )}
             </div>
-          </>
+          </div>
         ) : (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="Nákupní cena (Kč/g)"
-                type="number"
-                step="0.01"
-                placeholder="8.00"
-                value={costPricePerGram}
-                onChange={(e) => setCostPricePerGram(e.target.value)}
-              />
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Nákupní cena (Kč/g)"
+              type="number"
+              step="0.01"
+              placeholder="5.00"
+              value={costPricePerGram}
+              onChange={(e) => {
+                setCostPricePerGram(e.target.value);
+                if (!retailManual) {
+                  const cost = parseFloat(e.target.value);
+                  setRetailPricePerGram(cost > 0 ? (cost * 2).toString() : "");
+                }
+              }}
+            />
+            <div>
               <Input
                 label="Prodejní cena (Kč/g)"
                 type="number"
                 step="0.01"
-                placeholder="15.00"
+                placeholder="10.00"
                 value={retailPricePerGram}
-                onChange={(e) => setRetailPricePerGram(e.target.value)}
+                onChange={(e) => {
+                  setRetailPricePerGram(e.target.value);
+                  setRetailManual(true);
+                }}
               />
+              {!retailManual && costPricePerGram && (
+                <p className="text-[10px] text-muted mt-0.5">Auto: nákupní × 2</p>
+              )}
             </div>
-          </>
+          </div>
         )}
 
         {/* Price preview */}

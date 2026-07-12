@@ -30,24 +30,9 @@ export async function PUT(
 
   const data: Record<string, unknown> = { ...parsed.data };
 
-  // If retail price set explicitly, mark as manual override
+  // Keep wholesalePricePerGram in sync with retailPricePerGram
   if (parsed.data.retailPricePerGram !== undefined) {
-    data.retailManualOverride = true;
-  }
-
-  // If wholesale changed and NOT manual override, recalculate retail
-  if (
-    parsed.data.wholesalePricePerGram !== undefined &&
-    !parsed.data.retailManualOverride &&
-    !existing.retailManualOverride
-  ) {
-    const priceSetting = await prisma.priceSettings.findUnique({
-      where: { category: existing.product.category },
-    });
-    data.retailPricePerGram = calculateRetailPrice(
-      parsed.data.wholesalePricePerGram,
-      priceSetting?.markupPercent ?? 0
-    );
+    data.wholesalePricePerGram = parsed.data.retailPricePerGram;
   }
 
   const variant = await prisma.variant.update({

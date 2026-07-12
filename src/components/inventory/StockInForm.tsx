@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
@@ -47,6 +47,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
   const [totalPieces, setTotalPieces] = useState("");
   const [pieceWeightGrams, setPieceWeightGrams] = useState("");
+  const [purchasePricePerPieceCzk, setPurchasePricePerPieceCzk] = useState("");
   const [pricePerPieceCzk, setPricePerPieceCzk] = useState("");
   const [retailPricePerPieceCzk, setRetailPricePerPieceCzk] = useState("");
 
@@ -67,6 +68,23 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [uploadedVideo, setUploadedVideo] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  // Preview URLs for selected files
+  const filePreviews = useMemo(() => {
+    return selectedFiles.map((f) =>
+      f.type.startsWith("image/") ? URL.createObjectURL(f) : null
+    );
+  }, [selectedFiles]);
+
+  const handleFilesSelected = useCallback((files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setSelectedFiles((prev) => [...prev, ...Array.from(files)]);
+  }, []);
+
+  const removeFile = useCallback((index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
   // Auto-scroll to the next form section after selection
   const scrollTo = useCallback((id: string) => {
@@ -142,7 +160,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       color,
       lengthCm,
       supplierId,
-      purchasePricePerGramRaw: isByPiece ? 0 : Math.round(parseFloat(purchasePrice) * 100),
+      purchasePricePerGramRaw: isByPiece
+        ? (parsedPieceWeight ? Math.round((parseFloat(purchasePricePerPieceCzk) * 100) / parsedPieceWeight) : 0)
+        : Math.round(parseFloat(purchasePrice) * 100),
       currency: "CZK" as const,
       exchangeRate: 10000,
       totalGrams: computedGrams,
@@ -150,6 +170,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       sellingMode,
       ...(isByPiece ? {
         pieceWeightGrams: parsedPieceWeight,
+        purchasePricePerPiece: Math.round(parseFloat(purchasePricePerPieceCzk) * 100),
         pricePerPiece: Math.round(parseFloat(pricePerPieceCzk) * 100),
         ...(retailPricePerPieceCzk
           ? { retailPricePerPiece: Math.round(parseFloat(retailPricePerPieceCzk) * 100) }
@@ -175,6 +196,30 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     }
 
     const result = await res.json();
+
+    // Upload photos if any were selected
+    if (selectedFiles.length > 0) {
+      const formData = new FormData();
+      for (const file of selectedFiles) {
+        formData.append("files", file);
+      }
+      try {
+        const mediaRes = await fetch(`/api/products/${result.productId}/media`, {
+          method: "POST",
+          body: formData,
+        });
+        const mediaData = await mediaRes.json();
+        if (mediaRes.ok) {
+          setUploadedPhotos(mediaData.photos ?? []);
+          if (mediaData.video) setUploadedVideo(mediaData.video);
+        } else {
+          setUploadError(mediaData.error || "Upload selhal");
+        }
+      } catch {
+        setUploadError("Upload selhal");
+      }
+    }
+
     const saleUrl = `${window.location.origin}/sales/new?variantId=${result.variantId}`;
     const QRCode = await import("qrcode");
     const dataUrl = await QRCode.toDataURL(saleUrl, {
@@ -264,55 +309,50 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
           )}
           <p className="text-xs text-muted">{t("qrLinkDesc")}</p>
 
-          {/* Media upload section */}
-          <div className="w-full border-t border-line pt-4 mt-2 text-left">
-            <h3 className="text-sm font-semibold text-espresso mb-2">
-              Fotky &amp; video produktu
-            </h3>
-            <div className="bg-nude-50 rounded-lg p-3 mb-3">
-              <p className="text-xs text-muted font-medium mb-1.5">Tipy pro focení ve fotoboxu:</p>
-              <ul className="text-xs text-muted space-y-1">
-                <li>1. <strong>Celkový pohled</strong> — vlasy celé, rovně položené</li>
-                <li>2. <strong>Detail struktury</strong> — zblízka textura vlákna</li>
-                <li>3. <strong>Odstín barvy</strong> — detail při studiovém světle</li>
-                <li>4. <strong>Video</strong> — krátké (15-30s), ukázka lesku a pohybu</li>
-              </ul>
-              <p className="text-[10px] text-muted/70 mt-1.5">Max 6 fotek (JPG/PNG/WebP, 5MB) + 1 video (MP4/MOV/WebM, 50MB)</p>
-            </div>
-
-            {/* Uploaded previews */}
-            {(uploadedPhotos.length > 0 || uploadedVideo) && (
-              <div className="flex flex-wrap gap-2 mb-3">
+          {/* Uploaded photos preview */}
+          {(uploadedPhotos.length > 0 || uploadedVideo) && (
+            <div className="w-full border-t border-line pt-4 mt-2 text-left">
+              <h3 className="text-sm font-semibold text-espresso mb-2">
+                {t("photosUploaded")}
+              </h3>
+              <div className="flex flex-wrap gap-2">
                 {uploadedPhotos.map((url, i) => (
                   <img key={i} src={url} alt={`Foto ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-line" />
                 ))}
                 {uploadedVideo && (
                   <div className="w-16 h-16 rounded-lg border border-line bg-ink/5 flex items-center justify-center">
-                    <span className="text-lg">🎬</span>
+                    <svg className="w-6 h-6 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
 
-            {uploadError && (
-              <p className="text-xs text-red-600 mb-2">{uploadError}</p>
-            )}
-
-            <label className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-line text-sm font-medium transition-colors cursor-pointer ${uploading ? "opacity-50 pointer-events-none" : "hover:border-espresso/30 hover:bg-nude-50"}`}>
-              <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {uploading ? "Nahrávám..." : "Nahrát fotky / video"}
-              <input
-                type="file"
-                multiple
-                accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
-                className="hidden"
-                onChange={(e) => handleMediaUpload(e.target.files)}
-                disabled={uploading}
-              />
-            </label>
-          </div>
+          {/* Fallback upload if no photos were added during the form */}
+          {uploadedPhotos.length === 0 && !uploadedVideo && (
+            <div className="w-full border-t border-line pt-4 mt-2 text-left">
+              <h3 className="text-sm font-semibold text-espresso mb-2">
+                {t("uploadPhotos")}
+              </h3>
+              {uploadError && (
+                <p className="text-xs text-red-600 mb-2">{uploadError}</p>
+              )}
+              <label className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-line text-sm font-medium transition-colors cursor-pointer ${uploading ? "opacity-50 pointer-events-none" : "hover:border-espresso/30 hover:bg-nude-50"}`}>
+                <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {uploading ? tCommon("loading") : t("uploadPhotos")}
+                <input
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
+                  className="hidden"
+                  onChange={(e) => handleMediaUpload(e.target.files)}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             <Button
@@ -330,6 +370,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setUploadedPhotos([]);
                 setUploadedVideo(null);
                 setUploadError("");
+                setSelectedFiles([]);
                 setCategory("");
                 setOrigin("");
                 setTexture("");
@@ -339,6 +380,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setSellingMode("BY_GRAM");
                 setTotalPieces("");
                 setPieceWeightGrams("");
+                setPurchasePricePerPieceCzk("");
                 setPricePerPieceCzk("");
                 setRetailPricePerPieceCzk("");
                 setSupplierId("");
@@ -587,7 +629,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             {/* Purchase price (per gram — needed for COGS in BY_GRAM mode) */}
             {sellingMode === "BY_GRAM" && (
               <Input
-                label={`${t("purchasePrice")} (Kc/g)`}
+                label={`${t("purchasePrice")} (Kč/${t("grams")})`}
                 type="number"
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
@@ -618,6 +660,15 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                     min={1}
                   />
                 </div>
+                <Input
+                  label={t("purchasePricePerPieceCzk")}
+                  type="number"
+                  value={purchasePricePerPieceCzk}
+                  onChange={(e) => setPurchasePricePerPieceCzk(e.target.value)}
+                  required
+                  min={1}
+                  step="0.01"
+                />
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     label={t("pricePerPieceCzk")}
@@ -675,6 +726,56 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
+            </div>
+
+            {/* Photo upload section */}
+            <div id="section-photos">
+              <h2 className="text-sm font-medium text-espresso mb-2">
+                {t("uploadPhotos")}
+              </h2>
+              <p className="text-xs text-muted mb-3">{t("uploadPhotosTip")}</p>
+
+              {/* Selected file previews */}
+              {selectedFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {selectedFiles.map((file, i) => (
+                    <div key={i} className="relative group">
+                      {filePreviews[i] ? (
+                        <img
+                          src={filePreviews[i]!}
+                          alt={file.name}
+                          className="w-16 h-16 rounded-lg object-cover border border-line"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-lg border border-line bg-ink/5 flex items-center justify-center">
+                          <svg className="w-6 h-6 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeFile(i)}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-line text-sm font-medium transition-colors cursor-pointer hover:border-espresso/30 hover:bg-nude-50">
+                <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {t("uploadPhotos")}
+                <input
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
+                  className="hidden"
+                  onChange={(e) => { handleFilesSelected(e.target.files); e.target.value = ""; }}
+                />
+              </label>
             </div>
 
             {error && (

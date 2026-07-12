@@ -5,7 +5,6 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { roundHalereUp } from "@/lib/rounding";
-import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
 import { getOriginFlag } from "@/lib/origin-flags";
@@ -300,24 +299,21 @@ async function ProductDetailView({
     notFound();
   }
 
-  // Calculate per-variant prices based on user tier
+  // Calculate per-variant prices based on B2B discount (from margin)
   const role = session?.user?.role;
   let discountPct = 0;
   let tierBadge: string | null = null;
 
-  if ((role === "HAIRDRESSER" || role === "SALON") && session?.user?.salonId) {
-    const salon = await prisma.salon.findUnique({
-      where: { id: session.user.salonId },
-      select: { tier: true, type: true },
-    });
-    if (salon) {
-      discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
-    }
+  if (role === "HAIRDRESSER" || role === "SALON") {
+    const b2bSettings = await prisma.b2BSettings.findFirst();
+    discountPct = role === "SALON"
+      ? (b2bSettings?.salonDiscountPct ?? 3000)
+      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
     tierBadge = t("productDetail.yourPrice");
   }
 
   // Build variant data with resolved prices for the picker
-  // B2B: loyalty discount from retail price. Retail: full retail price.
+  // B2B: discount from margin (margin = retail / 2 with 100% markup)
   const pickerVariants = product.variants
     .filter((v) => v.retailPricePerGram > 0 || (v.pricePerPiece ?? 0) > 0)
     .map((v) => {
@@ -325,19 +321,20 @@ async function ProductDetailView({
       let displayPrice: number;
       if (isByPiece) {
         const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+        // Discount from margin: margin = retail / 2, discount = margin × pct
         displayPrice = discountPct > 0
-          ? roundHalereUp((retailPiece * (10000 - discountPct)) / 10000)
+          ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
           : retailPiece;
       } else {
         displayPrice = discountPct > 0
-          ? roundHalereUp((v.retailPricePerGram * (10000 - discountPct)) / 10000)
+          ? roundHalereUp(v.retailPricePerGram - (v.retailPricePerGram * discountPct) / 20000)
           : v.retailPricePerGram;
       }
       return {
         lengthCm: v.lengthCm,
         color: v.color,
         pricePerGram: displayPrice,
-        retailPricePerGram: v.retailPricePerGram,
+        retailPricePerGram: isByPiece ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
         availableGrams: v.availableGrams,
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
         pricePerPiece: isByPiece ? displayPrice : undefined,
@@ -671,7 +668,7 @@ async function ProductDetailView({
               )}
               {retailPricePerGram && (
                 <p className="text-sm text-muted">
-                  <span className="line-through text-ink/50">{formatCZK(retailPricePerGram)}/g</span>
+                  <span className="line-through text-ink/50">{formatCZK(retailPricePerGram)}{priceUnit}</span>
                   {" "}
                   <span>({t("productDetail.regularPrice")})</span>
                 </p>
@@ -680,7 +677,7 @@ async function ProductDetailView({
           )}
 
           {/* Description */}
-          <div className="text-sm text-muted leading-relaxed space-y-4">
+          <div className="text-sm text-muted leading-relaxed space-y-2 text-left">
             {description.split("\n\n").map((block, i) => {
               // Bullet list block
               if (block.includes("\n•")) {

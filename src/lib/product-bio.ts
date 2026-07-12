@@ -91,23 +91,9 @@ export function generateProductBio(data: BioProductData): string {
   const story = CATEGORY_STORY[data.category];
   if (story) sections.push(story);
 
-  // 2. Origin story
-  if (data.origin) {
-    const originStory = ORIGIN_STORY[data.origin];
-    if (originStory) sections.push(originStory);
-  }
-
-  // 3. Texture note
-  if (data.texture) {
-    const texNote = TEXTURE_NOTE[data.texture];
-    if (texNote) sections.push(texNote);
-  }
-
-  // 4. Benefits
-  const benefits = CATEGORY_BENEFITS[data.category];
-  if (benefits && benefits.length > 0) {
-    sections.push("**Co vás čeká:**\n" + benefits.map(b => `• ${b}`).join("\n"));
-  }
+  // 2. Processing method story
+  const procStory = PROCESSING_STORY[data.processingType];
+  if (procStory) sections.push(procStory);
 
   return sections.join("\n\n");
 }

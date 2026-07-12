@@ -123,11 +123,16 @@ export async function POST(request: NextRequest) {
 
     const isByPiece = data.sellingMode === "BY_PIECE";
 
+    // For BY_PIECE: derive per-gram purchase price from per-piece purchase price
+    const effectivePurchasePricePerGramRaw = isByPiece && data.purchasePricePerPiece && data.pieceWeightGrams
+      ? Math.round(data.purchasePricePerPiece / data.pieceWeightGrams)
+      : data.purchasePricePerGramRaw;
+
     if (!variant) {
       // Get markup from PriceSettings for retail price calculation
       const priceSetting = await prisma.priceSettings.findUnique({ where: { category: data.category } });
       const markupPercent = priceSetting?.markupPercent ?? 200;
-      const retailPrice = Math.round(data.purchasePricePerGramRaw * (10000 + markupPercent * 100) / 10000);
+      const retailPrice = Math.round(effectivePurchasePricePerGramRaw * (10000 + markupPercent * 100) / 10000);
       const retailPricePerPiece = isByPiece && data.pricePerPiece
         ? Math.round(data.pricePerPiece * (10000 + markupPercent * 100) / 10000)
         : undefined;
@@ -140,8 +145,8 @@ export async function POST(request: NextRequest) {
           sellingMode: data.sellingMode ?? "BY_GRAM",
           pricePerPiece: isByPiece ? data.pricePerPiece : undefined,
           retailPricePerPiece: isByPiece ? (data.retailPricePerPiece ?? retailPricePerPiece) : undefined,
-          costPricePerGram: data.purchasePricePerGramRaw,
-          wholesalePricePerGram: data.purchasePricePerGramRaw,
+          costPricePerGram: effectivePurchasePricePerGramRaw,
+          wholesalePricePerGram: effectivePurchasePricePerGramRaw,
           retailPricePerGram: retailPrice,
           active: true,
         },
@@ -167,7 +172,7 @@ export async function POST(request: NextRequest) {
       {
         variantId: variant.id,
         supplierId: data.supplierId,
-        purchasePricePerGramRaw: data.purchasePricePerGramRaw,
+        purchasePricePerGramRaw: effectivePurchasePricePerGramRaw,
         currency: data.currency,
         exchangeRate: data.exchangeRate,
         totalGrams: effectiveTotalGrams,

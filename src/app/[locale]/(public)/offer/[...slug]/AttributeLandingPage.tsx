@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { getAllStockNumbers } from "@/lib/stock";
 import { unstable_cache } from "next/cache";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
@@ -166,15 +165,12 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
   // Resolve user pricing
   let userRole: string | null = null;
   let discountPct = 0;
-  if ((session?.user?.role === "HAIRDRESSER" || session?.user?.role === "SALON") && session?.user?.salonId) {
+  if (session?.user?.role === "HAIRDRESSER" || session?.user?.role === "SALON") {
     userRole = session.user.role;
-    const salon = await prisma.salon.findUnique({
-      where: { id: session.user.salonId },
-      select: { tier: true, type: true },
-    });
-    if (salon) {
-      discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
-    }
+    const b2bSettings = await prisma.b2BSettings.findFirst();
+    discountPct = userRole === "SALON"
+      ? (b2bSettings?.salonDiscountPct ?? 3000)
+      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
   }
 
   const key = `${prefix}.${valueSlug}`;

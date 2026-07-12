@@ -188,12 +188,12 @@ export function VariantTable({
                       </span>
                     </div>
 
-                    {/* B2B price (main, editable) */}
-                    {variant.wholesalePricePerGram !== undefined && (
+                    {/* Prodejní cena (main, editable) */}
+                    {!isByPiece && variant.retailPricePerGram !== undefined && (
                       editingCell === cellKey ? (
                         <PriceInput
                           variantId={variant.id}
-                          field="wholesalePricePerGram"
+                          field="retailPricePerGram"
                           cellKey={cellKey}
                         />
                       ) : (
@@ -204,114 +204,74 @@ export function VariantTable({
                           onClick={() => {
                             if (!isOwner) return;
                             setEditingCell(cellKey);
-                            setEditValue((variant.wholesalePricePerGram! / 100).toString());
+                            setEditValue((variant.retailPricePerGram! / 100).toString());
                           }}
                           disabled={isSaving}
                         >
-                          {formatCZK(variant.wholesalePricePerGram!)}
+                          {formatCZK(variant.retailPricePerGram!)}/g
                         </button>
                       )
                     )}
 
-                    {/* Retail price */}
-                    {variant.retailPricePerGram !== undefined && !isByPiece && (
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-muted line-through">
-                          {formatCZK(variant.retailPricePerGram!)}
-                        </span>
-                        {isOwner && variant.retailManualOverride && (
-                          <button
-                            onClick={() => handleResetOverride(variant.id)}
-                            className="text-[9px] text-orange-500 hover:text-red-500"
-                            disabled={isSaving}
-                            title={t("variant.resetOverride")}
-                          >
-                            ✕
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Piece prices for BY_PIECE — editable */}
-                    {isByPiece && variant.pricePerPiece !== undefined && (
-                      editingCell === `piece-${cellKey}` ? (
-                        <PriceInput
-                          variantId={variant.id}
-                          field="pricePerPiece"
-                          cellKey={`piece-${cellKey}`}
-                        />
-                      ) : (
-                        <button
-                          className={`text-xs text-ink font-medium block ${
-                            isOwner ? "hover:text-rose transition-colors" : ""
-                          }`}
-                          onClick={() => {
-                            if (!isOwner) return;
-                            setEditingCell(`piece-${cellKey}`);
-                            setEditValue((variant.pricePerPiece! / 100).toString());
-                          }}
-                          disabled={isSaving}
-                        >
-                          B2B: {formatCZK(variant.pricePerPiece)} /ks
-                        </button>
-                      )
-                    )}
+                    {/* Prodejní cena BY_PIECE */}
                     {isByPiece && variant.retailPricePerPiece !== undefined && (
-                      editingCell === `retailPiece-${cellKey}` ? (
+                      editingCell === cellKey ? (
                         <PriceInput
                           variantId={variant.id}
                           field="retailPricePerPiece"
-                          cellKey={`retailPiece-${cellKey}`}
+                          cellKey={cellKey}
                         />
                       ) : (
                         <button
-                          className={`text-xs text-muted block ${
+                          className={`text-lg font-bold text-ink block ${
                             isOwner ? "hover:text-rose transition-colors" : ""
                           }`}
                           onClick={() => {
                             if (!isOwner) return;
-                            setEditingCell(`retailPiece-${cellKey}`);
+                            setEditingCell(cellKey);
                             setEditValue((variant.retailPricePerPiece! / 100).toString());
                           }}
                           disabled={isSaving}
                         >
-                          Zákazník: {formatCZK(variant.retailPricePerPiece)} /ks
+                          {formatCZK(variant.retailPricePerPiece!)}/ks
                         </button>
                       )
                     )}
 
-                    {/* Cost + margin (owner only) */}
-                    {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && (
-                      <div className="flex items-center gap-1 mt-1">
-                        {editingCell === `cost-${cellKey}` ? (
-                          <PriceInput
-                            variantId={variant.id}
-                            field="costPricePerGram"
-                            cellKey={`cost-${cellKey}`}
-                          />
-                        ) : (
-                          <button
-                            className="text-[10px] text-muted hover:text-espresso transition-colors"
-                            onClick={() => {
-                              setEditingCell(`cost-${cellKey}`);
-                              setEditValue((variant.costPricePerGram! / 100).toString());
-                            }}
-                            disabled={isSaving}
-                          >
-                            N: {formatCZK(variant.costPricePerGram!)}
-                          </button>
-                        )}
-                        {variant.wholesalePricePerGram !== undefined && (
+                    {/* Nákupní cena + marže (owner only) */}
+                    {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && (() => {
+                      const sellPrice = isByPiece
+                        ? (variant.retailPricePerPiece ?? 0)
+                        : (variant.retailPricePerGram ?? 0);
+                      const margin = sellPrice - variant.costPricePerGram;
+                      return (
+                        <div className="flex items-center gap-1 mt-1">
+                          {editingCell === `cost-${cellKey}` ? (
+                            <PriceInput
+                              variantId={variant.id}
+                              field="costPricePerGram"
+                              cellKey={`cost-${cellKey}`}
+                            />
+                          ) : (
+                            <button
+                              className="text-[10px] text-muted hover:text-espresso transition-colors"
+                              onClick={() => {
+                                setEditingCell(`cost-${cellKey}`);
+                                setEditValue((variant.costPricePerGram! / 100).toString());
+                              }}
+                              disabled={isSaving}
+                            >
+                              Nákup: {formatCZK(variant.costPricePerGram!)}
+                            </button>
+                          )}
                           <span className={`text-[10px] font-medium ${
-                            variant.wholesalePricePerGram - variant.costPricePerGram > 0
-                              ? "text-emerald-600"
-                              : "text-red-500"
+                            margin > 0 ? "text-emerald-600" : "text-red-500"
                           }`}>
-                            +{formatCZK(variant.wholesalePricePerGram - variant.costPricePerGram)}
+                            +{formatCZK(margin)}
                           </span>
-                        )}
-                      </div>
-                    )}
+                        </div>
+                      );
+                    })()}
 
                     {/* Selling mode badge */}
                     {isByPiece && (
@@ -346,9 +306,8 @@ export function VariantTable({
       {/* Legend */}
       {isOwner && (
         <div className="flex flex-wrap items-center gap-3 mt-4 pt-3 border-t border-line/50 text-[10px] text-muted">
-          <span><strong className="text-ink">63 Kč</strong> = B2B</span>
-          <span><span className="line-through">114 Kč</span> = běžná</span>
-          <span>N: 46 Kč = nákup</span>
+          <span><strong className="text-ink">63 Kč</strong> = prodejní</span>
+          <span>Nákup: 46 Kč = nákupní</span>
           <span className="text-emerald-600">+17 Kč = marže</span>
           <span>Klikni na cenu pro úpravu</span>
         </div>

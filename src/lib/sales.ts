@@ -4,7 +4,6 @@ import { roundHalereUp } from "./rounding";
 import { fifoDeduct } from "./fifo";
 import { invalidateStockCache } from "./stock";
 import { notifyLowStock } from "./telegram";
-import { getLoyaltyDiscount } from "./loyalty";
 
 export interface SaleItemInput {
   variantId: string;
@@ -54,23 +53,20 @@ export async function completeSale(
           let pricePerGram: number;
           let pricePerUnit: number;
 
-          // Loyalty discount for B2B customers (from retail price)
+          // B2B discount from margin (margin = retail / 2 with 100% markup)
           let discountPct = 0;
-          if ((input.customerType === "SALON" || input.customerType === "HAIRDRESSER") && input.salonId) {
-            const salon = await tx.salon.findUnique({
-              where: { id: input.salonId },
-              select: { tier: true, type: true },
-            });
-            if (salon) {
-              discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
-            }
+          if (input.customerType === "SALON" || input.customerType === "HAIRDRESSER") {
+            const b2bSettings = await tx.b2BSettings.findFirst();
+            discountPct = input.customerType === "SALON"
+              ? (b2bSettings?.salonDiscountPct ?? 3000)
+              : (b2bSettings?.hairdresserDiscountPct ?? 2000);
           }
 
           if (input.customerType === "RETAIL" || discountPct === 0) {
             pricePerGram = variant.retailPricePerGram;
           } else {
             pricePerGram = roundHalereUp(
-              (variant.retailPricePerGram * (10000 - discountPct)) / 10000
+              variant.retailPricePerGram - (variant.retailPricePerGram * discountPct) / 20000
             );
           }
 
@@ -80,7 +76,7 @@ export async function completeSale(
               pricePerUnit = retailPerPiece;
             } else {
               pricePerUnit = roundHalereUp(
-                (retailPerPiece * (10000 - discountPct)) / 10000
+                retailPerPiece - (retailPerPiece * discountPct) / 20000
               );
             }
           } else {

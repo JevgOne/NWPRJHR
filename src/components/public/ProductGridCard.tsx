@@ -215,17 +215,9 @@ export function ProductGridCard({
           const unit = isByPiece ? "ks" : "g";
           const priceDisplay = (retailPrice / 100).toFixed(0);
 
-          if (userRole === "SALON" && wholesalePrice > 0) {
-            const b2bDisplay = (wholesalePrice / 100).toFixed(0);
-            return (
-              <div className="min-w-0">
-                <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/{unit}</span>
-                <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
-              </div>
-            );
-          }
-          if (userRole === "HAIRDRESSER" && discountPct > 0) {
-            const b2b = Math.ceil(retailPrice * (10000 - discountPct) / 10000);
+          if ((userRole === "SALON" || userRole === "HAIRDRESSER") && discountPct > 0) {
+            // Discount from margin (margin = retail / 2 with 100% markup)
+            const b2b = Math.ceil(retailPrice - (retailPrice * discountPct) / 20000);
             const b2bDisplay = (b2b / 100).toFixed(0);
             return (
               <div className="min-w-0">

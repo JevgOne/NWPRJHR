@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getLoyaltyDiscount } from "@/lib/loyalty";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductsShowcase } from "./ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
@@ -100,15 +99,12 @@ export default async function ProductsPage() {
   let userRole: string | null = null;
   let discountPct = 0;
 
-  if ((session?.user?.role === "HAIRDRESSER" || session?.user?.role === "SALON") && session?.user?.salonId) {
+  if (session?.user?.role === "HAIRDRESSER" || session?.user?.role === "SALON") {
     userRole = session.user.role;
-    const salon = await prisma.salon.findUnique({
-      where: { id: session.user.salonId },
-      select: { tier: true, type: true },
-    });
-    if (salon) {
-      discountPct = await getLoyaltyDiscount(salon.tier, salon.type);
-    }
+    const b2bSettings = await prisma.b2BSettings.findFirst();
+    discountPct = userRole === "SALON"
+      ? (b2bSettings?.salonDiscountPct ?? 3000)
+      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
   }
 
   return (

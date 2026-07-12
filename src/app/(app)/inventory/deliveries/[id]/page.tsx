@@ -22,7 +22,7 @@ export default async function DeliveryDetailPage({
       supplier: true,
       variant: {
         include: {
-          product: { select: { id: true, name: true, category: true, processingType: true } },
+          product: { select: { id: true, name: true, category: true, processingType: true, origin: true, texture: true } },
         },
       },
       stockMovements: {
@@ -41,6 +41,7 @@ export default async function DeliveryDetailPage({
     variant: {
       lengthCm: delivery.variant.lengthCm,
       color: delivery.variant.color,
+      sellingMode: delivery.variant.sellingMode,
       product: delivery.variant.product,
     },
     supplier: { name: delivery.supplier.name },

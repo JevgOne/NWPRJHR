@@ -18,7 +18,8 @@ interface DeliveryData {
   variant: {
     lengthCm: number;
     color: string;
-    product: { id: string; name: string; category: string; processingType: string };
+    sellingMode: string;
+    product: { id: string; name: string; category: string; processingType: string; origin: string | null; texture: string | null };
   };
   supplier: { name: string };
   purchasePricePerGramRaw: number;
@@ -55,14 +56,25 @@ export function DeliveryDetailClient({
   const t = useTranslations("stock");
   const tFinance = useTranslations("finance");
 
-  const usedPercent =
-    delivery.initialGrams > 0
-      ? Math.round(
-          ((delivery.initialGrams - delivery.remainingGrams) /
-            delivery.initialGrams) *
-            100
-        )
+  const isByPiece = delivery.variant.sellingMode === "BY_PIECE";
+
+  // Progress based on selling mode
+  const usedPercent = isByPiece
+    ? delivery.initialPieces > 0
+      ? Math.round(((delivery.initialPieces - delivery.remainingPieces) / delivery.initialPieces) * 100)
+      : 0
+    : delivery.initialGrams > 0
+      ? Math.round(((delivery.initialGrams - delivery.remainingGrams) / delivery.initialGrams) * 100)
       : 0;
+
+  // Price formatting
+  function formatCZK(halere: number): string {
+    return (halere / 100).toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  const purchasePriceDisplay = isByPiece && delivery.pieceWeightGrams
+    ? `${formatCZK(delivery.purchasePricePerGramCZK * delivery.pieceWeightGrams)} Kc/${t("perPiece")}`
+    : `${formatCZK(delivery.purchasePricePerGramCZK)} Kc/${t("grams")}`;
 
   function typeLabel(type: string): string {
     const map: Record<string, string> = {
@@ -77,17 +89,57 @@ export function DeliveryDetailClient({
     return map[type] ?? type;
   }
 
+  const CATEGORY_COLORS: Record<string, string> = {
+    VIRGIN: "bg-amber-100 text-amber-800",
+    PREMIUM: "bg-purple-100 text-purple-800",
+    STANDARD: "bg-blue-100 text-blue-800",
+    SALE: "bg-red-100 text-red-800",
+  };
+
   return (
     <div className="space-y-6 max-w-3xl">
       {/* Info */}
       <Card>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
+          {/* Product name as link + metadata */}
+          <div className="col-span-2">
             <div className="text-muted mb-1">{t("selectVariant")}</div>
             <div className="font-medium">
-              {delivery.variant.product.name} — {delivery.variant.lengthCm} cm /{" "}
-              {delivery.variant.color}
+              <a
+                href={`/products/${delivery.variant.product.id}`}
+                className="text-rose hover:underline"
+              >
+                {delivery.variant.product.name}
+              </a>
             </div>
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
+              <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${CATEGORY_COLORS[delivery.variant.product.category] ?? "bg-nude-100"}`}>
+                {delivery.variant.product.category}
+              </span>
+              {delivery.variant.product.origin && (
+                <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-nude-100 text-espresso">
+                  {delivery.variant.product.origin}
+                </span>
+              )}
+              {delivery.variant.product.texture && (
+                <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-nude-100 text-espresso">
+                  {delivery.variant.product.texture}
+                </span>
+              )}
+              {isByPiece && (
+                <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-rose/10 text-rose">
+                  {t("byPiece")}
+                </span>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="text-muted mb-1">{t("length")}</div>
+            <div className="font-medium">{delivery.variant.lengthCm} cm</div>
+          </div>
+          <div>
+            <div className="text-muted mb-1">{t("color")}</div>
+            <div className="font-medium">{delivery.variant.color}</div>
           </div>
           <div>
             <div className="text-muted mb-1">{t("supplier")}</div>
@@ -96,10 +148,10 @@ export function DeliveryDetailClient({
           <div>
             <div className="text-muted mb-1">{tFinance("purchasePrice")}</div>
             <div className="font-medium">
-              {delivery.purchasePricePerGramRaw} ({delivery.currency})
+              {purchasePriceDisplay}
               {delivery.currency !== "CZK" && (
-                <span className="text-muted ml-1">
-                  = {(delivery.purchasePricePerGramCZK / 100).toFixed(2)} CZK/{t("grams")}
+                <span className="text-muted ml-1 text-xs">
+                  ({delivery.purchasePricePerGramRaw} {delivery.currency})
                 </span>
               )}
             </div>
@@ -112,10 +164,22 @@ export function DeliveryDetailClient({
               </div>
             </div>
           )}
+          {isByPiece && delivery.pieceWeightGrams && (
+            <div>
+              <div className="text-muted mb-1">{t("pieceWeightLabel")}</div>
+              <div className="font-medium">{delivery.pieceWeightGrams} g/{t("perPiece")}</div>
+            </div>
+          )}
           <div>
             <div className="text-muted mb-1">{t("barcode")}</div>
             <div className="font-mono text-xs">{delivery.barcode ?? "-"}</div>
           </div>
+          {delivery.batchCode && (
+            <div>
+              <div className="text-muted mb-1">{t("batchCode")}</div>
+              <div className="font-mono text-xs">{delivery.batchCode}</div>
+            </div>
+          )}
           <div>
             <div className="text-muted mb-1">{t("stockedAt")}</div>
             <div>
@@ -137,13 +201,26 @@ export function DeliveryDetailClient({
               />
             </div>
           </div>
-          <div className="text-espresso whitespace-nowrap">
-            {delivery.remainingGrams} / {delivery.initialGrams} {t("grams")}
-          </div>
-          {delivery.initialPieces > 0 && (
-            <div className="text-espresso whitespace-nowrap">
-              {delivery.remainingPieces} / {delivery.initialPieces} {t("pieces")}
-            </div>
+          {isByPiece ? (
+            <>
+              <div className="text-espresso whitespace-nowrap font-medium">
+                {delivery.remainingPieces} / {delivery.initialPieces} {t("pieces")}
+              </div>
+              <div className="text-muted whitespace-nowrap text-xs">
+                ({delivery.remainingGrams} / {delivery.initialGrams} {t("grams")})
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-espresso whitespace-nowrap font-medium">
+                {delivery.remainingGrams} / {delivery.initialGrams} {t("grams")}
+              </div>
+              {delivery.initialPieces > 0 && (
+                <div className="text-muted whitespace-nowrap text-xs">
+                  ({delivery.remainingPieces} / {delivery.initialPieces} {t("pieces")})
+                </div>
+              )}
+            </>
           )}
         </div>
         {delivery.note && (
@@ -163,8 +240,17 @@ export function DeliveryDetailClient({
             <tr className="border-b border-line text-left text-muted">
               <th className="py-2 px-2 font-medium">{t("stockedAt")}</th>
               <th className="py-2 px-2 font-medium">{t("movement")}</th>
-              <th className="py-2 px-2 font-medium text-right">{t("grams")}</th>
-              <th className="py-2 px-2 font-medium text-right">{t("pieces")}</th>
+              {isByPiece ? (
+                <>
+                  <th className="py-2 px-2 font-medium text-right">{t("pieces")}</th>
+                  <th className="py-2 px-2 font-medium text-right">{t("grams")}</th>
+                </>
+              ) : (
+                <>
+                  <th className="py-2 px-2 font-medium text-right">{t("grams")}</th>
+                  <th className="py-2 px-2 font-medium text-right">{t("pieces")}</th>
+                </>
+              )}
               <th className="py-2 px-2 font-medium">{t("note")}</th>
             </tr>
           </thead>
@@ -181,14 +267,25 @@ export function DeliveryDetailClient({
                     {typeLabel(m.type)}
                   </span>
                 </td>
-                <td className={`py-2 px-2 text-right ${m.grams < 0 ? "text-red-600" : "text-green-600"}`}>
-                  {m.grams > 0 ? "+" : ""}
-                  {m.grams}
-                </td>
-                <td className={`py-2 px-2 text-right ${m.pieces < 0 ? "text-red-600" : "text-green-600"}`}>
-                  {m.pieces > 0 ? "+" : ""}
-                  {m.pieces}
-                </td>
+                {isByPiece ? (
+                  <>
+                    <td className={`py-2 px-2 text-right ${m.pieces < 0 ? "text-red-600" : "text-green-600"}`}>
+                      {m.pieces > 0 ? "+" : ""}{m.pieces}
+                    </td>
+                    <td className="py-2 px-2 text-right text-muted">
+                      {m.grams > 0 ? "+" : ""}{m.grams}
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td className={`py-2 px-2 text-right ${m.grams < 0 ? "text-red-600" : "text-green-600"}`}>
+                      {m.grams > 0 ? "+" : ""}{m.grams}
+                    </td>
+                    <td className={`py-2 px-2 text-right ${m.pieces < 0 ? "text-red-600" : "text-green-600"}`}>
+                      {m.pieces > 0 ? "+" : ""}{m.pieces}
+                    </td>
+                  </>
+                )}
                 <td className="py-2 px-2 text-muted">{m.note ?? "-"}</td>
               </tr>
             ))}

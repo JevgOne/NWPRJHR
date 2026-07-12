@@ -45,6 +45,7 @@ export const newStockInSchema = z
     totalPieces: z.number().int().min(0).default(0),
     pieceWeightGrams: z.number().int().positive().optional(),
     sellingMode: z.enum(["BY_GRAM", "BY_PIECE"]).default("BY_GRAM"),
+    purchasePricePerPiece: z.number().int().positive().optional(),
     pricePerPiece: z.number().int().positive().optional(),
     retailPricePerPiece: z.number().int().positive().optional(),
     stockedAt: z.string().datetime().optional(),
