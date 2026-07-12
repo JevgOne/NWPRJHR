@@ -73,6 +73,17 @@ export default async function RootLayout({
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
         <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-1TL9NDPVCB" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-1TL9NDPVCB');
+            `,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)] overflow-x-hidden">
         <NextIntlClientProvider messages={messages}>
