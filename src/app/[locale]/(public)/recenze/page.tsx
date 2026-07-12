@@ -309,10 +309,10 @@ export default async function RecenzePage({
             </div>
             <div>
               <span className="block text-sm font-semibold text-ink">{t("writeOnGoogle")}</span>
-              <span className="block text-xs text-muted mt-1">Google recenze</span>
+              <span className="block text-xs text-muted mt-1">{t("googleReviews")}</span>
             </div>
             <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 group-hover:gap-2 transition-all">
-              Otevřít
+              {t("openLink")}
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
