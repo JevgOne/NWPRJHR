@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
@@ -110,13 +111,13 @@ export function ProductGridCard({
   const imageBlock = (
     <div className="aspect-[3/4] bg-nude-100 flex items-center justify-center relative overflow-hidden">
       {p.photos.length > 0 ? (
-        <img
+        <Image
           src={p.photos[0]}
           alt={localizedName}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
+          fill
+          priority={priority}
           sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
       ) : (
         <div className="flex flex-col items-center gap-2 text-muted/40">

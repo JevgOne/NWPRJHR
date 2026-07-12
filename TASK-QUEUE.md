@@ -165,19 +165,19 @@ Stav: čeká
 
 ## TASK-004: Struktura vlasů + tóny barev — celý systém
 Priorita: 2
-Stav: odloženo
+Stav: hotovo
 
 ## TASK-005: SEO automatizace pro nové produkty
 Priorita: 2
-Stav: odloženo
+Stav: hotovo
 
 ## TASK-002: Blog/Poradna
 Priorita: 3
-Stav: čeká
+Stav: hotovo
 
 ## TASK-003: Referral program
 Priorita: 3
-Stav: čeká
+Stav: hotovo
 
 ---
 

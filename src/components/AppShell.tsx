@@ -42,7 +42,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
         .catch(() => {});
     };
     poll();
-    const id = setInterval(poll, 30000);
+    const id = setInterval(poll, 60000);
     return () => { active = false; clearInterval(id); };
   }, []);
 
