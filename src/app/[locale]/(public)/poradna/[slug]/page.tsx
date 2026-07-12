@@ -62,15 +62,18 @@ export default async function ArticlePage({ params }: Props) {
   const article = articles.find((a) => a.slug === slug);
   if (!article) notFound();
 
-  const t = await getTranslations("advice");
-  const locale = await getLocale();
+  const [t, tNav, locale] = await Promise.all([
+    getTranslations("advice"),
+    getTranslations("public.nav"),
+    getLocale(),
+  ]);
   const contentKey = `${slug.replace(/-/g, "_")}_content` as "typesTitle";
 
   const currentIdx = articles.findIndex((a) => a.slug === slug);
   const prev = currentIdx > 0 ? articles[currentIdx - 1] : null;
   const next = currentIdx < articles.length - 1 ? articles[currentIdx + 1] : null;
 
-  const homeLabel = locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů";
+  const homeLabel = tNav("home");
   const prevLabel = locale === "uk" ? "Попередня" : locale === "ru" ? "Предыдущая" : "Předchozí";
   const nextLabel = locale === "uk" ? "Наступна" : locale === "ru" ? "Следующая" : "Další";
   const catLabel = categoryLabels[locale]?.[article.category] ?? categoryLabels.cs[article.category] ?? "";

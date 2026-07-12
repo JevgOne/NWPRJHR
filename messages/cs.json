@@ -39,8 +39,8 @@
     "registerSalon": "Zaregistrujte svůj salon"
   },
   "metadata": {
-    "description": "Hairland — prémiové RAW vlasy k prodloužení. Přímý import, zpracování na zakázku, osobní konzultace Praha.",
-    "homeTitle": "Prémiové RAW vlasy k prodloužení",
+    "description": "Hairland — 100% pravé RAW vlasy k prodloužení. Přímý import, zpracování na zakázku, osobní konzultace Praha.",
+    "homeTitle": "100% pravé RAW vlasy k prodloužení",
     "homeDescription": "100% přírodní RAW vlasy k prodloužení — slovanské a evropské. Zpracování na zakázku do 7 dnů: clip-in, tape-in, keratin, micro ring. Osobní konzultace Praha zdarma.",
     "blogTitle": "Poradce prodloužení vlasů — jak vybrat, péče, srovnání",
     "blogDescription": "Jak vybrat správnou metodu prodloužení vlasů? Clip-in, tape-in nebo keratin? Rady od expertů, péče o prodloužené vlasy, srovnání kvality.",
@@ -457,7 +457,7 @@
       "cta": "Kontaktujte nás",
       "viewOffer": "Zobrazit nabídku"
     },
-    "heroTitle": "Prémiové vlasy z celého světa",
+    "heroTitle": "100% pravé vlasy z celého světa",
     "heroSubtitle": "Prodej prémiových vlasů s osobním přístupem",
     "aboutUs": "O nás",
     "ourOffer": "Nabídka",
@@ -634,10 +634,10 @@
       "registerAsStylist": "Registrovat se jako kadeřnice"
     },
     "landing": {
-      "heroTitle": "Prémiové vlasy k prodloužení",
+      "heroTitle": "100% pravé vlasy k prodloužení",
       "heroSubtitle": "Přírodní vlasy s ověřeným původem z celého světa.",
       "whyHairland": "Proč Hairland",
-      "badgeNatural": "100% přírodní",
+      "badgeNatural": "100% pravé vlasy",
       "badgeNaturalDesc": "Jen lidské vlasy, žádná syntetika",
       "badgeImport": "Přímý import",
       "badgeImportDesc": "Bez překupníků — nejlepší cena",
@@ -711,8 +711,8 @@
       "registerSalon": "Nakupujete u nás? Nechte se zde uvést"
     },
     "offer": {
-      "metaTitle": "RAW vlasy k prodloužení — slovanské a evropské",
-      "metaDescription": "Prémiové RAW vlasy k prodloužení — virgin, premium, standard. Zpracování na zakázku: clip-in, tape-in, keratin, micro ring. Doručení do 7 dnů.",
+      "metaTitle": "100% pravé RAW vlasy k prodloužení — slovanské a evropské",
+      "metaDescription": "100% pravé RAW vlasy k prodloužení — virgin, premium, standard. Zpracování na zakázku: clip-in, tape-in, keratin, micro ring. Doručení do 7 dnů.",
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
       "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete zpracování na clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
       "bannerCta": "Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.",
@@ -739,6 +739,7 @@
       "browseByAttribute": "Procházet podle vlastností"
     },
     "productDetail": {
+      "realHair": "100% pravé vlasy",
       "home": "Domů",
       "offer": "Nabídka",
       "originLabel": "Původ",
@@ -862,7 +863,7 @@
     },
     "footer": {
       "copyright": "© 2026 Hairland.cz",
-      "brandDesc": "Prémiové vlasy z celého světa. Přímý import, osobní přístup.",
+      "brandDesc": "100% pravé vlasy z celého světa. Přímý import, osobní přístup.",
       "navTitle": "Navigace",
       "infoTitle": "Informace",
       "termsLink": "Obchodní podmínky",
@@ -891,7 +892,9 @@
       "register": "Registrace",
       "inquiry": "Poptávka",
       "weightGuide": "Průvodce gramáží",
-      "inspiration": "Inspirace"
+      "inspiration": "Inspirace",
+      "reviews": "Recenze",
+      "tagline": "100% PRAVÉ VLASY"
     },
     "reviews": {
       "title": "Co říkají naši zákazníci",
@@ -2239,5 +2242,41 @@
     "relatedPages": "Související stránky",
     "noProducts": "Momentálně žádné produkty v této kategorii",
     "browseAll": "Zobrazit všechny produkty"
+  },
+  "shipping": {
+    "home": "Domů",
+    "breadcrumb": "Doprava a vrácení",
+    "title": "Doprava a vrácení",
+    "deliveryOptions": "Možnosti doručení",
+    "free": "Zdarma",
+    "personalDelivery": "Osobní doručení — Praha",
+    "personalDeliveryDesc": "Doručíme vám vlasy osobně kamkoli po Praze. Možnost doručení ve stejný den.",
+    "czechPost": "Česká pošta — celá ČR",
+    "czechPostPrice": "99 Kč",
+    "czechPostDesc": "Balíček Českou poštou. Dodání během 2–3 pracovních dnů.",
+    "personalPickup": "Osobní odběr — Praha",
+    "personalPickupDesc": "Vyzvedněte si objednávku osobně po domluvě. Možnost konzultace na místě.",
+    "deliveryTimes": "Doba doručení",
+    "methodHeader": "Způsob",
+    "timeHeader": "Doba doručení",
+    "sameDay": "Stejný den",
+    "czechPostSimple": "Česká pošta",
+    "twoThreeDays": "2–3 pracovní dny",
+    "personalPickupSimple": "Osobní odběr",
+    "byArrangement": "Po domluvě",
+    "returnsTitle": "Vrácení a reklamace",
+    "returnsPeriod": "Máte právo vrátit zboží do <strong class=\"text-ink\">14 dnů</strong> od převzetí bez udání důvodu.",
+    "returnsCondition1": "Vlasy musí být nepoužité, nepoškozené a v původním obalu.",
+    "returnsCondition2": "Kontaktujte nás e-mailem nebo telefonicky pro domluvení vrácení.",
+    "returnsCondition3": "Peníze vrátíme do 14 dnů od přijetí vraceného zboží.",
+    "returnsMore": "Podrobnosti naleznete v",
+    "termsLink": "obchodních podmínkách",
+    "paymentTitle": "Způsoby platby",
+    "cash": "Hotovost",
+    "cashDesc": "Platba hotově při osobním doručení nebo odběru.",
+    "card": "Platba kartou",
+    "cardDesc": "Přijímáme platební karty Visa, Mastercard.",
+    "bankTransfer": "Bankovní převod",
+    "bankTransferDesc": "Platba předem na účet. Údaje obdržíte v potvrzení objednávky."
   }
 }

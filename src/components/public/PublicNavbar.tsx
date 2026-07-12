@@ -145,6 +145,7 @@ export function PublicNavbar() {
   const inspiraceItems = [
     { href: "/poradna", label: t("navbar.advice") },
     { href: "/pruvodce-gramazi", label: t("navbar.weightGuide") },
+    { href: "/recenze", label: t("navbar.reviews") },
     { href: "/blog", label: "Blog" },
   ];
 
@@ -183,7 +184,7 @@ export function PublicNavbar() {
                 HAIRLAND
               </span>
               <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-rose-deep leading-tight">
-                PRÉMIOVÉ VLASY
+                {t("navbar.tagline")}
               </span>
             </div>
           </Link>

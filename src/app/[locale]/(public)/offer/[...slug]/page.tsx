@@ -647,6 +647,9 @@ async function ProductDetailView({
                   {originFlag} {originName(product.origin)}
                 </Link>
               )}
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-medium text-xs">
+                ✓ {t("productDetail.realHair")}
+              </span>
             </div>
           </div>
 

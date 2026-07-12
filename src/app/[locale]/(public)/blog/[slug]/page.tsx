@@ -2,7 +2,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
@@ -89,7 +89,7 @@ function renderMarkdown(md: string): string {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const locale = await getLocale();
+  const [locale, tNav] = await Promise.all([getLocale(), getTranslations("public.nav")]);
   const post = await getCachedBlogPost(slug);
   if (!post || !post.published) notFound();
 
@@ -117,7 +117,7 @@ export default async function BlogPostPage({ params }: Props) {
     relatedPosts = [...related, ...more];
   }
 
-  const breadcrumbHome = locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů";
+  const breadcrumbHome = tNav("home");
   const ctaTitle = locale === "uk" ? "Готові до змін?" : locale === "ru" ? "Готовы к переменам?" : "Připravená na proměnu?";
   const ctaDesc = locale === "uk" ? "Перегляньте наші преміальні волосся або замовте безкоштовну консультацію." : locale === "ru" ? "Посмотрите наши премиальные волосы или закажите бесплатную консультацию." : "Prohlédněte si naše prémiové vlasy nebo si objednejte bezplatnou konzultaci.";
   const ctaOfferBtn = locale === "uk" ? "Переглянути колекцію" : locale === "ru" ? "Смотреть коллекцию" : "Prohlédnout kolekci";

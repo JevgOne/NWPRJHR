@@ -75,7 +75,7 @@ const getCachedBlogPosts = unstable_cache(
 );
 
 export default async function BlogPage() {
-  const locale = await getLocale();
+  const [locale, tNav] = await Promise.all([getLocale(), getTranslations("public.nav")]);
   const posts = await getCachedBlogPosts();
   const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
   const dateLocale = locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs";
@@ -122,7 +122,7 @@ export default async function BlogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
       />
       <Breadcrumbs items={[
-        { label: locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů", href: "/" },
+        { label: tNav("home"), href: "/" },
         { label: "Blog" },
       ]} />
       {/* Header */}

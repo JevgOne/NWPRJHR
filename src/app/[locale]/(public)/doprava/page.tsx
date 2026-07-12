@@ -73,7 +73,9 @@ const shippingJsonLd = {
   },
 };
 
-export default function DopravaPage() {
+export default async function DopravaPage() {
+  const t = await getTranslations("shipping");
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <script
@@ -81,45 +83,43 @@ export default function DopravaPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(shippingJsonLd) }}
       />
       <Breadcrumbs items={[
-        { label: "Domů", href: "/" },
-        { label: "Doprava a vrácení" },
+        { label: t("home"), href: "/" },
+        { label: t("breadcrumb") },
       ]} />
 
-      <h1 className="text-3xl font-bold text-ink mb-8">Doprava a vrácení</h1>
+      <h1 className="text-3xl font-bold text-ink mb-8">{t("title")}</h1>
 
       {/* Delivery options */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold text-ink mb-4">
-          Možnosti doručení
+          {t("deliveryOptions")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-nude-50 rounded-xl border border-line p-5">
-            <div className="text-lg font-bold text-ink mb-1">Zdarma</div>
+            <div className="text-lg font-bold text-ink mb-1">{t("free")}</div>
             <div className="text-sm font-medium text-rose mb-2">
-              Osobní doručení — Praha
+              {t("personalDelivery")}
             </div>
             <p className="text-sm text-muted">
-              Doručíme vám vlasy osobně kamkoli po Praze. Možnost doručení ve
-              stejný den.
+              {t("personalDeliveryDesc")}
             </p>
           </div>
           <div className="bg-nude-50 rounded-xl border border-line p-5">
-            <div className="text-lg font-bold text-ink mb-1">99 Kč</div>
+            <div className="text-lg font-bold text-ink mb-1">{t("czechPostPrice")}</div>
             <div className="text-sm font-medium text-rose mb-2">
-              Česká pošta — celá ČR
+              {t("czechPost")}
             </div>
             <p className="text-sm text-muted">
-              Balíček Českou poštou. Dodání během 2–3 pracovních dnů.
+              {t("czechPostDesc")}
             </p>
           </div>
           <div className="bg-nude-50 rounded-xl border border-line p-5">
-            <div className="text-lg font-bold text-ink mb-1">Zdarma</div>
+            <div className="text-lg font-bold text-ink mb-1">{t("free")}</div>
             <div className="text-sm font-medium text-rose mb-2">
-              Osobní odběr — Praha
+              {t("personalPickup")}
             </div>
             <p className="text-sm text-muted">
-              Vyzvedněte si objednávku osobně po domluvě. Možnost konzultace na
-              místě.
+              {t("personalPickupDesc")}
             </p>
           </div>
         </div>
@@ -127,31 +127,31 @@ export default function DopravaPage() {
 
       {/* Delivery times */}
       <section className="mb-10">
-        <h2 className="text-xl font-semibold text-ink mb-4">Doba doručení</h2>
+        <h2 className="text-xl font-semibold text-ink mb-4">{t("deliveryTimes")}</h2>
         <div className="bg-nude-50 rounded-xl border border-line overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-line">
                 <th className="text-left p-3 font-medium text-muted">
-                  Způsob
+                  {t("methodHeader")}
                 </th>
                 <th className="text-left p-3 font-medium text-muted">
-                  Doba doručení
+                  {t("timeHeader")}
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b border-line">
-                <td className="p-3 text-ink">Osobní doručení — Praha</td>
-                <td className="p-3 text-ink">Stejný den</td>
+                <td className="p-3 text-ink">{t("personalDelivery")}</td>
+                <td className="p-3 text-ink">{t("sameDay")}</td>
               </tr>
               <tr className="border-b border-line">
-                <td className="p-3 text-ink">Česká pošta</td>
-                <td className="p-3 text-ink">2–3 pracovní dny</td>
+                <td className="p-3 text-ink">{t("czechPostSimple")}</td>
+                <td className="p-3 text-ink">{t("twoThreeDays")}</td>
               </tr>
               <tr>
-                <td className="p-3 text-ink">Osobní odběr</td>
-                <td className="p-3 text-ink">Po domluvě</td>
+                <td className="p-3 text-ink">{t("personalPickupSimple")}</td>
+                <td className="p-3 text-ink">{t("byArrangement")}</td>
               </tr>
             </tbody>
           </table>
@@ -161,34 +161,34 @@ export default function DopravaPage() {
       {/* Returns */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold text-ink mb-4">
-          Vrácení a reklamace
+          {t("returnsTitle")}
         </h2>
         <div className="bg-nude-50 rounded-xl border border-line p-5 space-y-3">
-          <p className="text-sm text-muted">
-            Máte právo vrátit zboží do <strong className="text-ink">14 dnů</strong> od
-            převzetí bez udání důvodu.
-          </p>
+          <p
+            className="text-sm text-muted"
+            dangerouslySetInnerHTML={{ __html: t("returnsPeriod") }}
+          />
           <ul className="space-y-2 text-sm text-muted">
             <li className="flex items-start gap-2">
               <span className="text-rose mt-0.5">&#10003;</span>
-              Vlasy musí být nepoužité, nepoškozené a v původním obalu.
+              {t("returnsCondition1")}
             </li>
             <li className="flex items-start gap-2">
               <span className="text-rose mt-0.5">&#10003;</span>
-              Kontaktujte nás e-mailem nebo telefonicky pro domluvení vrácení.
+              {t("returnsCondition2")}
             </li>
             <li className="flex items-start gap-2">
               <span className="text-rose mt-0.5">&#10003;</span>
-              Peníze vrátíme do 14 dnů od přijetí vraceného zboží.
+              {t("returnsCondition3")}
             </li>
           </ul>
           <p className="text-xs text-muted">
-            Podrobnosti naleznete v{" "}
+            {t("returnsMore")}{" "}
             <Link
               href="/obchodni-podminky"
               className="text-rose hover:text-rose-deep underline"
             >
-              obchodních podmínkách
+              {t("termsLink")}
             </Link>
             .
           </p>
@@ -198,29 +198,29 @@ export default function DopravaPage() {
       {/* Payment */}
       <section>
         <h2 className="text-xl font-semibold text-ink mb-4">
-          Způsoby platby
+          {t("paymentTitle")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-nude-50 rounded-xl border border-line p-5">
-            <div className="text-sm font-semibold text-ink mb-1">Hotovost</div>
+            <div className="text-sm font-semibold text-ink mb-1">{t("cash")}</div>
             <p className="text-sm text-muted">
-              Platba hotově při osobním doručení nebo odběru.
+              {t("cashDesc")}
             </p>
           </div>
           <div className="bg-nude-50 rounded-xl border border-line p-5">
             <div className="text-sm font-semibold text-ink mb-1">
-              Platba kartou
+              {t("card")}
             </div>
             <p className="text-sm text-muted">
-              Přijímáme platební karty Visa, Mastercard.
+              {t("cardDesc")}
             </p>
           </div>
           <div className="bg-nude-50 rounded-xl border border-line p-5">
             <div className="text-sm font-semibold text-ink mb-1">
-              Bankovní převod
+              {t("bankTransfer")}
             </div>
             <p className="text-sm text-muted">
-              Platba předem na účet. Údaje obdržíte v potvrzení objednávky.
+              {t("bankTransferDesc")}
             </p>
           </div>
         </div>

@@ -58,8 +58,9 @@ const langFlags: Record<string, string> = {
 };
 
 export default async function StylistsPublicPage() {
-  const [t, stylists, locale] = await Promise.all([
+  const [t, tNav, stylists, locale] = await Promise.all([
     getTranslations("public.stylists"),
+    getTranslations("public.nav"),
     getCachedAllStylists(),
     getLocale(),
   ]);
@@ -84,7 +85,7 @@ export default async function StylistsPublicPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Breadcrumbs items={[
-        { label: "Domů", href: "/" },
+        { label: tNav("home"), href: "/" },
         { label: t("title") },
       ]} />
       <div className="text-center mb-8">

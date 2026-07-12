@@ -53,7 +53,10 @@ const jsonLd = {
 };
 
 export default async function BuybackPage() {
-  const t = await getTranslations("buyback");
+  const [t, tNav] = await Promise.all([
+    getTranslations("buyback"),
+    getTranslations("public.nav"),
+  ]);
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -83,7 +86,7 @@ export default async function BuybackPage() {
       <section className="bg-white pt-16 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Breadcrumbs items={[
-            { label: "Domů", href: "/" },
+            { label: tNav("home"), href: "/" },
             { label: t("heroTitle") },
           ]} />
           <h1 className="text-3xl lg:text-4xl font-bold text-ink mb-3">

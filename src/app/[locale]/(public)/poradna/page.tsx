@@ -54,8 +54,11 @@ const categoryIcons: Record<string, string> = {
 };
 
 export default async function AdvicePage() {
-  const t = await getTranslations("advice");
-  const locale = await getLocale();
+  const [t, tNav, locale] = await Promise.all([
+    getTranslations("advice"),
+    getTranslations("public.nav"),
+    getLocale(),
+  ]);
 
   // Get like counts and comment counts for all articles
   const slugs = articles.map((a) => a.slug);
@@ -94,7 +97,7 @@ export default async function AdvicePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(poradnaJsonLd) }}
       />
       <Breadcrumbs items={[
-        { label: locale === "uk" ? "Головна" : locale === "ru" ? "Главная" : "Domů", href: "/" },
+        { label: tNav("home"), href: "/" },
         { label: t("pageTitle").replace(" — Hairland", "") },
       ]} />
       {/* Header — distinct from blog */}
