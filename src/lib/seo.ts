@@ -17,6 +17,7 @@ export function getAlternates(path: string) {
   for (const [locale, prefix] of Object.entries(LOCALE_PREFIXES)) {
     languages[locale] = `${BASE_URL}${prefix}${path}`;
   }
+  languages["x-default"] = `${BASE_URL}${path}`;
   return {
     canonical: path || "/",
     languages,

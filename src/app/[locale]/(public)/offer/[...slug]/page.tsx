@@ -556,13 +556,20 @@ async function ProductDetailView({
         "@type": "AggregateRating",
         ratingValue: reviewStats._avg.rating?.toFixed(1),
         reviewCount: reviewStats._count,
+        bestRating: "5",
+        worstRating: "1",
       },
     }),
     ...(reviewsForSchema.length > 0 && {
       review: reviewsForSchema.map((r) => ({
         "@type": "Review",
         author: { "@type": "Person", name: r.authorName },
-        reviewRating: { "@type": "Rating", ratingValue: String(r.rating) },
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: String(r.rating),
+          bestRating: "5",
+          worstRating: "1",
+        },
         reviewBody: r.text.slice(0, 200),
       })),
     }),

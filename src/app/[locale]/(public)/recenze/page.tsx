@@ -19,6 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://www.hairland.cz/recenze",
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
+      images: [{ url: "https://www.hairland.cz/og-image.jpg", width: 1200, height: 630, alt: "Hairland" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${t("recenzeTitle")} | Hairland`,
+      description: t("recenzeDescription"),
+      images: ["https://www.hairland.cz/og-image.jpg"],
     },
   };
 }
@@ -157,6 +164,18 @@ export default async function RecenzePage({
       bestRating: "5",
       worstRating: "1",
     },
+    review: reviews.slice(0, 10).map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.authorName },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: String(r.rating),
+        bestRating: "5",
+        worstRating: "1",
+      },
+      reviewBody: r.text.slice(0, 200),
+      ...(r.source === "GOOGLE" && r.sourceUrl ? { url: r.sourceUrl } : {}),
+    })),
   } : null;
 
   const sourceFilters: { key: FilterSource; label: string }[] = [
