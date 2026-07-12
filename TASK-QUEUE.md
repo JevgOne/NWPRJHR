@@ -4,7 +4,7 @@
 
 ## TASK-078: Přepsat překladové stringy — odstranit "velkoobchodní" a staré % slev
 Priorita: 1
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:
@@ -90,7 +90,7 @@ Uživatel: "ono to nejak špatne počíta zadal se MO cenu 12500 za 100g a ono m
 
 ## TASK-076: Footer na desktopu opravit
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:
@@ -105,7 +105,7 @@ Uživatel: "footer na deskopu nic moc teda"
 
 ## TASK-077: Notifikace po schválení recenze
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:
@@ -121,7 +121,7 @@ Uživatel: "ty notrifikace, když schvalím tu recenzi tak už to nemusí bejt v
 
 ## TASK-070: Slevový kód při objednávce/poptávce
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:
@@ -144,7 +144,7 @@ API: `/api/promo-codes` (CRUD), `/api/promo-codes/validate` (validace).
 
 ## TASK-072: DB migrace — PromoCode tabulka do Turso
 Priorita: 2
-Stav: čeká
+Stav: hotovo
 Projekt: /Users/zen/hairora
 
 ### Kompletní zadání:

@@ -43,6 +43,10 @@ export async function PUT(request: NextRequest, { params }: Props) {
   }
 
   const data = parsed.data;
+
+  // Check if this is an approval (active: false → true)
+  const existing = await prisma.review.findUnique({ where: { id }, select: { active: true } });
+
   const review = await prisma.review.update({
     where: { id },
     data: {
@@ -54,6 +58,17 @@ export async function PUT(request: NextRequest, { params }: Props) {
       instagramEmbed: data.instagramEmbed || null,
     },
   });
+
+  // Auto-dismiss NEW_REVIEW notifications when review is approved
+  if (data.active === true && existing && !existing.active) {
+    prisma.$executeRaw`
+      UPDATE notifications
+      SET read = 1, "readAt" = ${new Date().toISOString()}
+      WHERE type = 'NEW_REVIEW'
+        AND read = 0
+        AND json_extract(data, '$.reviewId') = ${id}
+    `.catch(() => {});
+  }
 
   logAudit({
     userId: session.user.id,
@@ -89,6 +104,15 @@ export async function DELETE(_request: NextRequest, { params }: Props) {
 
   const { id } = await params;
   await prisma.review.delete({ where: { id } });
+
+  // Auto-dismiss NEW_REVIEW notifications when review is deleted/rejected
+  prisma.$executeRaw`
+    UPDATE notifications
+    SET read = 1, "readAt" = ${new Date().toISOString()}
+    WHERE type = 'NEW_REVIEW'
+      AND read = 0
+      AND json_extract(data, '$.reviewId') = ${id}
+  `.catch(() => {});
 
   logAudit({
     userId: session.user.id,
