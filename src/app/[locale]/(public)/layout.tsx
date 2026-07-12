@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { BatchPopup } from "@/components/public/BatchPopup";
+import { ScrollToTop } from "@/components/public/ScrollToTop";
 import { ReferralTracker } from "@/components/public/ReferralTracker";
 import { InquiryCartProvider } from "@/lib/inquiry-cart";
 
@@ -20,6 +21,7 @@ export default function PublicLayout({
         <main className="flex-1">{children}</main>
         <PublicFooter />
         <BatchPopup />
+        <ScrollToTop />
       </div>
     </InquiryCartProvider>
   );

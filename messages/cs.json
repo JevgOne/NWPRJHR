@@ -896,6 +896,11 @@
       "reviews": "Recenze",
       "tagline": "100% PRAVÉ VLASY"
     },
+    "search": {
+      "loading": "Hledám…",
+      "noResults": "Žádné výsledky",
+      "viewAll": "Zobrazit všechny výsledky"
+    },
     "reviews": {
       "title": "Co říkají naši zákazníci",
       "reviewCount": "{count, plural, one {recenze} few {recenze} other {recenzí}}",

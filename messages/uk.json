@@ -896,6 +896,11 @@
       "reviews": "Відгуки",
       "tagline": "100% НАТУРАЛЬНЕ ВОЛОССЯ"
     },
+    "search": {
+      "loading": "Шукаю…",
+      "noResults": "Нічого не знайдено",
+      "viewAll": "Показати всі результати"
+    },
     "reviews": {
       "title": "Що кажуть наші клієнти",
       "reviewCount": "{count, plural, one {відгук} few {відгуки} other {відгуків}}",

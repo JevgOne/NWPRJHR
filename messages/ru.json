@@ -896,6 +896,11 @@
       "reviews": "Отзывы",
       "tagline": "100% НАТУРАЛЬНЫЕ ВОЛОСЫ"
     },
+    "search": {
+      "loading": "Ищу…",
+      "noResults": "Ничего не найдено",
+      "viewAll": "Показать все результаты"
+    },
     "reviews": {
       "title": "Что говорят наши клиенты",
       "reviewCount": "{count, plural, one {отзыв} few {отзыва} other {отзывов}}",
