@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
@@ -7,12 +6,6 @@ import { prisma } from "@/lib/db";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductsShowcase } from "./ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import {
-  COLOR_TONE_SLUG_MAP,
-  TEXTURE_SLUG_MAP,
-  CATEGORY_SLUG_MAP_SEO,
-  ORIGIN_SLUG_MAP,
-} from "@/lib/attribute-slugs";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -72,9 +65,8 @@ export async function generateMetadata({
 }
 
 export default async function ProductsPage() {
-  const [t, tAttr, session, allProducts, locale] = await Promise.all([
+  const [t, session, allProducts, locale] = await Promise.all([
     getTranslations("public"),
-    getTranslations("attributePages"),
     auth(),
     getCachedAllProducts(),
     getLocale(),
@@ -125,60 +117,6 @@ export default async function ProductsPage() {
         <ProductsShowcase userRole={userRole} discountPct={discountPct} initialProducts={allProducts} />
       </Suspense>
 
-      {/* Browse by attribute — internal linking for SEO */}
-      <section className="mt-10 border-t border-line pt-8">
-        <h2 className="text-lg font-bold text-ink mb-4">
-          {t("offer.browseByAttribute")}
-        </h2>
-
-        {/* Color tones */}
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-muted mb-2">{tAttr("barva.sectionTitle")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(COLOR_TONE_SLUG_MAP).map(([slug, label]) => (
-              <Link key={slug} href={`/offer/barva/${slug}`} className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium">
-                {label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Textures */}
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-muted mb-2">{tAttr("textura.sectionTitle")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(TEXTURE_SLUG_MAP).map(([slug, label]) => (
-              <Link key={slug} href={`/offer/textura/${slug}`} className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium">
-                {label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Categories */}
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-muted mb-2">{tAttr("kategorie.sectionTitle")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(CATEGORY_SLUG_MAP_SEO).map(([slug, label]) => (
-              <Link key={slug} href={`/offer/kategorie/${slug}`} className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium">
-                {label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Origins */}
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-muted mb-2">{tAttr("zeme.sectionTitle")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(ORIGIN_SLUG_MAP).map(([slug, label]) => (
-              <Link key={slug} href={`/offer/zeme/${slug}`} className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium">
-                {label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
