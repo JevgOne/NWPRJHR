@@ -54,7 +54,7 @@ export function LocaleSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 bg-white rounded-lg shadow-lg border border-line py-1 min-w-[140px] right-0">
+        <div className="absolute z-50 bottom-full mb-1 bg-white rounded-lg shadow-lg border border-line py-1 min-w-[140px] left-0">
           {(["cs", "uk", "ru"] as const).map((loc) => {
             const { flag, label } = localeFlags[loc];
             return (
