@@ -68,14 +68,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   events: {
-    async signIn({ user }) {
-      await logAudit({
+    signIn({ user }) {
+      logAudit({
         userId: user.id ?? undefined,
         userEmail: user.email ?? undefined,
         action: "LOGIN",
         entity: "User",
         entityId: user.id ?? undefined,
-      });
+      }).catch(() => {});
     },
   },
   callbacks: {
