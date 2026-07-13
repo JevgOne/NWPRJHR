@@ -119,7 +119,7 @@ export function QrLabelSheet({
                     {label.category}
                   </div>
                   <div className="text-[5px] text-muted/40 mt-[0.5mm] font-mono truncate">
-                    {label.variantId.slice(-8)}
+                    {label.barcode ?? label.variantId.slice(-8)}
                   </div>
                 </div>
               </div>
@@ -151,7 +151,7 @@ export function QrLabelSheet({
                 {label.category}
               </div>
               <div style={{ fontSize: "5px", color: "#aaa", marginTop: "0.5mm", fontFamily: "monospace" }}>
-                {label.variantId.slice(-8)}
+                {label.barcode ?? label.variantId.slice(-8)}
               </div>
             </div>
           </div>

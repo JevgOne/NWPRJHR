@@ -13,7 +13,7 @@ export default async function InventoryPage() {
 
   if (role === "SALON" || role === "HAIRDRESSER") redirect("/dashboard");
 
-  const [t, variants, allStock] = await Promise.all([
+  const [t, variants, allStock, latestBarcodes] = await Promise.all([
     getTranslations(),
     prisma.variant.findMany({
       where: { active: true },
@@ -25,7 +25,17 @@ export default async function InventoryPage() {
       orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
     }),
     getAllStockNumbers(),
+    prisma.delivery.findMany({
+      where: { variant: { active: true }, barcode: { not: null } },
+      orderBy: { stockedAt: "desc" },
+      distinct: ["variantId"],
+      select: { variantId: true, barcode: true },
+    }),
   ]);
+
+  const barcodeMap = new Map(
+    latestBarcodes.map((d) => [d.variantId, d.barcode]),
+  );
 
   const items = variants.map((v) => {
     const stock = allStock.get(v.id);
@@ -40,6 +50,7 @@ export default async function InventoryPage() {
       reservedPieces: stock?.reservedPieces ?? 0,
       availableGrams: stock?.availableGrams ?? 0,
       availablePieces: stock?.availablePieces ?? 0,
+      barcode: barcodeMap.get(v.id) ?? null,
     };
   });
 

@@ -19,6 +19,7 @@ interface StockItem {
   reservedPieces: number;
   availableGrams: number;
   availablePieces: number;
+  barcode?: string | null;
 }
 
 const CATEGORIES = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
@@ -115,6 +116,7 @@ export function InventoryClient({
         lengthCm: i.lengthCm,
         color: i.color,
         category: i.product.category,
+        barcode: i.barcode,
       }));
   }, [filtered, selected]);
 
