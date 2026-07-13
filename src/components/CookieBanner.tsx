@@ -18,6 +18,7 @@ export function CookieBanner() {
 
   function accept(level: "all" | "necessary") {
     localStorage.setItem(CONSENT_KEY, level);
+    window.dispatchEvent(new Event("cookie-consent-change"));
     setVisible(false);
   }
 

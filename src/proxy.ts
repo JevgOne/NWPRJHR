@@ -13,8 +13,42 @@ const CATEGORY_REDIRECTS: Record<string, string> = {
   "weft": "/tresove-vlasy",
 };
 
+/** Admin/app route prefixes that require authentication */
+const PROTECTED_PREFIXES = [
+  "/dashboard", "/inventory", "/products", "/orders", "/salons",
+  "/invoices", "/sales", "/customers", "/export", "/complaints",
+  "/settings", "/notifications", "/audit-log", "/referrals",
+  "/promo-codes", "/posts", "/reviews", "/returns", "/payments",
+  "/registrations", "/samples", "/discounts", "/finance",
+  "/inquiries", "/stylists", "/suppliers", "/salon",
+];
+
+function isProtectedPath(pathname: string): boolean {
+  return PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/"),
+  );
+}
+
+function hasSessionToken(request: NextRequest): boolean {
+  return (
+    request.cookies.has("__Secure-authjs.session-token") ||
+    request.cookies.has("authjs.session-token")
+  );
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Auth guard for admin/app routes
+  if (isProtectedPath(pathname)) {
+    if (!hasSessionToken(request)) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
 
   // Strip locale prefix for matching (e.g. /cs/offer/clip-in → /offer/clip-in)
   const stripped = pathname.replace(/^\/(cs|uk|ru)/, "");
@@ -25,7 +59,6 @@ export function proxy(request: NextRequest) {
     const newPath = CATEGORY_REDIRECTS[offerMatch[1]];
     if (newPath) {
       const url = request.nextUrl.clone();
-      // Keep locale prefix if present
       const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
       url.pathname = localePrefix + newPath;
       return NextResponse.redirect(url, 308);
@@ -49,10 +82,35 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all public paths, but NOT:
-    // - api routes, _next/static, _next/image
-    // - favicon, icon, sitemap, robots, manifest, sw, icons
-    // - login, admin (app) paths, salon portal paths
+    // Public paths: intl routing + redirects (excludes static assets, api, login)
     "/((?!api|_next/static|_next/image|favicon\\.ico|icon\\.svg|logo-.*\\.svg|seal-.*\\.svg|hero-vzornik\\.png|sitemap\\.xml|robots\\.txt|manifest\\.json|sw\\.js|icons/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon/).*)",
+    // Protected admin/app paths: auth guard
+    "/dashboard/:path*",
+    "/inventory/:path*",
+    "/products/:path*",
+    "/orders/:path*",
+    "/salons/:path*",
+    "/invoices/:path*",
+    "/sales/:path*",
+    "/customers/:path*",
+    "/export/:path*",
+    "/complaints/:path*",
+    "/settings/:path*",
+    "/notifications/:path*",
+    "/audit-log/:path*",
+    "/referrals/:path*",
+    "/promo-codes/:path*",
+    "/posts/:path*",
+    "/reviews/:path*",
+    "/returns/:path*",
+    "/payments/:path*",
+    "/registrations/:path*",
+    "/samples/:path*",
+    "/discounts/:path*",
+    "/finance/:path*",
+    "/inquiries/:path*",
+    "/stylists/:path*",
+    "/suppliers/:path*",
+    "/salon/:path*",
   ],
 };

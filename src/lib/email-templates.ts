@@ -5,7 +5,16 @@
 
 // --- Shared template wrapper ---
 
-function hairlandEmailTemplate(content: string): string {
+function hairlandEmailTemplate(
+  content: string,
+  opts?: { unsubscribeUrl?: string; unsubscribeLabel?: string },
+): string {
+  const unsubLine = opts?.unsubscribeUrl
+    ? `<p style="margin:4px 0 0;color:#9c8682;font-size:11px;">
+        <a href="${opts.unsubscribeUrl}" style="color:#9c8682;text-decoration:underline;">${opts.unsubscribeLabel ?? "Odhl&aacute;sit se z emailů"}</a>
+      </p>`
+    : "";
+
   return `<!DOCTYPE html>
 <html lang="cs">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
@@ -26,6 +35,7 @@ function hairlandEmailTemplate(content: string): string {
       <p style="margin:4px 0 0;color:#9c8682;font-size:11px;">
         <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
       </p>
+      ${unsubLine}
     </div>
   </div>
 </body>

@@ -4,6 +4,7 @@ export interface SendEmailInput {
   subject: string;
   body: string;
   html?: string;
+  unsubscribeUrl?: string;
 }
 
 /**
@@ -30,5 +31,13 @@ export async function sendNotificationEmail(
     subject: input.subject,
     text: input.body,
     html: input.html,
+    ...(input.unsubscribeUrl
+      ? {
+          headers: {
+            "List-Unsubscribe": `<${input.unsubscribeUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
+        }
+      : {}),
   });
 }
