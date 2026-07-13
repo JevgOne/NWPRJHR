@@ -8,6 +8,7 @@ import { useLocale } from "next-intl";
 import { useTransition } from "react";
 import type { Locale } from "@/i18n/config";
 import { useInquiryCart } from "@/lib/inquiry-cart";
+import { useWishlist } from "@/lib/wishlist";
 import { signOut } from "next-auth/react";
 import { SearchOverlay } from "@/components/public/SearchOverlay";
 
@@ -112,6 +113,7 @@ export function PublicNavbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount } = useInquiryCart();
+  const { count: wishlistCount } = useWishlist();
   const [session, setSession] = useState<NavSession | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -247,6 +249,16 @@ export function PublicNavbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
+            <Link href="/wishlist" className="relative p-1.5 text-muted hover:text-rose transition-colors">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-rose text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
             <Link href="/inquiry-cart" className="relative p-1.5 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -326,6 +338,13 @@ export function PublicNavbar() {
               </svg>
               {t("offer.searchPlaceholder")}
             </button>
+            <Link
+              href="/wishlist"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"
+              onClick={() => setMenuOpen(false)}
+            >
+              {t("navbar.wishlist")} {wishlistCount > 0 && <span className="bg-rose text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
+            </Link>
             <Link
               href="/inquiry-cart"
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"

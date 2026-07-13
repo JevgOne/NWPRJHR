@@ -23,6 +23,10 @@ import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage, CATEGORY
 import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_SLUG_MAP_SEO, ORIGIN_SLUG_MAP } from "@/lib/attribute-slugs";
 import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLandingPage";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { TrackProductView } from "@/components/public/TrackProductView";
+import { RecentlyViewed } from "@/components/public/RecentlyViewed";
+import { StockNotifyButton } from "./StockNotifyButton";
+import { WishlistToggle } from "@/components/public/WishlistToggle";
 
 const getCachedReviewData = unstable_cache(
   async (productId: string) => {
@@ -331,6 +335,7 @@ async function ProductDetailView({
           : v.retailPricePerGram;
       }
       return {
+        id: v.id,
         lengthCm: v.lengthCm,
         color: v.color,
         pricePerGram: displayPrice,
@@ -603,6 +608,7 @@ async function ProductDetailView({
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <TrackProductView slug={product.slug ?? product.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
@@ -636,9 +642,14 @@ async function ProductDetailView({
         <div className="space-y-4">
           {/* Header: name + origin inline */}
           <div>
-            <h1 className="text-2xl font-bold text-ink mb-1">
-              {productName}
-            </h1>
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <h1 className="text-2xl font-bold text-ink">
+                {productName}
+              </h1>
+              {(product.slug ?? product.id) && (
+                <WishlistToggle slug={product.slug ?? product.id} />
+              )}
+            </div>
             <div className="flex items-center gap-2 text-sm text-muted">
               <Link
                 href={`/offer?category=${product.category}`}
@@ -789,6 +800,9 @@ async function ProductDetailView({
                         return t("inquiry.outOfStock");
                       })()}
                     </div>
+                    {focusedVariant.availableGrams === 0 && (focusedVariant.availablePieces ?? 0) === 0 && (
+                      <StockNotifyButton variantId={focusedVariant.id} />
+                    )}
                   </div>
                 </div>
               </>
@@ -821,6 +835,9 @@ async function ProductDetailView({
                             return t("inquiry.outOfStock");
                           })()}
                         </div>
+                        {totalStock === 0 && totalPieces === 0 && product.variants.length > 0 && (
+                          <StockNotifyButton variantId={product.variants[0].id} />
+                        )}
                       </div>
                     </div>
                   );
@@ -978,6 +995,9 @@ async function ProductDetailView({
           </section>
         );
       })()}
+
+      {/* Recently viewed */}
+      <RecentlyViewed excludeSlug={product.slug ?? product.id} />
 
       {/* FAQ — visual accordion, last section */}
       {allFaq.length > 0 && (

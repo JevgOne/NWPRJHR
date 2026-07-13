@@ -2,6 +2,7 @@ import type { Delivery, Currency } from "@prisma/client";
 import { prisma } from "./db";
 import { invalidateStockCache } from "./stock";
 import { notifyRestock, notifyLowStock } from "./telegram";
+import { notifyStockSubscribers } from "./stock-notify";
 
 export interface StockInInput {
   variantId: string;
@@ -90,6 +91,9 @@ export async function stockIn(
       ).catch(() => {});
     }
   } catch {}
+
+  // Notify stock subscribers (email)
+  notifyStockSubscribers(data.variantId).catch(() => {});
 
   invalidateStockCache();
   return delivery;

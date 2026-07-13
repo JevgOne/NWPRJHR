@@ -521,7 +521,7 @@ export function ProfileClient({ role }: { role: Role }) {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted">{t("totalRevenue")}</span>
-            <span>{formatCZK(profile.totalRevenue)} CZK</span>
+            <span>{formatCZK(profile.totalRevenue)} {t("currencyShort")}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted">{t("loyaltyPoints")}</span>
@@ -531,7 +531,7 @@ export function ProfileClient({ role }: { role: Role }) {
             <div className="pt-2 border-t text-sm">
               <span className="text-muted">{t("toNextTier")} </span>
               <span className="font-medium">
-                {formatCZK(profile.nextTier.remaining)} CZK
+                {formatCZK(profile.nextTier.remaining)} {t("currencyShort")}
               </span>
               <span className="text-muted">
                 {" "}

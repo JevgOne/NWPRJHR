@@ -11,9 +11,20 @@ export async function GET(request: NextRequest) {
     const search = sp.get("search")?.toLowerCase();
     const texture = sp.get("texture");
     const colorTone = sp.get("colorTone");
+    const slugs = sp.get("slugs")?.split(",").filter(Boolean);
 
     // Always fetch from cache — single DB hit shared across requests
     const allProducts = await getCachedAllProducts();
+
+    // Slug filter — return matching products in any order
+    if (slugs && slugs.length > 0) {
+      const slugSet = new Set(slugs);
+      const matched = allProducts.filter((p) => p.slug && slugSet.has(p.slug));
+      return NextResponse.json(
+        { data: matched },
+        { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } }
+      );
+    }
 
     // Apply filters in-memory (fast, no extra DB queries)
     const filtered = allProducts.filter((p) => {

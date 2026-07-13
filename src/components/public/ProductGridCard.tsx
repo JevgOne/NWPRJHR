@@ -8,6 +8,7 @@ import { getOriginFlag } from "@/lib/origin-flags";
 import { getTextureInfo } from "@/lib/hair-textures";
 
 import { TextureSwatch } from "@/components/TextureSwatch";
+import { useWishlist } from "@/lib/wishlist";
 
 interface ProductGridCardVariant {
   lengthCm: number;
@@ -66,6 +67,8 @@ export function ProductGridCard({
   const tTexture = useTranslations("texture");
   const tCategory = useTranslations("category");
   const locale = useLocale();
+  const { isInWishlist, toggle: toggleWishlist } = useWishlist();
+  const wishlisted = p.slug ? isInWishlist(p.slug) : false;
 
   const localizedName =
     locale === "ru" && p.nameRu ? p.nameRu
@@ -143,6 +146,17 @@ export function ProductGridCard({
             {t("inquiry.outOfStock")}
           </span>
         </div>
+      )}
+      {p.slug && (
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p.slug!); }}
+          className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
+          aria-label={wishlisted ? t("wishlist.remove") : t("wishlist.add")}
+        >
+          <svg className={`w-4 h-4 ${wishlisted ? "text-rose" : "text-muted"}`} viewBox="0 0 24 24" fill={wishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2}>
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
       )}
     </div>
   );

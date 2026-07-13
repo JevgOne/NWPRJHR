@@ -5,6 +5,7 @@ import { BatchPopup } from "@/components/public/BatchPopup";
 import { ScrollToTop } from "@/components/public/ScrollToTop";
 import { ReferralTracker } from "@/components/public/ReferralTracker";
 import { InquiryCartProvider } from "@/lib/inquiry-cart";
+import { WishlistProvider } from "@/lib/wishlist";
 
 export default function PublicLayout({
   children,
@@ -13,16 +14,18 @@ export default function PublicLayout({
 }) {
   return (
     <InquiryCartProvider>
-      <div className="flex flex-col min-h-screen">
-        <Suspense fallback={null}>
-          <ReferralTracker />
-        </Suspense>
-        <PublicNavbar />
-        <main className="flex-1">{children}</main>
-        <PublicFooter />
-        <BatchPopup />
-        <ScrollToTop />
-      </div>
+      <WishlistProvider>
+        <div className="flex flex-col min-h-screen">
+          <Suspense fallback={null}>
+            <ReferralTracker />
+          </Suspense>
+          <PublicNavbar />
+          <main className="flex-1">{children}</main>
+          <PublicFooter />
+          <BatchPopup />
+          <ScrollToTop />
+        </div>
+      </WishlistProvider>
     </InquiryCartProvider>
   );
 }

@@ -314,15 +314,15 @@ export function CatalogClient({ role }: { role: Role }) {
                         </td>
                         <td className="px-4 py-2 text-right text-ink font-medium whitespace-nowrap">
                           {v.sellingMode === "BY_PIECE"
-                            ? `${formatCZK(v.pricePerPiece ?? 0)} Kc/ks`
-                            : `${formatCZK(v.pricePerGram)} Kc/g`}
+                            ? `${formatCZK(v.pricePerPiece ?? 0)} ${t("pricePerPiece")}`
+                            : `${formatCZK(v.pricePerGram)} ${t("pricePerGramUnit")}`}
                         </td>
                         <td className="px-4 py-2 text-right whitespace-nowrap">
                           <span className="inline-flex items-center gap-1 text-emerald-700">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                             {v.sellingMode === "BY_PIECE"
-                              ? `${v.availablePieces} ks`
-                              : `${v.availableGrams} g`}
+                              ? `${v.availablePieces} ${t("unitPieces")}`
+                              : `${v.availableGrams} ${t("unitGrams")}`}
                           </span>
                         </td>
                         <td className="px-4 py-2 text-right">
@@ -333,7 +333,7 @@ export function CatalogClient({ role }: { role: Role }) {
                                 min={0}
                                 max={v.availablePieces}
                                 value={inCart || ""}
-                                placeholder="ks"
+                                placeholder={t("unitPieces")}
                                 onChange={(e) => {
                                   const val = Math.min(parseInt(e.target.value) || 0, v.availablePieces);
                                   updateCart(v.id, 0, {
@@ -354,7 +354,7 @@ export function CatalogClient({ role }: { role: Role }) {
                                 min={0}
                                 max={v.availableGrams}
                                 value={inCart || ""}
-                                placeholder="g"
+                                placeholder={t("unitGrams")}
                                 onChange={(e) => {
                                   const val = Math.min(parseInt(e.target.value) || 0, v.availableGrams);
                                   updateCart(v.id, val, {
@@ -369,7 +369,7 @@ export function CatalogClient({ role }: { role: Role }) {
                                 className="w-16 px-2 py-1 text-right text-sm border border-line rounded-lg focus:outline-none focus:ring-1 focus:ring-rose"
                               />
                             )}
-                            <span className="text-xs text-muted">{v.sellingMode === "BY_PIECE" ? "ks" : "g"}</span>
+                            <span className="text-xs text-muted">{v.sellingMode === "BY_PIECE" ? t("unitPieces") : t("unitGrams")}</span>
                           </div>
                         </td>
                       </tr>
@@ -403,7 +403,7 @@ export function CatalogClient({ role }: { role: Role }) {
                   <span className="text-emerald-600">
                     {promoResult.discountType === "PERCENT"
                       ? `-${(promoResult.discountValue ?? 0) / 100}%`
-                      : `-${formatCZK(promoResult.discountAmount ?? 0)} Kč`}
+                      : `-${formatCZK(promoResult.discountAmount ?? 0)} ${t("currencyShort")}`}
                   </span>
                   <button onClick={removePromoCode} className="text-emerald-400 hover:text-red-500 ml-1">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -440,17 +440,17 @@ export function CatalogClient({ role }: { role: Role }) {
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-ink">
                   {t("cartItems", { count: cartItems.length })}
-                  {cartTotalGrams > 0 && ` \u00b7 ${cartTotalGrams} g`}
-                  {cartTotalPieces > 0 && ` \u00b7 ${cartTotalPieces} ks`}
+                  {cartTotalGrams > 0 && ` \u00b7 ${cartTotalGrams} ${t("unitGrams")}`}
+                  {cartTotalPieces > 0 && ` \u00b7 ${cartTotalPieces} ${t("unitPieces")}`}
                 </div>
                 <div className="text-xs text-muted">
                   {promoResult?.valid && promoResult.discountAmount ? (
                     <>
-                      <span className="line-through mr-1">{formatCZK(cartTotal)} Kč</span>
-                      <span className="text-emerald-600 font-medium">{formatCZK(cartTotal - promoResult.discountAmount)} Kč</span>
+                      <span className="line-through mr-1">{formatCZK(cartTotal)} {t("currencyShort")}</span>
+                      <span className="text-emerald-600 font-medium">{formatCZK(cartTotal - promoResult.discountAmount)} {t("currencyShort")}</span>
                     </>
                   ) : (
-                    <>{t("cartTotal")}: {formatCZK(cartTotal)} Kč</>
+                    <>{t("cartTotal")}: {formatCZK(cartTotal)} {t("currencyShort")}</>
                   )}
                 </div>
               </div>

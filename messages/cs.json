@@ -235,6 +235,9 @@
     "stockedSuccess": "Naskladněno!",
     "qrLinkDesc": "Naskenuj QR kód pro rychlý prodej v admin panelu",
     "printLabel": "Tisknout štítek",
+    "printLabels": "Tisknout štítky",
+    "generatingLabels": "Generuji QR štítky",
+    "labelCount": "{count, plural, one {# štítek} few {# štítky} other {# štítků}}",
     "stockAnother": "Naskladnit další",
     "wizCategory": "Vyberte kategorii",
     "wizOrigin": "Vyberte původ",
@@ -802,6 +805,7 @@
       "priceTip": "100g ≈ {price}",
       "regularPrice": "běžná cena",
       "relatedProducts": "Podobné produkty",
+      "recentlyViewed": "Nedávno prohlédnuté",
       "trustQuality": "Garance kvality a původu",
       "trustQualityDesc": "Každý produkt má ověřený původ a prochází kontrolou kvality.",
       "trustReturn": "Vrácení do 14 dní",
@@ -816,7 +820,11 @@
       "careTip3Title": "Noční rutina",
       "careTip3Text": "Před spaním rozčesejte a zaplétejte do volného copu. Spěte na hedvábném polštáři — zabrání zamotávání.",
       "careReadMore": "Kompletní průvodce péčí",
-      "faqTitle": "Časté dotazy"
+      "faqTitle": "Časté dotazy",
+      "notifyWhenAvailable": "Hlídat dostupnost",
+      "notifyEmailPlaceholder": "Váš e-mail",
+      "notifySuccess": "Dáme vám vědět, až bude skladem",
+      "notifyAlreadySubscribed": "Hlídáte dostupnost"
     },
     "inquiry": {
       "addToInquiry": "Přidat do poptávky",
@@ -929,7 +937,16 @@
       "weightGuide": "Průvodce gramáží",
       "inspiration": "Inspirace",
       "reviews": "Recenze",
-      "tagline": "PRÉMIOVÉ VLASY"
+      "tagline": "PRÉMIOVÉ VLASY",
+      "wishlist": "Oblíbené"
+    },
+    "wishlist": {
+      "title": "Oblíbené",
+      "empty": "Zatím nemáte žádné oblíbené produkty",
+      "add": "Přidat do oblíbených",
+      "remove": "Odebrat z oblíbených",
+      "clearAll": "Smazat vše",
+      "browseProducts": "Prohlédnout nabídku"
     },
     "search": {
       "loading": "Hledám…",
@@ -1229,6 +1246,8 @@
     "receiptPlaceholder": "Číslo paragonu (nepovinné)",
     "receiptHint": "Paragon/pokladní doklad vystavíte ručně.",
     "transferHint": "Faktura se vytvoří automaticky.",
+    "promoHint": "Interní promo — vytvoří se interní doklad.",
+    "writeoffHint": "Interní odpis — vytvoří se interní doklad.",
     "totalSold": "Prodáno celkem"
   },
   "customer": {
@@ -1337,7 +1356,13 @@
     "color": "Barva",
     "promoCodePlaceholder": "Slevový kód",
     "applyPromo": "Použít",
-    "promoInvalid": "Neplatný kód"
+    "promoInvalid": "Neplatný kód",
+    "unitPieces": "ks",
+    "unitGrams": "g",
+    "pricePerPiece": "Kč/ks",
+    "pricePerGramUnit": "Kč/g",
+    "currencyShort": "Kč",
+    "whatsappShareText": "Objednejte si prémiové vlasy na Hairland se slevou: {url}"
   },
   "returnsMgmt": {
     "title": "Vratky",

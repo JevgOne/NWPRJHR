@@ -180,11 +180,12 @@ model Variant {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
-  deliveries     Delivery[]
-  stockMovements StockMovement[]
-  reservations   Reservation[]
-  saleItems      SaleItem[]
-  orderItems     OrderItem[]
+  deliveries          Delivery[]
+  stockMovements      StockMovement[]
+  reservations        Reservation[]
+  saleItems           SaleItem[]
+  orderItems          OrderItem[]
+  stockSubscriptions  StockSubscription[]
 
   @@unique([productId, lengthCm, color])
   @@index([productId])
@@ -1637,4 +1638,24 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+// ============================================================
+// STOCK_SUBSCRIPTION -- anonymous email subscription for restock notifications
+// ============================================================
+
+model StockSubscription {
+  id          String    @id @default(cuid())
+  email       String
+  variantId   String
+  variant     Variant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  locale      String    @default("cs")
+  notified    Boolean   @default(false)
+  notifiedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([email, variantId])
+  @@index([variantId, notified])
+  @@index([email])
+  @@map("stock_subscriptions")
 }

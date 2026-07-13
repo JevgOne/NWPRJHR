@@ -235,6 +235,9 @@
     "stockedSuccess": "Принято на склад!",
     "qrLinkDesc": "Сканируй QR код для быстрой продажи в админ панели",
     "printLabel": "Печать этикетки",
+    "printLabels": "Печать этикеток",
+    "generatingLabels": "Генерируем QR этикетки",
+    "labelCount": "{count, plural, one {# этикетка} few {# этикетки} other {# этикеток}}",
     "stockAnother": "Принять ещё",
     "wizCategory": "Выберите категорию",
     "wizOrigin": "Выберите происхождение",
@@ -802,6 +805,7 @@
       "priceTip": "100g ≈ {price}",
       "regularPrice": "обычная цена",
       "relatedProducts": "Похожие продукты",
+      "recentlyViewed": "Недавно просмотренные",
       "trustQuality": "Гарантия качества и происхождения",
       "trustQualityDesc": "Каждый продукт имеет проверенное происхождение и проходит контроль качества.",
       "trustReturn": "Возврат в течение 14 дней",
@@ -816,7 +820,11 @@
       "careTip3Title": "Ночная рутина",
       "careTip3Text": "Перед сном расчешите и заплетите в свободную косу. Спите на шёлковой подушке — предотвращает спутывание.",
       "careReadMore": "Полный гид по уходу",
-      "faqTitle": "Частые вопросы"
+      "faqTitle": "Частые вопросы",
+      "notifyWhenAvailable": "Сообщить о наличии",
+      "notifyEmailPlaceholder": "Ваш e-mail",
+      "notifySuccess": "Мы сообщим, когда будет в наличии",
+      "notifyAlreadySubscribed": "Вы подписаны на уведомления"
     },
     "inquiry": {
       "addToInquiry": "Добавить в запрос",
@@ -929,7 +937,16 @@
       "weightGuide": "Гид по граммажу",
       "inspiration": "Вдохновение",
       "reviews": "Отзывы",
-      "tagline": "ПРЕМИАЛЬНЫЕ ВОЛОСЫ"
+      "tagline": "ПРЕМИАЛЬНЫЕ ВОЛОСЫ",
+      "wishlist": "Избранное"
+    },
+    "wishlist": {
+      "title": "Избранное",
+      "empty": "У вас пока нет избранных товаров",
+      "add": "Добавить в избранное",
+      "remove": "Удалить из избранного",
+      "clearAll": "Очистить все",
+      "browseProducts": "Смотреть товары"
     },
     "search": {
       "loading": "Ищу…",
@@ -1229,6 +1246,8 @@
     "receiptPlaceholder": "Номер чека (необязательно)",
     "receiptHint": "Чек/кассовый документ выпишете вручную.",
     "transferHint": "Счёт-фактура создастся автоматически.",
+    "promoHint": "Внутреннее промо — создаётся внутренний документ.",
+    "writeoffHint": "Внутреннее списание — создаётся внутренний документ.",
     "totalSold": "Продано всего"
   },
   "customer": {
@@ -1337,7 +1356,13 @@
     "color": "Цвет",
     "promoCodePlaceholder": "Промокод",
     "applyPromo": "Применить",
-    "promoInvalid": "Недействительный код"
+    "promoInvalid": "Недействительный код",
+    "unitPieces": "шт",
+    "unitGrams": "г",
+    "pricePerPiece": "Kč/шт",
+    "pricePerGramUnit": "Kč/г",
+    "currencyShort": "Kč",
+    "whatsappShareText": "Закажите премиальные волосы на Hairland со скидкой: {url}"
   },
   "returnsMgmt": {
     "title": "Возвраты",

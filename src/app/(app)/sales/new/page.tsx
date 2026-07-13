@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { NewSaleWizard } from "./NewSaleWizard";
 
-export default async function NewSalePage() {
+export default async function NewSalePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ variantId?: string }>;
+}) {
+  const params = await searchParams;
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/dashboard");
@@ -35,6 +40,7 @@ export default async function NewSalePage() {
     <NewSaleWizard
       products={productOptions}
       role={session.user.role}
+      initialVariantId={params.variantId}
     />
   );
 }

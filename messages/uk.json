@@ -235,6 +235,9 @@
     "stockedSuccess": "Прийнято на склад!",
     "qrLinkDesc": "Скануй QR код для швидкого продажу в адмін панелі",
     "printLabel": "Друкувати етикетку",
+    "printLabels": "Друкувати етикетки",
+    "generatingLabels": "Генеруємо QR етикетки",
+    "labelCount": "{count, plural, one {# етикетка} few {# етикетки} other {# етикеток}}",
     "stockAnother": "Прийняти ще",
     "wizCategory": "Оберіть категорію",
     "wizOrigin": "Оберіть походження",
@@ -802,6 +805,7 @@
       "priceTip": "100g ≈ {price}",
       "regularPrice": "звичайна ціна",
       "relatedProducts": "Схожі продукти",
+      "recentlyViewed": "Нещодавно переглянуті",
       "trustQuality": "Гарантія якості та походження",
       "trustQualityDesc": "Кожен продукт має перевірене походження та проходить контроль якості.",
       "trustReturn": "Повернення протягом 14 днів",
@@ -816,7 +820,11 @@
       "careTip3Title": "Нічна рутина",
       "careTip3Text": "Перед сном розчешіть і заплетіть у вільну косу. Спіть на шовковій подушці — запобігає заплутуванню.",
       "careReadMore": "Повний гід з догляду",
-      "faqTitle": "Часті запитання"
+      "faqTitle": "Часті запитання",
+      "notifyWhenAvailable": "Повідомити про наявність",
+      "notifyEmailPlaceholder": "Ваш e-mail",
+      "notifySuccess": "Ми повідомимо, коли буде в наявності",
+      "notifyAlreadySubscribed": "Ви підписані на сповіщення"
     },
     "inquiry": {
       "addToInquiry": "Додати до запиту",
@@ -929,7 +937,16 @@
       "weightGuide": "Гід з грамажу",
       "inspiration": "Натхнення",
       "reviews": "Відгуки",
-      "tagline": "ПРЕМІАЛЬНЕ ВОЛОССЯ"
+      "tagline": "ПРЕМІАЛЬНЕ ВОЛОССЯ",
+      "wishlist": "Обране"
+    },
+    "wishlist": {
+      "title": "Обране",
+      "empty": "У вас поки немає обраних товарів",
+      "add": "Додати до обраних",
+      "remove": "Видалити з обраних",
+      "clearAll": "Очистити все",
+      "browseProducts": "Переглянути товари"
     },
     "search": {
       "loading": "Шукаю…",
@@ -1229,6 +1246,8 @@
     "receiptPlaceholder": "Номер чека (необов'язково)",
     "receiptHint": "Чек/касовий документ виставите вручну.",
     "transferHint": "Рахунок-фактура створюється автоматично.",
+    "promoHint": "Внутрішнє промо — створюється внутрішній документ.",
+    "writeoffHint": "Внутрішнє списання — створюється внутрішній документ.",
     "totalSold": "Продано всього"
   },
   "customer": {
@@ -1337,7 +1356,13 @@
     "color": "Колір",
     "promoCodePlaceholder": "Промокод",
     "applyPromo": "Застосувати",
-    "promoInvalid": "Недійсний код"
+    "promoInvalid": "Недійсний код",
+    "unitPieces": "шт",
+    "unitGrams": "г",
+    "pricePerPiece": "Kč/шт",
+    "pricePerGramUnit": "Kč/г",
+    "currencyShort": "Kč",
+    "whatsappShareText": "Замовте преміальне волосся на Hairland зі знижкою: {url}"
   },
   "returnsMgmt": {
     "title": "Повернення",

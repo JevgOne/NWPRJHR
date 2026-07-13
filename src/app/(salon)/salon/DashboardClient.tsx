@@ -133,7 +133,7 @@ export function DashboardClient({
                     </span>
                   </td>
                   <td className="py-2 text-right font-medium">
-                    {formatCZK(order.estimatedTotal)} CZK
+                    {formatCZK(order.estimatedTotal)} {t("currencyShort")}
                   </td>
                 </tr>
               ))}

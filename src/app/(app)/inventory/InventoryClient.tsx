@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
+import { QrLabelSheet } from "@/components/inventory/QrLabelSheet";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
 
@@ -46,6 +47,8 @@ export function InventoryClient({
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [originFilter, setOriginFilter] = useState<string>("");
   const [productFilter, setProductFilter] = useState<string>("");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [showLabels, setShowLabels] = useState(false);
 
   // Extract filter options
   const filterOptions = useMemo(() => {
@@ -85,6 +88,35 @@ export function InventoryClient({
   const colorName = (code: string) => {
     try { return tColors(getHairColor(code).nameKey); } catch { return code; }
   };
+
+  const toggleSelect = (variantId: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(variantId)) next.delete(variantId);
+      else next.add(variantId);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === filtered.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map((i) => i.variantId)));
+    }
+  };
+
+  const selectedLabelData = useMemo(() => {
+    return filtered
+      .filter((i) => selected.has(i.variantId))
+      .map((i) => ({
+        variantId: i.variantId,
+        productName: i.product.name,
+        lengthCm: i.lengthCm,
+        color: i.color,
+        category: i.product.category,
+      }));
+  }, [filtered, selected]);
 
   return (
     <div>
@@ -160,6 +192,17 @@ export function InventoryClient({
         {totalReserved > 0 && (
           <span className="text-amber-600 font-medium">{totalReserved} g rezervováno</span>
         )}
+        {selected.size > 0 && (
+          <button
+            onClick={() => setShowLabels(true)}
+            className="ml-auto px-3 py-1 bg-rose text-white text-xs font-medium rounded-lg hover:bg-rose-deep transition-colors flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+            </svg>
+            {t("printLabels")} ({selected.size})
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -168,6 +211,15 @@ export function InventoryClient({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-line text-left text-muted">
+                <th className="py-3 px-1 w-8">
+                  <input
+                    type="checkbox"
+                    checked={filtered.length > 0 && selected.size === filtered.length}
+                    onChange={toggleSelectAll}
+                    className="rounded border-line text-rose focus:ring-rose"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </th>
                 <th className="py-3 px-2 font-medium">{t("selectVariant")}</th>
                 <th className="py-3 px-2 font-medium">Barva</th>
                 <th className="py-3 px-2 font-medium">Délka</th>
@@ -187,7 +239,7 @@ export function InventoryClient({
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-muted">
+                  <td colSpan={7} className="py-8 text-center text-muted">
                     {t("noStock")}
                   </td>
                 </tr>
@@ -198,6 +250,14 @@ export function InventoryClient({
                     className="border-b border-gray-100 hover:bg-nude-50 cursor-pointer"
                     onClick={() => router.push(`/products/${item.product.id}`)}
                   >
+                    <td className="py-2.5 px-1" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selected.has(item.variantId)}
+                        onChange={() => toggleSelect(item.variantId)}
+                        className="rounded border-line text-rose focus:ring-rose"
+                      />
+                    </td>
                     <td className="py-2.5 px-2">
                       <div className="font-medium text-ink text-sm">
                         {item.product.name}
@@ -248,6 +308,13 @@ export function InventoryClient({
           </table>
         </div>
       </Card>
+
+      {showLabels && selectedLabelData.length > 0 && (
+        <QrLabelSheet
+          items={selectedLabelData}
+          onClose={() => setShowLabels(false)}
+        />
+      )}
     </div>
   );
 }

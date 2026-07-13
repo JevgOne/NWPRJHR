@@ -68,7 +68,7 @@ export function ReferralClient() {
   const shareWhatsApp = () => {
     if (!data?.shareUrl) return;
     window.open(
-      `https://wa.me/?text=${encodeURIComponent(`Objednejte si prémiové vlasy na Hairland se slevou: ${data.shareUrl}`)}`,
+      `https://wa.me/?text=${encodeURIComponent(t("whatsappShareText", { url: data.shareUrl }))}`,
       "_blank"
     );
   };
@@ -83,7 +83,7 @@ export function ReferralClient() {
 
   const formatDiscount = (type?: string, value?: number) => {
     if (!type || !value) return "—";
-    return type === "PERCENT" ? `${value / 100}%` : `${(value / 100).toLocaleString("cs-CZ")} Kč`;
+    return type === "PERCENT" ? `${value / 100}%` : `${(value / 100).toLocaleString("cs-CZ")} ${t("currencyShort")}`;
   };
 
   return (

@@ -73,7 +73,7 @@ export function SalonInvoicesClient() {
                     {new Date(inv.dueDate).toLocaleDateString("cs-CZ")}
                   </td>
                   <td className="py-2 pr-3 text-right font-medium">
-                    {formatCZK(inv.total)} CZK
+                    {formatCZK(inv.total)} {t("currencyShort")}
                   </td>
                   <td className="py-2 pr-3">
                     <InvoiceStatusBadge status={inv.status} />

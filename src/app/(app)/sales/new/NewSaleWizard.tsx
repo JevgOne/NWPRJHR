@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
@@ -54,9 +54,11 @@ function formatCZK(halere: number): string {
 export function NewSaleWizard({
   products,
   role,
+  initialVariantId,
 }: {
   products: ProductOption[];
   role: Role;
+  initialVariantId?: string;
 }) {
   const t = useTranslations("sale");
   const tCommon = useTranslations("common");
@@ -157,6 +159,18 @@ export function NewSaleWizard({
     },
     [products, fetchPricePreview]
   );
+
+  // Auto-add item from QR scan URL (?variantId=XXX)
+  const initialVariantHandled = useRef(false);
+  useEffect(() => {
+    if (!initialVariantId || initialVariantHandled.current) return;
+    if (!customerType) {
+      setCustomerType("RETAIL");
+      return;
+    }
+    initialVariantHandled.current = true;
+    addItemFromVariantId(initialVariantId);
+  }, [initialVariantId, customerType, addItemFromVariantId]);
 
   const handleBarcodeScan = useCallback(
     async (barcode: string) => {
@@ -449,10 +463,10 @@ export function NewSaleWizard({
             <p className="text-xs text-muted mt-2">{t("transferHint")}</p>
           )}
           {paymentType === "PROMO" && (
-            <p className="text-xs text-muted mt-2">Interní promo — vytvoří se interní doklad.</p>
+            <p className="text-xs text-muted mt-2">{t("promoHint")}</p>
           )}
           {paymentType === "WRITEOFF" && (
-            <p className="text-xs text-muted mt-2">Interní odpis — vytvoří se interní doklad.</p>
+            <p className="text-xs text-muted mt-2">{t("writeoffHint")}</p>
           )}
         </div>
       </Card>

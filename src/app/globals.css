@@ -72,3 +72,38 @@ body {
     transform: translateY(0);
   }
 }
+
+/* Print styles for QR label sheets — Miibot D520 thermal (40×30mm) */
+@media print {
+  @page {
+    size: 40mm 30mm;
+    margin: 0;
+  }
+  body > *:not(.print-only) {
+    display: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+    position: static;
+    background: white;
+    margin: 0;
+    padding: 0;
+  }
+  .qr-label {
+    width: 40mm;
+    height: 30mm;
+    padding: 1.5mm;
+    page-break-after: always;
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .qr-label:last-child {
+    page-break-after: auto;
+  }
+}
