@@ -65,6 +65,8 @@ export async function GET(request: NextRequest) {
           sellingMode: true,
           pricePerPiece: true,
           retailPricePerPiece: true,
+          availableToOrder: true,
+          orderLeadDays: true,
           active: true,
           createdAt: true,
           updatedAt: true,

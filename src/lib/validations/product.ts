@@ -58,6 +58,8 @@ export const updateVariantSchema = z.object({
   sellingMode: z.enum(["BY_GRAM", "BY_PIECE"]).optional(),
   pricePerPiece: z.number().int().positive().optional(),
   retailPricePerPiece: z.number().int().positive().optional(),
+  availableToOrder: z.boolean().optional(),
+  orderLeadDays: z.number().int().min(1).max(90).nullable().optional(),
   active: z.boolean().optional(),
 });
 

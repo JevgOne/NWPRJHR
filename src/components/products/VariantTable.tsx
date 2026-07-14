@@ -18,6 +18,8 @@ interface VariantData {
   sellingMode?: string;
   pricePerPiece?: number;
   retailPricePerPiece?: number;
+  availableToOrder?: boolean;
+  orderLeadDays?: number | null;
   active: boolean;
 }
 
@@ -294,6 +296,65 @@ export function VariantTable({
                           ? `${stock.availablePieces ?? 0} ks`
                           : `${stock.availableGrams} g`}
                       </span>
+                    )}
+
+                    {/* Available to order toggle */}
+                    {isOwner && (
+                      <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-line/30">
+                        <button
+                          className={`relative w-8 h-4 rounded-full transition-colors ${
+                            variant.availableToOrder ? "bg-amber-500" : "bg-gray-300"
+                          }`}
+                          onClick={async () => {
+                            setSaving(variant.id);
+                            try {
+                              await fetch(`/api/variants/${variant.id}`, {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ availableToOrder: !variant.availableToOrder }),
+                              });
+                              router.refresh();
+                            } finally {
+                              setSaving(variant.id === saving ? null : saving);
+                            }
+                          }}
+                          disabled={isSaving}
+                        >
+                          <span className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${
+                            variant.availableToOrder ? "translate-x-4" : ""
+                          }`} />
+                        </button>
+                        <span className="text-[10px] text-muted">Na obj.</span>
+                        {variant.availableToOrder && (
+                          <input
+                            type="number"
+                            min={1}
+                            max={90}
+                            placeholder="dní"
+                            className="w-12 text-[10px] border border-line rounded px-1 py-0.5 text-center focus:outline-none focus:ring-1 focus:ring-amber-400"
+                            defaultValue={variant.orderLeadDays ?? ""}
+                            onBlur={async (e) => {
+                              const val = parseInt(e.target.value);
+                              const days = val >= 1 && val <= 90 ? val : null;
+                              setSaving(variant.id);
+                              try {
+                                await fetch(`/api/variants/${variant.id}`, {
+                                  method: "PUT",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ orderLeadDays: days }),
+                                });
+                                router.refresh();
+                              } finally {
+                                setSaving(variant.id === saving ? null : saving);
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                            }}
+                            disabled={isSaving}
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 );

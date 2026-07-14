@@ -176,6 +176,8 @@ model Variant {
   sellingMode           String   @default("BY_GRAM")
   pricePerPiece         Int?
   retailPricePerPiece   Int?
+  availableToOrder      Boolean  @default(false)
+  orderLeadDays         Int?
   active                Boolean  @default(true)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt

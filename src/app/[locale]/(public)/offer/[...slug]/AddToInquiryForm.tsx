@@ -15,6 +15,8 @@ interface PickerVariant {
   sellingMode?: "BY_GRAM" | "BY_PIECE";
   pricePerPiece?: number;
   availablePieces?: number;
+  availableToOrder?: boolean;
+  orderLeadDays?: number | null;
 }
 
 interface AddToInquiryFormProps {
@@ -72,9 +74,12 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
     ? variants.find(v => v.color === selectedColor && v.lengthCm === selectedLength)
     : null;
   const isByPiece = selectedVariant?.sellingMode === "BY_PIECE";
-  const maxQty = isByPiece
-    ? (selectedVariant?.availablePieces ?? Infinity)
-    : (selectedVariant?.availableGrams ?? Infinity);
+  const isCustomOrder = selectedVariant?.availableToOrder && (isByPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
+  const maxQty = isCustomOrder
+    ? Infinity
+    : isByPiece
+      ? (selectedVariant?.availablePieces ?? Infinity)
+      : (selectedVariant?.availableGrams ?? Infinity);
   const qtyStep = isByPiece ? 1 : 50;
   const minQty = isByPiece ? 1 : 50;
   const unitLabel = isByPiece ? "ks" : "g";
@@ -155,16 +160,18 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
               const isSelected = selectedLength === v.lengthCm;
               const vIsByPiece = v.sellingMode === "BY_PIECE";
               const inStock = vIsByPiece ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0;
+              const canOrder = !inStock && !!v.availableToOrder;
+              const isSelectable = inStock || canOrder;
               return (
                 <button
                   key={v.lengthCm}
                   type="button"
-                  onClick={() => inStock && setSelectedLength(v.lengthCm)}
-                  disabled={!inStock}
+                  onClick={() => isSelectable && setSelectedLength(v.lengthCm)}
+                  disabled={!isSelectable}
                   className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
                     isSelected
                       ? "border-rose bg-rose/10 text-ink ring-1 ring-rose"
-                      : inStock
+                      : isSelectable
                         ? "border-line bg-white text-muted hover:border-espresso/30"
                         : "border-line bg-nude-100 opacity-50 cursor-not-allowed"
                   }`}
@@ -175,10 +182,18 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
                       ? `${formatPrice(v.pricePerPiece ?? 0)} Kc/ks`
                       : `${formatPrice(v.pricePerGram)} Kc/g`}
                   </div>
-                  <div className={`text-[11px] ${inStock ? "text-emerald-600" : "text-red-400"}`}>
+                  <div className={`text-[11px] ${
+                    inStock ? "text-emerald-600"
+                    : canOrder ? "text-amber-600"
+                    : "text-red-400"
+                  }`}>
                     {inStock
                       ? (vIsByPiece ? `${v.availablePieces} ks` : `${v.availableGrams}g`)
-                      : t("inquiry.outOfStock")}
+                      : canOrder
+                        ? (v.orderLeadDays
+                          ? t("inquiry.availableToOrder", { days: v.orderLeadDays })
+                          : t("inquiry.availableToOrderContact"))
+                        : t("inquiry.outOfStock")}
                   </div>
                 </button>
               );

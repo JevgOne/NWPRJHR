@@ -50,6 +50,8 @@ export default async function ProductsPage() {
             sellingMode: true,
             pricePerPiece: true,
             retailPricePerPiece: true,
+            availableToOrder: true,
+            orderLeadDays: true,
             active: true,
             createdAt: true,
             updatedAt: true,

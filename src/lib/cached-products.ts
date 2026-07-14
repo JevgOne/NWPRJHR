@@ -28,6 +28,8 @@ const productSelect = {
       sellingMode: true,
       pricePerPiece: true,
       retailPricePerPiece: true,
+      availableToOrder: true,
+      orderLeadDays: true,
     },
   },
 } as const;

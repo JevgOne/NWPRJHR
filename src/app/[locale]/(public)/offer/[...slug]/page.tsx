@@ -107,6 +107,8 @@ const productSelect = {
       sellingMode: true,
       pricePerPiece: true,
       retailPricePerPiece: true,
+      availableToOrder: true,
+      orderLeadDays: true,
     },
   },
 } as const;
@@ -344,6 +346,8 @@ async function ProductDetailView({
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
         pricePerPiece: isByPiece ? displayPrice : undefined,
         availablePieces: v.availablePieces,
+        availableToOrder: v.availableToOrder,
+        orderLeadDays: v.orderLeadDays,
       };
     });
 
@@ -793,14 +797,24 @@ async function ProductDetailView({
                   <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
-                    <div className={`text-sm font-semibold ${focusedVariant.availableGrams > 0 || (focusedVariant.availablePieces ?? 0) > 0 ? "text-emerald-700" : "text-red-500"}`}>
+                    <div className={`text-sm font-semibold ${
+                      focusedVariant.availableGrams > 0 || (focusedVariant.availablePieces ?? 0) > 0
+                        ? "text-emerald-700"
+                        : focusedVariant.availableToOrder ? "text-amber-600" : "text-red-500"
+                    }`}>
                       {(() => {
                         if (focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.availablePieces ?? 0) > 0) return `${focusedVariant.availablePieces} ks ${t("productDetail.inStock").toLowerCase()}`;
                         if (focusedVariant.availableGrams > 0) return `${focusedVariant.availableGrams} g ${t("productDetail.inStock").toLowerCase()}`;
+                        if (focusedVariant.availableToOrder) {
+                          return focusedVariant.orderLeadDays
+                            ? t("productDetail.availableToOrder", { days: focusedVariant.orderLeadDays })
+                            : t("productDetail.availableToOrderContact");
+                        }
                         return t("inquiry.outOfStock");
                       })()}
                     </div>
-                    {focusedVariant.availableGrams === 0 && (focusedVariant.availablePieces ?? 0) === 0 && (
+                    {focusedVariant.availableGrams === 0 && (focusedVariant.availablePieces ?? 0) === 0
+                      && !focusedVariant.availableToOrder && (
                       <StockNotifyButton variantId={focusedVariant.id} />
                     )}
                   </div>
@@ -823,19 +837,25 @@ async function ProductDetailView({
                   const totalStock = product.variants.reduce((sum, v) => sum + v.availableGrams, 0);
                   const totalPieces = product.variants.reduce((sum, v) => sum + (v.availablePieces ?? 0), 0);
                   const hasPieces = product.variants.some(v => v.sellingMode === "BY_PIECE");
+                  const hasAvailableToOrder = product.variants.some(v => v.availableToOrder);
                   return (
                     <div className="flex items-center gap-2.5">
                       <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       <div>
                         <div className="text-[10px] uppercase tracking-wider text-muted font-medium">{t("productDetail.availabilityLabel")}</div>
-                        <div className={`text-sm font-semibold ${totalStock > 0 || totalPieces > 0 ? "text-emerald-700" : "text-red-500"}`}>
+                        <div className={`text-sm font-semibold ${
+                          totalStock > 0 || totalPieces > 0 ? "text-emerald-700"
+                          : hasAvailableToOrder ? "text-amber-600"
+                          : "text-red-500"
+                        }`}>
                           {(() => {
                             if (hasPieces && totalPieces > 0) return `${totalPieces} ks ${t("productDetail.inStock").toLowerCase()}`;
                             if (totalStock > 0) return `${totalStock} g ${t("productDetail.inStock").toLowerCase()}`;
+                            if (hasAvailableToOrder) return t("productDetail.availableToOrderContact");
                             return t("inquiry.outOfStock");
                           })()}
                         </div>
-                        {totalStock === 0 && totalPieces === 0 && product.variants.length > 0 && (
+                        {totalStock === 0 && totalPieces === 0 && !hasAvailableToOrder && product.variants.length > 0 && (
                           <StockNotifyButton variantId={product.variants[0].id} />
                         )}
                       </div>

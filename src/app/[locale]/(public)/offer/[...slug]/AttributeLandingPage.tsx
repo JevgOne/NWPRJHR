@@ -71,6 +71,7 @@ const getCachedAttributeProducts = unstable_cache(
               wholesalePricePerGram: true,
               sellingMode: true,
               retailPricePerPiece: true,
+              availableToOrder: true,
             },
           },
         },

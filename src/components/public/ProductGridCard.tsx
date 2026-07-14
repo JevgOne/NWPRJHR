@@ -20,6 +20,7 @@ interface ProductGridCardVariant {
   retailPricePerPiece?: number | null;
   wholesalePricePerPiece?: number | null;
   availablePieces?: number | null;
+  availableToOrder?: boolean;
 }
 
 export interface ProductGridCardProduct {
@@ -90,6 +91,7 @@ export function ProductGridCard({
   const wholesalePrice = isByPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
   const stock = isByPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
   const inStock = stock > 0;
+  const canOrder = !inStock && !!v0?.availableToOrder;
 
   const href = `/offer/${p.slug ?? p.id}`;
 
@@ -140,10 +142,17 @@ export function ProductGridCard({
           {categoryLabel}
         </span>
       )}
-      {!inStock && (
+      {!inStock && !canOrder && (
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <span className="bg-white/90 text-ink text-xs font-bold px-3 py-1 rounded-md">
             {t("inquiry.outOfStock")}
+          </span>
+        </div>
+      )}
+      {canOrder && (
+        <div className="absolute bottom-2 left-2">
+          <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+            {t("inquiry.availableToOrderContact")}
           </span>
         </div>
       )}
@@ -251,8 +260,14 @@ export function ProductGridCard({
             </div>
           );
         })()}
-        <span className={`text-[10px] font-medium flex-shrink-0 ${inStock ? "text-emerald-600" : "text-red-400"}`}>
-          {inStock ? `${stock} ${isByPiece ? "ks" : "g"}` : t("inquiry.outOfStock")}
+        <span className={`text-[10px] font-medium flex-shrink-0 ${
+          inStock ? "text-emerald-600" : canOrder ? "text-amber-600" : "text-red-400"
+        }`}>
+          {inStock
+            ? `${stock} ${isByPiece ? "ks" : "g"}`
+            : canOrder
+              ? t("inquiry.availableToOrderContact")
+              : t("inquiry.outOfStock")}
         </span>
       </div>
     </div>
@@ -263,7 +278,7 @@ export function ProductGridCard({
     return (
       <Link
         href={href}
-        className={`group flex flex-col bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock ? "border-line" : "border-line grayscale opacity-50"}`}
+        className={`group flex flex-col bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock || canOrder ? "border-line" : "border-line grayscale opacity-50"}`}
       >
         {imageBlock}
         {infoBlock}
@@ -273,7 +288,7 @@ export function ProductGridCard({
 
   // Interactive card (offer page): only image and title are links, badges are filter buttons
   return (
-    <div className={`group flex flex-col bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock ? "border-line" : "border-line grayscale opacity-50"}`}>
+    <div className={`group flex flex-col bg-white rounded-xl border overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${inStock || canOrder ? "border-line" : "border-line grayscale opacity-50"}`}>
       <Link href={href}>
         {imageBlock}
       </Link>
