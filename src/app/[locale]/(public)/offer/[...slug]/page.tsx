@@ -201,6 +201,61 @@ const getCachedRelatedCandidates = unstable_cache(
   { revalidate: 120, tags: ["products"] }
 );
 
+async function RelatedProducts({
+  productId,
+  category,
+  origin,
+  texture,
+  colorTone,
+}: {
+  productId: string;
+  category: string | null;
+  origin: string | null;
+  texture: string | null;
+  colorTone: string | null;
+}) {
+  const t = await getTranslations("public");
+  const candidates = await getCachedRelatedCandidates(productId);
+
+  const scored = candidates.map((rp) => {
+    let score = 0;
+    if (rp.category === category) score += 3;
+    if (rp.origin && rp.origin === origin) score += 2;
+    if (rp.texture && rp.texture === texture) score += 1;
+    if (rp.colorTone && rp.colorTone === colorTone) score += 1;
+    return { ...rp, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const related = scored.slice(0, 4);
+
+  if (related.length === 0) return null;
+
+  const stockMap = await getAllStockNumbers();
+  const cards = related.map((rp) => ({
+    ...rp,
+    photos: JSON.parse(rp.photos || "[]") as string[],
+    variants: rp.variants.map((v) => ({
+      ...v,
+      sellingMode: v.sellingMode as "BY_GRAM" | "BY_PIECE" | undefined,
+      availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
+      availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
+    })),
+  }));
+
+  return (
+    <section className="mt-12 pt-8 border-t border-line">
+      <h2 className="text-lg font-bold text-ink mb-4">
+        {t("productDetail.relatedProducts")}
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {flattenProductVariants(cards).slice(0, 8).map((rp) => (
+          <ProductGridCard key={rp._variantKey} product={rp} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 const PROCESSING_LABELS: Record<string, Record<string, string>> = {
   cs: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Keratin", WEFT: "Tresový", MICRO_RING: "Micro ring", OTHER: "" },
   uk: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Кератин", WEFT: "Тресове", MICRO_RING: "Micro ring", OTHER: "" },
@@ -982,48 +1037,16 @@ async function ProductDetailView({
         <ProductReviews productId={product.id} />
       </Suspense>
 
-      {/* Related products — full width */}
-      {await (async () => {
-        const candidates = await getCachedRelatedCandidates(product.id);
-
-        const scored = candidates.map((rp) => {
-          let score = 0;
-          if (rp.category === product.category) score += 3;
-          if (rp.origin && rp.origin === product.origin) score += 2;
-          if (rp.texture && rp.texture === product.texture) score += 1;
-          if (rp.colorTone && rp.colorTone === product.colorTone) score += 1;
-          return { ...rp, score };
-        });
-        scored.sort((a, b) => b.score - a.score);
-        const related = scored.slice(0, 4);
-
-        if (related.length === 0) return null;
-
-        const stockMap = await getAllStockNumbers();
-        const cards = related.map((rp) => ({
-          ...rp,
-          photos: JSON.parse(rp.photos || "[]") as string[],
-          variants: rp.variants.map((v) => ({
-            ...v,
-            sellingMode: v.sellingMode as "BY_GRAM" | "BY_PIECE" | undefined,
-            availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
-            availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
-          })),
-        }));
-
-        return (
-          <section className="mt-12 pt-8 border-t border-line">
-            <h2 className="text-lg font-bold text-ink mb-4">
-              {t("productDetail.relatedProducts")}
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {flattenProductVariants(cards).slice(0, 8).map((rp) => (
-                <ProductGridCard key={rp._variantKey} product={rp} />
-              ))}
-            </div>
-          </section>
-        );
-      })()}
+      {/* Related products — Suspense-wrapped to not block main render */}
+      <Suspense fallback={<div className="mt-12 pt-8 border-t border-line h-48 animate-pulse bg-nude-50 rounded-2xl" />}>
+        <RelatedProducts
+          productId={product.id}
+          category={product.category}
+          origin={product.origin}
+          texture={product.texture}
+          colorTone={product.colorTone}
+        />
+      </Suspense>
 
       {/* Recently viewed */}
       <RecentlyViewed excludeSlug={product.slug ?? product.id} />
