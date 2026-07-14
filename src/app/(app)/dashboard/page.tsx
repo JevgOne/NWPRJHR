@@ -22,7 +22,7 @@ function fmtDate(d: Date | null): string {
 
 const categoryColors: Record<string, { bg: string; text: string; bar: string }> = {
   VIRGIN: { bg: "bg-amber-100", text: "text-amber-800", bar: "bg-amber-500" },
-  PREMIUM: { bg: "bg-nude-100", text: "text-espresso", bar: "bg-rose" },
+  LUXE: { bg: "bg-violet-100", text: "text-violet-800", bar: "bg-violet-500" },
   STANDARD: { bg: "bg-emerald-100", text: "text-emerald-800", bar: "bg-emerald-500" },
   SALE: { bg: "bg-rose-100", text: "text-rose-800", bar: "bg-rose-500" },
 };
@@ -224,7 +224,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-xl border border-line shadow-sm p-6">
           <h2 className="text-base font-semibold text-ink mb-4">{t("stockByCategory")}</h2>
           <div className="space-y-4">
-            {(["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const).map((cat) => {
+            {(["VIRGIN", "LUXE", "STANDARD", "SALE"] as const).map((cat) => {
               const data = catMap[cat];
               if (!data) return null;
               const colors = categoryColors[cat];

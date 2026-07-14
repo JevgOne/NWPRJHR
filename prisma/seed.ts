@@ -45,7 +45,7 @@ async function main() {
   // ========================================================================
   const priceSettingsData = [
     { category: "VIRGIN" as const, markupPercent: 80 },
-    { category: "PREMIUM" as const, markupPercent: 60 },
+    { category: "LUXE" as const, markupPercent: 60 },
     { category: "STANDARD" as const, markupPercent: 50 },
     { category: "SALE" as const, markupPercent: 30 },
   ];
@@ -354,14 +354,14 @@ async function main() {
         { lengthCm: 70, color: "1B", wholesalePricePerGram: 3400 },
       ],
     },
-    // --- PREMIUM ---
+    // --- LUXE ---
     {
-      name: "Premium Clip-In",
-      nameUk: "Преміум Clip-In",
-      nameRu: "Премиум Clip-In",
-      category: "PREMIUM" as const,
+      name: "Luxe Clip-In",
+      nameUk: "Люкс Clip-In",
+      nameRu: "Люкс Clip-In",
+      category: "LUXE" as const,
       processingType: "CLIP_IN" as const,
-      slug: "premium-clip-in",
+      slug: "luxe-clip-in",
       variants: [
         { lengthCm: 40, color: "1B", wholesalePricePerGram: 1200 },
         { lengthCm: 40, color: "4", wholesalePricePerGram: 1200 },
@@ -371,12 +371,12 @@ async function main() {
       ],
     },
     {
-      name: "Premium Tape-In",
-      nameUk: "Преміум Tape-In",
-      nameRu: "Премиум Tape-In",
-      category: "PREMIUM" as const,
+      name: "Luxe Tape-In",
+      nameUk: "Люкс Tape-In",
+      nameRu: "Люкс Tape-In",
+      category: "LUXE" as const,
       processingType: "TAPE_IN" as const,
-      slug: "premium-tape-in",
+      slug: "luxe-tape-in",
       variants: [
         { lengthCm: 40, color: "1B", wholesalePricePerGram: 1200 },
         { lengthCm: 40, color: "4", wholesalePricePerGram: 1200 },

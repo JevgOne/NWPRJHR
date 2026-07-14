@@ -58,7 +58,7 @@ function autoColorTone(colorCode: string): string {
 
 const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   VIRGIN: { cs: "Panenské Vlasy", uk: "Натуральне Волосся", ru: "Натуральные Волосы" },
-  PREMIUM: { cs: "Premium Vlasy", uk: "Преміум Волосся", ru: "Премиум Волосы" },
+  LUXE: { cs: "Luxe Vlasy", uk: "Люкс Волосся", ru: "Люкс Волосы" },
   STANDARD: { cs: "Standard Vlasy", uk: "Стандарт Волосся", ru: "Стандарт Волосы" },
   SALE: { cs: "Výprodej", uk: "Розпродаж", ru: "Распродажа" },
 };

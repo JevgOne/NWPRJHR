@@ -11,7 +11,7 @@ interface BioProductData {
 
 const CAT_LABEL: Record<string, string> = {
   VIRGIN: "panenské",
-  PREMIUM: "prémiové",
+  LUXE: "luxusní",
   STANDARD: "kvalitní",
   SALE: "akční",
 };
@@ -27,7 +27,7 @@ const PROC_LABEL: Record<string, string> = {
 
 const CATEGORY_STORY: Record<string, string> = {
   VIRGIN: "Tyto vlasy vám zaručují absolutní jistotu kvality. Každý culík pochází od jedné ženy — nikdy nesmícháváme vlasy z různých zdrojů. Získáváte tak 100% panenské vlasy, které nikdy nebyly barvené ani chemicky ošetřené.",
-  PREMIUM: "Vlasy prošly šetrným procesem, který zachovává přirozenou strukturu a hedvábný vzhled. Ideální volba pro klientky, které chtějí luxusní výsledek za rozumnou cenu. Kvalitou se blíží panenskému vlasu, přitom nabízejí výborný poměr kvality a ceny.",
+  LUXE: "Luxusní vlasy s jemným šetrným ošetřením, které zachovává přirozenou strukturu a hedvábný vzhled. Ideální volba pro klientky, které chtějí luxusní výsledek za rozumnou cenu. Kvalitou se blíží panenskému vlasu, přitom nabízejí výborný poměr kvality a ceny.",
   STANDARD: "Kvalitní vlasy ošetřené moderními postupy pro přirozený vzhled a spolehlivou trvanlivost. Perfektní pro klientky, které hledají změnu bez velkých investic — ať už jde o první prodloužení nebo doplnění objemu.",
   SALE: "Vlasy za výhodnou akční cenu — skvělá příležitost vyzkoušet prodloužení nebo doplnit zásoby. Kvalita odpovídá vyšším kategoriím, cena je snížena díky omezené dostupnosti.",
 };
@@ -40,7 +40,7 @@ const CATEGORY_BENEFITS: Record<string, string[]> = {
     "**Dlouhá životnost** — až 24 měsíců při správné péči",
     "**Možnost přeaplikace** — vlasy vydrží opakované použití",
   ],
-  PREMIUM: [
+  LUXE: [
     "**Jemně ošetřené** s maximálně zachovanou strukturou",
     "**Přirozený vzhled** nerozpoznatelný od vlastních vlasů",
     "**Snadná údržba** a dlouhá životnost",

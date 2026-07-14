@@ -22,7 +22,7 @@ interface StockItem {
   barcode?: string | null;
 }
 
-const CATEGORIES = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
+const CATEGORIES = ["ALL", "VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
 
 function stockClass(grams: number): string {
   if (grams <= 0) return "text-red-600 font-semibold";
@@ -267,7 +267,7 @@ export function InventoryClient({
                       <div className="flex items-center gap-1 mt-0.5">
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
                           item.product.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
-                          item.product.category === "PREMIUM" ? "bg-mauve/10 text-mauve" :
+                          item.product.category === "LUXE" ? "bg-violet-100 text-violet-700" :
                           item.product.category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
                           "bg-red-100 text-red-700"
                         }`}>

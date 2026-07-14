@@ -50,7 +50,7 @@ function formatCZK(halere: number): string {
 
 const categoryBadgeColors: Record<string, string> = {
   VIRGIN: "bg-amber-100 text-amber-800",
-  PREMIUM: "bg-nude-100 text-espresso",
+  LUXE: "bg-violet-100 text-violet-800",
   STANDARD: "bg-emerald-100 text-emerald-800",
   SALE: "bg-rose-100 text-rose-800",
 };

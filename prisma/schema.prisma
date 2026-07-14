@@ -107,7 +107,7 @@ model Salon {
 
 enum ProductCategory {
   VIRGIN
-  PREMIUM
+  LUXE
   STANDARD
   SALE
 }

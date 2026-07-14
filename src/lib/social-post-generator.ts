@@ -16,14 +16,14 @@ interface PostProductData {
 
 const CATEGORY_EMOJI: Record<string, string> = {
   VIRGIN: "\u{1F451}",
-  PREMIUM: "\u{1F48E}",
+  LUXE: "\u{1F48E}",
   STANDARD: "\u{2728}",
   SALE: "\u{1F525}",
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
   VIRGIN: "Panensk\u00e9 vlasy",
-  PREMIUM: "Premium vlasy",
+  LUXE: "Luxe vlasy",
   STANDARD: "Standard vlasy",
   SALE: "V\u00fdprodej",
 };
@@ -36,7 +36,7 @@ const CATEGORY_BENEFITS: Record<string, string[]> = {
     "\u2705 Lze barvit, stri\u017ehat i natá\u010det",
     "\u2705 P\u0159irozen\u00fd pohyb a hebkost",
   ],
-  PREMIUM: [
+  LUXE: [
     "\u2705 Vysoce kvalitn\u00ed vlasy s p\u0159irozen\u00fdm vzhledem",
     "\u2705 Skv\u011bl\u00fd pom\u011br cena/v\u00fdkon",
     "\u2705 Vydr\u017e\u00ed 12\u201318 m\u011bs\u00edc\u016f",
@@ -159,7 +159,7 @@ export function generateInstagramPost(product: PostProductData): string {
     "#hairextensions", "#remyhair", "#naturalhair",
   ];
   if (product.category === "VIRGIN") tags.push("#virginhair", "#panenskevlasy");
-  if (product.category === "PREMIUM") tags.push("#premiumhair", "#premiumvlasy");
+  if (product.category === "LUXE") tags.push("#luxehair", "#luxevlasy");
   if (processing) {
     const procTag = `#${processing.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
     tags.push(procTag);

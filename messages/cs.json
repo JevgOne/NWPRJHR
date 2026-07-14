@@ -179,7 +179,7 @@
   },
   "category": {
     "virgin": "Panenské Vlasy",
-    "premium": "Premium Vlasy",
+    "luxe": "Luxe Vlasy",
     "standard": "Standard Vlasy",
     "sale": "Výprodej"
   },
@@ -880,11 +880,11 @@
       "virginFeature2": "Kompletní kutikula — bez zamotávání",
       "virginFeature3": "Vydrží 2+ roky při správné péči",
       "virginFeature4": "Lze barvit i odbarvovat",
-      "premiumDesc": "Prémiová kvalita vlasů s jemným ošetřením. Zachovaná struktura a přirozený vzhled. Ideální volba pro náročné zákazníky.",
-      "premiumFeature1": "Jemně ošetřené, zachovaná struktura",
-      "premiumFeature2": "Přirozený vzhled a lesk",
-      "premiumFeature3": "Vydrží 1–2 roky při správné péči",
-      "premiumFeature4": "Široká nabídka odstínů",
+      "luxeDesc": "Luxusní vlasy s jemným šetrným ošetřením. Zachovaná přirozená struktura a hedvábný lesk. Prémiová volba pro náročné zákaznice, které chtějí maximální kvalitu.",
+      "luxeFeature1": "Šetrně ošetřené, zachovaná struktura",
+      "luxeFeature2": "Hedvábný lesk a přirozený vzhled",
+      "luxeFeature3": "Vydrží 1–2 roky při správné péči",
+      "luxeFeature4": "Široká nabídka odstínů a délek",
       "standardDesc": "Skvělý poměr cena/kvalita. Ošetřené vlasy s přirozeným vzhledem a výbornou trvanlivostí. Spolehlivá volba za rozumnou cenu.",
       "standardFeature1": "Výborný poměr cena/kvalita",
       "standardFeature2": "Přirozený vzhled a snadná údržba",
@@ -911,7 +911,7 @@
     },
     "slider": {
       "virgin": "Virgin",
-      "premium": "Premium",
+      "luxe": "Luxe",
       "standard": "Standard",
       "sale": "Akce"
     },
@@ -2204,11 +2204,11 @@
         "h1": "Virgin vlasy — nejčistší kvalita",
         "intro": "Virgin vlasy jsou nejvyšší kvalita lidských vlasů. Nebyly chemicky ošetřeny, kutikula je zachována v původním směru."
       },
-      "premium": {
-        "title": "Premium vlasy k prodloužení",
-        "description": "Premium vlasy k prodloužení. Skvělá kvalita za příznivou cenu. Osobní odběr Praha zdarma.",
-        "h1": "Premium vlasy k prodloužení",
-        "intro": "Premium vlasy nabízejí skvělou kvalitu za příznivější cenu. Prošly šetrným zpracováním pro konzistentní barvu."
+      "luxe": {
+        "title": "Luxe vlasy k prodloužení",
+        "description": "Luxe vlasy k prodloužení. Luxusní kvalita se zachovanou strukturou. Osobní odběr Praha zdarma.",
+        "h1": "Luxe vlasy k prodloužení",
+        "intro": "Luxe vlasy nabízejí luxusní kvalitu s jemným šetrným ošetřením. Zachovaná přirozená struktura a hedvábný vzhled."
       },
       "standard": {
         "title": "Standard vlasy k prodloužení",

@@ -24,7 +24,7 @@ interface SuccessData {
   barcode: string;
 }
 
-type Category = "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE";
+type Category = "VIRGIN" | "LUXE" | "STANDARD" | "SALE";
 
 const LENGTH_PRESETS = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
 
@@ -419,7 +419,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             {t("wizCategory")}
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            {(["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const).map((cat) => (
+            {(["VIRGIN", "LUXE", "STANDARD", "SALE"] as const).map((cat) => (
               <button
                 key={cat}
                 type="button"

@@ -98,13 +98,13 @@ export function ProductGridCard({
   const categoryLabel = tCategory(p.category.toLowerCase());
   const categoryBadgeColors: Record<string, string> = {
     VIRGIN: "bg-amber-500 text-white",
-    PREMIUM: "bg-rose-deep text-white",
+    LUXE: "bg-violet-600 text-white",
     STANDARD: "bg-espresso/80 text-white",
     SALE: "bg-red-500 text-white",
   };
   const categoryHoverColors: Record<string, string> = {
     VIRGIN: "hover:bg-amber-600",
-    PREMIUM: "hover:bg-rose-deep/90",
+    LUXE: "hover:bg-violet-700",
     STANDARD: "hover:bg-espresso",
     SALE: "hover:bg-red-600",
   };

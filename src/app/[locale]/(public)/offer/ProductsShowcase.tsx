@@ -69,7 +69,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
   const activeSearch = searchParams.get("search") ?? "";
   const activeSelling = searchParams.get("selling") ?? "";
 
-  const categories = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"];
+  const categories = ["ALL", "VIRGIN", "LUXE", "STANDARD", "SALE"];
 
   const colorName = (nameKey: string) => t(`colors.${nameKey}`);
   const originName = (origin: string) => { try { return t(`origins.${origin}`); } catch { return origin; } };

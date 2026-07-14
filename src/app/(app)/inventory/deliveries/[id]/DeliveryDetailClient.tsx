@@ -91,7 +91,7 @@ export function DeliveryDetailClient({
 
   const CATEGORY_COLORS: Record<string, string> = {
     VIRGIN: "bg-amber-100 text-amber-800",
-    PREMIUM: "bg-purple-100 text-purple-800",
+    LUXE: "bg-violet-100 text-violet-800",
     STANDARD: "bg-blue-100 text-blue-800",
     SALE: "bg-red-100 text-red-800",
   };

@@ -7,7 +7,7 @@ export const createProductSchema = z.object({
   description: z.string().max(2000).optional(),
   descriptionUk: z.string().max(2000).optional(),
   descriptionRu: z.string().max(2000).optional(),
-  category: z.enum(["VIRGIN", "PREMIUM", "STANDARD", "SALE"]),
+  category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE"]),
   processingType: z.enum([
     "CLIP_IN",
     "TAPE_IN",
@@ -64,6 +64,6 @@ export const updateVariantSchema = z.object({
 });
 
 export const updatePriceSettingsSchema = z.object({
-  category: z.enum(["VIRGIN", "PREMIUM", "STANDARD", "SALE"]),
+  category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE"]),
   markupPercent: z.number().int().min(0).max(1000),
 });

@@ -222,7 +222,7 @@ export function ProductDetailClient({
           <div className="flex flex-wrap items-center gap-2 mt-3">
             <CategoryBadge
               category={
-                product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"
+                product.category as "VIRGIN" | "LUXE" | "STANDARD" | "SALE"
               }
             />
             {product.processingType !== "OTHER" && (

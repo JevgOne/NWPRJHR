@@ -32,7 +32,7 @@ export const stockInSchema = z
 
 export const newStockInSchema = z
   .object({
-    category: z.enum(["VIRGIN", "PREMIUM", "STANDARD", "SALE"]),
+    category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE"]),
     origin: z.string().min(1),
     texture: z.string().min(1),
     color: z.string().min(1),

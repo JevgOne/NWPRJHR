@@ -516,10 +516,10 @@ async function ProductDetailView({
       { q: "Mohu panenské vlasy barvit?", a: "Ano, panenské vlasy lze barvit, odbarvovat i jinak chemicky upravovat. Díky tomu, že nebyly dříve ošetřeny, reagují na barvení velmi dobře a výsledek je přirozený." },
       { q: "Jak pečovat o panenské vlasy?", a: "Používejte šampony bez sulfátů, pravidelně aplikujte kondicionér a vlasový olej. Před spaním vlasy spleťte do volného copu. Vyhněte se nadměrnému tepelnému stylingu." },
     ],
-    PREMIUM: [
-      { q: "Jaký je rozdíl mezi premium a panenskými vlasy?", a: "Premium vlasy prošly šetrným zpracováním (např. barvením), zatímco panenské vlasy jsou zcela neošetřené. Premium vlasy nabízejí skvělou kvalitu za příznivější cenu." },
-      { q: "Jak dlouho vydrží premium vlasy?", a: "Premium vlasy při správné péči vydrží 1 až 2 roky. Životnost závisí na intenzitě nošení a péči." },
-      { q: "Jaké možnosti stylování mají premium vlasy?", a: "Premium vlasy lze kulmovat, žehlit, fénovat i natáčet. Doporučujeme používat termoochranný sprej pro delší životnost vlasů." },
+    LUXE: [
+      { q: "Jaký je rozdíl mezi luxe a panenskými vlasy?", a: "Luxe vlasy prošly šetrným zpracováním, které zachovává přirozenou strukturu, zatímco panenské vlasy jsou zcela neošetřené. Luxe vlasy nabízejí luxusní kvalitu za příznivější cenu." },
+      { q: "Jak dlouho vydrží luxe vlasy?", a: "Luxe vlasy při správné péči vydrží 1 až 2 roky. Životnost závisí na intenzitě nošení a péči." },
+      { q: "Jaké možnosti stylování mají luxe vlasy?", a: "Luxe vlasy lze kulmovat, žehlit, fénovat i natáčet. Doporučujeme používat termoochranný sprej pro delší životnost vlasů." },
     ],
     STANDARD: [
       { q: "Pro koho jsou standardní vlasy vhodné?", a: "Standardní vlasy jsou ideální volbou pro ty, kteří hledají kvalitní prodloužení za dostupnou cenu. Hodí se pro příležitostné nošení nebo jako první zkušenost s prodlužováním." },

@@ -33,7 +33,7 @@ interface ProductItem {
   [key: string]: unknown;
 }
 
-const CATEGORIES = ["ALL", "VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
+const CATEGORIES = ["ALL", "VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
 
 export function ProductListClient({ products, stockMap }: { products: ProductItem[]; stockMap: Record<string, number> }) {
   const t = useTranslations();
@@ -187,7 +187,7 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
                       {product.name}
                     </h3>
                     <CategoryBadge
-                      category={product.category as "VIRGIN" | "PREMIUM" | "STANDARD" | "SALE"}
+                      category={product.category as "VIRGIN" | "LUXE" | "STANDARD" | "SALE"}
                     />
                   </div>
 

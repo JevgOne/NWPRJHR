@@ -23,7 +23,7 @@ export const TEXTURE_REVERSE_MAP = Object.fromEntries(
 // === CATEGORY (product quality) ===
 export const CATEGORY_SLUG_MAP_SEO: Record<string, string> = {
   "virgin": "VIRGIN",
-  "premium": "PREMIUM",
+  "luxe": "LUXE",
   "standard": "STANDARD",
 };
 

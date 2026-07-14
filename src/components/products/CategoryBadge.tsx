@@ -5,14 +5,14 @@ import type { ProductCategory } from "@prisma/client";
 
 const categoryStyles: Record<ProductCategory, string> = {
   VIRGIN: "bg-purple-100 text-purple-800",
-  PREMIUM: "bg-amber-100 text-amber-800",
+  LUXE: "bg-violet-100 text-violet-800",
   STANDARD: "bg-nude-100 text-espresso",
   SALE: "bg-red-100 text-red-800",
 };
 
-const categoryKeys: Record<ProductCategory, "virgin" | "premium" | "standard" | "sale"> = {
+const categoryKeys: Record<ProductCategory, "virgin" | "luxe" | "standard" | "sale"> = {
   VIRGIN: "virgin",
-  PREMIUM: "premium",
+  LUXE: "luxe",
   STANDARD: "standard",
   SALE: "sale",
 };

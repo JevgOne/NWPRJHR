@@ -12,7 +12,7 @@ import { COLOR_TONE_OPTIONS } from "@/lib/color-tones";
 import { PhotoUpload } from "@/components/products/PhotoUpload";
 import { slugify } from "@/lib/slugify";
 
-const CATEGORIES = ["VIRGIN", "PREMIUM", "STANDARD", "SALE"] as const;
+const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
 const PROCESSING_TYPES = [
   "CLIP_IN",
   "TAPE_IN",

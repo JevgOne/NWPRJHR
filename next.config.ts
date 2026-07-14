@@ -45,6 +45,11 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: true,
       },
+      {
+        source: "/:locale/offer/kategorie/premium",
+        destination: "/:locale/offer/kategorie/luxe",
+        permanent: true,
+      },
     ];
   },
 };
