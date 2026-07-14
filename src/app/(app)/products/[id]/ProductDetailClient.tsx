@@ -188,7 +188,7 @@ export function ProductDetailClient({
   const titleWithColor = colorStr ? `${baseTitle} ${colorStr}` : baseTitle;
   const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
   const autoDescParts: string[] = [product.name];
-  if (product.origin) autoDescParts.push(`původ ${product.origin}`);
+  if (product.origin) autoDescParts.push(`${t("product.originPrefix")} ${product.origin}`);
   if (product.texture) autoDescParts.push(product.texture.toLowerCase());
   if (lengthStr) autoDescParts.push(lengthStr);
   autoDescParts.push(t("product.autoSeoDesc"));
@@ -451,7 +451,7 @@ export function ProductDetailClient({
               placeholder={t("product.ogImagePlaceholder")}
               className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose"
             />
-            <p className="text-xs text-muted mt-1">1200x630px pro sociální sítě</p>
+            <p className="text-xs text-muted mt-1">{t("product.ogImageHint")}</p>
           </div>
 
           {/* Google Preview */}

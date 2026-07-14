@@ -157,6 +157,8 @@
     "colorTonePlaceholder": "Выберите или введите тон...",
     "autoSeoDesc": "Самовывоз Прага бесплатно, обработка на заказ.",
     "ogImagePlaceholder": "Автоматически: первое фото продукта",
+    "ogImageHint": "1200x630px для социальных сетей",
+    "originPrefix": "происхождение",
     "saveSeo": "Сохранить SEO"
   },
   "colorTone": {
@@ -222,6 +224,10 @@
     "deliveryDetail": "Детали поставки",
     "noStock": "Нет запасов",
     "showSoldOut": "Показать распроданные",
+    "originAll": "Происхождение — все",
+    "productAll": "Продукт — все",
+    "reservedGrams": "{count} г зарезервировано",
+    "lengthCol": "Длина",
     "return": "Возврат",
     "complaint": "Рекламация",
     "sample": "Образец",
@@ -336,6 +342,7 @@
     "archived": "Архивированные",
     "archive": "Архивировать",
     "unarchive": "Восстановить",
+    "approve": "Одобрить салон",
     "noSalons": "Нет салонов",
     "debt": "Долг",
     "overdue": "Просрочено",
@@ -2549,7 +2556,14 @@
     "saveChanges": "Сохранить изменения",
     "createStylist": "Создать стилиста",
     "saveError": "Ошибка при сохранении",
-    "unknownError": "Неизвестная ошибка"
+    "unknownError": "Неизвестная ошибка",
+    "listTitle": "Стилисты",
+    "addStylist": "+ Добавить стилиста",
+    "noStylists": "Нет стилистов",
+    "inactive": "Неактивный",
+    "yearsExperience": "лет опыта",
+    "editTitle": "Редактировать стилиста",
+    "newTitle": "Новый стилист"
   },
   "referral": {
     "title": "Реферальная программа",

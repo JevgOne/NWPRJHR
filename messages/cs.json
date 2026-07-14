@@ -157,6 +157,8 @@
     "colorTonePlaceholder": "Vyberte nebo zadejte tón...",
     "autoSeoDesc": "Osobní odběr Praha zdarma, zpracování na zakázku.",
     "ogImagePlaceholder": "Automaticky: první fotka produktu",
+    "ogImageHint": "1200x630px pro sociální sítě",
+    "originPrefix": "původ",
     "saveSeo": "Uložit SEO"
   },
   "colorTone": {
@@ -222,6 +224,10 @@
     "deliveryDetail": "Detail dodávky",
     "noStock": "Žádné zásoby",
     "showSoldOut": "Zobrazit vyprodané",
+    "originAll": "Původ — vše",
+    "productAll": "Produkt — vše",
+    "reservedGrams": "{count} g rezervováno",
+    "lengthCol": "Délka",
     "return": "Vratka",
     "complaint": "Reklamace",
     "sample": "Vzorek",
@@ -336,6 +342,7 @@
     "archived": "Archivovaní",
     "archive": "Archivovat",
     "unarchive": "Obnovit",
+    "approve": "Schválit salon",
     "noSalons": "Žádné salony",
     "debt": "Dluh",
     "overdue": "Po splatnosti",
@@ -2549,7 +2556,14 @@
     "saveChanges": "Uložit změny",
     "createStylist": "Vytvořit kadeřnici",
     "saveError": "Chyba při ukládání",
-    "unknownError": "Neznámá chyba"
+    "unknownError": "Neznámá chyba",
+    "listTitle": "Kadeřnice",
+    "addStylist": "+ Přidat kadeřnici",
+    "noStylists": "Žádné kadeřnice",
+    "inactive": "Neaktivní",
+    "yearsExperience": "let praxe",
+    "editTitle": "Upravit kadeřnici",
+    "newTitle": "Nová kadeřnice"
   },
   "referral": {
     "title": "Referral Program",

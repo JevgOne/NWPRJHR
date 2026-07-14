@@ -169,7 +169,7 @@ export function SalonDetailClient({
         <div className="flex gap-2">
           {isOwner && !salon.approved && (
             <Button size="sm" onClick={handleApprove}>
-              Schválit salon
+              {t("approve")}
             </Button>
           )}
           {isOwner && (

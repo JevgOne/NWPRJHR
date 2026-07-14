@@ -157,7 +157,7 @@ export function InventoryClient({
               onChange={(e) => setOriginFilter(e.target.value)}
               className="px-2 py-1.5 border border-line rounded-lg text-xs text-espresso bg-white"
             >
-              <option value="">Původ — vše</option>
+              <option value="">{t("originAll")}</option>
               {filterOptions.origins.map((o) => (
                 <option key={o} value={o}>{getOriginFlag(o)} {o}</option>
               ))}
@@ -169,7 +169,7 @@ export function InventoryClient({
               onChange={(e) => setProductFilter(e.target.value)}
               className="px-2 py-1.5 border border-line rounded-lg text-xs text-espresso bg-white"
             >
-              <option value="">Produkt — vše</option>
+              <option value="">{t("productAll")}</option>
               {filterOptions.products.map(([id, name]) => (
                 <option key={id} value={id}>{name}</option>
               ))}
@@ -192,7 +192,7 @@ export function InventoryClient({
         <span className="text-muted">{filtered.length} variant</span>
         <span className="text-emerald-600 font-medium">{totalGrams} g skladem</span>
         {totalReserved > 0 && (
-          <span className="text-amber-600 font-medium">{totalReserved} g rezervováno</span>
+          <span className="text-amber-600 font-medium">{t("reservedGrams", { count: totalReserved })}</span>
         )}
         {selected.size > 0 && (
           <button
@@ -223,8 +223,8 @@ export function InventoryClient({
                   />
                 </th>
                 <th className="py-3 px-2 font-medium">{t("selectVariant")}</th>
-                <th className="py-3 px-2 font-medium">Barva</th>
-                <th className="py-3 px-2 font-medium">Délka</th>
+                <th className="py-3 px-2 font-medium">{t("color")}</th>
+                <th className="py-3 px-2 font-medium">{t("lengthCol")}</th>
                 <th className="py-3 px-2 font-medium text-right">
                   {t("physical")}
                 </th>

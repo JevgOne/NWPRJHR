@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const langFlags: Record<string, string> = {
   cs: "🇨🇿",
@@ -15,26 +16,29 @@ export default async function StylistsPage() {
   if (!session) redirect("/login");
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") redirect("/dashboard");
 
-  const stylists = await prisma.stylist.findMany({
-    orderBy: { name: "asc" },
-    include: { salon: { select: { name: true } } },
-  });
+  const [t, stylists] = await Promise.all([
+    getTranslations("stylist"),
+    prisma.stylist.findMany({
+      orderBy: { name: "asc" },
+      include: { salon: { select: { name: true } } },
+    }),
+  ]);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-ink">Kadeřnice</h1>
+        <h1 className="text-2xl font-bold text-ink">{t("listTitle")}</h1>
         <Link
           href="/stylists/new"
           className="inline-flex items-center px-4 py-2 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose-deep"
         >
-          + Přidat kadeřnici
+          {t("addStylist")}
         </Link>
       </div>
 
       {stylists.length === 0 ? (
         <div className="bg-white rounded-xl border border-line shadow-sm p-8 text-center text-muted">
-          Žádné kadeřnice
+          {t("noStylists")}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -63,7 +67,7 @@ export default async function StylistsPage() {
                       )}
                     </div>
                     <p className="text-xs text-muted mt-0.5">
-                      📍 {s.city || "—"} {s.experience ? `· ${s.experience} let praxe` : ""}
+                      📍 {s.city || "—"} {s.experience ? `· ${s.experience} ${t("yearsExperience")}` : ""}
                     </p>
                     {s.salon && (
                       <p className="text-xs text-espresso mt-0.5">🏠 {s.salon.name}</p>
@@ -90,7 +94,7 @@ export default async function StylistsPage() {
                   </div>
                 </div>
                 {!s.active && (
-                  <div className="mt-3 text-xs text-red-600 font-medium">⚠️ Neaktivní</div>
+                  <div className="mt-3 text-xs text-red-600 font-medium">⚠️ {t("inactive")}</div>
                 )}
               </Link>
             );

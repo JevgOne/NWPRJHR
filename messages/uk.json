@@ -157,6 +157,8 @@
     "colorTonePlaceholder": "Виберіть або введіть тон...",
     "autoSeoDesc": "Самовивіз Прага безкоштовно, обробка на замовлення.",
     "ogImagePlaceholder": "Автоматично: перше фото продукту",
+    "ogImageHint": "1200x630px для соціальних мереж",
+    "originPrefix": "походження",
     "saveSeo": "Зберегти SEO"
   },
   "colorTone": {
@@ -222,6 +224,10 @@
     "deliveryDetail": "Деталі постачання",
     "noStock": "Немає запасів",
     "showSoldOut": "Показати розпродані",
+    "originAll": "Походження — все",
+    "productAll": "Продукт — все",
+    "reservedGrams": "{count} г зарезервовано",
+    "lengthCol": "Довжина",
     "return": "Повернення",
     "complaint": "Рекламація",
     "sample": "Зразок",
@@ -336,6 +342,7 @@
     "archived": "Архівовані",
     "archive": "Архівувати",
     "unarchive": "Відновити",
+    "approve": "Схвалити салон",
     "noSalons": "Немає салонів",
     "debt": "Борг",
     "overdue": "Прострочено",
@@ -2549,7 +2556,14 @@
     "saveChanges": "Зберегти зміни",
     "createStylist": "Створити стилістку",
     "saveError": "Помилка при збереженні",
-    "unknownError": "Невідома помилка"
+    "unknownError": "Невідома помилка",
+    "listTitle": "Стилістки",
+    "addStylist": "+ Додати стилістку",
+    "noStylists": "Немає стилісток",
+    "inactive": "Неактивна",
+    "yearsExperience": "років досвіду",
+    "editTitle": "Редагувати стилістку",
+    "newTitle": "Нова стилістка"
   },
   "referral": {
     "title": "Реферальна програма",

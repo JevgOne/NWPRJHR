@@ -1,4 +1,4 @@
-const CACHE_NAME = "hairora-v2";
+const CACHE_NAME = "hairland-v3";
 
 self.addEventListener("install", (_event) => {
   self.skipWaiting();
