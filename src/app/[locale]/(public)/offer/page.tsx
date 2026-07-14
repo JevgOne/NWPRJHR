@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductsShowcase } from "./ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
@@ -93,10 +93,10 @@ export default async function ProductsPage() {
 
   if (session?.user?.role === "HAIRDRESSER" || session?.user?.role === "SALON") {
     userRole = session.user.role;
-    const b2bSettings = await prisma.b2BSettings.findFirst();
+    const b2bSettings = await getCachedB2BSettings();
     discountPct = userRole === "SALON"
-      ? (b2bSettings?.salonDiscountPct ?? 3000)
-      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
+      ? b2bSettings.salonDiscountPct
+      : b2bSettings.hairdresserDiscountPct;
   }
 
   return (

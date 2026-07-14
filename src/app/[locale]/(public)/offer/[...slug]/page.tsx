@@ -12,6 +12,7 @@ import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
 import { getAllStockNumbers } from "@/lib/stock";
+import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
@@ -169,6 +170,37 @@ const getProduct = cache(async function getProduct(slugOrId: string) {
   return byId;
 });
 
+const getCachedRelatedCandidates = unstable_cache(
+  async (excludeId: string) => {
+    return prisma.product.findMany({
+      where: {
+        archived: false,
+        id: { not: excludeId },
+        variants: { some: { active: true, OR: [{ retailPricePerGram: { gt: 0 } }, { retailPricePerPiece: { gt: 0 } }] } },
+      },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        nameUk: true,
+        nameRu: true,
+        category: true,
+        origin: true,
+        texture: true,
+        colorTone: true,
+        photos: true,
+        variants: {
+          where: { active: true },
+          select: { id: true, lengthCm: true, color: true, retailPricePerGram: true, sellingMode: true, retailPricePerPiece: true },
+        },
+      },
+      take: 20,
+    });
+  },
+  ["related-product-candidates"],
+  { revalidate: 120, tags: ["products"] }
+);
+
 const PROCESSING_LABELS: Record<string, Record<string, string>> = {
   cs: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Keratin", WEFT: "Tresový", MICRO_RING: "Micro ring", OTHER: "" },
   uk: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Кератин", WEFT: "Тресове", MICRO_RING: "Micro ring", OTHER: "" },
@@ -311,10 +343,10 @@ async function ProductDetailView({
   let tierBadge: string | null = null;
 
   if (role === "HAIRDRESSER" || role === "SALON") {
-    const b2bSettings = await prisma.b2BSettings.findFirst();
+    const b2bSettings = await getCachedB2BSettings();
     discountPct = role === "SALON"
-      ? (b2bSettings?.salonDiscountPct ?? 3000)
-      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
+      ? b2bSettings.salonDiscountPct
+      : b2bSettings.hairdresserDiscountPct;
     tierBadge = t("productDetail.yourPrice");
   }
 
@@ -952,30 +984,7 @@ async function ProductDetailView({
 
       {/* Related products — full width */}
       {await (async () => {
-        const candidates = await prisma.product.findMany({
-          where: {
-            archived: false,
-            id: { not: product.id },
-            variants: { some: { active: true, OR: [{ retailPricePerGram: { gt: 0 } }, { retailPricePerPiece: { gt: 0 } }] } },
-          },
-          select: {
-            id: true,
-            slug: true,
-            name: true,
-            nameUk: true,
-            nameRu: true,
-            category: true,
-            origin: true,
-            texture: true,
-            colorTone: true,
-            photos: true,
-            variants: {
-              where: { active: true },
-              select: { id: true, lengthCm: true, color: true, retailPricePerGram: true, sellingMode: true, retailPricePerPiece: true },
-            },
-          },
-          take: 20,
-        });
+        const candidates = await getCachedRelatedCandidates(product.id);
 
         const scored = candidates.map((rp) => {
           let score = 0;

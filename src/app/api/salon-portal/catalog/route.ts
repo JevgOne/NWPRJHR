@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { roundHalereUp } from "@/lib/rounding";
 import { getAllStockNumbers } from "@/lib/stock";
 
@@ -22,7 +23,7 @@ export async function GET() {
 
   // Parallel fetch: B2B discount + products + stock (3 queries at once)
   const [b2bSettings, products, stockMap] = await Promise.all([
-    prisma.b2BSettings.findFirst(),
+    getCachedB2BSettings(),
     prisma.product.findMany({
       where: { archived: false },
       include: {
@@ -39,8 +40,8 @@ export async function GET() {
   // Add role-specific prices, filter to in-stock variants only
   // B2B: discount from margin (margin = retail / 2 with 100% markup)
   const b2bDiscountPct = salonType === "SALON"
-    ? (b2bSettings?.salonDiscountPct ?? 3000)
-    : (b2bSettings?.hairdresserDiscountPct ?? 2000);
+    ? b2bSettings.salonDiscountPct
+    : b2bSettings.hairdresserDiscountPct;
 
   const allProducts = products.map((product) => {
     const variants = product.variants

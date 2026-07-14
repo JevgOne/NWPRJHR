@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { invalidateB2BCache } from "@/lib/b2b-pricing";
 
 const updateSchema = z.object({
   hairdresserDiscountPct: z.number().int().min(0).max(10000),
@@ -65,6 +66,8 @@ export async function PUT(request: NextRequest) {
       salonDiscountPct: parsed.data.salonDiscountPct,
     },
   });
+
+  invalidateB2BCache();
 
   logAudit({
     userId: session.user.id,

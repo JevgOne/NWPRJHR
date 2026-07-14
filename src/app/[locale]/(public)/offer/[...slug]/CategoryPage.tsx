@@ -3,6 +3,7 @@ import type { ProcessingType } from "@prisma/client";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { getAllStockNumbers } from "@/lib/stock";
 import { unstable_cache } from "next/cache";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
@@ -157,10 +158,10 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
   let discountPct = 0;
   if (session?.user?.role === "HAIRDRESSER" || session?.user?.role === "SALON") {
     userRole = session.user.role;
-    const b2bSettings = await prisma.b2BSettings.findFirst();
+    const b2bSettings = await getCachedB2BSettings();
     discountPct = userRole === "SALON"
-      ? (b2bSettings?.salonDiscountPct ?? 3000)
-      : (b2bSettings?.hairdresserDiscountPct ?? 2000);
+      ? b2bSettings.salonDiscountPct
+      : b2bSettings.hairdresserDiscountPct;
   }
 
   const titleKey = TITLE_KEYS[slug];
