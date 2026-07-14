@@ -232,7 +232,7 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime,video/x-quicktime,video/webm"
         multiple
         className="hidden"
         onChange={(e) => {

@@ -557,6 +557,13 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
           )}
           <p className="text-xs text-muted">{t("qrLinkDesc")}</p>
 
+          {/* Upload error — prominent display */}
+          {uploadError && (
+            <div className="w-full bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+              {uploadError}
+            </div>
+          )}
+
           {/* Uploaded photos preview */}
           {(uploadedPhotos.length > 0 || uploadedVideo) && (
             <div className="w-full border-t border-line pt-4 mt-2 text-left">
@@ -593,7 +600,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 <input
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime,video/x-quicktime,video/webm"
                   className="hidden"
                   onChange={(e) => handleMediaUpload(e.target.files)}
                   disabled={uploading}
@@ -1010,7 +1017,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 <input
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime,video/x-quicktime,video/webm"
                   className="hidden"
                   onChange={(e) => { handleFilesSelected(e.target.files); e.target.value = ""; }}
                 />
