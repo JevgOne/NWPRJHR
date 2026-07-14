@@ -128,11 +128,16 @@ export async function POST(request: NextRequest) {
       ? Math.round(data.purchasePricePerPiece / data.pieceWeightGrams)
       : data.purchasePricePerGramRaw;
 
+    // Convert raw purchase price to CZK (raw is in original currency halere/cents)
+    const costPricePerGramCZK = data.currency === "CZK"
+      ? effectivePurchasePricePerGramRaw
+      : Math.round((effectivePurchasePricePerGramRaw * data.exchangeRate) / 10000);
+
     if (!variant) {
       // Get markup from PriceSettings for retail price calculation
       const priceSetting = await prisma.priceSettings.findUnique({ where: { category: data.category } });
       const markupPercent = priceSetting?.markupPercent ?? 200;
-      const retailPrice = Math.round(effectivePurchasePricePerGramRaw * (10000 + markupPercent * 100) / 10000);
+      const retailPrice = Math.round(costPricePerGramCZK * (10000 + markupPercent * 100) / 10000);
       const retailPricePerPiece = isByPiece && data.pricePerPiece
         ? Math.round(data.pricePerPiece * (10000 + markupPercent * 100) / 10000)
         : undefined;
@@ -145,8 +150,8 @@ export async function POST(request: NextRequest) {
           sellingMode: data.sellingMode ?? "BY_GRAM",
           pricePerPiece: isByPiece ? data.pricePerPiece : undefined,
           retailPricePerPiece: isByPiece ? (data.retailPricePerPiece ?? retailPricePerPiece) : undefined,
-          costPricePerGram: effectivePurchasePricePerGramRaw,
-          wholesalePricePerGram: effectivePurchasePricePerGramRaw,
+          costPricePerGram: costPricePerGramCZK,
+          wholesalePricePerGram: costPricePerGramCZK,
           retailPricePerGram: retailPrice,
           active: true,
         },
