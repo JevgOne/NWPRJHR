@@ -51,10 +51,10 @@ export async function POST(
     }
 
     // Upload watermarked version
-    const safeName = `products/${id}-wm-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.jpg`;
+    const safeName = `products/${id}-wm-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.webp`;
     const blob = await put(safeName, watermarked, {
       access: "public",
-      contentType: "image/jpeg",
+      contentType: "image/webp",
     });
 
     newUrls.push(blob.url);
