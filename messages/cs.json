@@ -1772,6 +1772,27 @@
     "tierHairdresser": "Kadeřnice",
     "tierSalon": "Salon"
   },
+  "pricingSettings": {
+    "title": "Cenova politika",
+    "markupSection": "Marze (nakup -> prodej)",
+    "markup": "Marze",
+    "markupPercent": "% marze",
+    "markupDescription": "Prodejni = nakupni x {multiplier}",
+    "sameForAll": "Stejna marze pro vsechny kategorie",
+    "b2bSection": "B2B slevy",
+    "hairdresserDiscount": "Sleva pro kadernice",
+    "salonDiscount": "Sleva pro salony",
+    "discountFromMargin": "z marze",
+    "previewSection": "Priklad cen",
+    "previewCost": "Nakupni cena",
+    "perGram": "Kc/g",
+    "tierCustomer": "Zakaznik (retail)",
+    "tierHairdresser": "Kadernice",
+    "tierSalon": "Salon",
+    "saveAll": "Ulozit vse",
+    "saved": "Ulozeno",
+    "recalculated": "Prepocteno {count} variant"
+  },
   "registrations": {
     "title": "Registrace",
     "pendingSalons": "Čekající salony",

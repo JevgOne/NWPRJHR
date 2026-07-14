@@ -1772,6 +1772,27 @@
     "tierHairdresser": "Майстер",
     "tierSalon": "Салон"
   },
+  "pricingSettings": {
+    "title": "Цiнова полiтика",
+    "markupSection": "Маржа (закупка -> продаж)",
+    "markup": "Маржа",
+    "markupPercent": "% маржi",
+    "markupDescription": "Продажна = закупна x {multiplier}",
+    "sameForAll": "Однакова маржа для всiх категорiй",
+    "b2bSection": "B2B знижки",
+    "hairdresserDiscount": "Знижка для майстрiв",
+    "salonDiscount": "Знижка для салонiв",
+    "discountFromMargin": "з маржi",
+    "previewSection": "Приклад цiн",
+    "previewCost": "Закупiвельна цiна",
+    "perGram": "Kc/г",
+    "tierCustomer": "Клiєнт (роздрiб)",
+    "tierHairdresser": "Майстер",
+    "tierSalon": "Салон",
+    "saveAll": "Зберегти все",
+    "saved": "Збережено",
+    "recalculated": "Перераховано {count} варiантiв"
+  },
   "registrations": {
     "title": "Реєстрації",
     "pendingSalons": "Очікують салони",
