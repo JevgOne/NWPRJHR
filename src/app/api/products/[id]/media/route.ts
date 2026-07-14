@@ -4,8 +4,6 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { put } from "@vercel/blob";
 import sharp from "sharp";
-import path from "path";
-import { readFile } from "fs/promises";
 
 const MAX_PHOTO_SIZE = 15 * 1024 * 1024; // 15MB (HEIC files are larger)
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
@@ -23,64 +21,53 @@ const VIDEO_TYPES = [
   "video/webm",
 ];
 
-// Watermark cache — loaded once per cold start
-let watermarkBuffer: Buffer | null = null;
+/**
+ * Generate SVG text watermark sized to the image.
+ */
+function createWatermarkSvg(imgWidth: number): Buffer {
+  const fontSize = Math.round(imgWidth * 0.035);
+  const padding = Math.round(imgWidth * 0.02);
+  const textWidth = fontSize * 10; // approximate width
+  const svgHeight = fontSize + padding * 2;
+  const svgWidth = textWidth + padding * 2;
 
-async function getWatermark(): Promise<Buffer | null> {
-  if (watermarkBuffer) return watermarkBuffer;
-  try {
-    const watermarkPath = path.join(process.cwd(), "public", "watermark.png");
-    watermarkBuffer = await readFile(watermarkPath);
-    return watermarkBuffer;
-  } catch {
-    return null;
-  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}">
+    <text x="${svgWidth - padding}" y="${svgHeight - padding}"
+      font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="500"
+      fill="white" fill-opacity="0.35" text-anchor="end"
+      letter-spacing="2">www.hairland.cz</text>
+  </svg>`;
+
+  return Buffer.from(svg);
 }
 
 /**
  * Process an uploaded photo:
  * 1. Convert any format (HEIC/HEIF/JPEG/PNG) to WebP
- * 2. Add watermark overlay (bottom-right, semi-transparent)
+ * 2. Add text watermark "www.hairland.cz" (bottom-right, semi-transparent)
  * 3. Return buffer + content type
  */
 async function processPhoto(
   file: File
 ): Promise<{ buffer: Buffer; contentType: string; ext: string }> {
   const arrayBuffer = await file.arrayBuffer();
-  let pipeline = sharp(Buffer.from(arrayBuffer));
+  const inputBuffer = Buffer.from(arrayBuffer);
 
   // Get image metadata for watermark sizing
-  const metadata = await pipeline.metadata();
+  const metadata = await sharp(inputBuffer).metadata();
   const width = metadata.width ?? 800;
-  const height = metadata.height ?? 600;
 
-  // Resize watermark to ~25% of image width, with transparency
-  const watermark = await getWatermark();
-  if (watermark) {
-    const wmWidth = Math.round(width * 0.25);
-    const resizedWatermark = await sharp(watermark)
-      .resize(wmWidth)
-      .ensureAlpha()
-      .composite([
-        {
-          input: Buffer.from([255, 255, 255, Math.round(255 * 0.4)]),
-          raw: { width: 1, height: 1, channels: 4 },
-          tile: true,
-          blend: "dest-in",
-        },
-      ])
-      .toBuffer();
+  const watermarkSvg = createWatermarkSvg(width);
 
-    pipeline = sharp(Buffer.from(arrayBuffer)).composite([
+  const buffer = await sharp(inputBuffer)
+    .composite([
       {
-        input: resizedWatermark,
+        input: watermarkSvg,
         gravity: "southeast",
       },
-    ]);
-  }
-
-  // Convert to WebP
-  const buffer = await pipeline.webp({ quality: 82 }).toBuffer();
+    ])
+    .webp({ quality: 82 })
+    .toBuffer();
 
   return { buffer, contentType: "image/webp", ext: "webp" };
 }
