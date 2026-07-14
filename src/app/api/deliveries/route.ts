@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     if (!variant) {
       // Get markup from PriceSettings for retail price calculation
       const priceSetting = await prisma.priceSettings.findUnique({ where: { category: data.category } });
-      const markupPercent = priceSetting?.markupPercent ?? 200;
+      const markupPercent = priceSetting?.markupPercent ?? 100;
       const retailPrice = Math.round(costPricePerGramCZK * (10000 + markupPercent * 100) / 10000);
       const retailPricePerPiece = isByPiece && data.pricePerPiece
         ? Math.round(data.pricePerPiece * (10000 + markupPercent * 100) / 10000)
