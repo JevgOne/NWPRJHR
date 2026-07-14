@@ -324,7 +324,7 @@ export function VariantTable({
                             variant.availableToOrder ? "translate-x-4" : ""
                           }`} />
                         </button>
-                        <span className="text-[10px] text-muted">Na obj.</span>
+                        <span className="text-[10px] text-muted">Na objednávku</span>
                         {variant.availableToOrder && (
                           <input
                             type="number"
