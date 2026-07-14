@@ -189,7 +189,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-ink">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
 
       {/* ── ROW 1: Key stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
