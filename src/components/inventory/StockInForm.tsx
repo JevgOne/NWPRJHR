@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
@@ -25,8 +25,15 @@ interface SuccessData {
 }
 
 type Category = "VIRGIN" | "LUXE" | "STANDARD" | "SALE";
+type CurrencyCode = "USD" | "EUR" | "CZK";
 
 const LENGTH_PRESETS = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
+
+const CURRENCY_OPTIONS: { code: CurrencyCode; symbol: string }[] = [
+  { code: "USD", symbol: "$" },
+  { code: "EUR", symbol: "\u20AC" },
+  { code: "CZK", symbol: "Kc" },
+];
 
 export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const t = useTranslations("stock");
@@ -47,13 +54,19 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
   const [totalPieces, setTotalPieces] = useState("");
   const [pieceWeightGrams, setPieceWeightGrams] = useState("");
-  const [purchasePricePerPieceCzk, setPurchasePricePerPieceCzk] = useState("");
+  const [purchasePricePerPiece, setPurchasePricePerPiece] = useState("");
   const [pricePerPieceCzk, setPricePerPieceCzk] = useState("");
   const [retailPricePerPieceCzk, setRetailPricePerPieceCzk] = useState("");
 
+  // Currency & exchange rate
+  const [currency, setCurrency] = useState<CurrencyCode>("USD");
+  const [exchangeRateInput, setExchangeRateInput] = useState("");
+  const [rateLoading, setRateLoading] = useState(false);
+  const [rateSource, setRateSource] = useState<"CNB" | "fallback" | "">("");
+
   // Details form state
   const [supplierId, setSupplierId] = useState("");
-  const [purchasePrice, setPurchasePrice] = useState("");
+  const [purchasePricePer100g, setPurchasePricePer100g] = useState("");
   const [totalGrams, setTotalGrams] = useState("");
   const [stockedAt, setStockedAt] = useState(
     new Date().toISOString().slice(0, 10)
@@ -92,6 +105,74 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
   }, []);
+
+  // Fetch exchange rate from CNB when currency changes
+  const fetchRate = useCallback(async (cur: CurrencyCode) => {
+    if (cur === "CZK") {
+      setExchangeRateInput("");
+      setRateSource("");
+      return;
+    }
+    setRateLoading(true);
+    try {
+      const res = await fetch(`/api/exchange-rates?currency=${cur}`);
+      if (res.ok) {
+        const data = await res.json();
+        setExchangeRateInput(String(data.rate));
+        setRateSource(data.source === "fallback" ? "fallback" : "CNB");
+      }
+    } catch {
+      // keep existing rate if fetch fails
+    } finally {
+      setRateLoading(false);
+    }
+  }, []);
+
+  // Auto-fetch rate on currency change (only for non-CZK)
+  useEffect(() => {
+    if (currency !== "CZK") {
+      fetchRate(currency);
+    }
+  }, [currency, fetchRate]);
+
+  // Price preview calculation
+  const preview = useMemo(() => {
+    const rate = currency === "CZK" ? 1 : parseFloat(exchangeRateInput);
+    if (!rate || rate <= 0) return null;
+
+    if (sellingMode === "BY_GRAM") {
+      const pricePer100g = parseFloat(purchasePricePer100g);
+      if (!pricePer100g || pricePer100g <= 0) return null;
+
+      const pricePerGramOrig = pricePer100g / 100;
+      const pricePerGramCzk = pricePerGramOrig * rate;
+      const retailPerGram = pricePerGramCzk * 2; // 100% markup
+      const retailPer100g = retailPerGram * 100;
+
+      return {
+        pricePerGramOrig,
+        pricePerGramCzk,
+        retailPerGram,
+        retailPer100g,
+      };
+    } else {
+      // BY_PIECE
+      const pricePerPc = parseFloat(purchasePricePerPiece);
+      const weight = parseInt(pieceWeightGrams);
+      if (!pricePerPc || pricePerPc <= 0) return null;
+
+      const pricePerPcCzk = pricePerPc * rate;
+      const retailPerPc = pricePerPcCzk * 2; // 100% markup
+
+      return {
+        pricePerPcOrig: pricePerPc,
+        pricePerPcCzk,
+        retailPerPc,
+        pricePerGramOrig: weight ? pricePerPc / weight : undefined,
+        pricePerGramCzk: weight ? (pricePerPc * rate) / weight : undefined,
+      };
+    }
+  }, [currency, exchangeRateInput, purchasePricePer100g, sellingMode, purchasePricePerPiece, pieceWeightGrams]);
 
   const colorName = (code: string) => {
     const { nameKey } = getHairColor(code);
@@ -140,6 +221,13 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     );
   }
 
+  function formatCzk(halere: number): string {
+    return (halere / 100).toLocaleString("cs-CZ", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!category || !origin || !texture || !color || !lengthCm) return;
@@ -153,6 +241,33 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       ? parsedPieces * parsedPieceWeight
       : parseInt(totalGrams);
 
+    // Exchange rate conversion
+    const rateDecimal = currency === "CZK" ? 1 : parseFloat(exchangeRateInput);
+    const exchangeRateInt = currency === "CZK" ? 10000 : Math.round(rateDecimal * 10000);
+
+    let purchasePricePerGramRaw: number;
+    let purchasePricePerPieceRaw: number | undefined;
+
+    if (isByPiece) {
+      // BY_PIECE: user enters price per piece in original currency
+      const pricePerPcFloat = parseFloat(purchasePricePerPiece);
+      purchasePricePerPieceRaw = Math.round(pricePerPcFloat * 100); // to cents/halere
+      purchasePricePerGramRaw = parsedPieceWeight
+        ? Math.round(purchasePricePerPieceRaw / parsedPieceWeight)
+        : 0;
+    } else {
+      // BY_GRAM: user enters price per 100g in original currency
+      const pricePer100gFloat = parseFloat(purchasePricePer100g);
+      const pricePer100gCents = Math.round(pricePer100gFloat * 100);
+      purchasePricePerGramRaw = Math.round(pricePer100gCents / 100);
+    }
+
+    // BY_PIECE: auto-calculate wholesale/retail per piece in CZK
+    const costPerPieceCzk = isByPiece && purchasePricePerPieceRaw
+      ? Math.round((purchasePricePerPieceRaw * exchangeRateInt) / 10000)
+      : undefined;
+    const retailPerPieceCzk = costPerPieceCzk ? costPerPieceCzk * 2 : undefined;
+
     const body = {
       category,
       origin,
@@ -160,20 +275,18 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       color,
       lengthCm,
       supplierId,
-      purchasePricePerGramRaw: isByPiece
-        ? (parsedPieceWeight ? Math.round((parseFloat(purchasePricePerPieceCzk) * 100) / parsedPieceWeight) : 0)
-        : Math.round(parseFloat(purchasePrice) * 100),
-      currency: "CZK" as const,
-      exchangeRate: 10000,
+      purchasePricePerGramRaw,
+      currency,
+      exchangeRate: exchangeRateInt,
       totalGrams: computedGrams,
       totalPieces: parsedPieces,
       sellingMode,
       ...(isByPiece ? {
         pieceWeightGrams: parsedPieceWeight,
-        purchasePricePerPiece: Math.round(parseFloat(purchasePricePerPieceCzk) * 100),
-        pricePerPiece: Math.round(parseFloat(pricePerPieceCzk) * 100),
-        ...(retailPricePerPieceCzk
-          ? { retailPricePerPiece: Math.round(parseFloat(retailPricePerPieceCzk) * 100) }
+        purchasePricePerPiece: purchasePricePerPieceRaw,
+        pricePerPiece: costPerPieceCzk,
+        ...(retailPerPieceCzk
+          ? { retailPricePerPiece: retailPerPieceCzk }
           : {}),
       } : {}),
       stockedAt: new Date(stockedAt).toISOString(),
@@ -264,6 +377,141 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     } finally {
       setUploading(false);
     }
+  }
+
+  // Currency selector component
+  function CurrencySelector() {
+    return (
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-espresso">
+          {t("currency")}
+        </label>
+        <div className="flex gap-2">
+          {CURRENCY_OPTIONS.map((opt) => (
+            <button
+              key={opt.code}
+              type="button"
+              onClick={() => setCurrency(opt.code)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-colors ${
+                currency === opt.code
+                  ? "border-rose bg-rose/5 text-ink"
+                  : "border-line bg-white text-muted hover:border-espresso/30"
+              }`}
+            >
+              <span>{opt.symbol}</span>
+              <span>{opt.code}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Exchange rate input (hidden for CZK)
+  function ExchangeRateField() {
+    if (currency === "CZK") return null;
+
+    return (
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <Input
+              label={t("exchangeRateLabel", { currency })}
+              type="number"
+              value={exchangeRateInput}
+              onChange={(e) => setExchangeRateInput(e.target.value)}
+              required
+              min={0.01}
+              step="0.001"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => fetchRate(currency)}
+            disabled={rateLoading}
+            className="mt-6 p-2 rounded-lg border border-line hover:bg-nude-50 transition-colors disabled:opacity-50"
+            title={t("rateRefresh")}
+          >
+            <svg className={`w-4 h-4 text-muted ${rateLoading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+        <p className="text-xs text-muted">
+          {rateLoading
+            ? t("rateLoading")
+            : rateSource === "fallback"
+            ? t("rateFallback")
+            : rateSource === "CNB"
+            ? t("exchangeRateAuto")
+            : ""}
+        </p>
+      </div>
+    );
+  }
+
+  // Price preview box
+  function PricePreview() {
+    if (!preview) return null;
+
+    const currSymbol = CURRENCY_OPTIONS.find((o) => o.code === currency)?.symbol ?? currency;
+
+    if (sellingMode === "BY_GRAM" && "retailPer100g" in preview) {
+      const p = preview as {
+        pricePerGramOrig: number;
+        pricePerGramCzk: number;
+        retailPerGram: number;
+        retailPer100g: number;
+      };
+      return (
+        <div className="p-3 rounded-xl border border-line bg-nude-50/50 space-y-1">
+          <p className="text-xs font-medium text-espresso">{t("pricePreview")}</p>
+          <p className="text-xs text-muted">
+            {t("pricePerGramOrig")}: {p.pricePerGramOrig.toFixed(2)} {currSymbol}
+            {currency !== "CZK" && (
+              <> = {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kc</>
+            )}
+          </p>
+          <p className="text-xs text-muted">
+            {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 100%)
+          </p>
+          <p className="text-sm font-semibold text-espresso">
+            {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
+          </p>
+        </div>
+      );
+    }
+
+    if (sellingMode === "BY_PIECE" && "pricePerPcCzk" in preview) {
+      const p = preview as {
+        pricePerPcOrig: number;
+        pricePerPcCzk: number;
+        retailPerPc: number;
+        pricePerGramOrig?: number;
+        pricePerGramCzk?: number;
+      };
+      return (
+        <div className="p-3 rounded-xl border border-line bg-nude-50/50 space-y-1">
+          <p className="text-xs font-medium text-espresso">{t("pricePreview")}</p>
+          <p className="text-xs text-muted">
+            {t("purchasePricePerPiece")}: {p.pricePerPcOrig.toFixed(2)} {currSymbol}
+            {currency !== "CZK" && (
+              <> = {formatCzk(Math.round(p.pricePerPcCzk * 100))} Kc</>
+            )}
+          </p>
+          {p.pricePerGramCzk != null && (
+            <p className="text-xs text-muted">
+              {t("pricePerGramCzk")}: {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kc
+            </p>
+          )}
+          <p className="text-sm font-semibold text-espresso">
+            {t("retailPreview")}: {formatCzk(Math.round(p.retailPerPc * 100))} Kc/{t("perPiece")}
+          </p>
+        </div>
+      );
+    }
+
+    return null;
   }
 
   // Success screen
@@ -380,11 +628,11 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setSellingMode("BY_GRAM");
                 setTotalPieces("");
                 setPieceWeightGrams("");
-                setPurchasePricePerPieceCzk("");
+                setPurchasePricePerPiece("");
                 setPricePerPieceCzk("");
                 setRetailPricePerPieceCzk("");
                 setSupplierId("");
-                setPurchasePrice("");
+                setPurchasePricePer100g("");
                 setTotalGrams("");
                 setNote("");
                 setStockedAt(new Date().toISOString().slice(0, 10));
@@ -626,13 +874,19 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
               </select>
             </div>
 
-            {/* Purchase price (per gram — needed for COGS in BY_GRAM mode) */}
+            {/* Currency selector */}
+            <CurrencySelector />
+
+            {/* Exchange rate (hidden for CZK) */}
+            <ExchangeRateField />
+
+            {/* Purchase price — BY_GRAM: per 100g in original currency */}
             {sellingMode === "BY_GRAM" && (
               <Input
-                label={`${t("purchasePrice")} (Kč/${t("grams")})`}
+                label={`${t("purchasePricePer100g")} (${currency})`}
                 type="number"
-                value={purchasePrice}
-                onChange={(e) => setPurchasePrice(e.target.value)}
+                value={purchasePricePer100g}
+                onChange={(e) => setPurchasePricePer100g(e.target.value)}
                 required
                 min={1}
                 step="0.01"
@@ -661,32 +915,14 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                   />
                 </div>
                 <Input
-                  label={t("purchasePricePerPieceCzk")}
+                  label={`${t("purchasePricePerPiece")} (${currency})`}
                   type="number"
-                  value={purchasePricePerPieceCzk}
-                  onChange={(e) => setPurchasePricePerPieceCzk(e.target.value)}
+                  value={purchasePricePerPiece}
+                  onChange={(e) => setPurchasePricePerPiece(e.target.value)}
                   required
                   min={1}
                   step="0.01"
                 />
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label={t("pricePerPieceCzk")}
-                    type="number"
-                    value={pricePerPieceCzk}
-                    onChange={(e) => setPricePerPieceCzk(e.target.value)}
-                    required
-                    min={1}
-                    step="0.01"
-                  />
-                  <Input
-                    label={t("retailPricePerPieceCzk")}
-                    type="number"
-                    value={retailPricePerPieceCzk}
-                    onChange={(e) => setRetailPricePerPieceCzk(e.target.value)}
-                    step="0.01"
-                  />
-                </div>
                 {totalPieces && pieceWeightGrams && (
                   <p className="text-xs text-muted">
                     {t("autoGrams")}: {parseInt(totalPieces) * parseInt(pieceWeightGrams)} g
@@ -694,6 +930,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 )}
               </div>
             )}
+
+            {/* Price preview */}
+            <PricePreview />
 
             {/* Grams (manual) — only for BY_GRAM + Date */}
             <div className="grid grid-cols-2 gap-4">
