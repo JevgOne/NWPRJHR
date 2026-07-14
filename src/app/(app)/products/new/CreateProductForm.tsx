@@ -147,7 +147,7 @@ export function CreateProductForm() {
 
         <div>
           <label className="block text-sm font-medium text-espresso mb-1">
-            {t("category.virgin")} / {t("category.premium")} / ...
+            {t("category.virgin")} / {t("category.luxe")} / ...
           </label>
           <select
             name="category"

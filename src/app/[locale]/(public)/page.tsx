@@ -274,7 +274,7 @@ export default async function LandingPage() {
               {(
                 [
                   { key: "virgin" as const, img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
-                  { key: "premium" as const, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescPremium" as const },
+                  { key: "luxe" as const, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescLuxe" as const },
                   { key: "standard" as const, img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
                   { key: "sale" as const, img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
                 ]
