@@ -22,5 +22,11 @@ Disallow: /samples/
 Disallow: /audit-log
 Disallow: /export
 Disallow: /inquiry-cart
+Disallow: /registrations
+Disallow: /promo-codes
+Disallow: /referrals
+Disallow: /posts
+Disallow: /stylists
+Disallow: /inquiries
 
 Sitemap: https://www.hairland.cz/sitemap.xml

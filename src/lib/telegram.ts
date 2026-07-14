@@ -51,7 +51,6 @@ export async function handleTelegramCallback(callbackQuery: {
   const parts = callbackQuery.data.split(":");
   const type = parts[1];
   const recordId = parts[2];
-  console.log(`[Telegram] Assigning ${type}:${recordId}`);
 
   const firstName = callbackQuery.from?.first_name ?? "Někdo";
   const lastName = callbackQuery.from?.last_name ?? "";
