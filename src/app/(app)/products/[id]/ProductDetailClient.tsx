@@ -138,11 +138,14 @@ export function ProductDetailClient({
 
   const handlePhotosChange = useCallback(
     async (newPhotos: string[]) => {
-      await fetch(`/api/products/${product.id}`, {
+      const res = await fetch(`/api/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photos: JSON.stringify(newPhotos) }),
       });
+      if (!res.ok) {
+        console.error("Failed to save photos:", await res.text());
+      }
       router.refresh();
     },
     [product.id, router]
@@ -150,11 +153,14 @@ export function ProductDetailClient({
 
   const handleVideoChange = useCallback(
     async (videoUrl: string | null) => {
-      await fetch(`/api/products/${product.id}`, {
+      const res = await fetch(`/api/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ video: videoUrl }),
       });
+      if (!res.ok) {
+        console.error("Failed to save video:", await res.text());
+      }
       router.refresh();
     },
     [product.id, router]

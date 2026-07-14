@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { put } from "@vercel/blob";
@@ -86,6 +87,8 @@ export async function POST(
       ...(videoUrl !== product.video ? { video: videoUrl } : {}),
     },
   });
+
+  revalidateTag("products", "max");
 
   return NextResponse.json({
     photos: allPhotos,
