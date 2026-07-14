@@ -26,9 +26,27 @@ export async function GET() {
     getCachedB2BSettings(),
     prisma.product.findMany({
       where: { archived: false },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        nameUk: true,
+        nameRu: true,
+        category: true,
+        processingType: true,
+        origin: true,
+        texture: true,
+        photos: true,
         variants: {
           where: { active: true },
+          select: {
+            id: true,
+            lengthCm: true,
+            color: true,
+            retailPricePerGram: true,
+            retailPricePerPiece: true,
+            pricePerPiece: true,
+            sellingMode: true,
+          },
           orderBy: [{ lengthCm: "asc" }, { color: "asc" }],
         },
       },

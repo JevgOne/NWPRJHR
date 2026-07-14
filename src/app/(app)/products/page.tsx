@@ -2,66 +2,81 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { unstable_cache } from "next/cache";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
 import { getAllStockNumbers } from "@/lib/stock";
 import { ProductListClient } from "./ProductListClient";
+
+const getCachedAdminProducts = unstable_cache(
+  async () => {
+    const [products, allStock] = await Promise.all([
+      prisma.product.findMany({
+        where: { archived: false },
+        select: {
+          id: true,
+          name: true,
+          nameUk: true,
+          nameRu: true,
+          description: true,
+          descriptionUk: true,
+          descriptionRu: true,
+          category: true,
+          processingType: true,
+          origin: true,
+          texture: true,
+          colorTone: true,
+          photos: true,
+          video: true,
+          archived: true,
+          slug: true,
+          metaTitle: true,
+          metaDescription: true,
+          ogImage: true,
+          createdAt: true,
+          updatedAt: true,
+          variants: {
+            where: { active: true },
+            select: {
+              id: true,
+              productId: true,
+              lengthCm: true,
+              color: true,
+              costPricePerGram: true,
+              wholesalePricePerGram: true,
+              retailPricePerGram: true,
+              retailManualOverride: true,
+              sellingMode: true,
+              pricePerPiece: true,
+              retailPricePerPiece: true,
+              availableToOrder: true,
+              orderLeadDays: true,
+              active: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      getAllStockNumbers(),
+    ]);
+    return { products, stockEntries: Array.from(allStock.entries()) };
+  },
+  ["admin-products"],
+  { revalidate: 15, tags: ["products"] }
+);
 
 export default async function ProductsPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const [t, products, allStock] = await Promise.all([
+  const [t, cached] = await Promise.all([
     getTranslations(),
-    prisma.product.findMany({
-      where: { archived: false },
-      select: {
-        id: true,
-        name: true,
-        nameUk: true,
-        nameRu: true,
-        description: true,
-        descriptionUk: true,
-        descriptionRu: true,
-        category: true,
-        processingType: true,
-        origin: true,
-        texture: true,
-        colorTone: true,
-        photos: true,
-        video: true,
-        archived: true,
-        slug: true,
-        metaTitle: true,
-        metaDescription: true,
-        ogImage: true,
-        createdAt: true,
-        updatedAt: true,
-        variants: {
-          where: { active: true },
-          select: {
-            id: true,
-            productId: true,
-            lengthCm: true,
-            color: true,
-            costPricePerGram: true,
-            wholesalePricePerGram: true,
-            retailPricePerGram: true,
-            retailManualOverride: true,
-            sellingMode: true,
-            pricePerPiece: true,
-            retailPricePerPiece: true,
-            availableToOrder: true,
-            orderLeadDays: true,
-            active: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    getAllStockNumbers(),
+    getCachedAdminProducts(),
   ]);
+
+  const { products, stockEntries } = cached;
+  const allStock = new Map(stockEntries);
 
   const serialized = products.map((p) =>
     serializeProductForRole(p, session.user.role)

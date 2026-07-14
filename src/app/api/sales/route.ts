@@ -43,9 +43,9 @@ export async function POST(request: NextRequest) {
     include: {
       items: true,
       discounts: { include: { bearers: { include: { partner: true } } } },
-      salon: true,
-      customer: true,
-      user: true,
+      salon: { select: { id: true, name: true } },
+      customer: { select: { id: true, name: true } },
+      user: { select: { id: true, name: true, email: true, role: true } },
     },
   });
 
@@ -105,9 +105,9 @@ export async function GET(request: NextRequest) {
       include: {
         items: true,
         discounts: { include: { bearers: { include: { partner: true } } } },
-        salon: true,
-        customer: true,
-        user: true,
+        salon: { select: { id: true, name: true } },
+        customer: { select: { id: true, name: true } },
+        user: { select: { id: true, name: true, email: true, role: true } },
       },
       orderBy: { completedAt: "desc" },
       skip: (page - 1) * limit,

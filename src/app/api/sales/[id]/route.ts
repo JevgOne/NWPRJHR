@@ -22,9 +22,9 @@ export async function GET(
         },
       },
       discounts: { include: { bearers: { include: { partner: true } } } },
-      salon: true,
-      customer: true,
-      user: true,
+      salon: { select: { id: true, name: true } },
+      customer: { select: { id: true, name: true } },
+      user: { select: { id: true, name: true, email: true, role: true } },
     },
   });
 

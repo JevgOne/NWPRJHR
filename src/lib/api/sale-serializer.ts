@@ -4,18 +4,15 @@ import type {
   Discount,
   DiscountBearer,
   Partner,
-  Salon,
-  Customer,
-  User,
   Role,
 } from "@prisma/client";
 
 type SaleWithRelations = Sale & {
   items: SaleItem[];
   discounts: (Discount & { bearers: (DiscountBearer & { partner: Partner })[] })[];
-  salon?: Salon | null;
-  customer?: Customer | null;
-  user: User;
+  salon?: { id: string; name: string } | null;
+  customer?: { id: string; name: string } | null;
+  user: { id: string; name: string | null; email: string | null; role: Role };
 };
 
 function serializeSaleItemForRole(item: SaleItem, role: Role) {
