@@ -3,8 +3,10 @@
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
-const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
+const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/x-quicktime", "video/webm"];
+const PHOTO_EXTS = ["jpg", "jpeg", "png", "webp", "heic", "heif"];
+const VIDEO_EXTS = ["mp4", "mov", "webm"];
 
 /**
  * Client-side watermark: draws tiled "HAIRLAND" text across image using Canvas.
@@ -100,9 +102,11 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
 
   const uploadFiles = useCallback(
     async (files: FileList | File[]) => {
-      const fileArray = Array.from(files).filter((f) =>
-        [...PHOTO_TYPES, ...VIDEO_TYPES].includes(f.type)
-      );
+      const fileArray = Array.from(files).filter((f) => {
+        if ([...PHOTO_TYPES, ...VIDEO_TYPES].includes(f.type)) return true;
+        const ext = f.name.split(".").pop()?.toLowerCase() ?? "";
+        return PHOTO_EXTS.includes(ext) || VIDEO_EXTS.includes(ext);
+      });
       if (fileArray.length === 0) return;
 
       setUploading(true);
