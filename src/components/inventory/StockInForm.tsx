@@ -54,9 +54,6 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
   const [totalPieces, setTotalPieces] = useState("");
   const [pieceWeightGrams, setPieceWeightGrams] = useState("");
-  const [purchasePricePerPiece, setPurchasePricePerPiece] = useState("");
-  const [pricePerPieceCzk, setPricePerPieceCzk] = useState("");
-  const [retailPricePerPieceCzk, setRetailPricePerPieceCzk] = useState("");
 
   // Currency & exchange rate
   const [currency, setCurrency] = useState<CurrencyCode>("USD");
@@ -135,44 +132,43 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     }
   }, [currency, fetchRate]);
 
-  // Price preview calculation
+  // Price preview calculation — both modes use price per 100g
   const preview = useMemo(() => {
     const rate = currency === "CZK" ? 1 : parseFloat(exchangeRateInput);
     if (!rate || rate <= 0) return null;
 
-    if (sellingMode === "BY_GRAM") {
-      const pricePer100g = parseFloat(purchasePricePer100g);
-      if (!pricePer100g || pricePer100g <= 0) return null;
+    const pricePer100g = parseFloat(purchasePricePer100g);
+    if (!pricePer100g || pricePer100g <= 0) return null;
 
-      const pricePerGramOrig = pricePer100g / 100;
-      const pricePerGramCzk = pricePerGramOrig * rate;
-      const retailPerGram = pricePerGramCzk * 2; // 100% markup
-      const retailPer100g = retailPerGram * 100;
+    const pricePerGramOrig = pricePer100g / 100;
+    const pricePerGramCzk = pricePerGramOrig * rate;
+    const retailPerGram = pricePerGramCzk * 2; // 100% markup
+    const retailPer100g = retailPerGram * 100;
+
+    if (sellingMode === "BY_PIECE") {
+      const weight = parseInt(pieceWeightGrams);
+      const pricePerPcOrig = weight ? pricePerGramOrig * weight : undefined;
+      const pricePerPcCzk = weight ? pricePerGramCzk * weight : undefined;
+      const retailPerPc = pricePerPcCzk ? pricePerPcCzk * 2 : undefined;
 
       return {
         pricePerGramOrig,
         pricePerGramCzk,
         retailPerGram,
         retailPer100g,
-      };
-    } else {
-      // BY_PIECE
-      const pricePerPc = parseFloat(purchasePricePerPiece);
-      const weight = parseInt(pieceWeightGrams);
-      if (!pricePerPc || pricePerPc <= 0) return null;
-
-      const pricePerPcCzk = pricePerPc * rate;
-      const retailPerPc = pricePerPcCzk * 2; // 100% markup
-
-      return {
-        pricePerPcOrig: pricePerPc,
+        pricePerPcOrig,
         pricePerPcCzk,
         retailPerPc,
-        pricePerGramOrig: weight ? pricePerPc / weight : undefined,
-        pricePerGramCzk: weight ? (pricePerPc * rate) / weight : undefined,
       };
     }
-  }, [currency, exchangeRateInput, purchasePricePer100g, sellingMode, purchasePricePerPiece, pieceWeightGrams]);
+
+    return {
+      pricePerGramOrig,
+      pricePerGramCzk,
+      retailPerGram,
+      retailPer100g,
+    };
+  }, [currency, exchangeRateInput, purchasePricePer100g, sellingMode, pieceWeightGrams]);
 
   const colorName = (code: string) => {
     const { nameKey } = getHairColor(code);
@@ -245,21 +241,15 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     const rateDecimal = currency === "CZK" ? 1 : parseFloat(exchangeRateInput);
     const exchangeRateInt = currency === "CZK" ? 10000 : Math.round(rateDecimal * 10000);
 
-    let purchasePricePerGramRaw: number;
-    let purchasePricePerPieceRaw: number | undefined;
+    // Both modes: user enters price per 100g in original currency
+    const pricePer100gFloat = parseFloat(purchasePricePer100g);
+    const pricePer100gCents = Math.round(pricePer100gFloat * 100);
+    const purchasePricePerGramRaw = Math.round(pricePer100gCents / 100);
 
-    if (isByPiece) {
-      // BY_PIECE: user enters price per piece in original currency
-      const pricePerPcFloat = parseFloat(purchasePricePerPiece);
-      purchasePricePerPieceRaw = Math.round(pricePerPcFloat * 100); // to cents/halere
-      purchasePricePerGramRaw = parsedPieceWeight
-        ? Math.round(purchasePricePerPieceRaw / parsedPieceWeight)
-        : 0;
-    } else {
-      // BY_GRAM: user enters price per 100g in original currency
-      const pricePer100gFloat = parseFloat(purchasePricePer100g);
-      const pricePer100gCents = Math.round(pricePer100gFloat * 100);
-      purchasePricePerGramRaw = Math.round(pricePer100gCents / 100);
+    // BY_PIECE: derive per-piece price from per-gram × piece weight
+    let purchasePricePerPieceRaw: number | undefined;
+    if (isByPiece && parsedPieceWeight) {
+      purchasePricePerPieceRaw = purchasePricePerGramRaw * parsedPieceWeight;
     }
 
     // BY_PIECE: auto-calculate wholesale/retail per piece in CZK
@@ -455,63 +445,47 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     if (!preview) return null;
 
     const currSymbol = CURRENCY_OPTIONS.find((o) => o.code === currency)?.symbol ?? currency;
+    const p = preview as {
+      pricePerGramOrig: number;
+      pricePerGramCzk: number;
+      retailPerGram: number;
+      retailPer100g: number;
+      pricePerPcOrig?: number;
+      pricePerPcCzk?: number;
+      retailPerPc?: number;
+    };
 
-    if (sellingMode === "BY_GRAM" && "retailPer100g" in preview) {
-      const p = preview as {
-        pricePerGramOrig: number;
-        pricePerGramCzk: number;
-        retailPerGram: number;
-        retailPer100g: number;
-      };
-      return (
-        <div className="p-3 rounded-xl border border-line bg-nude-50/50 space-y-1">
-          <p className="text-xs font-medium text-espresso">{t("pricePreview")}</p>
-          <p className="text-xs text-muted">
-            {t("pricePerGramOrig")}: {p.pricePerGramOrig.toFixed(2)} {currSymbol}
-            {currency !== "CZK" && (
-              <> = {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kc</>
-            )}
-          </p>
-          <p className="text-xs text-muted">
-            {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 100%)
-          </p>
-          <p className="text-sm font-semibold text-espresso">
-            {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
-          </p>
-        </div>
-      );
-    }
-
-    if (sellingMode === "BY_PIECE" && "pricePerPcCzk" in preview) {
-      const p = preview as {
-        pricePerPcOrig: number;
-        pricePerPcCzk: number;
-        retailPerPc: number;
-        pricePerGramOrig?: number;
-        pricePerGramCzk?: number;
-      };
-      return (
-        <div className="p-3 rounded-xl border border-line bg-nude-50/50 space-y-1">
-          <p className="text-xs font-medium text-espresso">{t("pricePreview")}</p>
-          <p className="text-xs text-muted">
-            {t("purchasePricePerPiece")}: {p.pricePerPcOrig.toFixed(2)} {currSymbol}
-            {currency !== "CZK" && (
-              <> = {formatCzk(Math.round(p.pricePerPcCzk * 100))} Kc</>
-            )}
-          </p>
-          {p.pricePerGramCzk != null && (
-            <p className="text-xs text-muted">
-              {t("pricePerGramCzk")}: {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kc
-            </p>
+    return (
+      <div className="p-3 rounded-xl border border-line bg-nude-50/50 space-y-1">
+        <p className="text-xs font-medium text-espresso">{t("pricePreview")}</p>
+        <p className="text-xs text-muted">
+          {t("pricePerGramOrig")}: {p.pricePerGramOrig.toFixed(2)} {currSymbol}
+          {currency !== "CZK" && (
+            <> = {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kc</>
           )}
-          <p className="text-sm font-semibold text-espresso">
-            {t("retailPreview")}: {formatCzk(Math.round(p.retailPerPc * 100))} Kc/{t("perPiece")}
-          </p>
-        </div>
-      );
-    }
-
-    return null;
+        </p>
+        <p className="text-xs text-muted">
+          {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 100%)
+        </p>
+        <p className="text-sm font-semibold text-espresso">
+          {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
+        </p>
+        {sellingMode === "BY_PIECE" && p.pricePerPcCzk != null && p.retailPerPc != null && (
+          <>
+            <hr className="border-line my-1" />
+            <p className="text-xs text-muted">
+              {t("purchasePricePerPiece")}: {p.pricePerPcOrig?.toFixed(2)} {currSymbol}
+              {currency !== "CZK" && (
+                <> = {formatCzk(Math.round(p.pricePerPcCzk * 100))} Kc</>
+              )}
+            </p>
+            <p className="text-sm font-semibold text-espresso">
+              {t("retailPreview")}: {formatCzk(Math.round(p.retailPerPc * 100))} Kc/{t("perPiece")}
+            </p>
+          </>
+        )}
+      </div>
+    );
   }
 
   // Success screen
@@ -635,9 +609,6 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setSellingMode("BY_GRAM");
                 setTotalPieces("");
                 setPieceWeightGrams("");
-                setPurchasePricePerPiece("");
-                setPricePerPieceCzk("");
-                setRetailPricePerPieceCzk("");
                 setSupplierId("");
                 setPurchasePricePer100g("");
                 setTotalGrams("");
@@ -887,18 +858,16 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             {/* Exchange rate (hidden for CZK) */}
             <ExchangeRateField />
 
-            {/* Purchase price — BY_GRAM: per 100g in original currency */}
-            {sellingMode === "BY_GRAM" && (
-              <Input
-                label={`${t("purchasePricePer100g")} (${currency})`}
-                type="number"
-                value={purchasePricePer100g}
-                onChange={(e) => setPurchasePricePer100g(e.target.value)}
-                required
-                min={1}
-                step="0.01"
-              />
-            )}
+            {/* Purchase price per 100g — shared for both modes */}
+            <Input
+              label={`${t("purchasePricePer100g")} (${currency})`}
+              type="number"
+              value={purchasePricePer100g}
+              onChange={(e) => setPurchasePricePer100g(e.target.value)}
+              required
+              min={1}
+              step="0.01"
+            />
 
             {/* BY_PIECE fields */}
             {sellingMode === "BY_PIECE" && (
@@ -921,15 +890,6 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                     min={1}
                   />
                 </div>
-                <Input
-                  label={`${t("purchasePricePerPiece")} (${currency})`}
-                  type="number"
-                  value={purchasePricePerPiece}
-                  onChange={(e) => setPurchasePricePerPiece(e.target.value)}
-                  required
-                  min={1}
-                  step="0.01"
-                />
                 {totalPieces && pieceWeightGrams && (
                   <p className="text-xs text-muted">
                     {t("autoGrams")}: {parseInt(totalPieces) * parseInt(pieceWeightGrams)} g
