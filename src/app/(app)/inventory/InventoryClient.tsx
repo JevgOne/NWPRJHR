@@ -55,7 +55,6 @@ export function InventoryClient({
     dataUrl: string;
     category: string;
     lengthCm: number;
-    availableGrams: number;
   } | null>(null);
 
   const openQr = async (item: StockItem) => {
@@ -68,7 +67,6 @@ export function InventoryClient({
         dataUrl,
         category: item.product.category,
         lengthCm: item.lengthCm,
-        availableGrams: item.availableGrams,
       });
     } catch (e) {
       console.error("QR generation failed:", e);
@@ -379,12 +377,9 @@ export function InventoryClient({
               <button onClick={() => setQrModal(null)} className="text-muted hover:text-ink text-lg leading-none">&times;</button>
             </div>
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
-            <div className="mt-3 space-y-0.5 text-center">
-              <p className="text-sm font-medium text-ink">
-                {tCat(qrModal.category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
-              </p>
-              <p className="text-xs text-muted">{qrModal.availableGrams} g</p>
-            </div>
+            <p className="mt-3 text-sm font-medium text-ink text-center">
+              {tCat(qrModal.category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
+            </p>
             <button
               onClick={downloadQr}
               className="mt-4 w-full py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
