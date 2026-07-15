@@ -22,10 +22,9 @@ export async function createCreditNoteInTx(
   const { number, variableSymbol } = await getNextInvoiceNumber(tx);
 
   const itemsTotal = returnItems.reduce((sum, item) => sum + item.lineTotal, 0);
-  const subtotal = -itemsTotal;
-  const vatAmount = -roundHalereUp((itemsTotal * original.vatRate) / 10000);
-  const rawTotal = subtotal + vatAmount;
-  const total = -roundHalereUp(-rawTotal);
+  const total = -itemsTotal;
+  const vatAmount = -roundHalereUp((itemsTotal * original.vatRate) / 12100);
+  const subtotal = total - vatAmount;
 
   return tx.invoice.create({
     data: {

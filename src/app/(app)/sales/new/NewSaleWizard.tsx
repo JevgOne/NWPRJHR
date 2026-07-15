@@ -85,9 +85,9 @@ export function NewSaleWizard({
     discount && discount.percent > 0
       ? roundUp((subtotal * discount.percent) / 10000)
       : 0;
-  const totalBeforeVat = roundUp(subtotal - discountAmount);
-  const vatAmount = roundUp((totalBeforeVat * 2100) / 10000);
-  const totalAmount = roundUp(totalBeforeVat + vatAmount);
+  const totalAmount = roundUp(subtotal - discountAmount);
+  const vatAmount = roundUp((totalAmount * 2100) / 12100);
+  const totalBeforeVat = totalAmount - vatAmount;
 
   const fetchPricePreview = useCallback(
     async (variantId: string, grams: number, pieces: number) => {

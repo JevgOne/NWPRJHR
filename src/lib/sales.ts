@@ -111,11 +111,11 @@ export async function completeSale(
         );
       }
 
-      // 4. CALCULATE TOTALS
-      const totalBeforeVat = roundHalereUp(subtotal - discountAmount);
+      // 4. CALCULATE TOTALS (prices already include VAT)
+      const totalAmount = roundHalereUp(subtotal - discountAmount);
       const vatRate = 2100; // 21%
-      const vatAmount = roundHalereUp((totalBeforeVat * vatRate) / 10000);
-      const totalAmount = roundHalereUp(totalBeforeVat + vatAmount);
+      const vatAmount = roundHalereUp((totalAmount * vatRate) / 12100);
+      const totalBeforeVat = totalAmount - vatAmount;
 
       // 5. FIFO DEDUCT for each item
       let totalCostOfGoods = 0;
