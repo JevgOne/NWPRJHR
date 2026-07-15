@@ -770,7 +770,12 @@ async function ProductDetailView({
           {pricePerGram && (
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-ink">{formatCZK(pricePerGram)}{priceUnit}</span>
+                <span className="text-xl font-bold text-ink">
+                  {formatCZK(pricePerGram)}{priceUnit}
+                  {isByPiece && focusedVariant && (focusedVariant.availablePieces ?? 0) > 0 && focusedVariant.availableGrams > 0 && (
+                    <span className="text-sm font-normal text-muted ml-1">({Math.round(focusedVariant.availableGrams / focusedVariant.availablePieces!)} g)</span>
+                  )}
+                </span>
                 {tierBadge && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-xs font-medium">
                     {tierBadge}
@@ -900,7 +905,10 @@ async function ProductDetailView({
                         : focusedVariant.availableToOrder ? "text-amber-600" : "text-red-500"
                     }`}>
                       {(() => {
-                        if (focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.availablePieces ?? 0) > 0) return `${focusedVariant.availablePieces} ks ${t("productDetail.inStock").toLowerCase()}`;
+                        if (focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.availablePieces ?? 0) > 0) {
+                          const totalG = focusedVariant.availableGrams;
+                          return `${focusedVariant.availablePieces} ks ${t("productDetail.inStock").toLowerCase()}${totalG > 0 ? ` (${t("productDetail.totalGrams", { grams: totalG })})` : ""}`;
+                        }
                         if (focusedVariant.availableGrams > 0) return `${focusedVariant.availableGrams} g ${t("productDetail.inStock").toLowerCase()}`;
                         if (focusedVariant.availableToOrder) {
                           return focusedVariant.orderLeadDays
@@ -946,7 +954,9 @@ async function ProductDetailView({
                           : "text-red-500"
                         }`}>
                           {(() => {
-                            if (hasPieces && totalPieces > 0) return `${totalPieces} ks ${t("productDetail.inStock").toLowerCase()}`;
+                            if (hasPieces && totalPieces > 0) {
+                              return `${totalPieces} ks ${t("productDetail.inStock").toLowerCase()}${totalStock > 0 ? ` (${t("productDetail.totalGrams", { grams: totalStock })})` : ""}`;
+                            }
                             if (totalStock > 0) return `${totalStock} g ${t("productDetail.inStock").toLowerCase()}`;
                             if (hasAvailableToOrder) return t("productDetail.availableToOrderContact");
                             return t("inquiry.outOfStock");

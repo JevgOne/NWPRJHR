@@ -820,6 +820,7 @@
       "shadesCount": "{count, plural, one {1 колір} few {# кольори} other {# кольорів}}",
       "availabilityLabel": "Наявність",
       "inStock": "В наявності",
+      "totalGrams": "всього {grams} г",
       "availableToOrder": "На замовлення — доставка {days} днів",
       "availableToOrderContact": "На замовлення — зв'яжіться з нами",
       "availableLengths": "Доступні довжини",

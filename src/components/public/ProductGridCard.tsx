@@ -89,6 +89,9 @@ export function ProductGridCard({
   const isByPiece = v0?.sellingMode === "BY_PIECE";
   const retailPrice = isByPiece ? (v0?.retailPricePerPiece ?? 0) : (v0?.retailPricePerGram ?? 0);
   const retailPricePerGramForPiece = isByPiece ? (v0?.retailPricePerGram ?? 0) : 0;
+  const pieceWeight = isByPiece && (v0?.availablePieces ?? 0) > 0 && (v0?.availableGrams ?? 0) > 0
+    ? Math.round(v0!.availableGrams / v0!.availablePieces!)
+    : 0;
   const wholesalePrice = isByPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
   const stock = isByPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
   const inStock = stock > 0;
@@ -246,7 +249,10 @@ export function ProductGridCard({
             return (
               <div className="min-w-0">
                 <span className="text-[10px] text-muted line-through">{fmt(retailPrice)} Kc/{unit}</span>
-                <div className="text-sm font-bold text-rose">{fmt(b2b)} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
+                <div className="text-sm font-bold text-rose">
+                  {fmt(b2b)} Kc<span className="text-[10px] font-normal">/{unit}</span>
+                  {pieceWeight > 0 && <span className="text-[10px] font-normal ml-0.5">({pieceWeight} g)</span>}
+                </div>
                 {isByPiece && retailPricePerGramForPiece > 0 && (
                   <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
                 )}
@@ -258,6 +264,7 @@ export function ProductGridCard({
             <div className="min-w-0">
               <div className="text-sm font-bold text-ink">
                 {fmt(retailPrice)} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
+                {pieceWeight > 0 && <span className="text-[10px] font-normal text-muted ml-0.5">({pieceWeight} g)</span>}
               </div>
               {isByPiece && retailPricePerGramForPiece > 0 && (
                 <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>

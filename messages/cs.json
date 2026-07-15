@@ -820,6 +820,7 @@
       "shadesCount": "{count, plural, one {1 barva} few {# barvy} other {# barev}}",
       "availabilityLabel": "Dostupnost",
       "inStock": "Skladem",
+      "totalGrams": "celkem {grams} g",
       "availableToOrder": "Na objednávku — dodání {days} dní",
       "availableToOrderContact": "Na objednávku — kontaktujte nás",
       "availableLengths": "Dostupné délky",

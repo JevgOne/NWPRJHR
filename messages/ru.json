@@ -820,6 +820,7 @@
       "shadesCount": "{count, plural, one {1 цвет} few {# цвета} other {# цветов}}",
       "availabilityLabel": "Наличие",
       "inStock": "В наличии",
+      "totalGrams": "всего {grams} г",
       "availableToOrder": "Под заказ — доставка {days} дней",
       "availableToOrderContact": "Под заказ — свяжитесь с нами",
       "availableLengths": "Доступные длины",
