@@ -61,14 +61,24 @@ export async function POST(request: NextRequest) {
     // Add watermark to photos → always outputs WebP
     if (isPhoto) {
       const arrayBuffer = await file.arrayBuffer();
+      const inputBuffer = Buffer.from(arrayBuffer);
       try {
-        uploadBuffer = await addWatermark(Buffer.from(arrayBuffer));
+        uploadBuffer = await addWatermark(inputBuffer);
         contentType = "image/webp";
         outputExt = "webp";
       } catch (e) {
-        console.error("[upload/photos] watermark failed, uploading original:", e);
-        uploadBuffer = Buffer.from(arrayBuffer);
-        outputExt = "jpg";
+        console.error("[upload/photos] watermark failed, converting without watermark:", e);
+        try {
+          const sharp = (await import("sharp")).default;
+          uploadBuffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
+          contentType = "image/jpeg";
+          outputExt = "jpg";
+        } catch (e2) {
+          console.error("[upload/photos] sharp conversion also failed:", e2);
+          uploadBuffer = inputBuffer;
+          contentType = file.type || "application/octet-stream";
+          outputExt = fileExt || "bin";
+        }
       }
     }
 
