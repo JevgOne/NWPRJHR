@@ -470,9 +470,11 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
         <p className="text-xs text-muted">
           {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 100%)
         </p>
-        <p className="text-sm font-semibold text-espresso">
-          {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
-        </p>
+        {sellingMode !== "BY_PIECE" && (
+          <p className="text-sm font-semibold text-espresso">
+            {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
+          </p>
+        )}
         {sellingMode === "BY_PIECE" && p.pricePerPcCzk != null && p.retailPerPc != null && (
           <>
             <hr className="border-line my-1" />
