@@ -434,20 +434,9 @@ export function VariantTable({
               <button onClick={() => setQrModal(null)} className="text-muted hover:text-ink text-lg leading-none">&times;</button>
             </div>
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
-            <div className="mt-3 space-y-1 text-center">
-              <p className="text-sm font-medium text-ink">{productName}</p>
-              <p className="text-xs text-muted">
-                {qrModal.lengthCm} cm{(() => { const stock = stockMap.get(qrModal.variantId); return stock ? ` · ${stock.availableGrams} g` : ""; })()}
-              </p>
-              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${
-                category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
-                category === "LUXE" ? "bg-violet-100 text-violet-700" :
-                category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
-                "bg-red-100 text-red-700"
-              }`}>
-                {tCat(category.toLowerCase() as "virgin")}
-              </span>
-            </div>
+            <p className="mt-3 text-sm font-medium text-ink text-center">
+              {tCat(category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
+            </p>
             <button
               onClick={downloadQr}
               className="mt-4 w-full py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
