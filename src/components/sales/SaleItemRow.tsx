@@ -12,6 +12,7 @@ interface SaleItemData {
   pricePerGram: number;
   pricePerPiece?: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
+  sellByGrams?: boolean;
   lineTotal: number;
   availableGrams: number;
   availablePieces: number;
@@ -21,6 +22,7 @@ interface SaleItemRowProps {
   item: SaleItemData;
   onGramsChange: (grams: number) => void;
   onPiecesChange: (pieces: number) => void;
+  onToggleSellByGrams?: () => void;
   onRemove: () => void;
 }
 
@@ -35,6 +37,7 @@ export function SaleItemRow({
   item,
   onGramsChange,
   onPiecesChange,
+  onToggleSellByGrams,
   onRemove,
 }: SaleItemRowProps) {
   const t = useTranslations("sale");
@@ -42,7 +45,9 @@ export function SaleItemRow({
 
   const isByPiece = item.sellingMode === "BY_PIECE";
   const insufficientStock = isByPiece
-    ? item.pieces > item.availablePieces
+    ? item.sellByGrams
+      ? item.grams > item.availableGrams
+      : item.pieces > item.availablePieces
     : item.grams > item.availableGrams;
 
   return (
@@ -58,14 +63,37 @@ export function SaleItemRow({
       </div>
 
       {isByPiece ? (
-        <Input
-          label={t("enterPieces")}
-          type="number"
-          min={1}
-          value={item.pieces || ""}
-          onChange={(e) => onPiecesChange(parseInt(e.target.value) || 0)}
-          error={insufficientStock ? t("insufficientStock") : undefined}
-        />
+        <div className="space-y-2">
+          {onToggleSellByGrams && (
+            <button
+              type="button"
+              onClick={onToggleSellByGrams}
+              className="text-xs text-rose underline"
+            >
+              {item.sellByGrams ? t("sellByPieces") : t("sellByGrams")}
+            </button>
+          )}
+          {item.sellByGrams ? (
+            <Input
+              label={t("enterGrams")}
+              type="number"
+              min={1}
+              max={item.availableGrams}
+              value={item.grams || ""}
+              onChange={(e) => onGramsChange(parseInt(e.target.value) || 0)}
+              error={insufficientStock ? t("insufficientStock") : undefined}
+            />
+          ) : (
+            <Input
+              label={t("enterPieces")}
+              type="number"
+              min={1}
+              value={item.pieces || ""}
+              onChange={(e) => onPiecesChange(parseInt(e.target.value) || 0)}
+              error={insufficientStock ? t("insufficientStock") : undefined}
+            />
+          )}
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-2">
           <Input
@@ -90,7 +118,9 @@ export function SaleItemRow({
         <span className="text-muted">
           {t("availableStock")}:{" "}
           {isByPiece
-            ? `${item.availablePieces} ${tStock("pieces")}`
+            ? item.sellByGrams
+              ? `${item.availableGrams} ${tStock("grams")}`
+              : `${item.availablePieces} ${tStock("pieces")}`
             : `${item.availableGrams} ${tStock("grams")} / ${item.availablePieces} ${tStock("pieces")}`}
         </span>
       </div>
@@ -98,7 +128,9 @@ export function SaleItemRow({
       <div className="flex justify-between text-sm">
         <span className="text-muted">
           {isByPiece
-            ? `${formatCZK(item.pricePerPiece ?? 0)} CZK/${tStock("pieces")}`
+            ? item.sellByGrams
+              ? `${t("pricePerGram")}: ${formatCZK(item.pricePerGram)} CZK`
+              : `${formatCZK(item.pricePerPiece ?? 0)} CZK/${tStock("pieces")}`
             : `${t("pricePerGram")}: ${formatCZK(item.pricePerGram)} CZK`}
         </span>
         <span className="font-medium">

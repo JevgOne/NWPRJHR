@@ -33,7 +33,9 @@ export async function POST(request: NextRequest) {
   };
 
   if (pricing.sellingMode === "BY_PIECE") {
-    const lineTotal = roundHalereUp((pricing.pricePerPiece ?? 0) * (pieces ?? 0));
+    const lineTotal = (pieces ?? 0) > 0
+      ? roundHalereUp((pricing.pricePerPiece ?? 0) * (pieces ?? 0))
+      : roundHalereUp(pricing.pricePerGram * grams);
     return NextResponse.json({
       sellingMode: "BY_PIECE",
       pricePerPiece: pricing.pricePerPiece,

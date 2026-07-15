@@ -1279,7 +1279,9 @@
     "transferHint": "Faktura se vytvoří automaticky.",
     "promoHint": "Interní promo — vytvoří se interní doklad.",
     "writeoffHint": "Interní odpis — vytvoří se interní doklad.",
-    "totalSold": "Prodáno celkem"
+    "totalSold": "Prodáno celkem",
+    "sellByGrams": "Prodat po gramech",
+    "sellByPieces": "Prodat po kusech"
   },
   "customer": {
     "title": "Zákazníci",

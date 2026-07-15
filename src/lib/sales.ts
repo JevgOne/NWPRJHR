@@ -83,9 +83,9 @@ export async function completeSale(
             pricePerUnit = pricePerGram;
           }
 
-          const lineTotal = isByPiece
+          const lineTotal = (isByPiece && item.pieces > 0)
             ? roundHalereUp(pricePerUnit * item.pieces)
-            : roundHalereUp(pricePerUnit * item.grams);
+            : roundHalereUp(pricePerGram * item.grams);
 
           return {
             ...item,
@@ -142,9 +142,9 @@ export async function completeSale(
           const itemCost = fifo.purchasePricePerGramCZK * fifo.grams;
           totalCostOfGoods += itemCost;
 
-          const fifoLineTotal = item.sellingMode === "BY_PIECE"
+          const fifoLineTotal = (item.sellingMode === "BY_PIECE" && item.pieces > 0)
             ? roundHalereUp(item.pricePerUnit * fifo.pieces)
-            : roundHalereUp(item.pricePerUnit * fifo.grams);
+            : roundHalereUp(item.pricePerGram * fifo.grams);
 
           saleItemsData.push({
             variantId: item.variantId,

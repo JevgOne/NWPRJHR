@@ -28,6 +28,7 @@ interface SaleItem {
   pricePerGram: number;
   pricePerPiece?: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
+  sellByGrams?: boolean;
   lineTotal: number;
   availableGrams: number;
   availablePieces: number;
@@ -132,11 +133,12 @@ export function NewSaleWizard({
             variantLabel: label,
             grams: 0,
             pieces: 1,
-            pricePerGram: 0,
+            pricePerGram: piecePreview?.pricePerGram ?? preview?.pricePerGram ?? 0,
             pricePerPiece: piecePreview?.pricePerPiece ?? preview?.pricePerPiece ?? 0,
             sellingMode: "BY_PIECE",
+            sellByGrams: false,
             lineTotal: piecePreview?.lineTotal ?? 0,
-            availableGrams: 0,
+            availableGrams: piecePreview?.availableStock?.grams ?? preview?.availableStock?.grams ?? 0,
             availablePieces: piecePreview?.availableStock?.pieces ?? preview?.availableStock?.pieces ?? 0,
           },
         ]);
@@ -197,6 +199,23 @@ export function NewSaleWizard({
     [addItemFromVariantId, t]
   );
 
+  const toggleSellByGrams = useCallback((index: number) => {
+    setItems((prev) => {
+      const updated = [...prev];
+      const item = updated[index];
+      const nowByGrams = !item.sellByGrams;
+
+      updated[index] = {
+        ...item,
+        sellByGrams: nowByGrams,
+        grams: 0,
+        pieces: nowByGrams ? 0 : 1,
+        lineTotal: nowByGrams ? 0 : roundUp((item.pricePerPiece ?? 0) * 1),
+      };
+      return updated;
+    });
+  }, []);
+
   const updateItem = useCallback(
     async (index: number, updates: Partial<SaleItem>) => {
       setItems((prev) => {
@@ -204,10 +223,18 @@ export function NewSaleWizard({
         updated[index] = { ...updated[index], ...updates };
 
         if (updated[index].sellingMode === "BY_PIECE") {
-          if (updates.pieces !== undefined) {
-            updated[index].lineTotal = roundUp(
-              (updated[index].pricePerPiece ?? 0) * updated[index].pieces
-            );
+          if (updated[index].sellByGrams) {
+            if (updates.grams !== undefined) {
+              updated[index].lineTotal = roundUp(
+                updated[index].pricePerGram * updated[index].grams
+              );
+            }
+          } else {
+            if (updates.pieces !== undefined) {
+              updated[index].lineTotal = roundUp(
+                (updated[index].pricePerPiece ?? 0) * updated[index].pieces
+              );
+            }
           }
         } else if (updates.grams !== undefined) {
           updated[index].lineTotal = roundUp(
@@ -271,8 +298,8 @@ export function NewSaleWizard({
       receiptNumber: paymentType === "CASH" && receiptNumber ? receiptNumber : undefined,
       items: items.map((item) => ({
         variantId: item.variantId,
-        grams: item.grams,
-        pieces: item.pieces,
+        grams: item.sellByGrams ? item.grams : (item.sellingMode === "BY_PIECE" ? 0 : item.grams),
+        pieces: item.sellByGrams ? 0 : item.pieces,
       })),
       discount: discount
         ? {
@@ -313,7 +340,11 @@ export function NewSaleWizard({
     customerType &&
     (customerType === "SALON" ? !!salonId : true) &&
     items.length > 0 &&
-    items.every((i) => (i.sellingMode === "BY_PIECE" ? i.pieces > 0 : i.grams > 0)) &&
+    items.every((i) =>
+      i.sellingMode === "BY_PIECE"
+        ? i.sellByGrams ? i.grams > 0 : i.pieces > 0
+        : i.grams > 0
+    ) &&
     !submitting;
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
@@ -407,6 +438,7 @@ export function NewSaleWizard({
               item={item}
               onGramsChange={(g) => updateItem(i, { grams: g })}
               onPiecesChange={(p) => updateItem(i, { pieces: p })}
+              onToggleSellByGrams={item.sellingMode === "BY_PIECE" ? () => toggleSellByGrams(i) : undefined}
               onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
             />
           ))}
@@ -490,7 +522,9 @@ export function NewSaleWizard({
                   <div className="font-medium">{item.variantLabel}</div>
                   <div className="text-muted">
                     {item.sellingMode === "BY_PIECE"
-                      ? `${item.pieces} ${tStock("pieces")} @ ${formatCZK(item.pricePerPiece ?? 0)} CZK`
+                      ? item.sellByGrams
+                        ? `${item.grams} ${tStock("grams")} @ ${formatCZK(item.pricePerGram)} CZK/${tStock("grams")}`
+                        : `${item.pieces} ${tStock("pieces")} @ ${formatCZK(item.pricePerPiece ?? 0)} CZK`
                       : <>
                           {item.grams} {tStock("grams")}
                           {item.pieces > 0 && ` / ${item.pieces} ${tStock("pieces")}`}

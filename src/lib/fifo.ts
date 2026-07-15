@@ -86,9 +86,17 @@ export async function fifoDeduct(
       piecesRemaining -= piecesFromThis;
       gramsRemaining -= gramsFromThis;
     } else {
-      // Gram-based sale (loose hair): deduct grams only
+      // Gram-based sale (loose hair or partial from BY_PIECE): deduct grams
       gramsFromThis = Math.min(gramsRemaining, delivery.remainingGrams);
       gramsRemaining -= gramsFromThis;
+
+      // BY_PIECE: when all grams consumed from a piece, mark piece as consumed
+      if (delivery.remainingPieces > 0 && delivery.pieceWeightGrams) {
+        const gramsAfterDeduction = delivery.remainingGrams - gramsFromThis;
+        if (gramsAfterDeduction <= 0) {
+          piecesFromThis = delivery.remainingPieces;
+        }
+      }
     }
 
     if (gramsFromThis === 0 && piecesFromThis === 0) continue;
