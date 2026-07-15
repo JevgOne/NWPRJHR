@@ -20,6 +20,7 @@ interface ProductGridCardVariant {
   retailPricePerPiece?: number | null;
   wholesalePricePerPiece?: number | null;
   availablePieces?: number | null;
+  exclusivePieces?: number;
   availableToOrder?: boolean;
 }
 
@@ -87,14 +88,17 @@ export function ProductGridCard({
   const variantColor = v0?.color ?? null;
   const variantLength = v0?.lengthCm ?? null;
   const isByPiece = v0?.sellingMode === "BY_PIECE";
-  const retailPrice = isByPiece ? (v0?.retailPricePerPiece ?? 0) : (v0?.retailPricePerGram ?? 0);
+  const isExclusive = isByPiece && (v0?.exclusivePieces ?? 0) > 0;
+  // Non-exclusive BY_PIECE: show as grams on public web
+  const showAsPiece = isByPiece && isExclusive;
+  const retailPrice = showAsPiece ? (v0?.retailPricePerPiece ?? 0) : (v0?.retailPricePerGram ?? 0);
   const retailPricePerGramForPiece = isByPiece ? (v0?.retailPricePerGram ?? 0) : 0;
-  const pieceWeight = isByPiece && (v0?.availablePieces ?? 0) > 0 && (v0?.availableGrams ?? 0) > 0
+  const pieceWeight = showAsPiece && (v0?.availablePieces ?? 0) > 0 && (v0?.availableGrams ?? 0) > 0
     ? Math.round(v0!.availableGrams / v0!.availablePieces!)
     : 0;
-  const wholesalePrice = isByPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
-  const stock = isByPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
-  const inStock = stock > 0;
+  const wholesalePrice = showAsPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
+  const stock = showAsPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
+  const inStock = stock > 0 || (!showAsPiece && isByPiece && (v0?.availableGrams ?? 0) > 0);
   const canOrder = !inStock && !!v0?.availableToOrder;
 
   const href = `/offer/${p.slug ?? p.id}`;
@@ -240,7 +244,7 @@ export function ProductGridCard({
       <div className="flex items-end justify-between gap-1 mt-auto pt-1 border-t border-line/50">
         {(() => {
           if (retailPrice === 0) return null;
-          const unit = isByPiece ? "ks" : "g";
+          const unit = showAsPiece ? "ks" : "g";
           const fmt = (halere: number) => Math.round(halere / 100).toLocaleString("cs-CZ");
 
           if ((userRole === "SALON" || userRole === "HAIRDRESSER") && discountPct > 0) {
@@ -253,7 +257,7 @@ export function ProductGridCard({
                   {fmt(b2b)} Kc<span className="text-[10px] font-normal">/{unit}</span>
                   {pieceWeight > 0 && <span className="text-[10px] font-normal ml-0.5">({pieceWeight} g)</span>}
                 </div>
-                {isByPiece && retailPricePerGramForPiece > 0 && (
+                {showAsPiece && retailPricePerGramForPiece > 0 && (
                   <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
                 )}
               </div>
@@ -266,7 +270,7 @@ export function ProductGridCard({
                 {fmt(retailPrice)} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
                 {pieceWeight > 0 && <span className="text-[10px] font-normal text-muted ml-0.5">({pieceWeight} g)</span>}
               </div>
-              {isByPiece && retailPricePerGramForPiece > 0 && (
+              {showAsPiece && retailPricePerGramForPiece > 0 && (
                 <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
               )}
             </div>
@@ -277,12 +281,12 @@ export function ProductGridCard({
             inStock ? "text-emerald-600" : canOrder ? "text-amber-600" : "text-red-400"
           }`}>
             {inStock
-              ? `${stock} ${isByPiece ? "ks" : "g"}`
+              ? `${stock} ${showAsPiece ? "ks" : "g"}`
               : canOrder
                 ? t("inquiry.availableToOrderContact")
                 : t("inquiry.outOfStock")}
           </span>
-          {isByPiece && inStock && (v0?.availableGrams ?? 0) > 0 && (
+          {showAsPiece && inStock && (v0?.availableGrams ?? 0) > 0 && (
             <span className="text-[10px] text-muted">{v0!.availableGrams} g</span>
           )}
         </div>

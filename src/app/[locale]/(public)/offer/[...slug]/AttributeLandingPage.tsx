@@ -89,6 +89,7 @@ const getCachedAttributeProducts = unstable_cache(
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
+        exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
       })),
     }));
   },

@@ -22,6 +22,7 @@ interface PublicVariant {
   sellingMode?: "BY_GRAM" | "BY_PIECE";
   retailPricePerPiece?: number | null;
   availablePieces?: number | null;
+  exclusivePieces?: number;
 }
 
 interface PublicProduct {

@@ -128,6 +128,7 @@ const getCachedProductBySlug = unstable_cache(
         ...v,
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
+        exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
       })),
       photos: JSON.parse(product.photos || "[]") as string[],
     };
@@ -150,6 +151,7 @@ const getCachedProductById = unstable_cache(
         ...v,
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
+        exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
       })),
       photos: JSON.parse(product.photos || "[]") as string[],
     };
@@ -239,6 +241,7 @@ async function RelatedProducts({
       sellingMode: v.sellingMode as "BY_GRAM" | "BY_PIECE" | undefined,
       availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
       availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
+      exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
     })),
   }));
 
@@ -411,29 +414,39 @@ async function ProductDetailView({
     .filter((v) => v.retailPricePerGram > 0 || (v.pricePerPiece ?? 0) > 0)
     .map((v) => {
       const isByPiece = v.sellingMode === "BY_PIECE";
+      const vIsExclusive = isByPiece && (v.exclusivePieces ?? 0) > 0;
       let displayPrice: number;
-      if (isByPiece) {
+      let pieceDisplayPrice: number | undefined;
+      if (isByPiece && vIsExclusive) {
         const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
-        // Discount from margin: margin = retail / 2, discount = margin × pct
         displayPrice = discountPct > 0
           ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
           : retailPiece;
+        pieceDisplayPrice = displayPrice;
       } else {
+        // BY_GRAM or non-exclusive BY_PIECE — show per-gram price
         displayPrice = discountPct > 0
           ? roundHalereUp(v.retailPricePerGram - (v.retailPricePerGram * discountPct) / 20000)
           : v.retailPricePerGram;
+        if (isByPiece) {
+          const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+          pieceDisplayPrice = discountPct > 0
+            ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
+            : retailPiece;
+        }
       }
       return {
         id: v.id,
         lengthCm: v.lengthCm,
         color: v.color,
         pricePerGram: displayPrice,
-        retailPricePerGram: isByPiece ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
+        retailPricePerGram: (isByPiece && vIsExclusive) ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
         retailPricePerGramForPiece: isByPiece ? v.retailPricePerGram : 0,
         availableGrams: v.availableGrams,
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
-        pricePerPiece: isByPiece ? displayPrice : undefined,
+        pricePerPiece: pieceDisplayPrice,
         availablePieces: v.availablePieces,
+        exclusivePieces: v.exclusivePieces ?? 0,
         availableToOrder: v.availableToOrder,
         orderLeadDays: v.orderLeadDays,
       };
@@ -454,7 +467,12 @@ async function ProductDetailView({
   const isByPiece = focusedVariant
     ? focusedVariant.sellingMode === "BY_PIECE"
     : pickerVariants.some(v => v.sellingMode === "BY_PIECE");
-  const priceUnit = isByPiece ? "/ks" : "/g";
+  const isExclusive = isByPiece && (focusedVariant
+    ? (focusedVariant.exclusivePieces ?? 0) > 0
+    : pickerVariants.some(v => v.sellingMode === "BY_PIECE" && (v.exclusivePieces ?? 0) > 0));
+  // Non-exclusive BY_PIECE: show as grams on public web
+  const showAsPiece = isByPiece && isExclusive;
+  const priceUnit = showAsPiece ? "/ks" : "/g";
   const retailPricePerGram = focusedVariant
     ? (tierBadge ? focusedVariant.retailPricePerGram : null)
     : (tierBadge && pickerVariants.length > 0)
@@ -599,7 +617,7 @@ async function ProductDetailView({
     ...(pricePerGram && {
     offers: {
       "@type": "Offer",
-      price: isByPiece
+      price: showAsPiece
         ? (pricePerGram / 100).toFixed(2)
         : (priceTip100g! / 100).toFixed(2),
       priceCurrency: "CZK",
@@ -612,7 +630,7 @@ async function ProductDetailView({
         name: "Hairland",
         url: "https://www.hairland.cz",
       },
-      ...(!isByPiece && pricePerGram && {
+      ...(!showAsPiece && pricePerGram && {
         priceSpecification: {
           "@type": "UnitPriceSpecification",
           price: (pricePerGram / 100).toFixed(2),
@@ -772,7 +790,7 @@ async function ProductDetailView({
               <div className="flex items-center gap-2">
                 <span className="text-xl font-bold text-ink">
                   {formatCZK(pricePerGram)}{priceUnit}
-                  {isByPiece && focusedVariant && (focusedVariant.availablePieces ?? 0) > 0 && focusedVariant.availableGrams > 0 && (
+                  {showAsPiece && focusedVariant && (focusedVariant.availablePieces ?? 0) > 0 && focusedVariant.availableGrams > 0 && (
                     <span className="text-sm font-normal text-muted ml-1">({Math.round(focusedVariant.availableGrams / focusedVariant.availablePieces!)} g)</span>
                   )}
                 </span>
@@ -782,7 +800,7 @@ async function ProductDetailView({
                   </span>
                 )}
               </div>
-              {priceTip100g && !isByPiece && (
+              {priceTip100g && !showAsPiece && (
                 <p className="text-sm text-muted">
                   {t("productDetail.priceTip", { price: formatCZK(priceTip100g) })}
                 </p>
@@ -794,7 +812,7 @@ async function ProductDetailView({
                   <span>({t("productDetail.regularPrice")})</span>
                 </p>
               )}
-              {isByPiece && retailPricePerGramForPiece > 0 && (
+              {showAsPiece && retailPricePerGramForPiece > 0 && (
                 <p className="text-sm text-muted">({formatCZK(retailPricePerGramForPiece)}/g)</p>
               )}
             </div>
@@ -905,7 +923,8 @@ async function ProductDetailView({
                         : focusedVariant.availableToOrder ? "text-amber-600" : "text-red-500"
                     }`}>
                       {(() => {
-                        if (focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.availablePieces ?? 0) > 0) {
+                        const fvIsExclusive = focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.exclusivePieces ?? 0) > 0;
+                        if (fvIsExclusive && (focusedVariant.availablePieces ?? 0) > 0) {
                           const totalG = focusedVariant.availableGrams;
                           return `${focusedVariant.availablePieces} ks ${t("productDetail.inStock").toLowerCase()}${totalG > 0 ? ` (${t("productDetail.totalGrams", { grams: totalG })})` : ""}`;
                         }
@@ -941,7 +960,7 @@ async function ProductDetailView({
                 {(() => {
                   const totalStock = product.variants.reduce((sum, v) => sum + v.availableGrams, 0);
                   const totalPieces = product.variants.reduce((sum, v) => sum + (v.availablePieces ?? 0), 0);
-                  const hasPieces = product.variants.some(v => v.sellingMode === "BY_PIECE");
+                  const hasExclusivePieces = product.variants.some(v => v.sellingMode === "BY_PIECE" && (v.exclusivePieces ?? 0) > 0);
                   const hasAvailableToOrder = product.variants.some(v => v.availableToOrder);
                   return (
                     <div className="flex items-center gap-2.5">
@@ -954,7 +973,7 @@ async function ProductDetailView({
                           : "text-red-500"
                         }`}>
                           {(() => {
-                            if (hasPieces && totalPieces > 0) {
+                            if (hasExclusivePieces && totalPieces > 0) {
                               return `${totalPieces} ks ${t("productDetail.inStock").toLowerCase()}${totalStock > 0 ? ` (${t("productDetail.totalGrams", { grams: totalStock })})` : ""}`;
                             }
                             if (totalStock > 0) return `${totalStock} g ${t("productDetail.inStock").toLowerCase()}`;

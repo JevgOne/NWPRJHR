@@ -77,6 +77,7 @@ export const getCachedAllProducts = unstable_cache(
           pricePerPiece: v.pricePerPiece,
           wholesalePricePerPiece: v.pricePerPiece,
           availablePieces: stock?.availablePieces ?? 0,
+          exclusivePieces: stock?.exclusivePieces ?? 0,
         };
       }),
     }));

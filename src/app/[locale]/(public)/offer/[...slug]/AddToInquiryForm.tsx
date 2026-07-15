@@ -15,6 +15,7 @@ interface PickerVariant {
   sellingMode?: "BY_GRAM" | "BY_PIECE";
   pricePerPiece?: number;
   availablePieces?: number;
+  exclusivePieces?: number;
   availableToOrder?: boolean;
   orderLeadDays?: number | null;
 }
@@ -75,26 +76,30 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
     ? variants.find(v => v.color === selectedColor && v.lengthCm === selectedLength)
     : null;
   const isByPiece = selectedVariant?.sellingMode === "BY_PIECE";
-  const isCustomOrder = selectedVariant?.availableToOrder && (isByPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
-  const effectiveByGrams = isByPiece && inquiryUnit === "g";
+  const isExclusive = isByPiece && (selectedVariant?.exclusivePieces ?? 0) > 0;
+  const showAsPiece = isByPiece && isExclusive;
+  const isCustomOrder = selectedVariant?.availableToOrder && (showAsPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
+  const effectiveByGrams = showAsPiece && inquiryUnit === "g";
   const maxQty = isCustomOrder
     ? Infinity
     : effectiveByGrams
       ? (selectedVariant?.availableGrams ?? Infinity)
-      : isByPiece
+      : showAsPiece
         ? (selectedVariant?.availablePieces ?? Infinity)
         : (selectedVariant?.availableGrams ?? Infinity);
-  const qtyStep = isByPiece && !effectiveByGrams ? 1 : 50;
-  const minQty = isByPiece && !effectiveByGrams ? 1 : 50;
-  const unitLabel = isByPiece ? inquiryUnit : "g";
+  const qtyStep = showAsPiece && !effectiveByGrams ? 1 : 50;
+  const minQty = showAsPiece && !effectiveByGrams ? 1 : 50;
+  const unitLabel = showAsPiece ? inquiryUnit : "g";
 
   // Reset quantity when variant changes
   const prevVariantRef = useRef(selectedVariant);
   useEffect(() => {
     if (selectedVariant && selectedVariant !== prevVariantRef.current) {
       const isBP = selectedVariant.sellingMode === "BY_PIECE";
-      setQuantity(isBP ? 1 : 100);
-      setInquiryUnit(isBP ? "ks" : "g");
+      const isExcl = isBP && (selectedVariant.exclusivePieces ?? 0) > 0;
+      const showPiece = isBP && isExcl;
+      setQuantity(showPiece ? 1 : 100);
+      setInquiryUnit(showPiece ? "ks" : "g");
       prevVariantRef.current = selectedVariant;
     }
   }, [selectedVariant]);
@@ -107,7 +112,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
       lengthCm: selectedLength,
       color: selectedColor,
       quantity,
-      unit: isByPiece ? inquiryUnit : "g",
+      unit: showAsPiece ? inquiryUnit : "g",
     });
     setAdded(true);
     confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
@@ -164,7 +169,9 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
             {availableLengths.map((v) => {
               const isSelected = selectedLength === v.lengthCm;
               const vIsByPiece = v.sellingMode === "BY_PIECE";
-              const inStock = vIsByPiece ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0;
+              const vIsExclusive = vIsByPiece && (v.exclusivePieces ?? 0) > 0;
+              const vShowAsPiece = vIsByPiece && vIsExclusive;
+              const inStock = vShowAsPiece ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0;
               const canOrder = !inStock && !!v.availableToOrder;
               const isSelectable = inStock || canOrder;
               return (
@@ -183,7 +190,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
                 >
                   <div className="font-medium text-ink">{v.lengthCm} cm</div>
                   <div className="text-xs text-muted">
-                    {vIsByPiece
+                    {vShowAsPiece
                       ? `${formatPrice(v.pricePerPiece ?? 0)} Kc/ks`
                       : `${formatPrice(v.pricePerGram)} Kc/g`}
                   </div>
@@ -193,7 +200,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
                     : "text-red-400"
                   }`}>
                     {inStock
-                      ? (vIsByPiece ? `${v.availablePieces} ks` : `${v.availableGrams}g`)
+                      ? (vShowAsPiece ? `${v.availablePieces} ks` : `${v.availableGrams}g`)
                       : canOrder
                         ? (v.orderLeadDays
                           ? t("inquiry.availableToOrder", { days: v.orderLeadDays })
@@ -209,8 +216,8 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
         )}
       </div>
 
-      {/* BY_PIECE: ks/g toggle */}
-      {isByPiece && selectedLength && selectedColor && (
+      {/* BY_PIECE: ks/g toggle — only for exclusive pieces */}
+      {showAsPiece && selectedLength && selectedColor && (
         <div className="flex gap-2">
           <button
             type="button"
