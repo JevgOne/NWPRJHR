@@ -324,13 +324,17 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
     }
 
     const saleUrl = `${window.location.origin}/sales/new?variantId=${result.variantId}`;
-    const QRCode = await import("qrcode");
-    const dataUrl = await QRCode.toDataURL(saleUrl, {
-      errorCorrectionLevel: "M",
-      width: 200,
-      margin: 2,
-    });
-    setQrDataUrl(dataUrl);
+    try {
+      const QRCode = await import("qrcode");
+      const dataUrl = await QRCode.toDataURL(saleUrl, {
+        errorCorrectionLevel: "M",
+        width: 300,
+        margin: 2,
+      });
+      setQrDataUrl(dataUrl);
+    } catch (e) {
+      console.error("QR generation failed:", e);
+    }
     setSuccessData({
       productId: result.productId,
       productName: result.productName ?? "",
@@ -521,9 +525,9 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             <img
               src={qrDataUrl}
               alt="QR"
-              width={200}
-              height={200}
-              className="mx-auto"
+              width={300}
+              height={300}
+              className="mx-auto border border-line rounded-lg"
             />
           )}
           {successData.barcode && (
@@ -584,19 +588,20 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
           )}
 
           <div className="flex gap-3 pt-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                if (!qrDataUrl) return;
-                const link = document.createElement("a");
-                link.download = `qr-${successData.barcode || successData.productId}.png`;
-                link.href = qrDataUrl;
-                link.click();
-              }}
-            >
-              {t("downloadQr")}
-            </Button>
+            {qrDataUrl && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.download = `qr-${successData.barcode || successData.productId}.png`;
+                  link.href = qrDataUrl;
+                  link.click();
+                }}
+              >
+                {t("downloadQr")}
+              </Button>
+            )}
             <Button
               type="button"
               onClick={() => {
