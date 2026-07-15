@@ -77,7 +77,7 @@ export function VariantTable({
       const label = `${catLabel}, ${qrModal.lengthCm} cm`;
       const stock = stockMap.get(qrModal.variantId);
       const isByPiece = qrModal.sellingMode === "BY_PIECE";
-      const stockLabel = stock ? (isByPiece ? `${stock.availablePieces ?? 0} ks` : `${stock.availableGrams} g`) : "";
+      const stockLabel = stock ? `${stock.availableGrams} g` : "";
       const canvas = document.createElement("canvas");
       const pad = 20;
       const textH = stockLabel ? 50 : 30;
@@ -465,7 +465,7 @@ export function VariantTable({
                 const stock = stockMap.get(qrModal.variantId);
                 if (!stock) return null;
                 const isByPiece = qrModal.sellingMode === "BY_PIECE";
-                return <p className="text-xs text-muted">{isByPiece ? `${stock.availablePieces ?? 0} ks` : `${stock.availableGrams} g`}</p>;
+                return <p className="text-xs text-muted">{stock.availableGrams} g</p>;
               })()}
             </div>
             <button

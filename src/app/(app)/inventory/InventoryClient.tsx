@@ -84,7 +84,7 @@ export function InventoryClient({
     const img = new Image();
     img.onload = () => {
       const label = `${tCat(qrModal.category.toLowerCase() as "virgin")}, ${qrModal.lengthCm} cm`;
-      const stockLabel = qrModal.availablePieces > 0 ? `${qrModal.availablePieces} ks` : `${qrModal.availableGrams} g`;
+      const stockLabel = `${qrModal.availableGrams} g`;
       const canvas = document.createElement("canvas");
       const pad = 20;
       const textH = 50;
@@ -407,7 +407,7 @@ export function InventoryClient({
                 {tCat(qrModal.category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
               </p>
               <p className="text-xs text-muted">
-                {qrModal.availablePieces > 0 ? `${qrModal.availablePieces} ks` : `${qrModal.availableGrams} g`}
+                {qrModal.availableGrams} g
               </p>
             </div>
             <button
