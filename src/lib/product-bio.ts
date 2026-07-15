@@ -9,63 +9,11 @@ interface BioProductData {
   colorCount?: number;
 }
 
-const CAT_LABEL: Record<string, string> = {
-  VIRGIN: "panenské",
-  LUXE: "luxusní",
-  STANDARD: "kvalitní",
-  SALE: "akční",
-};
-
-const PROC_LABEL: Record<string, string> = {
-  CLIP_IN: "clip-in",
-  TAPE_IN: "tape-in",
-  KERATIN: "keratinové",
-  WEFT: "tresové",
-  MICRO_RING: "micro ring",
-  OTHER: "",
-};
-
 const CATEGORY_STORY: Record<string, string> = {
   VIRGIN: "Tyto vlasy vám zaručují absolutní jistotu kvality. Každý culík pochází od jedné ženy — nikdy nesmícháváme vlasy z různých zdrojů. Získáváte tak 100% panenské vlasy, které nikdy nebyly barvené ani chemicky ošetřené.",
   LUXE: "Luxusní vlasy s jemným šetrným ošetřením, které zachovává přirozenou strukturu a hedvábný vzhled. Ideální volba pro klientky, které chtějí luxusní výsledek za rozumnou cenu. Kvalitou se blíží panenskému vlasu, přitom nabízejí výborný poměr kvality a ceny.",
   STANDARD: "Kvalitní vlasy ošetřené moderními postupy pro přirozený vzhled a spolehlivou trvanlivost. Perfektní pro klientky, které hledají změnu bez velkých investic — ať už jde o první prodloužení nebo doplnění objemu.",
   SALE: "Vlasy za výhodnou akční cenu — skvělá příležitost vyzkoušet prodloužení nebo doplnit zásoby. Kvalita odpovídá vyšším kategoriím, cena je snížena díky omezené dostupnosti.",
-};
-
-const CATEGORY_BENEFITS: Record<string, string[]> = {
-  VIRGIN: [
-    "**Přirozenou jemnost a lesk**, který si zachovává původní strukturu",
-    "**Nejkvalitnější vlasy** v naší nabídce — prémiový produkt pro náročné zákaznice",
-    "**Možnost barvení** — vlasy lze barvit, tónovat i narovnat dle přání",
-    "**Dlouhá životnost** — až 24 měsíců při správné péči",
-    "**Možnost přeaplikace** — vlasy vydrží opakované použití",
-  ],
-  LUXE: [
-    "**Jemně ošetřené** s maximálně zachovanou strukturou",
-    "**Přirozený vzhled** nerozpoznatelný od vlastních vlasů",
-    "**Snadná údržba** a dlouhá životnost",
-    "**Vhodné pro barvení** a styling",
-    "**Výborný poměr** kvality a ceny",
-  ],
-  STANDARD: [
-    "**Přirozený vzhled** pro každodenní nošení",
-    "**Spolehlivá trvanlivost** a odolnost",
-    "**Snadná aplikace** a minimální údržba",
-    "**Výborný poměr** cena/výkon",
-  ],
-  SALE: [
-    "**Stejná kvalita** za zvýhodněnou cenu",
-    "**Ideální pro první vyzkoušení** prodloužení",
-    "**Omezená nabídka** — dokud jsou skladem",
-  ],
-};
-
-const ORIGIN_STORY: Record<string, string> = {
-  "Uzbekistán": "Uzbecké vlasy vynikají silnou strukturou, přirozenou hustotou a odolností. Skvěle drží tvar a barvu. Jsou oblíbené pro svou schopnost zvládnout i náročnější styling.",
-  "Ukrajina": "Ukrajinské vlasy patří k nejkvalitnějším na světě. Jemné, hedvábné a s přirozeným leskem, který vydrží. Jsou ideální pro klientky, které hledají ten nejpřirozenější vzhled.",
-  "Rusko": "Ruské vlasy jsou synonymem luxusu — jemná struktura, přirozený lesk a výjimečná trvanlivost. Každý pramen prošel pečlivým výběrem, aby splňoval ty nejpřísnější standardy.",
-  "Kazachstán": "Kazašské vlasy se vyznačují silnou strukturou a vysokou odolností. Výborně drží barvu i tvar. Jsou skvělou volbou pro klientky, které preferují plnější a odolnější vlasy.",
-  "Indie": "Indické vlasy nabízí skvělý poměr kvality a ceny. Hustá struktura a přirozený lesk jsou jejich poznávacím znakem.",
 };
 
 const PROCESSING_STORY: Record<string, string> = {
@@ -75,13 +23,6 @@ const PROCESSING_STORY: Record<string, string> = {
   WEFT: "**Tresové zpracování** zajišťuje rychlou aplikaci s maximálním objemem a hustotou. Vhodné pro zkušené kadeřnice, které chtějí dosáhnout dramatického efektu.",
   MICRO_RING: "Metoda **micro ring** využívá mikroskopické kroužky pro šetrnou aplikaci bez tepla a lepidla. Maximálně šetrné k vlastním vlasům.",
   OTHER: "",
-};
-
-const TEXTURE_NOTE: Record<string, string> = {
-  "Rovné": "Rovná struktura — hladký, elegantní vzhled s přirozeným leskem.",
-  "Mírně vlnité": "Mírně vlnitá struktura přidá jemný objem a přirozený pohyb. Vypadají jako vlasy po noci s copánky — effortless a žensky.",
-  "Vlnité": "Vlnitá struktura dodá dramatický objem a romantický vzhled. Krásně drží tvar bez potřeby kulmy.",
-  "Kudrnaté": "Kudrnatá struktura plná objemu a energie. Každý pramen je originál.",
 };
 
 export function generateProductBio(data: BioProductData): string {
@@ -96,26 +37,4 @@ export function generateProductBio(data: BioProductData): string {
   if (procStory) sections.push(procStory);
 
   return sections.join("\n\n");
-}
-
-export function generateProductBioShort(data: BioProductData): string {
-  const parts: string[] = [];
-
-  const cat = CAT_LABEL[data.category] ?? "";
-  const proc = PROC_LABEL[data.processingType] ?? "";
-  if (cat && proc) {
-    parts.push(`${cat.charAt(0).toUpperCase() + cat.slice(1)} ${proc} vlasy`);
-  } else if (cat) {
-    parts.push(`${cat.charAt(0).toUpperCase() + cat.slice(1)} vlasy`);
-  }
-
-  if (data.texture) parts.push(data.texture.toLowerCase());
-  if (data.colorTone) parts.push(data.colorTone.toLowerCase());
-  if (data.origin) parts.push(data.origin);
-
-  if (data.lengths && data.lengths.length > 1) {
-    parts.push(`${data.lengths[0]}–${data.lengths[data.lengths.length - 1]} cm`);
-  }
-
-  return parts.join(" | ");
 }

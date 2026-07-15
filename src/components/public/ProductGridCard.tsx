@@ -194,9 +194,6 @@ export function ProductGridCard({
         </div>
       )}
 
-      {/* 100% real hair claim */}
-      <span className="text-[9px] text-emerald-600 font-medium">✓ {t("productDetail.realHair")}</span>
-
       {/* Product name */}
       {isInteractive ? (
         <Link href={href}>
