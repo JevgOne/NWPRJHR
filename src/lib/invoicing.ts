@@ -273,12 +273,11 @@ export async function createCreditNote(
         (sum, item) => sum + item.lineTotal,
         0
       );
-      const subtotal = -itemsTotal;
+      const total = -itemsTotal;
       const vatAmount = -roundHalereUp(
-        (itemsTotal * original.vatRate) / 10000
+        (itemsTotal * original.vatRate) / 12100
       );
-      const rawTotal = subtotal + vatAmount;
-      const total = -roundHalereUp(-rawTotal);
+      const subtotal = total - vatAmount;
 
       const creditNote = await tx.invoice.create({
         data: {
