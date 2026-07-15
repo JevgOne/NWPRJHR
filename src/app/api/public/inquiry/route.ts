@@ -23,6 +23,7 @@ const inquirySchema = z.object({
   promoCode: z.string().max(50).optional().default(""),
   referralCode: z.string().max(50).optional().default(""),
   locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
+  customerPhotos: z.array(z.string().url().or(z.string().startsWith("/uploads/"))).max(3).optional().default([]),
   items: z.array(inquiryItemSchema).min(1).max(50),
 });
 
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, phone, salonName, message, promoCode, referralCode, locale, items } = parsed.data;
+  const { name, email, phone, salonName, message, promoCode, referralCode, locale, customerPhotos, items } = parsed.data;
 
   // Validate and increment promo code usage
   let appliedPromoCode: string | null = null;
@@ -97,6 +98,7 @@ export async function POST(request: NextRequest) {
         message: message || null,
         promoCode: appliedPromoCode,
         referralCode: referralCode || null,
+        customerPhotos: customerPhotos.length > 0 ? JSON.stringify(customerPhotos) : null,
         items: {
           create: items.map((item) => ({
             productId: item.productId,
@@ -153,6 +155,7 @@ export async function POST(request: NextRequest) {
         itemLines,
         "",
         message ? `Poznámka: ${message}` : null,
+        customerPhotos.length > 0 ? `\nFotky zákaznice: ${customerPhotos.length}` : null,
       ]
         .filter(Boolean)
         .join("\n"),

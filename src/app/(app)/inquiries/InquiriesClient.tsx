@@ -31,6 +31,7 @@ interface Inquiry {
   internalNote: string | null;
   contactedAt: string | null;
   completedAt: string | null;
+  customerPhotos: string | null;
   createdAt: string;
   items: InquiryItem[];
   subtotal: number;
@@ -338,6 +339,24 @@ export function InquiriesClient() {
                         </p>
                       </div>
                     )}
+
+                    {inq.customerPhotos && (() => {
+                      const photoUrls: string[] = JSON.parse(inq.customerPhotos);
+                      return photoUrls.length > 0 ? (
+                        <div className="mt-4">
+                          <p className="text-xs font-medium text-muted uppercase mb-2">
+                            {t("customerPhotos")}
+                          </p>
+                          <div className="flex gap-2 flex-wrap">
+                            {photoUrls.map((url, i) => (
+                              <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 rounded-lg overflow-hidden border border-line hover:ring-2 hover:ring-rose transition-all">
+                                <img src={url} alt="" className="w-full h-full object-cover" />
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null;
+                    })()}
 
                     {/* Edit / Note */}
                     <div className="mt-4 pt-4 border-t border-line">
