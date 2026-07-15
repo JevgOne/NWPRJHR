@@ -102,9 +102,9 @@ export async function POST(request: NextRequest) {
       const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
       product = await prisma.product.create({
         data: {
-          name: `${catNames.cs} ${data.origin} ${data.texture}`,
-          nameUk: `${catNames.uk} ${data.origin} ${data.texture}`,
-          nameRu: `${catNames.ru} ${data.origin} ${data.texture}`,
+          name: `${catNames.cs} — ${data.texture}`,
+          nameUk: `${catNames.uk} — ${data.texture}`,
+          nameRu: `${catNames.ru} — ${data.texture}`,
           category: data.category,
           processingType: "OTHER",
           origin: data.origin,
