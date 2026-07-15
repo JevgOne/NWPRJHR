@@ -56,6 +56,8 @@ export function InventoryClient({
     category: string;
     lengthCm: number;
     availableGrams: number;
+    availablePieces: number;
+    sellingMode: string;
   } | null>(null);
 
   const openQr = async (item: StockItem) => {
@@ -69,6 +71,8 @@ export function InventoryClient({
         category: item.product.category,
         lengthCm: item.lengthCm,
         availableGrams: item.availableGrams,
+        availablePieces: item.availablePieces,
+        sellingMode: "BY_GRAM", // inventory items don't have sellingMode directly
       });
     } catch (e) {
       console.error("QR generation failed:", e);
@@ -77,18 +81,37 @@ export function InventoryClient({
 
   const downloadQr = () => {
     if (!qrModal) return;
-    const [header, b64] = qrModal.dataUrl.split(",");
-    const mime = header.match(/:(.*?);/)?.[1] ?? "image/png";
-    const bin = atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-    const blob = new Blob([arr], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = `qr-${qrModal.variantId}.png`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
+    const img = new Image();
+    img.onload = () => {
+      const label = `${tCat(qrModal.category.toLowerCase() as "virgin")}, ${qrModal.lengthCm} cm`;
+      const stockLabel = qrModal.availablePieces > 0 ? `${qrModal.availablePieces} ks` : `${qrModal.availableGrams} g`;
+      const canvas = document.createElement("canvas");
+      const pad = 20;
+      const textH = 50;
+      canvas.width = img.width + pad * 2;
+      canvas.height = img.height + pad * 2 + textH;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, pad, pad);
+      ctx.fillStyle = "#1a1a1a";
+      ctx.font = "bold 16px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(label, canvas.width / 2, img.height + pad + 22);
+      ctx.fillStyle = "#888";
+      ctx.font = "14px Arial, sans-serif";
+      ctx.fillText(stockLabel, canvas.width / 2, img.height + pad + 42);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = `qr-${qrModal.variantId}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    };
+    img.src = qrModal.dataUrl;
   };
 
   // Extract filter options
@@ -383,7 +406,9 @@ export function InventoryClient({
               <p className="text-sm font-medium text-ink">
                 {tCat(qrModal.category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
               </p>
-              <p className="text-xs text-muted">{qrModal.availableGrams} g</p>
+              <p className="text-xs text-muted">
+                {qrModal.availablePieces > 0 ? `${qrModal.availablePieces} ks` : `${qrModal.availableGrams} g`}
+              </p>
             </div>
             <button
               onClick={downloadQr}

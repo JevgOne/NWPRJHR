@@ -55,6 +55,7 @@ export function VariantTable({
     variantId: string;
     dataUrl: string;
     lengthCm: number;
+    sellingMode: string;
   } | null>(null);
 
   const openQr = async (variant: VariantData) => {
@@ -62,7 +63,7 @@ export function VariantTable({
       const QRCode = await import("qrcode");
       const url = `${window.location.origin}/sales/new?variantId=${variant.id}`;
       const dataUrl = await QRCode.toDataURL(url, { width: 300, errorCorrectionLevel: "M", margin: 2 });
-      setQrModal({ variantId: variant.id, dataUrl, lengthCm: variant.lengthCm });
+      setQrModal({ variantId: variant.id, dataUrl, lengthCm: variant.lengthCm, sellingMode: variant.sellingMode ?? "BY_GRAM" });
     } catch (e) {
       console.error("QR generation failed:", e);
     }
@@ -70,18 +71,42 @@ export function VariantTable({
 
   const downloadQr = () => {
     if (!qrModal) return;
-    const [header, b64] = qrModal.dataUrl.split(",");
-    const mime = header.match(/:(.*?);/)?.[1] ?? "image/png";
-    const bin = atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-    const blob = new Blob([arr], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = `qr-${qrModal.variantId}.png`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
+    const img = new Image();
+    img.onload = () => {
+      const catLabel = tCat(category.toLowerCase() as "virgin");
+      const label = `${catLabel}, ${qrModal.lengthCm} cm`;
+      const stock = stockMap.get(qrModal.variantId);
+      const isByPiece = qrModal.sellingMode === "BY_PIECE";
+      const stockLabel = stock ? (isByPiece ? `${stock.availablePieces ?? 0} ks` : `${stock.availableGrams} g`) : "";
+      const canvas = document.createElement("canvas");
+      const pad = 20;
+      const textH = stockLabel ? 50 : 30;
+      canvas.width = img.width + pad * 2;
+      canvas.height = img.height + pad * 2 + textH;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, pad, pad);
+      ctx.fillStyle = "#1a1a1a";
+      ctx.font = "bold 16px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(label, canvas.width / 2, img.height + pad + 22);
+      if (stockLabel) {
+        ctx.fillStyle = "#888";
+        ctx.font = "14px Arial, sans-serif";
+        ctx.fillText(stockLabel, canvas.width / 2, img.height + pad + 42);
+      }
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = `qr-${qrModal.variantId}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    };
+    img.src = qrModal.dataUrl;
   };
 
   useEffect(() => {
@@ -436,7 +461,12 @@ export function VariantTable({
               <p className="text-sm font-medium text-ink">
                 {tCat(category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
               </p>
-              {(() => { const stock = stockMap.get(qrModal.variantId); return stock ? <p className="text-xs text-muted">{stock.availableGrams} g</p> : null; })()}
+              {(() => {
+                const stock = stockMap.get(qrModal.variantId);
+                if (!stock) return null;
+                const isByPiece = qrModal.sellingMode === "BY_PIECE";
+                return <p className="text-xs text-muted">{isByPiece ? `${stock.availablePieces ?? 0} ks` : `${stock.availableGrams} g`}</p>;
+              })()}
             </div>
             <button
               onClick={downloadQr}
