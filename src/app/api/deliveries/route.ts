@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { stockInSchema, newStockInSchema } from "@/lib/validations/delivery";
@@ -203,6 +204,8 @@ export async function POST(request: NextRequest) {
       ipAddress: getClientIp(request),
     });
 
+    revalidatePath("/inventory");
+
     return NextResponse.json(
       { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },
       { status: 201 }
@@ -248,6 +251,8 @@ export async function POST(request: NextRequest) {
     detail: { variantId: data.variantId, totalGrams: data.totalGrams, productName: variant?.product.name },
     ipAddress: getClientIp(request),
   });
+
+  revalidatePath("/inventory");
 
   return NextResponse.json(
     { ...delivery, productId: variant?.productId, productName: variant?.product.name, productSlug: variant?.product.slug },
