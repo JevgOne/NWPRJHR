@@ -238,18 +238,17 @@ export function ProductGridCard({
         {(() => {
           if (retailPrice === 0) return null;
           const unit = isByPiece ? "ks" : "g";
-          const priceDisplay = (retailPrice / 100).toFixed(0);
+          const fmt = (halere: number) => Math.round(halere / 100).toLocaleString("cs-CZ");
 
           if ((userRole === "SALON" || userRole === "HAIRDRESSER") && discountPct > 0) {
             // Discount from margin (margin = retail / 2 with 100% markup)
             const b2b = Math.ceil(retailPrice - (retailPrice * discountPct) / 20000);
-            const b2bDisplay = (b2b / 100).toFixed(0);
             return (
               <div className="min-w-0">
-                <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/{unit}</span>
-                <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
+                <span className="text-[10px] text-muted line-through">{fmt(retailPrice)} Kc/{unit}</span>
+                <div className="text-sm font-bold text-rose">{fmt(b2b)} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
                 {isByPiece && retailPricePerGramForPiece > 0 && (
-                  <div className="text-[10px] text-muted">({(retailPricePerGramForPiece / 100).toFixed(0)} Kc/g)</div>
+                  <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
                 )}
               </div>
             );
@@ -258,23 +257,28 @@ export function ProductGridCard({
           return (
             <div className="min-w-0">
               <div className="text-sm font-bold text-ink">
-                {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
+                {fmt(retailPrice)} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
               </div>
               {isByPiece && retailPricePerGramForPiece > 0 && (
-                <div className="text-[10px] text-muted">({(retailPricePerGramForPiece / 100).toFixed(0)} Kc/g)</div>
+                <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
               )}
             </div>
           );
         })()}
-        <span className={`text-[10px] font-medium flex-shrink-0 ${
-          inStock ? "text-emerald-600" : canOrder ? "text-amber-600" : "text-red-400"
-        }`}>
-          {inStock
-            ? `${stock} ${isByPiece ? "ks" : "g"}`
-            : canOrder
-              ? t("inquiry.availableToOrderContact")
-              : t("inquiry.outOfStock")}
-        </span>
+        <div className="flex flex-col items-end flex-shrink-0">
+          <span className={`text-[10px] font-medium ${
+            inStock ? "text-emerald-600" : canOrder ? "text-amber-600" : "text-red-400"
+          }`}>
+            {inStock
+              ? `${stock} ${isByPiece ? "ks" : "g"}`
+              : canOrder
+                ? t("inquiry.availableToOrderContact")
+                : t("inquiry.outOfStock")}
+          </span>
+          {isByPiece && inStock && (v0?.availableGrams ?? 0) > 0 && (
+            <span className="text-[10px] text-muted">{v0!.availableGrams} g</span>
+          )}
+        </div>
       </div>
     </div>
   );
