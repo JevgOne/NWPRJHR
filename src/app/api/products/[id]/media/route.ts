@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import { put } from "@vercel/blob";
 import { addWatermark } from "@/lib/watermark";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const MAX_PHOTO_SIZE = 15 * 1024 * 1024; // 15MB (HEIC files are larger)
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB

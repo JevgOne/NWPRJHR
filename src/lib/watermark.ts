@@ -1,5 +1,3 @@
-import sharp from "sharp";
-
 /**
  * Generate SVG text watermark "www.hairland.cz" sized to the image.
  * Semi-transparent white text in bottom-right corner.
@@ -27,6 +25,7 @@ function createWatermarkSvg(imgWidth: number): Buffer {
  * Returns WebP buffer.
  */
 export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
+  const sharp = (await import("sharp")).default;
   const image = sharp(imageBuffer);
   const metadata = await image.metadata();
   const width = metadata.width ?? 800;
