@@ -70,11 +70,10 @@ export async function POST(
     return NextResponse.json({ error: "No files provided" }, { status: 400 });
 
   const existingPhotos: string[] = JSON.parse(product.photos || "[]");
-  const newPhotoUrls: string[] = [];
-  let videoUrl: string | null = product.video;
 
+  // 1. Validate all files before processing
+  let photoCount = 0;
   for (const file of files) {
-    // Check type by MIME or fall back to extension for HEIC
     const fileType = file.type || "";
     const fileExt = file.name.split(".").pop()?.toLowerCase() ?? "";
     const isHeic = fileExt === "heic" || fileExt === "heif" || fileType === "image/heic" || fileType === "image/heif";
@@ -100,31 +99,62 @@ export async function POST(
       );
     }
 
-    if (!isVideo && existingPhotos.length + newPhotoUrls.length >= 6) {
-      return NextResponse.json(
-        { error: "Max 6 fotek na produkt" },
-        { status: 400 }
-      );
-    }
+    if (isPhoto) photoCount++;
+  }
+
+  if (existingPhotos.length + photoCount > 6) {
+    return NextResponse.json(
+      { error: "Max 6 fotek na produkt" },
+      { status: 400 }
+    );
+  }
+
+  // 2. Process all files in parallel
+  const uploads = files.map(async (file) => {
+    const fileType = file.type || "";
+    const fileExt = file.name.split(".").pop()?.toLowerCase() ?? "";
+    const isVideo =
+      VIDEO_TYPES.includes(fileType) ||
+      fileExt === "mov" ||
+      fileExt === "mp4" ||
+      fileExt === "webm";
 
     if (isVideo) {
-      // Videos: upload as-is
       const ext = fileExt || "mp4";
       const safeName = `videos/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
       const blob = await put(safeName, file, {
         access: "public",
         contentType: fileType || "video/mp4",
       });
-      videoUrl = blob.url;
+      return { url: blob.url, isVideo: true };
     } else {
-      // Photos: process through sharp (HEIC→WebP, watermark)
       const { buffer, contentType, ext } = await processPhoto(file);
       const safeName = `products/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
       const blob = await put(safeName, buffer, {
         access: "public",
         contentType,
       });
-      newPhotoUrls.push(blob.url);
+      return { url: blob.url, isVideo: false };
+    }
+  });
+
+  let results: { url: string; isVideo: boolean }[];
+  try {
+    results = await Promise.all(uploads);
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Upload failed" },
+      { status: 500 }
+    );
+  }
+
+  const newPhotoUrls: string[] = [];
+  let videoUrl: string | null = product.video;
+  for (const r of results) {
+    if (r.isVideo) {
+      videoUrl = r.url;
+    } else {
+      newPhotoUrls.push(r.url);
     }
   }
 
