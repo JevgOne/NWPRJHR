@@ -25,7 +25,9 @@
     "done": "Hotovo",
     "copy": "Kopírovat",
     "copied": "Zkopírováno!",
-    "close": "Zavřít"
+    "close": "Zavřít",
+    "show": "Zobrazit",
+    "hide": "Skrýt"
   },
   "auth": {
     "login": "Přihlášení",
@@ -165,7 +167,29 @@
     "legendRetailLabel": "prodejní",
     "legendCostLabel": "nákupní",
     "legendMarginLabel": "marže",
-    "legendClickToEdit": "Klikni na cenu pro úpravu"
+    "legendClickToEdit": "Klikni na cenu pro úpravu",
+    "editProduct": "Upravit produkt",
+    "nameCz": "Název (CZ)",
+    "nameUk": "Název (UK)",
+    "nameRu": "Název (RU)",
+    "category": "Kategorie",
+    "processingType": "Typ zpracování",
+    "descriptionCz": "Popis (CZ)",
+    "descriptionUk": "Popis (UK)",
+    "descriptionRu": "Popis (RU)",
+    "deliveries": "Dodávky",
+    "noDeliveries": "Žádné dodávky",
+    "variant": "Varianta",
+    "supplier": "Dodavatel",
+    "date": "Datum",
+    "initial": "Počáteční",
+    "remaining": "Zbývá",
+    "purchasePrice": "Nákupní cena",
+    "barcode": "Čárový kód",
+    "note": "Poznámka",
+    "deactivate": "Deaktivovat",
+    "reactivate": "Aktivovat",
+    "cannotDeleteDelivery": "Nelze smazat — částečně spotřebováno"
   },
   "colorTone": {
     "blond": "Blond",

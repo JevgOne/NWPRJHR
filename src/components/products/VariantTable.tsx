@@ -335,12 +335,34 @@ export function VariantTable({
                       );
                     })()}
 
-                    {/* Selling mode badge */}
-                    {isByPiece && (
+                    {/* Selling mode toggle (owner only) */}
+                    {isOwner ? (
+                      <button
+                        className="inline-flex items-center mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose/10 text-rose hover:bg-rose/20 transition-colors"
+                        onClick={async () => {
+                          const newMode = isByPiece ? "BY_GRAM" : "BY_PIECE";
+                          setSaving(variant.id);
+                          try {
+                            await fetch(`/api/variants/${variant.id}`, {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ sellingMode: newMode }),
+                            });
+                            router.refresh();
+                          } finally {
+                            setSaving(null);
+                          }
+                        }}
+                        disabled={isSaving}
+                        title={`${isByPiece ? "BY_PIECE" : "BY_GRAM"} → click to toggle`}
+                      >
+                        {isByPiece ? "ks" : "g"}
+                      </button>
+                    ) : isByPiece ? (
                       <span className="inline-flex items-center mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose/10 text-rose">
                         ks
                       </span>
-                    )}
+                    ) : null}
 
                     {/* Stock badge */}
                     {stock && (
@@ -428,6 +450,50 @@ export function VariantTable({
                             }}
                             disabled={isSaving}
                           />
+                        )}
+                      </div>
+                    )}
+
+                    {/* Deactivate / Reactivate */}
+                    {isOwner && (
+                      <div className="mt-1.5">
+                        {variant.active ? (
+                          <button
+                            className="text-[10px] text-red-400 hover:text-red-600 transition-colors"
+                            onClick={async () => {
+                              if (!confirm("Deaktivovat variantu?")) return;
+                              setSaving(variant.id);
+                              try {
+                                await fetch(`/api/variants/${variant.id}`, { method: "DELETE" });
+                                router.refresh();
+                              } finally {
+                                setSaving(null);
+                              }
+                            }}
+                            disabled={isSaving}
+                          >
+                            {t("product.deactivate")}
+                          </button>
+                        ) : (
+                          <button
+                            className="text-[10px] text-emerald-600 hover:text-emerald-700 transition-colors"
+                            onClick={async () => {
+                              setSaving(variant.id);
+                              try {
+                                await fetch(`/api/variants/${variant.id}`, {
+                                  method: "PUT",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ active: true }),
+                                });
+                                router.refresh();
+                              } finally {
+                                setSaving(null);
+                              }
+                            }}
+                            disabled={isSaving}
+                          >
+                            {t("product.reactivate")}
+                          </button>
                         )}
                       </div>
                     )}

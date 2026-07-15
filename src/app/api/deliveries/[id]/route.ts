@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { deliveryUpdateSchema } from "@/lib/validations/delivery";
 import { serializeDeliveryForRole } from "@/lib/api/delivery-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { invalidateStockCache } from "@/lib/stock";
 
 export async function GET(
   _request: NextRequest,
@@ -104,4 +106,64 @@ export async function PUT(
   });
 
   return NextResponse.json(delivery);
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (session.user.role !== "OWNER")
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const { id } = await params;
+
+  const delivery = await prisma.delivery.findUnique({
+    where: { id },
+    include: { variant: { select: { productId: true } } },
+  });
+  if (!delivery)
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Allow deletion only if:
+  // 1. Nothing sold yet (remaining === initial)
+  // 2. OR fully consumed (remaining === 0)
+  const isUntouched = delivery.remainingGrams === delivery.initialGrams
+    && delivery.remainingPieces === delivery.initialPieces;
+  const isFullyConsumed = delivery.remainingGrams === 0 && delivery.remainingPieces === 0;
+
+  if (!isUntouched && !isFullyConsumed) {
+    return NextResponse.json(
+      { error: "Cannot delete delivery with partially consumed stock" },
+      { status: 409 }
+    );
+  }
+
+  // Delete related stock movements first, then the delivery
+  await prisma.stockMovement.deleteMany({ where: { deliveryId: id } });
+  await prisma.delivery.delete({ where: { id } });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "Delivery",
+    entityId: id,
+    detail: {
+      initialGrams: delivery.initialGrams,
+      remainingGrams: delivery.remainingGrams,
+      initialPieces: delivery.initialPieces,
+      remainingPieces: delivery.remainingPieces,
+      isUntouched,
+      isFullyConsumed,
+    },
+    ipAddress: getClientIp(request),
+  });
+
+  invalidateStockCache();
+  revalidatePath("/inventory");
+  revalidateTag("products", "max");
+  return NextResponse.json({ ok: true });
 }

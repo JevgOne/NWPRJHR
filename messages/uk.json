@@ -25,7 +25,9 @@
     "done": "Готово",
     "copy": "Копіювати",
     "copied": "Скопійовано!",
-    "close": "Закрити"
+    "close": "Закрити",
+    "show": "Показати",
+    "hide": "Сховати"
   },
   "auth": {
     "login": "Вхід",
@@ -165,7 +167,29 @@
     "legendRetailLabel": "продажна",
     "legendCostLabel": "закупівельна",
     "legendMarginLabel": "маржа",
-    "legendClickToEdit": "Натисніть на ціну для редагування"
+    "legendClickToEdit": "Натисніть на ціну для редагування",
+    "editProduct": "Редагувати продукт",
+    "nameCz": "Назва (CZ)",
+    "nameUk": "Назва (UK)",
+    "nameRu": "Назва (RU)",
+    "category": "Категорія",
+    "processingType": "Тип обробки",
+    "descriptionCz": "Опис (CZ)",
+    "descriptionUk": "Опис (UK)",
+    "descriptionRu": "Опис (RU)",
+    "deliveries": "Поставки",
+    "noDeliveries": "Немає поставок",
+    "variant": "Варіант",
+    "supplier": "Постачальник",
+    "date": "Дата",
+    "initial": "Початковий",
+    "remaining": "Залишок",
+    "purchasePrice": "Закупівельна ціна",
+    "barcode": "Штрих-код",
+    "note": "Примітка",
+    "deactivate": "Деактивувати",
+    "reactivate": "Активувати",
+    "cannotDeleteDelivery": "Не можна видалити — частково використано"
   },
   "colorTone": {
     "blond": "Блонд",

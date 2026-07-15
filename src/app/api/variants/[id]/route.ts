@@ -30,6 +30,27 @@ export async function PUT(
 
   const data: Record<string, unknown> = { ...parsed.data };
 
+  // Validate uniqueness when lengthCm or color changes
+  if (parsed.data.lengthCm !== undefined || parsed.data.color !== undefined) {
+    const newLength = parsed.data.lengthCm ?? existing.lengthCm;
+    const newColor = parsed.data.color ?? existing.color;
+    const duplicate = await prisma.variant.findUnique({
+      where: {
+        productId_lengthCm_color: {
+          productId: existing.productId,
+          lengthCm: newLength,
+          color: newColor,
+        },
+      },
+    });
+    if (duplicate && duplicate.id !== id) {
+      return NextResponse.json(
+        { error: "Variant with this length and color already exists" },
+        { status: 409 }
+      );
+    }
+  }
+
   // Keep wholesalePricePerGram in sync with retailPricePerGram
   if (parsed.data.retailPricePerGram !== undefined) {
     data.wholesalePricePerGram = parsed.data.retailPricePerGram;

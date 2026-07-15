@@ -51,6 +51,8 @@ export const createVariantsSchema = z.object({
 });
 
 export const updateVariantSchema = z.object({
+  lengthCm: z.number().int().positive().max(150).optional(),
+  color: z.string().min(1).max(100).optional(),
   costPricePerGram: z.number().int().min(0).optional(),
   wholesalePricePerGram: z.number().int().positive().optional(),
   retailPricePerGram: z.number().int().positive().optional(),

@@ -25,7 +25,9 @@
     "done": "Готово",
     "copy": "Копировать",
     "copied": "Скопировано!",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "show": "Показать",
+    "hide": "Скрыть"
   },
   "auth": {
     "login": "Вход",
@@ -165,7 +167,29 @@
     "legendRetailLabel": "продажная",
     "legendCostLabel": "закупочная",
     "legendMarginLabel": "маржа",
-    "legendClickToEdit": "Нажмите на цену для редактирования"
+    "legendClickToEdit": "Нажмите на цену для редактирования",
+    "editProduct": "Редактировать продукт",
+    "nameCz": "Название (CZ)",
+    "nameUk": "Название (UK)",
+    "nameRu": "Название (RU)",
+    "category": "Категория",
+    "processingType": "Тип обработки",
+    "descriptionCz": "Описание (CZ)",
+    "descriptionUk": "Описание (UK)",
+    "descriptionRu": "Описание (RU)",
+    "deliveries": "Поставки",
+    "noDeliveries": "Нет поставок",
+    "variant": "Вариант",
+    "supplier": "Поставщик",
+    "date": "Дата",
+    "initial": "Начальный",
+    "remaining": "Остаток",
+    "purchasePrice": "Закупочная цена",
+    "barcode": "Штрих-код",
+    "note": "Примечание",
+    "deactivate": "Деактивировать",
+    "reactivate": "Активировать",
+    "cannotDeleteDelivery": "Нельзя удалить — частично использовано"
   },
   "colorTone": {
     "blond": "Блонд",

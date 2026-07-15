@@ -96,6 +96,9 @@ export function serializeProductForRole(
     video: product.video,
     archived: product.archived,
     slug: product.slug,
+    metaTitle: product.metaTitle,
+    metaDescription: product.metaDescription,
+    ogImage: product.ogImage,
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
   };
