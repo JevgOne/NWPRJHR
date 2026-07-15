@@ -895,7 +895,9 @@
       "promoApplied": "Kód bude aplikován",
       "promoRemove": "Odebrat",
       "promoInvalid": "Neplatný kód",
-      "photoSoon": "Foto připravujeme"
+      "photoSoon": "Foto připravujeme",
+      "byPiece": "Po kusech",
+      "byGram": "Po gramech"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",
