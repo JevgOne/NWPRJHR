@@ -29,6 +29,7 @@ interface VariantRow {
 
 export function CreateProductForm() {
   const t = useTranslations();
+  const tColors = useTranslations("public.colors");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,9 +48,28 @@ export function CreateProductForm() {
   const textureRef = useRef<HTMLDivElement>(null);
   const colorToneRef = useRef<HTMLDivElement>(null);
 
+  // Pricing state
+  const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
+  const [costPrice, setCostPrice] = useState("");
+  const [retailPrice, setRetailPrice] = useState("");
+  const [retailManual, setRetailManual] = useState(false);
+
+  const isByPiece = sellingMode === "BY_PIECE";
+
   // Auto-generated name preview
   const catNames = CATEGORY_NAMES[category] ?? CATEGORY_NAMES.VIRGIN;
   const namePreview = texture ? `${catNames.cs} — ${texture}` : catNames.cs;
+
+  // Price preview
+  const retailPreview = isByPiece
+    ? (parseFloat(retailPrice) || 0)
+    : (parseFloat(retailPrice) || 0) * 100;
+  const costPreview = isByPiece
+    ? (parseFloat(costPrice) || 0)
+    : (parseFloat(costPrice) || 0) * 100;
+  const marginPreview = retailPreview > 0 && costPreview > 0
+    ? Math.round(((retailPreview - costPreview) / retailPreview) * 100)
+    : null;
 
   const filteredOrigins = ORIGIN_OPTIONS.filter((o) =>
     o.name.toLowerCase().includes(origin.toLowerCase())
@@ -77,12 +97,9 @@ export function CreateProductForm() {
       return { name: n, hex: opt?.hex ?? "#9CA3AF" };
     });
 
-  const tColors = useTranslations("public.colors");
-  const colorOptions = COLOR_CODES.map((code) => ({
-    code,
-    hex: HAIR_COLORS[code].hex,
-    label: (() => { try { return tColors(HAIR_COLORS[code].nameKey as "c1"); } catch { return code; } })(),
-  }));
+  const colorLabel = (code: string) => {
+    try { return tColors(HAIR_COLORS[code]?.nameKey as "c1"); } catch { return code; }
+  };
 
   useEffect(() => {
     fetch("/api/products/options")
@@ -134,6 +151,14 @@ export function CreateProductForm() {
       return;
     }
 
+    // Validate pricing
+    const retailHalere = Math.round(parseFloat(retailPrice) * 100);
+    if (!retailHalere || retailHalere <= 0) {
+      setError(t("variant.enterValidPrice"));
+      return;
+    }
+    const costHalere = costPrice ? Math.round(parseFloat(costPrice) * 100) : 0;
+
     setLoading(true);
 
     const name = texture ? `${catNames.cs} — ${texture}` : catNames.cs;
@@ -169,13 +194,26 @@ export function CreateProductForm() {
 
       const product = await res.json();
 
-      // 2. Create variants
-      const variantData = validVariants.map((v) => ({
-        lengthCm: parseInt(v.lengthCm),
-        color: v.color,
-        wholesalePricePerGram: 0,
-        retailPricePerGram: 0,
-      }));
+      // 2. Create variants with pricing
+      const variantData = isByPiece
+        ? validVariants.map((v) => ({
+            lengthCm: parseInt(v.lengthCm),
+            color: v.color,
+            costPricePerGram: costHalere,
+            wholesalePricePerGram: 0,
+            retailPricePerGram: 0,
+            sellingMode: "BY_PIECE" as const,
+            pricePerPiece: retailHalere,
+            retailPricePerPiece: retailHalere,
+          }))
+        : validVariants.map((v) => ({
+            lengthCm: parseInt(v.lengthCm),
+            color: v.color,
+            costPricePerGram: costHalere,
+            wholesalePricePerGram: retailHalere,
+            retailPricePerGram: retailHalere,
+            sellingMode: "BY_GRAM" as const,
+          }));
 
       await fetch(`/api/products/${product.id}/variants`, {
         method: "POST",
@@ -342,44 +380,159 @@ export function CreateProductForm() {
         {/* Photos */}
         <PhotoUpload photos={photos} onChange={setPhotos} disabled={loading} />
 
+        {/* Selling mode toggle */}
+        <div>
+          <label className="block text-sm font-medium text-espresso mb-1.5">
+            {t("variant.sellingMode")}
+          </label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => { setSellingMode("BY_GRAM"); setRetailManual(false); setCostPrice(""); setRetailPrice(""); }}
+              className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                !isByPiece
+                  ? "border-rose bg-rose/5 text-rose"
+                  : "border-line text-muted hover:border-muted"
+              }`}
+            >
+              {t("variant.byGram")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setSellingMode("BY_PIECE"); setRetailManual(false); setCostPrice(""); setRetailPrice(""); }}
+              className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                isByPiece
+                  ? "border-rose bg-rose/5 text-rose"
+                  : "border-line text-muted hover:border-muted"
+              }`}
+            >
+              {t("variant.byPiece")}
+            </button>
+          </div>
+        </div>
+
+        {/* Pricing */}
+        <div className="grid grid-cols-2 gap-3">
+          <Input
+            label={isByPiece ? t("variant.purchasePricePiece") : t("variant.purchasePriceGram")}
+            type="number"
+            step="0.01"
+            placeholder={isByPiece ? "5000" : "5.00"}
+            value={costPrice}
+            onChange={(e) => {
+              setCostPrice(e.target.value);
+              if (!retailManual) {
+                const cost = parseFloat(e.target.value);
+                setRetailPrice(cost > 0 ? (cost * 2).toString() : "");
+              }
+            }}
+          />
+          <div>
+            <Input
+              label={isByPiece ? t("variant.retailPricePiece") : t("variant.retailPriceGram")}
+              type="number"
+              step="0.01"
+              placeholder={isByPiece ? "10000" : "10.00"}
+              value={retailPrice}
+              onChange={(e) => {
+                setRetailPrice(e.target.value);
+                setRetailManual(true);
+              }}
+            />
+            {!retailManual && costPrice && (
+              <p className="text-[10px] text-muted mt-0.5">Auto: nákupní x 2</p>
+            )}
+          </div>
+        </div>
+
+        {/* Price preview */}
+        {retailPreview > 0 && (
+          <div className="bg-nude-50 rounded-lg p-3 space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted">{t("variant.retailPriceLabel")} {isByPiece ? t("variant.perPiece") : t("variant.per100g")}:</span>
+              <span className="font-semibold text-ink">
+                {retailPreview.toLocaleString("cs-CZ")} Kč
+              </span>
+            </div>
+            {costPreview > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">{t("variant.purchasePriceLabel")} {isByPiece ? t("variant.perPiece") : t("variant.per100g")}:</span>
+                <span className="text-muted">
+                  {costPreview.toLocaleString("cs-CZ")} Kč
+                </span>
+              </div>
+            )}
+            {marginPreview !== null && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Marže:</span>
+                <span className={`font-medium ${marginPreview > 30 ? "text-emerald-600" : marginPreview > 0 ? "text-amber-600" : "text-red-600"}`}>
+                  {marginPreview}%
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Variants */}
         <div>
           <label className="block text-sm font-medium text-espresso mb-2">
             {t("product.variants")}
           </label>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {variants.map((v, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  max={150}
-                  placeholder={`${t("product.length")} (cm)`}
-                  value={v.lengthCm}
-                  onChange={(e) => updateVariant(i, "lengthCm", e.target.value)}
-                  className="w-24 rounded-lg border border-line px-3 py-2 text-sm"
-                />
-                <select
-                  value={v.color}
-                  onChange={(e) => updateVariant(i, "color", e.target.value)}
-                  className="flex-1 rounded-lg border border-line px-3 py-2 text-sm"
-                >
-                  <option value="">{t("stock.color")}...</option>
-                  {colorOptions.map((c) => (
-                    <option key={c.code} value={c.code}>{c.code} — {c.label}</option>
-                  ))}
-                </select>
-                {variants.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeVariantRow(i)}
-                    className="p-2 text-red-400 hover:text-red-600 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
+              <div key={i} className="space-y-2 p-3 rounded-lg border border-line/50 bg-white">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={1}
+                    max={150}
+                    placeholder={`${t("product.length")} (cm)`}
+                    value={v.lengthCm}
+                    onChange={(e) => updateVariant(i, "lengthCm", e.target.value)}
+                    className="w-28 rounded-lg border border-line px-3 py-2 text-sm"
+                  />
+                  {v.color && (
+                    <span className="flex items-center gap-1.5 text-xs text-espresso">
+                      <span
+                        className="w-4 h-4 rounded-full border border-line/50"
+                        style={{ backgroundColor: HAIR_COLORS[v.color]?.hex ?? "#9CA3AF" }}
+                      />
+                      {colorLabel(v.color)}
+                    </span>
+                  )}
+                  {variants.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeVariantRow(i)}
+                      className="ml-auto p-1.5 text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {/* Color grid */}
+                <div className="flex flex-wrap gap-1.5">
+                  {COLOR_CODES.map((code) => {
+                    const hc = HAIR_COLORS[code];
+                    const selected = v.color === code;
+                    return (
+                      <button
+                        key={code}
+                        type="button"
+                        onClick={() => updateVariant(i, "color", code)}
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                          selected
+                            ? "border-rose ring-2 ring-rose/30 scale-110"
+                            : "border-white hover:border-line shadow-sm"
+                        }`}
+                        style={{ backgroundColor: hc.hex }}
+                        title={colorLabel(code)}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             ))}
             <button
