@@ -41,7 +41,13 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
           formData.append("files", file);
         }
 
-        const res = await fetch("/api/upload/photos", {
+        // Use product-specific media endpoint when productId is available
+        // This saves photos directly to the product (single round-trip)
+        const endpoint = productId
+          ? `/api/products/${productId}/media`
+          : "/api/upload/photos";
+
+        const res = await fetch(endpoint, {
           method: "POST",
           body: formData,
         });
@@ -53,12 +59,23 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
         }
 
         const data = await res.json();
-        const newPhotos = data.photoUrls ?? data.urls ?? [];
-        if (newPhotos.length > 0) {
-          onChange([...photos, ...newPhotos]);
-        }
-        if (data.videoUrl && onVideoChange) {
-          onVideoChange(data.videoUrl);
+
+        if (productId) {
+          // Media endpoint returns full photos array already saved to DB
+          const allPhotos: string[] = data.photos ?? [];
+          onChange(allPhotos);
+          if (data.video !== undefined && onVideoChange) {
+            onVideoChange(data.video);
+          }
+        } else {
+          // Generic upload endpoint returns new URLs only
+          const newPhotos = data.photoUrls ?? data.urls ?? [];
+          if (newPhotos.length > 0) {
+            onChange([...photos, ...newPhotos]);
+          }
+          if (data.videoUrl && onVideoChange) {
+            onVideoChange(data.videoUrl);
+          }
         }
       } catch (e) {
         setUploadError(e instanceof Error ? e.message : "Upload selhal");
@@ -66,7 +83,7 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
         setUploading(false);
       }
     },
-    [photos, onChange, onVideoChange]
+    [photos, onChange, onVideoChange, productId]
   );
 
   function handleRemove(index: number) {
