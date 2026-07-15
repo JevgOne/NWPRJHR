@@ -100,4 +100,8 @@ export const deliveryUpdateSchema = z.object({
   barcode: z.string().max(100).optional(),
   note: z.string().max(1000).optional(),
   receivedInvoiceFile: z.string().optional(),
+  remainingGrams: z.number().int().min(0).optional(),
+  remainingPieces: z.number().int().min(0).optional(),
+  initialGrams: z.number().int().min(0).optional(),
+  initialPieces: z.number().int().min(0).optional(),
 });

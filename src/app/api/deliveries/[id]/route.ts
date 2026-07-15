@@ -95,6 +95,29 @@ export async function PUT(
     data: parsed.data,
   });
 
+  // Create ADJUSTMENT stock movement when quantity changes
+  if (parsed.data.remainingGrams !== undefined || parsed.data.remainingPieces !== undefined) {
+    const gramsChange = (parsed.data.remainingGrams ?? existing.remainingGrams) - existing.remainingGrams;
+    const piecesChange = (parsed.data.remainingPieces ?? existing.remainingPieces) - existing.remainingPieces;
+
+    if (gramsChange !== 0 || piecesChange !== 0) {
+      await prisma.stockMovement.create({
+        data: {
+          type: "ADJUSTMENT",
+          deliveryId: id,
+          variantId: existing.variantId,
+          userId: session.user.id,
+          grams: gramsChange,
+          pieces: piecesChange,
+          note: `Manual correction: ${existing.remainingGrams}g→${delivery.remainingGrams}g, ${existing.remainingPieces}ks→${delivery.remainingPieces}ks`,
+        },
+      });
+
+      invalidateStockCache();
+      revalidatePath("/inventory");
+    }
+  }
+
   logAudit({
     userId: session.user.id,
     userEmail: session.user.email ?? undefined,
@@ -122,10 +145,20 @@ export async function DELETE(
 
   const delivery = await prisma.delivery.findUnique({
     where: { id },
-    include: { variant: { select: { productId: true } } },
+    include: {
+      _count: { select: { saleItems: true, returns: true, complaints: true } },
+    },
   });
   if (!delivery)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Block if delivery has linked sales, returns, or complaints
+  if (delivery._count.saleItems > 0 || delivery._count.returns > 0 || delivery._count.complaints > 0) {
+    return NextResponse.json(
+      { error: "Cannot delete delivery with linked sales, returns, or complaints" },
+      { status: 409 }
+    );
+  }
 
   // Allow deletion only if:
   // 1. Nothing sold yet (remaining === initial)
@@ -141,9 +174,11 @@ export async function DELETE(
     );
   }
 
-  // Delete related stock movements first, then the delivery
-  await prisma.stockMovement.deleteMany({ where: { deliveryId: id } });
-  await prisma.delivery.delete({ where: { id } });
+  // Atomically delete stock movements + delivery
+  await prisma.$transaction([
+    prisma.stockMovement.deleteMany({ where: { deliveryId: id } }),
+    prisma.delivery.delete({ where: { id } }),
+  ]);
 
   logAudit({
     userId: session.user.id,

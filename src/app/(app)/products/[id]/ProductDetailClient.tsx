@@ -231,6 +231,19 @@ export function ProductDetailClient({
     fetchDeliveries();
   }, [fetchDeliveries]);
 
+  const saveDeliveryQuantity = useCallback(async (deliveryId: string, field: string, value: number, oldValue: number) => {
+    if (value === oldValue) { setEditingDeliveryField(null); return; }
+    if (!confirm(`${oldValue} -> ${value}?`)) { setEditingDeliveryField(null); return; }
+    await fetch(`/api/deliveries/${deliveryId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [field]: value }),
+    });
+    setEditingDeliveryField(null);
+    fetchDeliveries();
+    router.refresh();
+  }, [fetchDeliveries, router]);
+
   const deleteDelivery = useCallback(async (deliveryId: string) => {
     if (!confirm("Smazat tuto dodávku?")) return;
     const res = await fetch(`/api/deliveries/${deliveryId}`, { method: "DELETE" });
@@ -923,9 +936,36 @@ export function ProductDetailClient({
                             {isByPiece ? `${d.initialPieces} ks` : `${d.initialGrams} g`}
                           </td>
                           <td className="py-2 pr-3 whitespace-nowrap">
-                            <span className={d.remainingGrams === 0 && d.remainingPieces === 0 ? "text-red-400" : "text-emerald-600"}>
-                              {isByPiece ? `${d.remainingPieces} ks` : `${d.remainingGrams} g`}
-                            </span>
+                            {editingDeliveryField === `remaining-${d.id}` ? (
+                              <input
+                                type="number"
+                                className="w-20 border border-line rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-rose/30"
+                                value={deliveryEditValue}
+                                onChange={(e) => setDeliveryEditValue(e.target.value)}
+                                onBlur={() => {
+                                  const val = parseInt(deliveryEditValue);
+                                  if (isNaN(val) || val < 0) { setEditingDeliveryField(null); return; }
+                                  const field = isByPiece ? "remainingPieces" : "remainingGrams";
+                                  const oldVal = isByPiece ? d.remainingPieces : d.remainingGrams;
+                                  saveDeliveryQuantity(d.id, field, val, oldVal);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                                  if (e.key === "Escape") setEditingDeliveryField(null);
+                                }}
+                                autoFocus
+                              />
+                            ) : (
+                              <button
+                                className={`text-xs hover:text-rose transition-colors ${d.remainingGrams === 0 && d.remainingPieces === 0 ? "text-red-400" : "text-emerald-600"}`}
+                                onClick={() => {
+                                  setEditingDeliveryField(`remaining-${d.id}`);
+                                  setDeliveryEditValue(String(isByPiece ? d.remainingPieces : d.remainingGrams));
+                                }}
+                              >
+                                {isByPiece ? `${d.remainingPieces} ks` : `${d.remainingGrams} g`}
+                              </button>
+                            )}
                           </td>
                           <td className="py-2 pr-3 whitespace-nowrap">
                             {formatCZK(d.purchasePricePerGramRaw)}/g {d.currency !== "CZK" && `(${d.currency})`}
