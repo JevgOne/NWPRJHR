@@ -593,10 +593,19 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 type="button"
                 variant="secondary"
                 onClick={() => {
+                  // Convert data URL to Blob for iOS Safari compatibility
+                  const [header, b64] = qrDataUrl.split(",");
+                  const mime = header.match(/:(.*?);/)?.[1] ?? "image/png";
+                  const bin = atob(b64);
+                  const arr = new Uint8Array(bin.length);
+                  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+                  const blob = new Blob([arr], { type: mime });
+                  const url = URL.createObjectURL(blob);
                   const link = document.createElement("a");
                   link.download = `qr-${successData.barcode || successData.productId}.png`;
-                  link.href = qrDataUrl;
+                  link.href = url;
                   link.click();
+                  URL.revokeObjectURL(url);
                 }}
               >
                 {t("downloadQr")}
