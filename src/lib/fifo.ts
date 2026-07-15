@@ -40,7 +40,7 @@ export async function fifoDeduct(
   const deliveries = await tx.$queryRaw<Delivery[]>`
     SELECT * FROM "deliveries"
     WHERE "variantId" = ${variantId}
-      AND "remainingGrams" > 0
+      AND ("remainingGrams" > 0 OR "remainingPieces" > 0)
     ORDER BY "stockedAt" ASC
     FOR UPDATE
   `;
