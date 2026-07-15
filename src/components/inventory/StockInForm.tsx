@@ -601,19 +601,37 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 type="button"
                 variant="secondary"
                 onClick={() => {
-                  // Convert data URL to Blob for iOS Safari compatibility
-                  const [header, b64] = qrDataUrl.split(",");
-                  const mime = header.match(/:(.*?);/)?.[1] ?? "image/png";
-                  const bin = atob(b64);
-                  const arr = new Uint8Array(bin.length);
-                  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-                  const blob = new Blob([arr], { type: mime });
-                  const url = URL.createObjectURL(blob);
-                  const link = document.createElement("a");
-                  link.download = `qr-${successData.barcode || successData.productId}.png`;
-                  link.href = url;
-                  link.click();
-                  URL.revokeObjectURL(url);
+                  const img = new Image();
+                  img.onload = () => {
+                    const label = category ? `${tCat(category.toLowerCase() as "virgin")}, ${lengthCm} cm` : "";
+                    const stockLabel = `${successData.totalGrams} g`;
+                    const canvas = document.createElement("canvas");
+                    const pad = 20;
+                    const textH = 50;
+                    canvas.width = img.width + pad * 2;
+                    canvas.height = img.height + pad * 2 + textH;
+                    const ctx = canvas.getContext("2d")!;
+                    ctx.fillStyle = "#fff";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, pad, pad);
+                    ctx.fillStyle = "#1a1a1a";
+                    ctx.font = "bold 16px Arial, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(label, canvas.width / 2, img.height + pad + 22);
+                    ctx.fillStyle = "#888";
+                    ctx.font = "14px Arial, sans-serif";
+                    ctx.fillText(stockLabel, canvas.width / 2, img.height + pad + 42);
+                    canvas.toBlob((blob) => {
+                      if (!blob) return;
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.download = `qr-${successData.barcode || successData.productId}.png`;
+                      link.href = url;
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    }, "image/png");
+                  };
+                  img.src = qrDataUrl;
                 }}
               >
                 {t("downloadQr")}
