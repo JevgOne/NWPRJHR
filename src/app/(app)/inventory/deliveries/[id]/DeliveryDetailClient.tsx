@@ -31,6 +31,7 @@ interface DeliveryData {
   pieceWeightGrams: number | null;
   remainingGrams: number;
   remainingPieces: number;
+  exclusive: boolean;
   barcode: string | null;
   batchCode: string | null;
   stockedAt: string;
@@ -129,6 +130,11 @@ export function DeliveryDetailClient({
               {isByPiece && (
                 <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-rose/10 text-rose">
                   {t("byPiece")}
+                </span>
+              )}
+              {delivery.exclusive && (
+                <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                  {t("exclusiveBadge")}
                 </span>
               )}
             </div>

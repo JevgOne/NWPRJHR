@@ -19,6 +19,8 @@ interface StockItem {
   reservedPieces: number;
   availableGrams: number;
   availablePieces: number;
+  exclusiveGrams: number;
+  exclusivePieces: number;
   barcode?: string | null;
 }
 
@@ -366,6 +368,9 @@ export function InventoryClient({
                     )}
                     <td className={`py-2.5 px-2 text-right font-medium ${stockClass(item.availableGrams)}`}>
                       {item.availableGrams} g
+                      {item.exclusivePieces > 0 && (
+                        <div className="text-[10px] text-amber-600 font-medium">({item.exclusivePieces} {t("exclusiveBadge")})</div>
+                      )}
                     </td>
                     <td className="py-2.5 px-1" onClick={(e) => e.stopPropagation()}>
                       <button

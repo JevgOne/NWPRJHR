@@ -54,6 +54,7 @@ export default async function DeliveryDetailPage({
     pieceWeightGrams: delivery.pieceWeightGrams,
     remainingGrams: delivery.remainingGrams,
     remainingPieces: delivery.remainingPieces,
+    exclusive: delivery.exclusive,
     barcode: delivery.barcode,
     batchCode: delivery.batchCode,
     stockedAt: delivery.stockedAt.toISOString(),

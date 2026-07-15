@@ -50,6 +50,8 @@ export default async function InventoryPage() {
       reservedPieces: stock?.reservedPieces ?? 0,
       availableGrams: stock?.availableGrams ?? 0,
       availablePieces: stock?.availablePieces ?? 0,
+      exclusiveGrams: stock?.exclusiveGrams ?? 0,
+      exclusivePieces: stock?.exclusivePieces ?? 0,
       barcode: barcodeMap.get(v.id) ?? null,
     };
   });
