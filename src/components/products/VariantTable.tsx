@@ -32,7 +32,6 @@ interface StockInfo {
 
 interface VariantTableProps {
   productId: string;
-  productName: string;
   category: string;
   variants: VariantData[];
   isOwner: boolean;
@@ -40,7 +39,6 @@ interface VariantTableProps {
 
 export function VariantTable({
   productId,
-  productName,
   category,
   variants,
   isOwner,
@@ -434,9 +432,12 @@ export function VariantTable({
               <button onClick={() => setQrModal(null)} className="text-muted hover:text-ink text-lg leading-none">&times;</button>
             </div>
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
-            <p className="mt-3 text-sm font-medium text-ink text-center">
-              {tCat(category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
-            </p>
+            <div className="mt-3 space-y-0.5 text-center">
+              <p className="text-sm font-medium text-ink">
+                {tCat(category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
+              </p>
+              {(() => { const stock = stockMap.get(qrModal.variantId); return stock ? <p className="text-xs text-muted">{stock.availableGrams} g</p> : null; })()}
+            </div>
             <button
               onClick={downloadQr}
               className="mt-4 w-full py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
