@@ -31,7 +31,10 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
         const ext = f.name.split(".").pop()?.toLowerCase() ?? "";
         return PHOTO_EXTS.includes(ext) || VIDEO_EXTS.includes(ext);
       });
-      if (fileArray.length === 0) return;
+      if (fileArray.length === 0) {
+        setUploadError("Nepodporovaný formát souboru");
+        return;
+      }
 
       setUploading(true);
       setUploadError("");
