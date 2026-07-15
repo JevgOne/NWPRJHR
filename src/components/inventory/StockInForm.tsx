@@ -587,9 +587,15 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             <Button
               type="button"
               variant="secondary"
-              onClick={() => window.print()}
+              onClick={() => {
+                if (!qrDataUrl) return;
+                const link = document.createElement("a");
+                link.download = `qr-${successData.barcode || successData.productId}.png`;
+                link.href = qrDataUrl;
+                link.click();
+              }}
             >
-              {t("printLabel")}
+              {t("downloadQr")}
             </Button>
             <Button
               type="button"

@@ -25,8 +25,13 @@ async function processPhoto(
   file: File
 ): Promise<{ buffer: Buffer; contentType: string; ext: string }> {
   const arrayBuffer = await file.arrayBuffer();
-  const buffer = await addWatermark(Buffer.from(arrayBuffer));
-  return { buffer, contentType: "image/webp", ext: "webp" };
+  try {
+    const buffer = await addWatermark(Buffer.from(arrayBuffer));
+    return { buffer, contentType: "image/webp", ext: "webp" };
+  } catch (e) {
+    console.error("[media] watermark failed, uploading original:", e);
+    return { buffer: Buffer.from(arrayBuffer), contentType: file.type || "image/jpeg", ext: "jpg" };
+  }
 }
 
 export async function POST(

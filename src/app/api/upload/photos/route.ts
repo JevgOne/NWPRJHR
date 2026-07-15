@@ -54,15 +54,23 @@ export async function POST(request: NextRequest) {
 
     let uploadBuffer: Buffer | File = file;
     let contentType = file.type;
+    let outputExt = file.name.split(".").pop() ?? "jpg";
 
     // Add watermark to photos → always outputs WebP
     if (isPhoto) {
       const arrayBuffer = await file.arrayBuffer();
-      uploadBuffer = await addWatermark(Buffer.from(arrayBuffer));
-      contentType = "image/webp";
+      try {
+        uploadBuffer = await addWatermark(Buffer.from(arrayBuffer));
+        contentType = "image/webp";
+        outputExt = "webp";
+      } catch (e) {
+        console.error("[upload/photos] watermark failed, uploading original:", e);
+        uploadBuffer = Buffer.from(arrayBuffer);
+        outputExt = "jpg";
+      }
     }
 
-    const ext = isPhoto ? "webp" : (file.name.split(".").pop() ?? "mp4");
+    const ext = isPhoto ? outputExt : (file.name.split(".").pop() ?? "mp4");
     const folder = isVideo ? "videos" : "products";
     const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
 

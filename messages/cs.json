@@ -241,6 +241,7 @@
     "stockedSuccess": "Naskladněno!",
     "qrLinkDesc": "Naskenuj QR kód pro rychlý prodej v admin panelu",
     "printLabel": "Tisknout štítek",
+    "downloadQr": "Stáhnout QR kód",
     "printLabels": "Tisknout štítky",
     "generatingLabels": "Generuji QR štítky",
     "labelCount": "{count, plural, one {# štítek} few {# štítky} other {# štítků}}",

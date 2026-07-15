@@ -241,6 +241,7 @@
     "stockedSuccess": "Прийнято на склад!",
     "qrLinkDesc": "Скануй QR код для швидкого продажу в адмін панелі",
     "printLabel": "Друкувати етикетку",
+    "downloadQr": "Завантажити QR код",
     "printLabels": "Друкувати етикетки",
     "generatingLabels": "Генеруємо QR етикетки",
     "labelCount": "{count, plural, one {# етикетка} few {# етикетки} other {# етикеток}}",

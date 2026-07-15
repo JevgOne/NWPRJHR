@@ -173,9 +173,18 @@ export function NewSaleWizard({
   }, [initialVariantId, customerType, addItemFromVariantId]);
 
   const handleBarcodeScan = useCallback(
-    async (barcode: string) => {
+    async (scanned: string) => {
       setScannerOpen(false);
-      const res = await fetch(`/api/deliveries/barcode/${encodeURIComponent(barcode)}`);
+
+      // If QR contains URL with variantId, extract it directly
+      const urlMatch = scanned.match(/variantId=([a-zA-Z0-9_-]+)/);
+      if (urlMatch) {
+        await addItemFromVariantId(urlMatch[1]);
+        return;
+      }
+
+      // Otherwise treat as barcode (HR-XXXXX)
+      const res = await fetch(`/api/deliveries/barcode/${encodeURIComponent(scanned)}`);
       if (!res.ok) {
         setError(t("barcodeNotFound"));
         return;
