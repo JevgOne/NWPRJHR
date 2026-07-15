@@ -603,6 +603,7 @@
       "lengths": "Длины",
       "colors": "Цвета",
       "variants": "Доступные варианты",
+      "namePreview": "Название продукта",
       "noProducts": "Нет продуктов"
     },
     "register": {

@@ -603,6 +603,7 @@
       "lengths": "Délky",
       "colors": "Barvy",
       "variants": "Dostupné varianty",
+      "namePreview": "Název produktu",
       "noProducts": "Žádné produkty"
     },
     "register": {

@@ -15,7 +15,7 @@ export const createProductSchema = z.object({
     "WEFT",
     "MICRO_RING",
     "OTHER",
-  ]),
+  ]).default("OTHER"),
   origin: z.string().max(200).optional(),
   texture: z.string().max(200).nullable().optional(),
   colorTone: z.string().max(200).nullable().optional(),

@@ -11,22 +11,28 @@ import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { COLOR_TONE_OPTIONS } from "@/lib/color-tones";
 import { PhotoUpload } from "@/components/products/PhotoUpload";
 import { slugify } from "@/lib/slugify";
+import { HAIR_COLORS, COLOR_CODES } from "@/lib/hair-colors";
 
 const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
-const PROCESSING_TYPES = [
-  "CLIP_IN",
-  "TAPE_IN",
-  "KERATIN",
-  "WEFT",
-  "MICRO_RING",
-  "OTHER",
-] as const;
+
+const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
+  VIRGIN: { cs: "Panenské Vlasy", uk: "Натуральне Волосся", ru: "Натуральные Волосы" },
+  LUXE: { cs: "Luxe Vlasy", uk: "Люкс Волосся", ru: "Люкс Волосы" },
+  STANDARD: { cs: "Standard Vlasy", uk: "Стандарт Волосся", ru: "Стандарт Волосы" },
+  SALE: { cs: "Výprodej", uk: "Розпродаж", ru: "Распродажа" },
+};
+
+interface VariantRow {
+  lengthCm: string;
+  color: string;
+}
 
 export function CreateProductForm() {
   const t = useTranslations();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [category, setCategory] = useState<string>("VIRGIN");
   const [origin, setOrigin] = useState("");
   const [originOpen, setOriginOpen] = useState(false);
   const [texture, setTexture] = useState("");
@@ -36,9 +42,14 @@ export function CreateProductForm() {
   const [colorToneOpen, setColorToneOpen] = useState(false);
   const [dbColorTones, setDbColorTones] = useState<string[]>([]);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [variants, setVariants] = useState<VariantRow[]>([{ lengthCm: "", color: "" }]);
   const originRef = useRef<HTMLDivElement>(null);
   const textureRef = useRef<HTMLDivElement>(null);
   const colorToneRef = useRef<HTMLDivElement>(null);
+
+  // Auto-generated name preview
+  const catNames = CATEGORY_NAMES[category] ?? CATEGORY_NAMES.VIRGIN;
+  const namePreview = texture ? `${catNames.cs} — ${texture}` : catNames.cs;
 
   const filteredOrigins = ORIGIN_OPTIONS.filter((o) =>
     o.name.toLowerCase().includes(origin.toLowerCase())
@@ -66,6 +77,13 @@ export function CreateProductForm() {
       return { name: n, hex: opt?.hex ?? "#9CA3AF" };
     });
 
+  const tColors = useTranslations("public.colors");
+  const colorOptions = COLOR_CODES.map((code) => ({
+    code,
+    hex: HAIR_COLORS[code].hex,
+    label: (() => { try { return tColors(HAIR_COLORS[code].nameKey as "c1"); } catch { return code; } })(),
+  }));
+
   useEffect(() => {
     fetch("/api/products/options")
       .then((r) => (r.ok ? r.json() : null))
@@ -92,29 +110,51 @@ export function CreateProductForm() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  function addVariantRow() {
+    setVariants([...variants, { lengthCm: "", color: "" }]);
+  }
+
+  function removeVariantRow(index: number) {
+    if (variants.length <= 1) return;
+    setVariants(variants.filter((_, i) => i !== index));
+  }
+
+  function updateVariant(index: number, field: keyof VariantRow, value: string) {
+    setVariants(variants.map((v, i) => i === index ? { ...v, [field]: value } : v));
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+
+    // Validate variants
+    const validVariants = variants.filter((v) => v.lengthCm && v.color);
+    if (validVariants.length === 0) {
+      setError("Přidejte alespoň jednu variantu (délka + barva)");
+      return;
+    }
+
     setLoading(true);
 
-    const form = new FormData(e.currentTarget);
+    const name = texture ? `${catNames.cs} — ${texture}` : catNames.cs;
+    const nameUk = texture ? `${catNames.uk} — ${texture}` : catNames.uk;
+    const nameRu = texture ? `${catNames.ru} — ${texture}` : catNames.ru;
+
     const data = {
-      name: form.get("name") as string,
-      nameUk: (form.get("nameUk") as string) || undefined,
-      nameRu: (form.get("nameRu") as string) || undefined,
-      description: (form.get("description") as string) || undefined,
-      category: form.get("category") as string,
-      processingType: form.get("processingType") as string,
+      name,
+      nameUk,
+      nameRu,
+      category,
+      processingType: "OTHER",
       origin: origin || undefined,
       texture: texture || undefined,
       colorTone: colorTone || undefined,
       photos: photos.length > 0 ? JSON.stringify(photos) : undefined,
-      slug:
-        (form.get("slug") as string) ||
-        slugify(form.get("name") as string) || undefined,
+      slug: slugify(name) || undefined,
     };
 
     try {
+      // 1. Create product
       const res = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -128,6 +168,21 @@ export function CreateProductForm() {
       }
 
       const product = await res.json();
+
+      // 2. Create variants
+      const variantData = validVariants.map((v) => ({
+        lengthCm: parseInt(v.lengthCm),
+        color: v.color,
+        wholesalePricePerGram: 0,
+        retailPricePerGram: 0,
+      }));
+
+      await fetch(`/api/products/${product.id}/variants`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ variants: variantData }),
+      });
+
       router.push(`/products/${product.id}`);
     } finally {
       setLoading(false);
@@ -140,18 +195,14 @@ export function CreateProductForm() {
         {t("common.add")} — {t("nav.products")}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input id="name" name="name" label={`${t("nav.products")} (CZ)`} required />
-        <Input id="nameUk" name="nameUk" label={`${t("nav.products")} (UK)`} />
-        <Input id="nameRu" name="nameRu" label={`${t("nav.products")} (RU)`} />
-        <Input id="description" name="description" label={`${t("nav.products")} — ${t("productForm.description")}`} />
-
+        {/* Category */}
         <div>
           <label className="block text-sm font-medium text-espresso mb-1">
             {t("category.virgin")} / {t("category.luxe")} / ...
           </label>
           <select
-            name="category"
-            required
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
             className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
           >
             {CATEGORIES.map((cat) => (
@@ -162,23 +213,7 @@ export function CreateProductForm() {
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-espresso mb-1">
-            {t("salon.processingType")}
-          </label>
-          <select
-            name="processingType"
-            required
-            className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-          >
-            {PROCESSING_TYPES.map((pt) => (
-              <option key={pt} value={pt}>
-                {pt.replace(/_/g, "-")}
-              </option>
-            ))}
-          </select>
-        </div>
-
+        {/* Origin */}
         <div ref={originRef} className="relative">
           <label htmlFor="origin" className="block text-sm font-medium text-espresso mb-1">
             {t("product.origin")}
@@ -217,6 +252,8 @@ export function CreateProductForm() {
             </ul>
           )}
         </div>
+
+        {/* Texture */}
         <div ref={textureRef} className="relative">
           <label htmlFor="texture" className="block text-sm font-medium text-espresso mb-1">
             {t("product.texture")}
@@ -255,6 +292,8 @@ export function CreateProductForm() {
             </ul>
           )}
         </div>
+
+        {/* Color Tone */}
         <div ref={colorToneRef} className="relative">
           <label htmlFor="colorTone" className="block text-sm font-medium text-espresso mb-1">
             {t("product.colorTone")}
@@ -294,9 +333,64 @@ export function CreateProductForm() {
           )}
         </div>
 
+        {/* Name preview */}
+        <div className="px-3 py-2 bg-nude-50 rounded-lg border border-line/50">
+          <span className="text-[10px] uppercase tracking-wider text-muted">{t("product.namePreview")}</span>
+          <p className="text-sm font-medium text-ink mt-0.5">{namePreview}</p>
+        </div>
+
+        {/* Photos */}
         <PhotoUpload photos={photos} onChange={setPhotos} disabled={loading} />
 
-        <Input id="slug" name="slug" label="Slug (URL)" placeholder="auto-generated" />
+        {/* Variants */}
+        <div>
+          <label className="block text-sm font-medium text-espresso mb-2">
+            {t("product.variants")}
+          </label>
+          <div className="space-y-2">
+            {variants.map((v, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={150}
+                  placeholder={`${t("product.length")} (cm)`}
+                  value={v.lengthCm}
+                  onChange={(e) => updateVariant(i, "lengthCm", e.target.value)}
+                  className="w-24 rounded-lg border border-line px-3 py-2 text-sm"
+                />
+                <select
+                  value={v.color}
+                  onChange={(e) => updateVariant(i, "color", e.target.value)}
+                  className="flex-1 rounded-lg border border-line px-3 py-2 text-sm"
+                >
+                  <option value="">{t("stock.color")}...</option>
+                  {colorOptions.map((c) => (
+                    <option key={c.code} value={c.code}>{c.code} — {c.label}</option>
+                  ))}
+                </select>
+                {variants.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeVariantRow(i)}
+                    className="p-2 text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addVariantRow}
+              className="text-xs text-rose hover:text-rose-deep font-medium"
+            >
+              + {t("common.add")}
+            </button>
+          </div>
+        </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

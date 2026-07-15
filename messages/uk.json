@@ -603,6 +603,7 @@
       "lengths": "Довжини",
       "colors": "Кольори",
       "variants": "Доступні варіанти",
+      "namePreview": "Назва продукту",
       "noProducts": "Немає продуктів"
     },
     "register": {
