@@ -48,6 +48,34 @@ export function VariantTable({
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [stockMap, setStockMap] = useState<Map<string, StockInfo>>(new Map());
+  const [qrModal, setQrModal] = useState<{ variantId: string; dataUrl: string } | null>(null);
+
+  const openQr = async (variantId: string) => {
+    try {
+      const QRCode = await import("qrcode");
+      const url = `${window.location.origin}/sales/new?variantId=${variantId}`;
+      const dataUrl = await QRCode.toDataURL(url, { width: 300, errorCorrectionLevel: "M", margin: 2 });
+      setQrModal({ variantId, dataUrl });
+    } catch (e) {
+      console.error("QR generation failed:", e);
+    }
+  };
+
+  const downloadQr = () => {
+    if (!qrModal) return;
+    const [header, b64] = qrModal.dataUrl.split(",");
+    const mime = header.match(/:(.*?);/)?.[1] ?? "image/png";
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    const blob = new Blob([arr], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `qr-${qrModal.variantId}.png`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     fetch(`/api/stock?productId=${productId}`)
@@ -298,6 +326,21 @@ export function VariantTable({
                       </span>
                     )}
 
+                    {/* QR button (owner only) */}
+                    {isOwner && (
+                      <button
+                        onClick={() => openQr(variant.id)}
+                        className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium text-muted hover:text-espresso hover:bg-nude-100 transition-colors"
+                        title="QR"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 14.625v2.625m0 3v.375m0-3h3.375m-3.375 0h-.375m3.75 0h.375m0 0v.375m0-.375h.375" />
+                        </svg>
+                        QR
+                      </button>
+                    )}
+
                     {/* Available to order toggle */}
                     {isOwner && (
                       <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-line/30">
@@ -371,6 +414,24 @@ export function VariantTable({
           <span>{t("product.costLabel")} = {t("product.legendCostLabel")}</span>
           <span className="text-emerald-600">+ = {t("product.legendMarginLabel")}</span>
           <span>{t("product.legendClickToEdit")}</span>
+        </div>
+      )}
+
+      {qrModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setQrModal(null)}>
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-xs w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-ink">QR kód</h3>
+              <button onClick={() => setQrModal(null)} className="text-muted hover:text-ink text-lg leading-none">&times;</button>
+            </div>
+            <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
+            <button
+              onClick={downloadQr}
+              className="mt-4 w-full py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
+            >
+              {t("stock.downloadQr")}
+            </button>
+          </div>
         </div>
       )}
     </div>
