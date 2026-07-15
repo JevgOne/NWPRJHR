@@ -16,8 +16,8 @@ interface VariantData {
   retailManualOverride?: boolean;
   pricePerGram?: number;
   sellingMode?: string;
-  pricePerPiece?: number;
-  retailPricePerPiece?: number;
+  pricePerPiece?: number | null;
+  retailPricePerPiece?: number | null;
   availableToOrder?: boolean;
   orderLeadDays?: number | null;
   active: boolean;
@@ -210,7 +210,7 @@ export function VariantTable({
                           }}
                           disabled={isSaving}
                         >
-                          {formatCZK(variant.retailPricePerGram!)}/g
+                          {formatCZK(variant.retailPricePerGram * 100)}/100g
                         </button>
                       )
                     )}
@@ -242,10 +242,15 @@ export function VariantTable({
 
                     {/* Nákupní cena + marže (owner only) */}
                     {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && (() => {
+                      // For BY_PIECE: show per-piece cost; for BY_GRAM: show per-100g
+                      const costDisplay = isByPiece
+                        ? (variant.pricePerPiece ?? variant.costPricePerGram)
+                        : variant.costPricePerGram * 100;
                       const sellPrice = isByPiece
                         ? (variant.retailPricePerPiece ?? 0)
-                        : (variant.retailPricePerGram ?? 0);
-                      const margin = sellPrice - variant.costPricePerGram;
+                        : (variant.retailPricePerGram ?? 0) * 100;
+                      const margin = sellPrice - costDisplay;
+                      const unit = isByPiece ? "/ks" : "/100g";
                       return (
                         <div className="flex items-center gap-1 mt-1">
                           {editingCell === `cost-${cellKey}` ? (
@@ -255,16 +260,11 @@ export function VariantTable({
                               cellKey={`cost-${cellKey}`}
                             />
                           ) : (
-                            <button
-                              className="text-[10px] text-muted hover:text-espresso transition-colors"
-                              onClick={() => {
-                                setEditingCell(`cost-${cellKey}`);
-                                setEditValue((variant.costPricePerGram! / 100).toString());
-                              }}
-                              disabled={isSaving}
+                            <span
+                              className="text-[10px] text-muted"
                             >
-                              Nákup: {formatCZK(variant.costPricePerGram!)}
-                            </button>
+                              {t("product.costLabel")}: {formatCZK(costDisplay)}{unit}
+                            </span>
                           )}
                           <span className={`text-[10px] font-medium ${
                             margin > 0 ? "text-emerald-600" : "text-red-500"
@@ -367,10 +367,10 @@ export function VariantTable({
       {/* Legend */}
       {isOwner && (
         <div className="flex flex-wrap items-center gap-3 mt-4 pt-3 border-t border-line/50 text-[10px] text-muted">
-          <span><strong className="text-ink">63 Kč</strong> = prodejní</span>
-          <span>Nákup: 46 Kč = nákupní</span>
-          <span className="text-emerald-600">+17 Kč = marže</span>
-          <span>Klikni na cenu pro úpravu</span>
+          <span><strong className="text-ink">{t("product.legendRetail")}</strong> = {t("product.legendRetailLabel")}</span>
+          <span>{t("product.costLabel")} = {t("product.legendCostLabel")}</span>
+          <span className="text-emerald-600">+ = {t("product.legendMarginLabel")}</span>
+          <span>{t("product.legendClickToEdit")}</span>
         </div>
       )}
     </div>

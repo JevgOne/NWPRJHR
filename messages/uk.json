@@ -159,7 +159,13 @@
     "ogImagePlaceholder": "Автоматично: перше фото продукту",
     "ogImageHint": "1200x630px для соціальних мереж",
     "originPrefix": "походження",
-    "saveSeo": "Зберегти SEO"
+    "saveSeo": "Зберегти SEO",
+    "costLabel": "Закупка",
+    "legendRetail": "Ціна",
+    "legendRetailLabel": "продажна",
+    "legendCostLabel": "закупівельна",
+    "legendMarginLabel": "маржа",
+    "legendClickToEdit": "Натисніть на ціну для редагування"
   },
   "colorTone": {
     "blond": "Блонд",

@@ -159,7 +159,13 @@
     "ogImagePlaceholder": "Автоматически: первое фото продукта",
     "ogImageHint": "1200x630px для социальных сетей",
     "originPrefix": "происхождение",
-    "saveSeo": "Сохранить SEO"
+    "saveSeo": "Сохранить SEO",
+    "costLabel": "Закупка",
+    "legendRetail": "Цена",
+    "legendRetailLabel": "продажная",
+    "legendCostLabel": "закупочная",
+    "legendMarginLabel": "маржа",
+    "legendClickToEdit": "Нажмите на цену для редактирования"
   },
   "colorTone": {
     "blond": "Блонд",

@@ -159,7 +159,13 @@
     "ogImagePlaceholder": "Automaticky: první fotka produktu",
     "ogImageHint": "1200x630px pro sociální sítě",
     "originPrefix": "původ",
-    "saveSeo": "Uložit SEO"
+    "saveSeo": "Uložit SEO",
+    "costLabel": "Nákup",
+    "legendRetail": "Cena",
+    "legendRetailLabel": "prodejní",
+    "legendCostLabel": "nákupní",
+    "legendMarginLabel": "marže",
+    "legendClickToEdit": "Klikni na cenu pro úpravu"
   },
   "colorTone": {
     "blond": "Blond",

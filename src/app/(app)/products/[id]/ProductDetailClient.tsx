@@ -43,6 +43,11 @@ interface ProductDetail {
     retailPricePerGram?: number;
     retailManualOverride?: boolean;
     pricePerGram?: number;
+    sellingMode?: string;
+    pricePerPiece?: number | null;
+    retailPricePerPiece?: number | null;
+    availableToOrder?: boolean;
+    orderLeadDays?: number | null;
     active: boolean;
   }>;
 }
