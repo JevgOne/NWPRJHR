@@ -531,9 +531,12 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
             />
           )}
           {category && lengthCm && (
-            <p className="text-sm font-medium text-ink">
-              {tCat(category.toLowerCase() as "virgin")}, {lengthCm} cm
-            </p>
+            <div className="text-center">
+              <p className="text-sm font-medium text-ink">
+                {tCat(category.toLowerCase() as "virgin")}, {lengthCm} cm
+              </p>
+              <p className="text-xs text-muted">{successData.totalGrams} g</p>
+            </div>
           )}
           {successData.barcode && (
             <p className="text-xs text-muted font-mono">{successData.barcode}</p>
