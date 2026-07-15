@@ -530,6 +530,11 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
               className="mx-auto border border-line rounded-lg"
             />
           )}
+          {category && lengthCm && (
+            <p className="text-sm font-medium text-ink">
+              {tCat(category.toLowerCase() as "virgin")}, {lengthCm} cm
+            </p>
+          )}
           {successData.barcode && (
             <p className="text-xs text-muted font-mono">{successData.barcode}</p>
           )}
