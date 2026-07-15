@@ -55,7 +55,7 @@ export function SaleItemRow({
       <div className="flex items-start justify-between">
         <div className="font-medium text-sm">
           {item.variantLabel}
-          {isByPiece && <span className="ml-1.5 text-[10px] font-bold text-rose bg-rose/10 px-1.5 py-0.5 rounded">ks</span>}
+          {isByPiece && <span className="ml-1.5 text-[10px] font-bold text-rose bg-rose/10 px-1.5 py-0.5 rounded">{tStock("perPiece")}</span>}
         </div>
         <Button variant="ghost" size="sm" onClick={onRemove}>
           &times;

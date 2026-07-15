@@ -16,6 +16,7 @@ export interface StockInInput {
   barcode?: string;
   batchCode?: string;
   receivedInvoiceFile?: string;
+  exclusive?: boolean;
   stockedAt?: Date;
   note?: string;
 }
@@ -50,6 +51,7 @@ export async function stockIn(
         pieceWeightGrams: data.pieceWeightGrams,
         remainingGrams: data.totalGrams,
         remainingPieces: data.totalPieces,
+        exclusive: data.exclusive ?? false,
         barcode: data.barcode,
         batchCode: data.batchCode,
         receivedInvoiceFile: data.receivedInvoiceFile,

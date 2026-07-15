@@ -29,6 +29,7 @@ interface SaleItem {
   pricePerPiece?: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
   sellByGrams?: boolean;
+  hasNonExclusiveGrams?: boolean;
   lineTotal: number;
   availableGrams: number;
   availablePieces: number;
@@ -137,6 +138,7 @@ export function NewSaleWizard({
             pricePerPiece: piecePreview?.pricePerPiece ?? preview?.pricePerPiece ?? 0,
             sellingMode: "BY_PIECE",
             sellByGrams: false,
+            hasNonExclusiveGrams: piecePreview?.hasNonExclusiveGrams ?? preview?.hasNonExclusiveGrams ?? false,
             lineTotal: piecePreview?.lineTotal ?? 0,
             availableGrams: piecePreview?.availableStock?.grams ?? preview?.availableStock?.grams ?? 0,
             availablePieces: piecePreview?.availableStock?.pieces ?? preview?.availableStock?.pieces ?? 0,
@@ -438,7 +440,7 @@ export function NewSaleWizard({
               item={item}
               onGramsChange={(g) => updateItem(i, { grams: g })}
               onPiecesChange={(p) => updateItem(i, { pieces: p })}
-              onToggleSellByGrams={item.sellingMode === "BY_PIECE" ? () => toggleSellByGrams(i) : undefined}
+              onToggleSellByGrams={item.sellingMode === "BY_PIECE" && item.hasNonExclusiveGrams ? () => toggleSellByGrams(i) : undefined}
               onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
             />
           ))}

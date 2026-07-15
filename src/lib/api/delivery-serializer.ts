@@ -12,6 +12,7 @@ export function serializeDeliveryForRole(
     barcode: delivery.barcode,
     remainingGrams: delivery.remainingGrams,
     remainingPieces: delivery.remainingPieces,
+    exclusive: delivery.exclusive,
     stockedAt: delivery.stockedAt,
   };
 

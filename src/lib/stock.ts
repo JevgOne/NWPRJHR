@@ -10,6 +10,8 @@ export interface StockNumbers {
   reservedPieces: number;
   availableGrams: number;
   availablePieces: number;
+  exclusiveGrams: number;
+  exclusivePieces: number;
 }
 
 /**
@@ -24,26 +26,27 @@ export async function getStockNumbers(
   variantId: string,
   db: TransactionClient | typeof prisma = prisma
 ): Promise<StockNumbers> {
-  const physical = await db.delivery.aggregate({
-    where: { variantId },
-    _sum: {
-      remainingGrams: true,
-      remainingPieces: true,
-    },
-  });
-
-  const reserved = await db.reservation.aggregate({
-    where: { variantId, active: true },
-    _sum: {
-      grams: true,
-      pieces: true,
-    },
-  });
+  const [physical, reserved, exclusiveStock] = await Promise.all([
+    db.delivery.aggregate({
+      where: { variantId },
+      _sum: { remainingGrams: true, remainingPieces: true },
+    }),
+    db.reservation.aggregate({
+      where: { variantId, active: true },
+      _sum: { grams: true, pieces: true },
+    }),
+    db.delivery.aggregate({
+      where: { variantId, exclusive: true },
+      _sum: { remainingGrams: true, remainingPieces: true },
+    }),
+  ]);
 
   const physicalGrams = physical._sum.remainingGrams ?? 0;
   const physicalPieces = physical._sum.remainingPieces ?? 0;
   const reservedGrams = reserved._sum.grams ?? 0;
   const reservedPieces = reserved._sum.pieces ?? 0;
+  const exclusiveGrams = exclusiveStock._sum.remainingGrams ?? 0;
+  const exclusivePieces = exclusiveStock._sum.remainingPieces ?? 0;
 
   return {
     physicalGrams,
@@ -52,6 +55,8 @@ export async function getStockNumbers(
     reservedPieces,
     availableGrams: physicalGrams - reservedGrams,
     availablePieces: physicalPieces - reservedPieces,
+    exclusiveGrams,
+    exclusivePieces,
   };
 }
 
@@ -59,6 +64,8 @@ interface RawStockRow {
   variantId: string;
   physicalGrams: bigint;
   physicalPieces: bigint;
+  exclusiveGrams: bigint;
+  exclusivePieces: bigint;
 }
 
 interface RawReservationRow {
@@ -89,7 +96,9 @@ export async function getAllStockNumbers(): Promise<
   const physicalRows = await prisma.$queryRawUnsafe<RawStockRow[]>(
     `SELECT variantId,
             COALESCE(SUM(remainingGrams), 0) as physicalGrams,
-            COALESCE(SUM(remainingPieces), 0) as physicalPieces
+            COALESCE(SUM(remainingPieces), 0) as physicalPieces,
+            COALESCE(SUM(CASE WHEN exclusive = 1 THEN remainingGrams ELSE 0 END), 0) as exclusiveGrams,
+            COALESCE(SUM(CASE WHEN exclusive = 1 THEN remainingPieces ELSE 0 END), 0) as exclusivePieces
      FROM deliveries
      GROUP BY variantId`
   );
@@ -113,6 +122,8 @@ export async function getAllStockNumbers(): Promise<
       reservedPieces: 0,
       availableGrams: Number(row.physicalGrams),
       availablePieces: Number(row.physicalPieces),
+      exclusiveGrams: Number(row.exclusiveGrams),
+      exclusivePieces: Number(row.exclusivePieces),
     });
   }
 
@@ -133,6 +144,8 @@ export async function getAllStockNumbers(): Promise<
         reservedPieces: rp,
         availableGrams: -rg,
         availablePieces: -rp,
+        exclusiveGrams: 0,
+        exclusivePieces: 0,
       });
     }
   }

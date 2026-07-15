@@ -183,6 +183,7 @@ export async function POST(request: NextRequest) {
         totalGrams: effectiveTotalGrams,
         totalPieces: data.totalPieces,
         pieceWeightGrams: isByPiece ? data.pieceWeightGrams : undefined,
+        exclusive: isByPiece ? (data.exclusive ?? false) : false,
         barcode: generateBarcode(),
         stockedAt: data.stockedAt ? new Date(data.stockedAt) : undefined,
         note: data.note,

@@ -88,6 +88,7 @@ export function ProductGridCard({
   const variantLength = v0?.lengthCm ?? null;
   const isByPiece = v0?.sellingMode === "BY_PIECE";
   const retailPrice = isByPiece ? (v0?.retailPricePerPiece ?? 0) : (v0?.retailPricePerGram ?? 0);
+  const retailPricePerGramForPiece = isByPiece ? (v0?.retailPricePerGram ?? 0) : 0;
   const wholesalePrice = isByPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
   const stock = isByPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
   const inStock = stock > 0;
@@ -247,13 +248,21 @@ export function ProductGridCard({
               <div className="min-w-0">
                 <span className="text-[10px] text-muted line-through">{priceDisplay} Kc/{unit}</span>
                 <div className="text-sm font-bold text-rose">{b2bDisplay} Kc<span className="text-[10px] font-normal">/{unit}</span></div>
+                {isByPiece && retailPricePerGramForPiece > 0 && (
+                  <div className="text-[10px] text-muted">({(retailPricePerGramForPiece / 100).toFixed(0)} Kc/g)</div>
+                )}
               </div>
             );
           }
 
           return (
-            <div className="text-sm font-bold text-ink min-w-0">
-              {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
+            <div className="min-w-0">
+              <div className="text-sm font-bold text-ink">
+                {priceDisplay} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
+              </div>
+              {isByPiece && retailPricePerGramForPiece > 0 && (
+                <div className="text-[10px] text-muted">({(retailPricePerGramForPiece / 100).toFixed(0)} Kc/g)</div>
+              )}
             </div>
           );
         })()}

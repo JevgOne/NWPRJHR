@@ -45,11 +45,17 @@ export async function fifoDeduct(
     FOR UPDATE
   `;
 
-  const totalAvailableGrams = deliveries.reduce(
+  // For gram-only sales, exclude exclusive deliveries (they can only be sold as whole pieces)
+  const isGramOnlySale = requestedPieces === 0 && requestedGrams > 0;
+  const eligibleDeliveries = isGramOnlySale
+    ? deliveries.filter((d) => !d.exclusive)
+    : deliveries;
+
+  const totalAvailableGrams = eligibleDeliveries.reduce(
     (sum, d) => sum + d.remainingGrams,
     0
   );
-  const totalAvailablePieces = deliveries.reduce(
+  const totalAvailablePieces = eligibleDeliveries.reduce(
     (sum, d) => sum + d.remainingPieces,
     0
   );
@@ -73,7 +79,7 @@ export async function fifoDeduct(
   let gramsRemaining = requestedGrams;
   let piecesRemaining = requestedPieces;
 
-  for (const delivery of deliveries) {
+  for (const delivery of eligibleDeliveries) {
     if (gramsRemaining <= 0 && piecesRemaining <= 0) break;
 
     let gramsFromThis = 0;

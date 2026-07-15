@@ -280,7 +280,9 @@
     "pricePerGramCzk": "Nákup za 1g v CZK",
     "retailPreview": "Prodejní cena",
     "retailPer100g": "Za 100g retail",
-    "margin": "marže"
+    "margin": "marže",
+    "exclusivePiece": "Exkluzivní kus",
+    "exclusiveHint": "Exkluzivní kusy se prodávají pouze celé — nelze dělit po gramech"
   },
   "order": {
     "order": "Objednávka",

@@ -429,6 +429,7 @@ async function ProductDetailView({
         color: v.color,
         pricePerGram: displayPrice,
         retailPricePerGram: isByPiece ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
+        retailPricePerGramForPiece: isByPiece ? v.retailPricePerGram : 0,
         availableGrams: v.availableGrams,
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
         pricePerPiece: isByPiece ? displayPrice : undefined,
@@ -459,6 +460,9 @@ async function ProductDetailView({
     : (tierBadge && pickerVariants.length > 0)
       ? Math.min(...pickerVariants.map((v) => v.retailPricePerGram))
       : null;
+  const retailPricePerGramForPiece = isByPiece
+    ? (focusedVariant?.retailPricePerGramForPiece ?? pickerVariants.find(v => v.sellingMode === "BY_PIECE")?.retailPricePerGramForPiece ?? 0)
+    : 0;
 
   // Localized product name
   const productName = locale === "ru" && product.nameRu
@@ -784,6 +788,9 @@ async function ProductDetailView({
                   {" "}
                   <span>({t("productDetail.regularPrice")})</span>
                 </p>
+              )}
+              {isByPiece && retailPricePerGramForPiece > 0 && (
+                <p className="text-sm text-muted">({formatCZK(retailPricePerGramForPiece)}/g)</p>
               )}
             </div>
           )}

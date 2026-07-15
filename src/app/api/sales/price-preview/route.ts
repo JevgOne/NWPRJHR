@@ -4,6 +4,7 @@ import { pricePreviewSchema } from "@/lib/validations/sale";
 import { getSalePrice } from "@/lib/sale-pricing";
 import { roundHalereUp } from "@/lib/rounding";
 import { getStockNumbers } from "@/lib/stock";
+import { prisma } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -33,6 +34,13 @@ export async function POST(request: NextRequest) {
   };
 
   if (pricing.sellingMode === "BY_PIECE") {
+    // Check if there are non-exclusive grams available for partial gram sales
+    const nonExclusiveStock = await prisma.delivery.aggregate({
+      where: { variantId, exclusive: false, remainingGrams: { gt: 0 } },
+      _sum: { remainingGrams: true },
+    });
+    const hasNonExclusiveGrams = (nonExclusiveStock._sum.remainingGrams ?? 0) > 0;
+
     const lineTotal = (pieces ?? 0) > 0
       ? roundHalereUp((pricing.pricePerPiece ?? 0) * (pieces ?? 0))
       : roundHalereUp(pricing.pricePerGram * grams);
@@ -42,6 +50,7 @@ export async function POST(request: NextRequest) {
       pricePerGram: pricing.pricePerGram,
       lineTotal,
       availableStock,
+      hasNonExclusiveGrams,
     });
   }
 

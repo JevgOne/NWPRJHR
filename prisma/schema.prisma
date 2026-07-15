@@ -292,6 +292,8 @@ model Delivery {
   remainingGrams          Int
   remainingPieces         Int
 
+  exclusive               Boolean   @default(false)
+
   barcode                 String?   @unique
   batchCode               String?
 

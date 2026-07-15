@@ -280,7 +280,9 @@
     "pricePerGramCzk": "Закупка за 1г в CZK",
     "retailPreview": "Цена продажи",
     "retailPer100g": "За 100г розница",
-    "margin": "маржа"
+    "margin": "маржа",
+    "exclusivePiece": "Эксклюзивный кусок",
+    "exclusiveHint": "Эксклюзивные куски продаются только целиком — нельзя делить по граммам"
   },
   "order": {
     "order": "Заказ",

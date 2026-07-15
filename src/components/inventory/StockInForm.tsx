@@ -54,6 +54,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
   const [sellingMode, setSellingMode] = useState<"BY_GRAM" | "BY_PIECE">("BY_GRAM");
   const [totalPieces, setTotalPieces] = useState("");
   const [pieceWeightGrams, setPieceWeightGrams] = useState("");
+  const [exclusive, setExclusive] = useState(false);
 
   // Currency & exchange rate
   const [currency, setCurrency] = useState<CurrencyCode>("USD");
@@ -278,6 +279,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
         ...(retailPerPieceCzk
           ? { retailPricePerPiece: retailPerPieceCzk }
           : {}),
+        exclusive,
       } : {}),
       stockedAt: new Date(stockedAt).toISOString(),
       ...(note ? { note } : {}),
@@ -655,6 +657,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setSellingMode("BY_GRAM");
                 setTotalPieces("");
                 setPieceWeightGrams("");
+                setExclusive(false);
                 setSupplierId("");
                 setPurchasePricePer100g("");
                 setTotalGrams("");
@@ -939,6 +942,20 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 {totalPieces && pieceWeightGrams && (
                   <p className="text-xs text-muted">
                     {t("autoGrams")}: {parseInt(totalPieces) * parseInt(pieceWeightGrams)} g
+                  </p>
+                )}
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={exclusive}
+                    onChange={(e) => setExclusive(e.target.checked)}
+                    className="rounded border-line text-rose focus:ring-rose"
+                  />
+                  <span className="font-medium text-espresso">{t("exclusivePiece")}</span>
+                </label>
+                {exclusive && (
+                  <p className="text-xs text-amber-700 bg-amber-50 rounded-lg p-2">
+                    {t("exclusiveHint")}
                   </p>
                 )}
               </div>

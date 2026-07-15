@@ -48,6 +48,7 @@ export const newStockInSchema = z
     purchasePricePerPiece: z.number().int().positive().optional(),
     pricePerPiece: z.number().int().positive().optional(),
     retailPricePerPiece: z.number().int().positive().optional(),
+    exclusive: z.boolean().default(false),
     stockedAt: z.string().datetime().optional(),
     note: z.string().max(1000).optional(),
   })

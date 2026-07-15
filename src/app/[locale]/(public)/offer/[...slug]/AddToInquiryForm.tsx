@@ -48,6 +48,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
   const [selectedColor, setSelectedColor] = useState<string | null>(autoColor);
   const [selectedLength, setSelectedLength] = useState<number | null>(autoLength);
   const [quantity, setQuantity] = useState(100);
+  const [inquiryUnit, setInquiryUnit] = useState<"ks" | "g">("ks");
   const [added, setAdded] = useState(false);
 
   const colorName = (code: string) => {
@@ -80,9 +81,10 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
     : isByPiece
       ? (selectedVariant?.availablePieces ?? Infinity)
       : (selectedVariant?.availableGrams ?? Infinity);
-  const qtyStep = isByPiece ? 1 : 50;
-  const minQty = isByPiece ? 1 : 50;
-  const unitLabel = isByPiece ? "ks" : "g";
+  const effectiveByGrams = isByPiece && inquiryUnit === "g";
+  const qtyStep = isByPiece && !effectiveByGrams ? 1 : 50;
+  const minQty = isByPiece && !effectiveByGrams ? 1 : 50;
+  const unitLabel = isByPiece ? inquiryUnit : "g";
 
   // Reset quantity when variant changes
   const prevVariantRef = useRef(selectedVariant);
@@ -90,6 +92,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
     if (selectedVariant && selectedVariant !== prevVariantRef.current) {
       const isBP = selectedVariant.sellingMode === "BY_PIECE";
       setQuantity(isBP ? 1 : 100);
+      setInquiryUnit(isBP ? "ks" : "g");
       prevVariantRef.current = selectedVariant;
     }
   }, [selectedVariant]);
@@ -102,7 +105,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
       lengthCm: selectedLength,
       color: selectedColor,
       quantity,
-      unit: isByPiece ? "ks" : "g",
+      unit: isByPiece ? inquiryUnit : "g",
     });
     setAdded(true);
     confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
@@ -203,6 +206,34 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
           <p className="text-xs text-muted py-1">{t("inquiry.selectColorFirst")}</p>
         )}
       </div>
+
+      {/* BY_PIECE: ks/g toggle */}
+      {isByPiece && selectedLength && selectedColor && (
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => { setInquiryUnit("ks"); setQuantity(1); }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              inquiryUnit === "ks"
+                ? "border-rose bg-rose/10 text-ink"
+                : "border-line bg-white text-muted hover:border-espresso/30"
+            }`}
+          >
+            {t("inquiry.byPiece")}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setInquiryUnit("g"); setQuantity(50); }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              inquiryUnit === "g"
+                ? "border-rose bg-rose/10 text-ink"
+                : "border-line bg-white text-muted hover:border-espresso/30"
+            }`}
+          >
+            {t("inquiry.byGram")}
+          </button>
+        </div>
+      )}
 
       {/* Step 3: Quantity + add button */}
       <div className="flex items-end gap-3">
