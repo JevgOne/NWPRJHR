@@ -28,6 +28,8 @@ export function serializeVariantForRole(
         retailManualOverride: variant.retailManualOverride,
         pricePerPiece: variant.pricePerPiece,
         retailPricePerPiece: variant.retailPricePerPiece,
+        availableToOrder: variant.availableToOrder,
+        orderLeadDays: variant.orderLeadDays,
       };
 
     case "EMPLOYEE":
@@ -38,6 +40,8 @@ export function serializeVariantForRole(
         retailPricePerGram: variant.retailPricePerGram,
         pricePerPiece: variant.pricePerPiece,
         retailPricePerPiece: variant.retailPricePerPiece,
+        availableToOrder: variant.availableToOrder,
+        orderLeadDays: variant.orderLeadDays,
       };
 
     case "SALON": {
