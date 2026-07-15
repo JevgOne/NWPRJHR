@@ -76,12 +76,14 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
     : null;
   const isByPiece = selectedVariant?.sellingMode === "BY_PIECE";
   const isCustomOrder = selectedVariant?.availableToOrder && (isByPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
+  const effectiveByGrams = isByPiece && inquiryUnit === "g";
   const maxQty = isCustomOrder
     ? Infinity
-    : isByPiece
-      ? (selectedVariant?.availablePieces ?? Infinity)
-      : (selectedVariant?.availableGrams ?? Infinity);
-  const effectiveByGrams = isByPiece && inquiryUnit === "g";
+    : effectiveByGrams
+      ? (selectedVariant?.availableGrams ?? Infinity)
+      : isByPiece
+        ? (selectedVariant?.availablePieces ?? Infinity)
+        : (selectedVariant?.availableGrams ?? Infinity);
   const qtyStep = isByPiece && !effectiveByGrams ? 1 : 50;
   const minQty = isByPiece && !effectiveByGrams ? 1 : 50;
   const unitLabel = isByPiece ? inquiryUnit : "g";
