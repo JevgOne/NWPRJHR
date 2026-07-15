@@ -87,17 +87,21 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    // 1. Find or create Product (unique per category+origin+texture+color+length)
-    let product = await prisma.product.findFirst({
-      where: {
-        category: data.category,
-        origin: data.origin,
-        texture: data.texture,
-        archived: false,
-        variants: { some: { color: data.color, lengthCm: data.lengthCm } },
-      },
-    });
+    // 1. Find product + pre-fetch price settings in parallel (both use data.category)
+    const [existingProduct, priceSetting] = await Promise.all([
+      prisma.product.findFirst({
+        where: {
+          category: data.category,
+          origin: data.origin,
+          texture: data.texture,
+          archived: false,
+          variants: { some: { color: data.color, lengthCm: data.lengthCm } },
+        },
+      }),
+      prisma.priceSettings.findUnique({ where: { category: data.category } }),
+    ]);
 
+    let product = existingProduct;
     if (!product) {
       const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
       product = await prisma.product.create({
@@ -134,8 +138,6 @@ export async function POST(request: NextRequest) {
       : Math.round((effectivePurchasePricePerGramRaw * data.exchangeRate) / 10000);
 
     if (!variant) {
-      // Get markup from PriceSettings for retail price calculation
-      const priceSetting = await prisma.priceSettings.findUnique({ where: { category: data.category } });
       const markupPercent = priceSetting?.markupPercent ?? 100;
       const retailPrice = Math.round(costPricePerGramCZK * (10000 + markupPercent * 100) / 10000);
       const retailPricePerPiece = isByPiece && data.pricePerPiece

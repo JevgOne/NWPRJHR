@@ -10,6 +10,9 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
+// Pre-import qrcode module to avoid delay at submit time
+const qrcodePromise = import("qrcode");
+
 interface SupplierOption {
   id: string;
   name: string;
@@ -302,41 +305,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
 
     const result = await res.json();
 
-    // Upload photos if any were selected
-    if (selectedFiles.length > 0) {
-      const formData = new FormData();
-      for (const file of selectedFiles) {
-        formData.append("files", file);
-      }
-      try {
-        const mediaRes = await fetch(`/api/products/${result.productId}/media`, {
-          method: "POST",
-          body: formData,
-        });
-        const mediaData = await mediaRes.json();
-        if (mediaRes.ok) {
-          setUploadedPhotos(mediaData.photos ?? []);
-          if (mediaData.video) setUploadedVideo(mediaData.video);
-        } else {
-          setUploadError(mediaData.error || "Upload selhal");
-        }
-      } catch {
-        setUploadError("Upload selhal");
-      }
-    }
-
-    const saleUrl = `${window.location.origin}/sales/new?variantId=${result.variantId}`;
-    try {
-      const QRCode = await import("qrcode");
-      const dataUrl = await QRCode.toDataURL(saleUrl, {
-        errorCorrectionLevel: "M",
-        width: 300,
-        margin: 2,
-      });
-      setQrDataUrl(dataUrl);
-    } catch (e) {
-      console.error("QR generation failed:", e);
-    }
+    // Show success screen IMMEDIATELY — don't wait for photos or QR
     setSuccessData({
       productId: result.productId,
       productName: result.productName ?? "",
@@ -346,6 +315,34 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       barcode: result.barcode ?? "",
     });
     setSubmitting(false);
+
+    // Generate QR code in background (module pre-imported at top level)
+    const saleUrl = `${window.location.origin}/sales/new?variantId=${result.variantId}`;
+    qrcodePromise.then(QRCode =>
+      QRCode.toDataURL(saleUrl, { errorCorrectionLevel: "M", width: 300, margin: 2 })
+    ).then(setQrDataUrl).catch(e => console.error("QR generation failed:", e));
+
+    // Upload photos in background if any were selected
+    if (selectedFiles.length > 0) {
+      const formData = new FormData();
+      for (const file of selectedFiles) {
+        formData.append("files", file);
+      }
+      fetch(`/api/products/${result.productId}/media`, {
+        method: "POST",
+        body: formData,
+      }).then(async (mediaRes) => {
+        const mediaData = await mediaRes.json();
+        if (mediaRes.ok) {
+          setUploadedPhotos(mediaData.photos ?? []);
+          if (mediaData.video) setUploadedVideo(mediaData.video);
+        } else {
+          setUploadError(mediaData.error || "Upload selhal");
+        }
+      }).catch(() => {
+        setUploadError("Upload selhal");
+      });
+    }
   }
 
   // Handle media upload
