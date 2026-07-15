@@ -50,14 +50,28 @@ export function InventoryClient({
   const [productFilter, setProductFilter] = useState<string>("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showLabels, setShowLabels] = useState(false);
-  const [qrModal, setQrModal] = useState<{ variantId: string; dataUrl: string } | null>(null);
+  const [qrModal, setQrModal] = useState<{
+    variantId: string;
+    dataUrl: string;
+    productName: string;
+    category: string;
+    lengthCm: number;
+    availableGrams: number;
+  } | null>(null);
 
-  const openQr = async (variantId: string) => {
+  const openQr = async (item: StockItem) => {
     try {
       const QRCode = await import("qrcode");
-      const url = `${window.location.origin}/sales/new?variantId=${variantId}`;
+      const url = `${window.location.origin}/sales/new?variantId=${item.variantId}`;
       const dataUrl = await QRCode.toDataURL(url, { width: 300, errorCorrectionLevel: "M", margin: 2 });
-      setQrModal({ variantId, dataUrl });
+      setQrModal({
+        variantId: item.variantId,
+        dataUrl,
+        productName: item.product.name,
+        category: item.product.category,
+        lengthCm: item.lengthCm,
+        availableGrams: item.availableGrams,
+      });
     } catch (e) {
       console.error("QR generation failed:", e);
     }
@@ -334,7 +348,7 @@ export function InventoryClient({
                     </td>
                     <td className="py-2.5 px-1" onClick={(e) => e.stopPropagation()}>
                       <button
-                        onClick={() => openQr(item.variantId)}
+                        onClick={() => openQr(item)}
                         className="p-1 rounded hover:bg-nude-100 text-muted hover:text-espresso transition-colors"
                         title="QR"
                       >
@@ -367,6 +381,20 @@ export function InventoryClient({
               <button onClick={() => setQrModal(null)} className="text-muted hover:text-ink text-lg leading-none">&times;</button>
             </div>
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
+            <div className="mt-3 space-y-1 text-center">
+              <p className="text-sm font-medium text-ink">{qrModal.productName}</p>
+              <p className="text-xs text-muted">
+                {qrModal.lengthCm} cm · {qrModal.availableGrams} g
+              </p>
+              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${
+                qrModal.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
+                qrModal.category === "LUXE" ? "bg-violet-100 text-violet-700" :
+                qrModal.category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
+                "bg-red-100 text-red-700"
+              }`}>
+                {tCat(qrModal.category.toLowerCase() as "virgin")}
+              </span>
+            </div>
             <button
               onClick={downloadQr}
               className="mt-4 w-full py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
