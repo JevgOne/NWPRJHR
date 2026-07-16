@@ -175,6 +175,7 @@ export async function notifyContact(contactId: string, data: {
   salonName?: string;
   message: string;
   locale?: string;
+  customerPhotos?: string[];
 }): Promise<void> {
   const langMap: Record<string, string> = { cs: "🇨🇿 Čeština", uk: "🇺🇦 Ukrajinština", ru: "🇷🇺 Ruština" };
   const lang = data.locale ? langMap[data.locale] ?? data.locale : null;
@@ -192,6 +193,7 @@ export async function notifyContact(contactId: string, data: {
     ``,
     `💬 <b>Zpráva/Сообщение:</b>`,
     `${esc(data.message)}`,
+    data.customerPhotos && data.customerPhotos.length > 0 ? `\n📸 Fotky/Фото: ${data.customerPhotos.length}` : null,
     ``,
     `⏳ Čeká na odpověď / Ожидает ответа`,
   ]

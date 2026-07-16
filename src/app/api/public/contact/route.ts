@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
     salonName: salonName || undefined,
     message,
     locale: locale || undefined,
+    customerPhotos: customerPhotos && customerPhotos.length > 0 ? customerPhotos : undefined,
   }).catch(() => {});
 
   // In-app notification for owners

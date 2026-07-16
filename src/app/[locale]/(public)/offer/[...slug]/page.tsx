@@ -1069,13 +1069,13 @@ async function ProductDetailView({
                 <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta1Desc")}</p>
               </div>
             </Link>
-            <Link href="/contact?reason=show-in-person" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
+            <a href="https://wa.me/420608553103" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
               <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
               <div>
                 <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta2Title")}</p>
                 <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta2Desc")}</p>
               </div>
-            </Link>
+            </a>
             <Link href="/contact?reason=photo-match" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
               <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
               <div>
