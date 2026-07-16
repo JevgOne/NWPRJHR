@@ -93,13 +93,13 @@ export function NewSaleWizard({
 
   const fetchPricePreview = useCallback(
     async (variantId: string, grams: number, pieces: number) => {
-      if (!customerType || (grams <= 0 && pieces <= 0)) return null;
+      if (grams <= 0 && pieces <= 0) return null;
       const res = await fetch("/api/sales/price-preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           variantId,
-          customerType,
+          customerType: customerType ?? "RETAIL",
           salonId: salonId ?? undefined,
           grams,
           pieces,
@@ -192,29 +192,66 @@ export function NewSaleWizard({
     });
   }, [initialVariantId, customerType, addItemFromVariantId]);
 
+  // Refresh prices when customerType or salonId changes
+  useEffect(() => {
+    if (!customerType || items.length === 0) return;
+    Promise.all(
+      items.map(async (item, i) => {
+        const preview = await fetchPricePreview(item.variantId, item.grams, item.pieces);
+        if (preview) {
+          setItems((prev) => {
+            const updated = [...prev];
+            if (updated[i]) {
+              updated[i] = {
+                ...updated[i],
+                pricePerGram: preview.pricePerGram,
+                pricePerPiece: preview.pricePerPiece,
+                lineTotal: preview.lineTotal,
+                availableGrams: preview.availableStock?.grams ?? updated[i].availableGrams,
+                availablePieces: preview.availableStock?.pieces ?? updated[i].availablePieces,
+              };
+            }
+            return updated;
+          });
+        }
+      })
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customerType, salonId]);
+
   const handleBarcodeScan = useCallback(
     async (scanned: string) => {
       setScannerOpen(false);
 
-      // If QR contains URL with variantId, extract it directly
-      const urlMatch = scanned.match(/variantId=([a-zA-Z0-9_-]+)/);
-      if (urlMatch) {
-        await addItemFromVariantId(urlMatch[1]);
-        return;
+      // Auto-set RETAIL if no customer type selected
+      if (!customerType) {
+        setCustomerType("RETAIL");
       }
 
-      // Otherwise treat as barcode (HR-XXXXX)
-      const res = await fetch(`/api/deliveries/barcode/${encodeURIComponent(scanned)}`);
-      if (!res.ok) {
-        setError(t("barcodeNotFound"));
-        return;
+      // Extract variantId from QR URL or barcode
+      let variantId: string | null = null;
+      const urlMatch = scanned.match(/variantId=([a-zA-Z0-9_-]+)/);
+      if (urlMatch) {
+        variantId = urlMatch[1];
+      } else {
+        // Treat as barcode (HR-XXXXX)
+        const res = await fetch(`/api/deliveries/barcode/${encodeURIComponent(scanned)}`);
+        if (!res.ok) {
+          setError(t("barcodeNotFound"));
+          return;
+        }
+        const delivery = await res.json();
+        variantId = delivery.variantId;
       }
-      const delivery = await res.json();
-      if (delivery.variantId) {
-        await addItemFromVariantId(delivery.variantId);
-      }
+
+      if (!variantId) return;
+
+      // Prevent duplicate — if variant already in items, skip
+      if (items.some((i) => i.variantId === variantId)) return;
+
+      await addItemFromVariantId(variantId);
     },
-    [addItemFromVariantId, t]
+    [addItemFromVariantId, t, customerType, items]
   );
 
   const toggleSellByGrams = useCallback((index: number) => {
