@@ -92,6 +92,7 @@ export function NewSaleWizard({
   const [reservationNote, setReservationNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const previewRequestId = useRef(0);
 
   const isOwner = role === "OWNER";
 
@@ -334,8 +335,9 @@ export function NewSaleWizard({
       if (updates.grams !== undefined || updates.pieces !== undefined) {
         const grams = updates.grams ?? item.grams;
         const pieces = updates.pieces ?? item.pieces;
+        const requestId = ++previewRequestId.current;
         const preview = await fetchPricePreview(item.variantId, grams, pieces);
-        if (preview) {
+        if (preview && requestId === previewRequestId.current) {
           setItems((prev) => {
             const updated = [...prev];
             if (updated[index]) {
