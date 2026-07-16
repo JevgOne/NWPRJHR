@@ -128,8 +128,10 @@ const approvalT: Record<Lang, {
 
 const inquiryT: Record<Lang, {
   subject: string;
+  consultSubject: string;
   greeting: (name: string) => string;
   body1: string;
+  consultBody1: string;
   body2: string;
   itemsHeader: string;
   promoLabel: string;
@@ -139,8 +141,10 @@ const inquiryT: Record<Lang, {
 }> = {
   cs: {
     subject: "Vaše poptávka byla přijata — Hairland",
+    consultSubject: "Váš dotaz byl přijat — Hairland",
     greeting: (name) => `Dobrý den, ${name},`,
     body1: "Děkujeme za vaši poptávku na Hairland.cz.",
+    consultBody1: "Děkujeme za váš dotaz na Hairland.cz.",
     body2: "Přijali jsme ji a brzy se vám ozveme.",
     itemsHeader: "Poptávané položky:",
     promoLabel: "Slevový kód:",
@@ -150,8 +154,10 @@ const inquiryT: Record<Lang, {
   },
   uk: {
     subject: "Ваш запит прийнято — Hairland",
+    consultSubject: "Ваше запитання прийнято — Hairland",
     greeting: (name) => `Вітаємо, ${name},`,
     body1: "Дякуємо за ваш запит на Hairland.cz.",
+    consultBody1: "Дякуємо за ваше запитання на Hairland.cz.",
     body2: "Ми його прийняли і незабаром зв'яжемося з вами.",
     itemsHeader: "Запитувані товари:",
     promoLabel: "Промокод:",
@@ -161,8 +167,10 @@ const inquiryT: Record<Lang, {
   },
   ru: {
     subject: "Ваш запрос принят — Hairland",
+    consultSubject: "Ваш вопрос принят — Hairland",
     greeting: (name) => `Здравствуйте, ${name},`,
     body1: "Благодарим за ваш запрос на Hairland.cz.",
+    consultBody1: "Благодарим за ваш вопрос на Hairland.cz.",
     body2: "Мы его приняли и скоро свяжемся с вами.",
     itemsHeader: "Запрашиваемые товары:",
     promoLabel: "Промокод:",
@@ -304,42 +312,44 @@ export function getInquiryConfirmationEmail(
   }
 ): { subject: string; text: string; html: string } {
   const t = inquiryT[resolveLang(lang)];
+  const hasItems = data.items.length > 0;
 
-  const itemLines = data.items
-    .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`)
-    .join("\n");
+  const itemLines = hasItems
+    ? data.items
+        .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`)
+        .join("\n")
+    : "";
 
   const text = [
     t.greeting(data.name),
     "",
-    t.body1,
+    hasItems ? t.body1 : t.consultBody1,
     t.body2,
     "",
-    t.itemsHeader,
-    itemLines,
+    hasItems ? t.itemsHeader : null,
+    hasItems ? itemLines : null,
     data.promoCode ? `\n${t.promoLabel} ${data.promoCode}` : null,
     "",
     t.responseTime,
   ].filter(Boolean).join("\n");
 
-  const itemRows = data.items
-    .map(
-      (i) => `<tr style="border-bottom:1px solid #ead9cf;">
+  const itemRows = hasItems
+    ? data.items
+        .map(
+          (i) => `<tr style="border-bottom:1px solid #ead9cf;">
         <td style="padding:8px 0;color:#3a2c2a;font-size:14px;">${esc(i.productName)}</td>
         <td style="padding:8px 0;color:#9c8682;font-size:14px;text-align:right;">${i.lengthCm} cm, ${esc(i.color)}, ${i.quantity}${esc(i.unit)}</td>
       </tr>`
-    )
-    .join("");
+        )
+        .join("")
+    : "";
 
   const promoHtml = data.promoCode
     ? `<p style="color:#3a2c2a;font-size:14px;margin:12px 0 0;"><strong>${esc(t.promoLabel)}</strong> ${esc(data.promoCode)}</p>`
     : "";
 
-  const content = `
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.name))}</p>
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1)}</p>
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
-    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
+  const itemsSection = hasItems
+    ? `<div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
       <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 8px;">${esc(t.itemsHeader)}</p>
       <table style="width:100%;border-collapse:collapse;margin:4px 0;">
         <tr style="border-bottom:2px solid #ead9cf;">
@@ -349,11 +359,18 @@ export function getInquiryConfirmationEmail(
         ${itemRows}
       </table>
       ${promoHtml}
-    </div>
+    </div>`
+    : "";
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.name))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(hasItems ? t.body1 : t.consultBody1)}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
+    ${itemsSection}
     <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.responseTime)}</p>
   `;
 
-  return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
+  return { subject: hasItems ? t.subject : t.consultSubject, text, html: hairlandEmailTemplate(content) };
 }
 
 export function getSpinWinEmail(

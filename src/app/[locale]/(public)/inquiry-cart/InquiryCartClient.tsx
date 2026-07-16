@@ -9,11 +9,19 @@ import { getHairColor } from "@/lib/hair-colors";
 import { getReferralFromStorage, clearReferralFromStorage } from "@/components/public/ReferralTracker";
 
 
-export function InquiryCartClient() {
+interface InquiryCartClientProps {
+  mode?: "cart" | "consult";
+  reason?: string;
+}
+
+export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientProps) {
   const t = useTranslations("public.inquiry");
   const locale = useLocale();
   const { items, removeItem, updateQuantity, clearCart, itemCount } = useInquiryCart();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: "", promoCode: "" });
+  const reasonMessage = mode === "consult" && reason
+    ? (reason === "real-photo" ? t("reasonRealPhoto") : reason === "photo-match" ? t("reasonPhotoMatch") : "")
+    : "";
+  const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: reasonMessage, promoCode: "" });
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -84,7 +92,7 @@ export function InquiryCartClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (items.length === 0) return;
+    if (mode === "cart" && items.length === 0) return;
     setSubmitting(true);
     setError("");
 
@@ -109,7 +117,7 @@ export function InquiryCartClient() {
           promoCode: promoResult?.valid ? promoResult.code : form.promoCode || undefined,
           referralCode: referralCode || undefined,
           customerPhotos,
-          items,
+          items: isConsult ? [] : items,
         }),
       });
 
@@ -154,7 +162,7 @@ export function InquiryCartClient() {
     );
   }
 
-  if (itemCount === 0) {
+  if (mode === "cart" && itemCount === 0) {
     return (
       <div className="text-center py-16">
         <svg className="w-12 h-12 mx-auto text-muted mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
@@ -172,21 +180,30 @@ export function InquiryCartClient() {
     );
   }
 
+  const isConsult = mode === "consult";
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-ink mb-6">{t("cartTitle")}</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">
+        {isConsult ? t("consultTitle") : t("cartTitle")}
+      </h1>
+      {isConsult && (
+        <p className="text-muted mb-6">{t("consultSubtitle")}</p>
+      )}
 
-      {/* Cart items */}
-      <div className="space-y-3 mb-8">
-        {items.map((item) => (
-          <CartItemRow
-            key={`${item.productId}:${item.lengthCm}:${item.color}`}
-            item={item}
-            onRemove={() => removeItem(item.productId, item.lengthCm, item.color)}
-            onUpdateQty={(qty) => updateQuantity(item.productId, item.lengthCm, item.color, qty)}
-          />
-        ))}
-      </div>
+      {/* Cart items — hidden in consult mode */}
+      {!isConsult && (
+        <div className="space-y-3 mb-8">
+          {items.map((item) => (
+            <CartItemRow
+              key={`${item.productId}:${item.lengthCm}:${item.color}`}
+              item={item}
+              onRemove={() => removeItem(item.productId, item.lengthCm, item.color)}
+              onUpdateQty={(qty) => updateQuantity(item.productId, item.lengthCm, item.color, qty)}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Submission form */}
       <div className="bg-nude-50 rounded-2xl p-5">
@@ -278,6 +295,7 @@ export function InquiryCartClient() {
             )}
           </div>
 
+          {!isConsult && (
           <div>
             <label className="block text-xs font-medium text-muted mb-1">{t("promoCodeLabel")}</label>
             {promoResult?.valid ? (
@@ -322,13 +340,14 @@ export function InquiryCartClient() {
               <p className="text-xs text-red-500 mt-1">{t("promoInvalid")}</p>
             )}
           </div>
+          )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
             className="w-full py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors disabled:opacity-50"
           >
-            {submitting ? t("submitting") : t("submitButton", { count: itemCount })}
+            {submitting ? t("submitting") : isConsult ? t("submitConsult") : t("submitButton", { count: itemCount })}
           </button>
           <p className="text-[11px] text-muted text-center">
             {t("disclaimer")}

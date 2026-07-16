@@ -940,7 +940,12 @@
       "photoCta": "Nevíte si rady? Pošlete nám vaše fotky a my vám poradíme",
       "photoHint": "Nahrajte 1-3 fotky vašich vlasů (JPG, PNG, max 10 MB)",
       "photoButton": "Nahrát fotky",
-      "photoUploadError": "Chyba při nahrávání fotek"
+      "photoUploadError": "Chyba při nahrávání fotek",
+      "consultTitle": "Poradíme vám s výběrem",
+      "consultSubtitle": "Nahrajte fotku svých vlasů nebo nám napište, co potřebujete. Ozveme se do 24 hodin.",
+      "reasonRealPhoto": "Ráda bych viděla reálnou fotku konkrétního kusu, který máte skladem.",
+      "reasonPhotoMatch": "Posílám fotku svých vlasů — prosím o doporučení správného odstínu a délky.",
+      "submitConsult": "Odeslat"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",

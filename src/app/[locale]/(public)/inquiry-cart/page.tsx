@@ -13,10 +13,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function InquiryCartPage() {
+export default async function InquiryCartPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mode?: string; reason?: string }>;
+}) {
+  const sp = await searchParams;
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <InquiryCartClient />
+      <InquiryCartClient
+        mode={sp.mode === "consult" ? "consult" : "cart"}
+        reason={sp.reason}
+      />
     </div>
   );
 }

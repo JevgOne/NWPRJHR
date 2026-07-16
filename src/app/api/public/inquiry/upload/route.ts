@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { put } from "@vercel/blob";
 
-const UPLOAD_DIR = join(process.cwd(), "public", "uploads", "inquiries");
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 const MAX_FILES = 3;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -59,19 +57,14 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
-
   const urls: string[] = [];
 
   for (const file of files) {
     const ext = file.name.split(".").pop() ?? "jpg";
     const safeName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const filePath = join(UPLOAD_DIR, safeName);
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
-
-    urls.push(`/uploads/inquiries/${safeName}`);
+    const blob = await put(`inquiries/${safeName}`, file, { access: "public" });
+    urls.push(blob.url);
   }
 
   return NextResponse.json({ urls }, { status: 201 });

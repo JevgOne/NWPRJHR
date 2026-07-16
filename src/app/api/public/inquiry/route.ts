@@ -24,7 +24,7 @@ const inquirySchema = z.object({
   referralCode: z.string().max(50).optional().default(""),
   locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
   customerPhotos: z.array(z.string().url().or(z.string().startsWith("/uploads/"))).max(3).optional().default([]),
-  items: z.array(inquiryItemSchema).min(1).max(50),
+  items: z.array(inquiryItemSchema).max(50).default([]),
 });
 
 // Rate limit: 5 per hour per IP
@@ -135,15 +135,15 @@ export async function POST(request: NextRequest) {
 
     // Notify owner
     const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
-    const itemLines = items
-      .map((i) => `  • ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`)
-      .join("\n");
+    const itemLines = items.length > 0
+      ? items.map((i) => `  • ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`).join("\n")
+      : "  (žádné produkty — žádost o poradenství / fotky)";
 
     await sendNotificationEmail({
       to: contactTo,
-      subject: `[Hairland] Nová poptávka: ${name}${salonName ? ` (${salonName})` : ""}`,
+      subject: `[Hairland] ${items.length > 0 ? "Nová poptávka" : "Žádost o poradenství"}: ${name}${salonName ? ` (${salonName})` : ""}`,
       body: [
-        `Nová poptávka #${inquiry.id.slice(-6)}`,
+        `${items.length > 0 ? "Nová poptávka" : "Žádost o poradenství"} #${inquiry.id.slice(-6)}`,
         "",
         `Jméno: ${name}`,
         `Email: ${email}`,
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
         salonName ? `Salon: ${salonName}` : null,
         appliedPromoCode ? `Slevový kód: ${appliedPromoCode}` : null,
         "",
-        `Položky (${items.length}):`,
+        items.length > 0 ? `Položky (${items.length}):` : "Typ: Poradenství",
         itemLines,
         "",
         message ? `Poznámka: ${message}` : null,
@@ -172,8 +172,10 @@ export async function POST(request: NextRequest) {
           data: owners.map((o) => ({
             recipientId: o.id,
             type: "NEW_INQUIRY" as const,
-            title: `Nová poptávka: ${name}${salonName ? ` (${salonName})` : ""}`,
-            message: `${name} poptává ${items.length} položek. ${items.map((i) => i.productName).join(", ")}`,
+            title: `${items.length > 0 ? "Nová poptávka" : "Žádost o poradenství"}: ${name}${salonName ? ` (${salonName})` : ""}`,
+            message: items.length > 0
+              ? `${name} poptává ${items.length} položek. ${items.map((i) => i.productName).join(", ")}`
+              : `${name} žádá o poradenství${customerPhotos.length > 0 ? ` (${customerPhotos.length} fotek)` : ""}.`,
             data: JSON.stringify({ inquiryId: inquiry.id, name, itemCount: items.length }),
           })),
         });
