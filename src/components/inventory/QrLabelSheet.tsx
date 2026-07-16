@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { generateSku } from "@/lib/sku";
 
 interface LabelData {
   variantId: string;
@@ -9,6 +10,7 @@ interface LabelData {
   lengthCm: number;
   color: string;
   category: string;
+  texture?: string | null;
   barcode?: string | null;
 }
 
@@ -106,17 +108,14 @@ export function QrLabelSheet({
                   style={{ width: "20mm", height: "20mm" }}
                 />
                 <div className="flex-1 min-w-0 overflow-hidden flex flex-col justify-center">
-                  <div className="text-[7px] font-bold text-ink leading-tight truncate">
+                  <div className="text-[8px] font-bold text-ink leading-tight font-mono">
+                    {generateSku(label.category, label.texture, label.color, label.lengthCm)}
+                  </div>
+                  <div className="text-[6px] text-muted leading-tight mt-[0.5mm] truncate">
                     {label.productName}
                   </div>
                   <div className="text-[6px] text-muted leading-tight mt-[0.5mm]">
-                    {label.lengthCm} cm
-                  </div>
-                  <div className="text-[6px] text-muted leading-tight">
-                    {label.color}
-                  </div>
-                  <div className="text-[5px] text-muted/60 mt-[0.5mm] truncate">
-                    {label.category}
+                    {label.lengthCm}cm · {label.color}
                   </div>
                   <div className="text-[5px] text-muted/40 mt-[0.5mm] font-mono truncate">
                     {label.barcode ?? label.variantId.slice(-8)}
@@ -138,17 +137,14 @@ export function QrLabelSheet({
               style={{ width: "20mm", height: "20mm", flexShrink: 0 }}
             />
             <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <div style={{ fontSize: "7px", fontWeight: "bold", lineHeight: 1.2 }}>
+              <div style={{ fontSize: "8px", fontWeight: "bold", lineHeight: 1.2, fontFamily: "monospace" }}>
+                {generateSku(label.category, label.texture, label.color, label.lengthCm)}
+              </div>
+              <div style={{ fontSize: "6px", color: "#444", marginTop: "0.5mm" }}>
                 {label.productName}
               </div>
               <div style={{ fontSize: "6px", color: "#444", marginTop: "0.5mm" }}>
-                {label.lengthCm} cm
-              </div>
-              <div style={{ fontSize: "6px", color: "#444" }}>
-                {label.color}
-              </div>
-              <div style={{ fontSize: "5px", color: "#888", marginTop: "0.5mm" }}>
-                {label.category}
+                {label.lengthCm}cm · {label.color}
               </div>
               <div style={{ fontSize: "5px", color: "#aaa", marginTop: "0.5mm", fontFamily: "monospace" }}>
                 {label.barcode ?? label.variantId.slice(-8)}

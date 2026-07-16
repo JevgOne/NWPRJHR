@@ -376,6 +376,7 @@ function CartItemRow({
         <div className="text-sm font-medium text-ink truncate">{item.productName}</div>
         <div className="text-xs text-muted">
           {item.lengthCm} cm · {item.color}
+          {item.sku && <span className="ml-1 font-mono">({item.sku})</span>}
         </div>
       </div>
       <div className="flex items-center gap-1.5">

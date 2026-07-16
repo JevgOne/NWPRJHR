@@ -7,10 +7,11 @@ import { Card } from "@/components/ui/Card";
 import { QrLabelSheet } from "@/components/inventory/QrLabelSheet";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
+import { generateSku } from "@/lib/sku";
 
 interface StockItem {
   variantId: string;
-  product: { id: string; name: string; category: string; origin?: string | null };
+  product: { id: string; name: string; category: string; origin?: string | null; texture?: string | null };
   lengthCm: number;
   color: string;
   physicalGrams: number;
@@ -56,6 +57,8 @@ export function InventoryClient({
     variantId: string;
     dataUrl: string;
     category: string;
+    texture?: string | null;
+    color: string;
     lengthCm: number;
     availableGrams: number;
     availablePieces: number;
@@ -71,10 +74,12 @@ export function InventoryClient({
         variantId: item.variantId,
         dataUrl,
         category: item.product.category,
+        texture: item.product.texture,
+        color: item.color,
         lengthCm: item.lengthCm,
         availableGrams: item.availableGrams,
         availablePieces: item.availablePieces,
-        sellingMode: "BY_GRAM", // inventory items don't have sellingMode directly
+        sellingMode: "BY_GRAM",
       });
     } catch (e) {
       console.error("QR generation failed:", e);
@@ -138,9 +143,11 @@ export function InventoryClient({
       if (productFilter && item.product.id !== productFilter) return false;
       if (search) {
         const q = search.toLowerCase();
+        const sku = generateSku(item.product.category, item.product.texture, item.color, item.lengthCm).toLowerCase();
         if (
           !item.product.name.toLowerCase().includes(q) &&
-          !item.color.toLowerCase().includes(q)
+          !item.color.toLowerCase().includes(q) &&
+          !sku.includes(q)
         ) return false;
       }
       return true;
@@ -181,6 +188,7 @@ export function InventoryClient({
         lengthCm: i.lengthCm,
         color: i.color,
         category: i.product.category,
+        texture: i.product.texture,
         barcode: i.barcode,
       }));
   }, [filtered, selected]);
@@ -330,6 +338,9 @@ export function InventoryClient({
                       <div className="font-medium text-ink text-sm">
                         {item.product.name}
                       </div>
+                      <div className="font-mono text-[10px] text-muted">
+                        {generateSku(item.product.category, item.product.texture, item.color, item.lengthCm)}
+                      </div>
                       <div className="flex items-center gap-1 mt-0.5">
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
                           item.product.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
@@ -408,7 +419,10 @@ export function InventoryClient({
             </div>
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
             <div className="mt-3 text-center">
-              <p className="text-sm font-medium text-ink">
+              <p className="font-mono text-sm font-bold text-ink mb-1">
+                {generateSku(qrModal.category, qrModal.texture, qrModal.color, qrModal.lengthCm)}
+              </p>
+              <p className="text-sm text-muted">
                 {tCat(qrModal.category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
               </p>
               <p className="text-xs text-muted">

@@ -879,6 +879,7 @@ export function ProductDetailClient({
         <VariantTable
           productId={product.id}
           category={product.category}
+          texture={product.texture}
           variants={product.variants ?? []}
           isOwner={isOwner}
         />

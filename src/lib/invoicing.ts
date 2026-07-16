@@ -3,6 +3,7 @@ import { prisma } from "./db";
 import { getNextInvoiceNumber } from "./invoice-number";
 import { roundHalereUp } from "./rounding";
 import { getInvoiceTranslations } from "./invoice-translations";
+import { generateSku } from "./sku";
 
 type SaleWithRelations = Sale & {
   items: (SaleItem & { variant: Variant & { product: Product } })[];
@@ -22,7 +23,8 @@ function formatItemDescription(
       ? product.nameRu || product.name
       : product.name;
 
-  return `${name}, ${variant.lengthCm}cm, ${variant.color}`;
+  const sku = generateSku(product.category, product.texture, variant.color, variant.lengthCm);
+  return `${name}, ${variant.lengthCm}cm, ${variant.color} (${sku})`;
 }
 
 /**

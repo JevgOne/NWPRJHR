@@ -137,10 +137,10 @@ export async function notifyInquiry(inquiryId: string, data: {
   phone?: string;
   salonName?: string;
   message?: string;
-  items: { productName: string; lengthCm: number; color: string; quantity: number; unit: string }[];
+  items: { productName: string; lengthCm: number; color: string; quantity: number; unit: string; sku?: string }[];
 }): Promise<void> {
   const itemLines = data.items
-    .map((i) => `   ${originFlag(esc(i.productName))}\n   ${i.lengthCm} cm · ${formatColor(i.color)} · ${i.quantity}${i.unit}`)
+    .map((i) => `   ${originFlag(esc(i.productName))}${i.sku ? `\n   SKU: ${esc(i.sku)}` : ""}\n   ${i.lengthCm} cm · ${formatColor(i.color)} · ${i.quantity}${i.unit}`)
     .join("\n\n");
 
   const lines = [
@@ -263,13 +263,13 @@ async function sendRegistrationNotification(text: string): Promise<void> {
 /**
  * Notify about stock restock.
  */
-export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number): Promise<void> {
+export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number, sku?: string): Promise<void> {
   const lines = [
     `📥 <b>NASKLADNĚNÍ / ПОСТУПЛЕНИЕ</b>`,
     `Na sklad přibylo zboží / На склад поступил товар`,
     ``,
     `📦 <b>${esc(productName)}</b>`,
-    `${esc(variant)}`,
+    `${esc(variant)}${sku ? ` · SKU: ${esc(sku)}` : ""}`,
     `➕ ${addedQty}g → celkem/всего: <b>${newTotal}g</b>`,
   ].join("\n");
 

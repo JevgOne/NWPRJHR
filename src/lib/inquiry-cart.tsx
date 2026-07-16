@@ -9,6 +9,7 @@ export interface InquiryCartItem {
   color: string;
   quantity: number;
   unit: "g" | "ks";
+  sku?: string;
 }
 
 interface CartState {

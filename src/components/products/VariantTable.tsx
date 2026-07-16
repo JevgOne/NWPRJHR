@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatCZK } from "@/lib/pricing";
 import { getHairColor } from "@/lib/hair-colors";
+import { generateSku } from "@/lib/sku";
 
 interface VariantData {
   id: string;
@@ -33,6 +34,7 @@ interface StockInfo {
 interface VariantTableProps {
   productId: string;
   category: string;
+  texture?: string | null;
   variants: VariantData[];
   isOwner: boolean;
 }
@@ -40,6 +42,7 @@ interface VariantTableProps {
 export function VariantTable({
   productId,
   category,
+  texture,
   variants,
   isOwner,
 }: VariantTableProps) {
@@ -51,10 +54,12 @@ export function VariantTable({
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [stockMap, setStockMap] = useState<Map<string, StockInfo>>(new Map());
+  const [copiedSku, setCopiedSku] = useState<string | null>(null);
   const [qrModal, setQrModal] = useState<{
     variantId: string;
     dataUrl: string;
     lengthCm: number;
+    color: string;
     sellingMode: string;
   } | null>(null);
 
@@ -63,7 +68,7 @@ export function VariantTable({
       const QRCode = await import("qrcode");
       const url = `${window.location.origin}/sales/new?variantId=${variant.id}`;
       const dataUrl = await QRCode.toDataURL(url, { width: 300, errorCorrectionLevel: "M", margin: 2 });
-      setQrModal({ variantId: variant.id, dataUrl, lengthCm: variant.lengthCm, sellingMode: variant.sellingMode ?? "BY_GRAM" });
+      setQrModal({ variantId: variant.id, dataUrl, lengthCm: variant.lengthCm, color: variant.color, sellingMode: variant.sellingMode ?? "BY_GRAM" });
     } catch (e) {
       console.error("QR generation failed:", e);
     }
@@ -240,7 +245,7 @@ export function VariantTable({
                     } ${hasStock ? "bg-white" : "bg-gray-50/50"}`}
                   >
                     {/* Color indicator + name */}
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-1">
                       <span
                         className="w-6 h-6 rounded-full border-2 border-white shadow-sm flex-shrink-0"
                         style={{ backgroundColor: hc.hex }}
@@ -249,6 +254,21 @@ export function VariantTable({
                         {colorName(variant.color)}
                       </span>
                     </div>
+                    {/* SKU */}
+                    <button
+                      className="font-mono text-[10px] text-muted hover:text-ink transition-colors mb-1 block"
+                      onClick={() => {
+                        const sku = generateSku(category, texture, variant.color, length);
+                        navigator.clipboard.writeText(sku);
+                        setCopiedSku(sku);
+                        setTimeout(() => setCopiedSku(null), 1500);
+                      }}
+                      title="Copy SKU"
+                    >
+                      {copiedSku === generateSku(category, texture, variant.color, length)
+                        ? "Copied!"
+                        : generateSku(category, texture, variant.color, length)}
+                    </button>
 
                     {/* Prodejní cena (main, editable) */}
                     {!isByPiece && variant.retailPricePerGram !== undefined && (
@@ -524,7 +544,10 @@ export function VariantTable({
             </div>
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
             <div className="mt-3 text-center">
-              <p className="text-sm font-medium text-ink">
+              <p className="font-mono text-sm font-bold text-ink mb-1">
+                {generateSku(category, texture, qrModal.color, qrModal.lengthCm)}
+              </p>
+              <p className="text-sm text-muted">
                 {tCat(category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm
               </p>
               {(() => {

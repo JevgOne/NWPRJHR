@@ -23,6 +23,7 @@ import { unstable_cache } from "next/cache";
 import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage, CATEGORY_SLUG_MAP, CATEGORY_STANDALONE_PATHS } from "./CategoryPage";
 import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_SLUG_MAP_SEO, ORIGIN_SLUG_MAP } from "@/lib/attribute-slugs";
 import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLandingPage";
+import { generateSku } from "@/lib/sku";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 import { TrackProductView } from "@/components/public/TrackProductView";
 import { RecentlyViewed } from "@/components/public/RecentlyViewed";
@@ -608,7 +609,9 @@ async function ProductDetailView({
     description: schemaDesc,
     image: schemaImage,
     brand: { "@type": "Brand", name: "Hairland" },
-    sku: product.id,
+    sku: product.variants.length > 0
+      ? generateSku(product.category, product.texture, product.variants[0].color, product.variants[0].lengthCm)
+      : product.id,
     material: "100% lidské vlasy",
     ...(product.origin && ORIGIN_ISO[product.origin] && {
       countryOfOrigin: { "@type": "Country", name: ORIGIN_ISO[product.origin] },
@@ -997,6 +1000,8 @@ async function ProductDetailView({
           <AddToInquiryForm
             productId={product.id}
             productName={product.name}
+            category={product.category}
+            texture={product.texture}
             variants={pickerVariants}
             defaultColor={sp.color}
             defaultLength={sp.length ? parseInt(sp.length, 10) : undefined}

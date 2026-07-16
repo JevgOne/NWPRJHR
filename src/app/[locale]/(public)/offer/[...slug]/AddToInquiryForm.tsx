@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import confetti from "canvas-confetti";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
+import { generateSku } from "@/lib/sku";
 
 interface PickerVariant {
   lengthCm: number;
@@ -23,6 +24,8 @@ interface PickerVariant {
 interface AddToInquiryFormProps {
   productId: string;
   productName: string;
+  category: string;
+  texture?: string | null;
   variants: PickerVariant[];
   defaultColor?: string;
   defaultLength?: number;
@@ -35,7 +38,7 @@ function formatPrice(halere: number): string {
   });
 }
 
-export function AddToInquiryForm({ productId, productName, variants, defaultColor, defaultLength }: AddToInquiryFormProps) {
+export function AddToInquiryForm({ productId, productName, category, texture, variants, defaultColor, defaultLength }: AddToInquiryFormProps) {
   const t = useTranslations("public");
   const { addItem } = useInquiryCart();
 
@@ -104,6 +107,10 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
     }
   }, [selectedVariant]);
 
+  const selectedSku = selectedColor && selectedLength
+    ? generateSku(category, texture, selectedColor, selectedLength)
+    : null;
+
   const handleAdd = () => {
     if (!selectedLength || !selectedColor) return;
     addItem({
@@ -113,6 +120,7 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
       color: selectedColor,
       quantity,
       unit: showAsPiece ? inquiryUnit : "g",
+      sku: generateSku(category, texture, selectedColor, selectedLength),
     });
     setAdded(true);
     confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
@@ -294,9 +302,13 @@ export function AddToInquiryForm({ productId, productName, variants, defaultColo
         </button>
       </div>
 
-      {(!selectedLength || !selectedColor) && (
+      {(!selectedLength || !selectedColor) ? (
         <p className="text-[11px] text-muted text-center">
           {t("inquiry.selectLengthAndColor")}
+        </p>
+      ) : selectedSku && (
+        <p className="font-mono text-xs text-muted text-center">
+          SKU: {selectedSku}
         </p>
       )}
     </div>

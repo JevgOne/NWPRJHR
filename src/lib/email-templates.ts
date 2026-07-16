@@ -306,7 +306,7 @@ export function getInquiryConfirmationEmail(
   lang: string,
   data: {
     name: string;
-    items: Array<{ productName: string; lengthCm: number; color: string; quantity: number; unit: string }>;
+    items: Array<{ productName: string; lengthCm: number; color: string; quantity: number; unit: string; sku?: string }>;
     promoCode?: string;
     inquiryId: string;
   }
@@ -316,7 +316,7 @@ export function getInquiryConfirmationEmail(
 
   const itemLines = hasItems
     ? data.items
-        .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`)
+        .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}${i.sku ? ` (${i.sku})` : ""}`)
         .join("\n")
     : "";
 
@@ -337,7 +337,7 @@ export function getInquiryConfirmationEmail(
     ? data.items
         .map(
           (i) => `<tr style="border-bottom:1px solid #ead9cf;">
-        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;">${esc(i.productName)}</td>
+        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;">${esc(i.productName)}${i.sku ? ` <span style="color:#9c8682;font-family:monospace;font-size:12px;">(${esc(i.sku)})</span>` : ""}</td>
         <td style="padding:8px 0;color:#9c8682;font-size:14px;text-align:right;">${i.lengthCm} cm, ${esc(i.color)}, ${i.quantity}${esc(i.unit)}</td>
       </tr>`
         )

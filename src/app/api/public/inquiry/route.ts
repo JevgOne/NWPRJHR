@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
 import { getInquiryConfirmationEmail } from "@/lib/email-templates";
 import { notifyInquiry } from "@/lib/telegram";
+import { generateSku } from "@/lib/sku";
 import { z } from "zod";
 
 const inquiryItemSchema = z.object({
@@ -133,10 +134,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Enrich items with SKU
+    let itemsWithSku = items.map((i) => ({ ...i, sku: undefined as string | undefined }));
+    if (items.length > 0) {
+      const productIds = [...new Set(items.map((i) => i.productId))];
+      const products = await prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, category: true, texture: true },
+      });
+      const productMap = new Map(products.map((p) => [p.id, p]));
+      itemsWithSku = items.map((i) => {
+        const p = productMap.get(i.productId);
+        return { ...i, sku: p ? generateSku(p.category, p.texture, i.color, i.lengthCm) : undefined };
+      });
+    }
+
     // Notify owner
     const contactTo = process.env.EMAIL_CONTACT_TO ?? "info@hairland.cz";
     const itemLines = items.length > 0
-      ? items.map((i) => `  • ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}`).join("\n")
+      ? itemsWithSku.map((i) => `  • ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.quantity}${i.unit}${i.sku ? ` (${i.sku})` : ""}`).join("\n")
       : "  (žádné produkty — žádost o poradenství / fotky)";
 
     await sendNotificationEmail({
@@ -189,13 +205,13 @@ export async function POST(request: NextRequest) {
       phone: phone || undefined,
       salonName: salonName || undefined,
       message: message || undefined,
-      items,
+      items: itemsWithSku,
     }).catch(() => {});
 
     // Confirmation email to customer
     const inquiryEmailData = getInquiryConfirmationEmail(locale, {
       name,
-      items,
+      items: itemsWithSku,
       promoCode: appliedPromoCode ?? undefined,
       inquiryId: inquiry.id,
     });
