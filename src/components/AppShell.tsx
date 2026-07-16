@@ -141,7 +141,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 h-16 border-b border-nude-200/20">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <img src="/icons/icon-192x192.png" alt="Hairland" className="w-8 h-8 rounded-lg" />
+              <img src="/seal-dark.svg" alt="Hairland" className="w-8 h-8 rounded-lg" />
               <span className="text-xl font-bold text-white">Hairland</span>
             </Link>
             <button

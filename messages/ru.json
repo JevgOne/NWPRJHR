@@ -2531,6 +2531,7 @@
     "inquiryStatus": "Статус запроса",
     "assignedPerson": "Кто обрабатывает",
     "assignedPlaceholder": "Имя сотрудника",
+    "unassigned": "Не назначено",
     "internalNote": "Внутренняя заметка",
     "notePlaceholder": "Заметка, видимая только администраторам...",
     "subtotal": "Промежуточный итог (без НДС)",

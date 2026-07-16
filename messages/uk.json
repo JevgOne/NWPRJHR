@@ -2531,6 +2531,7 @@
     "inquiryStatus": "Статус запиту",
     "assignedPerson": "Хто обробляє",
     "assignedPlaceholder": "Ім'я працівника",
+    "unassigned": "Не призначено",
     "internalNote": "Внутрішня примітка",
     "notePlaceholder": "Примітка, видима лише адміністраторам...",
     "subtotal": "Проміжний підсумок (без ПДВ)",

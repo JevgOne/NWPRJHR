@@ -6,6 +6,19 @@ export const USER_COLORS: Record<string, { bg: string; text: string; ring: strin
   martin:   { bg: "bg-blue-500",  text: "text-blue-700",  ring: "ring-blue-300",  emoji: "🐻" },
 };
 
+export const TEAM_MEMBERS = Object.keys(USER_COLORS).map(
+  (key) => key.charAt(0).toUpperCase() + key.slice(1)
+);
+
+export const USER_ALIASES: Record<string, string> = {
+  "інна": "inna",
+  "інга": "inga",
+  "євгеній": "jevgenij",
+  "евгений": "jevgenij",
+  "мартін": "martin",
+  "мартин": "martin",
+};
+
 const FALLBACK = { bg: "bg-gray-400", text: "text-gray-600", ring: "ring-gray-200", emoji: "" };
 
 export function getUserColor(name: string | null | undefined) {
@@ -14,6 +27,11 @@ export function getUserColor(name: string | null | undefined) {
   for (const [userName, colors] of Object.entries(USER_COLORS)) {
     if (key === userName || key.startsWith(userName + " ")) {
       return colors;
+    }
+  }
+  for (const [alias, target] of Object.entries(USER_ALIASES)) {
+    if (key === alias || key.startsWith(alias + " ")) {
+      return USER_COLORS[target] ?? FALLBACK;
     }
   }
   return FALLBACK;

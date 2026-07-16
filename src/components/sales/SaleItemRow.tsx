@@ -16,6 +16,10 @@ interface SaleItemData {
   lineTotal: number;
   availableGrams: number;
   availablePieces: number;
+  origin?: string | null;
+  texture?: string | null;
+  sku?: string;
+  category?: string;
 }
 
 interface SaleItemRowProps {
@@ -61,6 +65,14 @@ export function SaleItemRow({
           &times;
         </Button>
       </div>
+
+      {(item.origin || item.texture || item.sku) && (
+        <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted">
+          {item.origin && <span>{item.origin}</span>}
+          {item.texture && <span>{item.texture}</span>}
+          {item.sku && <span className="font-mono">{item.sku}</span>}
+        </div>
+      )}
 
       {isByPiece ? (
         <div className="space-y-2">
@@ -118,10 +130,8 @@ export function SaleItemRow({
         <span className="text-muted">
           {t("availableStock")}:{" "}
           {isByPiece
-            ? item.sellByGrams
-              ? `${item.availableGrams} ${tStock("grams")}`
-              : `${item.availablePieces} ${tStock("pieces")}`
-            : `${item.availableGrams} ${tStock("grams")} / ${item.availablePieces} ${tStock("pieces")}`}
+            ? `${item.availablePieces} ${tStock("pieces")} - ${item.availableGrams} ${tStock("grams")}`
+            : `${item.availableGrams} ${tStock("grams")}`}
         </span>
       </div>
 

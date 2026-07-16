@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
 import { UserBadge } from "@/components/ui/UserBadge";
+import { TEAM_MEMBERS } from "@/lib/user-colors";
 
 interface InquiryItem {
   id: string;
@@ -398,12 +399,16 @@ export function InquiriesClient() {
                             <label className="block text-xs font-medium text-muted uppercase mb-1">
                               {t("assignedPerson")}
                             </label>
-                            <input
+                            <select
                               value={editAssigned}
                               onChange={(e) => setEditAssigned(e.target.value)}
                               className="border border-line rounded-lg px-3 py-2 text-sm w-full max-w-xs"
-                              placeholder={t("assignedPlaceholder")}
-                            />
+                            >
+                              <option value="">{t("unassigned")}</option>
+                              {TEAM_MEMBERS.map((name) => (
+                                <option key={name} value={name}>{name}</option>
+                              ))}
+                            </select>
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-muted uppercase mb-1">

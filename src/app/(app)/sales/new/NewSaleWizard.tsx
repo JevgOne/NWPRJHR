@@ -11,12 +11,15 @@ import { DiscountForm } from "@/components/sales/DiscountForm";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
 import type { Role } from "@prisma/client";
 import { getHairColor } from "@/lib/hair-colors";
+import { generateSku } from "@/lib/sku";
 
 interface ProductOption {
   id: string;
   name: string;
   category: string;
   processingType: string;
+  origin: string | null;
+  texture: string | null;
   variants: { id: string; lengthCm: number; color: string }[];
 }
 
@@ -33,6 +36,10 @@ interface SaleItem {
   lineTotal: number;
   availableGrams: number;
   availablePieces: number;
+  origin?: string | null;
+  texture?: string | null;
+  sku?: string;
+  category?: string;
 }
 
 interface DiscountData {
@@ -114,10 +121,19 @@ export function NewSaleWizard({
   const addItemFromVariantId = useCallback(
     async (variantId: string) => {
       let label = variantId;
+      let origin: string | null = null;
+      let texture: string | null = null;
+      let sku: string | undefined;
+      let category: string | undefined;
+
       for (const p of products) {
         const v = p.variants.find((v) => v.id === variantId);
         if (v) {
           label = `${p.name} ${v.lengthCm}cm ${v.color}`;
+          origin = p.origin;
+          texture = p.texture;
+          category = p.category;
+          sku = generateSku(p.category, p.texture, v.color, v.lengthCm);
           break;
         }
       }
@@ -142,6 +158,10 @@ export function NewSaleWizard({
             lineTotal: piecePreview?.lineTotal ?? 0,
             availableGrams: piecePreview?.availableStock?.grams ?? preview?.availableStock?.grams ?? 0,
             availablePieces: piecePreview?.availableStock?.pieces ?? preview?.availableStock?.pieces ?? 0,
+            origin,
+            texture,
+            sku,
+            category,
           },
         ]);
       } else {
@@ -157,6 +177,10 @@ export function NewSaleWizard({
             lineTotal: preview?.lineTotal ?? 0,
             availableGrams: preview?.availableStock?.grams ?? 0,
             availablePieces: preview?.availableStock?.pieces ?? 0,
+            origin,
+            texture,
+            sku,
+            category,
           },
         ]);
       }

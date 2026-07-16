@@ -178,19 +178,15 @@ export function PublicNavbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex-shrink-0 flex items-center gap-2">
-            <svg width="36" height="36" viewBox="0 0 230 230" className="flex-shrink-0">
-              <circle cx="115" cy="115" r="100" fill="#fdfaf7" stroke="#3a2c2a" strokeWidth="1.6"/>
-              <text x="115" y="128" fontFamily="Georgia, serif" fontSize="86" fill="#3a2c2a" textAnchor="middle">H</text>
-              <line x1="80" y1="150" x2="150" y2="150" stroke="#dba8a6" strokeWidth="1"/>
-            </svg>
-            <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-bold text-ink tracking-widest leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-                HAIRLAND
-              </span>
-              <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-rose-deep leading-tight">
-                {t("navbar.tagline")}
-              </span>
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-light.svg"
+              alt="Hairland"
+              className="h-9 w-auto"
+            />
+            <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-rose-deep leading-tight">
+              {t("navbar.tagline")}
+            </span>
           </Link>
 
           {/* Desktop nav */}

@@ -2531,6 +2531,7 @@
     "inquiryStatus": "Stav poptávky",
     "assignedPerson": "Kdo vyřizuje",
     "assignedPlaceholder": "Jméno pracovníka",
+    "unassigned": "Nepřiřazeno",
     "internalNote": "Interní poznámka",
     "notePlaceholder": "Poznámka viditelná pouze pro adminy...",
     "subtotal": "Mezisoučet (bez DPH)",
