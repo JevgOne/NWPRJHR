@@ -6,6 +6,9 @@ import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale, createInternalDocument } from "@/lib/invoicing";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { sendInvoiceEmail } from "@/lib/invoice-email";
+import { generateSpayd } from "@/lib/spayd";
+import { generateQRCodeDataUrl } from "@/lib/qr-code";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -33,16 +36,44 @@ export async function POST(request: NextRequest) {
 
   // Post-sale document creation based on payment type
   const pt = parsed.data.paymentType ?? "TRANSFER";
+  let invoice: { id: string; number: string } | null = null;
+  let qrDataUrl: string | null = null;
+  let paymentInfo: { bankAccount: string; variableSymbol: string; amount: number; iban?: string } | null = null;
+
   try {
-    if (pt === "TRANSFER") {
-      await createInvoiceFromSale(sale.id);
+    if (pt === "CASH") {
+      // CASH: payment received -> create invoice + send email immediately
+      const inv = await createInvoiceFromSale(sale.id);
+      invoice = { id: inv.id, number: inv.number };
+      sendInvoiceEmail(inv.id, { skipQr: true }).catch((e) =>
+        console.error("[Sales API] Invoice email failed:", e)
+      );
+    } else if (pt === "TRANSFER") {
+      // TRANSFER: no invoice yet — generate QR payment data
+      const company = await prisma.company.findFirst({ where: { isDefault: true } });
+      if (company?.bankIban) {
+        const spayd = generateSpayd({
+          iban: company.bankIban,
+          amount: sale.totalAmount / 100,
+          variableSymbol: sale.saleNumber ?? sale.id.slice(0, 8),
+          message: `Prodej ${sale.saleNumber ?? ""}`.trim(),
+        });
+        qrDataUrl = await generateQRCodeDataUrl(spayd);
+      }
+      if (company) {
+        paymentInfo = {
+          bankAccount: company.bankAccount,
+          variableSymbol: sale.saleNumber ?? sale.id.slice(0, 8),
+          amount: sale.totalAmount,
+          iban: company.bankIban ?? undefined,
+        };
+      }
     } else if (pt === "PROMO" || pt === "WRITEOFF") {
+      // PROMO/WRITEOFF: internal document for accounting
       await createInternalDocument(sale.id, pt);
     }
-    // CASH — no auto-document, receiptNumber already stored on sale
   } catch (docErr) {
-    console.error("[Sales API] Failed to create post-sale document:", docErr);
-    // Sale is already completed, don't fail the request
+    console.error("[Sales API] Post-sale processing failed:", docErr);
   }
 
   const full = await prisma.sale.findUniqueOrThrow({
@@ -67,7 +98,12 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json(
-    serializeSaleForRole(full, session.user.role),
+    {
+      ...serializeSaleForRole(full, session.user.role),
+      invoice: invoice ?? undefined,
+      qrPayment: qrDataUrl ?? undefined,
+      paymentInfo: paymentInfo ?? undefined,
+    },
     { status: 201 }
   );
 }

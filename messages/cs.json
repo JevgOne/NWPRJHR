@@ -1355,7 +1355,7 @@
     "receiptNumber": "Číslo paragonu",
     "receiptPlaceholder": "Číslo paragonu (nepovinné)",
     "receiptHint": "Paragon/pokladní doklad vystavíte ručně.",
-    "transferHint": "Faktura se vytvoří automaticky.",
+    "transferHint": "Faktura se vytvoří po potvrzení platby.",
     "promoHint": "Interní promo — vytvoří se interní doklad.",
     "writeoffHint": "Interní odpis — vytvoří se interní doklad.",
     "totalSold": "Prodáno celkem",
@@ -1369,7 +1369,16 @@
     "reserveInstead": "Rezervovat m\u00edsto prodeje",
     "reserveInsteadHint": "Vytvo\u0159\u00ed rezervaci s platbou na term\u00edn m\u00edsto okam\u017eit\u00e9ho prodeje",
     "cancelSale": "Stornovat prodej",
-    "cancelConfirm": "Opravdu chcete stornovat tento prodej? Sklad bude vr\u00e1cen."
+    "cancelConfirm": "Opravdu chcete stornovat tento prodej? Sklad bude vr\u00e1cen.",
+    "saleCreated": "Prodej vytvořen",
+    "scanQrToPay": "Naskenujte QR kód pro platbu převodem",
+    "bankAccount": "Bankovní účet",
+    "variableSymbol": "Variabilní symbol",
+    "amount": "Částka",
+    "goToSaleDetail": "Přejít na detail prodeje",
+    "confirmPayment": "Potvrdit platbu",
+    "transferAwaitingPayment": "Čeká na potvrzení platby převodem. Po potvrzení se vytvoří faktura a odešle email.",
+    "invoice": "Faktura"
   },
   "customer": {
     "title": "Zákazníci",

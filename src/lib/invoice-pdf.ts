@@ -1,7 +1,21 @@
+import { readFileSync } from "fs";
+import { join } from "path";
 import { PDFDocument, PDFFont, rgb, StandardFonts } from "pdf-lib";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateQRCodeDataUrl } from "./qr-code";
 import { generateSpayd } from "./spayd";
+
+let _logoPngBytes: Uint8Array | null = null;
+function getLogoPngBytes(): Uint8Array | null {
+  if (_logoPngBytes) return _logoPngBytes;
+  try {
+    const buf = readFileSync(join(process.cwd(), "public/logo-invoice.png"));
+    _logoPngBytes = new Uint8Array(buf);
+    return _logoPngBytes;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Invoice data expected by the PDF generator.
@@ -137,6 +151,25 @@ export async function generateInvoicePdf(
     const size = options.size ?? 9;
     const w = font.widthOfTextAtSize(toAscii(text), size);
     drawText(text, rightX - w, yPos, options);
+  }
+
+  // ---- LOGO ----
+  const logoBytes = getLogoPngBytes();
+  if (logoBytes) {
+    try {
+      const logoImage = await doc.embedPng(logoBytes);
+      const logoHeight = 36;
+      const logoWidth = logoHeight * (logoImage.width / logoImage.height);
+      page.drawImage(logoImage, {
+        x: margin,
+        y: y - logoHeight + 8,
+        width: logoWidth,
+        height: logoHeight,
+      });
+      y -= logoHeight + 16;
+    } catch {
+      // logo embed failure is non-fatal
+    }
   }
 
   // ---- HEADER ----

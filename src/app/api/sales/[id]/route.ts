@@ -27,6 +27,7 @@ export async function GET(
       salon: { select: { id: true, name: true } },
       customer: { select: { id: true, name: true } },
       user: { select: { id: true, name: true, email: true, role: true } },
+      invoice: { select: { id: true, number: true, status: true } },
     },
   });
 
@@ -76,6 +77,7 @@ export async function GET(
       },
     })),
     note: sale.note,
+    invoice: sale.invoice ?? undefined,
   };
 
   return NextResponse.json(result);

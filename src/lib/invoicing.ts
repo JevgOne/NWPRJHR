@@ -127,7 +127,7 @@ export async function createInvoiceFromSale(
           vatAmount,
           total: roundedTotal,
           roundingAmount,
-          status: "ISSUED",
+          status: "PAID",
           items: {
             create: invoiceItems,
           },
@@ -231,7 +231,7 @@ export async function createInternalDocument(
           vatRate: 2100,
           vatAmount: 0,
           total: 0,
-          status: "ISSUED",
+          status: "PAID",
           note: `Interní doklad — ${reasonLabel}`,
           items: {
             create: invoiceItems,
@@ -302,7 +302,7 @@ export async function createCreditNote(
           vatRate: original.vatRate,
           vatAmount,
           total,
-          status: "ISSUED",
+          status: "PAID",
           note: reason,
           items: {
             create: returnItems.map((item) => ({

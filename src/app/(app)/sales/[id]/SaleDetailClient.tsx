@@ -27,6 +27,7 @@ interface SaleDetail {
   completedAt: string;
   note?: string;
   userName?: string;
+  invoice?: { id: string; number: string; status: string } | null;
   items: {
     id: string;
     variantId: string;
@@ -98,6 +99,33 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       setCancelError(tCommon("error"));
     } finally {
       setCancelling(false);
+    }
+  };
+
+  const [confirmingPayment, setConfirmingPayment] = useState(false);
+  const [confirmPaymentError, setConfirmPaymentError] = useState("");
+
+  const handleConfirmPayment = async () => {
+    setConfirmingPayment(true);
+    setConfirmPaymentError("");
+    try {
+      const res = await fetch(`/api/sales/${id}/confirm-payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        const r = await fetch(`/api/sales/${id}`);
+        const data = await r.json();
+        setSale(data);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setConfirmPaymentError(data.error || tCommon("error"));
+      }
+    } catch {
+      setConfirmPaymentError(tCommon("error"));
+    } finally {
+      setConfirmingPayment(false);
     }
   };
 
@@ -306,6 +334,40 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       {sale.note && (
         <Card>
           <p className="text-sm text-gray-600">{sale.note}</p>
+        </Card>
+      )}
+
+      {/* Invoice link */}
+      {sale.invoice && (
+        <Card>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted">{t("invoice")}</span>
+            <Link href={`/invoices/${sale.invoice.id}`} className="text-rose font-medium hover:underline">
+              {sale.invoice.number}
+            </Link>
+          </div>
+        </Card>
+      )}
+
+      {/* Confirm Payment for TRANSFER sales without invoice */}
+      {isOwner && sale.status === "COMPLETED" && sale.paymentType === "TRANSFER" && !sale.invoice && (
+        <Card>
+          <div className="space-y-3">
+            <p className="text-sm text-muted">{t("transferAwaitingPayment")}</p>
+            {confirmPaymentError && (
+              <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                {confirmPaymentError}
+              </div>
+            )}
+            <Button
+              size="lg"
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={handleConfirmPayment}
+              disabled={confirmingPayment}
+            >
+              {confirmingPayment ? tCommon("loading") : t("confirmPayment")}
+            </Button>
+          </div>
         </Card>
       )}
 

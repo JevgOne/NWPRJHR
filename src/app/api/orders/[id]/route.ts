@@ -8,7 +8,7 @@ import {
   cancelOrder,
 } from "@/lib/order-workflow";
 import { completeSale } from "@/lib/sales";
-import { createInvoiceFromSale } from "@/lib/invoicing";
+
 import { createSalonNotification, createNotificationForRole } from "@/lib/notifications";
 import { notifyOrderCancelled } from "@/lib/telegram";
 import { logAudit, getClientIp } from "@/lib/audit";
@@ -271,25 +271,11 @@ export async function POST(
           data: { saleId: sale.id },
         });
 
-        let invoice;
-        try {
-          // Create invoice (has its own transaction)
-          invoice = await createInvoiceFromSale(
-            sale.id,
-            body.companyId
-          );
-        } catch (e) {
-          console.error("[Order Complete] createInvoiceFromSale failed:", { orderId: id, saleId: sale.id, error: e });
-          // Sale was created but invoice failed — don't revert order, just log and return partial success
-          const message = e instanceof Error ? e.message : "Invoice creation failed";
-          return NextResponse.json({ error: message }, { status: 400 });
-        }
-
-        // Notify salon about issued invoice
+        // Notify salon — order completed, invoice will be created after payment confirmation
         createSalonNotification({
           salonId: result.salonId,
-          type: "INVOICE_ISSUED",
-          data: { invoiceId: invoice.id, invoiceNumber: invoice.number },
+          type: "ORDER_READY",
+          data: { saleId: sale.id, saleNumber: sale.saleNumber },
         }).catch(() => {});
 
         logAudit({
@@ -298,14 +284,13 @@ export async function POST(
           action: "COMPLETE",
           entity: "Order",
           entityId: id,
-          detail: { saleId: sale.id, saleNumber: sale.saleNumber, invoiceNumber: invoice.number },
+          detail: { saleId: sale.id, saleNumber: sale.saleNumber },
           ipAddress: getClientIp(request),
         });
 
         return NextResponse.json({
           order: result.order,
           sale: { id: sale.id, saleNumber: sale.saleNumber },
-          invoice: { id: invoice.id, number: invoice.number },
         });
       }
 

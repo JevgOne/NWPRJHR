@@ -6,6 +6,7 @@ import { checkInvoicePaidInTx } from "@/lib/invoice-status";
 import { addSalonRevenueInTx } from "@/lib/loyalty";
 import { createNotificationForRole, createSalonNotification } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { sendInvoiceEmail } from "@/lib/invoice-email";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -100,6 +101,11 @@ export async function POST(request: NextRequest) {
         data: { invoiceId: parsed.data.invoiceId, invoiceNumber: invoice.number },
       });
     }
+
+    // Send invoice email with PDF (async, non-blocking)
+    sendInvoiceEmail(parsed.data.invoiceId).catch((e) =>
+      console.error("[Payments] Invoice email failed:", e)
+    );
   }
 
   await logAudit({

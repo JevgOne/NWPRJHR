@@ -92,6 +92,11 @@ export function NewSaleWizard({
   const [reservationNote, setReservationNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [transferResult, setTransferResult] = useState<{
+    saleId: string;
+    qrPayment?: string;
+    paymentInfo?: { bankAccount: string; variableSymbol: string; amount: number };
+  } | null>(null);
   const previewRequestId = useRef(0);
 
   const isOwner = role === "OWNER";
@@ -445,6 +450,17 @@ export function NewSaleWizard({
       }
 
       const sale = await res.json();
+
+      if (paymentType === "TRANSFER" && (sale.qrPayment || sale.paymentInfo)) {
+        setTransferResult({
+          saleId: sale.id,
+          qrPayment: sale.qrPayment,
+          paymentInfo: sale.paymentInfo,
+        });
+        setSubmitting(false);
+        return;
+      }
+
       router.push(`/sales/${sale.id}`);
     } catch {
       setError(tCommon("error"));
@@ -464,6 +480,56 @@ export function NewSaleWizard({
     !submitting;
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
+
+  // QR payment success screen for TRANSFER sales
+  if (transferResult) {
+    return (
+      <div className="max-w-lg mx-auto space-y-4">
+        <h1 className="text-xl font-bold">{t("newSale")}</h1>
+        <Card>
+          <div className="text-center space-y-4">
+            <div className="text-green-600 font-semibold text-lg">{t("saleCreated")}</div>
+            <p className="text-sm text-muted">{t("scanQrToPay")}</p>
+
+            {transferResult.qrPayment && (
+              <div className="flex justify-center">
+                <img
+                  src={transferResult.qrPayment}
+                  alt="QR platba"
+                  className="w-48 h-48"
+                />
+              </div>
+            )}
+
+            {transferResult.paymentInfo && (
+              <div className="text-left bg-nude-50 rounded-lg p-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("bankAccount")}:</span>
+                  <span className="font-medium">{transferResult.paymentInfo.bankAccount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("variableSymbol")}:</span>
+                  <span className="font-medium">{transferResult.paymentInfo.variableSymbol}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("amount")}:</span>
+                  <span className="font-medium">{formatCZK(transferResult.paymentInfo.amount)} CZK</span>
+                </div>
+              </div>
+            )}
+
+            <Button
+              size="lg"
+              className="w-full"
+              onClick={() => router.push(`/sales/${transferResult.saleId}`)}
+            >
+              {t("goToSaleDetail")}
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto space-y-4">
