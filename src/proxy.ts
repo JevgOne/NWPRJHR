@@ -21,6 +21,7 @@ const PROTECTED_PREFIXES = [
   "/promo-codes", "/posts", "/reviews", "/returns", "/payments",
   "/registrations", "/samples", "/discounts", "/finance",
   "/inquiries", "/stylists", "/suppliers", "/salon",
+  "/reservations",
 ];
 
 function isProtectedPath(pathname: string): boolean {
@@ -83,7 +84,7 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Public paths: intl routing + redirects (excludes static assets, api, login)
-    "/((?!api|_next/static|_next/image|favicon\\.ico|icon\\.svg|logo-.*\\.svg|seal-.*\\.svg|hero-vzornik\\.png|sitemap\\.xml|robots\\.txt|manifest\\.json|sw\\.js|icons/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon/).*)",
+    "/((?!api|_next/static|_next/image|favicon\\.ico|icon\\.svg|logo-.*\\.svg|seal-.*\\.svg|hero-vzornik\\.png|sitemap\\.xml|robots\\.txt|manifest\\.json|sw\\.js|icons/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon|reservations/).*)",
     // Protected admin/app paths: auth guard
     "/dashboard/:path*",
     "/inventory/:path*",
@@ -112,5 +113,6 @@ export const config = {
     "/stylists/:path*",
     "/suppliers/:path*",
     "/salon/:path*",
+    "/reservations/:path*",
   ],
 };
