@@ -6,7 +6,7 @@ import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale, createInternalDocument } from "@/lib/invoicing";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
-import { sendInvoiceEmail } from "@/lib/invoice-email";
+import { sendInvoiceEmail, sendPaymentDetailsEmail } from "@/lib/invoice-email";
 import { generateSpayd } from "@/lib/spayd";
 import { generateQRCodeDataUrl } from "@/lib/qr-code";
 
@@ -49,21 +49,54 @@ export async function POST(request: NextRequest) {
         console.error("[Sales API] Invoice email failed:", e)
       );
     } else if (pt === "TRANSFER") {
-      // TRANSFER: no invoice yet — generate QR payment data
+      // TRANSFER: no invoice yet — generate QR payment data + send email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
+      const vs = sale.saleNumber ?? sale.id.slice(0, 8);
       if (company?.bankIban) {
         const spayd = generateSpayd({
           iban: company.bankIban,
           amount: sale.totalAmount / 100,
-          variableSymbol: sale.saleNumber ?? sale.id.slice(0, 8),
+          variableSymbol: vs,
           message: `Prodej ${sale.saleNumber ?? ""}`.trim(),
         });
         qrDataUrl = await generateQRCodeDataUrl(spayd);
+
+        // Send payment details email with QR code
+        const saleForEmail = await prisma.sale.findUnique({
+          where: { id: sale.id },
+          select: {
+            salon: { select: { email: true, name: true, language: true } },
+            customer: { select: { email: true, name: true } },
+            customerType: true,
+          },
+        });
+        const recipientEmail = saleForEmail?.customerType === "SALON"
+          ? saleForEmail.salon?.email
+          : saleForEmail?.customer?.email;
+        const recipientName = saleForEmail?.customerType === "SALON"
+          ? saleForEmail.salon?.name ?? ""
+          : saleForEmail?.customer?.name ?? "";
+        const lang = saleForEmail?.customerType === "SALON"
+          ? saleForEmail.salon?.language ?? "cs"
+          : "cs";
+
+        if (recipientEmail) {
+          sendPaymentDetailsEmail({
+            recipientEmail,
+            recipientName,
+            lang,
+            amount: sale.totalAmount,
+            bankAccount: company.bankAccount,
+            iban: company.bankIban,
+            variableSymbol: vs,
+            saleNumber: sale.saleNumber ?? "",
+          }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
+        }
       }
       if (company) {
         paymentInfo = {
           bankAccount: company.bankAccount,
-          variableSymbol: sale.saleNumber ?? sale.id.slice(0, 8),
+          variableSymbol: vs,
           amount: sale.totalAmount,
           iban: company.bankIban ?? undefined,
         };

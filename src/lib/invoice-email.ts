@@ -126,6 +126,147 @@ export async function sendInvoiceEmail(
   return { sent: true, to: recipientEmail };
 }
 
+/**
+ * Send payment details email for TRANSFER sales (QR code + bank info).
+ * No invoice attached — invoice comes after payment is confirmed.
+ */
+export async function sendPaymentDetailsEmail(opts: {
+  recipientEmail: string;
+  recipientName: string;
+  lang: string;
+  amount: number; // halere
+  bankAccount: string;
+  iban: string;
+  variableSymbol: string;
+  saleNumber: string;
+}): Promise<{ sent: boolean; reason?: string }> {
+  if (!process.env.RESEND_API_KEY) {
+    return { sent: false, reason: "no_api_key" };
+  }
+  if (!opts.recipientEmail) {
+    return { sent: false, reason: "no_recipient_email" };
+  }
+
+  const { generateSpayd } = await import("./spayd");
+  const { generateQRCodeDataUrl } = await import("./qr-code");
+
+  const spayd = generateSpayd({
+    iban: opts.iban,
+    amount: opts.amount / 100,
+    variableSymbol: opts.variableSymbol,
+    message: `Prodej ${opts.saleNumber}`.trim(),
+  });
+  const qrDataUrl = await generateQRCodeDataUrl(spayd);
+
+  const t = paymentEmailT[resolveLang(opts.lang)];
+  const amount = formatCZK(opts.amount);
+
+  const subject = t.subject();
+  const text = [
+    t.greeting(opts.recipientName),
+    "",
+    t.body(amount),
+    "",
+    `${t.bankAccountLabel}: ${opts.bankAccount}`,
+    `${t.vsLabel}: ${opts.variableSymbol}`,
+    `${t.amountLabel}: ${amount}`,
+    "",
+    t.footer,
+  ].join("\n");
+
+  const html = `<!DOCTYPE html>
+<html lang="${opts.lang}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#fdfaf7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(58,44,42,0.08);">
+    <div style="background:#fdfaf7;padding:24px 24px 16px;text-align:center;">
+      <a href="https://hairland.cz" style="text-decoration:none;">
+        <span style="font-size:28px;font-weight:700;color:#3a2c2a;letter-spacing:1px;">Hairland</span>
+      </a>
+    </div>
+    <div style="padding:32px 24px;">
+      <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${t.greeting(opts.recipientName)}</p>
+      <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${t.body(amount)}</p>
+
+      <div style="text-align:center;margin:24px 0;">
+        <img src="${qrDataUrl}" width="180" height="180" alt="QR platba" style="border:1px solid #ead9cf;border-radius:8px;" />
+      </div>
+
+      <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
+        <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 8px;">${t.detailsLabel}</p>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td style="padding:4px 0;color:#9c8682;font-size:13px;">${t.bankAccountLabel}:</td><td style="padding:4px 0;color:#3a2c2a;font-size:13px;text-align:right;font-weight:600;">${opts.bankAccount}</td></tr>
+          <tr><td style="padding:4px 0;color:#9c8682;font-size:13px;">${t.vsLabel}:</td><td style="padding:4px 0;color:#3a2c2a;font-size:13px;text-align:right;font-weight:600;">${opts.variableSymbol}</td></tr>
+          <tr><td style="padding:4px 0;color:#9c8682;font-size:13px;">${t.amountLabel}:</td><td style="padding:4px 0;color:#3a2c2a;font-size:13px;text-align:right;font-weight:600;">${amount}</td></tr>
+        </table>
+      </div>
+
+      <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${t.footer}</p>
+    </div>
+    <div style="background:#f7efe8;padding:20px 24px;text-align:center;border-top:1px solid #ead9cf;">
+      <p style="margin:0;color:#9c8682;font-size:12px;">&copy; ${new Date().getFullYear()} Hairland.cz</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const { Resend } = await import("resend");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM ?? "info@hairland.cz",
+    replyTo: "info@hairland.cz",
+    to: opts.recipientEmail,
+    subject,
+    text,
+    html,
+  });
+
+  return { sent: true };
+}
+
+const paymentEmailT: Record<Lang, {
+  subject: () => string;
+  greeting: (name: string) => string;
+  body: (amount: string) => string;
+  detailsLabel: string;
+  bankAccountLabel: string;
+  vsLabel: string;
+  amountLabel: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: () => "Platebni udaje | Hairland",
+    greeting: (name) => `Dobry den, ${name},`,
+    body: (amount) => `dekujeme za Vasi objednavku. Prosime o uhradu castky <strong>${amount}</strong> na nasledujici ucet:`,
+    detailsLabel: "Platebni udaje:",
+    bankAccountLabel: "Bankovni ucet",
+    vsLabel: "Variabilni symbol",
+    amountLabel: "Castka",
+    footer: "Po prijeti platby Vam zaslem fakturu emailem. Dekujeme!",
+  },
+  uk: {
+    subject: () => "Платіжні реквізити | Hairland",
+    greeting: (name) => `Вітаємо, ${name},`,
+    body: (amount) => `дякуємо за Ваше замовлення. Просимо оплатити суму <strong>${amount}</strong> на наступний рахунок:`,
+    detailsLabel: "Платіжні реквізити:",
+    bankAccountLabel: "Банківський рахунок",
+    vsLabel: "Варіабельний символ",
+    amountLabel: "Сума",
+    footer: "Після отримання оплати ми надішлемо Вам рахунок-фактуру електронною поштою. Дякуємо!",
+  },
+  ru: {
+    subject: () => "Платёжные реквизиты | Hairland",
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body: (amount) => `благодарим за Ваш заказ. Просим оплатить сумму <strong>${amount}</strong> на следующий счёт:`,
+    detailsLabel: "Платёжные реквизиты:",
+    bankAccountLabel: "Банковский счёт",
+    vsLabel: "Вариабельный символ",
+    amountLabel: "Сумма",
+    footer: "После получения оплаты мы отправим Вам счёт-фактуру по электронной почте. Спасибо!",
+  },
+};
+
 // --- Email template ---
 
 type Lang = "cs" | "uk" | "ru";

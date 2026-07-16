@@ -89,12 +89,13 @@ export async function createInvoiceFromSale(
           lang
         );
         const isPiece = item.pieces > 0;
+        const qty = isPiece ? item.pieces : item.grams;
 
         return {
           description,
-          quantity: isPiece ? item.pieces : item.grams,
+          quantity: qty,
           unit: isPiece ? t.piece : t.gram,
-          pricePerUnit: item.pricePerGramUsed,
+          pricePerUnit: qty > 0 ? Math.round(item.lineTotal / qty) : 0,
           lineTotal: item.lineTotal,
           vatRate: 2100,
         };
@@ -106,8 +107,7 @@ export async function createInvoiceFromSale(
       const roundedTotal = roundHalereUp(rawTotal);
       const roundingAmount = roundedTotal - rawTotal;
 
-      const dueDate = new Date();
-      dueDate.setDate(dueDate.getDate() + 14);
+      const dueDate = new Date(); // same as issue date — already paid
 
       const invoice = await tx.invoice.create({
         data: {

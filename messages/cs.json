@@ -367,7 +367,9 @@
     "downloadPdf": "Stáhnout PDF",
     "status": "Stav",
     "buyer": "Odběratel",
-    "noInvoices": "Žádné faktury"
+    "noInvoices": "Žádné faktury",
+    "deleteInvoice": "Smazat fakturu",
+    "deleteConfirm": "Opravdu smazat tuto fakturu?"
   },
   "company": {
     "title": "Firmy",

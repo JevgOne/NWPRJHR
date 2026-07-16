@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -83,6 +84,19 @@ export function InvoiceDetailClient({
   );
 
   const isOwner = role === "OWNER";
+  const router = useRouter();
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm(t("deleteConfirm"))) return;
+    setDeleting(true);
+    const res = await fetch(`/api/invoices/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      router.push("/invoices");
+    } else {
+      setDeleting(false);
+    }
+  };
 
   useEffect(() => {
     fetch(`/api/invoices/${id}`)
@@ -187,8 +201,6 @@ export function InvoiceDetailClient({
           <span>
             {new Date(invoice.issueDate).toLocaleDateString("cs-CZ")}
           </span>
-          <span className="text-muted">{t("dueDate")}</span>
-          <span>{new Date(invoice.dueDate).toLocaleDateString("cs-CZ")}</span>
           <span className="text-muted">{t("variableSymbol")}</span>
           <span className="font-mono">{invoice.variableSymbol}</span>
         </div>
@@ -347,6 +359,19 @@ export function InvoiceDetailClient({
             </Link>
           ))}
         </div>
+      )}
+
+      {isOwner && (
+        <Card>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={handleDelete}
+            disabled={deleting}
+          >
+            {deleting ? tCommon("loading") : t("deleteInvoice")}
+          </Button>
+        </Card>
       )}
     </div>
   );

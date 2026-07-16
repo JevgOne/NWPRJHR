@@ -185,9 +185,9 @@ export async function generateInvoicePdf(
   y -= 30;
 
   // ---- DATES BAR ----
+  // No dueDate — invoice = proof of payment (already paid)
   const dates = [
     [t.issueDate, formatDate(data.issueDate)],
-    [t.dueDate, formatDate(data.dueDate)],
     ...(data.taxDate ? [[t.taxDate, formatDate(data.taxDate)]] : []),
     [t.vs, data.variableSymbol],
   ];
@@ -243,13 +243,15 @@ export async function generateInvoicePdf(
     });
     y -= 13;
   }
-  drawText(
-    `${toAscii(t.bankAccount)}: ${data.company.bankAccount}`,
-    margin,
-    y,
-    { size: 8 }
-  );
-  y -= 13;
+  if (data.company.bankAccount) {
+    drawText(
+      `${toAscii(t.bankAccount)}: ${data.company.bankAccount}`,
+      margin,
+      y,
+      { size: 8 }
+    );
+    y -= 13;
+  }
   if (data.company.bankIban) {
     drawText(
       `${toAscii(t.iban)}: ${data.company.bankIban}`,
@@ -352,7 +354,7 @@ export async function generateInvoicePdf(
   y -= 8;
 
   // ---- TOTALS ----
-  const totalsX = tableRight - 160;
+  const totalsX = tableRight - 230;
   const totalsValX = tableRight;
 
   // Subtotal

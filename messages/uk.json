@@ -367,7 +367,9 @@
     "downloadPdf": "Завантажити PDF",
     "status": "Статус",
     "buyer": "Покупець",
-    "noInvoices": "Немає рахунків"
+    "noInvoices": "Немає рахунків",
+    "deleteInvoice": "Видалити рахунок",
+    "deleteConfirm": "Дійсно видалити цей рахунок?"
   },
   "company": {
     "title": "Компанії",

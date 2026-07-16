@@ -367,7 +367,9 @@
     "downloadPdf": "Скачать PDF",
     "status": "Статус",
     "buyer": "Покупатель",
-    "noInvoices": "Нет счетов"
+    "noInvoices": "Нет счетов",
+    "deleteInvoice": "Удалить счёт",
+    "deleteConfirm": "Действительно удалить этот счёт?"
   },
   "company": {
     "title": "Компании",
