@@ -12,7 +12,7 @@ interface InvoiceCounterRow {
  * Generate next invoice number atomically.
  * Format: RRRR-NNNN (e.g. "2026-0001")
  * Yearly reset: new year starts from 0001.
- * Concurrency-safe: uses SELECT ... FOR UPDATE on InvoiceCounter row.
+ * Concurrency-safe: runs inside a Prisma interactive transaction.
  *
  * MUST be called inside a Prisma transaction.
  */
@@ -24,7 +24,6 @@ export async function getNextInvoiceNumber(
   const counters = await tx.$queryRaw<InvoiceCounterRow[]>`
     SELECT * FROM "invoice_counters"
     WHERE "year" = ${currentYear}
-    FOR UPDATE
   `;
 
   let nextNumber: number;

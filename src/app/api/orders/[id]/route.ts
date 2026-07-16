@@ -238,20 +238,32 @@ export async function POST(
           return { order: updated, orderItems: order.items, salonId: order.salonId };
         }, { timeout: 15000 });
 
-        // Create sale from order items (has its own transaction)
-        const sale = await completeSale(
-          {
-            customerType: "SALON",
-            salonId: result.salonId,
-            items: result.orderItems.map((item) => ({
-              variantId: item.variantId,
-              grams: item.grams,
-              pieces: item.pieces,
-            })),
-            orderId: id,
-          },
-          session.user.id
-        );
+        let sale;
+        try {
+          // Create sale from order items (has its own transaction)
+          sale = await completeSale(
+            {
+              customerType: "SALON",
+              salonId: result.salonId,
+              items: result.orderItems.map((item) => ({
+                variantId: item.variantId,
+                grams: item.grams,
+                pieces: item.pieces,
+              })),
+              orderId: id,
+            },
+            session.user.id
+          );
+        } catch (e) {
+          console.error("[Order Complete] completeSale failed:", { orderId: id, error: e });
+          // Revert order status back to CONFIRMED
+          await prisma.order.update({
+            where: { id },
+            data: { status: "CONFIRMED", completedAt: null },
+          });
+          const message = e instanceof Error ? e.message : "Sale creation failed";
+          return NextResponse.json({ error: message }, { status: 400 });
+        }
 
         // Link sale to order
         await prisma.order.update({
@@ -259,11 +271,19 @@ export async function POST(
           data: { saleId: sale.id },
         });
 
-        // Create invoice (has its own transaction)
-        const invoice = await createInvoiceFromSale(
-          sale.id,
-          body.companyId
-        );
+        let invoice;
+        try {
+          // Create invoice (has its own transaction)
+          invoice = await createInvoiceFromSale(
+            sale.id,
+            body.companyId
+          );
+        } catch (e) {
+          console.error("[Order Complete] createInvoiceFromSale failed:", { orderId: id, saleId: sale.id, error: e });
+          // Sale was created but invoice failed — don't revert order, just log and return partial success
+          const message = e instanceof Error ? e.message : "Invoice creation failed";
+          return NextResponse.json({ error: message }, { status: 400 });
+        }
 
         // Notify salon about issued invoice
         createSalonNotification({
