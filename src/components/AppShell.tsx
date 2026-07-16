@@ -141,9 +141,8 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 h-16 border-b border-nude-200/20">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <img src="/seal-dark.svg" alt="Hairland" className="w-8 h-8 rounded-lg" />
-              <span className="text-xl font-bold text-white">Hairland</span>
+            <Link href="/dashboard">
+              <img src="/logo-admin.svg" alt="Hairland" className="h-9 w-auto" />
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
