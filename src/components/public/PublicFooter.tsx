@@ -22,9 +22,9 @@ export function PublicFooter() {
               <Image
                 src="/logo-dark.svg"
                 alt="Hairland"
-                width={190}
-                height={52}
-                className="h-12 w-auto"
+                width={120}
+                height={140}
+                className="h-28 w-auto"
                 unoptimized
               />
             </Link>
