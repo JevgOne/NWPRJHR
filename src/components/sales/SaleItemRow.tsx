@@ -130,7 +130,9 @@ export function SaleItemRow({
         <span className="text-muted">
           {t("availableStock")}:{" "}
           {isByPiece
-            ? `${item.availablePieces} ${tStock("pieces")} - ${item.availableGrams} ${tStock("grams")}`
+            ? item.availablePieces > 0
+              ? `${item.availablePieces} ${tStock("pieces")} (${Math.round(item.availableGrams / item.availablePieces)} g/${tStock("pieces")})`
+              : `0 ${tStock("pieces")}`
             : `${item.availableGrams} ${tStock("grams")}`}
         </span>
       </div>
