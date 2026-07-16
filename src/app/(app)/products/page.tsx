@@ -96,7 +96,7 @@ export default async function ProductsPage() {
         </h1>
         {session.user.role === "OWNER" && (
           <a
-            href="/products/new"
+            href="/inventory"
             className="inline-flex items-center px-4 py-2 bg-rose text-white rounded-lg text-sm font-medium hover:bg-rose-deep"
           >
             {t("common.add")}
