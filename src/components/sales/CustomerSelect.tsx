@@ -54,13 +54,13 @@ export function CustomerSelect({
     if (customerType === "SALON") {
       fetch("/api/salons?archived=false")
         .then((r) => r.json())
-        .then(setSalons)
+        .then((res) => setSalons(res.data ?? res))
         .catch(() => {});
     } else if (customerType === "RETAIL") {
       const q = search ? `?search=${encodeURIComponent(search)}` : "";
       fetch(`/api/customers${q}`)
         .then((r) => r.json())
-        .then(setCustomers)
+        .then((res) => setCustomers(res.data ?? res))
         .catch(() => {});
     }
   }, [customerType, search]);
