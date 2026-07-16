@@ -195,9 +195,11 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
           </nav>
 
           <div className="px-4 py-4 border-t border-nude-200/20">
-            <div className="text-sm text-nude-200 mb-2 flex items-center gap-2">
-              <span className={`inline-block w-3 h-3 rounded-full flex-shrink-0 ${getUserColor(session.user.name).bg}`} />
-              {session.user.name || session.user.email}
+            <div className="flex items-center gap-2 mb-2">
+              <UserBadge name={session.user.name} size="md" showName={false} />
+              <span className="text-sm text-nude-200">
+                {session.user.name || session.user.email}
+              </span>
             </div>
             <LocaleSwitcher />
             <button
