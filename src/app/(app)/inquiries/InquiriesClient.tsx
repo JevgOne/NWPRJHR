@@ -59,7 +59,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 // STATUS_LABELS, COLOR_NAMES, itemCount moved inside component to access translations
 
-export function InquiriesClient({ userColors = {} }: { userColors?: Record<string, string> }) {
+export function InquiriesClient() {
   const t = useTranslations("inquiry");
   const tc = useTranslations("common");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -271,15 +271,7 @@ export function InquiriesClient({ userColors = {} }: { userColors?: Record<strin
                           <div>
                             <p className="text-xs font-medium text-muted uppercase">{t("assignedTo")}</p>
                             <p className="text-sm text-ink flex items-center gap-1.5">
-                              {userColors[inq.assignedTo] && (
-                                <span
-                                  className="inline-block w-3 h-3 rounded-full flex-shrink-0"
-                                  style={{ backgroundColor: userColors[inq.assignedTo] }}
-                                />
-                              )}
-                              <span style={{ color: userColors[inq.assignedTo] || undefined }} className={userColors[inq.assignedTo] ? "font-semibold" : ""}>
-                                {inq.assignedTo}
-                              </span>
+                              <UserBadge name={inq.assignedTo} />
                               {inq.assignedAt && <span className="text-muted"> od {new Date(inq.assignedAt).toLocaleString("cs-CZ")}</span>}
                             </p>
                           </div>
