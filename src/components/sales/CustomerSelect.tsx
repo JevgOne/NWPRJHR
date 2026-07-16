@@ -147,12 +147,18 @@ export function CustomerSelect({
 
           {showNewForm && (
             <Card padding="sm" className="space-y-2">
-              <Input
-                label={t("newCustomer")}
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder={t("newCustomer")}
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  label={tCustomer("firstName")}
+                  value={newFirstName}
+                  onChange={(e) => setNewFirstName(e.target.value)}
+                />
+                <Input
+                  label={tCustomer("lastName")}
+                  value={newLastName}
+                  onChange={(e) => setNewLastName(e.target.value)}
+                />
+              </div>
               <Input
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
@@ -168,19 +174,21 @@ export function CustomerSelect({
                 <Button
                   size="sm"
                   onClick={() => {
-                    if (newName.trim()) {
+                    if (newFirstName.trim() && newLastName.trim()) {
                       onNewCustomer({
-                        name: newName.trim(),
+                        firstName: newFirstName.trim(),
+                        lastName: newLastName.trim(),
                         email: newEmail || undefined,
                         phone: newPhone || undefined,
                       });
                       setShowNewForm(false);
-                      setNewName("");
+                      setNewFirstName("");
+                      setNewLastName("");
                       setNewEmail("");
                       setNewPhone("");
                     }
                   }}
-                  disabled={!newName.trim()}
+                  disabled={!newFirstName.trim() || !newLastName.trim()}
                 >
                   {tCommon("save")}
                 </Button>

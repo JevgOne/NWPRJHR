@@ -274,7 +274,7 @@ export function NewSaleWizard({
   );
 
   const handleNewCustomer = useCallback(
-    async (data: { name: string; email?: string; phone?: string }) => {
+    async (data: { firstName: string; lastName: string; email?: string; phone?: string }) => {
       const res = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
