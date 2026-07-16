@@ -26,7 +26,7 @@ function getNotificationUrl(n: NotificationItem): string | null {
     case "ORDER_REJECTED":
       return d.orderId ? `/orders/${d.orderId}` : "/orders";
     case "NEW_INQUIRY":
-      return d.inquiryId ? `/orders?tab=inquiries` : "/orders";
+      return "/inquiries";
     case "INVOICE_ISSUED":
     case "INVOICE_PAID":
     case "INCOMING_PAYMENT":
