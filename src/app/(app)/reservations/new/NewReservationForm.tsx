@@ -34,8 +34,10 @@ function formatCZK(halere: number): string {
 
 export function NewReservationForm({
   products,
+  initialVariantId,
 }: {
   products: ProductOption[];
+  initialVariantId?: string;
 }) {
   const t = useTranslations("reservation");
   const tCommon = useTranslations("common");
@@ -48,8 +50,17 @@ export function NewReservationForm({
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
 
-  const [selectedProductId, setSelectedProductId] = useState("");
-  const [selectedVariantId, setSelectedVariantId] = useState("");
+  // Auto-select product/variant when coming from QR scan
+  const initialProduct = initialVariantId
+    ? products.find((p) => p.variants.some((v) => v.id === initialVariantId))
+    : undefined;
+
+  const [selectedProductId, setSelectedProductId] = useState(
+    initialProduct?.id ?? ""
+  );
+  const [selectedVariantId, setSelectedVariantId] = useState(
+    initialVariantId ?? ""
+  );
   const [grams, setGrams] = useState(100);
   const [pieces, setPieces] = useState(1);
   const [note, setNote] = useState("");

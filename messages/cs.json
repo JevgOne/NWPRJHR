@@ -1360,7 +1360,12 @@
     "writeoffHint": "Interní odpis — vytvoří se interní doklad.",
     "totalSold": "Prodáno celkem",
     "sellByGrams": "Prodat po gramech",
-    "sellByPieces": "Prodat po kusech"
+    "sellByPieces": "Prodat po kusech",
+    "scannedProduct": "Naskenovan\u00fd produkt",
+    "sell": "Prodat",
+    "sellDescription": "Vytvo\u0159it prodej a ode\u010d\u00edst ze skladu",
+    "reserve": "Rezervovat",
+    "reserveDescription": "Vytvo\u0159it rezervaci s platbou na term\u00edn"
   },
   "customer": {
     "title": "Zákazníci",

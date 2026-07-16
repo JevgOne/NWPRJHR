@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { NewReservationForm } from "./NewReservationForm";
 
-export default async function NewReservationPage() {
+export default async function NewReservationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ variantId?: string }>;
+}) {
+  const params = await searchParams;
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER")
@@ -35,5 +40,10 @@ export default async function NewReservationPage() {
     })),
   }));
 
-  return <NewReservationForm products={productOptions} />;
+  return (
+    <NewReservationForm
+      products={productOptions}
+      initialVariantId={params.variantId}
+    />
+  );
 }
