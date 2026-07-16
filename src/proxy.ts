@@ -44,7 +44,7 @@ export function proxy(request: NextRequest) {
     if (!hasSessionToken(request)) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
-      loginUrl.searchParams.set("callbackUrl", pathname);
+      loginUrl.searchParams.set("callbackUrl", pathname + request.nextUrl.search);
       return NextResponse.redirect(loginUrl);
     }
     return NextResponse.next();

@@ -173,7 +173,23 @@ export function NewSaleWizard({
       return;
     }
     initialVariantHandled.current = true;
-    addItemFromVariantId(initialVariantId);
+    addItemFromVariantId(initialVariantId).catch(() => {
+      // Fallback: add item even if price preview fails
+      setItems((prev) => [
+        ...prev,
+        {
+          variantId: initialVariantId,
+          variantLabel: initialVariantId,
+          grams: 50,
+          pieces: 0,
+          pricePerGram: 0,
+          sellingMode: "BY_GRAM" as const,
+          lineTotal: 0,
+          availableGrams: 0,
+          availablePieces: 0,
+        },
+      ]);
+    });
   }, [initialVariantId, customerType, addItemFromVariantId]);
 
   const handleBarcodeScan = useCallback(
