@@ -42,9 +42,10 @@ export async function getSalePrice(
     );
   }
 
-  if (sellingMode === "BY_PIECE") {
-    const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
-    let piecePrice: number;
+  // Always calculate piece price if variant has one (for exclusive culíky)
+  const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+  let piecePrice: number | null = null;
+  if (retailPerPiece > 0) {
     if (customerType === "RETAIL" || discountPct === 0) {
       piecePrice = retailPerPiece;
     } else {
@@ -52,10 +53,9 @@ export async function getSalePrice(
         retailPerPiece - (retailPerPiece * discountPct) / 20000
       );
     }
-    return { pricePerGram, pricePerPiece: piecePrice, sellingMode: "BY_PIECE" };
   }
 
-  return { pricePerGram, pricePerPiece: null, sellingMode: "BY_GRAM" };
+  return { pricePerGram, pricePerPiece: piecePrice, sellingMode };
 }
 
 /**

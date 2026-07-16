@@ -52,55 +52,56 @@ export async function POST(request: NextRequest) {
       // TRANSFER: no invoice yet — generate QR payment data + send email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
       const vs = sale.saleNumber ?? sale.id.slice(0, 8);
-      if (company?.bankIban) {
-        const spayd = generateSpayd({
-          iban: company.bankIban,
-          amount: sale.totalAmount / 100,
-          variableSymbol: vs,
-          message: `Prodej ${sale.saleNumber ?? ""}`.trim(),
-        });
-        qrDataUrl = await generateQRCodeDataUrl(spayd);
+      const bankAccount = company?.bankAccount || "7141812004/5500";
+      const iban = company?.bankIban || "CZ0755000000007141812004";
 
-        // Send payment details email with QR code
-        const saleForEmail = await prisma.sale.findUnique({
-          where: { id: sale.id },
-          select: {
-            salon: { select: { email: true, name: true, language: true } },
-            customer: { select: { email: true, name: true } },
-            customerType: true,
-          },
-        });
-        const recipientEmail = saleForEmail?.customerType === "SALON"
-          ? saleForEmail.salon?.email
-          : saleForEmail?.customer?.email;
-        const recipientName = saleForEmail?.customerType === "SALON"
-          ? saleForEmail.salon?.name ?? ""
-          : saleForEmail?.customer?.name ?? "";
-        const lang = saleForEmail?.customerType === "SALON"
-          ? saleForEmail.salon?.language ?? "cs"
-          : "cs";
+      // Generate QR code for payment
+      const spayd = generateSpayd({
+        iban,
+        amount: sale.totalAmount / 100,
+        variableSymbol: vs,
+        message: `Prodej ${sale.saleNumber ?? ""}`.trim(),
+      });
+      qrDataUrl = await generateQRCodeDataUrl(spayd);
 
-        if (recipientEmail) {
-          sendPaymentDetailsEmail({
-            recipientEmail,
-            recipientName,
-            lang,
-            amount: sale.totalAmount,
-            bankAccount: company.bankAccount,
-            iban: company.bankIban,
-            variableSymbol: vs,
-            saleNumber: sale.saleNumber ?? "",
-          }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
-        }
-      }
-      if (company) {
-        paymentInfo = {
-          bankAccount: company.bankAccount,
-          variableSymbol: vs,
+      // Send payment details email with QR code
+      const saleForEmail = await prisma.sale.findUnique({
+        where: { id: sale.id },
+        select: {
+          salon: { select: { email: true, name: true, language: true } },
+          customer: { select: { email: true, name: true } },
+          customerType: true,
+        },
+      });
+      const recipientEmail = saleForEmail?.customerType === "SALON"
+        ? saleForEmail.salon?.email
+        : saleForEmail?.customer?.email;
+      const recipientName = saleForEmail?.customerType === "SALON"
+        ? saleForEmail.salon?.name ?? ""
+        : saleForEmail?.customer?.name ?? "";
+      const lang = saleForEmail?.customerType === "SALON"
+        ? saleForEmail.salon?.language ?? "cs"
+        : "cs";
+
+      if (recipientEmail) {
+        sendPaymentDetailsEmail({
+          recipientEmail,
+          recipientName,
+          lang,
           amount: sale.totalAmount,
-          iban: company.bankIban ?? undefined,
-        };
+          bankAccount,
+          iban,
+          variableSymbol: vs,
+          saleNumber: sale.saleNumber ?? "",
+        }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
       }
+
+      paymentInfo = {
+        bankAccount,
+        variableSymbol: vs,
+        amount: sale.totalAmount,
+        iban,
+      };
     } else if (pt === "PROMO" || pt === "WRITEOFF") {
       // PROMO/WRITEOFF: internal document for accounting
       await createInternalDocument(sale.id, pt);
