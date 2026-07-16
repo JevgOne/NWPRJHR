@@ -243,15 +243,13 @@ export async function generateInvoicePdf(
     });
     y -= 13;
   }
-  if (data.company.bankAccount) {
-    drawText(
-      `${toAscii(t.bankAccount)}: ${data.company.bankAccount}`,
-      margin,
-      y,
-      { size: 8 }
-    );
-    y -= 13;
-  }
+  drawText(
+    `${toAscii(t.bankAccount)}: ${data.company.bankAccount || "7141812004/5500"}`,
+    margin,
+    y,
+    { size: 8 }
+  );
+  y -= 13;
   if (data.company.bankIban) {
     drawText(
       `${toAscii(t.iban)}: ${data.company.bankIban}`,

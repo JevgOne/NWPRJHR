@@ -109,6 +109,13 @@ export async function createInvoiceFromSale(
 
       const dueDate = new Date(); // same as issue date — already paid
 
+      // Payment method note
+      const paymentNote = sale.paymentType === "CASH"
+        ? "Zaplaceno hotove"
+        : sale.paymentType === "TRANSFER"
+        ? "Zaplaceno prevodem"
+        : null;
+
       const invoice = await tx.invoice.create({
         data: {
           type: "INVOICE",
@@ -128,6 +135,7 @@ export async function createInvoiceFromSale(
           total: roundedTotal,
           roundingAmount,
           status: "PAID",
+          note: paymentNote,
           items: {
             create: invoiceItems,
           },
