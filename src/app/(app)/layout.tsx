@@ -35,10 +35,16 @@ export default async function AppLayout({
   const session = await auth();
   if (!session) redirect("/login");
 
-  const badges = await getCachedBadgeCounts(session.user.id, session.user.role);
+  const [badges, currentUser] = await Promise.all([
+    getCachedBadgeCounts(session.user.id, session.user.role),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { color: true },
+    }),
+  ]);
 
   return (
-    <AppShell session={session} badgeCounts={badges}>
+    <AppShell session={session} badgeCounts={badges} userColor={currentUser?.color ?? undefined}>
       {children}
     </AppShell>
   );

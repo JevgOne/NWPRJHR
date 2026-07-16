@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
+import { UserBadge } from "@/components/ui/UserBadge";
 
 interface InquiryItem {
   id: string;
@@ -203,16 +204,7 @@ export function InquiriesClient({ userColors = {} }: { userColors?: Record<strin
                       )}
                       {inq.assignedTo && (
                         <span className="text-xs font-medium flex items-center gap-1">
-                          ·
-                          {userColors[inq.assignedTo] && (
-                            <span
-                              className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: userColors[inq.assignedTo] }}
-                            />
-                          )}
-                          <span style={{ color: userColors[inq.assignedTo] || undefined }} className={userColors[inq.assignedTo] ? "font-semibold" : "text-green-700"}>
-                            {inq.assignedTo}
-                          </span>
+                          · <UserBadge name={inq.assignedTo} size="sm" />
                         </span>
                       )}
                     </div>

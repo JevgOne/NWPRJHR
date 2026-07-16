@@ -20,9 +20,10 @@ interface AppShellProps {
   session: Session;
   children: React.ReactNode;
   badgeCounts: BadgeCounts;
+  userColor?: string;
 }
 
-export function AppShell({ session, children, badgeCounts }: AppShellProps) {
+export function AppShell({ session, children, badgeCounts, userColor }: AppShellProps) {
   const t = useTranslations("nav");
   const tAuth = useTranslations("auth");
   const pathname = usePathname();
@@ -194,7 +195,13 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
           </nav>
 
           <div className="px-4 py-4 border-t border-nude-200/20">
-            <div className="text-sm text-nude-200 mb-2">
+            <div className="text-sm text-nude-200 mb-2 flex items-center gap-2">
+              {userColor && (
+                <span
+                  className="inline-block w-3 h-3 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: userColor }}
+                />
+              )}
               {session.user.name || session.user.email}
             </div>
             <LocaleSwitcher />

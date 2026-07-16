@@ -30,7 +30,7 @@ const STATUS_COLORS: Record<string, string> = {
   REJECTED: "bg-red-100 text-red-800",
 };
 
-export function ComplaintsClient() {
+export function ComplaintsClient({ userColors = {} }: { userColors?: Record<string, string> }) {
   const t = useTranslations("complaintTickets");
   const tc = useTranslations("common");
   const tNav = useTranslations("complaintsMgmt");
@@ -148,6 +148,19 @@ export function ComplaintsClient() {
                   <span className="text-xs text-muted hidden sm:inline">
                     {t(`type_${ticket.complaintType}`)}
                   </span>
+                  {ticket.assignedTo && (
+                    <span className="text-xs font-medium flex items-center gap-1">
+                      {userColors[ticket.assignedTo] && (
+                        <span
+                          className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: userColors[ticket.assignedTo] }}
+                        />
+                      )}
+                      <span style={{ color: userColors[ticket.assignedTo] || undefined }} className={userColors[ticket.assignedTo] ? "font-semibold" : "text-green-700"}>
+                        {ticket.assignedTo}
+                      </span>
+                    </span>
+                  )}
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       STATUS_COLORS[ticket.status] ?? "bg-gray-100 text-gray-800"
