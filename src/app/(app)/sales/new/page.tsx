@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { NewSaleWizard } from "./NewSaleWizard";
-import { ScanActionChooser } from "./ScanActionChooser";
 
 export default async function NewSalePage({
   searchParams,
@@ -39,32 +38,11 @@ export default async function NewSalePage({
     })),
   }));
 
-  // QR scan flow: variantId present → show action chooser (Sell / Reserve)
-  if (params.variantId) {
-    const variant = await prisma.variant.findUnique({
-      where: { id: params.variantId },
-      include: { product: { select: { name: true } } },
-    });
-
-    const variantLabel = variant
-      ? `${variant.product.name} ${variant.lengthCm}cm ${variant.color}`
-      : params.variantId;
-
-    return (
-      <ScanActionChooser
-        variantId={params.variantId}
-        variantLabel={variantLabel}
-        role={session.user.role}
-        products={productOptions}
-      />
-    );
-  }
-
-  // Normal flow — no QR scan, go straight to wizard
   return (
     <NewSaleWizard
       products={productOptions}
       role={session.user.role}
+      initialVariantId={params.variantId}
     />
   );
 }

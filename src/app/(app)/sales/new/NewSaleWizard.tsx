@@ -72,6 +72,7 @@ export function NewSaleWizard({
   const t = useTranslations("sale");
   const tCommon = useTranslations("common");
   const tStock = useTranslations("stock");
+  const tReservation = useTranslations("reservation");
   const router = useRouter();
 
   const [customerType, setCustomerType] = useState<"SALON" | "RETAIL" | null>(null);
@@ -84,6 +85,11 @@ export function NewSaleWizard({
   const [selectedProductId, setSelectedProductId] = useState("");
   const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "PROMO" | "WRITEOFF">("TRANSFER");
   const [receiptNumber, setReceiptNumber] = useState("");
+  const [reserveMode, setReserveMode] = useState(false);
+  const [paymentDueDate, setPaymentDueDate] = useState(
+    new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+  );
+  const [reservationNote, setReservationNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -362,6 +368,42 @@ export function NewSaleWizard({
     setSubmitting(true);
     setError("");
 
+    if (reserveMode) {
+      const item = items[0];
+      const body = {
+        customerType,
+        salonId: salonId ?? undefined,
+        customerId: customerId ?? undefined,
+        variantId: item.variantId,
+        grams: item.sellByGrams ? item.grams : (item.sellingMode === "BY_PIECE" ? 0 : item.grams),
+        pieces: item.sellByGrams ? 0 : item.pieces,
+        paymentDueDate,
+        note: reservationNote || undefined,
+      };
+
+      try {
+        const res = await fetch("/api/reservations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.error?.message || JSON.stringify(data.error) || tCommon("error"));
+          setSubmitting(false);
+          return;
+        }
+
+        const reservation = await res.json();
+        router.push(`/reservations/${reservation.id}`);
+      } catch {
+        setError(tCommon("error"));
+        setSubmitting(false);
+      }
+      return;
+    }
+
     const body = {
       customerType,
       salonId: salonId ?? undefined,
@@ -523,17 +565,69 @@ export function NewSaleWizard({
         </div>
       </Card>
 
+      {/* Reservation toggle */}
+      {items.length > 0 && (
+        <Card>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={reserveMode}
+              onChange={(e) => setReserveMode(e.target.checked)}
+              className="w-5 h-5 rounded border-line text-blue-600 focus:ring-blue-500"
+            />
+            <div>
+              <span className="text-sm font-medium text-espresso">
+                {t("reserveInstead")}
+              </span>
+              <p className="text-xs text-muted">{t("reserveInsteadHint")}</p>
+            </div>
+          </label>
+
+          {reserveMode && (
+            <div className="mt-3 space-y-3 pt-3 border-t">
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-1">
+                  {tReservation("deadline")}
+                </label>
+                <input
+                  type="date"
+                  value={paymentDueDate}
+                  onChange={(e) => setPaymentDueDate(e.target.value)}
+                  min={new Date().toISOString().slice(0, 10)}
+                  className="w-full border border-line rounded-lg px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-1">
+                  {tReservation("note")}
+                </label>
+                <input
+                  type="text"
+                  value={reservationNote}
+                  onChange={(e) => setReservationNote(e.target.value)}
+                  placeholder={tReservation("notePlaceholder")}
+                  className="w-full border border-line rounded-lg px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+
       {/* Discount */}
-      <Card>
-        <DiscountForm
-          discount={discount}
-          onChange={setDiscount}
-          subtotal={subtotal}
-          isOwner={isOwner}
-        />
-      </Card>
+      {!reserveMode && (
+        <Card>
+          <DiscountForm
+            discount={discount}
+            onChange={setDiscount}
+            subtotal={subtotal}
+            isOwner={isOwner}
+          />
+        </Card>
+      )}
 
       {/* Payment type */}
+      {!reserveMode && (
       <Card>
         <div>
           <label className="block text-sm font-medium text-espresso mb-2">
@@ -583,6 +677,7 @@ export function NewSaleWizard({
           )}
         </div>
       </Card>
+      )}
 
       {/* Summary + Submit */}
       {items.length > 0 && (
@@ -637,11 +732,19 @@ export function NewSaleWizard({
 
             <Button
               size="lg"
-              className="w-full mt-4 bg-green-600 hover:bg-green-700"
+              className={`w-full mt-4 ${
+                reserveMode
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
               onClick={handleSubmit}
               disabled={!canSubmit}
             >
-              {submitting ? tCommon("loading") : t("completeSale")}
+              {submitting
+                ? tCommon("loading")
+                : reserveMode
+                  ? tReservation("createReservation")
+                  : t("completeSale")}
             </Button>
           </div>
         </Card>

@@ -1365,7 +1365,9 @@
     "sell": "Prodat",
     "sellDescription": "Vytvo\u0159it prodej a ode\u010d\u00edst ze skladu",
     "reserve": "Rezervovat",
-    "reserveDescription": "Vytvo\u0159it rezervaci s platbou na term\u00edn"
+    "reserveDescription": "Vytvo\u0159it rezervaci s platbou na term\u00edn",
+    "reserveInstead": "Rezervovat m\u00edsto prodeje",
+    "reserveInsteadHint": "Vytvo\u0159\u00ed rezervaci s platbou na term\u00edn m\u00edsto okam\u017eit\u00e9ho prodeje"
   },
   "customer": {
     "title": "Zákazníci",
@@ -2761,6 +2763,7 @@
     "product": "Produkt",
     "cancelConfirm": "Opravdu zrušit?",
     "createdBy": "Vytvořil",
-    "viewSale": "Zobrazit prodej"
+    "viewSale": "Zobrazit prodej",
+    "notePlaceholder": "Voliteln\u00e1 pozn\u00e1mka k rezervaci..."
   }
 }

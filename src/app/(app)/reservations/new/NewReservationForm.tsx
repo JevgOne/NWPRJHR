@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { CustomerSelect } from "@/components/sales/CustomerSelect";
+import { BarcodeScanner } from "@/components/BarcodeScanner";
 
 interface VariantOption {
   id: string;
@@ -71,8 +72,43 @@ export function NewReservationForm({
     .slice(0, 10);
   const [paymentDueDate, setPaymentDueDate] = useState(defaultDate);
 
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [showProductPicker, setShowProductPicker] = useState(!initialVariantId);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const tSale = useTranslations("sale");
+
+  const handleBarcodeScan = useCallback(
+    async (scanned: string) => {
+      setScannerOpen(false);
+
+      let variantId: string | null = null;
+      const urlMatch = scanned.match(/variantId=([a-zA-Z0-9_-]+)/);
+      if (urlMatch) {
+        variantId = urlMatch[1];
+      } else {
+        const res = await fetch(`/api/deliveries/barcode/${encodeURIComponent(scanned)}`);
+        if (!res.ok) {
+          setError(tSale("barcodeNotFound"));
+          return;
+        }
+        const delivery = await res.json();
+        variantId = delivery.variantId;
+      }
+
+      if (!variantId) return;
+
+      // Find product containing this variant
+      const product = products.find((p) => p.variants.some((v) => v.id === variantId));
+      if (product) {
+        setSelectedProductId(product.id);
+      }
+      setSelectedVariantId(variantId);
+      setShowProductPicker(true);
+    },
+    [products, tSale]
+  );
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
   const selectedVariant = selectedProduct?.variants.find(
@@ -165,57 +201,81 @@ export function NewReservationForm({
         <Card>
           <h2 className="text-sm font-semibold text-espresso mb-3">{t("selectProduct")}</h2>
           <div className="space-y-3">
-            <select
-              className="block w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
-              value={selectedProductId}
-              onChange={(e) => {
-                setSelectedProductId(e.target.value);
-                setSelectedVariantId("");
-              }}
-            >
-              <option value="">{t("selectProduct")}...</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-
-            {selectedProduct && (
-              <select
-                className="block w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
-                value={selectedVariantId}
-                onChange={(e) => setSelectedVariantId(e.target.value)}
+            <div className="flex gap-2">
+              <Button size="lg" className="flex-1" onClick={() => setScannerOpen(true)}>
+                {tSale("scanBarcode")}
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="flex-1"
+                onClick={() => setShowProductPicker(!showProductPicker)}
               >
-                <option value="">-- variant --</option>
-                {selectedProduct.variants.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.color} {v.lengthCm}cm
-                  </option>
-                ))}
-              </select>
-            )}
+                {tSale("manualSelect")}
+              </Button>
+            </div>
 
-            {selectedVariant && (
-              <div className="space-y-2">
-                {isByPiece ? (
-                  <Input
-                    label={`${t("quantity")} (ks)`}
-                    type="number"
-                    min={1}
-                    value={pieces}
-                    onChange={(e) => setPieces(parseInt(e.target.value) || 1)}
-                  />
-                ) : (
-                  <Input
-                    label={`${t("quantity")} (g)`}
-                    type="number"
-                    min={1}
-                    value={grams}
-                    onChange={(e) => setGrams(parseInt(e.target.value) || 1)}
-                  />
+            <BarcodeScanner
+              active={scannerOpen}
+              onScan={handleBarcodeScan}
+              onClose={() => setScannerOpen(false)}
+            />
+
+            {showProductPicker && (
+              <>
+                <select
+                  className="block w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
+                  value={selectedProductId}
+                  onChange={(e) => {
+                    setSelectedProductId(e.target.value);
+                    setSelectedVariantId("");
+                  }}
+                >
+                  <option value="">{t("selectProduct")}...</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedProduct && (
+                  <select
+                    className="block w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-rose focus:outline-none focus:ring-1 focus:ring-rose"
+                    value={selectedVariantId}
+                    onChange={(e) => setSelectedVariantId(e.target.value)}
+                  >
+                    <option value="">-- variant --</option>
+                    {selectedProduct.variants.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.color} {v.lengthCm}cm
+                      </option>
+                    ))}
+                  </select>
                 )}
-              </div>
+
+                {selectedVariant && (
+                  <div className="space-y-2">
+                    {isByPiece ? (
+                      <Input
+                        label={`${t("quantity")} (ks)`}
+                        type="number"
+                        min={1}
+                        value={pieces}
+                        onChange={(e) => setPieces(parseInt(e.target.value) || 1)}
+                      />
+                    ) : (
+                      <Input
+                        label={`${t("quantity")} (g)`}
+                        type="number"
+                        min={1}
+                        value={grams}
+                        onChange={(e) => setGrams(parseInt(e.target.value) || 1)}
+                      />
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </Card>
