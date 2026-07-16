@@ -71,6 +71,35 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
   const [loading, setLoading] = useState(true);
 
   const isOwner = role === "OWNER";
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState("");
+
+  const handleCancel = async () => {
+    setCancelling(true);
+    setCancelError("");
+    try {
+      const res = await fetch(`/api/sales/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "cancel" }),
+      });
+      if (res.ok) {
+        setShowCancelConfirm(false);
+        // Reload sale data
+        const r = await fetch(`/api/sales/${id}`);
+        const data = await r.json();
+        setSale(data);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setCancelError(data.error || tCommon("error"));
+      }
+    } catch {
+      setCancelError(tCommon("error"));
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   useEffect(() => {
     fetch(`/api/sales/${id}`)
@@ -277,6 +306,48 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       {sale.note && (
         <Card>
           <p className="text-sm text-gray-600">{sale.note}</p>
+        </Card>
+      )}
+
+      {isOwner && sale.status === "COMPLETED" && (
+        <Card>
+          {cancelError && (
+            <div className="mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {cancelError}
+            </div>
+          )}
+          {!showCancelConfirm ? (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => setShowCancelConfirm(true)}
+            >
+              {t("cancelSale")}
+            </Button>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-red-700 font-medium">
+                {t("cancelConfirm")}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                >
+                  {cancelling ? tCommon("loading") : tCommon("confirm")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCancelConfirm(false)}
+                >
+                  {tCommon("cancel")}
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
       )}
     </div>

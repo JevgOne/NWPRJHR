@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
+import { fifoReturn } from "@/lib/fifo";
+import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
   _request: NextRequest,
@@ -77,4 +79,80 @@ export async function GET(
   };
 
   return NextResponse.json(result);
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (session.user.role !== "OWNER")
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const { id } = await params;
+  const body = await request.json();
+
+  if (body.action !== "cancel")
+    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const sale = await tx.sale.findUniqueOrThrow({
+        where: { id },
+        include: { items: true },
+      });
+
+      if (sale.status === "CANCELLED")
+        throw new Error("Sale is already cancelled");
+
+      // Return stock for each sale item
+      for (const item of sale.items) {
+        await fifoReturn(
+          item.deliveryId,
+          item.grams,
+          item.pieces,
+          session.user.id,
+          tx
+        );
+      }
+
+      // Cancel sale
+      const updated = await tx.sale.update({
+        where: { id },
+        data: { status: "CANCELLED" },
+      });
+
+      // Cancel associated invoice if exists
+      const invoice = await tx.invoice.findUnique({
+        where: { saleId: id },
+      });
+      if (invoice) {
+        await tx.invoice.update({
+          where: { id: invoice.id },
+          data: { status: "CANCELLED" },
+        });
+      }
+
+      return { sale: updated, invoiceCancelled: !!invoice };
+    }, { timeout: 15000 });
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "CANCEL",
+      entity: "Sale",
+      entityId: id,
+      detail: { saleNumber: result.sale.saleNumber, invoiceCancelled: result.invoiceCancelled },
+      ipAddress: getClientIp(request),
+    });
+
+    return NextResponse.json({ success: true, sale: result.sale });
+  } catch (e) {
+    console.error("[Sale Cancel] Failed:", { saleId: id, error: e });
+    const message = e instanceof Error ? e.message : "Cancel failed";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }

@@ -1367,7 +1367,9 @@
     "reserve": "Rezervovat",
     "reserveDescription": "Vytvo\u0159it rezervaci s platbou na term\u00edn",
     "reserveInstead": "Rezervovat m\u00edsto prodeje",
-    "reserveInsteadHint": "Vytvo\u0159\u00ed rezervaci s platbou na term\u00edn m\u00edsto okam\u017eit\u00e9ho prodeje"
+    "reserveInsteadHint": "Vytvo\u0159\u00ed rezervaci s platbou na term\u00edn m\u00edsto okam\u017eit\u00e9ho prodeje",
+    "cancelSale": "Stornovat prodej",
+    "cancelConfirm": "Opravdu chcete stornovat tento prodej? Sklad bude vr\u00e1cen."
   },
   "customer": {
     "title": "Zákazníci",
