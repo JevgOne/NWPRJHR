@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, phone, salonName, message, locale } = parsed.data;
+  const { name, email, phone, salonName, message, customerPhotos, locale } = parsed.data;
 
   // Save to DB
   const contactMsg = await prisma.contactMessage.create({
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       phone: phone || null,
       salonName: salonName || null,
       message,
+      customerPhotos: customerPhotos && customerPhotos.length > 0 ? JSON.stringify(customerPhotos) : null,
       locale: locale || "cs",
     },
   });
@@ -71,8 +72,12 @@ export async function POST(request: NextRequest) {
       phone ? `Phone: ${phone}` : null,
       salonName ? `Salon: ${salonName}` : null,
       `Language: ${locale}`,
+      customerPhotos && customerPhotos.length > 0 ? `Photos: ${customerPhotos.length}` : null,
       "",
       message,
+      ...(customerPhotos && customerPhotos.length > 0
+        ? ["", "Attached photos:", ...customerPhotos.map((url: string, i: number) => `  ${i + 1}. ${url}`)]
+        : []),
     ]
       .filter(Boolean)
       .join("\n"),

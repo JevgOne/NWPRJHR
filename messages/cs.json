@@ -563,7 +563,13 @@
         "salon": "Název salonu",
         "message": "Zpráva",
         "send": "Odeslat",
-        "success": "Zpráva odeslána. Ozveme se vám co nejdříve."
+        "success": "Zpráva odeslána. Ozveme se vám co nejdříve.",
+        "photoCtaTitle": "Přiložte fotku",
+        "photoCtaHint": "Pošlete fotku svých vlasů nebo požádejte o reálnou fotku konkrétního kusu (max 3 fotky).",
+        "photoButton": "Nahrát fotku",
+        "reasonRealPhoto": "Ráda bych viděla reálnou fotku konkrétního kusu, který máte skladem.",
+        "reasonPhotoMatch": "Posílám fotku svých vlasů — prosím o doporučení správného odstínu a délky.",
+        "reasonShowInPerson": "Mám zájem o osobní ukázku vlasů v Praze."
       },
       "trustTitle": "Osobní konzultace a dovoz zdarma",
       "trustText": "Nejste si jistí výběrem? Napište nám a domluvíme osobní schůzku. Přijedeme s vlasy přímo za vámi nebo za vaší kadeřnicí — <strong>po Praze zcela zdarma</strong>. Ukážeme, poradíme a pomůžeme s výběrem. Žádný závazek.",

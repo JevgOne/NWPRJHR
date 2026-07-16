@@ -18,6 +18,7 @@ export const contactFormSchema = z.object({
   phone: z.string().max(30).optional(),
   salonName: z.string().max(200).optional(),
   message: z.string().min(1).max(5000),
+  customerPhotos: z.array(z.string().url()).max(3).optional().default([]),
   locale: z.enum(["cs", "uk", "ru"]).default("cs"),
 });
 

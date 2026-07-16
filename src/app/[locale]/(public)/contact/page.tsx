@@ -69,8 +69,12 @@ const jsonLd = {
   paymentAccepted: "Hotově, Kartou, Převodem",
 };
 
-export default async function ContactPage() {
-  const t = await getTranslations("public");
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ reason?: string }>;
+}) {
+  const [t, sp] = await Promise.all([getTranslations("public"), searchParams]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -165,7 +169,7 @@ export default async function ContactPage() {
         </div>
 
         {/* Contact form */}
-        <ContactForm />
+        <ContactForm reason={sp.reason} />
       </div>
     </div>
   );

@@ -1110,8 +1110,9 @@ model ContactMessage {
   email       String
   phone       String?
   salonName   String?
-  message     String
-  locale      String   @default("cs")
+  message         String
+  customerPhotos  String?
+  locale          String   @default("cs")
 
   assignedTo  String?
   assignedAt  DateTime?
