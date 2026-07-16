@@ -176,6 +176,40 @@ export async function POST(request: NextRequest) {
       ? data.totalPieces * data.pieceWeightGrams
       : data.totalGrams;
 
+    // Resolve batchId: use provided, find open, or auto-create
+    let batchId = body.batchId as string | undefined;
+    if (!batchId) {
+      const openBatch = await prisma.stockBatch.findFirst({
+        where: { status: "OPEN" },
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
+      });
+      if (openBatch) {
+        batchId = openBatch.id;
+      } else {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth(); // 0-indexed
+        const monthNames = ["leden","únor","březen","duben","květen","červen","červenec","srpen","září","říjen","listopad","prosinec"];
+        const existingCount = await prisma.stockBatch.count({
+          where: {
+            createdAt: {
+              gte: new Date(year, month, 1),
+              lt: new Date(year, month + 1, 1),
+            },
+          },
+        });
+        const seq = existingCount + 1;
+        const newBatch = await prisma.stockBatch.create({
+          data: {
+            name: `Várka ${seq} — ${monthNames[month]} ${year}`,
+            status: "OPEN",
+          },
+        });
+        batchId = newBatch.id;
+      }
+    }
+
     const delivery = await stockIn(
       {
         variantId: variant.id,
@@ -188,6 +222,7 @@ export async function POST(request: NextRequest) {
         pieceWeightGrams: isByPiece ? data.pieceWeightGrams : undefined,
         exclusive: isByPiece ? (data.exclusive ?? false) : false,
         barcode: generateBarcode(),
+        batchId,
         stockedAt: data.stockedAt ? new Date(data.stockedAt) : undefined,
         note: data.note,
       },
@@ -231,6 +266,7 @@ export async function POST(request: NextRequest) {
       pieceWeightGrams: data.pieceWeightGrams,
       barcode: data.barcode || generateBarcode(),
       batchCode: data.batchCode,
+      batchId: data.batchId,
       stockedAt: data.stockedAt ? new Date(data.stockedAt) : undefined,
       note: data.note,
     },

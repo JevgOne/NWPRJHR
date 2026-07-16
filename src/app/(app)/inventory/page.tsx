@@ -73,6 +73,14 @@ export default async function InventoryPage() {
           )}
           {role === "OWNER" && (
             <a
+              href="/inventory/batches"
+              className="inline-flex items-center px-4 py-2 bg-white text-espresso border border-line rounded-lg text-sm font-medium hover:bg-nude-50"
+            >
+              {t("stock.batches")}
+            </a>
+          )}
+          {role === "OWNER" && (
+            <a
               href="/inventory/movements"
               className="inline-flex items-center px-4 py-2 bg-white text-espresso border border-line rounded-lg text-sm font-medium hover:bg-nude-50"
             >

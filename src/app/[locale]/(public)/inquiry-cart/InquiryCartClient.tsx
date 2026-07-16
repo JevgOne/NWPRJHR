@@ -21,7 +21,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
   const reasonMessage = mode === "consult" && reason
     ? (reason === "real-photo" ? t("reasonRealPhoto") : reason === "photo-match" ? t("reasonPhotoMatch") : "")
     : "";
-  const [form, setForm] = useState({ name: "", email: "", phone: "", salonName: "", message: reasonMessage, promoCode: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: reasonMessage, promoCode: "" });
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -237,16 +237,6 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                 value={form.phone}
                 onChange={(e) => setField("phone", e.target.value)}
                 className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-muted mb-1">{t("salonLabel")}</label>
-              <input
-                type="text"
-                value={form.salonName}
-                onChange={(e) => setField("salonName", e.target.value)}
-                className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
-                placeholder={t("salonPlaceholder")}
               />
             </div>
           </div>

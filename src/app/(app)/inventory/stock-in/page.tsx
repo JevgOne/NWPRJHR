@@ -11,11 +11,16 @@ export default async function StockInPage() {
   if (!session) redirect("/login");
   if (session.user.role !== "OWNER") redirect("/dashboard");
 
-  const [t, suppliers] = await Promise.all([
+  const [t, suppliers, openBatches] = await Promise.all([
     getTranslations(),
     prisma.supplier.findMany({
       where: { archived: false },
       orderBy: { name: "asc" },
+    }),
+    prisma.stockBatch.findMany({
+      where: { status: "OPEN" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, name: true, createdAt: true },
     }),
   ]);
 
@@ -29,7 +34,7 @@ export default async function StockInPage() {
       <h1 className="text-2xl font-bold text-ink mb-6">
         {t("stock.newDelivery")}
       </h1>
-      <StockInForm suppliers={supplierOptions} />
+      <StockInForm suppliers={supplierOptions} openBatches={openBatches} />
     </div>
   );
 }

@@ -12,6 +12,7 @@ export const stockInSchema = z
     pieceWeightGrams: z.number().int().positive().optional(),
     barcode: z.string().max(100).optional(),
     batchCode: z.string().max(100).optional(),
+    batchId: z.string().optional(),
     stockedAt: z.string().datetime().optional(),
     note: z.string().max(1000).optional(),
   })
@@ -94,6 +95,17 @@ export const supplierSchema = z.object({
   phone: z.string().max(50).optional(),
   country: z.string().max(100).optional(),
   note: z.string().max(1000).optional(),
+});
+
+export const stockBatchSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  note: z.string().max(1000).optional(),
+});
+
+export const stockBatchUpdateSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  note: z.string().max(1000).optional(),
+  status: z.enum(["OPEN", "CLOSED"]).optional(),
 });
 
 export const deliveryUpdateSchema = z.object({

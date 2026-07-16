@@ -266,6 +266,26 @@ model Supplier {
 }
 
 // ============================================================
+// STOCK_BATCH -- a stocking session (varka) that groups deliveries
+// ============================================================
+
+model StockBatch {
+  id          String    @id @default(cuid())
+  name        String
+  status      String    @default("OPEN")
+  note        String?
+  createdAt   DateTime  @default(now())
+  closedAt    DateTime?
+  updatedAt   DateTime  @updatedAt
+
+  deliveries  Delivery[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("stock_batches")
+}
+
+// ============================================================
 // DELIVERY -- a physical batch/shipment that arrived at the warehouse
 // Linked to a specific Variant (product + length + color)
 // This is what FIFO operates on.
@@ -297,6 +317,9 @@ model Delivery {
   barcode                 String?   @unique
   batchCode               String?
 
+  batchId                 String?
+  batch                   StockBatch? @relation(fields: [batchId], references: [id])
+
   receivedInvoiceFile     String?
 
   stockedAt               DateTime  @default(now())
@@ -313,6 +336,7 @@ model Delivery {
   @@index([supplierId])
   @@index([barcode])
   @@index([variantId, remainingGrams, stockedAt])
+  @@index([batchId])
   @@map("deliveries")
 }
 

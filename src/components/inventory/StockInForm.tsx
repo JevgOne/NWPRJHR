@@ -18,6 +18,12 @@ interface SupplierOption {
   name: string;
 }
 
+interface BatchOption {
+  id: string;
+  name: string;
+  createdAt: string | Date;
+}
+
 interface SuccessData {
   productId: string;
   productName: string;
@@ -38,12 +44,35 @@ const CURRENCY_OPTIONS: { code: CurrencyCode; symbol: string }[] = [
   { code: "CZK", symbol: "Kc" },
 ];
 
-export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
+export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { suppliers: SupplierOption[]; openBatches?: BatchOption[] }) {
   const t = useTranslations("stock");
   const tCommon = useTranslations("common");
   const tCat = useTranslations("category");
   const tColors = useTranslations("public.colors");
   const router = useRouter();
+
+  // Batch state
+  const [batches, setBatches] = useState<BatchOption[]>(initialBatches);
+  const [batchId, setBatchId] = useState<string>(initialBatches.length === 1 ? initialBatches[0].id : "");
+  const [creatingBatch, setCreatingBatch] = useState(false);
+
+  async function createNewBatch() {
+    setCreatingBatch(true);
+    try {
+      const res = await fetch("/api/inventory/batches", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        const newBatch = await res.json();
+        setBatches((prev) => [newBatch, ...prev]);
+        setBatchId(newBatch.id);
+      }
+    } catch {} finally {
+      setCreatingBatch(false);
+    }
+  }
 
   // Progressive form state
   const [category, setCategory] = useState<Category | "">("");
@@ -285,6 +314,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
         exclusive,
       } : {}),
       stockedAt: new Date(stockedAt).toISOString(),
+      ...(batchId ? { batchId } : {}),
       ...(note ? { note } : {}),
     };
 
@@ -645,6 +675,7 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
                 setUploadedVideo(null);
                 setUploadError("");
                 setSelectedFiles([]);
+                // Keep batchId — user likely stocking into same batch
                 setCategory("");
                 setOrigin("");
                 setTexture("");
@@ -685,6 +716,39 @@ export function StockInForm({ suppliers }: { suppliers: SupplierOption[] }) {
       <BadgeRow />
 
       <div className="space-y-6">
+        {/* Batch selector */}
+        <div id="section-batch" className="p-4 rounded-xl border-2 border-line bg-nude-50/50">
+          <label className="block text-sm font-medium text-espresso mb-2">
+            {t("batchSelect")}
+          </label>
+          <div className="flex items-center gap-2">
+            {batches.length > 0 ? (
+              <select
+                className="block flex-1 rounded-lg border border-line px-3 py-2 text-sm"
+                value={batchId}
+                onChange={(e) => setBatchId(e.target.value)}
+              >
+                <option value="">{t("batchSelect")}</option>
+                {batches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <p className="flex-1 text-sm text-muted">{t("batchNoData")}</p>
+            )}
+            <button
+              type="button"
+              onClick={createNewBatch}
+              disabled={creatingBatch}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-line bg-white text-sm font-medium text-espresso hover:bg-nude-50 disabled:opacity-50"
+            >
+              + {t("batchNew")}
+            </button>
+          </div>
+        </div>
+
         {/* Category — always visible */}
         <div id="section-category">
           <h2 className="text-sm font-medium text-espresso mb-3">
