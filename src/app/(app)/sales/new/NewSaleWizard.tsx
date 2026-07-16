@@ -351,16 +351,9 @@ export function NewSaleWizard({
   );
 
   const handleNewCustomer = useCallback(
-    async (data: { firstName: string; lastName: string; email?: string; phone?: string }) => {
-      const res = await fetch("/api/customers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        const customer = await res.json();
-        setCustomerId(customer.id);
-      }
+    (_data: { firstName: string; lastName: string; email?: string; phone?: string }) => {
+      // Customer creation + selection is handled by CustomerSelect internally.
+      // This callback is kept for any additional side effects if needed.
     },
     []
   );

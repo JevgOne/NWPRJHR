@@ -49,6 +49,7 @@ export function CustomerSelect({
   const [newLastName, setNewLastName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (customerType === "SALON") {
@@ -173,24 +174,42 @@ export function CustomerSelect({
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  onClick={() => {
-                    if (newFirstName.trim() && newLastName.trim()) {
-                      onNewCustomer({
+                  onClick={async () => {
+                    if (!newFirstName.trim() || !newLastName.trim()) return;
+                    setSaving(true);
+                    try {
+                      const data = {
                         firstName: newFirstName.trim(),
                         lastName: newLastName.trim(),
                         email: newEmail || undefined,
                         phone: newPhone || undefined,
+                      };
+                      const res = await fetch("/api/customers", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data),
                       });
+                      if (res.ok) {
+                        const created = await res.json();
+                        setCustomers((prev) => [
+                          { id: created.id, name: created.name, email: created.email, phone: created.phone },
+                          ...prev,
+                        ]);
+                        onCustomerSelect(created.id);
+                        onNewCustomer(data);
+                      }
                       setShowNewForm(false);
                       setNewFirstName("");
                       setNewLastName("");
                       setNewEmail("");
                       setNewPhone("");
+                    } finally {
+                      setSaving(false);
                     }
                   }}
-                  disabled={!newFirstName.trim() || !newLastName.trim()}
+                  disabled={!newFirstName.trim() || !newLastName.trim() || saving}
                 >
-                  {tCommon("save")}
+                  {saving ? tCommon("saving") : tCommon("save")}
                 </Button>
                 <Button
                   variant="ghost"
