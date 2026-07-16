@@ -755,14 +755,9 @@ async function ProductDetailView({
         <div className="space-y-4">
           {/* Header: name + origin inline */}
           <div>
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <h1 className="text-2xl font-bold text-ink">
-                {productName}
-              </h1>
-              {(product.slug ?? product.id) && (
-                <WishlistToggle slug={product.slug ?? product.id} />
-              )}
-            </div>
+            <h1 className="text-2xl font-bold text-ink mb-1">
+              {productName}
+            </h1>
             <div className="flex items-center gap-2 text-sm text-muted">
               <Link
                 href={`/offer?category=${product.category}`}
@@ -781,6 +776,11 @@ async function ProductDetailView({
               <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-medium text-xs">
                 ✓ {t("productDetail.realHair")}
               </span>
+              {(product.slug ?? product.id) && (
+                <span className="ml-auto">
+                  <WishlistToggle slug={product.slug ?? product.id} />
+                </span>
+              )}
             </div>
           </div>
 
@@ -1048,42 +1048,44 @@ async function ProductDetailView({
               </div>
             </div>
           </div>
-
-          {/* No-retouch trust section */}
-          <div className="rounded-2xl bg-amber-50/50 p-5 space-y-3">
-            <div className="flex items-start gap-2.5">
-              <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>
-              <div>
-                <h3 className="text-sm font-bold text-ink">{t("productDetail.noRetouchTitle")}</h3>
-                <p className="text-xs text-muted mt-1 leading-relaxed">{t("productDetail.noRetouchDesc")}</p>
-              </div>
-            </div>
-            <div className="space-y-1.5 pt-1">
-              <Link href="/contact" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
-                <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21zm5.25-12a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /></svg>
-                <div>
-                  <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta1Title")}</p>
-                  <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta1Desc")}</p>
-                </div>
-              </Link>
-              <a href="https://wa.me/420608553103" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
-                <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                <div>
-                  <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta2Title")}</p>
-                  <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta2Desc")}</p>
-                </div>
-              </a>
-              <Link href="/contact" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
-                <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
-                <div>
-                  <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta3Title")}</p>
-                  <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta3Desc")}</p>
-                </div>
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
+
+      {/* No-retouch trust section — full width */}
+      <section className="mt-6">
+        <div className="rounded-2xl bg-amber-50/50 p-5 space-y-3">
+          <div className="flex items-start gap-2.5">
+            <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>
+            <div>
+              <h3 className="text-sm font-bold text-ink">{t("productDetail.noRetouchTitle")}</h3>
+              <p className="text-xs text-muted mt-1 leading-relaxed">{t("productDetail.noRetouchDesc")}</p>
+            </div>
+          </div>
+          <div className="space-y-1.5 pt-1">
+            <Link href="/contact" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
+              <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21zm5.25-12a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /></svg>
+              <div>
+                <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta1Title")}</p>
+                <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta1Desc")}</p>
+              </div>
+            </Link>
+            <a href="https://wa.me/420608553103" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
+              <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+              <div>
+                <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta2Title")}</p>
+                <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta2Desc")}</p>
+              </div>
+            </a>
+            <Link href="/contact" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
+              <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+              <div>
+                <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta3Title")}</p>
+                <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta3Desc")}</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Care tips + blog link */}
       <section className="mt-10 pt-8 border-t border-line">
