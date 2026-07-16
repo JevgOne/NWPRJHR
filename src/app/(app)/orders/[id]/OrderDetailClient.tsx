@@ -84,15 +84,25 @@ export function OrderDetailClient({
 
   useEffect(load, [id]);
 
+  const [actionError, setActionError] = useState("");
+
   const doAction = async (action: string, body?: Record<string, unknown>) => {
-    const res = await fetch(`/api/orders/${id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, ...body }),
-    });
-    if (res.ok) {
-      setShowCancelConfirm(false);
-      load();
+    setActionError("");
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, ...body }),
+      });
+      if (res.ok) {
+        setShowCancelConfirm(false);
+        load();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setActionError(data.error || `Error ${res.status}`);
+      }
+    } catch {
+      setActionError(tCommon("error"));
     }
   };
 
@@ -219,6 +229,11 @@ export function OrderDetailClient({
       {/* Staff actions */}
       {!isFinal && (
         <div className="bg-white border border-line rounded-xl px-4 py-4">
+          {actionError && (
+            <div className="mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {actionError}
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
             {order.status === "NEW" && isOwner && (
               <>

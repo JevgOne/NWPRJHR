@@ -22,7 +22,14 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
 
-  const sale = await completeSale(parsed.data, session.user.id);
+  let sale;
+  try {
+    sale = await completeSale(parsed.data, session.user.id);
+  } catch (e) {
+    console.error("[Sales API] completeSale failed:", e);
+    const message = e instanceof Error ? e.message : "Sale creation failed";
+    return NextResponse.json({ error: { message } }, { status: 400 });
+  }
 
   // Post-sale document creation based on payment type
   const pt = parsed.data.paymentType ?? "TRANSFER";
