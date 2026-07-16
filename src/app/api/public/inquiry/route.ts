@@ -4,6 +4,7 @@ import { sendNotificationEmail } from "@/lib/email";
 import { getInquiryConfirmationEmail } from "@/lib/email-templates";
 import { notifyInquiry } from "@/lib/telegram";
 import { generateSku } from "@/lib/sku";
+import { upsertCustomerFromContact } from "@/lib/customer-upsert";
 import { z } from "zod";
 
 const inquiryItemSchema = z.object({
@@ -16,9 +17,12 @@ const inquiryItemSchema = z.object({
 });
 
 const inquirySchema = z.object({
-  name: z.string().min(1).max(200),
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  name: z.string().min(1).max(200).optional(),
   email: z.string().email().max(200),
   phone: z.string().max(30).optional().default(""),
+  city: z.string().max(100).optional().default(""),
   salonName: z.string().max(200).optional().default(""),
   message: z.string().max(5000).optional().default(""),
   promoCode: z.string().max(50).optional().default(""),
@@ -65,7 +69,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, phone, salonName, message, promoCode, referralCode, locale, customerPhotos, items } = parsed.data;
+  const { firstName, lastName, email, phone, city, salonName, message, promoCode, referralCode, locale, customerPhotos, items } = parsed.data;
+  const name = parsed.data.name || `${firstName} ${lastName}`.trim();
 
   // Validate and increment promo code usage
   let appliedPromoCode: string | null = null;
@@ -89,16 +94,25 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Auto-upsert customer
+  const customerId = await upsertCustomerFromContact({
+    firstName, lastName, email, phone, city,
+  }).catch(() => null);
+
   try {
     const inquiry = await prisma.inquiry.create({
       data: {
         name,
+        firstName,
+        lastName,
         email,
         phone: phone || null,
+        city: city || null,
         salonName: salonName || null,
         message: message || null,
         promoCode: appliedPromoCode,
         referralCode: referralCode || null,
+        customerId,
         customerPhotos: customerPhotos.length > 0 ? JSON.stringify(customerPhotos) : null,
         items: {
           create: items.map((item) => ({

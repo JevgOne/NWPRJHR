@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { getHairColor } from "@/lib/hair-colors";
 
@@ -32,6 +33,8 @@ interface Inquiry {
   contactedAt: string | null;
   completedAt: string | null;
   customerPhotos: string | null;
+  customerId: string | null;
+  city: string | null;
   createdAt: string;
   items: InquiryItem[];
   subtotal: number;
@@ -237,9 +240,19 @@ export function InquiriesClient() {
                     {/* Contact info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div className="space-y-2">
-                        <Detail label={t("customer")} value={inq.name} />
+                        <div>
+                          <p className="text-xs font-medium text-muted uppercase">{t("customer")}</p>
+                          {inq.customerId ? (
+                            <Link href={`/customers/${inq.customerId}`} className="text-sm text-rose hover:underline">
+                              {inq.name}
+                            </Link>
+                          ) : (
+                            <p className="text-sm text-ink">{inq.name}</p>
+                          )}
+                        </div>
                         <Detail label={t("email")} value={inq.email} />
                         {inq.phone && <Detail label={t("phone")} value={inq.phone} />}
+                        {inq.city && <Detail label={t("city")} value={inq.city} />}
                         {inq.salonName && <Detail label={t("salon")} value={inq.salonName} />}
                         {inq.promoCode && (
                           <Detail

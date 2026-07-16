@@ -43,9 +43,11 @@ export const completeSaleSchema = z
   );
 
 export const customerSchema = z.object({
-  name: z.string().min(1).max(200),
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().max(50).optional(),
+  city: z.string().max(100).optional(),
   note: z.string().max(1000).optional(),
 });
 

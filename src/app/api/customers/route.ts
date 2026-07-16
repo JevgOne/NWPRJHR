@@ -27,6 +27,9 @@ export async function GET(request: NextRequest) {
     where,
     orderBy: { name: "asc" },
     take: 100,
+    include: {
+      _count: { select: { inquiries: true, sales: true } },
+    },
   });
 
   return NextResponse.json(customers);
@@ -47,8 +50,9 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
 
+  const name = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
   const customer = await prisma.customer.create({
-    data: parsed.data,
+    data: { ...parsed.data, name },
   });
 
   logAudit({
@@ -57,7 +61,7 @@ export async function POST(request: NextRequest) {
     action: "CREATE",
     entity: "Customer",
     entityId: customer.id,
-    detail: { name: parsed.data.name },
+    detail: { name },
     ipAddress: getClientIp(request),
   });
 

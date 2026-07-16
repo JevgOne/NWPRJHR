@@ -37,6 +37,16 @@ export async function GET(
         },
         take: 50,
       },
+      inquiries: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          status: true,
+          createdAt: true,
+          items: { select: { id: true } },
+        },
+        take: 50,
+      },
     },
   });
 
@@ -49,6 +59,7 @@ export async function GET(
     ...customer,
     totalSpent,
     salesCount: customer.sales.length,
+    inquiriesCount: customer.inquiries.length,
   });
 }
 
@@ -75,9 +86,10 @@ export async function PUT(
   if (!existing)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  const name = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
   const customer = await prisma.customer.update({
     where: { id },
-    data: parsed.data,
+    data: { ...parsed.data, name },
   });
 
   logAudit({

@@ -451,9 +451,12 @@ model Partner {
 
 model Customer {
   id           String   @id @default(cuid())
+  firstName    String?
+  lastName     String?
   name         String
   email        String?
   phone        String?
+  city         String?
   note         String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -461,9 +464,10 @@ model Customer {
   passwordHash String?
   slug         String?  @unique
 
-  sales    Sale[]
-  invoices Invoice[]
+  sales     Sale[]
+  invoices  Invoice[]
   referrals Referral[] @relation("ReferrerCustomer")
+  inquiries Inquiry[]
 
   @@index([email])
   @@index([name])
@@ -1067,10 +1071,13 @@ model Inquiry {
   id           String        @id @default(cuid())
 
   name         String
+  firstName    String?
+  lastName     String?
   email        String
   phone        String?
   salonName    String?
   message      String?
+  city         String?
   locale       String        @default("cs")
   promoCode    String?
 
@@ -1093,11 +1100,15 @@ model Inquiry {
   followUpSent   Boolean       @default(false)
   followUpSentAt DateTime?
 
+  customerId   String?
+  customer     Customer?     @relation(fields: [customerId], references: [id])
+
   items        InquiryItem[]
 
   @@index([status])
   @@index([createdAt])
   @@index([email])
+  @@index([customerId])
   @@map("inquiries")
 }
 

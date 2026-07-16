@@ -26,7 +26,7 @@ interface CustomerSelectProps {
   onSalonSelect: (id: string) => void;
   selectedCustomerId: string | null;
   onCustomerSelect: (id: string) => void;
-  onNewCustomer: (customer: { name: string; email?: string; phone?: string }) => void;
+  onNewCustomer: (customer: { firstName: string; lastName: string; email?: string; phone?: string }) => void;
 }
 
 export function CustomerSelect({
@@ -45,7 +45,8 @@ export function CustomerSelect({
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState("");
   const [showNewForm, setShowNewForm] = useState(false);
-  const [newName, setNewName] = useState("");
+  const [newFirstName, setNewFirstName] = useState("");
+  const [newLastName, setNewLastName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
 
