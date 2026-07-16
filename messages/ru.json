@@ -82,6 +82,7 @@
     "finance": "Финансы",
     "settings": "Настройки",
     "orders": "Заказы",
+    "reservations": "Резервации",
     "suppliers": "Поставщики",
     "discounts": "Скидки",
     "samples": "Образцы",
@@ -2722,5 +2723,30 @@
     "photoLabel": "Фото {index}",
     "savingBtn": "Сохраняю...",
     "savedMsg": "Сохранено!"
+  },
+  "reservation": {
+    "title": "Резервации",
+    "newReservation": "Новая резервация",
+    "reservationNumber": "Номер резервации",
+    "paymentDueDate": "Срок оплаты",
+    "status": "Статус",
+    "pending": "Ожидает оплаты",
+    "paid": "Оплачено",
+    "completed": "Завершено",
+    "expired": "Просрочено",
+    "cancelled": "Отменено",
+    "markPaid": "Отметить как оплачено",
+    "complete": "Завершить (создать продажу)",
+    "cancel": "Отменить",
+    "noReservations": "Нет резерваций",
+    "selectProduct": "Выберите продукт",
+    "quantity": "Количество",
+    "deadline": "Дата оплаты",
+    "estimatedPrice": "Ориентировочная цена",
+    "createReservation": "Создать резервацию",
+    "daysLeft": "Осталось {days} дней",
+    "overdue": "Просрочено",
+    "contactInfo": "Контактная информация",
+    "paymentInfo": "Платежная информация"
   }
 }

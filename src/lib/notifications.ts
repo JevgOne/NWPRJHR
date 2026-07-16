@@ -211,6 +211,18 @@ export function translateNotification(
         title: "Nová referral konverze",
         message: `Někdo použil referral kód${data?.code ? ` ${data.code}` : ""}`,
       },
+      RESERVATION_CREATED: {
+        title: "Nová rezervace",
+        message: `Vytvořena nová rezervace${data?.reservationNumber ? ` ${data.reservationNumber}` : ""}`,
+      },
+      RESERVATION_PAID: {
+        title: "Rezervace zaplacena",
+        message: `Rezervace${data?.reservationNumber ? ` ${data.reservationNumber}` : ""} byla zaplacena`,
+      },
+      RESERVATION_EXPIRED: {
+        title: "Rezervace expirovala",
+        message: `${data?.expiredCount ?? 1} rezervací expiroval${(data?.expiredCount ?? 1) === 1 ? "a" : "o"}`,
+      },
     },
     uk: {
       NEW_ORDER: {
@@ -281,6 +293,18 @@ export function translateNotification(
         title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u0430 \u043a\u043e\u043d\u0432\u0435\u0440\u0441\u0456\u044f",
         message: `\u0425\u0442\u043e\u0441\u044c \u0432\u0438\u043a\u043e\u0440\u0438\u0441\u0442\u0430\u0432 \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u0438\u0439 \u043a\u043e\u0434${data?.code ? ` ${data.code}` : ""}`,
       },
+      RESERVATION_CREATED: {
+        title: "\u041d\u043e\u0432\u0430 \u0440\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0456\u044f",
+        message: `\u0421\u0442\u0432\u043e\u0440\u0435\u043d\u043e \u043d\u043e\u0432\u0443 \u0440\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0456\u044e${data?.reservationNumber ? ` ${data.reservationNumber}` : ""}`,
+      },
+      RESERVATION_PAID: {
+        title: "\u0420\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0456\u044e \u043e\u043f\u043b\u0430\u0447\u0435\u043d\u043e",
+        message: `\u0420\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0456\u044e${data?.reservationNumber ? ` ${data.reservationNumber}` : ""} \u043e\u043f\u043b\u0430\u0447\u0435\u043d\u043e`,
+      },
+      RESERVATION_EXPIRED: {
+        title: "\u0420\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0456\u044f \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u0430",
+        message: `${data?.expiredCount ?? 1} \u0440\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0456\u0439 \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u043e`,
+      },
     },
     ru: {
       NEW_ORDER: {
@@ -350,6 +374,18 @@ export function translateNotification(
       REFERRAL_USED: {
         title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u043d\u0432\u0435\u0440\u0441\u0438\u044f",
         message: `\u041a\u0442\u043e-\u0442\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043b \u0440\u0435\u0444\u0435\u0440\u0430\u043b\u044c\u043d\u044b\u0439 \u043a\u043e\u0434${data?.code ? ` ${data.code}` : ""}`,
+      },
+      RESERVATION_CREATED: {
+        title: "\u041d\u043e\u0432\u0430\u044f \u0440\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0438\u044f",
+        message: `\u0421\u043e\u0437\u0434\u0430\u043d\u0430 \u043d\u043e\u0432\u0430\u044f \u0440\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0438\u044f${data?.reservationNumber ? ` ${data.reservationNumber}` : ""}`,
+      },
+      RESERVATION_PAID: {
+        title: "\u0420\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0438\u044f \u043e\u043f\u043b\u0430\u0447\u0435\u043d\u0430",
+        message: `\u0420\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0438\u044f${data?.reservationNumber ? ` ${data.reservationNumber}` : ""} \u043e\u043f\u043b\u0430\u0447\u0435\u043d\u0430`,
+      },
+      RESERVATION_EXPIRED: {
+        title: "\u0420\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0438\u044f \u043f\u0440\u043e\u0441\u0440\u043e\u0447\u0435\u043d\u0430",
+        message: `${data?.expiredCount ?? 1} \u0440\u0435\u0437\u0435\u0440\u0432\u0430\u0446\u0438\u0439 \u043f\u0440\u043e\u0441\u0440\u043e\u0447\u0435\u043d\u043e`,
       },
     },
   };

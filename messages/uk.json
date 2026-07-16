@@ -82,6 +82,7 @@
     "finance": "Фінанси",
     "settings": "Налаштування",
     "orders": "Замовлення",
+    "reservations": "Резервації",
     "suppliers": "Постачальники",
     "discounts": "Знижки",
     "samples": "Зразки",
@@ -2722,5 +2723,30 @@
     "photoLabel": "Фото {index}",
     "savingBtn": "Зберігаю...",
     "savedMsg": "Збережено!"
+  },
+  "reservation": {
+    "title": "Резервації",
+    "newReservation": "Нова резервація",
+    "reservationNumber": "Номер резервації",
+    "paymentDueDate": "Термін оплати",
+    "status": "Статус",
+    "pending": "Очікує оплати",
+    "paid": "Оплачено",
+    "completed": "Завершено",
+    "expired": "Прострочено",
+    "cancelled": "Скасовано",
+    "markPaid": "Позначити як оплачено",
+    "complete": "Завершити (створити продаж)",
+    "cancel": "Скасувати",
+    "noReservations": "Немає резервацій",
+    "selectProduct": "Оберіть продукт",
+    "quantity": "Кількість",
+    "deadline": "Дата оплати",
+    "estimatedPrice": "Орієнтовна ціна",
+    "createReservation": "Створити резервацію",
+    "daysLeft": "Залишилось {days} днів",
+    "overdue": "Прострочено",
+    "contactInfo": "Контактна інформація",
+    "paymentInfo": "Платіжна інформація"
   }
 }

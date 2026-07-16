@@ -82,6 +82,7 @@
     "finance": "Finance",
     "settings": "Nastavení",
     "orders": "Objednávky",
+    "reservations": "Rezervace",
     "suppliers": "Dodavatelé",
     "discounts": "Slevy",
     "samples": "Vzorky",
@@ -2722,5 +2723,30 @@
     "photoLabel": "Fotka {index}",
     "savingBtn": "Ukládám...",
     "savedMsg": "Uloženo!"
+  },
+  "reservation": {
+    "title": "Rezervace",
+    "newReservation": "Nová rezervace",
+    "reservationNumber": "Číslo rezervace",
+    "paymentDueDate": "Splatnost",
+    "status": "Stav",
+    "pending": "Čeká na platbu",
+    "paid": "Zaplaceno",
+    "completed": "Dokončeno",
+    "expired": "Expirovalo",
+    "cancelled": "Zrušeno",
+    "markPaid": "Označit jako zaplaceno",
+    "complete": "Dokončit (vytvořit prodej)",
+    "cancel": "Zrušit",
+    "noReservations": "Žádné rezervace",
+    "selectProduct": "Vyberte produkt",
+    "quantity": "Množství",
+    "deadline": "Datum splatnosti",
+    "estimatedPrice": "Odhadovaná cena",
+    "createReservation": "Vytvořit rezervaci",
+    "daysLeft": "Zbývá {days} dní",
+    "overdue": "Po splatnosti",
+    "contactInfo": "Kontaktní údaje",
+    "paymentInfo": "Platební údaje"
   }
 }

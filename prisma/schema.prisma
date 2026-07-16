@@ -38,6 +38,7 @@ model User {
   complaintsCreated      Complaint[]         @relation("ComplaintsCreated")
   notificationsReceived  Notification[]      @relation("NotificationsReceived")
 
+  reservationsCreated    ProductReservation[] @relation("ReservationsCreated")
   comments               Comment[]
   articleLikes           ArticleLike[]
   commentLikes           CommentLike[]
@@ -89,6 +90,7 @@ model Salon {
   sampleRequests  SampleRequest[]
   returns         Return[]
   complaints      Complaint[]
+  productReservations ProductReservation[]
   paymentReminders PaymentReminder[]
   stylists        Stylist[]
   referrals       Referral[]  @relation("ReferrerSalon")
@@ -186,6 +188,7 @@ model Variant {
   deliveries          Delivery[]
   stockMovements      StockMovement[]
   reservations        Reservation[]
+  productReservations ProductReservation[]
   saleItems           SaleItem[]
   orderItems          OrderItem[]
   stockSubscriptions  StockSubscription[]
@@ -469,6 +472,7 @@ model Customer {
   invoices  Invoice[]
   referrals Referral[] @relation("ReferrerCustomer")
   inquiries Inquiry[]
+  productReservations ProductReservation[]
 
   @@index([email])
   @@index([name])
@@ -1051,6 +1055,75 @@ enum NotificationType {
   NEW_CONTACT
   NEW_COMPLAINT
   REFERRAL_USED
+  RESERVATION_CREATED
+  RESERVATION_PAID
+  RESERVATION_EXPIRED
+}
+
+// ============================================================
+// PRODUCT RESERVATION ENUMS
+// ============================================================
+
+enum ProductReservationStatus {
+  PENDING
+  PAID
+  COMPLETED
+  EXPIRED
+  CANCELLED
+}
+
+// ============================================================
+// PRODUCT_RESERVATION -- paid reservation for products
+// Separate from order Reservation (stock hold). This is a
+// customer commitment to buy with payment deadline.
+// ============================================================
+
+model ProductReservation {
+  id                String                    @id @default(cuid())
+  reservationNumber String?                   @unique
+
+  customerType      CustomerType
+  salonId           String?
+  salon             Salon?                    @relation(fields: [salonId], references: [id])
+  customerId        String?
+  customer          Customer?                 @relation(fields: [customerId], references: [id])
+
+  contactName       String?
+  contactEmail      String?
+  contactPhone      String?
+
+  variantId         String
+  variant           Variant                   @relation(fields: [variantId], references: [id])
+  grams             Int
+  pieces            Int
+
+  pricePerUnit      Int
+  lineTotal         Int
+  sellingMode       String                    @default("BY_GRAM")
+
+  status            ProductReservationStatus  @default(PENDING)
+  paymentDueDate    DateTime
+  paidAt            DateTime?
+  paymentNote       String?
+
+  saleId            String?                   @unique
+  invoiceId         String?                   @unique
+
+  note              String?
+  internalNote      String?
+  createdByUserId   String
+  createdByUser     User                      @relation("ReservationsCreated", fields: [createdByUserId], references: [id])
+
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  @@index([status])
+  @@index([salonId])
+  @@index([customerId])
+  @@index([variantId])
+  @@index([paymentDueDate])
+  @@index([createdAt])
+  @@map("product_reservations")
 }
 
 // ============================================================
