@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit, getClientIp } from "@/lib/audit";
@@ -45,6 +46,10 @@ export async function PUT(
     data,
     include: { items: true },
   });
+
+  if (body.status) {
+    revalidateTag("badges");
+  }
 
   logAudit({
     userId: session.user.id,
