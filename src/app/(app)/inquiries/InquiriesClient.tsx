@@ -58,7 +58,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 // STATUS_LABELS, COLOR_NAMES, itemCount moved inside component to access translations
 
-export function InquiriesClient() {
+export function InquiriesClient({ userColors = {} }: { userColors?: Record<string, string> }) {
   const t = useTranslations("inquiry");
   const tc = useTranslations("common");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -202,8 +202,17 @@ export function InquiriesClient() {
                         </span>
                       )}
                       {inq.assignedTo && (
-                        <span className="text-xs text-green-700 font-medium">
-                          · {t("assignedTo")}: {inq.assignedTo}
+                        <span className="text-xs font-medium flex items-center gap-1">
+                          ·
+                          {userColors[inq.assignedTo] && (
+                            <span
+                              className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: userColors[inq.assignedTo] }}
+                            />
+                          )}
+                          <span style={{ color: userColors[inq.assignedTo] || undefined }} className={userColors[inq.assignedTo] ? "font-semibold" : "text-green-700"}>
+                            {inq.assignedTo}
+                          </span>
                         </span>
                       )}
                     </div>
@@ -267,10 +276,21 @@ export function InquiriesClient() {
                           value={new Date(inq.createdAt).toLocaleString("cs-CZ")}
                         />
                         {inq.assignedTo && (
-                          <Detail
-                            label={t("assignedTo")}
-                            value={`${inq.assignedTo}${inq.assignedAt ? ` od ${new Date(inq.assignedAt).toLocaleString("cs-CZ")}` : ""}`}
-                          />
+                          <div>
+                            <p className="text-xs font-medium text-muted uppercase">{t("assignedTo")}</p>
+                            <p className="text-sm text-ink flex items-center gap-1.5">
+                              {userColors[inq.assignedTo] && (
+                                <span
+                                  className="inline-block w-3 h-3 rounded-full flex-shrink-0"
+                                  style={{ backgroundColor: userColors[inq.assignedTo] }}
+                                />
+                              )}
+                              <span style={{ color: userColors[inq.assignedTo] || undefined }} className={userColors[inq.assignedTo] ? "font-semibold" : ""}>
+                                {inq.assignedTo}
+                              </span>
+                              {inq.assignedAt && <span className="text-muted"> od {new Date(inq.assignedAt).toLocaleString("cs-CZ")}</span>}
+                            </p>
+                          </div>
                         )}
                         {inq.contactedAt && (
                           <Detail

@@ -19,6 +19,7 @@ model User {
   email          String    @unique
   hashedPassword String
   role           Role      @default(EMPLOYEE)
+  color          String?
   salonId        String?
   salon          Salon?    @relation(fields: [salonId], references: [id])
   createdAt      DateTime  @default(now())
