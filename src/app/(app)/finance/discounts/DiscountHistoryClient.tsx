@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
+import { UserBadge } from "@/components/ui/UserBadge";
 
 interface DiscountEntry {
   discountId: string;
@@ -150,7 +151,7 @@ export function DiscountHistoryClient() {
             {summary.map((s) => (
               <Card key={s.userId}>
                 <div className="p-4">
-                  <p className="text-sm text-muted">{s.userName}</p>
+                  <p className="text-sm text-muted"><UserBadge name={s.userName} /></p>
                   <p className="text-lg font-bold">
                     {s.totalCount}x / {formatCZK(s.totalAmountHalere)} CZK
                   </p>
@@ -189,7 +190,7 @@ export function DiscountHistoryClient() {
                       <td className="p-3 text-right font-mono">
                         {formatCZK(d.amountHalere)}
                       </td>
-                      <td className="p-3">{d.givenByUserName}</td>
+                      <td className="p-3"><UserBadge name={d.givenByUserName} /></td>
                       <td className="p-3">
                         {d.bearers.length > 0
                           ? d.bearers

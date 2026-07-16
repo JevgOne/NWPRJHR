@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { UserBadge } from "@/components/ui/UserBadge";
 import type { Role } from "@prisma/client";
 
 interface SaleDetail {
@@ -131,6 +132,8 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
             <>
               <span className="text-muted">{t("saleNumber")}</span>
               <span>{sale.saleNumber || sale.id.slice(0, 8)}</span>
+              <span className="text-muted">{t("soldBy")}</span>
+              <span><UserBadge name={sale.userName} /></span>
             </>
           )}
         </div>
