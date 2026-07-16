@@ -48,7 +48,7 @@ export async function PUT(
   });
 
   if (body.status) {
-    revalidateTag("badges");
+    revalidateTag("badges", "max");
   }
 
   logAudit({
