@@ -112,13 +112,15 @@ export async function POST(
 
       // Return stock for each sale item
       for (const item of sale.items) {
-        await fifoReturn(
-          item.deliveryId,
-          item.grams,
-          item.pieces,
-          session.user.id,
-          tx
-        );
+        if (item.deliveryId) {
+          await fifoReturn(
+            item.deliveryId,
+            item.grams,
+            item.pieces,
+            session.user.id,
+            tx
+          );
+        }
       }
 
       // Cancel sale

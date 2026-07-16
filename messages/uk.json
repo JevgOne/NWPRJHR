@@ -119,6 +119,8 @@
     "salesThisMonth": "Продажі цього місяця",
     "stockValue": "Вартість складу",
     "openInvoices": "Відкриті рахунки",
+    "awaitingPayment": "Очікує оплати",
+    "transfersPending": "переказів очікує",
     "activeSalons": "Активні салони",
     "recentSales": "Останні продажі",
     "noRecentSales": "Немає продажів",

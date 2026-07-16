@@ -119,6 +119,8 @@
     "salesThisMonth": "Prodeje tento měsíc",
     "stockValue": "Hodnota skladu",
     "openInvoices": "Otevřené faktury",
+    "awaitingPayment": "Čeká na platbu",
+    "transfersPending": "převodů čeká",
     "activeSalons": "Aktivní salony",
     "recentSales": "Poslední prodeje",
     "noRecentSales": "Žádné prodeje",

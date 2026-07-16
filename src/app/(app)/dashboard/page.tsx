@@ -75,10 +75,10 @@ const getCachedDashboardData = unstable_cache(
          GROUP BY p.category`
       ),
 
-      prisma.invoice.aggregate({
-        where: { type: "INVOICE", status: { in: ["ISSUED", "AWAITING", "OVERDUE"] } },
+      prisma.sale.aggregate({
+        where: { status: "COMPLETED", paymentType: "TRANSFER", invoice: { is: null } },
         _count: { id: true },
-        _sum: { total: true },
+        _sum: { totalAmount: true },
       }),
 
       prisma.salon.count({ where: { approved: true, archived: false } }),
@@ -137,7 +137,7 @@ const getCachedDashboardData = unstable_cache(
     };
   },
   ["dashboard-data"],
-  { revalidate: 30, tags: ["dashboard"] }
+  { revalidate: 5, tags: ["dashboard"] }
 );
 
 export default async function DashboardPage() {
@@ -180,8 +180,8 @@ export default async function DashboardPage() {
 
   const salesCount = salesThisMonth._count.id ?? 0;
   const salesRevenue = salesThisMonth._sum.totalAmount ?? 0;
-  const invoiceCount = openInvoices._count.id ?? 0;
-  const invoiceTotal = openInvoices._sum.total ?? 0;
+  const awaitingPaymentCount = openInvoices._count.id ?? 0;
+  const awaitingPaymentTotal = openInvoices._sum.totalAmount ?? 0;
   const totalSold = totalSalesEver._sum.totalAmount ?? 0;
   const totalSoldCount = totalSalesEver._count.id ?? 0;
   const totalCOGS = totalSalesEver._sum.totalCostOfGoods ?? 0;
@@ -212,9 +212,9 @@ export default async function DashboardPage() {
           sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)}`}
         />
         <StatCard
-          label={t("openInvoices")}
-          value={fmtCZK(invoiceTotal)}
-          sub1={`${invoiceCount} ${t("invoicesToPay")}`}
+          label={t("awaitingPayment")}
+          value={fmtCZK(awaitingPaymentTotal)}
+          sub1={`${awaitingPaymentCount} ${t("transfersPending")}`}
         />
       </div>
 
