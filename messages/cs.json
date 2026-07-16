@@ -2747,6 +2747,15 @@
     "daysLeft": "Zbývá {days} dní",
     "overdue": "Po splatnosti",
     "contactInfo": "Kontaktní údaje",
-    "paymentInfo": "Platební údaje"
+    "paymentInfo": "Platební údaje",
+    "note": "Poznámka",
+    "internalNote": "Interní poznámka",
+    "b2bPriceHint": "B2B cena (sleva bude aplikována automaticky)",
+    "retailPrice": "Maloobchodní cena",
+    "customer": "Zákazník",
+    "product": "Produkt",
+    "cancelConfirm": "Opravdu zrušit?",
+    "createdBy": "Vytvořil",
+    "viewSale": "Zobrazit prodej"
   }
 }

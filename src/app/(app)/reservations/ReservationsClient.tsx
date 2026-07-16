@@ -131,8 +131,8 @@ export function ReservationsClient({ role }: { role: Role }) {
               <thead>
                 <tr className="border-b text-left text-muted">
                   <th className="py-2 pr-3">{t("reservationNumber")}</th>
-                  <th className="py-2 pr-3">{tCommon("all") === "Vše" ? "Zákazník" : "Customer"}</th>
-                  <th className="py-2 pr-3">{t("selectProduct")}</th>
+                  <th className="py-2 pr-3">{t("customer")}</th>
+                  <th className="py-2 pr-3">{t("product")}</th>
                   <th className="py-2 pr-3 text-right">{t("quantity")}</th>
                   <th className="py-2 pr-3 text-right">{tCommon("total")}</th>
                   <th className="py-2 pr-3">{t("paymentDueDate")}</th>

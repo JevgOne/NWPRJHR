@@ -172,7 +172,7 @@ export function ReservationDetailClient({
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-nude-50 border-b border-line text-left text-muted text-xs uppercase tracking-wider">
-              <th className="py-2.5 px-4">{t("selectProduct")}</th>
+              <th className="py-2.5 px-4">{t("product")}</th>
               <th className="py-2.5 px-4 text-right">{t("quantity")}</th>
               <th className="py-2.5 px-4 text-right">{tCommon("total")}</th>
             </tr>
@@ -219,7 +219,7 @@ export function ReservationDetailClient({
       {reservation.note && (
         <div className="bg-white border border-line rounded-xl px-4 py-3">
           <p className="text-xs font-medium text-muted uppercase mb-1">
-            {tCommon("all") === "Vše" ? "Poznámka" : "Note"}
+            {t("note")}
           </p>
           <p className="text-sm text-ink">{reservation.note}</p>
         </div>
@@ -228,7 +228,7 @@ export function ReservationDetailClient({
       {reservation.internalNote && isOwner && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
           <p className="text-xs font-medium text-amber-600 uppercase mb-1">
-            {tCommon("all") === "Vše" ? "Interní poznámka" : "Internal note"}
+            {t("internalNote")}
           </p>
           <p className="text-sm text-amber-800">{reservation.internalNote}</p>
         </div>
@@ -272,7 +272,7 @@ export function ReservationDetailClient({
               ) : (
                 <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                   <span className="text-sm text-red-700 font-medium">
-                    {tCommon("all") === "Vše" ? "Opravdu zrušit?" : "Really cancel?"}
+                    {t("cancelConfirm")}
                   </span>
                   <Button
                     size="sm"
@@ -303,14 +303,14 @@ export function ReservationDetailClient({
             href={`/sales/${reservation.saleId}`}
             className="text-sm text-rose hover:underline font-medium"
           >
-            {tCommon("all") === "Vše" ? "Zobrazit prodej" : "View sale"} →
+            {t("viewSale")} →
           </Link>
         </div>
       )}
 
       {/* Created by */}
       <div className="text-xs text-muted text-right">
-        {tCommon("all") === "Vše" ? "Vytvořil" : "Created by"}:{" "}
+        {t("createdBy")}:{" "}
         {reservation.createdByUser.name ?? reservation.createdByUser.email}
       </div>
     </div>

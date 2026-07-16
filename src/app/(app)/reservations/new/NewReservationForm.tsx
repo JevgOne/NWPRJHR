@@ -222,8 +222,7 @@ export function NewReservationForm({
           />
           <div className="mt-3">
             <Input
-              label={t("contactInfo")}
-              placeholder={contactName || ""}
+              label={t("note")}
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
@@ -243,10 +242,10 @@ export function NewReservationForm({
             </span>
           </div>
           <p className="text-xs text-muted mb-4">
-            {customerType === "SALON" || customerType === "RETAIL"
-              ? customerType === "SALON"
-                ? "B2B cena (sleva bude aplikovana automaticky)"
-                : "Maloobchodni cena"
+            {customerType === "SALON"
+              ? t("b2bPriceHint")
+              : customerType === "RETAIL"
+              ? t("retailPrice")
               : ""}
           </p>
           {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
