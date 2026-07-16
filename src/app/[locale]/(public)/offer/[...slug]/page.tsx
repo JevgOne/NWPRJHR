@@ -747,8 +747,13 @@ async function ProductDetailView({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
         {/* Left: Photo gallery — sticky on desktop */}
-        <div className="lg:sticky lg:top-20 lg:self-start">
+        <div className="lg:sticky lg:top-20 lg:self-start relative">
           <PhotoGallery photos={product.photos} video={product.video} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
+          {(product.slug ?? product.id) && (
+            <div className="absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm rounded-full shadow-sm">
+              <WishlistToggle slug={product.slug ?? product.id} />
+            </div>
+          )}
         </div>
 
         {/* Right: Product info */}
@@ -758,30 +763,11 @@ async function ProductDetailView({
             <h1 className="text-2xl font-bold text-ink mb-1">
               {productName}
             </h1>
-            <div className="flex items-center gap-2 text-sm text-muted">
-              <Link
-                href={`/offer?category=${product.category}`}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blush-100 text-rose-deep font-medium text-xs hover:bg-blush-200 transition-colors"
-              >
-                {categoryLabel}
-              </Link>
-              {product.origin && (
-                <Link
-                  href={`/offer?origin=${encodeURIComponent(product.origin)}`}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-medium text-xs hover:bg-emerald-100 transition-colors"
-                >
-                  {originFlag} {originName(product.origin)}
-                </Link>
-              )}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-medium text-xs">
-                ✓ {t("productDetail.realHair")}
-              </span>
-              {(product.slug ?? product.id) && (
-                <span className="ml-auto">
-                  <WishlistToggle slug={product.slug ?? product.id} />
-                </span>
-              )}
-            </div>
+            <p className="text-sm text-muted">
+              {categoryLabel}
+              {product.origin && <> · {originFlag} {originName(product.origin)}</>}
+              {" · "}✓ {t("productDetail.realHair")}
+            </p>
           </div>
 
           {/* Price */}
