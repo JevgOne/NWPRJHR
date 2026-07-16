@@ -13,11 +13,17 @@ export function UserBadge({ name, showName = true, size = "sm" }: UserBadgeProps
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span
-        className={`${px} ${color.bg} rounded-full flex items-center justify-center text-white font-bold flex-shrink-0`}
-      >
-        {initials}
-      </span>
+      {color.emoji ? (
+        <span className={`${size === "sm" ? "text-sm" : "text-base"} flex-shrink-0`}>
+          {color.emoji}
+        </span>
+      ) : (
+        <span
+          className={`${px} ${color.bg} rounded-full flex items-center justify-center text-white font-bold flex-shrink-0`}
+        >
+          {initials}
+        </span>
+      )}
       {showName && name && (
         <span className={`${color.text} font-medium`}>{name}</span>
       )}

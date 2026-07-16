@@ -1,12 +1,12 @@
-/** User color map — name (lowercase) → tailwind color config */
-export const USER_COLORS: Record<string, { bg: string; text: string; ring: string }> = {
-  inna:     { bg: "bg-pink-500",  text: "text-pink-700",  ring: "ring-pink-300" },
-  inga:     { bg: "bg-pink-500",  text: "text-pink-700",  ring: "ring-pink-300" },
-  jevgenij: { bg: "bg-red-500",   text: "text-red-700",   ring: "ring-red-300" },
-  martin:   { bg: "bg-blue-500",  text: "text-blue-700",  ring: "ring-blue-300" },
+/** User color map — name (lowercase) → tailwind color config + emoji */
+export const USER_COLORS: Record<string, { bg: string; text: string; ring: string; emoji: string }> = {
+  inna:     { bg: "bg-pink-500",  text: "text-pink-700",  ring: "ring-pink-300",  emoji: "🐀" },
+  inga:     { bg: "bg-pink-500",  text: "text-pink-700",  ring: "ring-pink-300",  emoji: "🐀" },
+  jevgenij: { bg: "bg-red-500",   text: "text-red-700",   ring: "ring-red-300",   emoji: "👑" },
+  martin:   { bg: "bg-blue-500",  text: "text-blue-700",  ring: "ring-blue-300",  emoji: "🐻" },
 };
 
-const FALLBACK = { bg: "bg-gray-400", text: "text-gray-600", ring: "ring-gray-200" };
+const FALLBACK = { bg: "bg-gray-400", text: "text-gray-600", ring: "ring-gray-200", emoji: "" };
 
 export function getUserColor(name: string | null | undefined) {
   if (!name) return FALLBACK;
