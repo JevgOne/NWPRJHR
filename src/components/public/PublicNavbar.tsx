@@ -184,9 +184,6 @@ export function PublicNavbar() {
               alt="Hairland"
               className="h-9 w-auto"
             />
-            <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-rose-deep leading-tight">
-              {t("navbar.tagline")}
-            </span>
           </Link>
 
           {/* Desktop nav */}
