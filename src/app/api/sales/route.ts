@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
       const vs = sale.saleNumber ?? sale.id.slice(0, 8);
       const bankAccount = company?.bankAccount || "7141812004/5500";
-      const iban = company?.bankIban || "CZ0755000000007141812004";
+      const iban = company?.bankIban || "CZ6155000000007141812004";
 
       // Generate QR code for payment
       const spayd = generateSpayd({
