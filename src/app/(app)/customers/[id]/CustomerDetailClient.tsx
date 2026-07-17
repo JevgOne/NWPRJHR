@@ -181,11 +181,16 @@ export function CustomerDetailClient({ id }: { id: string }) {
             {customer.sales.map((sale) => (
               <Link key={sale.id} href={`/sales/${sale.id}`}>
                 <div className="flex justify-between items-center p-2 rounded hover:bg-nude-50 text-sm">
-                  <span>
-                    {sale.completedAt
-                      ? new Date(sale.completedAt).toLocaleDateString("cs-CZ")
-                      : "-"}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {sale.saleNumber && (
+                      <span className="text-xs text-muted">#{sale.saleNumber}</span>
+                    )}
+                    <span>
+                      {sale.completedAt
+                        ? new Date(sale.completedAt).toLocaleDateString("cs-CZ")
+                        : "-"}
+                    </span>
+                  </div>
                   <span className="font-medium">
                     {formatCZK(sale.totalAmount)} CZK
                   </span>

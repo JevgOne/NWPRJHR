@@ -84,6 +84,7 @@ export function SalesHistoryClient({ role }: { role: Role }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-left text-muted">
+                  <th className="py-2 pr-3">#</th>
                   <th className="py-2 pr-3">{t("date")}</th>
                   <th className="py-2 pr-3">{t("customer")}</th>
                   <th className="py-2 pr-3">{t("items")}</th>
@@ -98,6 +99,14 @@ export function SalesHistoryClient({ role }: { role: Role }) {
               <tbody>
                 {sales.map((sale) => (
                   <tr key={sale.id} className="border-b hover:bg-nude-50">
+                    <td className="py-2 pr-3 text-xs text-muted">
+                      <Link
+                        href={`/sales/${sale.id}`}
+                        className="text-espresso hover:underline"
+                      >
+                        {sale.saleNumber || "-"}
+                      </Link>
+                    </td>
                     <td className="py-2 pr-3">
                       <Link
                         href={`/sales/${sale.id}`}
