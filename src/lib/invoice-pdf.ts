@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, PDFFont, rgb } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateQRCodeDataUrl } from "./qr-code";
 import { generateSpayd } from "./spayd";
@@ -12,6 +13,23 @@ function getLogoPngBytes(): Uint8Array | null {
     const buf = readFileSync(join(process.cwd(), "public/logo-invoice.png"));
     _logoPngBytes = new Uint8Array(buf);
     return _logoPngBytes;
+  } catch {
+    return null;
+  }
+}
+
+let _fontRegularBytes: Uint8Array | null = null;
+let _fontBoldBytes: Uint8Array | null = null;
+function getFontBytes(variant: "regular" | "bold"): Uint8Array | null {
+  if (variant === "regular" && _fontRegularBytes) return _fontRegularBytes;
+  if (variant === "bold" && _fontBoldBytes) return _fontBoldBytes;
+  try {
+    const filename = variant === "bold" ? "Inter-Bold.ttf" : "Inter-Regular.ttf";
+    const buf = readFileSync(join(process.cwd(), `public/fonts/${filename}`));
+    const bytes = new Uint8Array(buf);
+    if (variant === "bold") _fontBoldBytes = bytes;
+    else _fontRegularBytes = bytes;
+    return bytes;
   } catch {
     return null;
   }
@@ -50,6 +68,8 @@ export interface InvoicePdfData {
     bankAccount: string;
     bankIban?: string | null;
     bankName?: string | null;
+    contactEmail?: string | null;
+    contactPhone?: string | null;
   };
   items: {
     description: string;
@@ -72,9 +92,9 @@ function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("cs-CZ");
 }
 
-// pdf-lib's standard fonts only support Latin-1 (WinAnsi).
-// Strip diacritics + transliterate Cyrillic for maximum compatibility.
-function toAscii(text: string): string {
+// Transliterate Cyrillic to Latin (Inter font supports Latin Extended but not Cyrillic).
+// Czech/Slovak diacritics (č, ř, ž, etc.) are kept — Inter supports them natively.
+function sanitizeText(text: string): string {
   const cyrMap: Record<string, string> = {
     А: "A",Б: "B",В: "V",Г: "G",Д: "D",Е: "E",Ё: "Yo",Ж: "Zh",
     З: "Z",И: "I",Й: "Y",К: "K",Л: "L",М: "M",Н: "N",О: "O",
@@ -97,8 +117,7 @@ function toAscii(text: string): string {
       result += ch;
     }
   }
-
-  return result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return result;
 }
 
 // Brand colors
@@ -120,8 +139,19 @@ export async function generateInvoicePdf(
   const page = doc.addPage([595.28, 841.89]); // A4
   const { width, height } = page.getSize();
 
-  const fontRegular = await doc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  // Register fontkit for custom font embedding (Czech/Ukrainian diacritics)
+  doc.registerFontkit(fontkit);
+
+  const regularBytes = getFontBytes("regular");
+  const boldBytes = getFontBytes("bold");
+
+  // Use Inter if available (full diacritics), fallback to Helvetica
+  const fontRegular = regularBytes
+    ? await doc.embedFont(regularBytes, { subset: true })
+    : await doc.embedFont("Helvetica" as never);
+  const fontBold = boldBytes
+    ? await doc.embedFont(boldBytes, { subset: true })
+    : await doc.embedFont("Helvetica-Bold" as never);
 
   const ml = 50;  // margin left
   const mr = 50;  // margin right
@@ -134,7 +164,7 @@ export async function generateInvoicePdf(
     s: string, x: number, yPos: number,
     opts: { font?: PDFFont; size?: number; color?: ReturnType<typeof rgb> } = {}
   ) {
-    page.drawText(toAscii(s), {
+    page.drawText(sanitizeText(s), {
       x, y: yPos,
       font: opts.font ?? fontRegular,
       size: opts.size ?? 9,
@@ -148,7 +178,7 @@ export async function generateInvoicePdf(
   ) {
     const f = opts.font ?? fontRegular;
     const sz = opts.size ?? 9;
-    const w = f.widthOfTextAtSize(toAscii(s), sz);
+    const w = f.widthOfTextAtSize(sanitizeText(s), sz);
     text(s, x - w, yPos, opts);
   }
 
@@ -175,7 +205,7 @@ export async function generateInvoicePdf(
   textRight(data.number, rightEdge, y - 2, { font: fontBold, size: 16, color: espresso });
 
   const title = data.type === "CREDIT_NOTE" ? t.creditNoteTitle : t.title;
-  textRight(toAscii(title), rightEdge, y - 18, { size: 9, color: muted });
+  textRight(sanitizeText(title), rightEdge, y - 18, { size: 9, color: muted });
 
   y -= 50;
 
@@ -198,7 +228,7 @@ export async function generateInvoicePdf(
   const infoColWidth = contentWidth / infoItems.length;
   infoItems.forEach(([label, value], i) => {
     const x = ml + i * infoColWidth;
-    text(toAscii(label), x, y, { size: 7, color: muted });
+    text(sanitizeText(label), x, y, { size: 7, color: muted });
     text(value, x, y - 12, { font: fontBold, size: 9 });
   });
 
@@ -211,48 +241,56 @@ export async function generateInvoicePdf(
   // Section headers
   rect(ml, y - 3, halfW, 16, bgLight);
   rect(buyerX, y - 3, halfW, 16, bgLight);
-  text(toAscii(t.supplier), ml + 8, y, { font: fontBold, size: 8, color: muted });
-  text(toAscii(t.buyer), buyerX + 8, y, { font: fontBold, size: 8, color: muted });
+  text(sanitizeText(t.supplier), ml + 8, y, { font: fontBold, size: 8, color: muted });
+  text(sanitizeText(t.buyer), buyerX + 8, y, { font: fontBold, size: 8, color: muted });
   y -= 20;
 
   // Supplier details
   const sY = y;
   text(data.company.name, ml + 8, y, { font: fontBold, size: 10 });
-  y -= 14;
+  y -= 15;
   text(data.company.address, ml + 8, y, { size: 8, color: muted });
-  y -= 14;
-  text(`${toAscii(t.ico)}: ${data.company.ico}`, ml + 8, y, { size: 8 });
-  y -= 12;
+  y -= 15;
+  text(`${sanitizeText(t.ico)}: ${data.company.ico}`, ml + 8, y, { size: 8 });
+  y -= 13;
   if (data.company.dic) {
-    text(`${toAscii(t.dic)}: ${data.company.dic}`, ml + 8, y, { size: 8 });
-    y -= 12;
+    text(`${sanitizeText(t.dic)}: ${data.company.dic}`, ml + 8, y, { size: 8 });
+    y -= 13;
   }
-  text(`${toAscii(t.bankAccount)}: ${data.company.bankAccount || "7141812004/5500"}`, ml + 8, y, { size: 8 });
-  y -= 12;
+  text(`${sanitizeText(t.bankAccount)}: ${data.company.bankAccount || "7141812004/5500"}`, ml + 8, y, { size: 8 });
+  y -= 13;
   if (data.company.bankIban) {
     text(`IBAN: ${data.company.bankIban}`, ml + 8, y, { size: 8 });
-    y -= 12;
+    y -= 13;
   }
   if (data.company.bankName) {
-    text(`${toAscii(t.bankName)}: ${data.company.bankName}`, ml + 8, y, { size: 8 });
-    y -= 12;
+    text(`${sanitizeText(t.bankName)}: ${data.company.bankName}`, ml + 8, y, { size: 8 });
+    y -= 13;
+  }
+  if (data.company.contactPhone) {
+    text(`Tel: ${data.company.contactPhone}`, ml + 8, y, { size: 8 });
+    y -= 13;
+  }
+  if (data.company.contactEmail) {
+    text(`E-mail: ${data.company.contactEmail}`, ml + 8, y, { size: 8 });
+    y -= 13;
   }
 
   // Buyer details (same start Y)
   let bY = sY;
   text(data.buyerName, buyerX + 8, bY, { font: fontBold, size: 10 });
-  bY -= 14;
+  bY -= 15;
   if (data.buyerAddress) {
     text(data.buyerAddress, buyerX + 8, bY, { size: 8, color: muted });
-    bY -= 14;
+    bY -= 15;
   }
   if (data.buyerIco) {
-    text(`${toAscii(t.ico)}: ${data.buyerIco}`, buyerX + 8, bY, { size: 8 });
-    bY -= 12;
+    text(`${sanitizeText(t.ico)}: ${data.buyerIco}`, buyerX + 8, bY, { size: 8 });
+    bY -= 13;
   }
   if (data.buyerDic) {
-    text(`${toAscii(t.dic)}: ${data.buyerDic}`, buyerX + 8, bY, { size: 8 });
-    bY -= 12;
+    text(`${sanitizeText(t.dic)}: ${data.buyerDic}`, buyerX + 8, bY, { size: 8 });
+    bY -= 13;
   }
 
   y = Math.min(y, bY) - 25;
@@ -268,7 +306,7 @@ export async function generateInvoicePdf(
   rect(ml, y - 4, contentWidth, 18, espresso);
   text(t.item, colDescX + 8, y, { font: fontBold, size: 8, color: white });
   textRight(t.quantity, colQtyX, y, { font: fontBold, size: 8, color: white });
-  textRight(toAscii(t.unitPrice), colUnitX, y, { font: fontBold, size: 8, color: white });
+  textRight(sanitizeText(t.unitPrice), colUnitX, y, { font: fontBold, size: 8, color: white });
   textRight(t.lineTotal, colTotalX - 4, y, { font: fontBold, size: 8, color: white });
   y -= 22;
 
@@ -300,18 +338,18 @@ export async function generateInvoicePdf(
   const totalsValueX = rightEdge - 4;
 
   // Subtotal
-  text(toAscii(t.subtotal), totalsLabelX, y, { size: 9, color: muted });
+  text(sanitizeText(t.subtotal), totalsLabelX, y, { size: 9, color: muted });
   textRight(`${formatCZK(data.subtotal)} CZK`, totalsValueX, y, { size: 9 });
   y -= 16;
 
   // VAT
-  text(toAscii(t.vat), totalsLabelX, y, { size: 9, color: muted });
+  text(sanitizeText(t.vat), totalsLabelX, y, { size: 9, color: muted });
   textRight(`${formatCZK(data.vatAmount)} CZK`, totalsValueX, y, { size: 9 });
   y -= 16;
 
   // Rounding
   if (data.roundingAmount !== 0) {
-    text(toAscii(t.rounding), totalsLabelX, y, { size: 8, color: muted });
+    text(sanitizeText(t.rounding), totalsLabelX, y, { size: 8, color: muted });
     textRight(`${formatCZK(data.roundingAmount)} CZK`, totalsValueX, y, { size: 8, color: muted });
     y -= 16;
   }
@@ -321,7 +359,7 @@ export async function generateInvoicePdf(
   const totalBoxH = 30;
   const totalTextY = y - totalBoxH / 2 + 5;
   rect(totalsLabelX - 10, y - totalBoxH + 8, rightEdge - totalsLabelX + 14, totalBoxH, espresso);
-  text(toAscii(t.total), totalsLabelX, totalTextY, { font: fontBold, size: 11, color: white });
+  text(sanitizeText(t.total), totalsLabelX, totalTextY, { font: fontBold, size: 11, color: white });
   textRight(`${formatCZK(data.total)} CZK`, totalsValueX, totalTextY, { font: fontBold, size: 11, color: white });
   y -= totalBoxH + 15;
 
@@ -346,7 +384,7 @@ export async function generateInvoicePdf(
 
       const qrSize = 90;
       if (y > qrSize + 40) {
-        text(toAscii(t.qrPayment), ml, y, { font: fontBold, size: 8, color: muted });
+        text(sanitizeText(t.qrPayment), ml, y, { font: fontBold, size: 8, color: muted });
         y -= 8;
         page.drawImage(qrImage, { x: ml, y: y - qrSize, width: qrSize, height: qrSize });
         y -= qrSize + 12;
@@ -361,8 +399,12 @@ export async function generateInvoicePdf(
   }
 
   // ---- FOOTER ----
-  line(ml, 50, rightEdge, 0.5, lineColor);
-  text(`${toAscii(t.page)} 1/1`, width / 2 - 15, 38, { size: 7, color: muted });
+  line(ml, 55, rightEdge, 0.5, lineColor);
+  const footerParts = ["www.hairland.cz"];
+  if (data.company.contactEmail) footerParts.push(data.company.contactEmail);
+  if (data.company.contactPhone) footerParts.push(data.company.contactPhone);
+  text(footerParts.join("  |  "), ml, 42, { size: 7, color: muted });
+  textRight(`${sanitizeText(t.page)} 1/1`, rightEdge, 42, { size: 7, color: muted });
 
   return doc.save();
 }
