@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp"],
   devIndicators: false,
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/**": ["./public/fonts/**", "./public/logo-invoice.png"],
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400,
