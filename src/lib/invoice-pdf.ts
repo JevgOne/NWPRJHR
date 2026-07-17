@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { PDFDocument, PDFFont, rgb } from "pdf-lib";
+import { PDFDocument, PDFFont, StandardFonts, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateQRCodeDataUrl } from "./qr-code";
@@ -92,23 +92,24 @@ function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("cs-CZ");
 }
 
-// Transliterate Cyrillic to Latin (Inter font supports Latin Extended but not Cyrillic).
-// Czech/Slovak diacritics (č, ř, ž, etc.) are kept — Inter supports them natively.
-function sanitizeText(text: string): string {
-  const cyrMap: Record<string, string> = {
-    А: "A",Б: "B",В: "V",Г: "G",Д: "D",Е: "E",Ё: "Yo",Ж: "Zh",
-    З: "Z",И: "I",Й: "Y",К: "K",Л: "L",М: "M",Н: "N",О: "O",
-    П: "P",Р: "R",С: "S",Т: "T",У: "U",Ф: "F",Х: "Kh",Ц: "Ts",
-    Ч: "Ch",Ш: "Sh",Щ: "Shch",Ъ: "",Ы: "Y",Ь: "",Э: "E",Ю: "Yu",
-    Я: "Ya",а: "a",б: "b",в: "v",г: "g",д: "d",е: "e",ё: "yo",
-    ж: "zh",з: "z",и: "i",й: "y",к: "k",л: "l",м: "m",н: "n",
-    о: "o",п: "p",р: "r",с: "s",т: "t",у: "u",ф: "f",х: "kh",
-    ц: "ts",ч: "ch",ш: "sh",щ: "shch",ъ: "",ы: "y",ь: "",э: "e",
-    ю: "yu",я: "ya",
-    І: "I",і: "i",Ї: "Yi",ї: "yi",Є: "Ye",є: "ye",Ґ: "G",ґ: "g",
-    "'": "'",
-  };
+const cyrMap: Record<string, string> = {
+  А: "A",Б: "B",В: "V",Г: "G",Д: "D",Е: "E",Ё: "Yo",Ж: "Zh",
+  З: "Z",И: "I",Й: "Y",К: "K",Л: "L",М: "M",Н: "N",О: "O",
+  П: "P",Р: "R",С: "S",Т: "T",У: "U",Ф: "F",Х: "Kh",Ц: "Ts",
+  Ч: "Ch",Ш: "Sh",Щ: "Shch",Ъ: "",Ы: "Y",Ь: "",Э: "E",Ю: "Yu",
+  Я: "Ya",а: "a",б: "b",в: "v",г: "g",д: "d",е: "e",ё: "yo",
+  ж: "zh",з: "z",и: "i",й: "y",к: "k",л: "l",м: "m",н: "n",
+  о: "o",п: "p",р: "r",с: "s",т: "t",у: "u",ф: "f",х: "kh",
+  ц: "ts",ч: "ch",ш: "sh",щ: "shch",ъ: "",ы: "y",ь: "",э: "e",
+  ю: "yu",я: "ya",
+  І: "I",і: "i",Ї: "Yi",ї: "yi",Є: "Ye",є: "ye",Ґ: "G",ґ: "g",
+  "'": "'",
+};
 
+// Sanitize text for PDF rendering.
+// With custom font (Inter): keep Czech diacritics, only transliterate Cyrillic.
+// Without (Helvetica fallback): also strip diacritics.
+function sanitizeText(text: string, stripDiacritics = false): string {
   let result = "";
   for (const ch of text) {
     if (cyrMap[ch] !== undefined) {
@@ -116,6 +117,9 @@ function sanitizeText(text: string): string {
     } else {
       result += ch;
     }
+  }
+  if (stripDiacritics) {
+    result = result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
   return result;
 }
@@ -146,12 +150,24 @@ export async function generateInvoicePdf(
   const boldBytes = getFontBytes("bold");
 
   // Use Inter if available (full diacritics), fallback to Helvetica
-  const fontRegular = regularBytes
-    ? await doc.embedFont(regularBytes, { subset: true })
-    : await doc.embedFont("Helvetica" as never);
-  const fontBold = boldBytes
-    ? await doc.embedFont(boldBytes, { subset: true })
-    : await doc.embedFont("Helvetica-Bold" as never);
+  // Use custom Inter font if available (Czech diacritics), fallback to Helvetica
+  let fontRegular: PDFFont;
+  let fontBold: PDFFont;
+  let hasDiacritics = false;
+
+  if (regularBytes && boldBytes) {
+    try {
+      fontRegular = await doc.embedFont(regularBytes, { subset: true });
+      fontBold = await doc.embedFont(boldBytes, { subset: true });
+      hasDiacritics = true;
+    } catch {
+      fontRegular = await doc.embedFont(StandardFonts.Helvetica);
+      fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+    }
+  } else {
+    fontRegular = await doc.embedFont(StandardFonts.Helvetica);
+    fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  }
 
   const ml = 50;  // margin left
   const mr = 50;  // margin right
@@ -159,12 +175,14 @@ export async function generateInvoicePdf(
   const rightEdge = width - mr;
   let y = height - 45;
 
+  const strip = !hasDiacritics; // strip diacritics if using Helvetica fallback
+
   // ---- Helper functions ----
   function text(
     s: string, x: number, yPos: number,
     opts: { font?: PDFFont; size?: number; color?: ReturnType<typeof rgb> } = {}
   ) {
-    page.drawText(sanitizeText(s), {
+    page.drawText(sanitizeText(s, strip), {
       x, y: yPos,
       font: opts.font ?? fontRegular,
       size: opts.size ?? 9,
@@ -178,7 +196,7 @@ export async function generateInvoicePdf(
   ) {
     const f = opts.font ?? fontRegular;
     const sz = opts.size ?? 9;
-    const w = f.widthOfTextAtSize(sanitizeText(s), sz);
+    const w = f.widthOfTextAtSize(sanitizeText(s, strip), sz);
     text(s, x - w, yPos, opts);
   }
 
