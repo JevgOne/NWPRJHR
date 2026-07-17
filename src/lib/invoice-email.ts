@@ -157,6 +157,8 @@ export async function sendPaymentDetailsEmail(opts: {
     message: `Prodej ${opts.saleNumber}`.trim(),
   });
   const qrDataUrl = await generateQRCodeDataUrl(spayd);
+  // Extract base64 PNG for inline attachment (Gmail blocks data: URLs)
+  const qrBase64 = qrDataUrl.split(",")[1];
 
   const t = paymentEmailT[resolveLang(opts.lang)];
   const amount = formatCZK(opts.amount);
@@ -189,7 +191,7 @@ export async function sendPaymentDetailsEmail(opts: {
       <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${t.body(amount)}</p>
 
       <div style="text-align:center;margin:24px 0;">
-        <img src="${qrDataUrl}" width="180" height="180" alt="QR platba" style="border:1px solid #ead9cf;border-radius:8px;" />
+        <img src="cid:qr-payment" width="180" height="180" alt="QR platba" style="border:1px solid #ead9cf;border-radius:8px;" />
       </div>
 
       <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
@@ -220,6 +222,16 @@ export async function sendPaymentDetailsEmail(opts: {
     subject,
     text,
     html,
+    attachments: [
+      {
+        filename: "qr-platba.png",
+        content: qrBase64,
+        content_type: "image/png",
+      },
+    ],
+    headers: {
+      "X-Entity-Ref-ID": `payment-${opts.variableSymbol}`,
+    },
   });
 
   return { sent: true };
