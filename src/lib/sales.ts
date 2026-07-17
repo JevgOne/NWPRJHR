@@ -158,9 +158,19 @@ export async function completeSale(
         }
       }
 
-      // 6. CREATE SALE
+      // 6. GENERATE SALE NUMBER (numeric, for variable symbol in QR payments)
+      const currentYear = new Date().getFullYear();
+      const saleCount = await tx.sale.count({
+        where: {
+          completedAt: { gte: new Date(`${currentYear}-01-01`) },
+        },
+      });
+      const saleNumber = `${currentYear}${String(saleCount + 1).padStart(4, "0")}`;
+
+      // 7. CREATE SALE
       const s = await tx.sale.create({
         data: {
+          saleNumber,
           customerType: input.customerType,
           salonId: input.salonId,
           customerId: input.customerId,
