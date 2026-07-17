@@ -188,7 +188,7 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
           {isOwner && sale.userName && (
             <>
               <span className="text-muted">{t("saleNumber")}</span>
-              <span>{sale.saleNumber || sale.id.slice(0, 8)}</span>
+              <span>{sale.saleNumber || sale.id}</span>
               <span className="text-muted">{t("soldBy")}</span>
               <span><UserBadge name={sale.userName} /></span>
             </>

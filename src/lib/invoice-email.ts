@@ -225,8 +225,9 @@ export async function sendPaymentDetailsEmail(opts: {
     attachments: [
       {
         filename: "qr-platba.png",
-        content: qrBase64,
+        content: Buffer.from(qrBase64, "base64"),
         contentType: "image/png",
+        contentId: "qr-payment",
       },
     ],
     headers: {

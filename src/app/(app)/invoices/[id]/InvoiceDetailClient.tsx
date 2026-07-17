@@ -330,7 +330,7 @@ export function InvoiceDetailClient({
           href={`/sales/${invoice.sale.id}`}
           className="text-sm text-espresso hover:underline"
         >
-          {invoice.sale.saleNumber || invoice.sale.id.slice(0, 8)}
+          {invoice.sale.saleNumber || invoice.sale.id}
         </Link>
       )}
 
