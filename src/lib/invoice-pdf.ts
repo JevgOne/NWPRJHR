@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { PDFDocument, PDFFont, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "pdf-lib";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateQRCodeDataUrl } from "./qr-code";
 import { generateSpayd } from "./spayd";
@@ -75,7 +75,6 @@ function formatDate(date: Date): string {
 // pdf-lib's standard fonts only support Latin-1 (WinAnsi).
 // Strip diacritics + transliterate Cyrillic for maximum compatibility.
 function toAscii(text: string): string {
-  // Transliterate common Cyrillic characters
   const cyrMap: Record<string, string> = {
     А: "A",Б: "B",В: "V",Г: "G",Д: "D",Е: "E",Ё: "Yo",Ж: "Zh",
     З: "Z",И: "I",Й: "Y",К: "K",Л: "L",М: "M",Н: "N",О: "O",
@@ -86,7 +85,6 @@ function toAscii(text: string): string {
     о: "o",п: "p",р: "r",с: "s",т: "t",у: "u",ф: "f",х: "kh",
     ц: "ts",ч: "ch",ш: "sh",щ: "shch",ъ: "",ы: "y",ь: "",э: "e",
     ю: "yu",я: "ya",
-    // Ukrainian specific
     І: "I",і: "i",Ї: "Yi",ї: "yi",Є: "Ye",є: "ye",Ґ: "G",ґ: "g",
     "'": "'",
   };
@@ -100,9 +98,16 @@ function toAscii(text: string): string {
     }
   }
 
-  // Normalize remaining diacritics (Czech č→c, ř→r, etc.)
   return result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
+
+// Brand colors
+const espresso = rgb(0.227, 0.173, 0.161);   // #3a2c29
+const muted = rgb(0.45, 0.40, 0.38);          // #736662
+const accent = rgb(0.761, 0.639, 0.420);       // #c2a36b
+const lineColor = rgb(0.88, 0.84, 0.80);       // #e1d6cc
+const bgLight = rgb(0.976, 0.965, 0.953);      // #f9f7f3
+const white = rgb(1, 1, 1);
 
 /**
  * Generate a PDF invoice/credit note as a Buffer.
@@ -118,280 +123,207 @@ export async function generateInvoicePdf(
   const fontRegular = await doc.embedFont(StandardFonts.Helvetica);
   const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
 
-  const margin = 50;
-  let y = height - margin;
+  const ml = 50;  // margin left
+  const mr = 50;  // margin right
+  const contentWidth = width - ml - mr;
+  const rightEdge = width - mr;
+  let y = height - 45;
 
-  const black = rgb(0, 0, 0);
-  const gray = rgb(0.4, 0.4, 0.4);
-  const lightGray = rgb(0.85, 0.85, 0.85);
-
-  // Helper functions
-  function drawText(
-    text: string,
-    x: number,
-    yPos: number,
-    options: { font?: PDFFont; size?: number; color?: typeof black } = {}
+  // ---- Helper functions ----
+  function text(
+    s: string, x: number, yPos: number,
+    opts: { font?: PDFFont; size?: number; color?: ReturnType<typeof rgb> } = {}
   ) {
-    page.drawText(toAscii(text), {
-      x,
-      y: yPos,
-      font: options.font ?? fontRegular,
-      size: options.size ?? 9,
-      color: options.color ?? black,
+    page.drawText(toAscii(s), {
+      x, y: yPos,
+      font: opts.font ?? fontRegular,
+      size: opts.size ?? 9,
+      color: opts.color ?? espresso,
     });
   }
 
-  function drawTextRight(
-    text: string,
-    rightX: number,
-    yPos: number,
-    options: { font?: PDFFont; size?: number; color?: typeof black } = {}
+  function textRight(
+    s: string, x: number, yPos: number,
+    opts: { font?: PDFFont; size?: number; color?: ReturnType<typeof rgb> } = {}
   ) {
-    const font = options.font ?? fontRegular;
-    const size = options.size ?? 9;
-    const w = font.widthOfTextAtSize(toAscii(text), size);
-    drawText(text, rightX - w, yPos, options);
+    const f = opts.font ?? fontRegular;
+    const sz = opts.size ?? 9;
+    const w = f.widthOfTextAtSize(toAscii(s), sz);
+    text(s, x - w, yPos, opts);
   }
 
-  // ---- LOGO ----
+  function line(x1: number, yPos: number, x2: number, thickness = 0.5, color = lineColor) {
+    page.drawLine({ start: { x: x1, y: yPos }, end: { x: x2, y: yPos }, thickness, color });
+  }
+
+  function rect(x: number, yPos: number, w: number, h: number, color: ReturnType<typeof rgb>) {
+    page.drawRectangle({ x, y: yPos, width: w, height: h, color });
+  }
+
+  // ---- HEADER ----
   const logoBytes = getLogoPngBytes();
   if (logoBytes) {
     try {
       const logoImage = await doc.embedPng(logoBytes);
-      const logoHeight = 36;
-      const logoWidth = logoHeight * (logoImage.width / logoImage.height);
-      page.drawImage(logoImage, {
-        x: margin,
-        y: y - logoHeight + 8,
-        width: logoWidth,
-        height: logoHeight,
-      });
-      y -= logoHeight + 16;
-    } catch {
-      // logo embed failure is non-fatal
-    }
+      const logoH = 32;
+      const logoW = logoH * (logoImage.width / logoImage.height);
+      page.drawImage(logoImage, { x: ml, y: y - logoH + 8, width: logoW, height: logoH });
+    } catch { /* non-fatal */ }
   }
 
-  // ---- HEADER ----
-  const title =
-    data.type === "CREDIT_NOTE"
-      ? toAscii(t.creditNoteTitle)
-      : toAscii(t.title);
-  drawText(title, margin, y, { font: fontBold, size: 18 });
-  drawTextRight(data.number, width - margin, y, {
-    font: fontBold,
-    size: 14,
-  });
-  y -= 30;
+  // Invoice number — top right, prominent
+  textRight(data.number, rightEdge, y - 2, { font: fontBold, size: 16, color: espresso });
 
-  // ---- DATES BAR ----
-  // No dueDate — invoice = proof of payment (already paid)
-  const dates = [
+  const title = data.type === "CREDIT_NOTE" ? t.creditNoteTitle : t.title;
+  textRight(toAscii(title), rightEdge, y - 18, { size: 9, color: muted });
+
+  y -= 50;
+
+  // Accent line under header
+  line(ml, y, rightEdge, 2, accent);
+  y -= 20;
+
+  // ---- INFO ROW (dates + VS) ----
+  const infoItems: [string, string][] = [
     [t.issueDate, formatDate(data.issueDate)],
-    ...(data.taxDate ? [[t.taxDate, formatDate(data.taxDate)]] : []),
+    ...(data.taxDate ? [[t.taxDate, formatDate(data.taxDate)] as [string, string]] : []),
     [t.vs, data.variableSymbol],
   ];
-  for (const [label, value] of dates) {
-    drawText(label + ":", margin, y, { color: gray, size: 8 });
-    drawText(value, margin + 100, y, { size: 8 });
-    y -= 13;
-  }
 
   if (data.type === "CREDIT_NOTE" && data.originalInvoiceNumber) {
-    drawText(t.referencesInvoice + ":", margin, y, { color: gray, size: 8 });
-    drawText(data.originalInvoiceNumber, margin + 100, y, { size: 8 });
-    y -= 13;
+    infoItems.push([t.referencesInvoice, data.originalInvoiceNumber]);
   }
 
-  y -= 10;
+  // Draw info items in a row
+  const infoColWidth = contentWidth / infoItems.length;
+  infoItems.forEach(([label, value], i) => {
+    const x = ml + i * infoColWidth;
+    text(toAscii(label), x, y, { size: 7, color: muted });
+    text(value, x, y - 12, { font: fontBold, size: 9 });
+  });
+
+  y -= 35;
 
   // ---- SUPPLIER / BUYER ----
-  const colWidth = (width - 2 * margin - 20) / 2;
+  const halfW = (contentWidth - 30) / 2;
+  const buyerX = ml + halfW + 30;
 
-  // Supplier
-  drawText(toAscii(t.supplier), margin, y, {
-    font: fontBold,
-    size: 9,
-    color: gray,
-  });
-  // Buyer
-  drawText(toAscii(t.buyer), margin + colWidth + 20, y, {
-    font: fontBold,
-    size: 9,
-    color: gray,
-  });
-  y -= 4;
-  page.drawLine({
-    start: { x: margin, y },
-    end: { x: width - margin, y },
-    thickness: 0.5,
-    color: lightGray,
-  });
-  y -= 14;
+  // Section headers
+  rect(ml, y - 3, halfW, 16, bgLight);
+  rect(buyerX, y - 3, halfW, 16, bgLight);
+  text(toAscii(t.supplier), ml + 8, y, { font: fontBold, size: 8, color: muted });
+  text(toAscii(t.buyer), buyerX + 8, y, { font: fontBold, size: 8, color: muted });
+  y -= 20;
 
   // Supplier details
   const sY = y;
-  drawText(data.company.name, margin, y, { font: fontBold, size: 10 });
-  y -= 13;
-  drawText(data.company.address, margin, y, { size: 8, color: gray });
-  y -= 13;
-  drawText(`${toAscii(t.ico)}: ${data.company.ico}`, margin, y, { size: 8 });
-  y -= 13;
+  text(data.company.name, ml + 8, y, { font: fontBold, size: 10 });
+  y -= 14;
+  text(data.company.address, ml + 8, y, { size: 8, color: muted });
+  y -= 14;
+  text(`${toAscii(t.ico)}: ${data.company.ico}`, ml + 8, y, { size: 8 });
+  y -= 12;
   if (data.company.dic) {
-    drawText(`${toAscii(t.dic)}: ${data.company.dic}`, margin, y, {
-      size: 8,
-    });
-    y -= 13;
+    text(`${toAscii(t.dic)}: ${data.company.dic}`, ml + 8, y, { size: 8 });
+    y -= 12;
   }
-  drawText(
-    `${toAscii(t.bankAccount)}: ${data.company.bankAccount || "7141812004/5500"}`,
-    margin,
-    y,
-    { size: 8 }
-  );
-  y -= 13;
+  text(`${toAscii(t.bankAccount)}: ${data.company.bankAccount || "7141812004/5500"}`, ml + 8, y, { size: 8 });
+  y -= 12;
   if (data.company.bankIban) {
-    drawText(
-      `${toAscii(t.iban)}: ${data.company.bankIban}`,
-      margin,
-      y,
-      { size: 8 }
-    );
-    y -= 13;
+    text(`IBAN: ${data.company.bankIban}`, ml + 8, y, { size: 8 });
+    y -= 12;
   }
   if (data.company.bankName) {
-    drawText(
-      `${toAscii(t.bankName)}: ${data.company.bankName}`,
-      margin,
-      y,
-      { size: 8 }
-    );
-    y -= 13;
+    text(`${toAscii(t.bankName)}: ${data.company.bankName}`, ml + 8, y, { size: 8 });
+    y -= 12;
   }
 
-  // Buyer details (same Y start)
+  // Buyer details (same start Y)
   let bY = sY;
-  const bX = margin + colWidth + 20;
-  drawText(data.buyerName, bX, bY, { font: fontBold, size: 10 });
-  bY -= 13;
+  text(data.buyerName, buyerX + 8, bY, { font: fontBold, size: 10 });
+  bY -= 14;
   if (data.buyerAddress) {
-    drawText(data.buyerAddress, bX, bY, { size: 8, color: gray });
-    bY -= 13;
+    text(data.buyerAddress, buyerX + 8, bY, { size: 8, color: muted });
+    bY -= 14;
   }
   if (data.buyerIco) {
-    drawText(`${toAscii(t.ico)}: ${data.buyerIco}`, bX, bY, { size: 8 });
-    bY -= 13;
+    text(`${toAscii(t.ico)}: ${data.buyerIco}`, buyerX + 8, bY, { size: 8 });
+    bY -= 12;
   }
   if (data.buyerDic) {
-    drawText(`${toAscii(t.dic)}: ${data.buyerDic}`, bX, bY, { size: 8 });
-    bY -= 13;
+    text(`${toAscii(t.dic)}: ${data.buyerDic}`, buyerX + 8, bY, { size: 8 });
+    bY -= 12;
   }
 
-  y = Math.min(y, bY) - 20;
+  y = Math.min(y, bY) - 25;
 
   // ---- ITEMS TABLE ----
-  const tableLeft = margin;
-  const tableRight = width - margin;
-  const colDesc = tableLeft;
-  const colQty = tableRight - 200;
-  const colPrice = tableRight - 100;
-  const colTotal = tableRight;
+  // Column positions — fixed widths for clean alignment
+  const colDescX = ml;
+  const colQtyX = rightEdge - 195;   // quantity right-edge
+  const colUnitX = rightEdge - 110;  // unit price right-edge
+  const colTotalX = rightEdge;       // line total right-edge
 
-  // Table header
-  page.drawRectangle({
-    x: tableLeft,
-    y: y - 3,
-    width: tableRight - tableLeft,
-    height: 16,
-    color: rgb(0.95, 0.95, 0.95),
-  });
-  drawText(t.item, colDesc + 4, y, { font: fontBold, size: 8, color: gray });
-  drawTextRight(t.quantity, colQty + 40, y, {
-    font: fontBold,
-    size: 8,
-    color: gray,
-  });
-  drawTextRight(t.unitPrice, colPrice + 10, y, {
-    font: fontBold,
-    size: 8,
-    color: gray,
-  });
-  drawTextRight(t.lineTotal, colTotal, y, {
-    font: fontBold,
-    size: 8,
-    color: gray,
-  });
-  y -= 18;
+  // Table header background
+  rect(ml, y - 4, contentWidth, 18, espresso);
+  text(t.item, colDescX + 8, y, { font: fontBold, size: 8, color: white });
+  textRight(t.quantity, colQtyX, y, { font: fontBold, size: 8, color: white });
+  textRight(toAscii(t.unitPrice), colUnitX, y, { font: fontBold, size: 8, color: white });
+  textRight(t.lineTotal, colTotalX - 4, y, { font: fontBold, size: 8, color: white });
+  y -= 22;
 
   // Table rows
-  for (const item of data.items) {
-    if (y < 100) break; // page overflow guard
+  for (let i = 0; i < data.items.length; i++) {
+    if (y < 120) break; // page overflow guard
+    const item = data.items[i];
 
-    const qty =
-      typeof item.quantity === "number"
-        ? item.quantity.toString()
-        : item.quantity;
+    // Alternating row background
+    if (i % 2 === 0) {
+      rect(ml, y - 5, contentWidth, 18, bgLight);
+    }
 
-    drawText(item.description, colDesc + 4, y, { size: 8 });
-    drawTextRight(`${qty} ${item.unit}`, colQty + 40, y, { size: 8 });
-    drawTextRight(formatCZK(item.pricePerUnit), colPrice + 10, y, {
-      size: 8,
-    });
-    drawTextRight(formatCZK(item.lineTotal), colTotal, y, { size: 8 });
+    const qty = typeof item.quantity === "number" ? item.quantity.toString() : item.quantity;
 
-    y -= 4;
-    page.drawLine({
-      start: { x: tableLeft, y },
-      end: { x: tableRight, y },
-      thickness: 0.3,
-      color: lightGray,
-    });
-    y -= 14;
+    text(item.description, colDescX + 8, y, { size: 8 });
+    textRight(`${qty} ${item.unit}`, colQtyX, y, { size: 8 });
+    textRight(formatCZK(item.pricePerUnit), colUnitX, y, { size: 8 });
+    textRight(formatCZK(item.lineTotal), colTotalX - 4, y, { size: 8 });
+    y -= 18;
   }
 
-  y -= 8;
+  // Bottom table line
+  line(ml, y + 2, rightEdge, 0.5);
+  y -= 20;
 
   // ---- TOTALS ----
-  const totalsX = tableRight - 230;
-  const totalsValX = tableRight;
+  const totalsLabelX = rightEdge - 200;
+  const totalsValueX = rightEdge - 4;
 
   // Subtotal
-  drawText(t.subtotal, totalsX, y, { size: 9, color: gray });
-  drawTextRight(`${formatCZK(data.subtotal)} CZK`, totalsValX, y, {
-    size: 9,
-  });
-  y -= 15;
+  text(toAscii(t.subtotal), totalsLabelX, y, { size: 9, color: muted });
+  textRight(`${formatCZK(data.subtotal)} CZK`, totalsValueX, y, { size: 9 });
+  y -= 16;
 
   // VAT
-  drawText(t.vat, totalsX, y, { size: 9, color: gray });
-  drawTextRight(`${formatCZK(data.vatAmount)} CZK`, totalsValX, y, {
-    size: 9,
-  });
-  y -= 15;
+  text(toAscii(t.vat), totalsLabelX, y, { size: 9, color: muted });
+  textRight(`${formatCZK(data.vatAmount)} CZK`, totalsValueX, y, { size: 9 });
+  y -= 16;
 
   // Rounding
   if (data.roundingAmount !== 0) {
-    drawText(t.rounding, totalsX, y, { size: 8, color: gray });
-    drawTextRight(`${formatCZK(data.roundingAmount)} CZK`, totalsValX, y, {
-      size: 8,
-      color: gray,
-    });
-    y -= 15;
+    text(toAscii(t.rounding), totalsLabelX, y, { size: 8, color: muted });
+    textRight(`${formatCZK(data.roundingAmount)} CZK`, totalsValueX, y, { size: 8, color: muted });
+    y -= 16;
   }
 
-  // Total line
-  page.drawLine({
-    start: { x: totalsX, y: y + 4 },
-    end: { x: totalsValX, y: y + 4 },
-    thickness: 1,
-    color: black,
-  });
-  drawText(t.total, totalsX, y - 4, { font: fontBold, size: 12 });
-  drawTextRight(`${formatCZK(data.total)} CZK`, totalsValX, y - 4, {
-    font: fontBold,
-    size: 12,
-  });
-  y -= 30;
+  // Total — highlighted box
+  y -= 4;
+  const totalBoxH = 30;
+  const totalTextY = y - totalBoxH / 2 + 5;
+  rect(totalsLabelX - 10, y - totalBoxH + 8, rightEdge - totalsLabelX + 14, totalBoxH, espresso);
+  text(toAscii(t.total), totalsLabelX, totalTextY, { font: fontBold, size: 11, color: white });
+  textRight(`${formatCZK(data.total)} CZK`, totalsValueX, totalTextY, { font: fontBold, size: 11, color: white });
+  y -= totalBoxH + 15;
 
   // ---- QR CODE ----
   if (
@@ -407,47 +339,30 @@ export async function generateInvoicePdf(
         variableSymbol: data.variableSymbol,
         message: `Faktura ${data.number}`,
       });
-
       const qrDataUrl = await generateQRCodeDataUrl(spayd);
-      // data:image/png;base64,...
       const base64 = qrDataUrl.split(",")[1];
       const qrBytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
       const qrImage = await doc.embedPng(qrBytes);
 
-      const qrSize = 100;
-      if (y > qrSize + 30) {
-        drawText(t.qrPayment, margin, y, {
-          font: fontBold,
-          size: 9,
-          color: gray,
-        });
-        y -= 10;
-        page.drawImage(qrImage, {
-          x: margin,
-          y: y - qrSize,
-          width: qrSize,
-          height: qrSize,
-        });
-        y -= qrSize + 10;
+      const qrSize = 90;
+      if (y > qrSize + 40) {
+        text(toAscii(t.qrPayment), ml, y, { font: fontBold, size: 8, color: muted });
+        y -= 8;
+        page.drawImage(qrImage, { x: ml, y: y - qrSize, width: qrSize, height: qrSize });
+        y -= qrSize + 12;
       }
-    } catch {
-      // QR generation failure is non-fatal
-    }
+    } catch { /* non-fatal */ }
   }
 
   // ---- NOTE ----
   if (data.note) {
-    drawText(data.note, margin, y, { size: 8, color: gray });
+    text(data.note, ml, y, { size: 8, color: muted });
     y -= 15;
   }
 
   // ---- FOOTER ----
-  drawText(
-    `${toAscii(t.page)} 1/1`,
-    width / 2 - 15,
-    30,
-    { size: 7, color: gray }
-  );
+  line(ml, 50, rightEdge, 0.5, lineColor);
+  text(`${toAscii(t.page)} 1/1`, width / 2 - 15, 38, { size: 7, color: muted });
 
   return doc.save();
 }

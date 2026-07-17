@@ -54,7 +54,7 @@ const translations: Record<string, InvoiceTranslations> = {
     lineTotal: "Celkem",
     subtotal: "Základ bez DPH",
     vat: "DPH 21%",
-    total: "Celkem k úhradě",
+    total: "Celkem uhrazeno",
     rounding: "Zaokrouhlení",
     qrPayment: "QR Platba",
     gram: "g",
