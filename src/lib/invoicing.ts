@@ -74,7 +74,7 @@ export async function createInvoiceFromSale(
               buyerName: sale.customer?.name ?? "",
               buyerIco: null as string | null,
               buyerDic: null as string | null,
-              buyerAddress: "",
+              buyerAddress: sale.customer?.city ?? "",
               buyerEmail: sale.customer?.email ?? null,
               buyerLanguage: "cs",
             };
@@ -195,7 +195,7 @@ export async function createInternalDocument(
               buyerName: sale.customer?.name ?? "Interní",
               buyerIco: null as string | null,
               buyerDic: null as string | null,
-              buyerAddress: "",
+              buyerAddress: sale.customer?.city ?? "",
               buyerEmail: sale.customer?.email ?? null,
               buyerLanguage: "cs",
             };
