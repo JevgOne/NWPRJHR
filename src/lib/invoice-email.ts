@@ -251,14 +251,14 @@ const paymentEmailT: Record<Lang, {
   footer: string;
 }> = {
   cs: {
-    subject: () => "Platebni udaje | Hairland",
-    greeting: (name) => `Dobry den, ${name},`,
-    body: (amount) => `dekujeme za Vasi objednavku. Prosime o uhradu castky <strong>${amount}</strong> na nasledujici ucet:`,
-    detailsLabel: "Platebni udaje:",
-    bankAccountLabel: "Bankovni ucet",
-    vsLabel: "Variabilni symbol",
-    amountLabel: "Castka",
-    footer: "Po prijeti platby Vam zaslem fakturu emailem. Dekujeme!",
+    subject: () => "Platební údaje | Hairland",
+    greeting: (name) => `Dobrý den, ${name},`,
+    body: (amount) => `děkujeme za Vaši objednávku. Prosíme o úhradu částky <strong>${amount}</strong> na následující účet:`,
+    detailsLabel: "Platební údaje:",
+    bankAccountLabel: "Bankovní účet",
+    vsLabel: "Variabilní symbol",
+    amountLabel: "Částka",
+    footer: "Po přijetí platby Vám zašleme fakturu emailem. Děkujeme!",
   },
   uk: {
     subject: () => "Платіжні реквізити | Hairland",
@@ -314,15 +314,15 @@ const invoiceEmailT: Record<Lang, {
 }> = {
   cs: {
     subject: (n) => `Faktura ${n} | Hairland`,
-    greeting: (name) => `Dobry den, ${name},`,
-    body: (amount) => `potvrzujeme prijeti Vasi platby ve vysi <strong>${amount}</strong>.`,
-    attachmentNote: "Faktura je prilozena k tomuto emailu ve formatu PDF.",
-    summaryLabel: "Shrnuti:",
+    greeting: (name) => `Dobrý den, ${name},`,
+    body: (amount) => `potvrzujeme přijetí Vaší platby ve výši <strong>${amount}</strong>.`,
+    attachmentNote: "Faktura je přiložena k tomuto emailu ve formátu PDF.",
+    summaryLabel: "Shrnutí:",
     invoiceLabel: "Faktura",
-    amountLabel: "Castka",
+    amountLabel: "Částka",
     dateLabel: "Datum platby",
     cta: "Zobrazit faktury",
-    footer: "Dekujeme za Vas nakup! Pokud mate dotazy, kontaktujte nas na info@hairland.cz.",
+    footer: "Děkujeme za Váš nákup! Pokud máte dotazy, kontaktujte nás na info@hairland.cz.",
   },
   uk: {
     subject: (n) => `Рахунок ${n} | Hairland`,
