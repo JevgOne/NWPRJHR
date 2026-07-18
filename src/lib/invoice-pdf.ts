@@ -1,51 +1,22 @@
 import { readFileSync, existsSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import { PDFDocument, PDFFont, StandardFonts, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateQRCodeDataUrl } from "./qr-code";
 import { generateSpayd } from "./spayd";
-
-// Try multiple paths to find files — process.cwd() often fails on Vercel serverless
-function resolvePublicFile(relativePath: string): Buffer | null {
-  const candidates = [
-    join(process.cwd(), relativePath),
-    join(process.cwd(), "public", relativePath.replace(/^public\//, "")),
-    join(dirname(fileURLToPath(import.meta.url)), "../../", relativePath),
-    join(dirname(fileURLToPath(import.meta.url)), "../../public", relativePath.replace(/^public\//, "")),
-    join("/var/task", relativePath),
-    join("/var/task/public", relativePath.replace(/^public\//, "")),
-  ];
-  for (const p of candidates) {
-    try {
-      if (existsSync(p)) return readFileSync(p);
-    } catch { /* continue */ }
-  }
-  return null;
-}
+import { getInterRegular, getInterBold } from "./invoice-fonts";
 
 let _logoPngBytes: Uint8Array | null = null;
 function getLogoPngBytes(): Uint8Array | null {
   if (_logoPngBytes) return _logoPngBytes;
-  const buf = resolvePublicFile("public/logo-invoice.png");
-  if (!buf) return null;
-  _logoPngBytes = new Uint8Array(buf);
-  return _logoPngBytes;
-}
-
-let _fontRegularBytes: Uint8Array | null = null;
-let _fontBoldBytes: Uint8Array | null = null;
-function getFontBytes(variant: "regular" | "bold"): Uint8Array | null {
-  if (variant === "regular" && _fontRegularBytes) return _fontRegularBytes;
-  if (variant === "bold" && _fontBoldBytes) return _fontBoldBytes;
-  const filename = variant === "bold" ? "Inter-Bold.ttf" : "Inter-Regular.ttf";
-  const buf = resolvePublicFile(`public/fonts/${filename}`);
-  if (!buf) return null;
-  const bytes = new Uint8Array(buf);
-  if (variant === "bold") _fontBoldBytes = bytes;
-  else _fontRegularBytes = bytes;
-  return bytes;
+  try {
+    const buf = readFileSync(join(process.cwd(), "public/logo-invoice.png"));
+    _logoPngBytes = new Uint8Array(buf);
+    return _logoPngBytes;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -159,25 +130,16 @@ export async function generateInvoicePdf(
   // Register fontkit for custom font embedding (Czech/Ukrainian diacritics)
   doc.registerFontkit(fontkit);
 
-  const regularBytes = getFontBytes("regular");
-  const boldBytes = getFontBytes("bold");
-
-  // Use Inter if available (full diacritics), fallback to Helvetica
-  // Use custom Inter font if available (Czech diacritics), fallback to Helvetica
+  // Use embedded Inter fonts (base64 bundled — works reliably on Vercel serverless)
   let fontRegular: PDFFont;
   let fontBold: PDFFont;
   let hasDiacritics = false;
 
-  if (regularBytes && boldBytes) {
-    try {
-      fontRegular = await doc.embedFont(regularBytes, { subset: true });
-      fontBold = await doc.embedFont(boldBytes, { subset: true });
-      hasDiacritics = true;
-    } catch {
-      fontRegular = await doc.embedFont(StandardFonts.Helvetica);
-      fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
-    }
-  } else {
+  try {
+    fontRegular = await doc.embedFont(getInterRegular(), { subset: true });
+    fontBold = await doc.embedFont(getInterBold(), { subset: true });
+    hasDiacritics = true;
+  } catch {
     fontRegular = await doc.embedFont(StandardFonts.Helvetica);
     fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
   }

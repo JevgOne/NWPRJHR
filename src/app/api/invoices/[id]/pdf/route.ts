@@ -58,6 +58,8 @@ export async function GET(
       bankAccount: invoice.company.bankAccount,
       bankIban: invoice.company.bankIban,
       bankName: invoice.company.bankName,
+      contactEmail: invoice.company.contactEmail,
+      contactPhone: invoice.company.contactPhone,
     },
     items: invoice.items.map((item) => ({
       description: item.description,
