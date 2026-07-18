@@ -79,8 +79,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const [products, stylists] = await Promise.all([
     prisma.product.findMany({
-      where: { archived: false },
-      select: { id: true, slug: true, updatedAt: true },
+      where: { archived: false, slug: { not: null } },
+      select: { slug: true, updatedAt: true },
     }),
     prisma.stylist.findMany({
       where: { active: true },
@@ -89,7 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const productPages: MetadataRoute.Sitemap = products.flatMap((product) =>
-    withAlternates(`/offer/${product.slug ?? product.id}`, { lastModified: product.updatedAt, changeFrequency: "weekly", priority: 0.8 }),
+    withAlternates(`/offer/${product.slug}`, { lastModified: product.updatedAt, changeFrequency: "weekly", priority: 0.8 }),
   );
 
   const stylistPages: MetadataRoute.Sitemap = stylists.flatMap((s) =>

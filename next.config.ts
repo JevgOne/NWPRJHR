@@ -50,8 +50,18 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/:locale/offer/kategorie/premium",
-        destination: "/:locale/offer/kategorie/luxe",
+        source: "/offer/kategorie/premium",
+        destination: "/offer/kategorie/luxe",
+        permanent: true,
+      },
+      {
+        source: "/ua/offer/kategorie/premium",
+        destination: "/ua/offer/kategorie/luxe",
+        permanent: true,
+      },
+      {
+        source: "/rus/offer/kategorie/premium",
+        destination: "/rus/offer/kategorie/luxe",
         permanent: true,
       },
     ];

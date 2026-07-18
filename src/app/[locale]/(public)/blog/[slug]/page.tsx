@@ -198,8 +198,10 @@ export default async function BlogPostPage({ params }: Props) {
         url: "https://www.hairland.cz",
         logo: { "@type": "ImageObject", url: "https://www.hairland.cz/og-image.jpg" },
       },
-      datePublished: post.publishedAt?.toISOString() ?? post.createdAt.toISOString(),
-      dateModified: post.updatedAt.toISOString(),
+      datePublished: post.publishedAt
+        ? new Date(post.publishedAt).toISOString()
+        : new Date(post.createdAt).toISOString(),
+      dateModified: new Date(post.updatedAt).toISOString(),
       mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
       url: articleUrl,
       inLanguage: locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs",
