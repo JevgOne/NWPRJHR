@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { stockInSchema, newStockInSchema } from "@/lib/validations/delivery";
@@ -240,6 +240,7 @@ export async function POST(request: NextRequest) {
     });
 
     revalidatePath("/inventory");
+    revalidateTag("dashboard", "max");
 
     return NextResponse.json(
       { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },
@@ -289,6 +290,7 @@ export async function POST(request: NextRequest) {
   });
 
   revalidatePath("/inventory");
+  revalidateTag("dashboard", "max");
 
   return NextResponse.json(
     { ...delivery, productId: variant?.productId, productName: variant?.product.name, productSlug: variant?.product.slug },

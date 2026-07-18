@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse, after } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { completeSaleSchema } from "@/lib/validations/sale";
@@ -134,6 +135,8 @@ export async function POST(request: NextRequest) {
     detail: { saleNumber: sale.saleNumber, totalAmount: sale.totalAmount },
     ipAddress: getClientIp(request),
   });
+
+  revalidateTag("dashboard", "max");
 
   return NextResponse.json(
     {

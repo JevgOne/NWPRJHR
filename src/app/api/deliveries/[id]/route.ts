@@ -200,5 +200,6 @@ export async function DELETE(
   invalidateStockCache();
   revalidatePath("/inventory");
   revalidateTag("products", "max");
+  revalidateTag("dashboard", "max");
   return NextResponse.json({ ok: true });
 }
