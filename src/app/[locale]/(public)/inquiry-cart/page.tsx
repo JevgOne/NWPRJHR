@@ -10,6 +10,17 @@ export async function generateMetadata(): Promise<Metadata> {
     description: t("inquiryCartDescription"),
     alternates: getAlternates("/inquiry-cart"),
     robots: { index: false },
+    openGraph: {
+      type: "website",
+      title: `${t("inquiryCartTitle")} | Hairland`,
+      description: t("inquiryCartDescription"),
+      siteName: "Hairland",
+      images: [{ url: "https://www.hairland.cz/og/og-inquiry-cart.jpg", width: 1200, height: 630, alt: "Hairland" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["https://www.hairland.cz/og/og-inquiry-cart.jpg"],
+    },
   };
 }
 

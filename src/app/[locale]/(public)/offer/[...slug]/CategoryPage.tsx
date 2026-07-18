@@ -52,6 +52,14 @@ const META_KEYS: Record<string, string> = {
   "weft": "weftMeta",
 };
 
+const CATEGORY_OG_IMAGES: Record<string, string> = {
+  "clip-in": "https://www.hairland.cz/og/og-clip-in.jpg",
+  "tape-in": "https://www.hairland.cz/og/og-tape-in.jpg",
+  "keratin": "https://www.hairland.cz/og/og-keratin.jpg",
+  "micro-ring": "https://www.hairland.cz/og/og-micro-ring.jpg",
+  "weft": "https://www.hairland.cz/og/og-tresove-vlasy.jpg",
+};
+
 export function isCategorySlug(slug: string): boolean {
   return slug in CATEGORY_SLUG_MAP;
 }
@@ -77,13 +85,13 @@ export async function generateCategoryMetadata(slug: string) {
       url: `https://www.hairland.cz${canonicalPath}`,
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
-      images: [{ url: "https://www.hairland.cz/hero-vzornik.png", width: 1672, height: 941, alt: title }],
+      images: [{ url: CATEGORY_OG_IMAGES[slug] ?? "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image" as const,
       title: `${title} | Hairland`,
       description,
-      images: ["https://www.hairland.cz/hero-vzornik.png"],
+      images: [CATEGORY_OG_IMAGES[slug] ?? "https://www.hairland.cz/og/og-offer.jpg"],
     },
   };
 }

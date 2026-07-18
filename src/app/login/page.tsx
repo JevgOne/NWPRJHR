@@ -3,6 +3,16 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
+  openGraph: {
+    type: "website",
+    title: "Přihlášení | Hairland",
+    siteName: "Hairland",
+    images: [{ url: "https://www.hairland.cz/og/og-login.jpg", width: 1200, height: 630, alt: "Hairland" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://www.hairland.cz/og/og-login.jpg"],
+  },
 };
 
 export default function LoginPage() {

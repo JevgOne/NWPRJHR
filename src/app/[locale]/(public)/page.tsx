@@ -39,9 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
         {
-          url: "https://www.hairland.cz/hero-vzornik.png",
-          width: 735,
-          height: 707,
+          url: "https://www.hairland.cz/og/og-home.jpg",
+          width: 1200,
+          height: 630,
           alt: t("homeTitle"),
         },
       ],
@@ -50,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: `${t("homeTitle")} | Hairland`,
       description: t("homeDescription"),
-      images: ["https://www.hairland.cz/hero-vzornik.png"],
+      images: ["https://www.hairland.cz/og/og-home.jpg"],
     },
   };
 }

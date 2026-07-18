@@ -19,13 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://www.hairland.cz/recenze",
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
-      images: [{ url: "https://www.hairland.cz/og-image.jpg", width: 1200, height: 630, alt: "Hairland" }],
+      images: [{ url: "https://www.hairland.cz/og/og-recenze.jpg", width: 1200, height: 630, alt: "Hairland" }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${t("recenzeTitle")} | Hairland`,
       description: t("recenzeDescription"),
-      images: ["https://www.hairland.cz/og-image.jpg"],
+      images: ["https://www.hairland.cz/og/og-recenze.jpg"],
     },
   };
 }
