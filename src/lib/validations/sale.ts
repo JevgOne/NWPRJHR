@@ -48,6 +48,7 @@ export const customerSchema = z.object({
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().max(50).optional(),
   city: z.string().max(100).optional(),
+  instagram: z.string().max(100).optional(),
   note: z.string().max(1000).optional(),
 });
 

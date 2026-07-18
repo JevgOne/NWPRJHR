@@ -15,6 +15,7 @@ interface CustomerDetail {
   email?: string | null;
   phone?: string | null;
   city?: string | null;
+  instagram?: string | null;
   note?: string | null;
   totalSpent: number;
   salesCount: number;
@@ -52,6 +53,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
   const [editEmail, setEditEmail] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
+  const [editInstagram, setEditInstagram] = useState("");
 
   useEffect(() => {
     fetch(`/api/customers/${id}`)
@@ -63,6 +65,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
         setEditEmail(data.email || "");
         setEditPhone(data.phone || "");
         setEditCity(data.city || "");
+        setEditInstagram(data.instagram || "");
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -78,6 +81,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
         email: editEmail || undefined,
         phone: editPhone || undefined,
         city: editCity || undefined,
+        instagram: editInstagram || undefined,
       }),
     });
     if (res.ok) {
@@ -140,6 +144,12 @@ export function CustomerDetailClient({ id }: { id: string }) {
             value={editCity}
             onChange={(e) => setEditCity(e.target.value)}
           />
+          <Input
+            label="Instagram"
+            value={editInstagram}
+            onChange={(e) => setEditInstagram(e.target.value)}
+            placeholder="@username"
+          />
           <div className="flex gap-2">
             <Button size="sm" onClick={handleSave}>
               {tCommon("save")}
@@ -162,6 +172,8 @@ export function CustomerDetailClient({ id }: { id: string }) {
             <span>{customer.phone || "-"}</span>
             <span className="text-muted">{t("city")}</span>
             <span>{customer.city || "-"}</span>
+            <span className="text-muted">Instagram</span>
+            <span>{customer.instagram || "-"}</span>
             <span className="text-muted">{t("totalSpent")}</span>
             <span className="font-medium">
               {formatCZK(customer.totalSpent)} CZK

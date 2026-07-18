@@ -31,6 +31,7 @@ export function CustomersClient() {
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newCity, setNewCity] = useState("");
+  const [newInstagram, setNewInstagram] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -53,6 +54,7 @@ export function CustomersClient() {
         email: newEmail || undefined,
         phone: newPhone || undefined,
         city: newCity || undefined,
+        instagram: newInstagram || undefined,
       }),
     });
     if (res.ok) {
@@ -64,6 +66,7 @@ export function CustomersClient() {
       setNewEmail("");
       setNewPhone("");
       setNewCity("");
+      setNewInstagram("");
     }
   };
 
@@ -109,6 +112,12 @@ export function CustomersClient() {
             label={t("city")}
             value={newCity}
             onChange={(e) => setNewCity(e.target.value)}
+          />
+          <Input
+            label="Instagram"
+            value={newInstagram}
+            onChange={(e) => setNewInstagram(e.target.value)}
+            placeholder="@username"
           />
           <div className="flex gap-2">
             <Button size="sm" onClick={handleAdd} disabled={!newFirstName.trim() || !newLastName.trim()}>
