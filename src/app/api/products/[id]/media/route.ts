@@ -23,26 +23,44 @@ const VIDEO_TYPES = [
   "video/webm",
 ];
 
+async function fileToBuffer(file: File): Promise<Buffer> {
+  const ab = await file.arrayBuffer();
+  return Buffer.from(new Uint8Array(ab));
+}
+
 async function processPhoto(
   file: File
 ): Promise<{ buffer: Buffer; contentType: string; ext: string }> {
-  const arrayBuffer = await file.arrayBuffer();
-  const inputBuffer = Buffer.from(arrayBuffer);
+  let inputBuffer: Buffer;
+  try {
+    inputBuffer = await fileToBuffer(file);
+  } catch (e) {
+    console.error("[media] fileToBuffer failed:", e);
+    // Last resort: upload raw file via blob stream
+    const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
+    return { buffer: Buffer.alloc(0), contentType: file.type || "application/octet-stream", ext };
+  }
+
+  // 1. Try watermark (WebP output)
   try {
     const buffer = await addWatermark(inputBuffer);
     return { buffer, contentType: "image/webp", ext: "webp" };
   } catch (e) {
-    console.error("[media] watermark failed, converting without watermark:", e);
-    try {
-      const sharp = (await import("sharp")).default;
-      const buffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
-      return { buffer, contentType: "image/jpeg", ext: "jpg" };
-    } catch (e2) {
-      console.error("[media] sharp conversion also failed:", e2);
-      const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-      return { buffer: inputBuffer, contentType: file.type || "application/octet-stream", ext };
-    }
+    console.error("[media] watermark failed:", e);
   }
+
+  // 2. Try Sharp JPEG conversion (no watermark)
+  try {
+    const sharp = (await import("sharp")).default;
+    const buffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
+    return { buffer, contentType: "image/jpeg", ext: "jpg" };
+  } catch (e) {
+    console.error("[media] sharp fallback failed:", e);
+  }
+
+  // 3. Raw passthrough
+  const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
+  return { buffer: inputBuffer, contentType: file.type || "application/octet-stream", ext };
 }
 
 export async function POST(
