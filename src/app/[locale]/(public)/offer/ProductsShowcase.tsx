@@ -75,7 +75,29 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
   const colorName = (nameKey: string) => t(`colors.${nameKey}`);
   const originName = (origin: string) => { try { return t(`origins.${origin}`); } catch { return origin; } };
 
+  // Faceted filter counts: each filter group counts products matching ALL OTHER active filters (excluding itself)
   const filterOptions = useMemo(() => {
+    function matchesFilters(p: (typeof allProducts)[0], skip?: string) {
+      if (skip !== "category" && activeCategory !== "ALL" && p.category !== activeCategory) return false;
+      if (skip !== "origin" && activeOrigin && p.origin !== activeOrigin) return false;
+      if (skip !== "texture" && activeTexture && p.texture !== activeTexture) return false;
+      if (skip !== "colorTone" && activeColorTone && p.colorTone !== activeColorTone) return false;
+      if (skip !== "selling" && activeSelling) {
+        if (!p.variants.some(v => (v.sellingMode ?? "BY_GRAM") === activeSelling)) return false;
+      }
+      if (skip !== "color" && activeColor) {
+        if (!p.variants.some((v: PublicVariant) => v.color === activeColor)) return false;
+      }
+      if (skip !== "length" && activeLength) {
+        if (!p.variants.some((v: PublicVariant) => v.lengthCm === parseInt(activeLength, 10))) return false;
+      }
+      if (activeSearch) {
+        const haystack = [p.name, p.nameUk, p.nameRu, p.origin, p.description].filter(Boolean).join(" ").toLowerCase();
+        if (!haystack.includes(activeSearch.toLowerCase())) return false;
+      }
+      return true;
+    }
+
     const origins: Record<string, number> = {};
     const lengths: Record<number, number> = {};
     const colors: Record<string, number> = {};
@@ -83,27 +105,29 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
     const colorTones: Record<string, number> = {};
 
     allProducts.forEach((p) => {
-      if (p.origin) {
+      if (p.origin && matchesFilters(p, "origin")) {
         origins[p.origin] = (origins[p.origin] ?? 0) + 1;
       }
-      if (p.texture) {
+      if (p.texture && matchesFilters(p, "texture")) {
         textures[p.texture] = (textures[p.texture] ?? 0) + 1;
       }
-      if (p.colorTone) {
+      if (p.colorTone && matchesFilters(p, "colorTone")) {
         colorTones[p.colorTone] = (colorTones[p.colorTone] ?? 0) + 1;
       }
-      const pLengths = new Set<number>();
-      const pColors = new Set<string>();
-      p.variants.forEach((v) => {
-        pLengths.add(v.lengthCm);
-        pColors.add(v.color);
-      });
-      pLengths.forEach((l) => {
-        lengths[l] = (lengths[l] ?? 0) + 1;
-      });
-      pColors.forEach((c) => {
-        colors[c] = (colors[c] ?? 0) + 1;
-      });
+      if (matchesFilters(p, "length")) {
+        const pLengths = new Set<number>();
+        p.variants.forEach((v) => {
+          if (!activeColor || v.color === activeColor) pLengths.add(v.lengthCm);
+        });
+        pLengths.forEach((l) => { lengths[l] = (lengths[l] ?? 0) + 1; });
+      }
+      if (matchesFilters(p, "color")) {
+        const pColors = new Set<string>();
+        p.variants.forEach((v) => {
+          if (!activeLength || v.lengthCm === parseInt(activeLength, 10)) pColors.add(v.color);
+        });
+        pColors.forEach((c) => { colors[c] = (colors[c] ?? 0) + 1; });
+      }
     });
 
     return {
@@ -115,7 +139,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
       textures: Object.entries(textures).sort((a, b) => b[1] - a[1]),
       colorTones: Object.entries(colorTones).sort((a, b) => b[1] - a[1]),
     };
-  }, [allProducts]);
+  }, [allProducts, activeCategory, activeOrigin, activeColor, activeLength, activeTexture, activeColorTone, activeSearch, activeSelling]);
 
   function setFilter(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());

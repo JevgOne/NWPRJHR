@@ -1,13 +1,35 @@
 import { join } from "path";
-import { readFileSync } from "fs";
 
 let watermarkPng: Buffer | null = null;
 
-function getWatermarkPng(): Buffer {
-  if (!watermarkPng) {
+async function getWatermarkPng(): Promise<Buffer> {
+  if (watermarkPng) return watermarkPng;
+
+  // Try filesystem first (works locally + some Vercel configs)
+  try {
+    const { readFileSync } = await import("fs");
     watermarkPng = readFileSync(join(process.cwd(), "public", "watermark.png"));
+    return watermarkPng;
+  } catch {
+    // Fallback: fetch from own public URL
   }
-  return watermarkPng;
+
+  try {
+    const base =
+      process.env.NEXT_PUBLIC_BASE_URL ??
+      process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://www.hairland.cz";
+    const res = await fetch(`${base}/watermark.png`);
+    if (res.ok) {
+      watermarkPng = Buffer.from(await res.arrayBuffer());
+      return watermarkPng;
+    }
+  } catch {
+    // Both methods failed
+  }
+
+  throw new Error("Cannot load watermark PNG");
 }
 
 /**
@@ -22,10 +44,12 @@ export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
   const imgWidth = metadata.width ?? 800;
   const imgHeight = metadata.height ?? 800;
 
+  const wmPng = await getWatermarkPng();
+
   const wmSize = Math.round(imgWidth * 0.20);
   const margin = Math.round(imgWidth * 0.03);
 
-  const resized = await sharp(getWatermarkPng())
+  const resized = await sharp(wmPng)
     .resize(wmSize, wmSize, { fit: "inside" })
     .ensureAlpha()
     .png()
