@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createInvoiceFromSale } from "@/lib/invoicing";
@@ -64,20 +65,20 @@ export async function POST(
     }
   });
 
-  // 3. Send invoice email (async, non-blocking)
-  sendInvoiceEmail(invoice.id, { skipQr: true }).catch((e) =>
-    console.error("[ConfirmPayment] Invoice email failed:", e)
-  );
-
-  // 4. Audit log
-  logAudit({
-    userId: session.user.id,
-    userEmail: session.user.email ?? undefined,
-    action: "PAYMENT_CONFIRMED",
-    entity: "Sale",
-    entityId: id,
-    detail: { invoiceId: invoice.id, invoiceNumber: invoice.number, amount: invoice.total },
-    ipAddress: getClientIp(request),
+  // 3. Send invoice email + audit log (after response, but guaranteed to run on Vercel)
+  after(async () => {
+    await sendInvoiceEmail(invoice.id, { skipQr: true }).catch((e) =>
+      console.error("[ConfirmPayment] Invoice email failed:", e)
+    );
+    await logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "PAYMENT_CONFIRMED",
+      entity: "Sale",
+      entityId: id,
+      detail: { invoiceId: invoice.id, invoiceNumber: invoice.number, amount: invoice.total },
+      ipAddress: getClientIp(request),
+    });
   });
 
   return NextResponse.json({

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { completeSaleSchema } from "@/lib/validations/sale";
@@ -45,9 +45,11 @@ export async function POST(request: NextRequest) {
       // CASH: payment received -> create invoice + send email immediately
       const inv = await createInvoiceFromSale(sale.id);
       invoice = { id: inv.id, number: inv.number };
-      sendInvoiceEmail(inv.id, { skipQr: true }).catch((e) =>
-        console.error("[Sales API] Invoice email failed:", e)
-      );
+      after(async () => {
+        await sendInvoiceEmail(inv.id, { skipQr: true }).catch((e) =>
+          console.error("[Sales API] Invoice email failed:", e)
+        );
+      });
     } else if (pt === "TRANSFER") {
       // TRANSFER: no invoice yet — generate QR payment data + send email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
@@ -84,16 +86,18 @@ export async function POST(request: NextRequest) {
         : "cs";
 
       if (recipientEmail) {
-        sendPaymentDetailsEmail({
-          recipientEmail,
-          recipientName,
-          lang,
-          amount: sale.totalAmount,
-          bankAccount,
-          iban,
-          variableSymbol: vs,
-          saleNumber: sale.saleNumber ?? "",
-        }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
+        after(async () => {
+          await sendPaymentDetailsEmail({
+            recipientEmail,
+            recipientName,
+            lang,
+            amount: sale.totalAmount,
+            bankAccount,
+            iban,
+            variableSymbol: vs,
+            saleNumber: sale.saleNumber ?? "",
+          }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
+        });
       }
 
       paymentInfo = {
