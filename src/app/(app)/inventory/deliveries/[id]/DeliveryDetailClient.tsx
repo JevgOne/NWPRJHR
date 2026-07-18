@@ -1,7 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 interface Movement {
   id: string;
@@ -54,8 +58,65 @@ export function DeliveryDetailClient({
 }: {
   delivery: DeliveryData;
 }) {
+  const router = useRouter();
   const t = useTranslations("stock");
+  const tCommon = useTranslations("common");
   const tFinance = useTranslations("finance");
+
+  const [editing, setEditing] = useState(false);
+  const [editInitialGrams, setEditInitialGrams] = useState(delivery.initialGrams);
+  const [editRemainingGrams, setEditRemainingGrams] = useState(delivery.remainingGrams);
+  const [editInitialPieces, setEditInitialPieces] = useState(delivery.initialPieces);
+  const [editRemainingPieces, setEditRemainingPieces] = useState(delivery.remainingPieces);
+  const [editNote, setEditNote] = useState(delivery.note ?? "");
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSave() {
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/deliveries/${delivery.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initialGrams: editInitialGrams,
+          remainingGrams: editRemainingGrams,
+          initialPieces: editInitialPieces,
+          remainingPieces: editRemainingPieces,
+          note: editNote || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error?.message ?? data.error ?? "Chyba při ukládání");
+        return;
+      }
+      setEditing(false);
+      router.refresh();
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete() {
+    setDeleting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/deliveries/${delivery.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Nelze smazat");
+        setConfirmDelete(false);
+        return;
+      }
+      router.push("/inventory");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   const isByPiece = delivery.variant.sellingMode === "BY_PIECE";
 
@@ -232,6 +293,85 @@ export function DeliveryDetailClient({
         {delivery.note && (
           <div className="mt-3 text-sm text-muted">
             {t("note")}: {delivery.note}
+          </div>
+        )}
+      </Card>
+
+      {/* Edit / Delete */}
+      <Card>
+        {error && (
+          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        {editing ? (
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-ink">{t("editDelivery")}</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label={`${t("initialGrams")} (g)`}
+                type="number"
+                value={editInitialGrams}
+                onChange={(e) => setEditInitialGrams(parseInt(e.target.value) || 0)}
+                min={0}
+              />
+              <Input
+                label={`${t("remaining")} (g)`}
+                type="number"
+                value={editRemainingGrams}
+                onChange={(e) => setEditRemainingGrams(parseInt(e.target.value) || 0)}
+                min={0}
+              />
+              <Input
+                label={`${t("initialPieces")} (ks)`}
+                type="number"
+                value={editInitialPieces}
+                onChange={(e) => setEditInitialPieces(parseInt(e.target.value) || 0)}
+                min={0}
+              />
+              <Input
+                label={`${t("remainingPieces")} (ks)`}
+                type="number"
+                value={editRemainingPieces}
+                onChange={(e) => setEditRemainingPieces(parseInt(e.target.value) || 0)}
+                min={0}
+              />
+            </div>
+            <Input
+              label={t("note")}
+              value={editNote}
+              onChange={(e) => setEditNote(e.target.value)}
+            />
+            <div className="flex gap-2">
+              <Button onClick={handleSave} disabled={saving} size="sm">
+                {saving ? tCommon("saving") : tCommon("save")}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => { setEditing(false); setError(null); }}>
+                {tCommon("cancel")}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => setEditing(true)}>
+              {tCommon("edit")}
+            </Button>
+            {confirmDelete ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-red-600">{t("confirmDelete")}</span>
+                <Button size="sm" variant="danger" onClick={handleDelete} disabled={deleting}>
+                  {deleting ? "..." : tCommon("delete")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setConfirmDelete(false)}>
+                  {tCommon("cancel")}
+                </Button>
+              </div>
+            ) : (
+              <Button size="sm" variant="danger" onClick={() => setConfirmDelete(true)}>
+                {tCommon("delete")}
+              </Button>
+            )}
           </div>
         )}
       </Card>
