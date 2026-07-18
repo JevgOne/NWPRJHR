@@ -140,17 +140,32 @@ export async function POST(
     if (isVideo) {
       const ext = fileExt || "mp4";
       const safeName = `videos/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
-      const blob = await put(safeName, file, {
+      const blob = await put(safeName, file.stream(), {
         access: "public",
         contentType: fileType || "video/mp4",
       });
       return { url: blob.url, isVideo: true };
     } else {
-      const { buffer, contentType, ext } = await processPhoto(file);
+      // Try processing (watermark/convert), fallback to raw upload
+      try {
+        const { buffer, contentType, ext } = await processPhoto(file);
+        if (buffer.length > 0) {
+          const safeName = `products/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
+          const blob = await put(safeName, buffer, {
+            access: "public",
+            contentType,
+          });
+          return { url: blob.url, isVideo: false };
+        }
+      } catch (e) {
+        console.error("[media] processPhoto failed completely:", e);
+      }
+      // Raw file upload fallback (no processing)
+      const ext = fileExt || "jpg";
       const safeName = `products/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
-      const blob = await put(safeName, buffer, {
+      const blob = await put(safeName, file.stream(), {
         access: "public",
-        contentType,
+        contentType: fileType || "image/jpeg",
       });
       return { url: blob.url, isVideo: false };
     }
