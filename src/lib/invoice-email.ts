@@ -26,8 +26,8 @@ export async function sendInvoiceEmail(
       items: true,
       sale: {
         select: {
-          salon: { select: { email: true, name: true, language: true } },
-          customer: { select: { email: true, name: true } },
+          salon: { select: { email: true, name: true, language: true, phone: true } },
+          customer: { select: { email: true, name: true, phone: true, instagram: true } },
           customerType: true,
         },
       },
@@ -67,6 +67,9 @@ export async function sendInvoiceEmail(
     buyerIco: invoice.buyerIco,
     buyerDic: invoice.buyerDic,
     buyerAddress: invoice.buyerAddress,
+    buyerEmail: invoice.buyerEmail ?? invoice.sale?.customer?.email ?? invoice.sale?.salon?.email,
+    buyerPhone: invoice.sale?.customer?.phone ?? invoice.sale?.salon?.phone,
+    buyerInstagram: invoice.sale?.customer?.instagram,
     buyerLanguage: invoice.buyerLanguage,
     subtotal: invoice.subtotal,
     vatRate: invoice.vatRate,

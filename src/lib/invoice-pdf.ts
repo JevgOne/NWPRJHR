@@ -34,6 +34,9 @@ export interface InvoicePdfData {
   buyerIco?: string | null;
   buyerDic?: string | null;
   buyerAddress: string;
+  buyerEmail?: string | null;
+  buyerPhone?: string | null;
+  buyerInstagram?: string | null;
   buyerLanguage: string;
   subtotal: number;
   vatRate: number;
@@ -283,6 +286,18 @@ export async function generateInvoicePdf(
   }
   if (data.buyerDic) {
     text(`${sanitizeText(t.dic)}: ${data.buyerDic}`, buyerX + 8, bY, { size: 8 });
+    bY -= 13;
+  }
+  if (data.buyerEmail) {
+    text(`E-mail: ${data.buyerEmail}`, buyerX + 8, bY, { size: 8, color: muted });
+    bY -= 13;
+  }
+  if (data.buyerPhone) {
+    text(`Tel: ${data.buyerPhone}`, buyerX + 8, bY, { size: 8, color: muted });
+    bY -= 13;
+  }
+  if (data.buyerInstagram) {
+    text(`IG: ${data.buyerInstagram}`, buyerX + 8, bY, { size: 8, color: muted });
     bY -= 13;
   }
 

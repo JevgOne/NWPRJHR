@@ -19,6 +19,13 @@ export async function GET(
       company: true,
       items: true,
       originalInvoice: { select: { number: true } },
+      sale: {
+        select: {
+          customerType: true,
+          customer: { select: { email: true, phone: true, instagram: true } },
+          salon: { select: { email: true, phone: true } },
+        },
+      },
     },
   });
 
@@ -42,6 +49,9 @@ export async function GET(
     buyerIco: invoice.buyerIco,
     buyerDic: invoice.buyerDic,
     buyerAddress: invoice.buyerAddress,
+    buyerEmail: invoice.buyerEmail ?? invoice.sale?.customer?.email ?? invoice.sale?.salon?.email,
+    buyerPhone: invoice.sale?.customer?.phone ?? invoice.sale?.salon?.phone,
+    buyerInstagram: invoice.sale?.customer?.instagram,
     buyerLanguage: invoice.buyerLanguage,
     subtotal: invoice.subtotal,
     vatRate: invoice.vatRate,
