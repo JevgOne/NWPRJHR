@@ -340,11 +340,15 @@ export function VariantTable({
                               cellKey={`cost-${cellKey}`}
                             />
                           ) : (
-                            <span
-                              className="text-[10px] text-muted"
+                            <button
+                              className="text-[10px] text-muted hover:text-rose transition-colors"
+                              onClick={() => {
+                                setEditingCell(`cost-${cellKey}`);
+                                setEditValue((variant.costPricePerGram! / 100).toString());
+                              }}
                             >
                               {t("product.costLabel")}: {formatCZK(costDisplay)}{unit}
-                            </span>
+                            </button>
                           )}
                           <span className={`text-[10px] font-medium ${
                             margin > 0 ? "text-emerald-600" : "text-red-500"
