@@ -26,7 +26,7 @@ interface CustomerSelectProps {
   onSalonSelect: (id: string) => void;
   selectedCustomerId: string | null;
   onCustomerSelect: (id: string) => void;
-  onNewCustomer: (customer: { firstName: string; lastName: string; email?: string; phone?: string }) => void;
+  onNewCustomer: (customer: { firstName: string; lastName: string; email?: string; phone?: string; city?: string; instagram?: string }) => void;
 }
 
 export function CustomerSelect({
@@ -49,6 +49,8 @@ export function CustomerSelect({
   const [newLastName, setNewLastName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [newCity, setNewCity] = useState("");
+  const [newInstagram, setNewInstagram] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -171,6 +173,16 @@ export function CustomerSelect({
                 onChange={(e) => setNewPhone(e.target.value)}
                 placeholder={tCustomer("phone")}
               />
+              <Input
+                value={newCity}
+                onChange={(e) => setNewCity(e.target.value)}
+                placeholder={tCustomer("city")}
+              />
+              <Input
+                value={newInstagram}
+                onChange={(e) => setNewInstagram(e.target.value)}
+                placeholder="@username"
+              />
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -183,6 +195,8 @@ export function CustomerSelect({
                         lastName: newLastName.trim(),
                         email: newEmail || undefined,
                         phone: newPhone || undefined,
+                        city: newCity || undefined,
+                        instagram: newInstagram || undefined,
                       };
                       const res = await fetch("/api/customers", {
                         method: "POST",
@@ -203,6 +217,8 @@ export function CustomerSelect({
                       setNewLastName("");
                       setNewEmail("");
                       setNewPhone("");
+                      setNewCity("");
+                      setNewInstagram("");
                     } finally {
                       setSaving(false);
                     }
