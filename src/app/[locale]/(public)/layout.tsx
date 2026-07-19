@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { TopInfoBar } from "@/components/public/TopInfoBar";
 import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { BatchPopup } from "@/components/public/BatchPopup";
@@ -19,6 +20,7 @@ export default function PublicLayout({
           <Suspense fallback={null}>
             <ReferralTracker />
           </Suspense>
+          <TopInfoBar />
           <PublicNavbar />
           <main className="flex-1">{children}</main>
           <PublicFooter />

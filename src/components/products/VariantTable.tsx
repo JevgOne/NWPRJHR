@@ -182,8 +182,8 @@ export function VariantTable({
     );
   }
 
-  function PriceInput({ variantId, field, cellKey }: {
-    variantId: string; field: string; cellKey: string;
+  function PriceInput({ variantId, field, cellKey, per100g = false }: {
+    variantId: string; field: string; cellKey: string; per100g?: boolean;
   }) {
     if (editingCell !== cellKey) return null;
     return (
@@ -193,13 +193,17 @@ export function VariantTable({
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={() => {
-          const val = Math.round(parseFloat(editValue) * 100);
+          const val = per100g
+            ? Math.round(parseFloat(editValue))
+            : Math.round(parseFloat(editValue) * 100);
           if (val >= 0) handleSavePrice(variantId, field, val);
           else setEditingCell(null);
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            const val = Math.round(parseFloat(editValue) * 100);
+            const val = per100g
+              ? Math.round(parseFloat(editValue))
+              : Math.round(parseFloat(editValue) * 100);
             if (val >= 0) handleSavePrice(variantId, field, val);
           }
           if (e.key === "Escape") setEditingCell(null);
@@ -277,21 +281,36 @@ export function VariantTable({
                           variantId={variant.id}
                           field="retailPricePerGram"
                           cellKey={cellKey}
+                          per100g
                         />
                       ) : (
-                        <button
-                          className={`text-lg font-bold text-ink block ${
-                            isOwner ? "hover:text-rose transition-colors" : ""
-                          }`}
-                          onClick={() => {
-                            if (!isOwner) return;
-                            setEditingCell(cellKey);
-                            setEditValue((variant.retailPricePerGram! / 100).toString());
-                          }}
-                          disabled={isSaving}
-                        >
-                          {formatCZK(variant.retailPricePerGram * 100)}/100g
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            className={`text-lg font-bold text-ink block ${
+                              isOwner ? "hover:text-rose transition-colors" : ""
+                            }`}
+                            onClick={() => {
+                              if (!isOwner) return;
+                              setEditingCell(cellKey);
+                              setEditValue(variant.retailPricePerGram!.toString());
+                            }}
+                            disabled={isSaving}
+                          >
+                            {formatCZK(variant.retailPricePerGram * 100)}/100g
+                          </button>
+                          {isOwner && variant.retailManualOverride && (
+                            <button
+                              className="text-amber-500 hover:text-amber-700 transition-colors"
+                              title={t("variant.resetOverride")}
+                              onClick={() => handleResetOverride(variant.id)}
+                              disabled={isSaving}
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
                       )
                     )}
 
@@ -304,19 +323,33 @@ export function VariantTable({
                           cellKey={cellKey}
                         />
                       ) : (
-                        <button
-                          className={`text-lg font-bold text-ink block ${
-                            isOwner ? "hover:text-rose transition-colors" : ""
-                          }`}
-                          onClick={() => {
-                            if (!isOwner) return;
-                            setEditingCell(cellKey);
-                            setEditValue((variant.retailPricePerPiece! / 100).toString());
-                          }}
-                          disabled={isSaving}
-                        >
-                          {formatCZK(variant.retailPricePerPiece!)}/ks
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            className={`text-lg font-bold text-ink block ${
+                              isOwner ? "hover:text-rose transition-colors" : ""
+                            }`}
+                            onClick={() => {
+                              if (!isOwner) return;
+                              setEditingCell(cellKey);
+                              setEditValue((variant.retailPricePerPiece! / 100).toString());
+                            }}
+                            disabled={isSaving}
+                          >
+                            {formatCZK(variant.retailPricePerPiece!)}/ks
+                          </button>
+                          {isOwner && variant.retailManualOverride && (
+                            <button
+                              className="text-amber-500 hover:text-amber-700 transition-colors"
+                              title={t("variant.resetOverride")}
+                              onClick={() => handleResetOverride(variant.id)}
+                              disabled={isSaving}
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
                       )
                     )}
 
@@ -339,13 +372,18 @@ export function VariantTable({
                               variantId={variant.id}
                               field="costPricePerGram"
                               cellKey={`cost-${cellKey}`}
+                              per100g={!isByPiece}
                             />
                           ) : (
                             <button
                               className="text-[10px] text-muted hover:text-rose transition-colors"
                               onClick={() => {
                                 setEditingCell(`cost-${cellKey}`);
-                                setEditValue((variant.costPricePerGram! / 100).toString());
+                                setEditValue(
+                                  isByPiece
+                                    ? ((variant.pricePerPiece ?? variant.costPricePerGram!) / 100).toString()
+                                    : variant.costPricePerGram!.toString()
+                                );
                               }}
                             >
                               {t("product.costLabel")}: {formatCZK(costDisplay)}{unit}

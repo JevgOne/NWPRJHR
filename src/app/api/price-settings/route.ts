@@ -46,13 +46,15 @@ export async function PUT(request: NextRequest) {
     });
 
     for (const variant of variants) {
+      const newRetail = calculateRetailPrice(
+        variant.costPricePerGram,
+        markupPercent
+      );
       await tx.variant.update({
         where: { id: variant.id },
         data: {
-          retailPricePerGram: calculateRetailPrice(
-            variant.wholesalePricePerGram,
-            markupPercent
-          ),
+          retailPricePerGram: newRetail,
+          wholesalePricePerGram: newRetail,
         },
       });
     }

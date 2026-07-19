@@ -1022,6 +1022,11 @@
       "standard": "Standard",
       "sale": "Akce"
     },
+    "topBar": {
+      "realHair": "pravé vlasy",
+      "freeDelivery": "Doprava zdarma Praha",
+      "returns": "Vrácení do 14 dnů"
+    },
     "footer": {
       "copyright": "© 2026 Hairland.cz",
       "brandDesc": "Prémiové vlasy z celého světa. Přímý import, osobní přístup.",

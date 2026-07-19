@@ -135,6 +135,11 @@ const organizationJsonLd = {
   name: "Hairland",
   url: "https://www.hairland.cz",
   logo: "https://www.hairland.cz/icons/icon-512x512.png",
+  sameAs: [
+    "https://www.instagram.com/hairland.cz/",
+    "https://www.facebook.com/profile.php?id=61591480246246",
+    "https://wa.me/420608553103",
+  ],
 };
 
 export default async function LandingPage() {
