@@ -8,7 +8,7 @@ export default async function PaymentResultPage({ searchParams }: Props) {
   const params = await searchParams;
   const t = await getTranslations("public.paymentResult");
 
-  const status = params.status || "pending";
+  const status = (params.status || "pending").toLowerCase();
 
   return (
     <div className="max-w-lg mx-auto py-20 px-4 text-center">

@@ -56,6 +56,10 @@ export function CreateProductForm() {
   const [retailPrice, setRetailPrice] = useState("");
   const [retailManual, setRetailManual] = useState(false);
 
+  // Available to order state
+  const [availableToOrder, setAvailableToOrder] = useState(false);
+  const [orderLeadDays, setOrderLeadDays] = useState("");
+
   const isByPiece = sellingMode === "BY_PIECE";
 
   // Auto-generated name preview
@@ -209,6 +213,7 @@ export function CreateProductForm() {
       const product = await res.json();
 
       // 2. Create variants with pricing
+      const leadDays = orderLeadDays ? parseInt(orderLeadDays) : null;
       const variantData = isByPiece
         ? validVariants.map((v) => ({
             lengthCm: isAccessory ? 0 : parseInt(v.lengthCm),
@@ -219,6 +224,8 @@ export function CreateProductForm() {
             sellingMode: "BY_PIECE" as const,
             pricePerPiece: retailHalere,
             retailPricePerPiece: retailHalere,
+            availableToOrder,
+            orderLeadDays: availableToOrder ? leadDays : null,
           }))
         : validVariants.map((v) => ({
             lengthCm: parseInt(v.lengthCm),
@@ -507,6 +514,34 @@ export function CreateProductForm() {
                 <span className={`font-medium ${marginPreview > 30 ? "text-emerald-600" : marginPreview > 0 ? "text-amber-600" : "text-red-600"}`}>
                   {marginPreview}%
                 </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Available to order — for ACCESSORY/BY_PIECE products */}
+        {isByPiece && (
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={availableToOrder}
+                onChange={(e) => setAvailableToOrder(e.target.checked)}
+                className="w-4 h-4 rounded border-line text-rose focus:ring-rose"
+              />
+              <span className="text-sm font-medium text-espresso">Na objednávku</span>
+            </label>
+            {availableToOrder && (
+              <div className="ml-6">
+                <Input
+                  label="Dodací lhůta (dny)"
+                  type="number"
+                  min={1}
+                  max={90}
+                  placeholder="7"
+                  value={orderLeadDays}
+                  onChange={(e) => setOrderLeadDays(e.target.value)}
+                />
               </div>
             )}
           </div>

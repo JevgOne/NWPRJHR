@@ -68,6 +68,8 @@ export async function POST(
       sellingMode: v.sellingMode ?? "BY_GRAM",
       pricePerPiece: v.pricePerPiece,
       retailPricePerPiece: v.retailPricePerPiece,
+      availableToOrder: v.availableToOrder ?? false,
+      orderLeadDays: v.orderLeadDays ?? null,
     }));
 
   const created = newVariants.length > 0

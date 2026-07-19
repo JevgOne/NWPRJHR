@@ -36,7 +36,7 @@ export const createVariantsSchema = z.object({
   variants: z
     .array(
       z.object({
-        lengthCm: z.number().int().positive().max(150),
+        lengthCm: z.number().int().min(0).max(150),
         color: z.string().min(1).max(100),
         wholesalePricePerGram: z.number().int().min(0),
         retailPricePerGram: z.number().int().min(0).optional(),
@@ -44,6 +44,8 @@ export const createVariantsSchema = z.object({
         sellingMode: z.enum(["BY_GRAM", "BY_PIECE"]).optional(),
         pricePerPiece: z.number().int().positive().optional(),
         retailPricePerPiece: z.number().int().positive().optional(),
+        availableToOrder: z.boolean().optional(),
+        orderLeadDays: z.number().int().min(1).max(90).nullable().optional(),
       })
     )
     .min(1)
