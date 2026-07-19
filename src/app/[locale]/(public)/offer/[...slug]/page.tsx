@@ -750,23 +750,25 @@ async function ProductDetailView({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
         {/* Left: Photo gallery — sticky on desktop */}
-        <div className="lg:sticky lg:top-20 lg:self-start relative">
+        <div className="lg:sticky lg:top-20 lg:self-start">
           <PhotoGallery photos={product.photos} video={product.video} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
-          {(product.slug ?? product.id) && (
-            <div className="absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm rounded-full shadow-sm">
-              <WishlistToggle slug={product.slug ?? product.id} />
-            </div>
-          )}
         </div>
 
         {/* Right: Product info */}
         <div className="space-y-4">
-          {/* Header: name + origin inline */}
+          {/* Header: name + wishlist */}
           <div>
-            <h1 className="text-2xl font-bold text-ink mb-1">
-              {productName}
-            </h1>
-            <p className="text-sm text-muted">
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-2xl font-bold text-ink">
+                {productName}
+              </h1>
+              {(product.slug ?? product.id) && (
+                <div className="flex-shrink-0 mt-0.5">
+                  <WishlistToggle slug={product.slug ?? product.id} />
+                </div>
+              )}
+            </div>
+            <p className="text-sm text-muted mt-1">
               {categoryLabel}
               {product.origin && <> · {originFlag} {originName(product.origin)}</>}
               {" · "}✓ {t("productDetail.realHair")}
