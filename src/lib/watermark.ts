@@ -17,9 +17,9 @@ async function getWatermarkPng(): Promise<Buffer> {
   try {
     const base =
       process.env.NEXT_PUBLIC_BASE_URL ??
-      process.env.VERCEL_URL
+      (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : "https://www.hairland.cz";
+        : "https://www.hairland.cz");
     const res = await fetch(`${base}/watermark.png`);
     if (res.ok) {
       watermarkPng = Buffer.from(await res.arrayBuffer());
