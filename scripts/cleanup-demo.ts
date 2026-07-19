@@ -3,7 +3,7 @@
  *
  * KEEP:
  *   - 3 real admin users: jevgenij@hairland.cz, inga@hairland.cz, martin@hairland.cz
- *   - Firma Alvento Solutions s.r.o. (company)
+ *   - Firma Altro servis group s.r.o. (company)
  *   - ALL products and variants (real data)
  *   - Price settings, loyalty settings, B2B settings
  *   - Invoice counters

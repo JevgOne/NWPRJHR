@@ -253,7 +253,7 @@ export async function generateInvoicePdf(
     text(`${sanitizeText(t.dic)}: ${data.company.dic}`, ml + 8, y, { size: 8 });
     y -= 13;
   }
-  text(`${sanitizeText(t.bankAccount)}: ${data.company.bankAccount || "7141812004/5500"}`, ml + 8, y, { size: 8 });
+  text(`${sanitizeText(t.bankAccount)}: ${data.company.bankAccount || "6424423004/5500"}`, ml + 8, y, { size: 8 });
   y -= 13;
   if (data.company.bankIban) {
     text(`IBAN: ${data.company.bankIban}`, ml + 8, y, { size: 8 });

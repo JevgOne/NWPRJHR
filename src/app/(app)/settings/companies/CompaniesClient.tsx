@@ -238,7 +238,7 @@ export function CompaniesClient() {
               label="IBAN"
               value={form.bankIban}
               onChange={(e) => setField("bankIban", e.target.value)}
-              placeholder="CZ6155000000007141812004"
+              placeholder="CZ5550000000006424423004"
             />
             <div className="flex gap-2 pt-2">
               <Button size="sm" onClick={handleSave} disabled={saving}>

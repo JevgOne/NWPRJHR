@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
       // TRANSFER: no invoice yet — generate QR payment data + send email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
       const vs = sale.saleNumber ?? String(Date.now()).slice(-10);
-      const bankAccount = company?.bankAccount || "7141812004/5500";
-      const iban = company?.bankIban || "CZ6155000000007141812004";
+      const bankAccount = company?.bankAccount || "6424423004/5500";
+      const iban = company?.bankIban || "CZ5550000000006424423004";
 
       // Generate QR code for payment
       const spayd = generateSpayd({

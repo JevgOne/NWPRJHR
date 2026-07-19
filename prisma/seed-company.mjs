@@ -13,18 +13,18 @@ await client.execute({
   sql: `INSERT OR REPLACE INTO companies (id, name, ico, dic, address, addressCity, addressZip, bankAccount, bankIban, bankBic, bankName, contactEmail, contactPhone, isDefault, active, createdAt, updatedAt)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   args: [
-    "company_alvento",
-    "Alvento Solutions s.r.o.",
-    "24111953",
-    null,        // DIČ - doplnit až bude známo
+    "company_altro",
+    "Altro servis group s.r.o.",
+    "23673389",
+    "CZ23673389",
     "Školská 660/3, Nové Město",
     "Praha",
     "110 00",
-    "",          // bankovní účet - doplnit
-    null,
-    null,
-    null,
-    "info@hairora.cz",
+    "6424423004/5500",
+    "CZ5550000000006424423004",
+    "RZBCCZPP",
+    "Raiffeisenbank",
+    "info@hairland.cz",
     null,
     1,           // isDefault = true
     1,           // active = true
@@ -33,4 +33,4 @@ await client.execute({
   ],
 });
 
-console.log("✓ Alvento Solutions s.r.o. added as default company");
+console.log("✓ Altro servis group s.r.o. added as default company");

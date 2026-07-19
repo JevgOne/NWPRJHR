@@ -16,7 +16,7 @@ async function main() {
   if (which === "qr") {
     // Generate and upload QR
     const spayd = generateSpayd({
-      iban: "CZ5555000000007141812004",
+      iban: "CZ5550000000006424423004",
       amount: 15125,
       variableSymbol: "20260042",
       message: "Faktura 20260042",
@@ -49,7 +49,7 @@ async function main() {
           <td style="vertical-align:middle;text-align:left;">
             <p style="color:#3a2c2a;font-size:20px;font-weight:700;margin:0 0 10px;">15 125,00 Kč</p>
             <table style="border-collapse:collapse;">
-              <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">Účet</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;font-family:'Courier New',monospace;font-weight:600;">7141812004/5500</td></tr>
+              <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">Účet</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;font-family:'Courier New',monospace;font-weight:600;">6424423004/5500</td></tr>
               <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">VS</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;font-family:'Courier New',monospace;font-weight:600;">20260042</td></tr>
               <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">Banka</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;">Raiffeisenbank</td></tr>
             </table>
@@ -84,7 +84,7 @@ async function main() {
       replyTo: "info@hairland.cz",
       to: "lunamanazer@gmail.com",
       subject: "Výzva k platbě za objednávku | Hairland",
-      text: "Vaše objednávka byla potvrzena. Částka: 15 125 Kč. VS: 20260042. Účet: 7141812004/5500.",
+      text: "Vaše objednávka byla potvrzena. Částka: 15 125 Kč. VS: 20260042. Účet: 6424423004/5500.",
       html,
     });
     console.log("✓ QR payment email sent:", r.data?.id);
@@ -110,12 +110,12 @@ async function main() {
       roundingAmount: 0,
       skipQr: true,
       company: {
-        name: "Alvento Solutions s.r.o.",
-        ico: "24111953",
-        dic: "CZ24111953",
-        address: "Školská 660/3, 110 00 Praha 1",
-        bankAccount: "7141812004/5500",
-        bankIban: "CZ5555000000007141812004",
+        name: "Altro servis group s.r.o.",
+        ico: "23673389",
+        dic: "CZ23673389",
+        address: "Školská 660/3, Nové Město, 110 00 Praha",
+        bankAccount: "6424423004/5500",
+        bankIban: "CZ5550000000006424423004",
         bankName: "Raiffeisenbank",
       },
       items: [

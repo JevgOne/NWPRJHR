@@ -27,12 +27,12 @@ async function main() {
     note: "Děkujeme za Váš nákup!",
     skipQr: false, // QR on invoice for payment request
     company: {
-      name: "Alvento Solutions s.r.o.",
-      ico: "24111953",
-      dic: "CZ24111953",
-      address: "Školská 660/3, 110 00 Praha 1",
-      bankAccount: "7141812004/5500",
-      bankIban: "CZ5555000000007141812004",
+      name: "Altro servis group s.r.o.",
+      ico: "23673389",
+      dic: "CZ23673389",
+      address: "Školská 660/3, Nové Město, 110 00 Praha",
+      bankAccount: "6424423004/5500",
+      bankIban: "CZ5550000000006424423004",
       bankName: "Raiffeisenbank",
     },
     items: [
@@ -63,7 +63,7 @@ async function main() {
 
   // Generate and upload QR code to Vercel Blob
   const spayd = generateSpayd({
-    iban: "CZ5555000000007141812004",
+    iban: "CZ5550000000006424423004",
     amount: 15125,
     variableSymbol: "20260042",
     message: "Faktura 20260042",
@@ -97,7 +97,7 @@ async function main() {
         <p style="color:#9c8682;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">QR platba</p>
         <img src="${qrUrl}" alt="QR platba" width="180" height="180" style="display:block;margin:0 auto 16px;" />
         <p style="color:#3a2c2a;font-size:22px;font-weight:700;margin:0 0 8px;">15 125,00 CZK</p>
-        <p style="color:#9c8682;font-size:13px;margin:0 0 4px;">Účet: 7141812004/5500 (Raiffeisenbank)</p>
+        <p style="color:#9c8682;font-size:13px;margin:0 0 4px;">Účet: 6424423004/5500 (Raiffeisenbank)</p>
         <p style="color:#9c8682;font-size:13px;margin:0 0 4px;">VS: 20260042</p>
         <p style="color:#9c8682;font-size:13px;margin:0;">Splatnost: 16. 7. 2026</p>
       </div>
@@ -134,7 +134,7 @@ async function main() {
     replyTo: "info@hairland.cz",
     to: "lunamanazer@gmail.com",
     subject: "Výzva k platbě za objednávku OBJ-2026-0042 | Hairland",
-    text: "Vaše objednávka byla potvrzena. Částka: 15 125 CZK. VS: 20260042. Účet: 7141812004/5500.",
+    text: "Vaše objednávka byla potvrzena. Částka: 15 125 CZK. VS: 20260042. Účet: 6424423004/5500.",
     html: qrEmailHtml,
   });
   console.log("✓ Email 1 sent:", r1.data?.id);

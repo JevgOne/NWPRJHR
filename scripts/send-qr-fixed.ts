@@ -6,8 +6,8 @@ import { put } from "@vercel/blob";
 async function main() {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // Correct IBAN for 7141812004/5500
-  const spayd = "SPD*1.0*ACC:CZ6155000000007141812004*AM:15125.00*CC:CZK*X-VS:20260042*MSG:Objednavka 20260042";
+  // Correct IBAN for 6424423004/5500
+  const spayd = "SPD*1.0*ACC:CZ5550000000006424423004*AM:15125.00*CC:CZK*X-VS:20260042*MSG:Objednavka 20260042";
   const qrBuffer = await generateQRCodeBuffer(spayd);
   const blob = await put(`email-qr/qr-fixed-${Date.now()}.png`, qrBuffer, {
     access: "public",
@@ -36,7 +36,7 @@ async function main() {
           <td style="vertical-align:middle;text-align:left;">
             <p style="color:#3a2c2a;font-size:20px;font-weight:700;margin:0 0 10px;">15 125 Kč</p>
             <table style="border-collapse:collapse;">
-              <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">Účet</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;font-family:'Courier New',monospace;font-weight:600;">7141812004/5500</td></tr>
+              <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">Účet</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;font-family:'Courier New',monospace;font-weight:600;">6424423004/5500</td></tr>
               <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">VS</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;font-family:'Courier New',monospace;font-weight:600;">20260042</td></tr>
               <tr><td style="padding:2px 8px 2px 0;color:#9c8682;font-size:12px;">Banka</td><td style="padding:2px 0;color:#3a2c2a;font-size:13px;">Raiffeisenbank</td></tr>
             </table>
@@ -83,7 +83,7 @@ async function main() {
     replyTo: "info@hairland.cz",
     to: "lunamanazer@gmail.com",
     subject: "Platba za objednávku OBJ-0042 | Hairland",
-    text: "Vaše objednávka byla potvrzena. Částka: 15 125 Kč s DPH. VS: 20260042. Účet: 7141812004/5500.",
+    text: "Vaše objednávka byla potvrzena. Částka: 15 125 Kč s DPH. VS: 20260042. Účet: 6424423004/5500.",
     html,
   });
   console.log("✓ Sent:", r.data?.id);
