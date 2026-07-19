@@ -6,6 +6,7 @@ import { stockInSchema, newStockInSchema } from "@/lib/validations/delivery";
 import { serializeDeliveryForRole } from "@/lib/api/delivery-serializer";
 import { stockIn } from "@/lib/stock-in";
 import { generateBarcode } from "@/lib/barcode";
+import { calculateRetailPrice } from "@/lib/pricing";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
@@ -140,9 +141,9 @@ export async function POST(request: NextRequest) {
 
     if (!variant) {
       const markupPercent = priceSetting?.markupPercent ?? 100;
-      const retailPrice = Math.round(costPricePerGramCZK * (10000 + markupPercent * 100) / 10000);
+      const retailPrice = calculateRetailPrice(costPricePerGramCZK, markupPercent);
       const retailPricePerPiece = isByPiece && data.pricePerPiece
-        ? Math.round(data.pricePerPiece * (10000 + markupPercent * 100) / 10000)
+        ? calculateRetailPrice(data.pricePerPiece, markupPercent)
         : undefined;
 
       variant = await prisma.variant.create({
