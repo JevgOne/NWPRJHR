@@ -121,6 +121,7 @@ enum ProcessingType {
   KERATIN
   WEFT
   MICRO_RING
+  BANGS
   OTHER
 }
 

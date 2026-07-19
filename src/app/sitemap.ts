@@ -57,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { slug: "keratin", path: "/keratin" },
     { slug: "micro-ring", path: "/micro-ring" },
     { slug: "weft", path: "/tresove-vlasy" },
+    { slug: "ofiny", path: "/ofiny" },
   ].flatMap(({ path }) =>
     withAlternates(path, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
   );

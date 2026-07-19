@@ -17,6 +17,7 @@ export const CATEGORY_SLUG_MAP: Record<string, ProcessingType> = {
   "keratin": "KERATIN",
   "micro-ring": "MICRO_RING",
   "weft": "WEFT",
+  "ofiny": "BANGS",
 };
 
 /** Maps old offer slug to standalone URL path */
@@ -26,6 +27,7 @@ export const CATEGORY_STANDALONE_PATHS: Record<string, string> = {
   "keratin": "/keratin",
   "micro-ring": "/micro-ring",
   "weft": "/tresove-vlasy",
+  "ofiny": "/ofiny",
 };
 
 const TITLE_KEYS: Record<string, string> = {
@@ -34,6 +36,7 @@ const TITLE_KEYS: Record<string, string> = {
   "keratin": "keratinTitle",
   "micro-ring": "microRingTitle",
   "weft": "weftTitle",
+  "ofiny": "ofinyTitle",
 };
 
 const DESC_KEYS: Record<string, string> = {
@@ -42,6 +45,7 @@ const DESC_KEYS: Record<string, string> = {
   "keratin": "keratinDesc",
   "micro-ring": "microRingDesc",
   "weft": "weftDesc",
+  "ofiny": "ofinyDesc",
 };
 
 const META_KEYS: Record<string, string> = {
@@ -50,6 +54,7 @@ const META_KEYS: Record<string, string> = {
   "keratin": "keratinMeta",
   "micro-ring": "microRingMeta",
   "weft": "weftMeta",
+  "ofiny": "ofinyMeta",
 };
 
 const CATEGORY_OG_IMAGES: Record<string, string> = {
@@ -58,6 +63,7 @@ const CATEGORY_OG_IMAGES: Record<string, string> = {
   "keratin": "https://www.hairland.cz/og/og-keratin.jpg",
   "micro-ring": "https://www.hairland.cz/og/og-micro-ring.jpg",
   "weft": "https://www.hairland.cz/og/og-tresove-vlasy.jpg",
+  "ofiny": "https://www.hairland.cz/og/og-ofiny.jpg",
 };
 
 export function isCategorySlug(slug: string): boolean {
@@ -210,7 +216,7 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
     })),
   };
 
-  const s = slug as "clip-in" | "tape-in" | "keratin" | "micro-ring" | "weft";
+  const s = slug as "clip-in" | "tape-in" | "keratin" | "micro-ring" | "weft" | "ofiny";
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
