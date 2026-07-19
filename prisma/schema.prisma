@@ -1176,6 +1176,12 @@ model Inquiry {
   followUpSent   Boolean       @default(false)
   followUpSentAt DateTime?
 
+  shippingMethod    String?
+  paymentMethod     String?
+  packetaPointId    String?
+  packetaPointName  String?
+  packetaPointCity  String?
+
   customerId   String?
   customer     Customer?     @relation(fields: [customerId], references: [id])
 

@@ -30,10 +30,12 @@ function formatItemDescription(
 /**
  * Create an invoice from a completed sale.
  * Runs in transaction with atomic numbering.
+ * If proforma is true (or paymentType is TRANSFER), creates an AWAITING invoice with dueDate +7 days.
  */
 export async function createInvoiceFromSale(
   saleId: string,
-  companyId?: string
+  companyId?: string,
+  options?: { proforma?: boolean }
 ): Promise<Invoice> {
   return prisma.$transaction(
     async (tx) => {
@@ -107,10 +109,15 @@ export async function createInvoiceFromSale(
       const roundedTotal = roundHalereUp(rawTotal);
       const roundingAmount = roundedTotal - rawTotal;
 
-      const dueDate = new Date(); // same as issue date — already paid
+      const isProforma = options?.proforma ?? (sale.paymentType === "TRANSFER");
+      const dueDate = isProforma
+        ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        : new Date();
 
       // Payment method note
-      const paymentNote = sale.paymentType === "CASH"
+      const paymentNote = isProforma
+        ? null
+        : sale.paymentType === "CASH"
         ? "Zaplaceno hotove"
         : sale.paymentType === "TRANSFER"
         ? "Zaplaceno prevodem"
@@ -134,7 +141,7 @@ export async function createInvoiceFromSale(
           vatAmount,
           total: roundedTotal,
           roundingAmount,
-          status: "PAID",
+          status: isProforma ? "AWAITING" : "PAID",
           note: paymentNote,
           items: {
             create: invoiceItems,

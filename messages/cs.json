@@ -979,7 +979,19 @@
       "consultSubtitle": "Nahrajte fotku svých vlasů nebo nám napište, co potřebujete. Ozveme se do 24 hodin.",
       "reasonRealPhoto": "Ráda bych viděla reálnou fotku konkrétního kusu, který máte skladem.",
       "reasonPhotoMatch": "Posílám fotku svých vlasů — prosím o doporučení správného odstínu a délky.",
-      "submitConsult": "Odeslat"
+      "submitConsult": "Odeslat",
+      "shippingTitle": "Způsob doručení",
+      "shippingPersonal": "Osobní rozvoz po Praze",
+      "shippingPickup": "Osobní odběr (Školská 3, Praha)",
+      "shippingPacketa": "Zásilkovna",
+      "shippingPost": "Česká pošta",
+      "shippingFree": "Zdarma",
+      "shippingSoon": "Brzy",
+      "paymentTitle": "Způsob platby",
+      "paymentTransfer": "Platba převodem",
+      "paymentTransferDesc": "Faktura s QR kódem — splatnost 7 dní",
+      "paymentCash": "Hotovost při předání",
+      "paymentCashDesc": "Platba při osobním doručení nebo odběru"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",

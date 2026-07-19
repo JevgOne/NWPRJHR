@@ -21,7 +21,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
   const reasonMessage = mode === "consult" && reason
     ? (reason === "real-photo" ? t("reasonRealPhoto") : reason === "photo-match" ? t("reasonPhotoMatch") : "")
     : "";
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", city: "", message: reasonMessage, promoCode: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", city: "", message: reasonMessage, promoCode: "", shippingMethod: "PERSONAL_DELIVERY", paymentMethod: "TRANSFER" });
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -118,6 +118,8 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
           referralCode: referralCode || undefined,
           customerPhotos,
           items: isConsult ? [] : items,
+          shippingMethod: isConsult ? undefined : form.shippingMethod || undefined,
+          paymentMethod: isConsult ? undefined : form.paymentMethod || undefined,
         }),
       });
 
@@ -350,6 +352,92 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
             )}
           </div>
           )}
+          {/* Shipping & Payment — only for cart mode */}
+          {!isConsult && (
+            <div className="space-y-4 pt-2">
+              <div>
+                <h3 className="text-sm font-semibold text-ink mb-2">{t("shippingTitle")}</h3>
+                <div className="space-y-2">
+                  {([
+                    { value: "PERSONAL_DELIVERY", label: t("shippingPersonal"), price: t("shippingFree") },
+                    { value: "PICKUP", label: t("shippingPickup"), price: t("shippingFree") },
+                    { value: "PACKETA", label: t("shippingPacketa"), price: "89 Kč", disabled: true },
+                    { value: "CZECH_POST", label: t("shippingPost"), price: "99 Kč", disabled: true },
+                  ] as const).map((opt) => (
+                    <label
+                      key={opt.value}
+                      className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                        form.shippingMethod === opt.value
+                          ? "border-rose bg-rose/5"
+                          : "border-line hover:border-muted"
+                      } ${"disabled" in opt && opt.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="shippingMethod"
+                        value={opt.value}
+                        checked={form.shippingMethod === opt.value}
+                        onChange={(e) => setField("shippingMethod", e.target.value)}
+                        disabled={"disabled" in opt && opt.disabled}
+                        className="accent-rose"
+                      />
+                      <span className="flex-1 text-sm text-ink">{opt.label}</span>
+                      <span className="text-xs text-muted">{opt.price}</span>
+                      {"disabled" in opt && opt.disabled && (
+                        <span className="text-[10px] text-muted">{t("shippingSoon")}</span>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-ink mb-2">{t("paymentTitle")}</h3>
+                <div className="space-y-2">
+                  <label
+                    className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                      form.paymentMethod === "TRANSFER"
+                        ? "border-rose bg-rose/5"
+                        : "border-line hover:border-muted"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="TRANSFER"
+                      checked={form.paymentMethod === "TRANSFER"}
+                      onChange={(e) => setField("paymentMethod", e.target.value)}
+                      className="accent-rose"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm text-ink">{t("paymentTransfer")}</span>
+                      <p className="text-xs text-muted">{t("paymentTransferDesc")}</p>
+                    </div>
+                  </label>
+                  <label
+                    className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                      form.paymentMethod === "CASH"
+                        ? "border-rose bg-rose/5"
+                        : "border-line hover:border-muted"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CASH"
+                      checked={form.paymentMethod === "CASH"}
+                      onChange={(e) => setField("paymentMethod", e.target.value)}
+                      className="accent-rose"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm text-ink">{t("paymentCash")}</span>
+                      <p className="text-xs text-muted">{t("paymentCashDesc")}</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"

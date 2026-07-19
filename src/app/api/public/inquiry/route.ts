@@ -30,6 +30,11 @@ const inquirySchema = z.object({
   locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
   customerPhotos: z.array(z.string().url().or(z.string().startsWith("/uploads/"))).max(3).optional().default([]),
   items: z.array(inquiryItemSchema).max(50).default([]),
+  shippingMethod: z.enum(["PERSONAL_DELIVERY", "PACKETA", "CZECH_POST", "PICKUP"]).optional(),
+  paymentMethod: z.enum(["TRANSFER", "CASH"]).optional(),
+  packetaPointId: z.string().max(50).optional(),
+  packetaPointName: z.string().max(200).optional(),
+  packetaPointCity: z.string().max(100).optional(),
 });
 
 // Rate limit: 5 per hour per IP
@@ -69,7 +74,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { firstName, lastName, email, phone, city, salonName, message, promoCode, referralCode, locale, customerPhotos, items } = parsed.data;
+  const { firstName, lastName, email, phone, city, salonName, message, promoCode, referralCode, locale, customerPhotos, items, shippingMethod, paymentMethod, packetaPointId, packetaPointName, packetaPointCity } = parsed.data;
   const name = parsed.data.name || `${firstName} ${lastName}`.trim();
 
   // Validate and increment promo code usage
@@ -114,6 +119,11 @@ export async function POST(request: NextRequest) {
         referralCode: referralCode || null,
         customerId,
         customerPhotos: customerPhotos.length > 0 ? JSON.stringify(customerPhotos) : null,
+        shippingMethod: shippingMethod || null,
+        paymentMethod: paymentMethod || null,
+        packetaPointId: packetaPointId || null,
+        packetaPointName: packetaPointName || null,
+        packetaPointCity: packetaPointCity || null,
         items: {
           create: items.map((item) => ({
             productId: item.productId,
