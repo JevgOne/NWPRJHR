@@ -72,7 +72,10 @@ const getCachedIgPhotos = unstable_cache(
       });
       if (setting?.value) {
         const parsed = JSON.parse(setting.value);
-        if (Array.isArray(parsed) && parsed.length === 4) return parsed as string[];
+        // Only use DB values if they are local paths (not stale blob URLs)
+        if (Array.isArray(parsed) && parsed.length === 4 && parsed.every((u: string) => u.startsWith("/"))) {
+          return parsed as string[];
+        }
       }
     } catch {}
     return DEFAULT_IG_PHOTOS;

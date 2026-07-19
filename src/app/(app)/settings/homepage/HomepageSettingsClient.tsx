@@ -6,10 +6,10 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
 const DEFAULT_PHOTOS = [
-  "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/volne-vlasy.jpg",
-  "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/odstiny-prehled.jpg",
-  "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/extensions-techniky.jpg",
-  "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair/keratinove-vlasy.jpg",
+  "/images/hair/volne-vlasy.jpg",
+  "/images/hair/odstiny-prehled.jpg",
+  "/images/hair/extensions-techniky.jpg",
+  "/images/hair/keratinove-vlasy.jpg",
 ];
 
 const SETTING_KEY = "instagram_photos";
