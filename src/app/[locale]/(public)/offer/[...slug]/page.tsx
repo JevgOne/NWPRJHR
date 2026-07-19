@@ -247,8 +247,8 @@ async function RelatedProducts({
   }));
 
   return (
-    <section className="mt-12 pt-8 border-t border-line">
-      <h2 className="text-lg font-bold text-ink mb-4">
+    <section className="mt-14 pt-10 border-t border-line/50">
+      <h2 className="text-xl font-bold text-ink tracking-tight mb-6">
         {t("productDetail.relatedProducts")}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -723,7 +723,7 @@ async function ProductDetailView({
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
       <TrackProductView slug={product.slug ?? product.id} />
       <script
         type="application/ld+json"
@@ -740,53 +740,55 @@ async function ProductDetailView({
         />
       )}
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-muted mb-4">
+      <nav className="flex items-center gap-1.5 text-xs tracking-wide text-muted/70 mb-6 lg:mb-8 uppercase">
         <Link href="/" className="hover:text-rose transition-colors">{t("productDetail.home")}</Link>
-        <span>/</span>
+        <span className="text-line">/</span>
         <Link href="/offer" className="hover:text-rose transition-colors">{t("productDetail.offer")}</Link>
-        <span>/</span>
-        <span className="text-espresso font-medium truncate max-w-[200px]">{productName}</span>
+        <span className="text-line">/</span>
+        <span className="text-espresso font-medium truncate max-w-[200px] normal-case">{productName}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.85fr] gap-6 lg:gap-14 items-start">
         {/* Left: Photo gallery — sticky on desktop */}
         <div className="lg:sticky lg:top-20 lg:self-start">
           <PhotoGallery photos={product.photos} video={product.video} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
         </div>
 
         {/* Right: Product info */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Header: name + wishlist */}
           <div>
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-2xl font-bold text-ink">
+              <h1 className="text-2xl lg:text-3xl font-bold text-ink tracking-tight">
                 {productName}
               </h1>
               {(product.slug ?? product.id) && (
-                <div className="flex-shrink-0 mt-0.5">
+                <div className="flex-shrink-0 mt-1">
                   <WishlistToggle slug={product.slug ?? product.id} />
                 </div>
               )}
             </div>
-            <p className="text-sm text-muted mt-1">
-              {categoryLabel}
-              {product.origin && <> · {originFlag} {originName(product.origin)}</>}
-              {" · "}✓ {t("productDetail.realHair")}
+            <p className="text-sm text-muted mt-2 flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-nude-100 text-xs font-medium text-espresso">{categoryLabel}</span>
+              {product.origin && <span className="text-muted/60">·</span>}
+              {product.origin && <span>{originFlag} {originName(product.origin)}</span>}
+              <span className="text-muted/60">·</span>
+              <span className="text-emerald-700 font-medium">✓ {t("productDetail.realHair")}</span>
             </p>
           </div>
 
           {/* Price */}
           {pricePerGram && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-ink">
-                  {formatCZK(pricePerGram)}{priceUnit}
+            <div className="py-4 border-y border-line/50 space-y-1.5">
+              <div className="flex items-baseline gap-3">
+                <span className="text-2xl lg:text-3xl font-bold text-ink tracking-tight">
+                  {formatCZK(pricePerGram)}<span className="text-base font-medium text-muted ml-0.5">{priceUnit}</span>
                   {showAsPiece && focusedVariant && (focusedVariant.availablePieces ?? 0) > 0 && focusedVariant.availableGrams > 0 && (
                     <span className="text-sm font-normal text-muted ml-1">({Math.round(focusedVariant.availableGrams / focusedVariant.availablePieces!)} g)</span>
                   )}
                 </span>
                 {tierBadge && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-xs font-medium">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold tracking-wide">
                     {tierBadge}
                   </span>
                 )}
@@ -798,7 +800,7 @@ async function ProductDetailView({
               )}
               {retailPricePerGram && (
                 <p className="text-sm text-muted">
-                  <span className="line-through text-ink/50">{formatCZK(retailPricePerGram)}{priceUnit}</span>
+                  <span className="line-through text-ink/40">{formatCZK(retailPricePerGram)}{priceUnit}</span>
                   {" "}
                   <span>({t("productDetail.regularPrice")})</span>
                 </p>
@@ -847,7 +849,7 @@ async function ProductDetailView({
           </div>
 
           {/* Specs row — compact, clickable */}
-          <div className="bg-nude-50 rounded-2xl p-4 grid grid-cols-2 gap-3">
+          <div className="bg-nude-50 rounded-2xl p-5 grid grid-cols-2 gap-4">
             {product.origin && (
               <Link
                 href={`/offer?origin=${encodeURIComponent(product.origin)}`}
@@ -984,14 +986,14 @@ async function ProductDetailView({
           </div>
 
           {/* Category features */}
-          <div className="bg-amber-50 rounded-2xl p-4">
-            <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+          <div className="bg-gradient-to-br from-nude-50 to-blush-100/30 rounded-2xl p-5 border border-line/30">
+            <div className="text-[10px] font-semibold text-espresso/60 uppercase tracking-[0.15em] mb-3">
               {t("productDetail.categoryFeatures", { category: categoryLabel })}
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {catFeatures.map((f, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-amber-900">
-                  <span className="text-amber-600 mt-0.5">&#10003;</span>
+                <li key={i} className="flex items-start gap-2.5 text-sm text-ink/80">
+                  <span className="text-rose mt-0.5 shrink-0">&#10003;</span>
                   {f}
                 </li>
               ))}
@@ -1010,7 +1012,7 @@ async function ProductDetailView({
           />
 
           {/* Delivery strip */}
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted/80">
             <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.5 12.75l6 6 9-13.5" /></svg> {t("productDetail.deliveryInStock")}</span>
             <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg> {t("productDetail.deliveryPrague")}</span>
             <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg> {t("productDetail.deliveryInvoice")}</span>
@@ -1018,7 +1020,7 @@ async function ProductDetailView({
           </div>
 
           {/* Trust guarantees */}
-          <div className="mt-4 rounded-xl bg-nude-50 p-4 space-y-3">
+          <div className="mt-5 rounded-2xl bg-nude-50 p-5 space-y-4 border border-line/20">
             <div className="flex items-start gap-3">
               <svg className="w-5 h-5 text-rose shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
               <div>
@@ -1045,8 +1047,8 @@ async function ProductDetailView({
       </div>
 
       {/* No-retouch trust section — full width */}
-      <section className="mt-6">
-        <div className="rounded-2xl bg-amber-50/50 p-5 space-y-3">
+      <section className="mt-8">
+        <div className="rounded-2xl bg-gradient-to-br from-amber-50/60 to-nude-50 p-6 space-y-4 border border-amber-100/50">
           <div className="flex items-start gap-2.5">
             <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>
             <div>
@@ -1081,13 +1083,13 @@ async function ProductDetailView({
       </section>
 
       {/* Care tips + blog link */}
-      <section className="mt-10 pt-8 border-t border-line">
-        <h2 className="text-lg font-bold text-ink mb-4">{t("productDetail.careTitle")}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+      <section className="mt-12 pt-10 border-t border-line/50">
+        <h2 className="text-xl font-bold text-ink tracking-tight mb-6">{t("productDetail.careTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
           {([1, 2, 3] as const).map((n) => (
-            <div key={n} className="bg-nude-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="w-6 h-6 rounded-full bg-blush-100 flex items-center justify-center text-rose-deep text-xs font-bold">{n}</span>
+            <div key={n} className="bg-nude-50 rounded-2xl p-5 border border-line/20">
+              <div className="flex items-center gap-2.5 mb-2">
+                <span className="w-7 h-7 rounded-full bg-blush-100 flex items-center justify-center text-rose-deep text-xs font-bold">{n}</span>
                 <h3 className="text-sm font-semibold text-ink">{t(`productDetail.careTip${n}Title` as any)}</h3>
               </div>
               <p className="text-xs text-muted leading-relaxed">{t(`productDetail.careTip${n}Text` as any)}</p>
@@ -1121,11 +1123,11 @@ async function ProductDetailView({
 
       {/* FAQ — visual accordion, last section */}
       {allFaq.length > 0 && (
-        <section className="mt-12 pt-8 border-t border-line">
-          <h2 className="text-lg font-bold text-ink mb-4">{t("productDetail.faqTitle")}</h2>
-          <div className="space-y-2 max-w-3xl">
+        <section className="mt-14 pt-10 border-t border-line/50">
+          <h2 className="text-xl font-bold text-ink tracking-tight mb-6">{t("productDetail.faqTitle")}</h2>
+          <div className="space-y-2.5 max-w-3xl">
             {allFaq.map((faq, i) => (
-              <details key={i} className="group bg-nude-50 rounded-xl">
+              <details key={i} className="group bg-nude-50 rounded-2xl border border-line/20">
                 <summary className="flex items-center justify-between cursor-pointer px-4 py-3 text-sm font-medium text-ink hover:text-rose-deep transition-colors">
                   <span>{faq.q}</span>
                   <svg className="w-4 h-4 shrink-0 ml-2 text-muted group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
