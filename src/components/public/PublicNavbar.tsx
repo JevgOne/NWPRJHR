@@ -143,7 +143,11 @@ export function PublicNavbar() {
 
   const mainLinks = [
     { href: "/", label: t("nav.home") },
-    { href: "/offer", label: t("nav.products") },
+  ];
+
+  const offerItems = [
+    { href: "/offer", label: t("navbar.hair") },
+    { href: "/ofiny", label: t("navbar.bangs") },
     { href: "/prislusenstvi", label: t("nav.accessories") },
   ];
 
@@ -169,6 +173,7 @@ export function PublicNavbar() {
   // All links flat for mobile
   const allMobileLinks = [
     ...mainLinks,
+    ...offerItems,
     ...cooperationItems,
     ...inspiraceItems,
     ...endLinks,
@@ -206,6 +211,12 @@ export function PublicNavbar() {
                 </Link>
               );
             })}
+
+            <NavDropdown
+              label={t("nav.products")}
+              items={offerItems}
+              pathname={pathname}
+            />
 
             <NavDropdown
               label={t("navbar.cooperation")}
