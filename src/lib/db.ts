@@ -12,7 +12,7 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const remoteUrl = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
-  const useEmbeddedReplica = process.env.TURSO_EMBEDDED_REPLICA === "true" && remoteUrl;
+  const useEmbeddedReplica = process.env.TURSO_EMBEDDED_REPLICA?.trim() === "true" && remoteUrl;
 
   try {
     if (useEmbeddedReplica) {

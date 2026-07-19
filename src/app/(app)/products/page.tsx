@@ -63,7 +63,7 @@ const getCachedAdminProducts = unstable_cache(
     return { products, stockEntries: Array.from(allStock.entries()) };
   },
   ["admin-products"],
-  { revalidate: 15, tags: ["products"] }
+  { revalidate: 60, tags: ["products"] }
 );
 
 export default async function ProductsPage() {
