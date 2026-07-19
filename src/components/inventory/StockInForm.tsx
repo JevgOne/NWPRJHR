@@ -33,7 +33,7 @@ interface SuccessData {
   barcode: string;
 }
 
-type Category = "VIRGIN" | "LUXE" | "STANDARD" | "SALE";
+type Category = "VIRGIN" | "LUXE" | "STANDARD" | "SALE" | "ACCESSORY";
 type CurrencyCode = "USD" | "EUR" | "CZK";
 
 const LENGTH_PRESETS = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];

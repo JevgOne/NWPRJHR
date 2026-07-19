@@ -13,13 +13,14 @@ import { PhotoUpload } from "@/components/products/PhotoUpload";
 import { slugify } from "@/lib/slugify";
 import { HAIR_COLORS, COLOR_CODES } from "@/lib/hair-colors";
 
-const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
+const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"] as const;
 
 const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   VIRGIN: { cs: "Panenské Vlasy", uk: "Натуральне Волосся", ru: "Натуральные Волосы" },
   LUXE: { cs: "Luxe Vlasy", uk: "Люкс Волосся", ru: "Люкс Волосы" },
   STANDARD: { cs: "Standard Vlasy", uk: "Стандарт Волосся", ru: "Стандарт Волосы" },
   SALE: { cs: "Výprodej", uk: "Розпродаж", ru: "Распродажа" },
+  ACCESSORY: { cs: "Příslušenství", uk: "Аксесуари", ru: "Аксессуары" },
 };
 
 interface VariantRow {
@@ -34,6 +35,7 @@ export function CreateProductForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [category, setCategory] = useState<string>("VIRGIN");
+  const [customName, setCustomName] = useState("");
   const [origin, setOrigin] = useState("");
   const [originOpen, setOriginOpen] = useState(false);
   const [texture, setTexture] = useState("");
@@ -58,7 +60,10 @@ export function CreateProductForm() {
 
   // Auto-generated name preview
   const catNames = CATEGORY_NAMES[category] ?? CATEGORY_NAMES.VIRGIN;
-  const namePreview = texture ? `${catNames.cs} — ${texture}` : catNames.cs;
+  const isAccessoryCategory = category === "ACCESSORY";
+  const namePreview = isAccessoryCategory
+    ? (customName || catNames.cs)
+    : (texture ? `${catNames.cs} — ${texture}` : catNames.cs);
 
   // Price preview
   const retailPreview = isByPiece
@@ -145,9 +150,12 @@ export function CreateProductForm() {
     setError("");
 
     // Validate variants
-    const validVariants = variants.filter((v) => v.lengthCm && v.color);
+    const isAccessory = category === "ACCESSORY";
+    const validVariants = isAccessory
+      ? variants.filter((v) => v.color)
+      : variants.filter((v) => v.lengthCm && v.color);
     if (validVariants.length === 0) {
-      setError("Přidejte alespoň jednu variantu (délka + barva)");
+      setError(isAccessory ? "Přidejte alespoň jednu variantu (název)" : "Přidejte alespoň jednu variantu (délka + barva)");
       return;
     }
 
@@ -161,9 +169,15 @@ export function CreateProductForm() {
 
     setLoading(true);
 
-    const name = texture ? `${catNames.cs} — ${texture}` : catNames.cs;
-    const nameUk = texture ? `${catNames.uk} — ${texture}` : catNames.uk;
-    const nameRu = texture ? `${catNames.ru} — ${texture}` : catNames.ru;
+    const name = isAccessory
+      ? (customName || catNames.cs)
+      : (texture ? `${catNames.cs} — ${texture}` : catNames.cs);
+    const nameUk = isAccessory
+      ? (customName || catNames.uk)
+      : (texture ? `${catNames.uk} — ${texture}` : catNames.uk);
+    const nameRu = isAccessory
+      ? (customName || catNames.ru)
+      : (texture ? `${catNames.ru} — ${texture}` : catNames.ru);
 
     const data = {
       name,
@@ -197,7 +211,7 @@ export function CreateProductForm() {
       // 2. Create variants with pricing
       const variantData = isByPiece
         ? validVariants.map((v) => ({
-            lengthCm: parseInt(v.lengthCm),
+            lengthCm: isAccessory ? 0 : parseInt(v.lengthCm),
             color: v.color,
             costPricePerGram: costHalere,
             wholesalePricePerGram: 0,
@@ -240,7 +254,15 @@ export function CreateProductForm() {
           </label>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              if (e.target.value === "ACCESSORY") {
+                setSellingMode("BY_PIECE");
+                setOrigin("");
+                setTexture("");
+                setColorTone("");
+              }
+            }}
             className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
           >
             {CATEGORIES.map((cat) => (
@@ -251,8 +273,8 @@ export function CreateProductForm() {
           </select>
         </div>
 
-        {/* Origin */}
-        <div ref={originRef} className="relative">
+        {/* Origin — hidden for ACCESSORY */}
+        {category !== "ACCESSORY" && <div ref={originRef} className="relative">
           <label htmlFor="origin" className="block text-sm font-medium text-espresso mb-1">
             {t("product.origin")}
           </label>
@@ -289,10 +311,10 @@ export function CreateProductForm() {
               ))}
             </ul>
           )}
-        </div>
+        </div>}
 
-        {/* Texture */}
-        <div ref={textureRef} className="relative">
+        {/* Texture — hidden for ACCESSORY */}
+        {category !== "ACCESSORY" && <div ref={textureRef} className="relative">
           <label htmlFor="texture" className="block text-sm font-medium text-espresso mb-1">
             {t("product.texture")}
           </label>
@@ -329,10 +351,10 @@ export function CreateProductForm() {
               ))}
             </ul>
           )}
-        </div>
+        </div>}
 
-        {/* Color Tone */}
-        <div ref={colorToneRef} className="relative">
+        {/* Color Tone — hidden for ACCESSORY */}
+        {category !== "ACCESSORY" && <div ref={colorToneRef} className="relative">
           <label htmlFor="colorTone" className="block text-sm font-medium text-espresso mb-1">
             {t("product.colorTone")}
           </label>
@@ -369,7 +391,24 @@ export function CreateProductForm() {
               ))}
             </ul>
           )}
-        </div>
+        </div>}
+
+        {/* Custom name for ACCESSORY */}
+        {category === "ACCESSORY" && (
+          <div>
+            <label htmlFor="customName" className="block text-sm font-medium text-espresso mb-1">
+              Název produktu
+            </label>
+            <input
+              id="customName"
+              type="text"
+              className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+              placeholder="Žehlička na vlasy, Šampon 250ml..."
+            />
+          </div>
+        )}
 
         {/* Name preview */}
         <div className="px-3 py-2 bg-nude-50 rounded-lg border border-line/50">
@@ -481,58 +520,83 @@ export function CreateProductForm() {
           <div className="space-y-3">
             {variants.map((v, i) => (
               <div key={i} className="space-y-2 p-3 rounded-lg border border-line/50 bg-white">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={1}
-                    max={150}
-                    placeholder={`${t("product.length")} (cm)`}
-                    value={v.lengthCm}
-                    onChange={(e) => updateVariant(i, "lengthCm", e.target.value)}
-                    className="w-28 rounded-lg border border-line px-3 py-2 text-sm"
-                  />
-                  {v.color && (
-                    <span className="flex items-center gap-1.5 text-xs text-espresso">
-                      <span
-                        className="w-4 h-4 rounded-full border border-line/50"
-                        style={{ backgroundColor: HAIR_COLORS[v.color]?.hex ?? "#9CA3AF" }}
-                      />
-                      {colorLabel(v.color)}
-                    </span>
-                  )}
-                  {variants.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeVariantRow(i)}
-                      className="ml-auto p-1.5 text-red-400 hover:text-red-600 transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-                {/* Color grid */}
-                <div className="flex flex-wrap gap-1.5">
-                  {COLOR_CODES.map((code) => {
-                    const hc = HAIR_COLORS[code];
-                    const selected = v.color === code;
-                    return (
+                {category === "ACCESSORY" ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Název varianty (standard, 250ml, mini...)"
+                      value={v.color}
+                      onChange={(e) => updateVariant(i, "color", e.target.value)}
+                      className="flex-1 rounded-lg border border-line px-3 py-2 text-sm"
+                    />
+                    {variants.length > 1 && (
                       <button
-                        key={code}
                         type="button"
-                        onClick={() => updateVariant(i, "color", code)}
-                        className={`w-8 h-8 rounded-full border-2 transition-all ${
-                          selected
-                            ? "border-rose ring-2 ring-rose/30 scale-110"
-                            : "border-white hover:border-line shadow-sm"
-                        }`}
-                        style={{ backgroundColor: hc.hex }}
-                        title={colorLabel(code)}
+                        onClick={() => removeVariantRow(i)}
+                        className="p-1.5 text-red-400 hover:text-red-600 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={1}
+                        max={150}
+                        placeholder={`${t("product.length")} (cm)`}
+                        value={v.lengthCm}
+                        onChange={(e) => updateVariant(i, "lengthCm", e.target.value)}
+                        className="w-28 rounded-lg border border-line px-3 py-2 text-sm"
                       />
-                    );
-                  })}
-                </div>
+                      {v.color && (
+                        <span className="flex items-center gap-1.5 text-xs text-espresso">
+                          <span
+                            className="w-4 h-4 rounded-full border border-line/50"
+                            style={{ backgroundColor: HAIR_COLORS[v.color]?.hex ?? "#9CA3AF" }}
+                          />
+                          {colorLabel(v.color)}
+                        </span>
+                      )}
+                      {variants.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeVariantRow(i)}
+                          className="ml-auto p-1.5 text-red-400 hover:text-red-600 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    {/* Color grid */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {COLOR_CODES.map((code) => {
+                        const hc = HAIR_COLORS[code];
+                        const selected = v.color === code;
+                        return (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => updateVariant(i, "color", code)}
+                            className={`w-8 h-8 rounded-full border-2 transition-all ${
+                              selected
+                                ? "border-rose ring-2 ring-rose/30 scale-110"
+                                : "border-white hover:border-line shadow-sm"
+                            }`}
+                            style={{ backgroundColor: hc.hex }}
+                            title={colorLabel(code)}
+                          />
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
             <button

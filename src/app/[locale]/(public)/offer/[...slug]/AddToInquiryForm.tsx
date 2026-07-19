@@ -196,7 +196,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
                         : "border-line bg-nude-100 opacity-50 cursor-not-allowed"
                   }`}
                 >
-                  <div className="font-medium text-ink">{v.lengthCm} cm</div>
+                  <div className="font-medium text-ink">{v.lengthCm > 0 ? `${v.lengthCm} cm` : v.color}</div>
                   <div className="text-xs text-muted">
                     {vShowAsPiece
                       ? `${formatPrice(v.pricePerPiece ?? 0)} Kc/ks`
