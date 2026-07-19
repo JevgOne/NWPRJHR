@@ -63,6 +63,7 @@ const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   LUXE: { cs: "Luxe Vlasy", uk: "Люкс Волосся", ru: "Люкс Волосы" },
   STANDARD: { cs: "Standard Vlasy", uk: "Стандарт Волосся", ru: "Стандарт Волосы" },
   SALE: { cs: "Výprodej", uk: "Розпродаж", ru: "Распродажа" },
+  ACCESSORY: { cs: "Příslušenství", uk: "Аксесуари", ru: "Аксессуары" },
 };
 
 function slugify(text: string): string {
@@ -82,7 +83,8 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
   // New wizard flow: find-or-create product + variant
-  if (body.category && body.origin && body.texture && body.color && body.lengthCm) {
+  const isAccessory = body.category === "ACCESSORY";
+  if (body.category && (isAccessory || (body.origin && body.texture && body.color && body.lengthCm))) {
     const parsed = newStockInSchema.safeParse(body);
     if (!parsed.success)
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -94,10 +96,10 @@ export async function POST(request: NextRequest) {
       prisma.product.findFirst({
         where: {
           category: data.category,
-          origin: data.origin,
-          texture: data.texture,
-          archived: false,
-          variants: { some: { color: data.color, lengthCm: data.lengthCm } },
+          ...(isAccessory
+            ? { archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
+            : { origin: data.origin, texture: data.texture, archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
+          ),
         },
       }),
       prisma.priceSettings.findUnique({ where: { category: data.category } }),
@@ -106,20 +108,34 @@ export async function POST(request: NextRequest) {
     let product = existingProduct;
     if (!product) {
       const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
-      product = await prisma.product.create({
-        data: {
-          name: `${catNames.cs} — ${data.texture}`,
-          nameUk: `${catNames.uk} — ${data.texture}`,
-          nameRu: `${catNames.ru} — ${data.texture}`,
-          category: data.category,
-          processingType: "OTHER",
-          origin: data.origin,
-          texture: data.texture,
-          colorTone: autoColorTone(data.color),
-          slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm`),
-          photos: "[]",
-        },
-      });
+      if (isAccessory) {
+        product = await prisma.product.create({
+          data: {
+            name: catNames.cs,
+            nameUk: catNames.uk,
+            nameRu: catNames.ru,
+            category: data.category,
+            processingType: "OTHER",
+            slug: slugify(`${data.category}-${data.color}-${Date.now()}`),
+            photos: "[]",
+          },
+        });
+      } else {
+        product = await prisma.product.create({
+          data: {
+            name: `${catNames.cs} — ${data.texture}`,
+            nameUk: `${catNames.uk} — ${data.texture}`,
+            nameRu: `${catNames.ru} — ${data.texture}`,
+            category: data.category,
+            processingType: "OTHER",
+            origin: data.origin,
+            texture: data.texture,
+            colorTone: autoColorTone(data.color),
+            slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm`),
+            photos: "[]",
+          },
+        });
+      }
     }
 
     // 2. Find or create Variant

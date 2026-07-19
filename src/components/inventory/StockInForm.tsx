@@ -259,7 +259,9 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!category || !origin || !texture || !color || !lengthCm) return;
+    const isAccessory = category === "ACCESSORY";
+    if (!category) return;
+    if (!isAccessory && (!origin || !texture || !color || !lengthCm)) return;
     setSubmitting(true);
     setError("");
 
@@ -293,10 +295,10 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
 
     const body = {
       category,
-      origin,
-      texture,
-      color,
-      lengthCm,
+      origin: isAccessory ? undefined : origin,
+      texture: isAccessory ? undefined : texture,
+      color: isAccessory ? "standard" : color,
+      lengthCm: isAccessory ? 0 : lengthCm,
       supplierId,
       purchasePricePerGramRaw,
       currency,
@@ -755,11 +757,20 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
             {t("wizCategory")}
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            {(["VIRGIN", "LUXE", "STANDARD", "SALE"] as const).map((cat) => (
+            {(["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"] as const).map((cat) => (
               <button
                 key={cat}
                 type="button"
-                onClick={() => { setCategory(cat); resetFrom(2); scrollTo("section-origin"); }}
+                onClick={() => {
+                  setCategory(cat);
+                  resetFrom(2);
+                  if (cat === "ACCESSORY") {
+                    setSellingMode("BY_PIECE");
+                    scrollTo("section-details");
+                  } else {
+                    scrollTo("section-origin");
+                  }
+                }}
                 className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
                   category === cat
                     ? "border-rose bg-rose/5 text-ink"
@@ -772,8 +783,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           </div>
         </div>
 
-        {/* Origin — after category */}
-        {category && (
+        {/* Origin — after category (not for ACCESSORY) */}
+        {category && category !== "ACCESSORY" && (
           <div id="section-origin">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("wizOrigin")}
@@ -798,8 +809,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           </div>
         )}
 
-        {/* Texture — after origin */}
-        {category && origin && (
+        {/* Texture — after origin (not for ACCESSORY) */}
+        {category && category !== "ACCESSORY" && origin && (
           <div id="section-texture">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("wizTexture")}
@@ -824,8 +835,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           </div>
         )}
 
-        {/* Color — after texture */}
-        {category && origin && texture && (
+        {/* Color — after texture (not for ACCESSORY) */}
+        {category && category !== "ACCESSORY" && origin && texture && (
           <div id="section-color">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("color")}
@@ -858,8 +869,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           </div>
         )}
 
-        {/* Length — after color */}
-        {category && origin && texture && color && (
+        {/* Length — after color (not for ACCESSORY) */}
+        {category && category !== "ACCESSORY" && origin && texture && color && (
           <div id="section-length">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("length")}
@@ -902,8 +913,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           </div>
         )}
 
-        {/* Selling mode — after length */}
-        {category && origin && texture && color && lengthCm && (
+        {/* Selling mode — after length (hidden for ACCESSORY — always BY_PIECE) */}
+        {category && category !== "ACCESSORY" && origin && texture && color && lengthCm && (
           <div id="section-selling">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("sellingMode")}
@@ -936,7 +947,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
         )}
 
         {/* Details — after selling mode */}
-        {category && origin && texture && color && lengthCm && (
+        {category && (category === "ACCESSORY" || (origin && texture && color && lengthCm)) && (
           <form id="section-details" onSubmit={handleSubmit} className="space-y-5 max-w-lg">
             <h2 className="text-sm font-medium text-espresso mb-1">
               {t("wizDetails")}

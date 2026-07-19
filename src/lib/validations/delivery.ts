@@ -33,11 +33,11 @@ export const stockInSchema = z
 
 export const newStockInSchema = z
   .object({
-    category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE"]),
-    origin: z.string().min(1),
-    texture: z.string().min(1),
+    category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"]),
+    origin: z.string().min(1).optional(),
+    texture: z.string().min(1).optional(),
     color: z.string().min(1),
-    lengthCm: z.number().int().positive().max(150),
+    lengthCm: z.number().int().min(0).max(150),
     supplierId: z.string().min(1),
     purchasePricePerGramRaw: z.number().int().min(0),
     currency: z.enum(["CZK", "USD", "EUR", "UAH"]),
@@ -53,6 +53,15 @@ export const newStockInSchema = z
     stockedAt: z.string().datetime().optional(),
     note: z.string().max(1000).optional(),
   })
+  .refine(
+    (data) => {
+      if (data.category !== "ACCESSORY") {
+        return !!data.origin && !!data.texture && data.lengthCm > 0;
+      }
+      return true;
+    },
+    { message: "Non-ACCESSORY requires origin, texture, and lengthCm > 0" }
+  )
   .refine(
     (data) => {
       if (data.sellingMode === "BY_PIECE") {
