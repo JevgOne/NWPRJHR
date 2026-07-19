@@ -119,7 +119,7 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
             <button
               type="button"
               onClick={() => { setLightboxIndex(selected); setLightboxOpen(true); }}
-              className="w-full h-full cursor-zoom-in"
+              className="block w-full h-full cursor-zoom-in"
             >
               <img
                 src={photos[selected]}
