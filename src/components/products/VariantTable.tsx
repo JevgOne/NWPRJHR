@@ -139,11 +139,15 @@ export function VariantTable({
   async function handleSavePrice(variantId: string, field: string, newPriceHalere: number) {
     setSaving(variantId);
     try {
-      await fetch(`/api/variants/${variantId}`, {
+      const res = await fetch(`/api/variants/${variantId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [field]: newPriceHalere }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(`Chyba při ukládání: ${err.error || res.statusText}`);
+      }
       router.refresh();
     } finally {
       setSaving(null);
@@ -154,11 +158,21 @@ export function VariantTable({
   async function handleResetOverride(variantId: string) {
     setSaving(variantId);
     try {
-      await fetch(`/api/variants/${variantId}`, {
+      // Reset override AND trigger recalculation by sending costPricePerGram
+      const variant = variants.find(v => v.id === variantId);
+      const body: Record<string, unknown> = { retailManualOverride: false };
+      if (variant?.costPricePerGram) {
+        body.costPricePerGram = variant.costPricePerGram;
+      }
+      const res = await fetch(`/api/variants/${variantId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ retailManualOverride: false }),
+        body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(`Chyba při resetu: ${err.error || res.statusText}`);
+      }
       router.refresh();
     } finally {
       setSaving(null);
