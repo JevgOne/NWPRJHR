@@ -64,6 +64,47 @@ const nextConfig: NextConfig = {
         destination: "/rus/offer/kategorie/luxe",
         permanent: true,
       },
+      // Legacy URL redirects
+      {
+        source: "/vlasy/virgin",
+        destination: "/offer?category=VIRGIN",
+        permanent: true,
+      },
+      {
+        source: "/vlasy/luxe",
+        destination: "/offer?category=LUXE",
+        permanent: true,
+      },
+      {
+        source: "/vlasy/:slug",
+        destination: "/offer",
+        permanent: false,
+      },
+      {
+        source: "/vlasy",
+        destination: "/offer",
+        permanent: true,
+      },
+      {
+        source: "/o-nas",
+        destination: "/about",
+        permanent: true,
+      },
+      {
+        source: "/faq",
+        destination: "/poradna",
+        permanent: false,
+      },
+      {
+        source: "/register",
+        destination: "/registrace",
+        permanent: true,
+      },
+      {
+        source: "/stock",
+        destination: "/inventory",
+        permanent: true,
+      },
     ];
   },
 };

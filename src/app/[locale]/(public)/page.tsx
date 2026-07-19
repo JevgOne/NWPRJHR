@@ -55,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const BLOB = "https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com/hair";
+const BLOB = "/images/hair";
 
 const DEFAULT_IG_PHOTOS = [
   `${BLOB}/volne-vlasy.jpg`,
