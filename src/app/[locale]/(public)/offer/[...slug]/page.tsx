@@ -32,12 +32,15 @@ import { WishlistToggle } from "@/components/public/WishlistToggle";
 
 const getCachedReviewData = unstable_cache(
   async (productId: string) => {
-    let stats = await prisma.review.aggregate({
+    // Product-specific stats for JSON-LD schema (no fallback to site-wide)
+    const productStats = await prisma.review.aggregate({
       where: { productId, active: true },
       _avg: { rating: true },
       _count: true,
     });
 
+    // Site-wide stats for display purposes only (not used in schema)
+    let stats = productStats;
     if (stats._count === 0) {
       stats = await prisma.review.aggregate({
         where: { active: true },
@@ -46,7 +49,15 @@ const getCachedReviewData = unstable_cache(
       });
     }
 
-    const reviews = await prisma.review.findMany({
+    // Product-specific reviews for schema; site-wide for display
+    const schemaReviews = await prisma.review.findMany({
+      where: { productId, active: true },
+      select: { authorName: true, rating: true, text: true },
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: 5,
+    });
+
+    const reviews = schemaReviews.length > 0 ? schemaReviews : await prisma.review.findMany({
       where: {
         active: true,
         OR: [{ productId }, { productId: null }],
@@ -56,7 +67,7 @@ const getCachedReviewData = unstable_cache(
       take: 5,
     });
 
-    return { stats, reviews };
+    return { stats, productStats, reviews, schemaReviews };
   },
   ["product-review-data"],
   { revalidate: 300, tags: ["reviews"] }
@@ -299,14 +310,15 @@ async function generateProductMetadataFromProduct(
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
   const colorCodes = [...new Set(product.variants.map((v) => v.color))];
 
-  // Title: "{name} {cm} {barva}" — layout adds "| Hairland" (11 chars) via template
+  // Title: "{name} {processing} {cm} {barva}" — layout adds "| Hairland" (11 chars) via template
   const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
+  const procLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? "";
   const colorNames = colorCodes.map((c) => {
     const key = getHairColor(c).nameKey;
     try { return t(`colors.${key}`); } catch { return c; }
   });
   const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
-  const baseTitle = [product.name, lengthStr].filter(Boolean).join(" ");
+  const baseTitle = [product.name, procLabel, lengthStr].filter(Boolean).join(" ");
   // Add color only if total (incl. " | Hairland" = 11 chars) fits in 60
   const titleWithColor = colorStr ? `${baseTitle} ${colorStr}` : baseTitle;
   const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
@@ -323,6 +335,14 @@ async function generateProductMetadataFromProduct(
 
   const productSlug = product.slug ?? product.id;
   const ogImg = product.ogImage || product.photos[0];
+  // Minimum price for OG product tags
+  const minPrice = product.variants.length > 0
+    ? Math.min(...product.variants
+        .filter(v => v.retailPricePerGram > 0 || (v.retailPricePerPiece ?? 0) > 0)
+        .map(v => v.sellingMode === "BY_PIECE" ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram * 100)
+      )
+    : null;
+
   return {
     title,
     description,
@@ -343,6 +363,15 @@ async function generateProductMetadataFromProduct(
       title,
       description,
       ...(ogImg && { images: [ogImg] }),
+    },
+    other: {
+      ...(minPrice && {
+        "product:price:amount": (minPrice / 100).toFixed(2),
+        "product:price:currency": "CZK",
+      }),
+      "product:availability": product.archived ? "oos" : "instock",
+      "product:brand": "Hairland",
+      "product:condition": "new",
     },
   };
 }
@@ -528,32 +557,50 @@ async function ProductDetailView({
   });
   const description = localizedDesc || autoBio;
 
-  // Cached review stats + snippets for JSON-LD
-  const { stats: reviewStats, reviews: reviewsForSchema } = await getCachedReviewData(product.id);
+  // Cached review stats + snippets for JSON-LD (product-specific only, no site-wide fallback)
+  const { productStats: reviewStats, schemaReviews: reviewsForSchema } = await getCachedReviewData(product.id);
 
   // FAQ data by category
   const faqByCategory: Record<string, Array<{ q: string; a: string }>> = {
     VIRGIN: [
-      { q: "Co jsou panenské (virgin) vlasy?", a: "Panenské vlasy jsou nejvyšší kvalita lidských vlasů, které nebyly chemicky ošetřeny ani barveny. Kutikula je zachována v původním směru, což zajišťuje přirozený lesk a minimální zamotávání." },
-      { q: "Jak dlouho vydrží panenské vlasy?", a: "Při správné péči vydrží panenské vlasy 2 a více let. Díky neporušené kutikule si dlouho zachovávají hebkost a lesk." },
+      { q: "Co jsou panenské (virgin) vlasy?", a: "Panenské vlasy jsou nejvyšší kvalita lidských vlasů k prodloužení, které nebyly chemicky ošetřeny ani barveny. Kutikula je zachována v původním směru, což zajišťuje přirozený lesk a minimální zamotávání." },
+      { q: "Jak dlouho vydrží panenské vlasy?", a: "Při správné péči vydrží panenské vlasy 2 a více let. Díky neporušené kutikule si dlouho zachovávají hebkost a lesk — jsou to nejodolnější vlasy na trhu." },
       { q: "Mohu panenské vlasy barvit?", a: "Ano, panenské vlasy lze barvit, odbarvovat i jinak chemicky upravovat. Díky tomu, že nebyly dříve ošetřeny, reagují na barvení velmi dobře a výsledek je přirozený." },
-      { q: "Jak pečovat o panenské vlasy?", a: "Používejte šampony bez sulfátů, pravidelně aplikujte kondicionér a vlasový olej. Před spaním vlasy spleťte do volného copu. Vyhněte se nadměrnému tepelnému stylingu." },
+      { q: "Jak pečovat o panenské vlasy po barvení?", a: "Po barvení používejte šampony bez sulfátů určené pro barvené vlasy. Aplikujte hluboce hydratační masku minimálně 1× týdně a vlasový olej na konečky. Mezi barvením dodržujte alespoň 6–8 týdnů odstup." },
+      { q: "Jak pečovat o panenské vlasy?", a: "Používejte šampony bez sulfátů, pravidelně aplikujte kondicionér a vlasový olej. Před spaním vlasy spleťte do volného copu. Vyhněte se nadměrnému tepelnému stylingu a vždy používejte termoochranný sprej." },
+      { q: "Odkud pochází panenské vlasy Hairland?", a: "Naše RAW panenské vlasy pocházejí z východní Evropy — především z Ukrajiny, Běloruska a Moldavska. Východoevropské vlasy mají jemnou strukturu blízkou středoevropským vlasům, proto vypadají naprosto přirozeně." },
     ],
     LUXE: [
-      { q: "Jaký je rozdíl mezi luxe a panenskými vlasy?", a: "Luxe vlasy prošly šetrným zpracováním, které zachovává přirozenou strukturu, zatímco panenské vlasy jsou zcela neošetřené. Luxe vlasy nabízejí luxusní kvalitu za příznivější cenu." },
-      { q: "Jak dlouho vydrží luxe vlasy?", a: "Luxe vlasy při správné péči vydrží 1 až 2 roky. Životnost závisí na intenzitě nošení a péči." },
-      { q: "Jaké možnosti stylování mají luxe vlasy?", a: "Luxe vlasy lze kulmovat, žehlit, fénovat i natáčet. Doporučujeme používat termoochranný sprej pro delší životnost vlasů." },
+      { q: "Jaký je rozdíl mezi luxe a panenskými vlasy?", a: "Luxe vlasy prošly šetrným zpracováním, které zachovává přirozenou strukturu, zatímco panenské vlasy jsou zcela neošetřené. Luxe vlasy nabízejí prémiovou kvalitu prodloužení za příznivější cenu." },
+      { q: "Jak dlouho vydrží luxe vlasy?", a: "Luxe vlasy při správné péči vydrží 1 až 2 roky. Životnost závisí na intenzitě nošení a péči — pravidelné použití hydratačních masek výrazně prodlužuje jejich trvanlivost." },
+      { q: "Jaké možnosti stylování mají luxe vlasy?", a: "Luxe vlasy lze kulmovat, žehlit, fénovat i natáčet. Doporučujeme používat termoochranný sprej a nastavit teplotu maximálně na 180 °C pro delší životnost vlasů." },
+      { q: "Mohu luxe vlasy přebarvit?", a: "Ano, luxe vlasy lze barvit. Doporučujeme tmavší odstíny zesvětlovat maximálně o 2–3 tóny. Po barvení ošetřete vlasy regenerační maskou a omezte tepelný styling na minimum po dobu prvního týdne." },
+      { q: "Pro koho jsou luxe vlasy ideální?", a: "Luxe vlasy jsou ideální pro klientky, které chtějí prémiovou kvalitu vlasů k prodloužení za rozumnou cenu. Jsou skvělou volbou pro pravidelné nošení a profesionální kadeřnické aplikace." },
     ],
     STANDARD: [
-      { q: "Pro koho jsou standardní vlasy vhodné?", a: "Standardní vlasy jsou ideální volbou pro ty, kteří hledají kvalitní prodloužení za dostupnou cenu. Hodí se pro příležitostné nošení nebo jako první zkušenost s prodlužováním." },
-      { q: "Jaká je výhoda standardních vlasů oproti dražším variantám?", a: "Hlavní výhodou je příznivá cena při zachování dobré kvality. Standardní vlasy vypadají přirozeně a jsou vhodné pro běžné nošení." },
-      { q: "Jak dlouho vydrží standardní vlasy?", a: "Standardní vlasy vydrží přibližně 6 až 12 měsíců v závislosti na frekvenci nošení a péči." },
+      { q: "Pro koho jsou standardní vlasy vhodné?", a: "Standardní vlasy jsou ideální volbou pro ty, kteří hledají kvalitní prodloužení vlasů za dostupnou cenu. Hodí se pro příležitostné nošení nebo jako první zkušenost s prodlužováním." },
+      { q: "Jaká je výhoda standardních vlasů oproti dražším variantám?", a: "Hlavní výhodou je příznivá cena při zachování dobré kvality. Standardní vlasy vypadají přirozeně a jsou vhodné pro běžné nošení i jednorázové akce." },
+      { q: "Jak dlouho vydrží standardní vlasy?", a: "Standardní vlasy vydrží přibližně 6 až 12 měsíců v závislosti na frekvenci nošení a péči. Při šetrném zacházení a správné údržbě mohou vydržet i déle." },
+      { q: "Lze standardní vlasy barvit?", a: "Standardní vlasy lze barvit, ale doporučujeme pouze tónování nebo barvení do tmavších odstínů. Odbarvování může zkrátit životnost. Po barvení vždy aplikujte regenerační kúru." },
     ],
   };
   const generalFaq: Array<{ q: string; a: string }> = [
-    { q: "Jak aplikovat clip-in a tape-in vlasy?", a: "Clip-in vlasy se jednoduše připínají sponkami k vlastním vlasům — zvládnete to samy doma za pár minut. Tape-in vlasy se lepí speciální páskou k vlastním vlasům a aplikaci doporučujeme u kadeřníka." },
-    { q: "Kolik gramů vlasů potřebuji?", a: "Záleží na požadovaném objemu a délce. Pro jemné doplnění stačí 100 g, pro střední objem 150 g a pro plný objem 200 g a více. Podrobný průvodce najdete na naší stránce." },
-    { q: "Nabízíte dopravu zdarma v Praze?", a: "Ano, v Praze nabízíme osobní doručení zdarma. Pro ostatní lokality v ČR zasíláme Českou poštou." },
+    // Textura
+    { q: "Jaký je rozdíl mezi rovnými, vlnitými a kudrnatými vlasy?", a: "Rovné vlasy jsou nejuniverzálnější — snadno se stylují a vypadají přirozeně. Vlnité přírodní vlasy dodávají objem a romantický look. Kudrnaté vlasy jsou ideální pro maximální objem. Všechny textury nabízíme jako RAW nezpracované vlasy, které si zachovávají svou přirozenou strukturu." },
+    { q: "Jak pečovat o rovné prodloužené vlasy?", a: "Rovné vlasy k prodloužení udržíte hladké pravidelným kartáčováním speciálním kartáčem od konečků nahoru. Aplikujte lehký olej nebo sérum na konečky. Při sušení fénem směřujte proud vzduchu od kořínků ke konečkům, aby vlasy zůstaly lesklé." },
+    { q: "Jak pečovat o vlnité a kudrnaté vlasy?", a: "Vlnité a kudrnaté vlasy rozčesávejte pouze za mokra hřebenem s širokými zuby. Používejte hydratační masky a bezoplachové kondicionéry. Nechte vlasy uschnout přirozeně nebo použijte difuzér — kartáčování za sucha narušuje přirozený vzor vln." },
+    // Objednávka a zpracování
+    { q: "Co jsou RAW vlasy a jak se liší od hotových příčesků?", a: "RAW vlasy jsou přírodní nezpracované lidské vlasy s neporušenou kutikulou — nejvyšší možná kvalita pro prodloužení vlasů. Na rozdíl od hotových příčesků z obchodu se RAW vlasy zpracovávají na zakázku přesně podle vašich požadavků — clip-in, tape-in, keratin nebo micro ring." },
+    { q: "Jak probíhá objednávka vlasů na míru?", a: "Vyberete si RAW vlasy (kategorie, délka, barva, textura) a zvolíte způsob zpracování — clip-in, tape-in, keratin nebo micro ring. Zakázkové zpracování trvá přibližně 7 pracovních dní. Kontaktujte nás přes telefon +420 608 553 103, WhatsApp nebo Instagram pro konzultaci." },
+    { q: "Kolik gramů vlasů potřebuji k prodloužení?", a: "Záleží na požadovaném objemu a délce vlastních vlasů. Pro jemné doplnění hustoty stačí 100 g, pro střední objem 150 g a pro plný objem nebo velmi dlouhé prodloužení 200 g a více. Podrobný průvodce gramáží najdete na naší stránce." },
+    // Konzultace a doručení
+    { q: "Nabízíte osobní konzultaci před nákupem?", a: "Ano, nabízíme bezplatnou osobní konzultaci v Praze, kde vám pomůžeme vybrat správný odstín, délku a gramáž přírodních vlasů k prodloužení. Můžete si vlasy prohlédnout a osahat naživo. Konzultaci si domluvte na +420 608 553 103 nebo přes WhatsApp." },
+    { q: "Jak funguje doručení a kolik stojí?", a: "V Praze nabízíme osobní doručení zdarma — přivezeme vlasy přímo k vám nebo do salonu. Pro ostatní lokality v ČR zasíláme Českou poštou nebo přepravní službou." },
+    // Platba a vrácení
+    { q: "Jaké platební metody přijímáte?", a: "Přijímáme platbu bankovním převodem a hotovost při osobním převzetí v Praze. Pro B2B zákazníky (kadeřníky a salony) nabízíme fakturaci se splatností." },
+    { q: "Mohu vlasy vrátit, pokud mi nesedí?", a: "Nepoužité vlasy v původním obalu lze vrátit do 14 dnů od převzetí. Vlasy nesmí být střižené, barvené ani jinak upravované. Kontaktujte nás a domluvíme se na postupu vrácení nebo výměny." },
+    // B2B
+    { q: "Spolupracujete s kadeřníky a salony?", a: "Ano, nabízíme zvýhodněné B2B ceny prémiových RAW vlasů pro kadeřníky a salony. Zajistíme pravidelné dodávky, fakturaci a individuální velkoobchodní podmínky. Kontaktujte nás pro nezávaznou nabídku." },
   ];
   const categoryFaq = faqByCategory[product.category] ?? [];
   const allFaq = [...categoryFaq, ...generalFaq];
@@ -602,6 +649,31 @@ async function ProductDetailView({
     additionalProperties.push({ "@type": "PropertyValue", name: "Délka", value: lengths.map((l) => `${l} cm`).join(", ") });
   }
 
+  // Determine real availability from stock
+  const hasStock = pickerVariants.some(v => v.availableGrams > 0 || v.availablePieces > 0);
+  const hasPreOrder = pickerVariants.some(v => v.availableToOrder);
+  const schemaAvailability = product.archived
+    ? "https://schema.org/Discontinued"
+    : hasStock
+      ? "https://schema.org/InStock"
+      : hasPreOrder
+        ? "https://schema.org/PreOrder"
+        : "https://schema.org/OutOfStock";
+
+  // Use focused variant's SKU if available, otherwise first variant
+  const skuVariant = focusedVariant ?? (product.variants.length > 0 ? product.variants[0] : null);
+  const productSku = skuVariant
+    ? generateSku(product.category, product.texture, skuVariant.color, skuVariant.lengthCm)
+    : product.id;
+
+  // Color name for schema
+  const schemaColor = (() => {
+    const v = focusedVariant ?? (product.variants.length > 0 ? product.variants[0] : null);
+    if (!v) return product.colorTone ?? undefined;
+    const key = getHairColor(v.color).nameKey;
+    try { return t(`colors.${key}`); } catch { return key; }
+  })();
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -609,10 +681,10 @@ async function ProductDetailView({
     description: schemaDesc,
     image: schemaImage,
     brand: { "@type": "Brand", name: "Hairland" },
-    sku: product.variants.length > 0
-      ? generateSku(product.category, product.texture, product.variants[0].color, product.variants[0].lengthCm)
-      : product.id,
+    sku: productSku,
+    mpn: productSku,
     material: "100% lidské vlasy",
+    ...(schemaColor && { color: schemaColor }),
     ...(product.origin && ORIGIN_ISO[product.origin] && {
       countryOfOrigin: { "@type": "Country", name: ORIGIN_ISO[product.origin] },
     }),
@@ -624,9 +696,9 @@ async function ProductDetailView({
         ? (pricePerGram / 100).toFixed(2)
         : (priceTip100g! / 100).toFixed(2),
       priceCurrency: "CZK",
-      availability: product.archived
-        ? "https://schema.org/Discontinued"
-        : "https://schema.org/InStock",
+      availability: schemaAvailability,
+      itemCondition: "https://schema.org/NewCondition",
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       url: `https://www.hairland.cz/offer/${product.slug ?? product.id}`,
       seller: {
         "@type": "Organization",
