@@ -131,12 +131,12 @@ export function NewSaleWizard({
   );
 
   const addItemFromVariantId = useCallback(
-    async (variantId: string) => {
+    async (variantId: string, fallbackProduct?: { origin?: string | null; texture?: string | null; category?: string } | null) => {
       let label = variantId;
-      let origin: string | null = null;
-      let texture: string | null = null;
+      let origin: string | null = fallbackProduct?.origin ?? null;
+      let texture: string | null = fallbackProduct?.texture ?? null;
       let sku: string | undefined;
-      let category: string | undefined;
+      let category: string | undefined = fallbackProduct?.category;
 
       for (const p of products) {
         const v = p.variants.find((v) => v.id === variantId);
@@ -266,6 +266,8 @@ export function NewSaleWizard({
 
       // Extract variantId from QR URL or barcode
       let variantId: string | null = null;
+      let barcodeProduct: { origin?: string | null; texture?: string | null; category?: string } | null = null;
+
       const urlMatch = scanned.match(/variantId=([a-zA-Z0-9_-]+)/);
       if (urlMatch) {
         variantId = urlMatch[1];
@@ -277,7 +279,8 @@ export function NewSaleWizard({
           return;
         }
         const delivery = await res.json();
-        variantId = delivery.variantId;
+        variantId = delivery.variant?.id ?? delivery.variantId;
+        barcodeProduct = delivery.variant?.product ?? null;
       }
 
       if (!variantId) return;
@@ -285,7 +288,7 @@ export function NewSaleWizard({
       // Prevent duplicate — if variant already in items, skip
       if (items.some((i) => i.variantId === variantId)) return;
 
-      await addItemFromVariantId(variantId);
+      await addItemFromVariantId(variantId, barcodeProduct);
     },
     [addItemFromVariantId, t, customerType, items]
   );

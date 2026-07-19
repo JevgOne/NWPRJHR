@@ -66,13 +66,11 @@ export function SaleItemRow({
         </Button>
       </div>
 
-      {(item.origin || item.texture || item.sku) && (
-        <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted">
-          {item.origin && <span>{item.origin}</span>}
-          {item.texture && <span>{item.texture}</span>}
-          {item.sku && <span className="font-mono">{item.sku}</span>}
-        </div>
-      )}
+      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted">
+        {item.origin ? <span>{item.origin}</span> : item.category && <span className="text-muted/70">{item.category}</span>}
+        {item.texture && <span>{item.texture}</span>}
+        {item.sku && <span className="font-mono">{item.sku}</span>}
+      </div>
 
       {isByPiece ? (
         <div className="space-y-2">
@@ -131,9 +129,9 @@ export function SaleItemRow({
           {t("availableStock")}:{" "}
           {isByPiece
             ? item.availablePieces > 0
-              ? `${item.availablePieces} ${tStock("pieces")} (${Math.round(item.availableGrams / item.availablePieces)} g/${tStock("pieces")})`
-              : `0 ${tStock("pieces")}`
-            : `${item.availableGrams} ${tStock("grams")}`}
+              ? `${item.availablePieces} ks – ${item.availableGrams} g`
+              : `0 ks`
+            : `${item.availableGrams} g`}
         </span>
       </div>
 

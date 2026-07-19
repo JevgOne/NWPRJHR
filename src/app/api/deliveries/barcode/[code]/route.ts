@@ -40,6 +40,8 @@ export async function GET(
         id: delivery.variant.product.id,
         name: delivery.variant.product.name,
         category: delivery.variant.product.category,
+        origin: delivery.variant.product.origin,
+        texture: delivery.variant.product.texture,
       },
     },
   });
