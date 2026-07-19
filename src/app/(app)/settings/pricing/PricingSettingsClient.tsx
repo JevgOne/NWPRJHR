@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { CategoryBadge } from "@/components/products/CategoryBadge";
 
-const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
+const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"] as const;
 
 interface PriceSetting {
   id: string;

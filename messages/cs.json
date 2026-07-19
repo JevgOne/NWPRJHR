@@ -54,6 +54,8 @@
     "kadernicDescription": "Ověřené kadeřnice a salony spolupracující s Hairland. Najděte specialistku na prodloužení vlasů ve vašem okolí.",
     "recenzeTitle": "Recenze zákazníků na vlasy Hairland",
     "recenzeDescription": "Recenze zákazníků na prémiové vlasy Hairland. Zkušenosti s kvalitou RAW vlasů, zpracováním na zakázku a zákaznickým servisem.",
+    "accessoriesTitle": "Příslušenství pro vlasy",
+    "accessoriesDesc": "Žehličky, šampony a hřebeny pro prodloužené vlasy. Profesionální péče pro dlouhou životnost vlasových pramenů.",
     "dopravaTitle": "Doprava a doručení",
     "dopravaDescription": "Informace o dopravě a doručení vlasů. Osobní odběr po Praze zdarma, zásilka Českou poštou po celé ČR.",
     "obchodniTitle": "Obchodní podmínky",
@@ -214,7 +216,8 @@
     "virgin": "Panenské Vlasy",
     "luxe": "Luxe Vlasy",
     "standard": "Standard Vlasy",
-    "sale": "Výprodej"
+    "sale": "Výprodej",
+    "accessory": "Příslušenství"
   },
   "stock": {
     "warehouse": "Sklad",
@@ -572,7 +575,8 @@
       "products": "Nabídka",
       "contact": "Kontakt",
       "login": "Přihlásit se",
-      "privacy": "Ochrana osobních údajů"
+      "privacy": "Ochrana osobních údajů",
+      "accessories": "Příslušenství"
     },
     "hero": {
       "title": "Prémiové vlasy z celého světa",
@@ -928,6 +932,10 @@
       "notifyEmailPlaceholder": "Váš e-mail",
       "notifySuccess": "Dáme vám vědět, až bude skladem",
       "notifyAlreadySubscribed": "Hlídáte dostupnost"
+    },
+    "accessories": {
+      "title": "Příslušenství",
+      "subtitle": "Žehličky, šampony a hřebeny pro prodloužené vlasy. Profesionální péče pro dlouhou životnost vašich vlasů."
     },
     "inquiry": {
       "addToInquiry": "Přidat do poptávky",

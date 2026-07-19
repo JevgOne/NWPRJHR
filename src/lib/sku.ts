@@ -3,6 +3,7 @@ export const SKU_CATEGORY_MAP: Record<string, string> = {
   LUXE: "L",
   STANDARD: "S",
   SALE: "X",
+  ACCESSORY: "A",
 };
 export const SKU_CATEGORY_REVERSE = Object.fromEntries(
   Object.entries(SKU_CATEGORY_MAP).map(([k, v]) => [v, k])

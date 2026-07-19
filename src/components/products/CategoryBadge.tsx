@@ -8,13 +8,15 @@ const categoryStyles: Record<ProductCategory, string> = {
   LUXE: "bg-violet-100 text-violet-800",
   STANDARD: "bg-nude-100 text-espresso",
   SALE: "bg-red-100 text-red-800",
+  ACCESSORY: "bg-sky-100 text-sky-800",
 };
 
-const categoryKeys: Record<ProductCategory, "virgin" | "luxe" | "standard" | "sale"> = {
+const categoryKeys: Record<ProductCategory, "virgin" | "luxe" | "standard" | "sale" | "accessory"> = {
   VIRGIN: "virgin",
   LUXE: "luxe",
   STANDARD: "standard",
   SALE: "sale",
+  ACCESSORY: "accessory",
 };
 
 export function CategoryBadge({ category }: { category: ProductCategory }) {

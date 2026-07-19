@@ -144,6 +144,7 @@ export function PublicNavbar() {
   const mainLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/offer", label: t("nav.products") },
+    { href: "/prislusenstvi", label: t("nav.accessories") },
   ];
 
   const inspiraceItems = [
