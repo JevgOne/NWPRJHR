@@ -7,6 +7,7 @@ import confetti from "canvas-confetti";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 import { getReferralFromStorage, clearReferralFromStorage } from "@/components/public/ReferralTracker";
+import { PacketaWidget, type PacketaPoint } from "@/components/public/PacketaWidget";
 
 
 interface InquiryCartClientProps {
@@ -25,6 +26,9 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [packetaPoint, setPacketaPoint] = useState<{
+    id: string; name: string; city: string;
+  } | null>(null);
 
   // Auto-load referral code from localStorage
   useEffect(() => {
@@ -93,6 +97,10 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "cart" && items.length === 0) return;
+    if (form.shippingMethod === "PACKETA" && !packetaPoint) {
+      setError(t("packetaRequired"));
+      return;
+    }
     setSubmitting(true);
     setError("");
 
@@ -120,6 +128,9 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
           items: isConsult ? [] : items,
           shippingMethod: isConsult ? undefined : form.shippingMethod || undefined,
           paymentMethod: isConsult ? undefined : form.paymentMethod || undefined,
+          packetaPointId: packetaPoint?.id || undefined,
+          packetaPointName: packetaPoint?.name || undefined,
+          packetaPointCity: packetaPoint?.city || undefined,
         }),
       });
 
@@ -361,7 +372,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                   {([
                     { value: "PERSONAL_DELIVERY", label: t("shippingPersonal"), price: t("shippingFree") },
                     { value: "PICKUP", label: t("shippingPickup"), price: t("shippingFree") },
-                    { value: "PACKETA", label: t("shippingPacketa"), price: "89 Kč", disabled: true },
+                    { value: "PACKETA", label: t("shippingPacketa"), price: "89 Kč" },
                     { value: "CZECH_POST", label: t("shippingPost"), price: "99 Kč", disabled: true },
                   ] as const).map((opt) => (
                     <label
@@ -377,7 +388,10 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                         name="shippingMethod"
                         value={opt.value}
                         checked={form.shippingMethod === opt.value}
-                        onChange={(e) => setField("shippingMethod", e.target.value)}
+                        onChange={(e) => {
+                          setField("shippingMethod", e.target.value);
+                          if (e.target.value !== "PACKETA") setPacketaPoint(null);
+                        }}
                         disabled={"disabled" in opt && opt.disabled}
                         className="accent-rose"
                       />
@@ -389,6 +403,22 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                     </label>
                   ))}
                 </div>
+                {form.shippingMethod === "PACKETA" && (
+                  <PacketaWidget
+                    onSelect={(point: PacketaPoint) => {
+                      setPacketaPoint({
+                        id: String(point.id),
+                        name: point.name,
+                        city: point.city,
+                      });
+                    }}
+                    selectedPoint={packetaPoint}
+                    language={locale === "uk" ? "en" : locale === "ru" ? "en" : "cs"}
+                  />
+                )}
+                {form.shippingMethod === "PACKETA" && !packetaPoint && (
+                  <p className="text-xs text-red-500 mt-1">{t("packetaRequired")}</p>
+                )}
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-ink mb-2">{t("paymentTitle")}</h3>

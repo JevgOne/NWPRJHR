@@ -999,7 +999,10 @@
       "paymentTransfer": "Банковский перевод",
       "paymentTransferDesc": "Счёт с QR кодом — оплата в течение 7 дней",
       "paymentCash": "Наличные при получении",
-      "paymentCashDesc": "Оплата при личной доставке или самовывозе"
+      "paymentCashDesc": "Оплата при личной доставке или самовывозе",
+      "packetaRequired": "Выберите пункт выдачи Zásilkovna",
+      "packetaChange": "— изменить",
+      "packetaSelect": "Выбрать пункт выдачи Zásilkovna"
     },
     "categoryInfo": {
       "virginDesc": "Высшее качество натуральных волос. 100% необработанные, полная кутикула сохранена в правильном направлении. Естественно блестящие, шелковистые и прочные.",
@@ -1412,7 +1415,10 @@
     "goToSaleDetail": "Перейти к деталям продажи",
     "confirmPayment": "Подтвердить оплату",
     "transferAwaitingPayment": "Ожидает подтверждения оплаты переводом. После подтверждения будет создан счёт-фактура и отправлен email.",
-    "invoice": "Счёт-фактура"
+    "invoice": "Счёт-фактура",
+    "shippingInfo": "Доставка",
+    "shippingMethod": "Способ доставки",
+    "shippingStatus": "Статус отправки"
   },
   "customer": {
     "title": "Клиенты",
@@ -2636,7 +2642,9 @@
     "colorDarkBrown": "Тёмно-коричневый",
     "colorDark": "Тёмный",
     "colorBlack": "Чёрный",
-    "customerPhotos": "Фото клиентки"
+    "customerPhotos": "Фото клиентки",
+    "shipping": "Доставка",
+    "payment": "Оплата"
   },
   "blog": {
     "title": "Блог",

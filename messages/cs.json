@@ -999,7 +999,10 @@
       "paymentTransfer": "Platba převodem",
       "paymentTransferDesc": "Faktura s QR kódem — splatnost 7 dní",
       "paymentCash": "Hotovost při předání",
-      "paymentCashDesc": "Platba při osobním doručení nebo odběru"
+      "paymentCashDesc": "Platba při osobním doručení nebo odběru",
+      "packetaRequired": "Vyberte výdejní místo Zásilkovny",
+      "packetaChange": "— změnit",
+      "packetaSelect": "Vybrat výdejní místo Zásilkovny"
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",
@@ -1412,7 +1415,10 @@
     "goToSaleDetail": "Přejít na detail prodeje",
     "confirmPayment": "Potvrdit platbu",
     "transferAwaitingPayment": "Čeká na potvrzení platby převodem. Po potvrzení se vytvoří faktura a odešle email.",
-    "invoice": "Faktura"
+    "invoice": "Faktura",
+    "shippingInfo": "Doprava",
+    "shippingMethod": "Způsob doručení",
+    "shippingStatus": "Stav zásilky"
   },
   "customer": {
     "title": "Zákazníci",
@@ -2636,7 +2642,9 @@
     "colorDarkBrown": "Tmavě hnědá",
     "colorDark": "Tmavá",
     "colorBlack": "Černá",
-    "customerPhotos": "Fotky zákaznice"
+    "customerPhotos": "Fotky zákaznice",
+    "shipping": "Doprava",
+    "payment": "Platba"
   },
   "blog": {
     "title": "Blog",

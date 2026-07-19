@@ -999,7 +999,10 @@
       "paymentTransfer": "Банківський переказ",
       "paymentTransferDesc": "Рахунок з QR кодом — оплата протягом 7 днів",
       "paymentCash": "Готівка при отриманні",
-      "paymentCashDesc": "Оплата при особистій доставці або самовивозі"
+      "paymentCashDesc": "Оплата при особистій доставці або самовивозі",
+      "packetaRequired": "Оберіть пункт видачі Zásilkovna",
+      "packetaChange": "— змінити",
+      "packetaSelect": "Обрати пункт видачі Zásilkovna"
     },
     "categoryInfo": {
       "virginDesc": "Найвища якість натурального волосся. 100% необроблене, повна кутикула збережена у правильному напрямку. Природно блискуче, шовковисте та міцне.",
@@ -1412,7 +1415,10 @@
     "goToSaleDetail": "Перейти до деталей продажу",
     "confirmPayment": "Підтвердити оплату",
     "transferAwaitingPayment": "Очікує підтвердження оплати переказом. Після підтвердження буде створено рахунок-фактуру та надіслано email.",
-    "invoice": "Рахунок-фактура"
+    "invoice": "Рахунок-фактура",
+    "shippingInfo": "Доставка",
+    "shippingMethod": "Спосіб доставки",
+    "shippingStatus": "Стан відправлення"
   },
   "customer": {
     "title": "Клієнти",
@@ -2636,7 +2642,9 @@
     "colorDarkBrown": "Темно-коричневий",
     "colorDark": "Темний",
     "colorBlack": "Чорний",
-    "customerPhotos": "Фото клієнтки"
+    "customerPhotos": "Фото клієнтки",
+    "shipping": "Доставка",
+    "payment": "Оплата"
   },
   "blog": {
     "title": "Блог",

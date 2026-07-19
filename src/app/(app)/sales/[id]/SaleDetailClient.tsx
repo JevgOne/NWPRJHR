@@ -27,6 +27,13 @@ interface SaleDetail {
   completedAt: string;
   note?: string;
   userName?: string;
+  shippingMethod?: string;
+  shippingStatus?: string;
+  shippingTrackingId?: string;
+  shippingCost?: number;
+  packetaPointId?: string;
+  packetaPointName?: string;
+  packetaPointCity?: string;
   invoice?: { id: string; number: string; status: string } | null;
   items: {
     id: string;
@@ -338,6 +345,92 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       {sale.note && (
         <Card>
           <p className="text-sm text-gray-600">{sale.note}</p>
+        </Card>
+      )}
+
+      {/* Shipping info */}
+      {sale.shippingMethod && (
+        <Card>
+          <h2 className="font-medium mb-3">{t("shippingInfo")}</h2>
+          <div className="grid grid-cols-2 gap-y-2 text-sm">
+            <span className="text-muted">{t("shippingMethod")}</span>
+            <span>
+              {sale.shippingMethod === "PACKETA"
+                ? `Zásilkovna — ${sale.packetaPointName || ""} (${sale.packetaPointCity || ""})`
+                : sale.shippingMethod === "PERSONAL_DELIVERY"
+                ? "Osobní rozvoz"
+                : sale.shippingMethod === "PICKUP"
+                ? "Osobní vyzvednutí"
+                : "Česká pošta"}
+            </span>
+            {sale.shippingStatus && (
+              <>
+                <span className="text-muted">{t("shippingStatus")}</span>
+                <span className={
+                  sale.shippingStatus === "SHIPPED" ? "text-blue-600 font-medium" :
+                  sale.shippingStatus === "DELIVERED" ? "text-green-600 font-medium" :
+                  "text-yellow-600 font-medium"
+                }>
+                  {sale.shippingStatus === "SHIPPED" ? "Odesláno" :
+                   sale.shippingStatus === "DELIVERED" ? "Doručeno" : "Čeká na odeslání"}
+                </span>
+              </>
+            )}
+            {sale.shippingTrackingId && (
+              <>
+                <span className="text-muted">Tracking</span>
+                <span className="font-mono text-xs">{sale.shippingTrackingId}</span>
+              </>
+            )}
+          </div>
+          {/* Packeta actions */}
+          {isOwner && sale.shippingMethod === "PACKETA" && (
+            <div className="mt-3 pt-3 border-t border-line flex flex-wrap gap-2">
+              {!sale.shippingTrackingId && (
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    const res = await fetch("/api/admin/packeta/create", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ saleId: sale.id }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                      const r = await fetch(`/api/sales/${id}`);
+                      setSale(await r.json());
+                    }
+                  }}
+                >
+                  Odeslat do Zásilkovny
+                </Button>
+              )}
+              {sale.shippingTrackingId && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => window.open(`/api/admin/packeta/label?packetId=${sale.shippingTrackingId}`, "_blank")}
+                  >
+                    Stáhnout štítek
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={async () => {
+                      const res = await fetch(`/api/admin/packeta/tracking?packetId=${sale.shippingTrackingId}`);
+                      const data = await res.json();
+                      if (data.status) {
+                        alert(`Stav: ${data.status.text}\n\nHistorie:\n${data.tracking.map((t: { dateTime: string; statusText: string }) => `${t.dateTime}: ${t.statusText}`).join("\n")}`);
+                      }
+                    }}
+                  >
+                    Zkontrolovat stav
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
         </Card>
       )}
 

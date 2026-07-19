@@ -58,6 +58,13 @@ export function serializeSaleForRole(
     totalAmount: sale.totalAmount,
     completedAt: sale.completedAt,
     createdAt: sale.createdAt,
+    shippingMethod: sale.shippingMethod,
+    shippingStatus: sale.shippingStatus,
+    shippingTrackingId: sale.shippingTrackingId,
+    shippingCost: sale.shippingCost,
+    packetaPointId: sale.packetaPointId,
+    packetaPointName: sale.packetaPointName,
+    packetaPointCity: sale.packetaPointCity,
     items: sale.items.map((item) => serializeSaleItemForRole(item, role)),
   };
 

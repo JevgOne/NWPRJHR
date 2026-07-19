@@ -37,6 +37,11 @@ interface Inquiry {
   customerPhotos: string | null;
   customerId: string | null;
   city: string | null;
+  shippingMethod: string | null;
+  paymentMethod: string | null;
+  packetaPointId: string | null;
+  packetaPointName: string | null;
+  packetaPointCity: string | null;
   createdAt: string;
   items: InquiryItem[];
   subtotal: number;
@@ -255,6 +260,26 @@ export function InquiriesClient() {
                         <Detail label={t("email")} value={inq.email} />
                         {inq.phone && <Detail label={t("phone")} value={inq.phone} />}
                         {inq.city && <Detail label={t("city")} value={inq.city} />}
+                        {inq.shippingMethod && (
+                          <Detail
+                            label={t("shipping")}
+                            value={
+                              inq.shippingMethod === "PACKETA"
+                                ? `Zásilkovna — ${inq.packetaPointName || ""} (${inq.packetaPointCity || ""})`
+                                : inq.shippingMethod === "PERSONAL_DELIVERY"
+                                ? "Osobní rozvoz"
+                                : inq.shippingMethod === "PICKUP"
+                                ? "Osobní vyzvednutí"
+                                : "Česká pošta"
+                            }
+                          />
+                        )}
+                        {inq.paymentMethod && (
+                          <Detail
+                            label={t("payment")}
+                            value={inq.paymentMethod === "TRANSFER" ? "Převodem" : "Hotově"}
+                          />
+                        )}
                         {inq.salonName && <Detail label={t("salon")} value={inq.salonName} />}
                         {inq.promoCode && (
                           <Detail
