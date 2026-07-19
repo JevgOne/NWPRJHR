@@ -330,6 +330,7 @@ export function VariantTable({
                         ? (variant.retailPricePerPiece ?? 0)
                         : (variant.retailPricePerGram ?? 0) * 100;
                       const margin = sellPrice - costDisplay;
+                      const marginPct = costDisplay > 0 ? Math.round((margin / costDisplay) * 100) : 0;
                       const unit = isByPiece ? "/ks" : "/100g";
                       return (
                         <div className="flex items-center gap-1 mt-1">
@@ -353,7 +354,7 @@ export function VariantTable({
                           <span className={`text-[10px] font-medium ${
                             margin > 0 ? "text-emerald-600" : "text-red-500"
                           }`}>
-                            +{formatCZK(margin)}
+                            +{formatCZK(margin)} ({marginPct}%)
                           </span>
                         </div>
                       );

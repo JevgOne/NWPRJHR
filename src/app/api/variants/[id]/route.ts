@@ -30,6 +30,19 @@ export async function PUT(
 
   const data: Record<string, unknown> = { ...parsed.data };
 
+  // Recalculate retail price when cost price changes (unless manually overridden)
+  if (parsed.data.costPricePerGram !== undefined && !existing.retailManualOverride) {
+    const priceSetting = await prisma.priceSettings.findUnique({
+      where: { category: existing.product.category },
+    });
+    const markupPercent = priceSetting?.markupPercent ?? 100;
+    const newRetail = Math.round(
+      parsed.data.costPricePerGram * (10000 + markupPercent * 100) / 10000
+    );
+    data.retailPricePerGram = newRetail;
+    data.wholesalePricePerGram = newRetail;
+  }
+
   // Validate uniqueness when lengthCm or color changes
   if (parsed.data.lengthCm !== undefined || parsed.data.color !== undefined) {
     const newLength = parsed.data.lengthCm ?? existing.lengthCm;
