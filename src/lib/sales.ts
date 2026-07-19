@@ -24,7 +24,7 @@ export interface CompleteSaleInput {
   customerId?: string;
   items: SaleItemInput[];
   discount?: DiscountInput;
-  paymentType?: "TRANSFER" | "CASH" | "PROMO" | "WRITEOFF";
+  paymentType?: "TRANSFER" | "CASH" | "CARD" | "PROMO" | "WRITEOFF";
   receiptNumber?: string;
   orderId?: string;
   note?: string;

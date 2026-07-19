@@ -83,7 +83,7 @@ export function NewSaleWizard({
   const [scannerOpen, setScannerOpen] = useState(false);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
-  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "PROMO" | "WRITEOFF">("TRANSFER");
+  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "CARD" | "PROMO" | "WRITEOFF">("TRANSFER");
   const [receiptNumber, setReceiptNumber] = useState("");
   const [reserveMode, setReserveMode] = useState(false);
   const [paymentDueDate, setPaymentDueDate] = useState(
@@ -708,6 +708,7 @@ export function NewSaleWizard({
             {([
               { key: "TRANSFER", label: t("paymentTransfer") },
               { key: "CASH", label: t("paymentCash") },
+              { key: "CARD", label: t("paymentCard") },
               { key: "PROMO", label: t("paymentPromo") },
               { key: "WRITEOFF", label: t("paymentWriteoff") },
             ] as const).map((pt) => (
@@ -739,6 +740,9 @@ export function NewSaleWizard({
           )}
           {paymentType === "TRANSFER" && (
             <p className="text-xs text-muted mt-2">{t("transferHint")}</p>
+          )}
+          {paymentType === "CARD" && (
+            <p className="text-xs text-muted mt-2">{t("cardHint")}</p>
           )}
           {paymentType === "PROMO" && (
             <p className="text-xs text-muted mt-2">{t("promoHint")}</p>

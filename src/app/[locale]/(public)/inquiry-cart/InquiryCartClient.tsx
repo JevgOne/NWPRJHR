@@ -463,6 +463,31 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                       <p className="text-xs text-muted">{t("paymentCashDesc")}</p>
                     </div>
                   </label>
+                  <label
+                    className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                      form.paymentMethod === "CARD"
+                        ? "border-rose bg-rose/5"
+                        : "border-line hover:border-muted"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CARD"
+                      checked={form.paymentMethod === "CARD"}
+                      onChange={(e) => setField("paymentMethod", e.target.value)}
+                      className="accent-rose"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm text-ink">{t("paymentCard")}</span>
+                      <p className="text-xs text-muted">{t("paymentCardDesc")}</p>
+                    </div>
+                    <div className="flex gap-1.5 items-center">
+                      <span className="text-[10px] text-muted">Visa</span>
+                      <span className="text-[10px] text-muted">MC</span>
+                      <span className="text-[10px] text-muted">Apple Pay</span>
+                    </div>
+                  </label>
                 </div>
               </div>
             </div>

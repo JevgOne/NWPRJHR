@@ -277,7 +277,7 @@ export function InquiriesClient() {
                         {inq.paymentMethod && (
                           <Detail
                             label={t("payment")}
-                            value={inq.paymentMethod === "TRANSFER" ? "Převodem" : "Hotově"}
+                            value={inq.paymentMethod === "TRANSFER" ? "Převodem" : inq.paymentMethod === "CARD" ? "Kartou online" : "Hotově"}
                           />
                         )}
                         {inq.salonName && <Detail label={t("salon")} value={inq.salonName} />}

@@ -428,6 +428,7 @@ enum SaleStatus {
 enum PaymentType {
   TRANSFER
   CASH
+  CARD
   PROMO
   WRITEOFF
 }
@@ -816,17 +817,19 @@ model InvoiceItem {
 // ============================================================
 
 model Payment {
-  id            String    @id @default(cuid())
-  invoiceId     String
-  invoice       Invoice   @relation(fields: [invoiceId], references: [id])
+  id              String    @id @default(cuid())
+  invoiceId       String
+  invoice         Invoice   @relation(fields: [invoiceId], references: [id])
 
-  amount        Int
-  date          DateTime
-  matchedVS     String?
-  source        String    @default("MANUAL")
-  note          String?
+  amount          Int
+  date            DateTime
+  matchedVS       String?
+  source          String    @default("MANUAL")
+  note            String?
+  comgateTransId  String?
+  matchedAt       DateTime?
 
-  createdAt     DateTime  @default(now())
+  createdAt       DateTime  @default(now())
 
   @@index([invoiceId])
   @@index([matchedVS])

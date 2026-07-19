@@ -182,6 +182,7 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
               <span>
                 {sale.paymentType === "TRANSFER" ? t("paymentTransfer") :
                  sale.paymentType === "CASH" ? t("paymentCash") :
+                 sale.paymentType === "CARD" ? t("paymentCard") :
                  sale.paymentType === "PROMO" ? t("paymentPromo") : t("paymentWriteoff")}
               </span>
             </>
@@ -451,6 +452,28 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
         <Card>
           <div className="space-y-3">
             <p className="text-sm text-muted">{t("transferAwaitingPayment")}</p>
+            {confirmPaymentError && (
+              <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                {confirmPaymentError}
+              </div>
+            )}
+            <Button
+              size="lg"
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={handleConfirmPayment}
+              disabled={confirmingPayment}
+            >
+              {confirmingPayment ? tCommon("loading") : t("confirmPayment")}
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {/* Confirm Payment for CARD sales without invoice */}
+      {isOwner && sale.status === "COMPLETED" && sale.paymentType === "CARD" && !sale.invoice && (
+        <Card>
+          <div className="space-y-3">
+            <p className="text-sm text-muted">{t("cardAwaitingPayment")}</p>
             {confirmPaymentError && (
               <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
                 {confirmPaymentError}

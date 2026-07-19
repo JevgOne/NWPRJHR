@@ -1002,7 +1002,17 @@
       "paymentCashDesc": "Platba při osobním doručení nebo odběru",
       "packetaRequired": "Vyberte výdejní místo Zásilkovny",
       "packetaChange": "— změnit",
-      "packetaSelect": "Vybrat výdejní místo Zásilkovny"
+      "packetaSelect": "Vybrat výdejní místo Zásilkovny",
+      "paymentCard": "Platba kartou online",
+      "paymentCardDesc": "Visa, Mastercard, Apple Pay, Google Pay — okamžitá platba"
+    },
+    "paymentResult": {
+      "paidTitle": "Platba proběhla úspěšně!",
+      "paidDesc": "Vaše platba byla přijata. O dalším postupu vás budeme informovat e-mailem.",
+      "pendingTitle": "Platba se zpracovává",
+      "pendingDesc": "Čekáme na potvrzení platby od banky. Jakmile bude zpracována, dáme vám vědět.",
+      "cancelledTitle": "Platba nebyla dokončena",
+      "cancelledDesc": "Platba byla zrušena nebo zamítnuta. Můžete to zkusit znovu nebo zvolit jinou platební metodu."
     },
     "categoryInfo": {
       "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",
@@ -1387,12 +1397,14 @@
     "paymentType": "Typ platby",
     "paymentTransfer": "Převod",
     "paymentCash": "Hotovost",
+    "paymentCard": "Karta online",
     "paymentPromo": "Promo",
     "paymentWriteoff": "Odpis",
     "receiptNumber": "Číslo paragonu",
     "receiptPlaceholder": "Číslo paragonu (nepovinné)",
     "receiptHint": "Paragon/pokladní doklad vystavíte ručně.",
     "transferHint": "Faktura se vytvoří po potvrzení platby.",
+    "cardHint": "Proforma faktura se vytvoří po potvrzení. Zákazník obdrží platební odkaz.",
     "promoHint": "Interní promo — vytvoří se interní doklad.",
     "writeoffHint": "Interní odpis — vytvoří se interní doklad.",
     "totalSold": "Prodáno celkem",
@@ -1415,6 +1427,7 @@
     "goToSaleDetail": "Přejít na detail prodeje",
     "confirmPayment": "Potvrdit platbu",
     "transferAwaitingPayment": "Čeká na potvrzení platby převodem. Po potvrzení se vytvoří faktura a odešle email.",
+    "cardAwaitingPayment": "Platba kartou online. Po potvrzení se vytvoří faktura a zákazník obdrží platební odkaz.",
     "invoice": "Faktura",
     "shippingInfo": "Doprava",
     "shippingMethod": "Způsob doručení",

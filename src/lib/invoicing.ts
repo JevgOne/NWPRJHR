@@ -109,7 +109,7 @@ export async function createInvoiceFromSale(
       const roundedTotal = roundHalereUp(rawTotal);
       const roundingAmount = roundedTotal - rawTotal;
 
-      const isProforma = options?.proforma ?? (sale.paymentType === "TRANSFER");
+      const isProforma = options?.proforma ?? (sale.paymentType === "TRANSFER" || sale.paymentType === "CARD");
       const dueDate = isProforma
         ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         : new Date();
