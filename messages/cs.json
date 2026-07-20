@@ -77,6 +77,7 @@
   },
   "nav": {
     "dashboard": "Přehled",
+    "calendar": "Kalend\u00e1\u0159",
     "products": "Produkty",
     "inventory": "Sklad",
     "sales": "Prodeje",
@@ -2945,6 +2946,35 @@
     "cancelConfirm": "Opravdu zrušit?",
     "createdBy": "Vytvořil",
     "viewSale": "Zobrazit prodej",
-    "notePlaceholder": "Voliteln\u00e1 pozn\u00e1mka k rezervaci..."
+    "notePlaceholder": "Voliteln\u00e1 pozn\u00e1mka k rezervaci...",
+    "discount": "Sleva",
+    "listView": "Seznam",
+    "calendarView": "Kalend\u00e1\u0159",
+    "calendarTitle": "Kalend\u00e1\u0159 rezervac\u00ed",
+    "today": "Dnes",
+    "noReservationsDay": "\u017d\u00e1dn\u00e9 rezervace"
+  },
+  "calendar": {
+    "sales": "Prodeje",
+    "sale": "Prodej",
+    "reservation": "Rezervace",
+    "transfer": "P\u0159evodem",
+    "cash": "Hotov\u011b",
+    "card": "Kartou",
+    "promo": "Promo",
+    "writeoff": "Odpis",
+    "noEntriesDay": "\u017d\u00e1dn\u00e9 z\u00e1znamy",
+    "orders": "Objedn\u00e1vky",
+    "order": "Objedn\u00e1vka",
+    "order_new": "Nov\u00e1",
+    "order_awaiting_payment": "\u010cek\u00e1 na platbu",
+    "order_paid": "Zaplaceno",
+    "order_shipped": "Odesl\u00e1no",
+    "order_delivered": "Doru\u010deno",
+    "order_completed": "Dokon\u010deno",
+    "order_cancelled": "Zru\u0161eno",
+    "order_rejected": "Zam\u00edtnuto",
+    "deliveries": "Naskladn\u011bn\u00ed",
+    "delivery": "Naskladn\u011bn\u00ed"
   }
 }

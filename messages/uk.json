@@ -77,6 +77,7 @@
   },
   "nav": {
     "dashboard": "Огляд",
+    "calendar": "Календар",
     "products": "Продукти",
     "inventory": "Склад",
     "sales": "Продажі",
@@ -2945,6 +2946,35 @@
     "cancelConfirm": "Дійсно скасувати?",
     "createdBy": "Створив",
     "viewSale": "Переглянути продаж",
-    "notePlaceholder": "Необов'язкова примітка до резервації..."
+    "notePlaceholder": "Необов'язкова примітка до резервації...",
+    "discount": "Знижка",
+    "listView": "Список",
+    "calendarView": "Календар",
+    "calendarTitle": "Календар резервацій",
+    "today": "Сьогодні",
+    "noReservationsDay": "Немає резервацій"
+  },
+  "calendar": {
+    "sales": "Продажі",
+    "sale": "Продаж",
+    "reservation": "Резервація",
+    "transfer": "Переказом",
+    "cash": "Готівкою",
+    "card": "Карткою",
+    "promo": "Промо",
+    "writeoff": "Списання",
+    "noEntriesDay": "Немає записів",
+    "orders": "Замовлення",
+    "order": "Замовлення",
+    "order_new": "Нове",
+    "order_awaiting_payment": "Очікує оплати",
+    "order_paid": "Оплачено",
+    "order_shipped": "Відправлено",
+    "order_delivered": "Доставлено",
+    "order_completed": "Завершено",
+    "order_cancelled": "Скасовано",
+    "order_rejected": "Відхилено",
+    "deliveries": "Надходження",
+    "delivery": "Надходження"
   }
 }

@@ -14,6 +14,12 @@ export interface CreateReservationInput {
   pieces: number;
   paymentDueDate?: string; // ISO date
   note?: string;
+  discount?: {
+    percent: number;
+    type: "STANDARD" | "MARKETING" | "PERSONAL";
+    counterPerformanceNote?: string;
+    bearerPartnerIds?: string[];
+  };
 }
 
 /**
@@ -88,10 +94,17 @@ export async function createProductReservation(
     }
   }
 
-  const lineTotal =
+  const lineTotalBeforeDiscount =
     isByPiece && input.pieces > 0
       ? roundHalereUp(pricePerUnit * input.pieces)
       : roundHalereUp(pricePerUnit * input.grams);
+
+  // Apply manual discount
+  let manualDiscountAmount = 0;
+  if (input.discount && input.discount.percent > 0) {
+    manualDiscountAmount = roundHalereUp((lineTotalBeforeDiscount * input.discount.percent) / 10000);
+  }
+  const lineTotal = roundHalereUp(lineTotalBeforeDiscount - manualDiscountAmount);
 
   // Payment deadline: default +3 days
   const paymentDueDate = input.paymentDueDate
@@ -115,6 +128,10 @@ export async function createProductReservation(
       pricePerUnit,
       lineTotal,
       sellingMode,
+      discountPercent: input.discount?.percent ?? null,
+      discountAmount: manualDiscountAmount || null,
+      discountType: input.discount?.type ?? null,
+      discountNote: input.discount?.counterPerformanceNote ?? null,
       status: "PENDING",
       paymentDueDate,
       note: input.note || null,

@@ -1161,6 +1161,12 @@ model ProductReservation {
   lineTotal         Int
   sellingMode       String                    @default("BY_GRAM")
 
+  // Discount
+  discountPercent   Int?
+  discountAmount    Int?
+  discountType      String?
+  discountNote      String?
+
   status            ProductReservationStatus  @default(PENDING)
   paymentDueDate    DateTime
   paidAt            DateTime?

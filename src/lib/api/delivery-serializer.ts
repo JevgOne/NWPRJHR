@@ -1,9 +1,12 @@
 import type { Delivery, Supplier, Role } from "@prisma/client";
 
-type DeliveryWithSupplier = Delivery & { supplier: Supplier };
+type DeliveryWithRelations = Delivery & {
+  supplier: Supplier;
+  variant?: { color: string; lengthCm: number; product: { name: string } } | null;
+};
 
 export function serializeDeliveryForRole(
-  delivery: DeliveryWithSupplier,
+  delivery: DeliveryWithRelations,
   role: Role
 ) {
   const base = {
@@ -14,6 +17,13 @@ export function serializeDeliveryForRole(
     remainingPieces: delivery.remainingPieces,
     exclusive: delivery.exclusive,
     stockedAt: delivery.stockedAt,
+    ...(delivery.variant ? {
+      variant: {
+        color: delivery.variant.color,
+        lengthCm: delivery.variant.lengthCm,
+        product: { name: delivery.variant.product.name },
+      },
+    } : {}),
   };
 
   if (role === "OWNER") {

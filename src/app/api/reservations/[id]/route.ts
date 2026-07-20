@@ -123,6 +123,13 @@ export async function POST(
               },
             ],
             note: `Reservation ${res.reservationNumber}`,
+            discount: res.discountPercent
+              ? {
+                  percent: res.discountPercent,
+                  type: (res.discountType ?? "STANDARD") as "STANDARD" | "MARKETING" | "PERSONAL",
+                  counterPerformanceNote: res.discountNote ?? undefined,
+                }
+              : undefined,
           },
           session.user.id
         );

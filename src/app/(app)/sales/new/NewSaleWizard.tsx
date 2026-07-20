@@ -389,6 +389,17 @@ export function NewSaleWizard({
         pieces: item.sellByGrams ? 0 : item.pieces,
         paymentDueDate,
         note: reservationNote || undefined,
+        discount: discount
+          ? {
+              percent: discount.percent,
+              type: discount.type,
+              counterPerformanceNote: discount.counterPerformanceNote || undefined,
+              bearerPartnerIds:
+                discount.bearerPartnerIds.length > 0
+                  ? discount.bearerPartnerIds
+                  : undefined,
+            }
+          : undefined,
       };
 
       try {
@@ -686,16 +697,14 @@ export function NewSaleWizard({
       )}
 
       {/* Discount */}
-      {!reserveMode && (
-        <Card>
-          <DiscountForm
-            discount={discount}
-            onChange={setDiscount}
-            subtotal={subtotal}
-            isOwner={isOwner}
-          />
-        </Card>
-      )}
+      <Card>
+        <DiscountForm
+          discount={discount}
+          onChange={setDiscount}
+          subtotal={subtotal}
+          isOwner={isOwner}
+        />
+      </Card>
 
       {/* Payment type */}
       {!reserveMode && (

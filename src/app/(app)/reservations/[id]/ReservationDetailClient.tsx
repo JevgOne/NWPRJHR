@@ -24,6 +24,10 @@ interface ReservationDetail {
   paymentDueDate: string;
   paidAt?: string | null;
   paymentNote?: string | null;
+  discountPercent?: number | null;
+  discountAmount?: number | null;
+  discountType?: string | null;
+  discountNote?: string | null;
   saleId?: string | null;
   invoiceId?: string | null;
   note?: string | null;
@@ -196,6 +200,16 @@ export function ReservationDetailClient({
             </tr>
           </tbody>
         </table>
+        {reservation.discountAmount != null && reservation.discountAmount > 0 && (
+          <div className="px-4 py-2 border-t border-line flex justify-between items-center text-sm">
+            <span className="text-muted">
+              {t("discount")} ({(reservation.discountPercent ?? 0) / 100}%)
+            </span>
+            <span className="text-red-600 font-medium">
+              -{formatCZK(reservation.discountAmount)} CZK
+            </span>
+          </div>
+        )}
         <div className="px-4 py-3 bg-nude-50 border-t border-line flex justify-between items-center">
           <span className="text-sm font-bold text-ink">{tCommon("total")}</span>
           <span className="text-lg font-bold text-ink">

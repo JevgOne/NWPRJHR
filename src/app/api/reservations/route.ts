@@ -29,6 +29,52 @@ export async function GET(request: NextRequest) {
     where.salonId = session.user.salonId;
   }
 
+  // Calendar view
+  const view = sp.get("view");
+  if (view === "calendar") {
+    const from = sp.get("from");
+    const to = sp.get("to");
+
+    if (!from || !to) {
+      return NextResponse.json({ error: "from and to required for calendar view" }, { status: 400 });
+    }
+
+    const calendarWhere = {
+      ...where,
+      paymentDueDate: {
+        gte: new Date(from),
+        lte: new Date(to),
+      },
+    };
+
+    const reservations = await prisma.productReservation.findMany({
+      where: calendarWhere,
+      orderBy: { paymentDueDate: "asc" },
+      select: {
+        id: true,
+        reservationNumber: true,
+        status: true,
+        paymentDueDate: true,
+        lineTotal: true,
+        grams: true,
+        pieces: true,
+        sellingMode: true,
+        contactName: true,
+        variant: {
+          select: {
+            color: true,
+            lengthCm: true,
+            product: { select: { name: true } },
+          },
+        },
+        salon: { select: { name: true } },
+        customer: { select: { name: true } },
+      },
+    });
+
+    return NextResponse.json({ data: reservations });
+  }
+
   const [total, reservations] = await Promise.all([
     prisma.productReservation.count({ where }),
     prisma.productReservation.findMany({

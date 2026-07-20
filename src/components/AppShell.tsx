@@ -55,6 +55,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       label: null,
       items: [
         { href: "/dashboard", label: t("dashboard"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
+        { href: "/calendar", label: t("calendar"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/notifications", label: t("notifications"), roles: ["OWNER", "EMPLOYEE", "SALON"], badge: liveUnread, badgeColor: "bg-red-500" },
       ],
     },

@@ -37,7 +37,10 @@ export async function GET(request: NextRequest) {
 
   const deliveries = await prisma.delivery.findMany({
     where,
-    include: { supplier: true },
+    include: {
+      supplier: true,
+      variant: { select: { color: true, lengthCm: true, product: { select: { name: true } } } },
+    },
     orderBy: { stockedAt: "desc" },
   });
 

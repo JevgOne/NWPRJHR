@@ -15,6 +15,8 @@ export async function GET(request: NextRequest) {
   const status = sp.get("status");
   const salonId = sp.get("salonId");
   const type = sp.get("type"); // "B2B" | "RETAIL" | null (=ALL)
+  const from = sp.get("from");
+  const to = sp.get("to");
   const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
   const limit = Math.min(100, parseInt(sp.get("limit") ?? "20"));
 
@@ -22,6 +24,12 @@ export async function GET(request: NextRequest) {
   const where: any = {};
   if (status) where.status = status;
   if (salonId) where.salonId = salonId;
+  if (from || to) {
+    where.createdAt = {
+      ...(from ? { gte: new Date(from) } : {}),
+      ...(to ? { lte: new Date(to) } : {}),
+    };
+  }
 
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;

@@ -77,6 +77,7 @@
   },
   "nav": {
     "dashboard": "Обзор",
+    "calendar": "Календарь",
     "products": "Продукты",
     "inventory": "Склад",
     "sales": "Продажи",
@@ -2945,6 +2946,35 @@
     "cancelConfirm": "Действительно отменить?",
     "createdBy": "Создал",
     "viewSale": "Просмотреть продажу",
-    "notePlaceholder": "Необязательная заметка к резервации..."
+    "notePlaceholder": "Необязательная заметка к резервации...",
+    "discount": "Скидка",
+    "listView": "Список",
+    "calendarView": "Календарь",
+    "calendarTitle": "Календарь резерваций",
+    "today": "Сегодня",
+    "noReservationsDay": "Нет резерваций"
+  },
+  "calendar": {
+    "sales": "Продажи",
+    "sale": "Продажа",
+    "reservation": "Резервация",
+    "transfer": "Переводом",
+    "cash": "Наличными",
+    "card": "Картой",
+    "promo": "Промо",
+    "writeoff": "Списание",
+    "noEntriesDay": "Нет записей",
+    "orders": "Заказы",
+    "order": "Заказ",
+    "order_new": "Новый",
+    "order_awaiting_payment": "Ожидает оплаты",
+    "order_paid": "Оплачено",
+    "order_shipped": "Отправлено",
+    "order_delivered": "Доставлено",
+    "order_completed": "Завершено",
+    "order_cancelled": "Отменено",
+    "order_rejected": "Отклонено",
+    "deliveries": "Поступления",
+    "delivery": "Поступление"
   }
 }

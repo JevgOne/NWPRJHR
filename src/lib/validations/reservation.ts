@@ -12,6 +12,12 @@ export const createReservationSchema = z.object({
   pieces: z.number().int().min(0),
   paymentDueDate: z.string().optional(), // ISO date string
   note: z.string().max(2000).optional(),
+  discount: z.object({
+    percent: z.number().int().min(100).max(10000),
+    type: z.enum(["STANDARD", "MARKETING", "PERSONAL"]),
+    counterPerformanceNote: z.string().max(500).optional(),
+    bearerPartnerIds: z.array(z.string()).optional(),
+  }).optional(),
 });
 
 export const updateReservationSchema = z.object({
