@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
       try {
         await createSaleFromOrder(order.id, systemUser.id);
-        revalidateTag("dashboard");
+        revalidateTag("dashboard", "max");
       } catch (e) {
         console.error("[comgate/callback] createSaleFromOrder failed:", { orderId: order.id, error: e });
       }
