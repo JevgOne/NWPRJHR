@@ -69,6 +69,7 @@ export async function GET(request: NextRequest) {
         },
         salon: { select: { name: true } },
         customer: { select: { name: true } },
+        createdByUser: { select: { name: true } },
       },
     });
 

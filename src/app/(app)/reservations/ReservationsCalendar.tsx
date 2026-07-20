@@ -21,6 +21,7 @@ interface CalendarReservation {
   };
   salon?: { name: string } | null;
   customer?: { name: string } | null;
+  createdByUser?: { name: string | null } | null;
 }
 
 interface CalendarSale {
@@ -31,6 +32,7 @@ interface CalendarSale {
   completedAt: string;
   salonName?: string | null;
   customerName?: string | null;
+  userName?: string | null;
   items: { grams: number; pieces: number; lineTotal: number }[];
 }
 
@@ -54,6 +56,7 @@ interface CalendarDelivery {
   initialPieces: number;
   remainingGrams: number;
   remainingPieces: number;
+  createdByName?: string | null;
   variant?: {
     color: string;
     lengthCm: number;
@@ -292,6 +295,37 @@ function DayTooltip({ entries, day, monthLabel }: {
   );
 }
 
+function getEntryHref(entry: CalendarEntry): string {
+  if (entry.kind === "reservation") return `/reservations/${entry.data.id}`;
+  if (entry.kind === "sale") return `/sales/${entry.data.id}`;
+  if (entry.kind === "order") return `/orders/${entry.data.id}`;
+  return `/inventory/deliveries/${entry.data.id}`;
+}
+
+function getEntryLabel(entry: CalendarEntry): string | null {
+  if (entry.kind === "reservation") return entry.data.reservationNumber ?? entry.data.id.slice(0, 8);
+  if (entry.kind === "sale") return entry.data.saleNumber ?? entry.data.id.slice(0, 8);
+  if (entry.kind === "order") return entry.data.orderNumber ?? entry.data.id.slice(0, 8);
+  return null;
+}
+
+function WeekDayEntry({ entry }: { entry: CalendarEntry }) {
+  const emoji = TYPE_EMOJI[entry.kind];
+  const label = getEntryLabel(entry);
+  const amount = getEntryAmount(entry);
+  const href = getEntryHref(entry);
+  const dot = getDotColor(entry);
+
+  return (
+    <Link href={href} className="flex items-center gap-1 text-[11px] hover:bg-nude-50 rounded px-1 py-0.5 transition-colors">
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`} />
+      <span className="text-[10px]">{emoji}</span>
+      <span className="truncate text-muted">{label ?? "—"}</span>
+      {amount > 0 && <span className="ml-auto text-ink font-medium whitespace-nowrap">{formatCZK(amount)}</span>}
+    </Link>
+  );
+}
+
 // --- Main component ---
 
 export function ActivityCalendar() {
@@ -308,6 +342,15 @@ export function ActivityCalendar() {
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [showStatusLegend, setShowStatusLegend] = useState(false);
+  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const now = new Date();
+    const dow = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((dow + 6) % 7));
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  });
 
   // Filters — persisted to localStorage
   const [filters, setFilters] = useState({
@@ -328,8 +371,18 @@ export function ActivityCalendar() {
     localStorage.setItem("calendar-filters", JSON.stringify(filters));
   }, [filters]);
 
-  const from = currentMonth.toISOString();
-  const to = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0, 23, 59, 59).toISOString();
+  const { from, to } = useMemo(() => {
+    if (viewMode === "week") {
+      const end = new Date(currentWeekStart);
+      end.setDate(end.getDate() + 6);
+      end.setHours(23, 59, 59);
+      return { from: currentWeekStart.toISOString(), to: end.toISOString() };
+    }
+    return {
+      from: currentMonth.toISOString(),
+      to: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0, 23, 59, 59).toISOString(),
+    };
+  }, [viewMode, currentMonth, currentWeekStart]);
 
   useEffect(() => {
     setLoading(true);
@@ -425,6 +478,16 @@ export function ActivityCalendar() {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
   const nextMonth = () =>
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  const prevWeek = () => {
+    const d = new Date(currentWeekStart);
+    d.setDate(d.getDate() - 7);
+    setCurrentWeekStart(d);
+  };
+  const nextWeek = () => {
+    const d = new Date(currentWeekStart);
+    d.setDate(d.getDate() + 7);
+    setCurrentWeekStart(d);
+  };
 
   const monthLabel = currentMonth.toLocaleDateString("cs-CZ", {
     month: "long",
@@ -432,6 +495,48 @@ export function ActivityCalendar() {
   });
 
   const shortMonthLabel = currentMonth.toLocaleDateString("cs-CZ", { month: "short" });
+
+  // Week days for weekly view
+  const weekDays = useMemo(() => {
+    const days: Date[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(currentWeekStart);
+      d.setDate(d.getDate() + i);
+      days.push(d);
+    }
+    return days;
+  }, [currentWeekStart]);
+
+  const weekLabel = `${weekDays[0].getDate()}.${weekDays[0].getMonth() + 1}. — ${weekDays[6].getDate()}.${weekDays[6].getMonth() + 1}.${weekDays[6].getFullYear()}`;
+
+  // For week view, group by actual Date (not just day number within month)
+  const byDayWeek = useMemo(() => {
+    if (viewMode !== "week") return new Map<string, CalendarEntry[]>();
+    const map = new Map<string, CalendarEntry[]>();
+
+    function addEntry(dateStr: string, entry: CalendarEntry) {
+      const d = new Date(dateStr);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      const arr = map.get(key) ?? [];
+      arr.push(entry);
+      map.set(key, arr);
+    }
+
+    if (filters.reservations) {
+      for (const r of reservations) addEntry(r.paymentDueDate, { kind: "reservation", data: r });
+    }
+    if (filters.sales) {
+      for (const s of sales) { if (s.completedAt) addEntry(s.completedAt, { kind: "sale", data: s }); }
+    }
+    if (filters.orders) {
+      for (const o of orders) addEntry(o.createdAt, { kind: "order", data: o });
+    }
+    if (filters.deliveries) {
+      for (const dl of deliveries) addEntry(dl.stockedAt, { kind: "delivery", data: dl });
+    }
+
+    return map;
+  }, [viewMode, reservations, sales, orders, deliveries, filters]);
 
   const selectedEntries = selectedDay ? byDay.get(parseInt(selectedDay)) ?? [] : [];
 
@@ -529,17 +634,39 @@ export function ActivityCalendar() {
         </div>
       )}
 
-      {/* Month navigation */}
-      <div className="flex items-center justify-between">
+      {/* Navigation + view toggle */}
+      <div className="flex items-center justify-between gap-2">
         <button
-          onClick={prevMonth}
+          onClick={viewMode === "month" ? prevMonth : prevWeek}
           className="px-3 py-1.5 rounded-lg border border-line hover:bg-nude-50 text-sm"
         >
           &lt;
         </button>
-        <h2 className="text-lg font-bold text-ink capitalize">{monthLabel}</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-bold text-ink capitalize">
+            {viewMode === "month" ? monthLabel : weekLabel}
+          </h2>
+          <div className="flex gap-1 bg-nude-50 rounded-lg p-0.5">
+            <button
+              onClick={() => setViewMode("month")}
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                viewMode === "month" ? "bg-white shadow-sm text-ink" : "text-muted hover:text-ink"
+              }`}
+            >
+              {tCal("month")}
+            </button>
+            <button
+              onClick={() => setViewMode("week")}
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                viewMode === "week" ? "bg-white shadow-sm text-ink" : "text-muted hover:text-ink"
+              }`}
+            >
+              {tCal("week")}
+            </button>
+          </div>
+        </div>
         <button
-          onClick={nextMonth}
+          onClick={viewMode === "month" ? nextMonth : nextWeek}
           className="px-3 py-1.5 rounded-lg border border-line hover:bg-nude-50 text-sm"
         >
           &gt;
@@ -551,61 +678,101 @@ export function ActivityCalendar() {
         <p className="text-muted text-center py-8">...</p>
       ) : (
         <>
-          {/* Desktop: calendar grid */}
-          <div className="hidden sm:block border border-line rounded-xl overflow-hidden">
-            {/* Header row */}
-            <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
-              {DAY_NAMES.map((d) => (
-                <div key={d} className="text-center text-xs font-medium text-muted py-2">
-                  {d}
-                </div>
-              ))}
+          {/* Desktop: calendar grid or weekly view */}
+          {viewMode === "week" ? (
+            <div className="hidden sm:block border border-line rounded-xl overflow-hidden">
+              <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
+                {weekDays.map((wd) => {
+                  const isToday = wd.toDateString() === today.toDateString();
+                  return (
+                    <div key={wd.toISOString()} className="text-center py-2">
+                      <div className="text-xs font-medium text-muted">{DAY_NAMES[wd.getDay() === 0 ? 6 : wd.getDay() - 1]}</div>
+                      <div className={`text-sm font-bold ${isToday ? "text-rose" : "text-ink"}`}>
+                        {wd.getDate()}.{wd.getMonth() + 1}.
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="grid grid-cols-7">
+                {weekDays.map((wd) => {
+                  const key = `${wd.getFullYear()}-${wd.getMonth()}-${wd.getDate()}`;
+                  const dayEntries = byDayWeek.get(key) ?? [];
+                  const isToday = wd.toDateString() === today.toDateString();
+                  return (
+                    <div
+                      key={wd.toISOString()}
+                      className={`min-h-[8rem] p-1.5 border-r border-line/50 space-y-0.5 ${
+                        isToday ? "ring-2 ring-rose/40 ring-inset bg-rose/[0.03]" : getDayBgIntensity(dayEntries.length)
+                      }`}
+                    >
+                      {dayEntries.map((entry) => (
+                        <WeekDayEntry key={getEntryKey(entry)} entry={entry} />
+                      ))}
+                      {dayEntries.length === 0 && (
+                        <span className="text-[10px] text-muted/40 block pt-2 text-center">—</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+          ) : (
+            <div className="hidden sm:block border border-line rounded-xl overflow-hidden">
+              {/* Header row */}
+              <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
+                {DAY_NAMES.map((d) => (
+                  <div key={d} className="text-center text-xs font-medium text-muted py-2">
+                    {d}
+                  </div>
+                ))}
+              </div>
 
-            {/* Day cells */}
-            <div className="grid grid-cols-7">
-              {calendarDays.map((day, idx) => {
-                const dayEntries = day ? byDay.get(day) ?? [] : [];
-                const isToday = isCurrentMonth && day === today.getDate();
-                const isSelected = selectedDay === String(day);
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={!day}
-                    onClick={() => day && setSelectedDay(isSelected ? null : String(day))}
-                    className={`group relative min-h-[4.5rem] p-1.5 border-b border-r transition-colors text-left ${
-                      !day
-                        ? "bg-nude-50/50 border-line/50"
-                        : isToday
-                          ? `ring-2 ring-rose/40 ring-inset ${isSelected ? "bg-rose/10" : getDayBgIntensity(dayEntries.length)} border-rose/20`
-                          : isSelected
-                            ? "bg-rose/10 ring-1 ring-rose/30 ring-inset border-line/50"
-                            : `${getDayBgIntensity(dayEntries.length)} hover:bg-nude-50 cursor-pointer border-line/30`
-                    }`}
-                  >
-                    {day && (
-                      <>
-                        <div className={`text-xs font-bold mb-0.5 ${
-                          isToday
-                            ? "text-white bg-rose w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
-                            : dayEntries.length > 0 ? "text-ink" : "text-muted"
-                        }`}>
-                          {day}
-                        </div>
-                        {dayEntries.length > 0 && (
-                          <>
-                            <DaySummary entries={dayEntries} />
-                            <DayTooltip entries={dayEntries} day={day} monthLabel={shortMonthLabel} />
-                          </>
-                        )}
-                      </>
-                    )}
-                  </button>
-                );
-              })}
+              {/* Day cells */}
+              <div className="grid grid-cols-7">
+                {calendarDays.map((day, idx) => {
+                  const dayEntries = day ? byDay.get(day) ?? [] : [];
+                  const isToday = isCurrentMonth && day === today.getDate();
+                  const isSelected = selectedDay === String(day);
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      disabled={!day}
+                      onClick={() => day && setSelectedDay(isSelected ? null : String(day))}
+                      className={`group relative min-h-[4.5rem] p-1.5 border-b border-r transition-colors text-left ${
+                        !day
+                          ? "bg-nude-50/50 border-line/50"
+                          : isToday
+                            ? `ring-2 ring-rose/40 ring-inset ${isSelected ? "bg-rose/10" : getDayBgIntensity(dayEntries.length)} border-rose/20`
+                            : isSelected
+                              ? "bg-rose/10 ring-1 ring-rose/30 ring-inset border-line/50"
+                              : `${getDayBgIntensity(dayEntries.length)} hover:bg-nude-50 cursor-pointer border-line/30`
+                      }`}
+                    >
+                      {day && (
+                        <>
+                          <div className={`text-xs font-bold mb-0.5 ${
+                            isToday
+                              ? "text-white bg-rose w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
+                              : dayEntries.length > 0 ? "text-ink" : "text-muted"
+                          }`}>
+                            {day}
+                          </div>
+                          {dayEntries.length > 0 && (
+                            <>
+                              <DaySummary entries={dayEntries} />
+                              <DayTooltip entries={dayEntries} day={day} monthLabel={shortMonthLabel} />
+                            </>
+                          )}
+                        </>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Mobile: list view */}
           <div className="block sm:hidden space-y-1">
@@ -689,6 +856,11 @@ export function ActivityCalendar() {
                       <div className="text-xs text-muted">
                         {r.sellingMode === "BY_PIECE" ? `${r.pieces} ks` : `${r.grams} g`} — {formatCZK(r.lineTotal)} CZK
                       </div>
+                      {r.createdByUser?.name && (
+                        <div className="text-xs text-muted/70">
+                          {tCal("createdBy")}: {r.createdByUser.name}
+                        </div>
+                      )}
                     </div>
                   </Link>
                 );
@@ -721,6 +893,11 @@ export function ActivityCalendar() {
                       <div className="text-xs text-muted">
                         {formatCZK(s.totalAmount)} CZK
                       </div>
+                      {s.userName && (
+                        <div className="text-xs text-muted/70">
+                          {tCal("createdBy")}: {s.userName}
+                        </div>
+                      )}
                     </div>
                   </Link>
                 );
@@ -749,6 +926,11 @@ export function ActivityCalendar() {
                       <div className="text-xs text-muted">
                         {dl.initialGrams} g, {dl.initialPieces} ks
                       </div>
+                      {dl.createdByName && (
+                        <div className="text-xs text-muted/70">
+                          {tCal("stockedBy")}: {dl.createdByName}
+                        </div>
+                      )}
                     </div>
                   </Link>
                 );
@@ -780,6 +962,11 @@ export function ActivityCalendar() {
                     <div className="text-xs text-muted">
                       {formatCZK(o.totalAmount ?? o.estimatedTotal)} CZK
                     </div>
+                    {o.contactName && (
+                      <div className="text-xs text-muted/70">
+                        {tCal("orderedBy")}: {o.contactName}
+                      </div>
+                    )}
                   </div>
                 </Link>
               );

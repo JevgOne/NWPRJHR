@@ -3,6 +3,7 @@ import type { Delivery, Supplier, Role } from "@prisma/client";
 type DeliveryWithRelations = Delivery & {
   supplier: Supplier;
   variant?: { color: string; lengthCm: number; product: { name: string } } | null;
+  createdByUser?: { name: string | null } | null;
 };
 
 export function serializeDeliveryForRole(
@@ -24,6 +25,7 @@ export function serializeDeliveryForRole(
         product: { name: delivery.variant.product.name },
       },
     } : {}),
+    createdByName: delivery.createdByUser?.name ?? null,
   };
 
   if (role === "OWNER") {

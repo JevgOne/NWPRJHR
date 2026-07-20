@@ -39,6 +39,7 @@ model User {
   notificationsReceived  Notification[]      @relation("NotificationsReceived")
 
   reservationsCreated    ProductReservation[] @relation("ReservationsCreated")
+  deliveriesCreated      Delivery[]          @relation("DeliveriesCreated")
   comments               Comment[]
   articleLikes           ArticleLike[]
   commentLikes           CommentLike[]
@@ -332,6 +333,9 @@ model Delivery {
   note                    String?
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
+
+  createdByUserId         String?
+  createdByUser           User?     @relation("DeliveriesCreated", fields: [createdByUserId], references: [id])
 
   stockMovements          StockMovement[]
   saleItems               SaleItem[]

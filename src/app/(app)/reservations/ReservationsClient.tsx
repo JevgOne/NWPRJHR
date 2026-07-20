@@ -18,6 +18,8 @@ interface ReservationRow {
   sellingMode: string;
   paymentDueDate: string;
   createdAt: string;
+  discountPercent?: number | null;
+  discountAmount?: number | null;
   variant: {
     lengthCm: number;
     color: string;
@@ -135,6 +137,7 @@ export function ReservationsClient({ role }: { role: Role }) {
                   <th className="py-2 pr-3">{t("product")}</th>
                   <th className="py-2 pr-3 text-right">{t("quantity")}</th>
                   <th className="py-2 pr-3 text-right">{tCommon("total")}</th>
+                  <th className="py-2 pr-3 text-right">{t("discount")}</th>
                   <th className="py-2 pr-3">{t("paymentDueDate")}</th>
                   <th className="py-2 pr-3">{t("status")}</th>
                 </tr>
@@ -169,6 +172,15 @@ export function ReservationsClient({ role }: { role: Role }) {
                       </td>
                       <td className="py-2 pr-3 text-right font-medium">
                         {formatCZK(r.lineTotal)} CZK
+                      </td>
+                      <td className="py-2 pr-3 text-right text-muted">
+                        {r.discountAmount && r.discountAmount > 0 ? (
+                          <span className="text-red-600">
+                            -{formatCZK(r.discountAmount)} ({(r.discountPercent ?? 0) / 100}%)
+                          </span>
+                        ) : (
+                          "—"
+                        )}
                       </td>
                       <td className="py-2 pr-3">
                         {r.status === "PENDING" && (

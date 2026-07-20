@@ -66,6 +66,7 @@ export function serializeSaleForRole(
     packetaPointName: sale.packetaPointName,
     packetaPointCity: sale.packetaPointCity,
     items: sale.items.map((item) => serializeSaleItemForRole(item, role)),
+    userName: sale.user.name,
   };
 
   if (role === "OWNER") {
@@ -86,7 +87,6 @@ export function serializeSaleForRole(
         })),
       })),
       userId: sale.userId,
-      userName: sale.user.name,
     };
   }
 

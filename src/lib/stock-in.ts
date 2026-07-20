@@ -60,6 +60,7 @@ export async function stockIn(
         receivedInvoiceFile: data.receivedInvoiceFile,
         stockedAt: data.stockedAt ?? new Date(),
         note: data.note,
+        createdByUserId: userId,
       },
     });
 

@@ -2978,6 +2978,11 @@
     "delivery": "Naskladn\u011bn\u00ed",
     "noEntries": "\u017d\u00e1dn\u00e9 z\u00e1znamy v tomto m\u011bs\u00edci",
     "showLegend": "Zobrazit legendu status\u016f",
-    "hideLegend": "Skr\u00fdt legendu"
+    "hideLegend": "Skr\u00fdt legendu",
+    "month": "M\u011bs\u00edc",
+    "week": "T\u00fdden",
+    "createdBy": "Vytvo\u0159il/a",
+    "orderedBy": "Objednal/a",
+    "stockedBy": "Naskladnil/a"
   }
 }
