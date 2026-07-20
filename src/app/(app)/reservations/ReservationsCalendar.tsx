@@ -680,7 +680,7 @@ export function ActivityCalendar() {
         <>
           {/* Desktop: calendar grid or weekly view */}
           {viewMode === "week" ? (
-            <div className="hidden sm:block border border-line rounded-xl overflow-hidden">
+            <div className="border border-line rounded-xl overflow-x-auto">
               <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
                 {weekDays.map((wd) => {
                   const isToday = wd.toDateString() === today.toDateString();
@@ -718,7 +718,7 @@ export function ActivityCalendar() {
               </div>
             </div>
           ) : (
-            <div className="hidden sm:block border border-line rounded-xl overflow-hidden">
+            <div className="border border-line rounded-xl overflow-x-auto">
               {/* Header row */}
               <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
                 {DAY_NAMES.map((d) => (
@@ -774,8 +774,8 @@ export function ActivityCalendar() {
             </div>
           )}
 
-          {/* Mobile: list view */}
-          <div className="block sm:hidden space-y-1">
+          {/* Mobile: compact list view */}
+          <div className="sm:hidden space-y-1 mt-3">
             {Array.from(byDay.entries())
               .sort(([a], [b]) => a - b)
               .map(([day, entries]) => {
