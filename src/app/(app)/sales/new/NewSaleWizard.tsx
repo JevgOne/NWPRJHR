@@ -389,7 +389,7 @@ export function NewSaleWizard({
         pieces: item.sellByGrams ? 0 : item.pieces,
         paymentDueDate,
         note: reservationNote || undefined,
-        discount: discount
+        discount: discount && discount.percent > 0
           ? {
               percent: discount.percent,
               type: discount.type,

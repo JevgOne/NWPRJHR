@@ -13,7 +13,7 @@ export const createReservationSchema = z.object({
   paymentDueDate: z.string().optional(), // ISO date string
   note: z.string().max(2000).optional(),
   discount: z.object({
-    percent: z.number().int().min(100).max(10000),
+    percent: z.number().int().min(0).max(10000),
     type: z.enum(["STANDARD", "MARKETING", "PERSONAL"]),
     counterPerformanceNote: z.string().max(500).optional(),
     bearerPartnerIds: z.array(z.string()).optional(),
