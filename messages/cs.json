@@ -116,7 +116,8 @@
     "groupQuality": "Kvalita",
     "groupFinance": "Finance",
     "groupMarketing": "Marketing",
-    "groupSystem": "Systém"
+    "groupSystem": "Systém",
+    "profile": "Profil"
   },
   "dashboard": {
     "title": "Přehled",
@@ -2984,5 +2985,17 @@
     "createdBy": "Vytvo\u0159il/a",
     "orderedBy": "Objednal/a",
     "stockedBy": "Naskladnil/a"
+  },
+  "profile": {
+    "title": "Profil",
+    "name": "Jméno",
+    "email": "E-mail",
+    "role": "Role",
+    "changePassword": "Změna hesla",
+    "currentPassword": "Současné heslo",
+    "newPassword": "Nové heslo",
+    "confirmNewPassword": "Potvrzení nového hesla",
+    "passwordHint": "Heslo musí mít alespoň 6 znaků.",
+    "saved": "Profil byl úspěšně uložen."
   }
 }

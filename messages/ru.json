@@ -116,7 +116,8 @@
     "groupQuality": "Качество",
     "groupFinance": "Финансы",
     "groupMarketing": "Маркетинг",
-    "groupSystem": "Система"
+    "groupSystem": "Система",
+    "profile": "Профиль"
   },
   "dashboard": {
     "title": "Обзор",
@@ -2984,5 +2985,17 @@
     "createdBy": "Создал(а)",
     "orderedBy": "Заказал(а)",
     "stockedBy": "Оприходовал(а)"
+  },
+  "profile": {
+    "title": "Профиль",
+    "name": "Имя",
+    "email": "E-mail",
+    "role": "Роль",
+    "changePassword": "Смена пароля",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmNewPassword": "Подтверждение нового пароля",
+    "passwordHint": "Пароль должен содержать не менее 6 символов.",
+    "saved": "Профиль успешно сохранён."
   }
 }

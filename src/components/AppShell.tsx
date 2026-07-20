@@ -115,6 +115,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
     {
       label: t("groupSystem"),
       items: [
+        { href: "/settings/profile", label: t("profile"), roles: ["OWNER", "EMPLOYEE", "SALON", "HAIRDRESSER"] },
         { href: "/settings/loyalty", label: t("loyalty"), roles: ["OWNER"] },
         { href: "/settings/pricing", label: t("pricing"), roles: ["OWNER"] },
         { href: "/settings/companies", label: t("companies"), roles: ["OWNER"] },

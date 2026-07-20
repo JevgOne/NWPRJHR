@@ -28,11 +28,21 @@ async function calculateRevenue(
     where: {
       type: "INVOICE",
       status: "PAID",
-      payments: {
-        some: {
-          date: { gte: period.from, lte: period.to },
+      OR: [
+        // TRANSFER invoices — use payment date
+        {
+          payments: {
+            some: {
+              date: { gte: period.from, lte: period.to },
+            },
+          },
         },
-      },
+        // CASH invoices — no Payment record, use issue date
+        {
+          payments: { none: {} },
+          issueDate: { gte: period.from, lte: period.to },
+        },
+      ],
     },
     select: { total: true },
   });

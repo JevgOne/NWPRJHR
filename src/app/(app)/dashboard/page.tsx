@@ -54,6 +54,8 @@ const getCachedDashboardData = unstable_cache(
       newOrders,
       unreadNotifications,
       pendingRegistrations,
+      activeReservations,
+      pendingReservationsCount,
     ] = await Promise.all([
       prisma.sale.aggregate({
         where: { status: "COMPLETED", completedAt: { gte: monthStart } },
@@ -119,6 +121,33 @@ const getCachedDashboardData = unstable_cache(
       prisma.order.count({ where: { status: "NEW" } }),
       prisma.notification.count({ where: { recipientId: userId, read: false } }),
       prisma.salon.count({ where: { approved: false, archived: false } }),
+
+      prisma.productReservation.findMany({
+        where: { status: { in: ["PENDING", "PAID"] } },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          status: true,
+          grams: true,
+          pieces: true,
+          contactName: true,
+          lineTotal: true,
+          createdAt: true,
+          paymentDueDate: true,
+          variant: {
+            select: {
+              lengthCm: true,
+              color: true,
+              product: { select: { name: true } },
+            },
+          },
+        },
+      }),
+
+      prisma.productReservation.count({
+        where: { status: { in: ["PENDING", "PAID"] } },
+      }),
     ]);
 
     return {
@@ -134,6 +163,8 @@ const getCachedDashboardData = unstable_cache(
       newOrders,
       unreadNotifications,
       pendingRegistrations,
+      activeReservations,
+      pendingReservationsCount,
     };
   },
   ["dashboard-data"],
@@ -164,6 +195,8 @@ export default async function DashboardPage() {
     newOrders,
     unreadNotifications,
     pendingRegistrations,
+    activeReservations,
+    pendingReservationsCount,
   } = await getCachedDashboardData(session.user.id);
 
   // Compute stats from pre-aggregated SQL results
@@ -217,6 +250,61 @@ export default async function DashboardPage() {
           sub1={`${awaitingPaymentCount} ${t("transfersPending")}`}
         />
       </div>
+
+      {/* ── ROW 1.5: Active reservations ── */}
+      {activeReservations.length > 0 && (
+        <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold text-ink">Aktivní rezervace</h2>
+            <a href="/reservations" className="text-sm text-rose-600 hover:text-rose-700 font-medium">
+              Zobrazit vše ({pendingReservationsCount})
+            </a>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs font-medium text-muted uppercase tracking-wider">
+                  <th className="pb-3 pr-4">{t("date")}</th>
+                  <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3 pr-4">{t("product")}</th>
+                  <th className="pb-3 pr-4 text-right">{t("quantity")}</th>
+                  <th className="pb-3 pr-4">Kontakt</th>
+                  <th className="pb-3 pr-4 text-right">Částka</th>
+                  <th className="pb-3">Splatnost</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {activeReservations.map((r) => {
+                  const statusStyle = r.status === "PAID"
+                    ? { bg: "bg-emerald-100", text: "text-emerald-700", label: "Zaplaceno" }
+                    : { bg: "bg-amber-100", text: "text-amber-700", label: "Čeká na platbu" };
+                  return (
+                    <tr key={r.id}>
+                      <td className="py-2.5 pr-4 text-gray-600 whitespace-nowrap">{fmtDate(r.createdAt)}</td>
+                      <td className="py-2.5 pr-4">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}>
+                          {statusStyle.label}
+                        </span>
+                      </td>
+                      <td className="py-2.5 pr-4 text-ink">
+                        <a href={`/reservations/${r.id}`} className="hover:text-rose-600 hover:underline">
+                          {r.variant.product.name} · {r.variant.color} #{r.variant.lengthCm}cm
+                        </a>
+                      </td>
+                      <td className="py-2.5 pr-4 text-right font-medium text-ink whitespace-nowrap">
+                        {r.grams} g
+                      </td>
+                      <td className="py-2.5 pr-4 text-gray-600">{r.contactName || "—"}</td>
+                      <td className="py-2.5 pr-4 text-right text-ink whitespace-nowrap">{fmtCZK(r.lineTotal)}</td>
+                      <td className="py-2.5 text-gray-600 whitespace-nowrap">{fmtDate(r.paymentDueDate)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* ── ROW 2: Categories + Stock alerts ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -295,7 +383,8 @@ export default async function DashboardPage() {
               {recentMovements.map((m) => {
                 const mtStyle = movementTypeStyles[m.type] ?? { bg: "bg-nude-100", text: "text-espresso" };
                 const mtLabel = tStock(m.type.toLowerCase());
-                const sign = m.type === "RECEIPT" || m.type === "RETURN" ? "+" : "-";
+                const isIncoming = m.type === "RECEIPT" || m.type === "RETURN";
+                const absGrams = Math.abs(m.grams);
                 return (
                   <tr key={m.id}>
                     <td className="py-2.5 pr-4 text-gray-600 whitespace-nowrap">{fmtDate(m.createdAt)}</td>
@@ -308,7 +397,7 @@ export default async function DashboardPage() {
                       {m.variant.product.name} · {m.variant.color} #{m.variant.lengthCm}cm
                     </td>
                     <td className="py-2.5 pr-4 text-right font-medium text-ink whitespace-nowrap">
-                      {sign}{m.grams} g
+                      {isIncoming ? "+" : "-"}{absGrams} g
                     </td>
                     <td className="py-2.5 text-muted truncate max-w-[200px]">{m.note || "—"}</td>
                   </tr>
@@ -323,11 +412,12 @@ export default async function DashboardPage() {
       <BatchAnnouncementCard />
 
       {/* ── ROW 4: Quick info badges ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         <a href="/salons"><QuickBadge label={t("activeSalons")} value={activeSalonsCount} color="rose" /></a>
         <a href="/registrations"><QuickBadge label={t("pendingRegistrations")} value={pendingRegistrations} color={pendingRegistrations > 0 ? "amber" : "gray"} /></a>
         <a href="/orders"><QuickBadge label={t("pendingOrders")} value={newOrders} color={newOrders > 0 ? "blue" : "gray"} /></a>
         <a href="/returns"><QuickBadge label={t("pendingReturns")} value={pendingReturns} color={pendingReturns > 0 ? "orange" : "gray"} /></a>
+        <a href="/reservations"><QuickBadge label="Rezervace" value={pendingReservationsCount} color={pendingReservationsCount > 0 ? "amber" : "gray"} /></a>
         <a href="/notifications"><QuickBadge label={t("unreadNotifications")} value={unreadNotifications} color={unreadNotifications > 0 ? "rose" : "gray"} /></a>
       </div>
     </div>
