@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
   const status = sp.get("status");
   const salonId = sp.get("salonId");
+  const type = sp.get("type"); // "B2B" | "RETAIL" | null (=ALL)
   const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
   const limit = Math.min(100, parseInt(sp.get("limit") ?? "20"));
 
@@ -24,6 +25,11 @@ export async function GET(request: NextRequest) {
 
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;
+  } else if (type === "B2B") {
+    where.salonId = { not: null };
+  } else if (type === "RETAIL") {
+    where.customerId = { not: null };
+    where.salonId = null;
   }
 
   const [total, orders] = await Promise.all([
@@ -35,6 +41,7 @@ export async function GET(request: NextRequest) {
       take: limit,
       include: {
         salon: { select: { name: true } },
+        customer: { select: { name: true, email: true } },
         items: {
           include: {
             variant: {

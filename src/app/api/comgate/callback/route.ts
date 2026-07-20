@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getPaymentStatus } from "@/lib/comgate";
 import { createSaleFromOrder } from "@/lib/order-to-sale";
+import { sendNotificationEmail } from "@/lib/email";
+import { getRetailPaymentReceivedEmail } from "@/lib/email-templates";
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -63,6 +65,29 @@ export async function POST(request: NextRequest) {
         await createSaleFromOrder(order.id, systemUser.id);
       } catch (e) {
         console.error("[comgate/callback] createSaleFromOrder failed:", { orderId: order.id, error: e });
+      }
+
+      // Send payment received email
+      if (order.contactEmail) {
+        try {
+          const updatedOrder = await prisma.order.findUnique({
+            where: { id: order.id },
+            select: { totalAmount: true, locale: true, contactName: true, orderNumber: true },
+          });
+          const emailData = getRetailPaymentReceivedEmail(updatedOrder?.locale ?? "cs", {
+            customerName: updatedOrder?.contactName ?? "",
+            orderNumber: updatedOrder?.orderNumber ?? order.id,
+            totalAmount: updatedOrder?.totalAmount ?? 0,
+          });
+          sendNotificationEmail({
+            to: order.contactEmail,
+            subject: emailData.subject,
+            body: emailData.text,
+            html: emailData.html,
+          }).catch((e) => console.error("[comgate/callback] Payment email failed:", e));
+        } catch (e) {
+          console.error("[comgate/callback] Payment email template error:", e);
+        }
       }
     } else if (verified.status === "CANCELLED") {
       if (order.status === "AWAITING_PAYMENT") {

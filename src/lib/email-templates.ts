@@ -777,3 +777,342 @@ export function getInquiryFollowUpEmail(
 
   return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
 }
+
+// --- Retail Order Confirmation Email ---
+
+const retailOrderConfirmT: Record<Lang, {
+  subject: (orderNumber: string) => string;
+  greeting: (name: string) => string;
+  body1: (orderNumber: string) => string;
+  bodyTransfer: string;
+  bodyCard: string;
+  itemsHeader: string;
+  productHeader: string;
+  detailsHeader: string;
+  shippingLabel: string;
+  discountLabel: string;
+  totalLabel: string;
+  bankAccountLabel: string;
+  vsLabel: string;
+  amountLabel: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: (n) => `Objednávka #${n} přijata — Hairland`,
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: (n) => `děkujeme za Vaši objednávku #${n}.`,
+    bodyTransfer: "Prosíme o úhradu na následující účet. Po přijetí platby Vám objednávku připravíme a odešleme.",
+    bodyCard: "Vaše platba byla přijata. Objednávku připravíme a budeme Vás informovat o odeslání.",
+    itemsHeader: "Položky objednávky:",
+    productHeader: "Produkt",
+    detailsHeader: "Detaily",
+    shippingLabel: "Doprava",
+    discountLabel: "Sleva",
+    totalLabel: "Celkem k úhradě",
+    bankAccountLabel: "Bankovní účet",
+    vsLabel: "Variabilní symbol",
+    amountLabel: "Částka",
+    footer: "Máte dotaz? Odpovězte na tento email nebo nás kontaktujte na info@hairland.cz.",
+  },
+  uk: {
+    subject: (n) => `Замовлення #${n} прийнято — Hairland`,
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: (n) => `дякуємо за Ваше замовлення #${n}.`,
+    bodyTransfer: "Будь ласка, оплатіть на наступний рахунок. Після отримання оплати ми підготуємо та відправимо замовлення.",
+    bodyCard: "Ваша оплата прийнята. Ми підготуємо замовлення та повідомимо Вас про відправку.",
+    itemsHeader: "Товари замовлення:",
+    productHeader: "Продукт",
+    detailsHeader: "Деталі",
+    shippingLabel: "Доставка",
+    discountLabel: "Знижка",
+    totalLabel: "Всього до оплати",
+    bankAccountLabel: "Банківський рахунок",
+    vsLabel: "Варіабельний символ",
+    amountLabel: "Сума",
+    footer: "Маєте запитання? Відповідайте на цей лист або зверніться до нас на info@hairland.cz.",
+  },
+  ru: {
+    subject: (n) => `Заказ #${n} принят — Hairland`,
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: (n) => `благодарим за Ваш заказ #${n}.`,
+    bodyTransfer: "Просим оплатить на следующий счёт. После получения оплаты мы подготовим и отправим заказ.",
+    bodyCard: "Ваша оплата принята. Мы подготовим заказ и сообщим Вам об отправке.",
+    itemsHeader: "Товары заказа:",
+    productHeader: "Продукт",
+    detailsHeader: "Детали",
+    shippingLabel: "Доставка",
+    discountLabel: "Скидка",
+    totalLabel: "Итого к оплате",
+    bankAccountLabel: "Банковский счёт",
+    vsLabel: "Вариабельный символ",
+    amountLabel: "Сумма",
+    footer: "Есть вопрос? Ответьте на это письмо или свяжитесь с нами по адресу info@hairland.cz.",
+  },
+};
+
+export function getRetailOrderConfirmationEmail(
+  lang: string,
+  data: {
+    customerName: string;
+    orderNumber: string;
+    items: Array<{ productName: string; lengthCm: number; color: string; grams: number; pieces: number; lineTotal: number }>;
+    subtotal: number;
+    shippingCost: number;
+    promoCode?: string;
+    promoDiscount?: number;
+    totalAmount: number;
+    paymentMethod: string;
+    bankAccount?: string;
+    variableSymbol?: string;
+  }
+): { subject: string; text: string; html: string } {
+  const t = retailOrderConfirmT[resolveLang(lang)];
+  const isTransfer = data.paymentMethod === "TRANSFER";
+  const fmtCzk = (h: number) => (h / 100).toLocaleString("cs-CZ");
+
+  const itemLines = data.items
+    .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`} — ${fmtCzk(i.lineTotal)} Kč`)
+    .join("\n");
+
+  const text = [
+    t.greeting(data.customerName),
+    "",
+    t.body1(data.orderNumber),
+    isTransfer ? t.bodyTransfer : t.bodyCard,
+    "",
+    t.itemsHeader,
+    itemLines,
+    data.promoCode ? `\n${t.discountLabel}: ${data.promoCode} -${fmtCzk(data.promoDiscount ?? 0)} Kč` : null,
+    data.shippingCost > 0 ? `${t.shippingLabel}: ${fmtCzk(data.shippingCost)} Kč` : null,
+    `${t.totalLabel}: ${fmtCzk(data.totalAmount)} Kč`,
+    "",
+    isTransfer && data.bankAccount ? `${t.bankAccountLabel}: ${data.bankAccount}` : null,
+    isTransfer && data.variableSymbol ? `${t.vsLabel}: ${data.variableSymbol}` : null,
+    "",
+    t.footer,
+  ].filter(Boolean).join("\n");
+
+  const itemRows = data.items
+    .map(
+      (i) => `<tr style="border-bottom:1px solid #ead9cf;">
+        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;">${esc(i.productName)}</td>
+        <td style="padding:8px 0;color:#9c8682;font-size:14px;text-align:right;">${i.lengthCm} cm, ${esc(i.color)}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`}</td>
+        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;">${fmtCzk(i.lineTotal)} Kč</td>
+      </tr>`
+    )
+    .join("");
+
+  const discountHtml = data.promoCode && data.promoDiscount
+    ? `<p style="color:#c98b88;font-size:14px;margin:8px 0 0;">${esc(t.discountLabel)}: ${esc(data.promoCode)} -${fmtCzk(data.promoDiscount)} Kč</p>`
+    : "";
+
+  const transferHtml = isTransfer && data.bankAccount
+    ? `<div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
+        <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 12px;">${esc(t.bodyTransfer)}</p>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td style="padding:4px 0;color:#9c8682;font-size:14px;">${esc(t.bankAccountLabel)}</td><td style="padding:4px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;">${esc(data.bankAccount)}</td></tr>
+          <tr><td style="padding:4px 0;color:#9c8682;font-size:14px;">${esc(t.vsLabel)}</td><td style="padding:4px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;font-family:monospace;">${esc(data.variableSymbol ?? "")}</td></tr>
+          <tr><td style="padding:4px 0;color:#9c8682;font-size:14px;">${esc(t.amountLabel)}</td><td style="padding:4px 0;color:#3a2c2a;font-size:16px;text-align:right;font-weight:700;">${fmtCzk(data.totalAmount)} Kč</td></tr>
+        </table>
+      </div>`
+    : "";
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body1(data.orderNumber))}</p>
+    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
+      <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 8px;">${esc(t.itemsHeader)}</p>
+      <table style="width:100%;border-collapse:collapse;margin:4px 0;">
+        <tr style="border-bottom:2px solid #ead9cf;">
+          <th style="padding:6px 0;color:#9c8682;font-size:12px;text-align:left;text-transform:uppercase;letter-spacing:0.5px;">${esc(t.productHeader)}</th>
+          <th style="padding:6px 0;color:#9c8682;font-size:12px;text-align:right;text-transform:uppercase;letter-spacing:0.5px;">${esc(t.detailsHeader)}</th>
+          <th style="padding:6px 0;"></th>
+        </tr>
+        ${itemRows}
+      </table>
+      ${discountHtml}
+      <div style="border-top:1px solid #ead9cf;margin-top:8px;padding-top:8px;">
+        <table style="width:100%;">
+          ${data.shippingCost > 0 ? `<tr><td style="color:#9c8682;font-size:14px;padding:2px 0;">${esc(t.shippingLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:14px;padding:2px 0;">${fmtCzk(data.shippingCost)} Kč</td></tr>` : ""}
+          <tr><td style="color:#3a2c2a;font-size:16px;font-weight:700;padding:4px 0;">${esc(t.totalLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:16px;font-weight:700;padding:4px 0;">${fmtCzk(data.totalAmount)} Kč</td></tr>
+        </table>
+      </div>
+    </div>
+    ${transferHtml}
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Retail Order Shipped Email ---
+
+const retailShippedT: Record<Lang, {
+  subject: (orderNumber: string) => string;
+  greeting: (name: string) => string;
+  body1: (orderNumber: string) => string;
+  bodyPacketa: (pointName: string) => string;
+  bodyPersonal: string;
+  bodyPost: string;
+  trackingLabel: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: (n) => `Objednávka #${n} odeslána — Hairland`,
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: (n) => `Vaše objednávka #${n} byla odeslána.`,
+    bodyPacketa: (p) => `Zásilku si vyzvednete na pobočce Zásilkovny: ${p}.`,
+    bodyPersonal: "Doručíme Vám objednávku osobně v Praze do 24 hodin.",
+    bodyPost: "Zásilka je na cestě Českou poštou.",
+    trackingLabel: "Sledování zásilky",
+    footer: "Máte dotaz? Odpovězte na tento email.",
+  },
+  uk: {
+    subject: (n) => `Замовлення #${n} відправлено — Hairland`,
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: (n) => `Ваше замовлення #${n} відправлено.`,
+    bodyPacketa: (p) => `Забрати посилку можна у відділенні Zásilkovna: ${p}.`,
+    bodyPersonal: "Ми доставимо замовлення особисто в Празі протягом 24 годин.",
+    bodyPost: "Посилка в дорозі Чеською поштою.",
+    trackingLabel: "Відстеження",
+    footer: "Маєте запитання? Відповідайте на цей лист.",
+  },
+  ru: {
+    subject: (n) => `Заказ #${n} отправлен — Hairland`,
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: (n) => `Ваш заказ #${n} отправлен.`,
+    bodyPacketa: (p) => `Забрать посылку можно в отделении Zásilkovna: ${p}.`,
+    bodyPersonal: "Мы доставим заказ лично в Праге в течение 24 часов.",
+    bodyPost: "Посылка в пути Чешской почтой.",
+    trackingLabel: "Отслеживание",
+    footer: "Есть вопрос? Ответьте на это письмо.",
+  },
+};
+
+export function getRetailOrderShippedEmail(
+  lang: string,
+  data: {
+    customerName: string;
+    orderNumber: string;
+    shippingMethod: string;
+    trackingId?: string;
+    packetaPointName?: string;
+  }
+): { subject: string; text: string; html: string } {
+  const t = retailShippedT[resolveLang(lang)];
+
+  const shippingDetail =
+    data.shippingMethod === "PACKETA" ? t.bodyPacketa(data.packetaPointName || "Zásilkovna") :
+    data.shippingMethod === "PERSONAL_DELIVERY" || data.shippingMethod === "PICKUP" ? t.bodyPersonal :
+    t.bodyPost;
+
+  const trackingUrl = data.shippingMethod === "PACKETA" && data.trackingId
+    ? `https://tracking.packeta.com/cs/?id=${data.trackingId}`
+    : undefined;
+
+  const text = [
+    t.greeting(data.customerName),
+    "",
+    t.body1(data.orderNumber),
+    shippingDetail,
+    data.trackingId ? `\n${t.trackingLabel}: ${trackingUrl || data.trackingId}` : null,
+    "",
+    t.footer,
+  ].filter(Boolean).join("\n");
+
+  const trackingHtml = trackingUrl
+    ? `<div style="text-align:center;margin:28px 0;">
+        <a href="${trackingUrl}"
+           style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
+          ${esc(t.trackingLabel)}
+        </a>
+      </div>`
+    : data.trackingId
+      ? `<div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;text-align:center;">
+          <p style="color:#9c8682;font-size:12px;margin:0 0 4px;">${esc(t.trackingLabel)}</p>
+          <p style="color:#3a2c2a;font-size:16px;font-weight:700;font-family:monospace;margin:0;">${esc(data.trackingId)}</p>
+        </div>`
+      : "";
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1(data.orderNumber))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(shippingDetail)}</p>
+    ${trackingHtml}
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Retail Payment Received Email ---
+
+const retailPaymentT: Record<Lang, {
+  subject: (orderNumber: string) => string;
+  greeting: (name: string) => string;
+  body1: (orderNumber: string) => string;
+  body2: string;
+  totalLabel: string;
+  footer: string;
+}> = {
+  cs: {
+    subject: (n) => `Platba přijata — objednávka #${n} — Hairland`,
+    greeting: (name) => `Dobrý den, ${name},`,
+    body1: (n) => `Vaše platba za objednávku #${n} byla přijata.`,
+    body2: "Objednávku nyní připravujeme a budeme Vás informovat o odeslání.",
+    totalLabel: "Zaplaceno",
+    footer: "Máte dotaz? Odpovězte na tento email.",
+  },
+  uk: {
+    subject: (n) => `Оплату прийнято — замовлення #${n} — Hairland`,
+    greeting: (name) => `Вітаємо, ${name},`,
+    body1: (n) => `Вашу оплату за замовлення #${n} прийнято.`,
+    body2: "Ми готуємо замовлення та повідомимо Вас про відправку.",
+    totalLabel: "Сплачено",
+    footer: "Маєте запитання? Відповідайте на цей лист.",
+  },
+  ru: {
+    subject: (n) => `Оплата принята — заказ #${n} — Hairland`,
+    greeting: (name) => `Здравствуйте, ${name},`,
+    body1: (n) => `Ваша оплата за заказ #${n} принята.`,
+    body2: "Мы готовим заказ и сообщим Вам об отправке.",
+    totalLabel: "Оплачено",
+    footer: "Есть вопрос? Ответьте на это письмо.",
+  },
+};
+
+export function getRetailPaymentReceivedEmail(
+  lang: string,
+  data: {
+    customerName: string;
+    orderNumber: string;
+    totalAmount: number;
+  }
+): { subject: string; text: string; html: string } {
+  const t = retailPaymentT[resolveLang(lang)];
+  const fmtCzk = (h: number) => (h / 100).toLocaleString("cs-CZ");
+
+  const text = [
+    t.greeting(data.customerName),
+    "",
+    t.body1(data.orderNumber),
+    t.body2,
+    "",
+    `${t.totalLabel}: ${fmtCzk(data.totalAmount)} Kč`,
+    "",
+    t.footer,
+  ].join("\n");
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1(data.orderNumber))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
+    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;text-align:center;">
+      <p style="color:#9c8682;font-size:12px;margin:0 0 4px;">${esc(t.totalLabel)}</p>
+      <p style="color:#3a2c2a;font-size:20px;font-weight:700;margin:0;">${fmtCzk(data.totalAmount)} Kč</p>
+    </div>
+    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+  `;
+
+  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}

@@ -8,12 +8,18 @@ import {
   cancelOrder,
 } from "@/lib/order-workflow";
 import { completeSale } from "@/lib/sales";
+import { createSaleFromOrder } from "@/lib/order-to-sale";
 
 import { createSalonNotification, createNotificationForRole } from "@/lib/notifications";
 import { notifyOrderCancelled } from "@/lib/telegram";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { sendNotificationEmail } from "@/lib/email";
-import { getOrderConfirmationEmail, getOrderShippedEmail } from "@/lib/email-templates";
+import {
+  getOrderConfirmationEmail,
+  getOrderShippedEmail,
+  getRetailOrderShippedEmail,
+  getRetailPaymentReceivedEmail,
+} from "@/lib/email-templates";
 
 export async function GET(
   _request: NextRequest,
@@ -29,6 +35,7 @@ export async function GET(
     where: { id },
     include: {
       salon: { select: { id: true, name: true, tier: true } },
+      customer: { select: { id: true, name: true, email: true } },
       items: {
         include: {
           variant: {
@@ -210,43 +217,264 @@ export async function POST(
         return NextResponse.json(order);
       }
 
+      case "mark-paid": {
+        if (session.user.role !== "OWNER")
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+        const orderToPay = await prisma.order.findUniqueOrThrow({ where: { id } });
+        if (orderToPay.status !== "AWAITING_PAYMENT")
+          return NextResponse.json({ error: "Order is not awaiting payment" }, { status: 400 });
+
+        await prisma.order.update({
+          where: { id },
+          data: { status: "PAID", paidAt: new Date() },
+        });
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "MARK_PAID",
+          entity: "Order",
+          entityId: id,
+          detail: { orderNumber: orderToPay.orderNumber },
+          ipAddress: getClientIp(request),
+        });
+
+        // Trigger createSaleFromOrder (FIFO + invoice)
+        try {
+          await createSaleFromOrder(id, session.user.id);
+        } catch (e) {
+          console.error("[mark-paid] createSaleFromOrder failed:", e);
+          // Revert to AWAITING_PAYMENT so admin can retry
+          await prisma.order.update({
+            where: { id },
+            data: { status: "AWAITING_PAYMENT", paidAt: null },
+          });
+          const message = e instanceof Error ? e.message : "Sale creation failed";
+          return NextResponse.json({ error: message }, { status: 400 });
+        }
+
+        // Send payment received email (fire-and-forget)
+        if (orderToPay.contactEmail) {
+          const lang = (orderToPay.locale as "cs" | "uk" | "ru") || "cs";
+          const emailData = getRetailPaymentReceivedEmail(lang, {
+            customerName: orderToPay.contactName || "customer",
+            orderNumber: orderToPay.orderNumber ?? id.slice(0, 8),
+            totalAmount: orderToPay.totalAmount ?? orderToPay.estimatedTotal,
+          });
+          sendNotificationEmail({ to: orderToPay.contactEmail, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+        }
+
+        return NextResponse.json({ success: true });
+      }
+
+      case "ship-packeta": {
+        if (!["OWNER", "EMPLOYEE"].includes(session.user.role))
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+        const orderToShip = await prisma.order.findUniqueOrThrow({
+          where: { id },
+          include: { items: true, customer: true },
+        });
+
+        if (!["PAID", "PROCESSING"].includes(orderToShip.status))
+          return NextResponse.json({ error: "Order must be PAID or PROCESSING" }, { status: 400 });
+        if (orderToShip.shippingMethod !== "PACKETA" || !orderToShip.packetaPointId)
+          return NextResponse.json({ error: "Not a Packeta order" }, { status: 400 });
+
+        const { createPacket } = await import("@/lib/packeta");
+
+        const totalGrams = orderToShip.items.reduce((sum, item) => sum + item.grams, 0);
+        const weightKg = Math.max(0.5, totalGrams / 1000);
+        const valueCzk = (orderToShip.totalAmount ?? orderToShip.estimatedTotal) / 100;
+
+        const nameParts = (orderToShip.contactName || orderToShip.customer?.name || "Customer").split(" ");
+        const firstName = nameParts[0] || "Customer";
+        const surname = nameParts.slice(1).join(" ") || firstName;
+
+        const packetResult = await createPacket({
+          number: orderToShip.orderNumber || id.slice(-8),
+          name: firstName,
+          surname,
+          email: orderToShip.contactEmail || orderToShip.customer?.email || "",
+          phone: orderToShip.contactPhone || undefined,
+          addressId: parseInt(orderToShip.packetaPointId),
+          weight: weightKg,
+          value: valueCzk,
+        });
+
+        if (!packetResult.success) {
+          return NextResponse.json({ error: packetResult.error || "Packeta API error" }, { status: 500 });
+        }
+
+        await prisma.order.update({
+          where: { id },
+          data: {
+            packetaPacketId: packetResult.packetId,
+            packetaBarcode: packetResult.barcode,
+            shippingTrackingId: packetResult.barcode,
+            status: "SHIPPED",
+          },
+        });
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "SHIP_PACKETA",
+          entity: "Order",
+          entityId: id,
+          detail: { packetId: packetResult.packetId, barcode: packetResult.barcode, orderNumber: orderToShip.orderNumber },
+          ipAddress: getClientIp(request),
+        });
+
+        // Send shipped email (fire-and-forget)
+        const shipEmail = orderToShip.contactEmail || orderToShip.customer?.email;
+        if (shipEmail) {
+          const lang = (orderToShip.locale as "cs" | "uk" | "ru") || "cs";
+          const emailData = getRetailOrderShippedEmail(lang, {
+            customerName: orderToShip.contactName || orderToShip.customer?.name || "customer",
+            orderNumber: orderToShip.orderNumber ?? id.slice(0, 8),
+            shippingMethod: "PACKETA",
+            trackingId: packetResult.barcode,
+            packetaPointName: orderToShip.packetaPointName ?? undefined,
+          });
+          sendNotificationEmail({ to: shipEmail, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+        }
+
+        return NextResponse.json({
+          success: true,
+          packetId: packetResult.packetId,
+          barcode: packetResult.barcode,
+        });
+      }
+
+      case "ship-manual": {
+        if (!["OWNER", "EMPLOYEE"].includes(session.user.role))
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+        const orderManual = await prisma.order.findUniqueOrThrow({
+          where: { id },
+          include: { customer: true },
+        });
+        if (!["PAID", "PROCESSING"].includes(orderManual.status))
+          return NextResponse.json({ error: "Order must be PAID or PROCESSING" }, { status: 400 });
+
+        await prisma.order.update({
+          where: { id },
+          data: {
+            status: "SHIPPED",
+            shippingTrackingId: body.trackingId || null,
+          },
+        });
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "SHIP_MANUAL",
+          entity: "Order",
+          entityId: id,
+          detail: { trackingId: body.trackingId, orderNumber: orderManual.orderNumber },
+          ipAddress: getClientIp(request),
+        });
+
+        // Send shipped email (fire-and-forget)
+        const manualEmail = orderManual.contactEmail || orderManual.customer?.email;
+        if (manualEmail) {
+          const lang = (orderManual.locale as "cs" | "uk" | "ru") || "cs";
+          const emailData = getRetailOrderShippedEmail(lang, {
+            customerName: orderManual.contactName || orderManual.customer?.name || "customer",
+            orderNumber: orderManual.orderNumber ?? id.slice(0, 8),
+            shippingMethod: orderManual.shippingMethod || "PERSONAL_DELIVERY",
+            trackingId: body.trackingId || undefined,
+          });
+          sendNotificationEmail({ to: manualEmail, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+        }
+
+        return NextResponse.json({ success: true });
+      }
+
       case "complete": {
         if (!["OWNER", "EMPLOYEE"].includes(session.user.role))
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-        const result = await prisma.$transaction(async (tx) => {
-          const order = await tx.order.findUniqueOrThrow({
+        const orderToComplete = await prisma.order.findUniqueOrThrow({
+          where: { id },
+          include: { items: true, salon: true },
+        });
+
+        if (!["CONFIRMED", "READY", "SHIPPED", "DELIVERED"].includes(orderToComplete.status))
+          return NextResponse.json({ error: `Cannot complete order in status ${orderToComplete.status}` }, { status: 400 });
+
+        // Skip sale creation if order already has one (e.g. retail orders via createSaleFromOrder)
+        if (orderToComplete.saleId) {
+          await prisma.order.update({
             where: { id },
-            include: { items: true, salon: true },
+            data: { status: "COMPLETED", completedAt: new Date() },
           });
-
-          if (
-            !["CONFIRMED", "READY", "SHIPPED", "DELIVERED"].includes(order.status)
-          ) {
-            throw new Error(`Cannot complete order in status ${order.status}`);
-          }
-
-          // Release reservations
-          await tx.reservation.updateMany({
+          await prisma.reservation.updateMany({
             where: { orderId: id, active: true },
             data: { active: false },
           });
 
-          // Update order status
-          const updated = await tx.order.update({
-            where: { id },
-            data: {
-              status: "COMPLETED",
-              completedAt: new Date(),
-            },
+          logAudit({
+            userId: session.user.id,
+            userEmail: session.user.email ?? undefined,
+            action: "COMPLETE",
+            entity: "Order",
+            entityId: id,
+            detail: { saleId: orderToComplete.saleId, orderNumber: orderToComplete.orderNumber },
+            ipAddress: getClientIp(request),
           });
 
-          return { order: updated, orderItems: order.items, salonId: order.salonId };
+          return NextResponse.json({ order: { ...orderToComplete, status: "COMPLETED" } });
+        }
+
+        // Retail order without sale — use createSaleFromOrder
+        if (!orderToComplete.salonId) {
+          // Ensure order is in PAID status for createSaleFromOrder
+          if (orderToComplete.status !== "PAID" && !orderToComplete.saleId) {
+            // Set to PAID temporarily for createSaleFromOrder flow
+            await prisma.order.update({ where: { id }, data: { status: "PAID" } });
+          }
+          try {
+            const sale = await createSaleFromOrder(id, session.user.id);
+            await prisma.order.update({
+              where: { id },
+              data: { status: "COMPLETED", completedAt: new Date() },
+            });
+            logAudit({
+              userId: session.user.id,
+              userEmail: session.user.email ?? undefined,
+              action: "COMPLETE",
+              entity: "Order",
+              entityId: id,
+              detail: { saleId: sale.id, saleNumber: sale.saleNumber, orderNumber: orderToComplete.orderNumber },
+              ipAddress: getClientIp(request),
+            });
+            return NextResponse.json({ order: { ...orderToComplete, status: "COMPLETED" }, sale: { id: sale.id, saleNumber: sale.saleNumber } });
+          } catch (e) {
+            // Revert status
+            await prisma.order.update({ where: { id }, data: { status: orderToComplete.status } });
+            const message = e instanceof Error ? e.message : "Sale creation failed";
+            return NextResponse.json({ error: message }, { status: 400 });
+          }
+        }
+
+        // B2B order — existing flow with completeSale
+        const result = await prisma.$transaction(async (tx) => {
+          await tx.reservation.updateMany({
+            where: { orderId: id, active: true },
+            data: { active: false },
+          });
+          const updated = await tx.order.update({
+            where: { id },
+            data: { status: "COMPLETED", completedAt: new Date() },
+          });
+          return { order: updated, orderItems: orderToComplete.items, salonId: orderToComplete.salonId };
         }, { timeout: 15000 });
 
         let sale;
         try {
-          // Create sale from order items (has its own transaction)
           sale = await completeSale(
             {
               customerType: "SALON",
@@ -262,7 +490,6 @@ export async function POST(
           );
         } catch (e) {
           console.error("[Order Complete] completeSale failed:", { orderId: id, error: e });
-          // Revert order status back to CONFIRMED
           await prisma.order.update({
             where: { id },
             data: { status: "CONFIRMED", completedAt: null },
@@ -271,13 +498,11 @@ export async function POST(
           return NextResponse.json({ error: message }, { status: 400 });
         }
 
-        // Link sale to order
         await prisma.order.update({
           where: { id },
           data: { saleId: sale.id },
         });
 
-        // Notify salon — order completed, invoice will be created after payment confirmation
         if (result.salonId) {
           createSalonNotification({
             salonId: result.salonId,

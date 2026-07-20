@@ -12,15 +12,29 @@ interface OrderDetail {
   orderNumber?: string;
   status: string;
   estimatedTotal: number;
+  totalAmount?: number;
+  shippingCost?: number;
   note?: string;
   internalNote?: string;
   rejectedReason?: string;
   promoCode?: string;
   promoDiscount?: number;
+  paymentMethod?: string;
+  shippingMethod?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  packetaPointName?: string;
+  packetaPointCity?: string;
+  packetaPacketId?: string;
+  packetaBarcode?: string;
+  shippingTrackingId?: string;
+  paidAt?: string;
   createdAt: string;
   confirmedAt?: string;
   completedAt?: string;
-  salon: { id: string; name: string; tier: string };
+  salon?: { id: string; name: string; tier: string } | null;
+  customer?: { name: string; email: string } | null;
   items: {
     id: string;
     grams: number;
@@ -39,10 +53,14 @@ interface OrderDetail {
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
   NEW: { color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-200" },
+  AWAITING_PAYMENT: { color: "text-orange-700", bg: "bg-orange-50", border: "border-orange-200" },
+  PAID: { color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-200" },
   CONFIRMED: { color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
+  PROCESSING: { color: "text-indigo-700", bg: "bg-indigo-50", border: "border-indigo-200" },
   REJECTED: { color: "text-red-700", bg: "bg-red-50", border: "border-red-200" },
   READY: { color: "text-purple-700", bg: "bg-purple-50", border: "border-purple-200" },
   SHIPPED: { color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200" },
+  DELIVERED: { color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
   COMPLETED: { color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
   CANCELLED: { color: "text-gray-500", bg: "bg-gray-50", border: "border-gray-200" },
 };
@@ -70,6 +88,8 @@ export function OrderDetailClient({
   const [rejectReason, setRejectReason] = useState("");
   const [showReject, setShowReject] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [trackingId, setTrackingId] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
 
   const isOwner = role === "OWNER";
   const isStaff = ["OWNER", "EMPLOYEE"].includes(role);
@@ -88,6 +108,7 @@ export function OrderDetailClient({
 
   const doAction = async (action: string, body?: Record<string, unknown>) => {
     setActionError("");
+    setActionLoading(true);
     try {
       const res = await fetch(`/api/orders/${id}`, {
         method: "POST",
@@ -103,6 +124,8 @@ export function OrderDetailClient({
       }
     } catch {
       setActionError(tCommon("error"));
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -120,8 +143,9 @@ export function OrderDetailClient({
         <div>
           <h1 className="text-xl font-bold text-ink">{t("orderDetail")}</h1>
           <p className="text-sm text-muted mt-0.5">
-            {order.salon.name} · {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
+            {order.salon?.name ?? order.customer?.name ?? ""} · {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
             {order.orderNumber && <span className="ml-2 font-mono text-xs">#{order.orderNumber}</span>}
+            {!order.salon && order.customer && <span className="ml-2 text-[10px] bg-rose/10 text-rose px-1.5 py-0.5 rounded">Retail</span>}
           </p>
         </div>
         <Link href={isStaff ? "/orders" : "/salon/orders"}>
@@ -226,6 +250,63 @@ export function OrderDetailClient({
         </div>
       )}
 
+      {/* Contact info — retail orders */}
+      {isStaff && (order.contactName || order.contactEmail) && (
+        <div className="bg-white border border-line rounded-xl px-4 py-3 space-y-1">
+          <p className="text-xs font-medium text-muted uppercase mb-2">{t("contactInfo")}</p>
+          {order.contactName && (
+            <p className="text-sm text-ink">{order.contactName}</p>
+          )}
+          {order.contactEmail && (
+            <p className="text-sm text-muted">{order.contactEmail}</p>
+          )}
+          {order.contactPhone && (
+            <p className="text-sm text-muted">{order.contactPhone}</p>
+          )}
+        </div>
+      )}
+
+      {/* Shipping info */}
+      {isStaff && order.shippingMethod && (
+        <div className="bg-white border border-line rounded-xl px-4 py-3 space-y-1">
+          <p className="text-xs font-medium text-muted uppercase mb-2">{t("shippingInfo")}</p>
+          <p className="text-sm text-ink">
+            {order.shippingMethod === "PACKETA" ? "Packeta" : order.shippingMethod === "PERSONAL_DELIVERY" ? t("shipPersonal") : order.shippingMethod === "PICKUP" ? t("shipPickup") : order.shippingMethod === "CZECH_POST" ? t("shipPost") : order.shippingMethod}
+          </p>
+          {order.packetaPointName && (
+            <p className="text-sm text-muted">{order.packetaPointName}{order.packetaPointCity ? `, ${order.packetaPointCity}` : ""}</p>
+          )}
+          {order.packetaPacketId && (
+            <p className="text-sm text-muted">{t("packetaId")}: {order.packetaPacketId}</p>
+          )}
+          {order.packetaBarcode && (
+            <p className="text-sm text-muted">{t("barcode")}: {order.packetaBarcode}</p>
+          )}
+          {order.shippingTrackingId && (
+            <p className="text-sm text-muted">{t("trackingId")}: {order.shippingTrackingId}</p>
+          )}
+          {order.shippingCost != null && (
+            <p className="text-sm text-muted">{t("shippingCostLabel")}: {formatCZK(order.shippingCost)} Kč</p>
+          )}
+        </div>
+      )}
+
+      {/* Payment info */}
+      {isStaff && order.paymentMethod && (
+        <div className="bg-white border border-line rounded-xl px-4 py-3 space-y-1">
+          <p className="text-xs font-medium text-muted uppercase mb-2">{t("paymentInfo")}</p>
+          <p className="text-sm text-ink">
+            {order.paymentMethod === "CARD" ? t("payCard") : order.paymentMethod === "TRANSFER" ? t("payTransfer") : order.paymentMethod}
+          </p>
+          {order.paidAt && (
+            <p className="text-sm text-emerald-600">{t("paidAtLabel")}: {new Date(order.paidAt).toLocaleDateString("cs-CZ")}</p>
+          )}
+          {order.totalAmount != null && (
+            <p className="text-sm font-semibold text-ink">{t("totalAmountLabel")}: {formatCZK(order.totalAmount)} Kč</p>
+          )}
+        </div>
+      )}
+
       {/* Staff actions */}
       {!isFinal && (
         <div className="bg-white border border-line rounded-xl px-4 py-4">
@@ -237,7 +318,7 @@ export function OrderDetailClient({
           <div className="flex flex-wrap gap-2">
             {order.status === "NEW" && isOwner && (
               <>
-                <Button size="sm" onClick={() => doAction("confirm")}>
+                <Button size="sm" onClick={() => doAction("confirm")} disabled={actionLoading}>
                   {t("confirmOrder")}
                 </Button>
                 <Button
@@ -250,20 +331,56 @@ export function OrderDetailClient({
               </>
             )}
 
+            {/* mark-paid — retail AWAITING_PAYMENT orders */}
+            {order.status === "AWAITING_PAYMENT" && isOwner && (
+              <Button size="sm" onClick={() => doAction("mark-paid")} disabled={actionLoading}>
+                {t("markPaid")}
+              </Button>
+            )}
+
             {order.status === "CONFIRMED" && isStaff && (
-              <Button size="sm" onClick={() => doAction("status", { status: "READY" })}>
+              <Button size="sm" onClick={() => doAction("status", { status: "READY" })} disabled={actionLoading}>
                 {t("markReady")}
               </Button>
             )}
 
-            {order.status === "READY" && isStaff && (
-              <Button size="sm" onClick={() => doAction("status", { status: "SHIPPED" })}>
+            {/* ship-packeta — for Packeta orders */}
+            {["PROCESSING", "READY"].includes(order.status) && isStaff && order.shippingMethod === "PACKETA" && (
+              <Button size="sm" onClick={() => doAction("ship-packeta")} disabled={actionLoading}>
+                {t("shipPacketa")}
+              </Button>
+            )}
+
+            {/* ship-manual — for non-Packeta shipping */}
+            {["PROCESSING", "READY"].includes(order.status) && isStaff && order.shippingMethod && order.shippingMethod !== "PACKETA" && (
+              <div className="flex items-center gap-2">
+                <Input
+                  value={trackingId}
+                  onChange={(e) => setTrackingId(e.target.value)}
+                  placeholder={t("trackingIdPlaceholder")}
+                  className="w-40 text-xs"
+                />
+                <Button size="sm" onClick={() => doAction("ship-manual", { trackingId: trackingId || undefined })} disabled={actionLoading}>
+                  {t("shipManual")}
+                </Button>
+              </div>
+            )}
+
+            {order.status === "READY" && isStaff && !order.shippingMethod && (
+              <Button size="sm" onClick={() => doAction("status", { status: "SHIPPED" })} disabled={actionLoading}>
                 {t("markShipped")}
               </Button>
             )}
 
-            {["CONFIRMED", "READY", "SHIPPED"].includes(order.status) && isStaff && (
-              <Button size="sm" onClick={() => doAction("complete")}>
+            {/* mark delivered */}
+            {order.status === "SHIPPED" && isStaff && (
+              <Button size="sm" onClick={() => doAction("status", { status: "DELIVERED" })} disabled={actionLoading}>
+                {t("markDelivered")}
+              </Button>
+            )}
+
+            {["CONFIRMED", "READY", "SHIPPED", "DELIVERED", "PROCESSING"].includes(order.status) && isStaff && (
+              <Button size="sm" onClick={() => doAction("complete")} disabled={actionLoading}>
                 {t("completeOrder")}
               </Button>
             )}

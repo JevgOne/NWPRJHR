@@ -266,6 +266,19 @@ export function CheckoutClient() {
     );
   }
 
+  // Generate SPAYD QR code for transfer payments
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (orderResult?.success && orderResult.paymentInfo) {
+      const spayd = `SPD*1.0*ACC:${orderResult.paymentInfo.iban}*AM:${orderResult.paymentInfo.amount.toFixed(2)}*CC:CZK*X-VS:${orderResult.paymentInfo.variableSymbol}`;
+      import("qrcode").then((QRCode) => {
+        QRCode.toDataURL(spayd, { errorCorrectionLevel: "M", width: 200, margin: 2 })
+          .then(setQrDataUrl)
+          .catch(() => {});
+      }).catch(() => {});
+    }
+  }, [orderResult]);
+
   // Success — transfer payment info
   if (orderResult?.success && orderResult.paymentInfo) {
     return (
@@ -277,6 +290,13 @@ export function CheckoutClient() {
         </div>
         <h1 className="text-2xl font-bold text-ink mb-2">{t("successTitle")}</h1>
         <p className="text-muted mb-6">{t("successTransferDesc")}</p>
+
+        {qrDataUrl && (
+          <div className="mb-6">
+            <img src={qrDataUrl} alt="QR platba" className="mx-auto w-48 h-48" />
+            <p className="text-xs text-muted mt-2">{t("scanQrToPay")}</p>
+          </div>
+        )}
 
         <div className="bg-nude-50 rounded-2xl p-5 text-left max-w-sm mx-auto space-y-3">
           <div>
