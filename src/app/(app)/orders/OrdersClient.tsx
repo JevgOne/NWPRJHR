@@ -28,7 +28,7 @@ const statusColors: Record<string, string> = {
   CONFIRMED: "bg-rose/15 text-espresso",
   REJECTED: "bg-red-100 text-red-700",
   READY: "bg-green-100 text-green-700",
-  IN_TRANSIT: "bg-yellow-100 text-yellow-700",
+  SHIPPED: "bg-yellow-100 text-yellow-700",
   COMPLETED: "bg-nude-100 text-gray-600",
   CANCELLED: "bg-nude-100 text-muted",
 };
@@ -64,7 +64,7 @@ export function OrdersClient({ role }: { role: Role }) {
     "NEW",
     "CONFIRMED",
     "READY",
-    "IN_TRANSIT",
+    "SHIPPED",
     "COMPLETED",
     "REJECTED",
     "CANCELLED",
@@ -88,7 +88,7 @@ export function OrdersClient({ role }: { role: Role }) {
               setPage(1);
             }}
           >
-            {s === "" ? tCommon("search") : t(s.toLowerCase().replace("_", "")  === "intransit" ? "inTransit" : s.toLowerCase())}
+            {s === "" ? tCommon("search") : t(s.toLowerCase())}
           </button>
         ))}
       </div>
@@ -137,7 +137,7 @@ export function OrdersClient({ role }: { role: Role }) {
                           statusColors[o.status] ?? "bg-nude-100"
                         }`}
                       >
-                        {t(o.status === "IN_TRANSIT" ? "inTransit" : o.status.toLowerCase())}
+                        {t(o.status.toLowerCase())}
                       </span>
                     </td>
                   </tr>

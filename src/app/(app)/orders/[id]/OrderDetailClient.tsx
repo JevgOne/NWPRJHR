@@ -42,7 +42,7 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string 
   CONFIRMED: { color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
   REJECTED: { color: "text-red-700", bg: "bg-red-50", border: "border-red-200" },
   READY: { color: "text-purple-700", bg: "bg-purple-50", border: "border-purple-200" },
-  IN_TRANSIT: { color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200" },
+  SHIPPED: { color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200" },
   COMPLETED: { color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
   CANCELLED: { color: "text-gray-500", bg: "bg-gray-50", border: "border-gray-200" },
 };
@@ -110,7 +110,7 @@ export function OrderDetailClient({
   if (!order) return <p className="text-red-500 py-8 text-center">{tCommon("error")}</p>;
 
   const statusStyle = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.NEW;
-  const statusLabel = t(order.status === "NEW" ? "new" : order.status === "CONFIRMED" ? "confirmed" : order.status === "REJECTED" ? "rejected" : order.status === "READY" ? "ready" : order.status === "IN_TRANSIT" ? "inTransit" : order.status === "COMPLETED" ? "completed" : "cancelled");
+  const statusLabel = t(order.status.toLowerCase());
   const isFinal = ["COMPLETED", "CANCELLED", "REJECTED"].includes(order.status);
 
   return (
@@ -257,12 +257,12 @@ export function OrderDetailClient({
             )}
 
             {order.status === "READY" && isStaff && (
-              <Button size="sm" onClick={() => doAction("status", { status: "IN_TRANSIT" })}>
-                {t("markInTransit")}
+              <Button size="sm" onClick={() => doAction("status", { status: "SHIPPED" })}>
+                {t("markShipped")}
               </Button>
             )}
 
-            {["CONFIRMED", "READY", "IN_TRANSIT"].includes(order.status) && isStaff && (
+            {["CONFIRMED", "READY", "SHIPPED"].includes(order.status) && isStaff && (
               <Button size="sm" onClick={() => doAction("complete")}>
                 {t("completeOrder")}
               </Button>

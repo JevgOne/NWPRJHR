@@ -23,7 +23,7 @@ const statusColors: Record<string, string> = {
   CONFIRMED: "bg-green-100 text-green-700",
   REJECTED: "bg-red-100 text-red-700",
   READY: "bg-green-100 text-green-700",
-  IN_TRANSIT: "bg-nude-200 text-espresso",
+  SHIPPED: "bg-nude-200 text-espresso",
   COMPLETED: "bg-nude-100 text-muted",
   CANCELLED: "bg-nude-100 text-muted",
 };
@@ -33,7 +33,7 @@ const statusKey: Record<string, string> = {
   CONFIRMED: "confirmed",
   REJECTED: "rejected",
   READY: "ready",
-  IN_TRANSIT: "inTransit",
+  SHIPPED: "shipped",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
 };

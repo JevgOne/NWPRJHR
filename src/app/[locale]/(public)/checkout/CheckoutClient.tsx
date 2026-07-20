@@ -297,7 +297,7 @@ export function CheckoutClient() {
           </div>
           <div>
             <div className="text-xs text-muted">{t("amount")}</div>
-            <div className="font-bold text-ink">{orderResult.paymentInfo.amount.toLocaleString("cs-CZ")} Kc</div>
+            <div className="font-bold text-ink">{orderResult.paymentInfo.amount.toLocaleString("cs-CZ")} Kč</div>
           </div>
         </div>
 
@@ -433,8 +433,8 @@ export function CheckoutClient() {
             {([
               { value: "PERSONAL_DELIVERY", label: tInquiry("shippingPersonal"), price: tInquiry("shippingFree") },
               { value: "PICKUP", label: tInquiry("shippingPickup"), price: tInquiry("shippingFree") },
-              { value: "PACKETA", label: tInquiry("shippingPacketa"), price: "89 Kc" },
-              { value: "CZECH_POST", label: tInquiry("shippingPost"), price: "119 Kc" },
+              { value: "PACKETA", label: tInquiry("shippingPacketa"), price: "89 Kč" },
+              { value: "CZECH_POST", label: tInquiry("shippingPost"), price: "119 Kč" },
             ] as const).map((opt) => (
               <label
                 key={opt.value}
@@ -617,23 +617,23 @@ export function CheckoutClient() {
           <div className="bg-nude-50 rounded-2xl p-5 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted">{t("itemsTotal")}</span>
-              <span className="text-ink">{formatPrice(itemsTotal)} Kc</span>
+              <span className="text-ink">{formatPrice(itemsTotal)} Kč</span>
             </div>
             {promoDiscount > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-emerald-600">{t("discount")}</span>
-                <span className="text-emerald-600">-{formatPrice(promoDiscount)} Kc</span>
+                <span className="text-emerald-600">-{formatPrice(promoDiscount)} Kč</span>
               </div>
             )}
             <div className="flex justify-between text-sm">
               <span className="text-muted">{t("shipping")}</span>
               <span className="text-ink">
-                {shippingCost === 0 ? tInquiry("shippingFree") : `${formatPrice(shippingCost)} Kc`}
+                {shippingCost === 0 ? tInquiry("shippingFree") : `${formatPrice(shippingCost)} Kč`}
               </span>
             </div>
             <div className="border-t border-line pt-2 flex justify-between font-bold text-ink">
               <span>{t("total")}</span>
-              <span>{formatPrice(total)} Kc</span>
+              <span>{formatPrice(total)} Kč</span>
             </div>
           </div>
 
@@ -721,7 +721,7 @@ function SummaryItemRow({ item }: { item: InquiryCartItem }) {
         </div>
       </div>
       <div className="text-sm font-medium text-ink whitespace-nowrap">
-        {formatPrice(lineTotal)} Kc
+        {formatPrice(lineTotal)} Kč
       </div>
     </div>
   );
