@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getPaymentStatus } from "@/lib/comgate";
 import { createSaleFromOrder } from "@/lib/order-to-sale";
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
 
       try {
         await createSaleFromOrder(order.id, systemUser.id);
+        revalidateTag("dashboard");
       } catch (e) {
         console.error("[comgate/callback] createSaleFromOrder failed:", { orderId: order.id, error: e });
       }

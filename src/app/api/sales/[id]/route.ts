@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
@@ -152,6 +153,8 @@ export async function POST(
       detail: { saleNumber: result.sale.saleNumber, invoiceCancelled: result.invoiceCancelled },
       ipAddress: getClientIp(request),
     });
+
+    revalidateTag("dashboard");
 
     return NextResponse.json({ success: true, sale: result.sale });
   } catch (e) {

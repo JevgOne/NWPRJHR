@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import {
@@ -243,6 +244,7 @@ export async function POST(
         // Trigger createSaleFromOrder (FIFO + invoice)
         try {
           await createSaleFromOrder(id, session.user.id);
+          revalidateTag("dashboard");
         } catch (e) {
           console.error("[mark-paid] createSaleFromOrder failed:", e);
           // Revert to AWAITING_PAYMENT so admin can retry
@@ -442,6 +444,7 @@ export async function POST(
               where: { id },
               data: { status: "COMPLETED", completedAt: new Date() },
             });
+            revalidateTag("dashboard");
             logAudit({
               userId: session.user.id,
               userEmail: session.user.email ?? undefined,
@@ -502,6 +505,8 @@ export async function POST(
           where: { id },
           data: { saleId: sale.id },
         });
+
+        revalidateTag("dashboard");
 
         if (result.salonId) {
           createSalonNotification({
