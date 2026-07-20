@@ -10,6 +10,7 @@ export interface InquiryCartItem {
   quantity: number;
   unit: "g" | "ks";
   sku?: string;
+  pricePerUnit?: number; // halere per gram or per piece (retail)
 }
 
 interface CartState {

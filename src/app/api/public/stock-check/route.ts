@@ -7,7 +7,10 @@ const stockCheckSchema = z.object({
   items: z
     .array(
       z.object({
-        variantId: z.string().min(1),
+        variantId: z.string().min(1).optional(),
+        productId: z.string().min(1).optional(),
+        lengthCm: z.number().int().min(0).optional(),
+        color: z.string().min(1).optional(),
         grams: z.number().int().min(0),
         pieces: z.number().int().min(0),
       })
@@ -24,7 +27,37 @@ export async function POST(request: NextRequest) {
   }
 
   const { items } = parsed.data;
-  const variantIds = items.map((i) => i.variantId);
+
+  // Resolve variantIds: either passed directly or looked up via @@unique(productId, lengthCm, color)
+  const resolvedItems: { variantId: string; grams: number; pieces: number }[] = [];
+  for (const item of items) {
+    if (item.variantId) {
+      resolvedItems.push({ variantId: item.variantId, grams: item.grams, pieces: item.pieces });
+    } else if (item.productId && item.lengthCm !== undefined && item.color) {
+      const variant = await prisma.variant.findUnique({
+        where: {
+          productId_lengthCm_color: {
+            productId: item.productId,
+            lengthCm: item.lengthCm,
+            color: item.color,
+          },
+        },
+        select: { id: true },
+      });
+      if (variant) {
+        resolvedItems.push({ variantId: variant.id, grams: item.grams, pieces: item.pieces });
+      } else {
+        resolvedItems.push({ variantId: "", grams: item.grams, pieces: item.pieces });
+      }
+    } else {
+      return NextResponse.json(
+        { error: "Each item must have either variantId or productId+lengthCm+color" },
+        { status: 400 }
+      );
+    }
+  }
+
+  const variantIds = resolvedItems.map((i) => i.variantId).filter(Boolean);
 
   const variants = await prisma.variant.findMany({
     where: { id: { in: variantIds } },
@@ -38,11 +71,11 @@ export async function POST(request: NextRequest) {
   const variantMap = new Map(variants.map((v) => [v.id, v]));
 
   const results = await Promise.all(
-    items.map(async (item) => {
+    resolvedItems.map(async (item) => {
       const variant = variantMap.get(item.variantId);
       if (!variant) {
         return {
-          variantId: item.variantId,
+          variantId: item.variantId || null,
           requested: { grams: item.grams, pieces: item.pieces },
           available: false,
           inStock: { grams: 0, pieces: 0 },

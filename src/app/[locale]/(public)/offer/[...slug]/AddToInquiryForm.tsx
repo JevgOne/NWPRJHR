@@ -15,6 +15,7 @@ interface PickerVariant {
   availableGrams: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
   pricePerPiece?: number;
+  retailPricePerPiece?: number;
   availablePieces?: number;
   exclusivePieces?: number;
   availableToOrder?: boolean;
@@ -112,7 +113,10 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
     : null;
 
   const handleAdd = () => {
-    if (!selectedLength || !selectedColor) return;
+    if (!selectedLength || !selectedColor || !selectedVariant) return;
+    const pricePerUnit = isByPiece
+      ? (selectedVariant.retailPricePerPiece ?? selectedVariant.pricePerPiece ?? 0)
+      : selectedVariant.retailPricePerGram;
     addItem({
       productId,
       productName,
@@ -121,6 +125,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
       quantity,
       unit: showAsPiece ? inquiryUnit : "g",
       sku: generateSku(category, texture, selectedColor, selectedLength),
+      pricePerUnit,
     });
     setAdded(true);
     confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });

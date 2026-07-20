@@ -206,7 +206,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
 
       {/* Cart items — hidden in consult mode */}
       {!isConsult && (
-        <div className="space-y-3 mb-8">
+        <div className="space-y-3 mb-4">
           {items.map((item) => (
             <CartItemRow
               key={`${item.productId}:${item.lengthCm}:${item.color}`}
@@ -215,6 +215,19 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
               onUpdateQty={(qty) => updateQuantity(item.productId, item.lengthCm, item.color, qty)}
             />
           ))}
+        </div>
+      )}
+
+      {/* Quick checkout button */}
+      {!isConsult && items.some((i) => i.pricePerUnit && i.pricePerUnit > 0) && (
+        <div className="mb-8">
+          <Link
+            href="/checkout"
+            className="block w-full py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors text-center text-sm"
+          >
+            {t("proceedToCheckout")}
+          </Link>
+          <p className="text-[11px] text-muted text-center mt-2">{t("orSendInquiry")}</p>
         </div>
       )}
 
