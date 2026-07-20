@@ -113,16 +113,16 @@ export function CustomerSelect({
                 <button
                   key={salon.id}
                   type="button"
-                  className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                  className={`w-full text-left py-1.5 px-3 border-b border-line/50 transition-colors ${
                     selectedSalonId === salon.id
-                      ? "border-rose bg-rose/10"
-                      : "border-line hover:bg-nude-50"
+                      ? "bg-rose/10"
+                      : "hover:bg-nude-50"
                   }`}
                   onClick={() => onSalonSelect(salon.id)}
                 >
-                  <div className="font-medium">{salon.name}</div>
+                  <div className="font-medium text-sm">{salon.name}</div>
                   {salon.city && (
-                    <div className="text-sm text-muted">{salon.city}</div>
+                    <div className="text-xs text-muted">{salon.city}</div>
                   )}
                 </button>
               ))}
@@ -243,16 +243,16 @@ export function CustomerSelect({
               <button
                 key={c.id}
                 type="button"
-                className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                className={`w-full text-left py-1.5 px-3 border-b border-line/50 transition-colors ${
                   selectedCustomerId === c.id
-                    ? "border-rose bg-rose/10"
-                    : "border-line hover:bg-nude-50"
+                    ? "bg-rose/10"
+                    : "hover:bg-nude-50"
                 }`}
                 onClick={() => onCustomerSelect(c.id)}
               >
-                <div className="font-medium">{c.name}</div>
+                <div className="font-medium text-sm">{c.name}</div>
                 {c.email && (
-                  <div className="text-sm text-muted">{c.email}</div>
+                  <div className="text-xs text-muted">{c.email}</div>
                 )}
               </button>
             ))}
