@@ -357,6 +357,14 @@ export function PublicNavbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
+            <Link href="/wishlist" className="relative p-2 text-muted hover:text-rose transition-colors">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              {wishlistCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{wishlistCount}</span>
+              )}
+            </Link>
             <Link href="/inquiry-cart" className="relative p-2 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -383,45 +391,6 @@ export function PublicNavbar() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="lg:hidden pb-4">
-            {/* Utility icons — top row */}
-            <div className="flex items-center justify-around py-3 border-b border-line mb-2">
-              <button
-                onClick={() => { setMenuOpen(false); setSearchOpen(true); }}
-                className="flex flex-col items-center gap-1 text-muted hover:text-rose transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <span className="text-[10px]">{t("navbar.search")}</span>
-              </button>
-              <Link
-                href="/wishlist"
-                onClick={() => setMenuOpen(false)}
-                className="relative flex flex-col items-center gap-1 text-muted hover:text-rose transition-colors"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                {wishlistCount > 0 && (
-                  <span className="absolute -top-1 right-0 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{wishlistCount}</span>
-                )}
-                <span className="text-[10px]">{t("navbar.wishlist")}</span>
-              </Link>
-              <Link
-                href="/inquiry-cart"
-                onClick={() => setMenuOpen(false)}
-                className="relative flex flex-col items-center gap-1 text-muted hover:text-rose transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                {itemCount > 0 && (
-                  <span className="absolute -top-1 right-0 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{itemCount}</span>
-                )}
-                <span className="text-[10px]">{t("navbar.inquiry")}</span>
-              </Link>
-            </div>
-
             {/* Navigation links */}
             <div className="space-y-0.5">
               {/* Nabidka — primo link */}
