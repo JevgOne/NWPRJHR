@@ -2975,6 +2975,9 @@
     "order_cancelled": "Скасовано",
     "order_rejected": "Відхилено",
     "deliveries": "Надходження",
-    "delivery": "Надходження"
+    "delivery": "Надходження",
+    "noEntries": "Немає записів за цей місяць",
+    "showLegend": "Показати легенду статусів",
+    "hideLegend": "Сховати легенду"
   }
 }

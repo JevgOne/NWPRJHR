@@ -41,6 +41,7 @@ interface CalendarOrder {
   totalAmount?: number | null;
   estimatedTotal: number;
   createdAt: string;
+  contactName?: string | null;
   salon?: { name: string } | null;
   customer?: { name: string; email?: string } | null;
   _count?: { items: number };
@@ -66,6 +67,8 @@ type CalendarEntry =
   | { kind: "order"; data: CalendarOrder }
   | { kind: "delivery"; data: CalendarDelivery };
 
+// --- Dot colors by status ---
+
 const RESERVATION_DOT: Record<string, string> = {
   PENDING: "bg-yellow-400",
   PAID: "bg-lime-500",
@@ -79,7 +82,7 @@ const SALE_DOT: Record<string, string> = {
   CASH: "bg-green-500",
   CARD: "bg-purple-500",
   PROMO: "bg-orange-500",
-  WRITEOFF: "bg-zinc-400",
+  WRITEOFF: "bg-amber-300",
 };
 
 const ORDER_DOT: Record<string, string> = {
@@ -89,7 +92,7 @@ const ORDER_DOT: Record<string, string> = {
   SHIPPED: "bg-indigo-500",
   DELIVERED: "bg-cyan-500",
   COMPLETED: "bg-emerald-400",
-  CANCELLED: "bg-gray-300",
+  CANCELLED: "bg-red-300",
   REJECTED: "bg-red-500",
 };
 
@@ -108,7 +111,7 @@ const SALE_TEXT: Record<string, string> = {
   CASH: "text-green-700",
   CARD: "text-purple-700",
   PROMO: "text-orange-700",
-  WRITEOFF: "text-zinc-500",
+  WRITEOFF: "text-amber-600",
 };
 
 const ORDER_TEXT: Record<string, string> = {
@@ -118,9 +121,41 @@ const ORDER_TEXT: Record<string, string> = {
   SHIPPED: "text-indigo-700",
   DELIVERED: "text-cyan-700",
   COMPLETED: "text-emerald-600",
-  CANCELLED: "text-gray-400",
+  CANCELLED: "text-red-400",
   REJECTED: "text-red-700",
 };
+
+// --- Emoji constants ---
+
+const TYPE_EMOJI = {
+  reservation: "📋",
+  sale: "💰",
+  order: "📦",
+  delivery: "🚚",
+} as const;
+
+const STATUS_EMOJI: Record<string, string> = {
+  PENDING: "⏳",
+  PAID: "✅",
+  COMPLETED: "🔄",
+  EXPIRED: "⌛",
+  CANCELLED: "❌",
+  TRANSFER: "🏦",
+  CASH: "💵",
+  CARD: "💳",
+  PROMO: "🎁",
+  WRITEOFF: "📝",
+  NEW: "🆕",
+  AWAITING_PAYMENT: "⏳",
+  CONFIRMED: "✔️",
+  PROCESSING: "⚙️",
+  READY: "📦",
+  SHIPPED: "🚚",
+  DELIVERED: "📬",
+  REJECTED: "🚫",
+};
+
+// --- Helpers ---
 
 function formatCZK(halere: number): string {
   return (halere / 100).toLocaleString("cs-CZ", {
@@ -129,7 +164,135 @@ function formatCZK(halere: number): string {
   });
 }
 
-const DAY_NAMES = ["Po", "Ut", "St", "Ct", "Pa", "So", "Ne"];
+const DAY_NAMES = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+
+function getDayBgIntensity(count: number): string {
+  if (count === 0) return "";
+  if (count <= 2) return "bg-rose/[0.03]";
+  if (count <= 5) return "bg-rose/[0.06]";
+  if (count <= 10) return "bg-rose/[0.10]";
+  return "bg-rose/[0.15]";
+}
+
+function getEntryAmount(entry: CalendarEntry): number {
+  if (entry.kind === "reservation") return entry.data.lineTotal;
+  if (entry.kind === "sale") return entry.data.totalAmount;
+  if (entry.kind === "order") return entry.data.totalAmount ?? entry.data.estimatedTotal;
+  return 0;
+}
+
+function getDotColor(entry: CalendarEntry): string {
+  if (entry.kind === "reservation") return RESERVATION_DOT[entry.data.status] ?? "bg-gray-300";
+  if (entry.kind === "sale") return SALE_DOT[entry.data.paymentType] ?? "bg-gray-300";
+  if (entry.kind === "delivery") return DELIVERY_DOT;
+  return ORDER_DOT[entry.data.status] ?? "bg-gray-300";
+}
+
+function getEntryKey(entry: CalendarEntry): string {
+  return `${entry.kind}-${entry.data.id}`;
+}
+
+function isCancelledEntry(entry: CalendarEntry): boolean {
+  return (
+    (entry.kind === "reservation" && entry.data.status === "CANCELLED") ||
+    (entry.kind === "order" && entry.data.status === "CANCELLED") ||
+    (entry.kind === "sale" && entry.data.paymentType === "WRITEOFF")
+  );
+}
+
+// --- Sub-components ---
+
+function DaySummary({ entries }: { entries: CalendarEntry[] }) {
+  const counts = { reservation: 0, sale: 0, order: 0, delivery: 0 };
+  for (const e of entries) counts[e.kind]++;
+
+  const chips: { key: string; count: number; bg: string; text: string; emoji: string }[] = [];
+  if (counts.reservation > 0) chips.push({ key: "r", count: counts.reservation, bg: "bg-amber-100", text: "text-amber-700", emoji: "📋" });
+  if (counts.sale > 0) chips.push({ key: "s", count: counts.sale, bg: "bg-blue-100", text: "text-blue-700", emoji: "💰" });
+  if (counts.order > 0) chips.push({ key: "o", count: counts.order, bg: "bg-indigo-100", text: "text-indigo-700", emoji: "📦" });
+  if (counts.delivery > 0) chips.push({ key: "d", count: counts.delivery, bg: "bg-teal-100", text: "text-teal-700", emoji: "🚚" });
+
+  return (
+    <div className="flex flex-col gap-0.5 mt-0.5">
+      {chips.slice(0, 3).map(({ key, count, bg, text, emoji }) => (
+        <div key={key} className={`flex items-center gap-0.5 rounded px-1 py-px text-[10px] font-medium leading-tight ${bg} ${text}`}>
+          <span className="text-[9px]">{emoji}</span>
+          <span>{count}</span>
+        </div>
+      ))}
+      {chips.length > 3 && (
+        <span className="text-[9px] text-muted">+{chips.length - 3}</span>
+      )}
+    </div>
+  );
+}
+
+function DaySummaryInline({ entries }: { entries: CalendarEntry[] }) {
+  const counts = { reservation: 0, sale: 0, order: 0, delivery: 0 };
+  for (const e of entries) counts[e.kind]++;
+
+  return (
+    <div className="flex gap-1 flex-wrap">
+      {counts.reservation > 0 && (
+        <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 text-[10px] font-medium">
+          📋 {counts.reservation}
+        </span>
+      )}
+      {counts.sale > 0 && (
+        <span className="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-medium">
+          💰 {counts.sale}
+        </span>
+      )}
+      {counts.order > 0 && (
+        <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 text-[10px] font-medium">
+          📦 {counts.order}
+        </span>
+      )}
+      {counts.delivery > 0 && (
+        <span className="px-1.5 py-0.5 rounded bg-teal-100 text-teal-700 text-[10px] font-medium">
+          🚚 {counts.delivery}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function DayTooltip({ entries, day, monthLabel }: {
+  entries: CalendarEntry[];
+  day: number;
+  monthLabel: string;
+}) {
+  if (entries.length === 0) return null;
+
+  const counts = { reservation: 0, sale: 0, order: 0, delivery: 0 };
+  let totalAmount = 0;
+  for (const e of entries) {
+    counts[e.kind]++;
+    totalAmount += getEntryAmount(e);
+  }
+
+  return (
+    <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 z-30
+                    hidden group-hover:block
+                    bg-ink text-white text-[11px] rounded-lg shadow-lg px-3 py-2 whitespace-nowrap">
+      <div className="font-semibold mb-1">{day}. {monthLabel}</div>
+      {counts.reservation > 0 && <div className="flex justify-between gap-3"><span>📋 Rezervace</span><span>{counts.reservation}</span></div>}
+      {counts.sale > 0 && <div className="flex justify-between gap-3"><span>💰 Prodeje</span><span>{counts.sale}</span></div>}
+      {counts.order > 0 && <div className="flex justify-between gap-3"><span>📦 Objednávky</span><span>{counts.order}</span></div>}
+      {counts.delivery > 0 && <div className="flex justify-between gap-3"><span>🚚 Naskladnění</span><span>{counts.delivery}</span></div>}
+      {totalAmount > 0 && (
+        <div className="mt-1 pt-1 border-t border-white/20 font-medium text-right">
+          {formatCZK(totalAmount)} CZK
+        </div>
+      )}
+      <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0
+                      border-l-[5px] border-r-[5px] border-t-[5px]
+                      border-l-transparent border-r-transparent border-t-ink" />
+    </div>
+  );
+}
+
+// --- Main component ---
 
 export function ActivityCalendar() {
   const t = useTranslations("reservation");
@@ -144,6 +307,26 @@ export function ActivityCalendar() {
   const [deliveries, setDeliveries] = useState<CalendarDelivery[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [showStatusLegend, setShowStatusLegend] = useState(false);
+
+  // Filters — persisted to localStorage
+  const [filters, setFilters] = useState({
+    reservations: true,
+    sales: true,
+    orders: true,
+    deliveries: true,
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem("calendar-filters");
+    if (saved) {
+      try { setFilters(JSON.parse(saved)); } catch { /* ignore */ }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("calendar-filters", JSON.stringify(filters));
+  }, [filters]);
 
   const from = currentMonth.toISOString();
   const to = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0, 23, 59, 59).toISOString();
@@ -153,7 +336,6 @@ export function ActivityCalendar() {
     const resParams = new URLSearchParams({ view: "calendar", from, to });
     const saleParams = new URLSearchParams({ from, to, limit: "500" });
     const orderParams = new URLSearchParams({ from, to, limit: "500" });
-
     const deliveryParams = new URLSearchParams({ from, to });
 
     Promise.all([
@@ -179,7 +361,6 @@ export function ActivityCalendar() {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
-    // Monday = 0, Sunday = 6
     let startDow = firstDay.getDay() - 1;
     if (startDow < 0) startDow = 6;
 
@@ -191,41 +372,49 @@ export function ActivityCalendar() {
     return days;
   }, [currentMonth]);
 
-  // Group entries by day
+  // Group entries by day — respects filters
   const byDay = useMemo(() => {
     const map = new Map<number, CalendarEntry[]>();
 
-    for (const r of reservations) {
-      const d = new Date(r.paymentDueDate).getDate();
-      const arr = map.get(d) ?? [];
-      arr.push({ kind: "reservation", data: r });
-      map.set(d, arr);
+    if (filters.reservations) {
+      for (const r of reservations) {
+        const d = new Date(r.paymentDueDate).getDate();
+        const arr = map.get(d) ?? [];
+        arr.push({ kind: "reservation", data: r });
+        map.set(d, arr);
+      }
     }
 
-    for (const s of sales) {
-      if (!s.completedAt) continue;
-      const d = new Date(s.completedAt).getDate();
-      const arr = map.get(d) ?? [];
-      arr.push({ kind: "sale", data: s });
-      map.set(d, arr);
+    if (filters.sales) {
+      for (const s of sales) {
+        if (!s.completedAt) continue;
+        const d = new Date(s.completedAt).getDate();
+        const arr = map.get(d) ?? [];
+        arr.push({ kind: "sale", data: s });
+        map.set(d, arr);
+      }
     }
 
-    for (const o of orders) {
-      const d = new Date(o.createdAt).getDate();
-      const arr = map.get(d) ?? [];
-      arr.push({ kind: "order", data: o });
-      map.set(d, arr);
+    if (filters.orders) {
+      for (const o of orders) {
+        const d = new Date(o.createdAt).getDate();
+        const arr = map.get(d) ?? [];
+        arr.push({ kind: "order", data: o });
+        map.set(d, arr);
+      }
     }
 
-    for (const dl of deliveries) {
-      const d = new Date(dl.stockedAt).getDate();
-      const arr = map.get(d) ?? [];
-      arr.push({ kind: "delivery", data: dl });
-      map.set(d, arr);
+    if (filters.deliveries) {
+      for (const dl of deliveries) {
+        const d = new Date(dl.stockedAt).getDate();
+        const arr = map.get(d) ?? [];
+        arr.push({ kind: "delivery", data: dl });
+        map.set(d, arr);
+      }
     }
 
     return map;
-  }, [reservations, sales, orders, deliveries]);
+  }, [reservations, sales, orders, deliveries, filters]);
 
   const today = new Date();
   const isCurrentMonth =
@@ -242,27 +431,104 @@ export function ActivityCalendar() {
     year: "numeric",
   });
 
+  const shortMonthLabel = currentMonth.toLocaleDateString("cs-CZ", { month: "short" });
+
   const selectedEntries = selectedDay ? byDay.get(parseInt(selectedDay)) ?? [] : [];
-
-  function getDotColor(entry: CalendarEntry): string {
-    if (entry.kind === "reservation") {
-      return RESERVATION_DOT[entry.data.status] ?? "bg-gray-300";
-    }
-    if (entry.kind === "sale") {
-      return SALE_DOT[entry.data.paymentType] ?? "bg-gray-300";
-    }
-    if (entry.kind === "delivery") {
-      return DELIVERY_DOT;
-    }
-    return ORDER_DOT[entry.data.status] ?? "bg-gray-300";
-  }
-
-  function getEntryKey(entry: CalendarEntry): string {
-    return `${entry.kind}-${entry.data.id}`;
-  }
 
   return (
     <div className="space-y-4">
+      {/* Filter chips = legend */}
+      <div className="flex flex-wrap gap-2">
+        {([
+          { key: "reservations" as const, label: tCal("reservation"), emoji: "📋", active: "bg-amber-50 text-amber-700 border-amber-200", count: reservations.length },
+          { key: "sales" as const, label: tCal("sales"), emoji: "💰", active: "bg-blue-50 text-blue-700 border-blue-200", count: sales.length },
+          { key: "orders" as const, label: tCal("orders"), emoji: "📦", active: "bg-indigo-50 text-indigo-700 border-indigo-200", count: orders.length },
+          { key: "deliveries" as const, label: tCal("deliveries"), emoji: "🚚", active: "bg-teal-50 text-teal-700 border-teal-200", count: deliveries.length },
+        ]).map(({ key, label, emoji, active, count }) => (
+          <button
+            key={key}
+            onClick={() => setFilters(f => ({ ...f, [key]: !f[key] }))}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${
+              filters[key] ? active : "bg-nude-50/50 text-muted/50 border-line/50 line-through"
+            }`}
+          >
+            <span className="text-sm">{emoji}</span>
+            {label}
+            <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] ${
+              filters[key] ? "bg-white/60" : "bg-nude-100/50"
+            }`}>
+              {count}
+            </span>
+          </button>
+        ))}
+
+        <button
+          onClick={() => setShowStatusLegend(v => !v)}
+          className="text-[11px] text-muted hover:text-ink transition-colors self-center ml-auto"
+        >
+          {showStatusLegend ? tCal("hideLegend") : tCal("showLegend")}
+        </button>
+      </div>
+
+      {/* Collapsible status legend */}
+      {showStatusLegend && (
+        <div className="bg-nude-50 rounded-xl p-3 text-xs text-muted grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {filters.reservations && (
+            <div>
+              <span className="font-medium text-ink">📋 {t("title")}</span>
+              <div className="flex flex-col gap-0.5 mt-1">
+                {Object.entries(RESERVATION_DOT).map(([key, color]) => (
+                  <span key={key} className="flex items-center gap-1">
+                    <span className={`w-2 h-2 rounded-full ${color}`} />
+                    <span>{STATUS_EMOJI[key] ?? ""}</span>
+                    {t(key.toLowerCase())}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {filters.sales && (
+            <div>
+              <span className="font-medium text-ink">💰 {tCal("sales")}</span>
+              <div className="flex flex-col gap-0.5 mt-1">
+                {Object.entries(SALE_DOT).map(([key, color]) => (
+                  <span key={key} className="flex items-center gap-1">
+                    <span className={`w-2 h-2 rounded-full ${color}`} />
+                    <span>{STATUS_EMOJI[key] ?? ""}</span>
+                    {tCal(key.toLowerCase())}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {filters.orders && (
+            <div>
+              <span className="font-medium text-ink">📦 {tCal("orders")}</span>
+              <div className="flex flex-col gap-0.5 mt-1">
+                {Object.entries(ORDER_DOT).map(([key, color]) => (
+                  <span key={key} className="flex items-center gap-1">
+                    <span className={`w-2 h-2 rounded-full ${color}`} />
+                    <span>{STATUS_EMOJI[key] ?? ""}</span>
+                    {tCal(`order_${key.toLowerCase()}`)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {filters.deliveries && (
+            <div>
+              <span className="font-medium text-ink">🚚 {tCal("deliveries")}</span>
+              <div className="flex flex-col gap-0.5 mt-1">
+                <span className="flex items-center gap-1">
+                  <span className={`w-2 h-2 rounded-full ${DELIVERY_DOT}`} />
+                  {tCal("delivery")}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Month navigation */}
       <div className="flex items-center justify-between">
         <button
@@ -280,116 +546,108 @@ export function ActivityCalendar() {
         </button>
       </div>
 
-      {/* Calendar grid */}
+      {/* Calendar content */}
       {loading ? (
         <p className="text-muted text-center py-8">...</p>
       ) : (
-        <div className="border border-line rounded-xl overflow-hidden">
-          {/* Header row */}
-          <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
-            {DAY_NAMES.map((d) => (
-              <div key={d} className="text-center text-xs font-medium text-muted py-2">
-                {d}
-              </div>
-            ))}
-          </div>
+        <>
+          {/* Desktop: calendar grid */}
+          <div className="hidden sm:block border border-line rounded-xl overflow-hidden">
+            {/* Header row */}
+            <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
+              {DAY_NAMES.map((d) => (
+                <div key={d} className="text-center text-xs font-medium text-muted py-2">
+                  {d}
+                </div>
+              ))}
+            </div>
 
-          {/* Day cells */}
-          <div className="grid grid-cols-7">
-            {calendarDays.map((day, idx) => {
-              const dayEntries = day ? byDay.get(day) ?? [] : [];
-              const isToday = isCurrentMonth && day === today.getDate();
-              const isSelected = selectedDay === String(day);
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  disabled={!day}
-                  onClick={() => day && setSelectedDay(isSelected ? null : String(day))}
-                  className={`min-h-[3.5rem] p-1 border-b border-r border-line/50 text-left transition-colors ${
-                    !day
-                      ? "bg-nude-50/50"
-                      : isSelected
-                        ? "bg-rose/10"
-                        : "hover:bg-nude-50"
-                  }`}
-                >
-                  {day && (
-                    <>
-                      <div className={`text-xs font-medium mb-0.5 ${
-                        isToday
-                          ? "text-white bg-rose w-5 h-5 rounded-full flex items-center justify-center"
-                          : "text-ink"
-                      }`}>
-                        {day}
-                      </div>
-                      {dayEntries.length > 0 && (
-                        <div className="flex flex-wrap gap-0.5">
-                          {dayEntries.slice(0, 6).map((entry) => (
-                            <span
-                              key={getEntryKey(entry)}
-                              className={`w-2 h-2 rounded-full ${getDotColor(entry)}`}
-                            />
-                          ))}
-                          {dayEntries.length > 6 && (
-                            <span className="text-[9px] text-muted">+{dayEntries.length - 6}</span>
-                          )}
+            {/* Day cells */}
+            <div className="grid grid-cols-7">
+              {calendarDays.map((day, idx) => {
+                const dayEntries = day ? byDay.get(day) ?? [] : [];
+                const isToday = isCurrentMonth && day === today.getDate();
+                const isSelected = selectedDay === String(day);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={!day}
+                    onClick={() => day && setSelectedDay(isSelected ? null : String(day))}
+                    className={`group relative min-h-[4.5rem] p-1.5 border-b border-r transition-colors text-left ${
+                      !day
+                        ? "bg-nude-50/50 border-line/50"
+                        : isToday
+                          ? `ring-2 ring-rose/40 ring-inset ${isSelected ? "bg-rose/10" : getDayBgIntensity(dayEntries.length)} border-rose/20`
+                          : isSelected
+                            ? "bg-rose/10 ring-1 ring-rose/30 ring-inset border-line/50"
+                            : `${getDayBgIntensity(dayEntries.length)} hover:bg-nude-50 cursor-pointer border-line/30`
+                    }`}
+                  >
+                    {day && (
+                      <>
+                        <div className={`text-xs font-bold mb-0.5 ${
+                          isToday
+                            ? "text-white bg-rose w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
+                            : dayEntries.length > 0 ? "text-ink" : "text-muted"
+                        }`}>
+                          {day}
                         </div>
-                      )}
-                    </>
-                  )}
-                </button>
-              );
-            })}
+                        {dayEntries.length > 0 && (
+                          <>
+                            <DaySummary entries={dayEntries} />
+                            <DayTooltip entries={dayEntries} day={day} monthLabel={shortMonthLabel} />
+                          </>
+                        )}
+                      </>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-6 text-xs text-muted">
-        <div>
-          <span className="font-medium text-ink">{t("title")}</span>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-            {Object.entries(RESERVATION_DOT).map(([key, color]) => (
-              <span key={key} className="flex items-center gap-1">
-                <span className={`w-2 h-2 rounded-full ${color}`} />
-                {t(key.toLowerCase())}
-              </span>
-            ))}
+          {/* Mobile: list view */}
+          <div className="block sm:hidden space-y-1">
+            {Array.from(byDay.entries())
+              .sort(([a], [b]) => a - b)
+              .map(([day, entries]) => {
+                const totalAmount = entries.reduce((sum, e) => sum + getEntryAmount(e), 0);
+                return (
+                  <button
+                    key={day}
+                    onClick={() => setSelectedDay(selectedDay === String(day) ? null : String(day))}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl border transition-colors text-left ${
+                      selectedDay === String(day)
+                        ? "bg-rose/10 border-rose/20"
+                        : "bg-white border-line hover:bg-nude-50"
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                      isCurrentMonth && day === today.getDate()
+                        ? "bg-rose text-white"
+                        : "bg-nude-50 text-ink"
+                    }`}>
+                      {day}
+                    </div>
+                    <div className="flex gap-1.5 flex-1 min-w-0">
+                      <DaySummaryInline entries={entries} />
+                    </div>
+                    {totalAmount > 0 && (
+                      <span className="text-xs text-muted flex-shrink-0">
+                        {formatCZK(totalAmount)} CZK
+                      </span>
+                    )}
+                  </button>
+                );
+              })
+            }
+            {byDay.size === 0 && (
+              <p className="text-sm text-muted text-center py-6">{tCal("noEntries")}</p>
+            )}
           </div>
-        </div>
-        <div>
-          <span className="font-medium text-ink">{tCal("sales")}</span>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-            {Object.entries(SALE_DOT).map(([key, color]) => (
-              <span key={key} className="flex items-center gap-1">
-                <span className={`w-2 h-2 rounded-full ${color}`} />
-                {tCal(key.toLowerCase())}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div>
-          <span className="font-medium text-ink">{tCal("orders")}</span>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-            {Object.entries(ORDER_DOT).map(([key, color]) => (
-              <span key={key} className="flex items-center gap-1">
-                <span className={`w-2 h-2 rounded-full ${color}`} />
-                {tCal(`order_${key.toLowerCase()}`)}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div>
-          <span className="font-medium text-ink">{tCal("deliveries")}</span>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-            <span className="flex items-center gap-1">
-              <span className={`w-2 h-2 rounded-full ${DELIVERY_DOT}`} />
-              {tCal("delivery")}
-            </span>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* Selected day detail */}
       {selectedDay && (
@@ -401,25 +659,27 @@ export function ActivityCalendar() {
             <p className="text-sm text-muted">{tCal("noEntriesDay")}</p>
           ) : (
             selectedEntries.map((entry) => {
+              const cancelled = isCancelledEntry(entry);
+
               if (entry.kind === "reservation") {
                 const r = entry.data;
                 return (
                   <Link
                     key={`r-${r.id}`}
                     href={`/reservations/${r.id}`}
-                    className="flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors"
+                    className={`flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors ${cancelled ? "opacity-50" : ""}`}
                   >
                     <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${RESERVATION_DOT[r.status] ?? "bg-gray-300"}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">
-                          {tCal("reservation")}
+                          📋 {tCal("reservation")}
                         </span>
                         <span className="text-sm font-medium text-ink">
                           {r.reservationNumber ?? r.id.slice(0, 8)}
                         </span>
                         <span className={`text-xs font-medium ${RESERVATION_TEXT[r.status] ?? "text-gray-500"}`}>
-                          {t(r.status.toLowerCase())}
+                          {STATUS_EMOJI[r.status] ?? ""} {t(r.status.toLowerCase())}
                         </span>
                       </div>
                       <div className="text-xs text-muted">
@@ -440,19 +700,19 @@ export function ActivityCalendar() {
                   <Link
                     key={`s-${s.id}`}
                     href={`/sales/${s.id}`}
-                    className="flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors"
+                    className={`flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors ${cancelled ? "opacity-50" : ""}`}
                   >
                     <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${SALE_DOT[s.paymentType] ?? "bg-gray-300"}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">
-                          {tCal("sale")}
+                          💰 {tCal("sale")}
                         </span>
                         <span className="text-sm font-medium text-ink">
                           {s.saleNumber ?? s.id.slice(0, 8)}
                         </span>
                         <span className={`text-xs font-medium ${SALE_TEXT[s.paymentType] ?? "text-gray-500"}`}>
-                          {tCal(s.paymentType.toLowerCase())}
+                          {STATUS_EMOJI[s.paymentType] ?? ""} {tCal(s.paymentType.toLowerCase())}
                         </span>
                       </div>
                       <div className="text-xs text-muted">
@@ -469,15 +729,16 @@ export function ActivityCalendar() {
               if (entry.kind === "delivery") {
                 const dl = entry.data;
                 return (
-                  <div
+                  <Link
                     key={`d-${dl.id}`}
-                    className="flex items-start gap-2 py-1.5 px-2 -mx-2"
+                    href={`/inventory/deliveries/${dl.id}`}
+                    className="flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors"
                   >
                     <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${DELIVERY_DOT}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">
-                          {tCal("delivery")}
+                          🚚 {tCal("delivery")}
                         </span>
                         {dl.variant && (
                           <span className="text-sm font-medium text-ink">
@@ -489,7 +750,7 @@ export function ActivityCalendar() {
                         {dl.initialGrams} g, {dl.initialPieces} ks
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               }
 
@@ -498,23 +759,23 @@ export function ActivityCalendar() {
                 <Link
                   key={`o-${o.id}`}
                   href={`/orders/${o.id}`}
-                  className="flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors"
+                  className={`flex items-start gap-2 py-1.5 hover:bg-nude-50 rounded-lg px-2 -mx-2 transition-colors ${cancelled ? "opacity-50" : ""}`}
                 >
                   <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${ORDER_DOT[o.status] ?? "bg-gray-300"}`} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">
-                        {tCal("order")}
+                        📦 {tCal("order")}
                       </span>
                       <span className="text-sm font-medium text-ink">
                         {o.orderNumber ?? o.id.slice(0, 8)}
                       </span>
                       <span className={`text-xs font-medium ${ORDER_TEXT[o.status] ?? "text-gray-500"}`}>
-                        {tCal(`order_${o.status.toLowerCase()}`)}
+                        {STATUS_EMOJI[o.status] ?? ""} {tCal(`order_${o.status.toLowerCase()}`)}
                       </span>
                     </div>
                     <div className="text-xs text-muted">
-                      {o.salon?.name ?? o.customer?.name ?? "—"}
+                      {o.salon?.name ?? o.customer?.name ?? o.contactName ?? "—"}
                     </div>
                     <div className="text-xs text-muted">
                       {formatCZK(o.totalAmount ?? o.estimatedTotal)} CZK

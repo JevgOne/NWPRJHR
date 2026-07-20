@@ -2975,6 +2975,9 @@
     "order_cancelled": "Zru\u0161eno",
     "order_rejected": "Zam\u00edtnuto",
     "deliveries": "Naskladn\u011bn\u00ed",
-    "delivery": "Naskladn\u011bn\u00ed"
+    "delivery": "Naskladn\u011bn\u00ed",
+    "noEntries": "\u017d\u00e1dn\u00e9 z\u00e1znamy v tomto m\u011bs\u00edci",
+    "showLegend": "Zobrazit legendu status\u016f",
+    "hideLegend": "Skr\u00fdt legendu"
   }
 }

@@ -2975,6 +2975,9 @@
     "order_cancelled": "Отменено",
     "order_rejected": "Отклонено",
     "deliveries": "Поступления",
-    "delivery": "Поступление"
+    "delivery": "Поступление",
+    "noEntries": "Нет записей за этот месяц",
+    "showLegend": "Показать легенду статусов",
+    "hideLegend": "Скрыть легенду"
   }
 }
