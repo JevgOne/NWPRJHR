@@ -59,15 +59,37 @@ CREATE INDEX "promo_codes_code_idx" ON "promo_codes"("code");
 CREATE INDEX "promo_codes_active_idx" ON "promo_codes"("active");
 ```
 
+## Existující migrační skript
+
+Soubor `scripts/create-promo-codes-table.ts` už existuje a je připravený ke spuštění:
+- Používá `@libsql/client` + dotenv pro připojení přes `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`
+- Vytváří tabulku `promo_codes` s `CREATE TABLE IF NOT EXISTS` (bezpečné pro opakované spuštění)
+- Vytváří indexy `idx_promo_codes_code` a `idx_promo_codes_active`
+
+**POZOR:** Skript nevytváří UNIQUE index na `code` — vytváří jen běžný index. UNIQUE constraint ale chybí i v CREATE TABLE (nemá `UNIQUE` u `code TEXT NOT NULL`). **Je třeba přidat `UNIQUE` na sloupec `code`** — Prisma model to vyžaduje (`@unique`) a API na to spoléhá.
+
 ## Kroky implementace
 
-1. **Spustit SQL v Turso DB** — buď přes `turso db shell <db-name>` nebo přes Turso Dashboard
-2. **Ověřit** — zkontrolovat že tabulka existuje: `SELECT name FROM sqlite_master WHERE type='table' AND name='promo_codes';`
-3. **Test** — otevřít `/promo-codes` v admin panelu a zkusit vytvořit testovací kód
+### Varianta A: Spustit existující skript (doporučeno)
+1. **Opravit skript** `scripts/create-promo-codes-table.ts`:
+   - Změnit `code TEXT NOT NULL` na `code TEXT NOT NULL UNIQUE`
+   - Nebo přidat `CREATE UNIQUE INDEX IF NOT EXISTS promo_codes_code_key ON promo_codes(code)` 
+2. **Spustit:** `npx tsx scripts/create-promo-codes-table.ts`
+3. **Ověřit:** Spustit `npx tsx -e "...SELECT name FROM sqlite_master..."` nebo přes Turso Dashboard
+
+### Varianta B: Přímý SQL přes Turso CLI
+1. Spustit CREATE TABLE + indexy z SQL migrace výše přes `turso db shell <db-name>`
+
+### Verifikace
+- `SELECT name FROM sqlite_master WHERE type='table' AND name='promo_codes';` → musí vrátit řádek
+- `PRAGMA table_info(promo_codes);` → ověřit všechny sloupce
+- Otevřít `/promo-codes` v admin panelu → stránka se musí načíst bez chyby
+- Zkusit vytvořit testovací promo kód → musí se uložit
 
 ## Poznámky
 
 - Turso nepodporuje `prisma db push` ani `prisma migrate` — nutná manuální SQL migrace
-- UNIQUE constraint na `code` je klíčový — validace v API (`route.ts:31`) na něm závisí
+- UNIQUE constraint na `code` je KRITICKÝ — validace v API (`src/app/api/promo-codes/route.ts:31`) na něm závisí
 - `discountType` přijímá hodnoty `PERCENT` nebo `FIXED` (text)
 - Tabulka BLOKUJE TASK-070 (integrace slevového kódu do objednávek/poptávek)
+- Script pattern viz `scripts/create-inquiry-tables.ts` pro referenci
