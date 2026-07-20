@@ -762,7 +762,7 @@ export function NewSaleWizard({
               <div key={i} className="flex justify-between text-sm border-b pb-2">
                 <div>
                   <div className="font-medium">{item.variantLabel}</div>
-                  <div className="text-muted">
+                  <div className="text-ink/70">
                     {item.sellingMode === "BY_PIECE"
                       ? item.sellByGrams
                         ? `${item.grams} ${tStock("grams")} @ ${formatCZK(item.pricePerGram)} CZK/${tStock("grams")}`

@@ -125,7 +125,7 @@ export function SaleItemRow({
       )}
 
       <div className="flex justify-between text-sm">
-        <span className="text-muted">
+        <span className={insufficientStock ? "text-red-600 font-medium" : "text-emerald-600 font-medium"}>
           {t("availableStock")}:{" "}
           {isByPiece
             ? item.availablePieces > 0
@@ -136,7 +136,7 @@ export function SaleItemRow({
       </div>
 
       <div className="flex justify-between text-sm">
-        <span className="text-muted">
+        <span className="text-ink">
           {isByPiece
             ? item.sellByGrams
               ? `${t("pricePerGram")}: ${formatCZK(item.pricePerGram)} CZK`
