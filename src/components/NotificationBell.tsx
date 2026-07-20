@@ -15,8 +15,7 @@ interface NotificationItem {
 }
 
 function getNotificationUrl(n: NotificationItem): string | null {
-  const d = n.data as Record<string, string> | null | undefined;
-  if (!d) return null;
+  const d = (n.data ?? {}) as Record<string, string>;
   switch (n.type) {
     case "NEW_ORDER":
     case "ORDER_CONFIRMED":

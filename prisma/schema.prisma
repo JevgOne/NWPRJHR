@@ -724,9 +724,11 @@ model Company {
 
 model InvoiceCounter {
   id          String  @id @default(cuid())
-  year        Int     @unique
+  year        Int
+  prefix      String  @default("F")
   lastNumber  Int     @default(0)
 
+  @@unique([year, prefix])
   @@map("invoice_counters")
 }
 

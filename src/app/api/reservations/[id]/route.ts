@@ -8,7 +8,7 @@ import {
 } from "@/lib/reservations";
 import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale } from "@/lib/invoicing";
-import { createNotificationForRole } from "@/lib/notifications";
+import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
 
 export async function GET(
@@ -176,6 +176,9 @@ export async function POST(
 
       case "cancel": {
         const reservation = await cancelReservation(id, body.reason);
+
+        // Clean up notifications for cancelled reservation
+        deleteNotificationsForEntity("reservationId", id).catch(() => {});
 
         logAudit({
           userId: session.user.id,

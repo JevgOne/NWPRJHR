@@ -11,7 +11,7 @@ import {
 import { completeSale } from "@/lib/sales";
 import { createSaleFromOrder } from "@/lib/order-to-sale";
 
-import { createSalonNotification, createNotificationForRole } from "@/lib/notifications";
+import { createSalonNotification, createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { notifyOrderCancelled } from "@/lib/telegram";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { sendNotificationEmail } from "@/lib/email";
@@ -588,6 +588,9 @@ export async function POST(
             data: { orderId: order.id, orderNumber: order.orderNumber },
           }).catch(() => {});
         }
+
+        // Clean up old notifications for this order
+        deleteNotificationsForEntity("orderId", id).catch(() => {});
 
         // Telegram notification
         notifyOrderCancelled({

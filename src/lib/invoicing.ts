@@ -1,6 +1,6 @@
 import type { Sale, SaleItem, Variant, Product, Salon, Customer, Invoice } from "@prisma/client";
 import { prisma } from "./db";
-import { getNextInvoiceNumber } from "./invoice-number";
+import { getNextInvoiceNumber, type InvoicePrefix } from "./invoice-number";
 import { roundHalereUp } from "./rounding";
 import { getInvoiceTranslations } from "./invoice-translations";
 import { generateSku } from "./sku";
@@ -60,7 +60,8 @@ export async function createInvoiceFromSale(
         ? await tx.company.findUniqueOrThrow({ where: { id: companyId } })
         : await tx.company.findFirstOrThrow({ where: { isDefault: true } });
 
-      const { number, variableSymbol } = await getNextInvoiceNumber(tx);
+      const invoicePrefix: InvoicePrefix = sale.paymentType === "CASH" ? "H" : "F";
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, invoicePrefix);
 
       const buyer =
         sale.customerType === "SALON" && sale.salon
@@ -186,7 +187,7 @@ export async function createInternalDocument(
         ? await tx.company.findUniqueOrThrow({ where: { id: companyId } })
         : await tx.company.findFirstOrThrow({ where: { isDefault: true } });
 
-      const { number, variableSymbol } = await getNextInvoiceNumber(tx);
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, "F");
 
       const buyer =
         sale.customerType === "SALON" && sale.salon
@@ -284,7 +285,9 @@ export async function createCreditNote(
         include: { company: true },
       });
 
-      const { number, variableSymbol } = await getNextInvoiceNumber(tx);
+      // Credit note uses same prefix as original invoice
+      const originalPrefix = original.number.startsWith("H") ? "H" as InvoicePrefix : "F" as InvoicePrefix;
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, originalPrefix);
 
       const itemsTotal = returnItems.reduce(
         (sum, item) => sum + item.lineTotal,

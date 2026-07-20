@@ -2,6 +2,114 @@
 
 ## AKTIVNÍ
 
+## TASK-097: Oddělené číslování faktur (karta vs hotovost)
+Priorita: 1
+Stav: implementováno, čeká deploy
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Uživatel: "dej zvlíšt číslování faktur pro platby kartou a zvlíšt pro platby hotově at jdou za sebou"
+
+### Co bylo uděláno:
+- Schema: InvoiceCounter má nový `prefix` field + `@@unique([year, prefix])`
+- `invoice-number.ts`: getNextInvoiceNumber přijímá prefix ("H" = hotovost, "F" = faktura/karta)
+- `invoicing.ts`: createInvoiceFromSale předává prefix podle paymentType
+- `credit-note.ts`: dobropis dědí prefix z originální faktury
+- Formát: H2026-0001 (hotovost), F2026-0001 (karta/převod)
+
+---
+
+## TASK-098: Výběr zákazníků — redesign pro mobil
+Priorita: 1
+Stav: implementováno, čeká deploy
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Uživatel: "ten vyber zakaznicu je furt stejny uplne napíču"
+Screenshot: Na mobilu jsou zákaznické karty ošklivé, příliš velké, bez avatarů, testovací zákazníci.
+
+### Co bylo uděláno:
+- CustomerSelect.tsx: kompletní redesign — avatary s iniciálami, ikona hledání, checkmark vybraného, kompaktní layout
+- Smazat testovací zákazníky z DB (Test ApiTest atd.) — ZBÝVÁ
+
+---
+
+## TASK-099: Notifikační zvoneček — kliknutí nefunguje + stornované položky
+Priorita: 1
+Stav: částečně opraveno
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Uživatel: "když klinu na zvoneček pak na oznamení nic se neudela"
+Uživatel: "pokud se objednavka/rezervace nebo cokloliv stornuje logicky už nema co delat v oznamení"
+
+### Co bylo uděláno:
+- NotificationBell.tsx: opraveno `getNotificationUrl` — vrací URL i bez data pole (fallback na section URL)
+
+### Co zbývá:
+- Při stornu objednávky/rezervace smazat nebo označit související notifikace
+- Ověřit že kliknutí naviguje správně na všech typech notifikací
+
+---
+
+## TASK-100: Blog — nahrávání obrázků nefunguje
+Priorita: 1
+Stav: čeká
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Uživatel: "proč zase nejde nahrat obrazek do blogu?"
+
+### Kontext:
+- Blog editor: `src/app/(app)/posts/[id]/BlogEditorClient.tsx` (handleCoverUpload, řádek 116)
+- Upload API: `src/app/api/upload/photos/route.ts` — používá @vercel/blob + sharp watermark
+- Watermark: `src/lib/watermark.ts` — může selhat na Vercelu (sharp + watermark.png)
+- Potřeba: ověřit error handling, ověřit BLOB token, ověřit sharp na Vercelu
+
+---
+
+## TASK-101: Blog — SEO meta popisky slabé
+Priorita: 2
+Stav: čeká
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Uživatel: "SEO za me meta popisky atd jsou slabe na blogu nebo snad mi chceš říct že ne?"
+
+### Kontext:
+- Blog detail: `src/app/[locale]/(public)/blog/[slug]/page.tsx` — generateMetadata
+- Blog listing: `src/app/[locale]/(public)/blog/page.tsx` — generateMetadata
+- Editor: `src/app/(app)/posts/[id]/BlogEditorClient.tsx` — metaTitle, metaDescription fields
+- Možné problémy: auto-generace SEO popisků chybí, fallback na excerpt/title je slabý
+
+---
+
+## TASK-102: Kalendář — mobilní optimalizace + WOW design
+Priorita: 1
+Stav: čeká
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Uživatel: "kalendář jsi nedořešil furt je to obyčejny, neni optimalizace pro telefon"
+Uživatel: "kalendář chce urcite jeste vylepšit design na WOW neco"
+
+### Kontext:
+- Najít calendar komponentu v src/app/(app)/ nebo src/components/
+- Potřeba: responzivní design, swipe gesta, mobilní view (den/týden), WOW vizuální styl
+
+---
+
+## TASK-103: Smazání testovacích zákazníků z DB
+Priorita: 1
+Stav: čeká
+Projekt: /Users/zen/NWPRJHR
+
+### Kompletní zadání:
+Ze screenshotu: "Test ApiTest" zákazník musí být smazán z produkční DB.
+Ověřit zda "Jitka Zkouška" je test (příjmení = zkouška/test).
+
+---
+
 ## TASK-096: Cenová politika — marže se stále špatně počítá (221% místo 100%)
 Priorita: 1
 Stav: čeká na debug
@@ -9,41 +117,11 @@ Projekt: /Users/zen/NWPRJHR
 
 ### Kompletní zadání:
 Uživatel: "v admin panelu jsem upravil cenu nákupní na 3300 u S-RV-10-55 a marže je stale 221% má bejt 100%"
-Uživatel: "ta se přičte k nákupu a z toho je prodejní cena" + "máme automaticky nastavenou marži na 100%"
-
-Produkt: Luxe Vlasy — Rovné 55cm Černá (slug: luxe-iran-rovne-10-55cm)
-- Nákup: 3 300 Kč/100g (costPricePerGram = 3300)
-- Prodejní: 10 586 Kč/100g (retailPricePerGram = 10586) — ŠPATNĚ
-- Očekávaná prodejní: 6 600 Kč/100g (100% marže)
-- Zobrazená marže: +7 286 Kč (221%)
-
-### Analýza:
-API route `src/app/api/variants/[id]/route.ts` při změně costPricePerGram:
-1. Načte markupPercent z priceSettings pro kategorii produktu
-2. Vypočítá retailPrice = calculateRetailPrice(cost, markup)
-3. Uloží nový retail + reset retailManualOverride
-
-Možné příčiny:
-- priceSettings pro LUXE kategorii má v DB jiný markup než 100%
-- API vrací chybu kterou frontend ignoroval (FIX: přidán error handling v commit aa11587)
-- handleResetOverride jen mazal flag bez přepočtu (FIX: opraveno v commit aa11587)
-
-### Co už bylo opraveno (commit 3ca87be + aa11587):
-- Odstraněna podmínka !retailManualOverride při cost change
-- Reset override přepočítá retail (posílá i costPricePerGram)
-- Error handling na handleSavePrice a handleResetOverride
-
-### Co zbývá:
-1. Ověřit markup v DB pro kategorii LUXE (uživatel říká 100%, ale DB může mít jinak)
-2. Uživatel musí vyzkoušet změnu nákupní ceny PO deployi aa11587
-3. Pokud stále nefunguje — přidat debug logging do API route
 
 ### Kontext:
 - Variant PUT API: `src/app/api/variants/[id]/route.ts`
-- PriceInput: `src/components/products/VariantTable.tsx` (řádky 185-215)
-- Pricing: `src/lib/pricing.ts` (calculateRetailPrice)
+- Pricing: `src/lib/pricing.ts`
 - Price settings: `src/app/api/price-settings/route.ts`
-- Cenová politika UI: `src/app/(app)/settings/pricing/PricingSettingsClient.tsx`
 
 ---
 
@@ -53,16 +131,9 @@ Stav: čeká
 Projekt: /Users/zen/NWPRJHR
 
 ### Kompletní zadání:
-Uživatel: "a druha vec je ta že tohle je maximalně nepřehledné, nejsou tam puvod vlasu, atd všechny informace + není tam videt kolik je skladem G."
-
-Na kartě položky v prodejním formuláři po nascanování QR musí být:
-1. Původ vlasů (origin)
-2. Textura (texture)
-3. SKU kód
-4. Skladem info: BY_PIECE = "1ks - 100g", BY_GRAM = celkové gramy
+Uživatel: "nejsou tam puvod vlasu, atd všechny informace + není tam videt kolik je skladem G."
 
 ### Kontext:
-- Prodejní stránka: `src/app/(app)/sales/new/page.tsx`
 - Item row: `src/components/sales/SaleItemRow.tsx`
 - SKU: `src/lib/sku.ts`
 
@@ -90,6 +161,19 @@ Stav: čeká
 
 ---
 
+## TASK-104: Rezervace 50% záloha + Comgate
+Priorita: 2
+Stav: plán hotový v .claude-context/tasks/TASK-104-reservation-deposit-plan.md
+Projekt: /Users/zen/NWPRJHR
+
+---
+
+## TASK-105: Telegram bot pro Hairland
+Priorita: 3
+Stav: analýza hotová, uživatel chce udělat jako POSLEDNÍ
+
+---
+
 ## ČEKÁ
 
 ---
@@ -104,17 +188,3 @@ Stav: čeká
 - TASK-093: SEO kódové fixy (ItemList, mpn, sitemap, HowTo) — vše už implementováno — 2026-07-19
 - TASK-094: SEO bugy produktu (availability, og:type, reviews, meta title) (commit 5019ea5) — 2026-07-19
 - TASK-095: Rozšíření FAQ na produktových stránkách (commit 5019ea5) — 2026-07-19
-- SEO základy (sitemap, robots.txt, schema markup, OG tags, meta tags)
-- Audit log rozšíření (35+ API routes, filtrování, barevné badge)
-- Reklamace sloučení (interní + tikety → jen tikety)
-- Order detail redesign (červený cancel s potvrzením, status banner)
-- Logout v public navbar
-- Slevové kódy admin CRUD (/promo-codes)
-- Cancel notifikace obousměrně (salon→admin, admin→salon)
-- Unicode fix ReviewsClient.tsx (2026-07-09)
-- Notification badge revalidation (2026-07-09)
-- Blog OG image auto z cover image (2026-07-09)
-- Produktové karty flatten (2026-07-09)
-- Stock-in force-dynamic (2026-07-09)
-- Demo produkty smazány, cenový formulář (2026-07-10)
-- Recenze gender-neutral + premium cards (2026-07-10)

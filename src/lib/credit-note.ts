@@ -19,7 +19,9 @@ export async function createCreditNoteInTx(
     include: { company: true },
   });
 
-  const { number, variableSymbol } = await getNextInvoiceNumber(tx);
+  // Credit note uses same prefix as original invoice
+  const prefix = original.number.startsWith("H") ? "H" as const : "F" as const;
+  const { number, variableSymbol } = await getNextInvoiceNumber(tx, prefix);
 
   const itemsTotal = returnItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const total = -itemsTotal;

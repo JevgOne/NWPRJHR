@@ -392,3 +392,32 @@ export function translateNotification(
 
   return templates[lang]?.[type] ?? templates.cs[type];
 }
+
+/**
+ * Delete unread notifications related to an entity when it's cancelled/stornoed.
+ * Matches notifications by JSON data field containing the entity ID.
+ */
+export async function deleteNotificationsForEntity(
+  entityKey: "orderId" | "reservationId" | "invoiceId" | "returnId" | "complaintId",
+  entityId: string
+): Promise<number> {
+  // Prisma doesn't support JSON field filtering on SQLite well,
+  // so we fetch unread notifications and filter in memory
+  const unread = await prisma.notification.findMany({
+    where: { read: false },
+    select: { id: true, data: true },
+  });
+
+  const toDelete = unread.filter((n) => {
+    const d = n.data as Record<string, unknown> | null;
+    return d && d[entityKey] === entityId;
+  });
+
+  if (toDelete.length === 0) return 0;
+
+  const result = await prisma.notification.deleteMany({
+    where: { id: { in: toDelete.map((n) => n.id) } },
+  });
+
+  return result.count;
+}
