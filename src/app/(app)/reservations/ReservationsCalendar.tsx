@@ -131,7 +131,7 @@ const TYPE_EMOJI = {
   reservation: "📋",
   sale: "💰",
   order: "📦",
-  delivery: "🚚",
+  delivery: "📥",
 } as const;
 
 const STATUS_EMOJI: Record<string, string> = {
@@ -210,7 +210,7 @@ function DaySummary({ entries }: { entries: CalendarEntry[] }) {
   if (counts.reservation > 0) chips.push({ key: "r", count: counts.reservation, bg: "bg-amber-100", text: "text-amber-700", emoji: "📋" });
   if (counts.sale > 0) chips.push({ key: "s", count: counts.sale, bg: "bg-blue-100", text: "text-blue-700", emoji: "💰" });
   if (counts.order > 0) chips.push({ key: "o", count: counts.order, bg: "bg-indigo-100", text: "text-indigo-700", emoji: "📦" });
-  if (counts.delivery > 0) chips.push({ key: "d", count: counts.delivery, bg: "bg-teal-100", text: "text-teal-700", emoji: "🚚" });
+  if (counts.delivery > 0) chips.push({ key: "d", count: counts.delivery, bg: "bg-teal-100", text: "text-teal-700", emoji: "📥" });
 
   return (
     <div className="flex flex-col gap-0.5 mt-0.5">
@@ -250,7 +250,7 @@ function DaySummaryInline({ entries }: { entries: CalendarEntry[] }) {
       )}
       {counts.delivery > 0 && (
         <span className="px-1.5 py-0.5 rounded bg-teal-100 text-teal-700 text-[10px] font-medium">
-          🚚 {counts.delivery}
+          📥 {counts.delivery}
         </span>
       )}
     </div>
@@ -279,7 +279,7 @@ function DayTooltip({ entries, day, monthLabel }: {
       {counts.reservation > 0 && <div className="flex justify-between gap-3"><span>📋 Rezervace</span><span>{counts.reservation}</span></div>}
       {counts.sale > 0 && <div className="flex justify-between gap-3"><span>💰 Prodeje</span><span>{counts.sale}</span></div>}
       {counts.order > 0 && <div className="flex justify-between gap-3"><span>📦 Objednávky</span><span>{counts.order}</span></div>}
-      {counts.delivery > 0 && <div className="flex justify-between gap-3"><span>🚚 Naskladnění</span><span>{counts.delivery}</span></div>}
+      {counts.delivery > 0 && <div className="flex justify-between gap-3"><span>📥 Naskladnění</span><span>{counts.delivery}</span></div>}
       {totalAmount > 0 && (
         <div className="mt-1 pt-1 border-t border-white/20 font-medium text-right">
           {formatCZK(totalAmount)} CZK
@@ -443,7 +443,7 @@ export function ActivityCalendar() {
           { key: "reservations" as const, label: tCal("reservation"), emoji: "📋", active: "bg-amber-50 text-amber-700 border-amber-200", count: reservations.length },
           { key: "sales" as const, label: tCal("sales"), emoji: "💰", active: "bg-blue-50 text-blue-700 border-blue-200", count: sales.length },
           { key: "orders" as const, label: tCal("orders"), emoji: "📦", active: "bg-indigo-50 text-indigo-700 border-indigo-200", count: orders.length },
-          { key: "deliveries" as const, label: tCal("deliveries"), emoji: "🚚", active: "bg-teal-50 text-teal-700 border-teal-200", count: deliveries.length },
+          { key: "deliveries" as const, label: tCal("deliveries"), emoji: "📥", active: "bg-teal-50 text-teal-700 border-teal-200", count: deliveries.length },
         ]).map(({ key, label, emoji, active, count }) => (
           <button
             key={key}
@@ -517,7 +517,7 @@ export function ActivityCalendar() {
           )}
           {filters.deliveries && (
             <div>
-              <span className="font-medium text-ink">🚚 {tCal("deliveries")}</span>
+              <span className="font-medium text-ink">📥 {tCal("deliveries")}</span>
               <div className="flex flex-col gap-0.5 mt-1">
                 <span className="flex items-center gap-1">
                   <span className={`w-2 h-2 rounded-full ${DELIVERY_DOT}`} />
@@ -738,7 +738,7 @@ export function ActivityCalendar() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">
-                          🚚 {tCal("delivery")}
+                          📥 {tCal("delivery")}
                         </span>
                         {dl.variant && (
                           <span className="text-sm font-medium text-ink">
