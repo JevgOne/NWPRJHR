@@ -239,6 +239,19 @@ export function CheckoutClient() {
     }
   };
 
+  // Generate SPAYD QR code for transfer payments
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (orderResult?.success && orderResult.paymentInfo) {
+      const spayd = `SPD*1.0*ACC:${orderResult.paymentInfo.iban}*AM:${orderResult.paymentInfo.amount.toFixed(2)}*CC:CZK*X-VS:${orderResult.paymentInfo.variableSymbol}`;
+      import("qrcode").then((QRCode) => {
+        QRCode.toDataURL(spayd, { errorCorrectionLevel: "M", width: 200, margin: 2 })
+          .then(setQrDataUrl)
+          .catch(() => {});
+      }).catch(() => {});
+    }
+  }, [orderResult]);
+
   // Confetti on success
   useEffect(() => {
     if (orderResult?.success && !orderResult.redirect) {
@@ -265,19 +278,6 @@ export function CheckoutClient() {
       </div>
     );
   }
-
-  // Generate SPAYD QR code for transfer payments
-  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  useEffect(() => {
-    if (orderResult?.success && orderResult.paymentInfo) {
-      const spayd = `SPD*1.0*ACC:${orderResult.paymentInfo.iban}*AM:${orderResult.paymentInfo.amount.toFixed(2)}*CC:CZK*X-VS:${orderResult.paymentInfo.variableSymbol}`;
-      import("qrcode").then((QRCode) => {
-        QRCode.toDataURL(spayd, { errorCorrectionLevel: "M", width: 200, margin: 2 })
-          .then(setQrDataUrl)
-          .catch(() => {});
-      }).catch(() => {});
-    }
-  }, [orderResult]);
 
   // Success — transfer payment info
   if (orderResult?.success && orderResult.paymentInfo) {
