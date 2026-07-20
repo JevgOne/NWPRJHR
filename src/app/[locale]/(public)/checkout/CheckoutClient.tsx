@@ -34,6 +34,9 @@ export function CheckoutClient() {
     note: "",
     promoCode: "",
     shippingMethod: "PERSONAL_DELIVERY",
+    shippingStreet: "",
+    shippingCity: "",
+    shippingZip: "",
     paymentMethod: "TRANSFER",
     termsAccepted: false,
   });
@@ -124,8 +127,13 @@ export function CheckoutClient() {
     switch (step) {
       case "contact":
         return form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.email.includes("@");
-      case "shipping":
-        return form.shippingMethod !== "PACKETA" || !!packetaPoint;
+      case "shipping": {
+        if (form.shippingMethod === "PACKETA") return !!packetaPoint;
+        if (form.shippingMethod === "PERSONAL_DELIVERY" || form.shippingMethod === "CZECH_POST") {
+          return !!(form.shippingStreet.trim() && form.shippingCity.trim() && form.shippingZip.trim());
+        }
+        return true;
+      }
       case "payment":
         return !!form.paymentMethod && form.termsAccepted;
       case "summary":
@@ -207,6 +215,9 @@ export function CheckoutClient() {
             pieces: item.unit === "ks" ? item.quantity : 0,
           })),
           shippingMethod: form.shippingMethod,
+          shippingStreet: form.shippingStreet || undefined,
+          shippingCity: form.shippingCity || undefined,
+          shippingZip: form.shippingZip || undefined,
           packetaPointId: packetaPoint?.id || undefined,
           packetaPointName: packetaPoint?.name || undefined,
           packetaPointCity: packetaPoint?.city || undefined,
@@ -452,7 +463,6 @@ export function CheckoutClient() {
           <div className="space-y-2">
             {([
               { value: "PERSONAL_DELIVERY", label: tInquiry("shippingPersonal"), price: tInquiry("shippingFree") },
-              { value: "PICKUP", label: tInquiry("shippingPickup"), price: tInquiry("shippingFree") },
               { value: "PACKETA", label: tInquiry("shippingPacketa"), price: "89 Kč" },
               { value: "CZECH_POST", label: tInquiry("shippingPost"), price: "119 Kč" },
             ] as const).map((opt) => (
@@ -497,6 +507,42 @@ export function CheckoutClient() {
           )}
           {form.shippingMethod === "PACKETA" && !packetaPoint && (
             <p className="text-xs text-red-500">{tInquiry("packetaRequired")}</p>
+          )}
+          {(form.shippingMethod === "PERSONAL_DELIVERY" || form.shippingMethod === "CZECH_POST") && (
+            <div className="space-y-3 pt-2">
+              <div>
+                <label className="block text-xs text-muted mb-1">{t("addressStreet")}</label>
+                <input
+                  type="text"
+                  value={form.shippingStreet}
+                  onChange={(e) => setField("shippingStreet", e.target.value)}
+                  className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                  placeholder={t("addressStreetPlaceholder")}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-muted mb-1">{t("addressCity")}</label>
+                  <input
+                    type="text"
+                    value={form.shippingCity}
+                    onChange={(e) => setField("shippingCity", e.target.value)}
+                    className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                    placeholder={t("addressCityPlaceholder")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted mb-1">{t("addressZip")}</label>
+                  <input
+                    type="text"
+                    value={form.shippingZip}
+                    onChange={(e) => setField("shippingZip", e.target.value)}
+                    className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                    placeholder={t("addressZipPlaceholder")}
+                  />
+                </div>
+              </div>
+            </div>
           )}
           {subtotal >= FREE_SHIPPING_THRESHOLD && (
             <p className="text-xs text-emerald-600">{t("freeShippingApplied")}</p>
@@ -665,14 +711,15 @@ export function CheckoutClient() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted">{t("step_shipping")}</span>
-              <span className="text-ink">
+              <span className="text-ink text-right">
                 {form.shippingMethod === "PACKETA" && packetaPoint
                   ? `${tInquiry("shippingPacketa")} — ${packetaPoint.name}`
                   : form.shippingMethod === "PERSONAL_DELIVERY"
                     ? tInquiry("shippingPersonal")
-                    : form.shippingMethod === "PICKUP"
-                      ? tInquiry("shippingPickup")
-                      : tInquiry("shippingPost")}
+                    : tInquiry("shippingPost")}
+                {(form.shippingMethod === "PERSONAL_DELIVERY" || form.shippingMethod === "CZECH_POST") && form.shippingStreet && (
+                  <span className="block text-xs text-muted">{form.shippingStreet}, {form.shippingCity} {form.shippingZip}</span>
+                )}
               </span>
             </div>
             <div className="flex justify-between">

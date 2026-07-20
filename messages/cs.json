@@ -969,21 +969,21 @@
       "subtitle": "Žehličky, šampony a hřebeny pro prodloužené vlasy. Profesionální péče pro dlouhou životnost vašich vlasů."
     },
     "inquiry": {
-      "addToInquiry": "Přidat do poptávky",
+      "addToInquiry": "Přidat do košíku",
       "lengthLabel": "Délka",
       "colorLabel": "Barva",
       "quantityLabel": "Množství (gramy)",
-      "addButton": "Přidat do poptávky",
-      "addedButton": "Přidáno do poptávky!",
+      "addButton": "Přidat do košíku",
+      "addedButton": "Přidáno do košíku!",
       "selectLengthAndColor": "Vyberte barvu a délku",
       "selectColorFirst": "Nejdříve vyberte barvu",
-      "cartTitle": "Poptávkový košík",
-      "emptyTitle": "Poptávkový košík je prázdný",
-      "emptyText": "Prohlédněte si naši nabídku a přidejte vlasy do poptávky.",
+      "cartTitle": "Košík",
+      "emptyTitle": "Košík je prázdný",
+      "emptyText": "Prohlédněte si naši nabídku a přidejte vlasy do košíku.",
       "viewOffer": "Zobrazit nabídku",
       "backToOffer": "Zpět na nabídku",
       "successTitle": "Poptávka odeslána!",
-      "successText": "Děkujeme za vaši poptávku. Ozveme se vám co nejdříve — domluvíme schůzku kde si vlasy prohlédnete osobně.",
+      "successText": "Děkujeme za vaši poptávku. Ozveme se vám co nejdříve.",
       "contactInfo": "Vaše kontaktní údaje",
       "firstNameLabel": "Jméno *",
       "lastNameLabel": "Příjmení *",
@@ -994,7 +994,7 @@
       "salonPlaceholder": "Volitelné",
       "noteLabel": "Poznámka",
       "notePlaceholder": "Např. preferovaný termín schůzky, speciální požadavky...",
-      "submitButton": "Odeslat poptávku ({count} položek)",
+      "submitButton": "Odeslat nezávaznou poptávku ({count} položek)",
       "submitting": "Odesílám...",
       "submitError": "Chyba při odesílání",
       "disclaimer": "Neplatíte nic online. Domluvíme schůzku kde si vlasy prohlédnete osobně.",
@@ -1037,7 +1037,7 @@
       "paymentCard": "Platba kartou online",
       "paymentCardDesc": "Visa, Mastercard, Apple Pay, Google Pay — okamžitá platba",
       "proceedToCheckout": "Pokračovat k objednávce",
-      "orSendInquiry": "nebo odešlete nezávaznou poptávku níže"
+      "orSendInquiry": "nebo odešlete nezávaznou poptávku níže (bez online platby)"
     },
     "checkout": {
       "title": "Objednávka",
@@ -1074,7 +1074,13 @@
       "someItemsUnavailable": "Některé položky nejsou momentálně skladem.",
       "variantNotFound": "Některé varianty nebyly nalezeny.",
       "submitError": "Chyba při odesílání objednávky. Zkuste to prosím znovu.",
-      "scanQrToPay": "Naskenujte QR kód v bankovní aplikaci pro rychlou platbu"
+      "scanQrToPay": "Naskenujte QR kód v bankovní aplikaci pro rychlou platbu",
+      "addressStreet": "Ulice a číslo popisné *",
+      "addressStreetPlaceholder": "Např. Vodičkova 123/4",
+      "addressCity": "Město *",
+      "addressCityPlaceholder": "Např. Praha",
+      "addressZip": "PSČ *",
+      "addressZipPlaceholder": "Např. 110 00"
     },
     "paymentResult": {
       "paidTitle": "Platba proběhla úspěšně!",
@@ -1161,12 +1167,13 @@
       "cooperation": "Spolupráce",
       "advice": "Poradna",
       "register": "Registrace",
-      "inquiry": "Poptávka",
+      "inquiry": "Košík",
       "weightGuide": "Průvodce gramáží",
       "inspiration": "Inspirace",
       "reviews": "Recenze",
       "tagline": "PRÉMIOVÉ VLASY",
-      "wishlist": "Oblíbené"
+      "wishlist": "Oblíbené",
+      "search": "Hledat"
     },
     "wishlist": {
       "title": "Oblíbené",

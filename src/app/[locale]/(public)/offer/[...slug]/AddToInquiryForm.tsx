@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import confetti from "canvas-confetti";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 import { generateSku } from "@/lib/sku";
@@ -128,7 +127,6 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
       pricePerUnit,
     });
     setAdded(true);
-    confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
     setTimeout(() => setAdded(false), 2000);
   };
 

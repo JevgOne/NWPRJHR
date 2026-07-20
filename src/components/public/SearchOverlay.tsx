@@ -13,8 +13,13 @@ interface SearchProduct {
   nameRu: string | null;
   category: string;
   origin: string | null;
+  description: string | null;
+  descriptionUk: string | null;
+  descriptionRu: string | null;
+  texture: string | null;
+  colorTone: string | null;
   photos: string[];
-  variants: { retailPricePerGram: number; sellingMode?: string; retailPricePerPiece?: number | null }[];
+  variants: { retailPricePerGram: number; sellingMode?: string; retailPricePerPiece?: number | null; color: string; lengthCm: number }[];
 }
 
 let cachedProducts: SearchProduct[] | null = null;
@@ -81,14 +86,28 @@ export function SearchOverlay({
 
     return products
       .filter((p) => {
-        const haystack = [p.name, p.nameUk, p.nameRu, p.origin]
+        const variantColors = [...new Set(p.variants.map(v => v.color))].join(" ");
+        const localizedDesc = locale === "ru" ? p.descriptionRu
+          : locale === "uk" ? p.descriptionUk
+          : p.description;
+        const haystack = [
+          p.name,
+          p.nameUk,
+          p.nameRu,
+          p.origin,
+          localizedDesc,
+          p.category,
+          p.texture,
+          p.colorTone,
+          variantColors,
+        ]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
         return haystack.includes(trimmed);
       })
       .slice(0, 8);
-  }, [query, products]);
+  }, [query, products, locale]);
 
   if (!open) return null;
 

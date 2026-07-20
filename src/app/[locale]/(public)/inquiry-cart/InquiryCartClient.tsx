@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import confetti from "canvas-confetti";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 import { getReferralFromStorage, clearReferralFromStorage } from "@/components/public/ReferralTracker";
@@ -148,14 +147,6 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
       setSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (submitted) {
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
-      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.7, y: 0.5 } }), 600);
-    }
-  }, [submitted]);
 
   if (submitted) {
     return (
@@ -384,7 +375,6 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                 <div className="space-y-2">
                   {([
                     { value: "PERSONAL_DELIVERY", label: t("shippingPersonal"), price: t("shippingFree") },
-                    { value: "PICKUP", label: t("shippingPickup"), price: t("shippingFree") },
                     { value: "PACKETA", label: t("shippingPacketa"), price: "89 Kč" },
                     { value: "CZECH_POST", label: t("shippingPost"), price: "99 Kč", disabled: true },
                   ] as const).map((opt) => (

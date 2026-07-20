@@ -107,6 +107,55 @@ function NavDropdown({
   );
 }
 
+function MobileAccordion({
+  label,
+  items,
+  pathname,
+  onNavigate,
+}: {
+  label: string;
+  items: { href: string; label: string }[];
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const isActive = items.some((item) => pathname.startsWith(item.href));
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+          isActive ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+        }`}
+      >
+        {label}
+        <svg className={`w-4 h-4 text-muted transition-transform ${open ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="ml-3 border-l-2 border-nude-200 pl-3 mt-1 space-y-0.5">
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
+                pathname.startsWith(item.href)
+                  ? "text-rose font-medium"
+                  : "text-muted hover:text-ink hover:bg-nude-50"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PublicNavbar() {
   const t = useTranslations("public");
   const tAuth = useTranslations("auth");
@@ -170,14 +219,6 @@ export function PublicNavbar() {
     { href: "/about", label: t("nav.about") },
   ];
 
-  // All links flat for mobile
-  const allMobileLinks = [
-    ...mainLinks,
-    ...offerItems,
-    ...cooperationItems,
-    ...inspiraceItems,
-    ...endLinks,
-  ];
 
   return (
     <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-xl border-b border-line shadow-sm" : "bg-white border-b border-transparent"}`}>
@@ -306,85 +347,173 @@ export function PublicNavbar() {
             )}
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden text-muted hover:text-ink"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          {/* Mobile icons + hamburger */}
+          <div className="flex items-center gap-1 lg:hidden">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2 text-muted hover:text-rose transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <Link href="/inquiry-cart" className="relative p-2 text-muted hover:text-rose transition-colors">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {itemCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{itemCount}</span>
               )}
-            </svg>
-          </button>
+            </Link>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 text-muted hover:text-ink"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {menuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="lg:hidden pb-4 space-y-1">
-            {allMobileLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"
-                onClick={() => setMenuOpen(false)}
+          <div className="lg:hidden pb-4">
+            {/* Utility icons — top row */}
+            <div className="flex items-center justify-around py-3 border-b border-line mb-2">
+              <button
+                onClick={() => { setMenuOpen(false); setSearchOpen(true); }}
+                className="flex flex-col items-center gap-1 text-muted hover:text-rose transition-colors"
               >
-                {link.label}
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-[10px]">{t("navbar.search")}</span>
+              </button>
+              <Link
+                href="/wishlist"
+                onClick={() => setMenuOpen(false)}
+                className="relative flex flex-col items-center gap-1 text-muted hover:text-rose transition-colors"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 right-0 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{wishlistCount}</span>
+                )}
+                <span className="text-[10px]">{t("navbar.wishlist")}</span>
               </Link>
-            ))}
-            <button
-              onClick={() => { setMenuOpen(false); setSearchOpen(true); }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              {t("offer.searchPlaceholder")}
-            </button>
-            <Link
-              href="/wishlist"
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"
-              onClick={() => setMenuOpen(false)}
-            >
-              {t("navbar.wishlist")} {wishlistCount > 0 && <span className="bg-rose text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
-            </Link>
-            <Link
-              href="/inquiry-cart"
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted hover:text-ink hover:bg-nude-50 rounded-lg"
-              onClick={() => setMenuOpen(false)}
-            >
-              {t("navbar.inquiry")} {itemCount > 0 && <span className="bg-rose text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{itemCount}</span>}
-            </Link>
-            <div className="flex items-center gap-2 px-3 py-2">
-              <MobileLocaleSwitcher />
+              <Link
+                href="/inquiry-cart"
+                onClick={() => setMenuOpen(false)}
+                className="relative flex flex-col items-center gap-1 text-muted hover:text-rose transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 right-0 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{itemCount}</span>
+                )}
+                <span className="text-[10px]">{t("navbar.inquiry")}</span>
+              </Link>
             </div>
-            {isLoggedIn ? (
-              <div className="mx-3 flex gap-2">
+
+            {/* Navigation links */}
+            <div className="space-y-0.5">
+              {/* Nabidka — primo link */}
+              <Link
+                href="/offer"
+                onClick={() => setMenuOpen(false)}
+                className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                  pathname.startsWith("/offer") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+                }`}
+              >
+                {t("navbar.hair")}
+              </Link>
+
+              {/* Ofiny + Prislusenstvi — primo linky */}
+              <Link
+                href="/ofiny"
+                onClick={() => setMenuOpen(false)}
+                className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                  pathname.startsWith("/ofiny") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+                }`}
+              >
+                {t("navbar.bangs")}
+              </Link>
+              <Link
+                href="/prislusenstvi"
+                onClick={() => setMenuOpen(false)}
+                className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                  pathname.startsWith("/prislusenstvi") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+                }`}
+              >
+                {t("nav.accessories")}
+              </Link>
+
+              {/* Spoluprace — accordion */}
+              <MobileAccordion
+                label={t("navbar.cooperation")}
+                items={cooperationItems}
+                pathname={pathname}
+                onNavigate={() => setMenuOpen(false)}
+              />
+
+              {/* Inspirace — accordion */}
+              <MobileAccordion
+                label={t("navbar.inspiration")}
+                items={inspiraceItems}
+                pathname={pathname}
+                onNavigate={() => setMenuOpen(false)}
+              />
+
+              {/* Kontakt — primo link */}
+              <Link
+                href="/contact"
+                onClick={() => setMenuOpen(false)}
+                className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                  pathname.startsWith("/contact") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+                }`}
+              >
+                {t("nav.contact")}
+              </Link>
+            </div>
+
+            {/* Language + Auth — bottom section */}
+            <div className="mt-3 pt-3 border-t border-line space-y-2">
+              <div className="flex items-center gap-2 px-3">
+                <MobileLocaleSwitcher />
+              </div>
+              {isLoggedIn ? (
+                <div className="mx-3 flex gap-2">
+                  <Link
+                    href={portalHref}
+                    className="flex-1 px-4 py-2 text-sm font-medium text-center text-espresso bg-nude-100 rounded-lg hover:bg-nude-200"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {session.user?.name ?? tAuth("loginButton")}
+                  </Link>
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    {tAuth("logout")}
+                  </button>
+                </div>
+              ) : (
                 <Link
-                  href={portalHref}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-center text-espresso bg-nude-100 rounded-lg hover:bg-nude-200"
+                  href="/login"
+                  className="block mx-3 px-4 py-2 text-sm font-medium text-center text-white bg-rose rounded-lg hover:bg-rose-deep"
                   onClick={() => setMenuOpen(false)}
                 >
-                  {session.user?.name ?? tAuth("loginButton")}
+                  {tAuth("loginButton")}
                 </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-                >
-                  {tAuth("logout")}
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="block mx-3 px-4 py-2 text-sm font-medium text-center text-white bg-rose rounded-lg hover:bg-rose-deep"
-                onClick={() => setMenuOpen(false)}
-              >
-                {tAuth("loginButton")}
-              </Link>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>

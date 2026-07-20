@@ -32,8 +32,10 @@ const publicOrderSchema = z
       "PACKETA",
       "PERSONAL_DELIVERY",
       "CZECH_POST",
-      "PICKUP",
     ]),
+    shippingStreet: z.string().max(200).optional(),
+    shippingCity: z.string().max(100).optional(),
+    shippingZip: z.string().max(20).optional(),
     packetaPointId: z.string().max(50).optional(),
     packetaPointName: z.string().max(200).optional(),
     packetaPointCity: z.string().max(100).optional(),
@@ -52,6 +54,18 @@ const publicOrderSchema = z
       return true;
     },
     { message: "packetaPointId is required for PACKETA shipping" }
+  )
+  .refine(
+    (data) => {
+      if (
+        (data.shippingMethod === "PERSONAL_DELIVERY" || data.shippingMethod === "CZECH_POST") &&
+        (!data.shippingStreet || !data.shippingCity || !data.shippingZip)
+      ) {
+        return false;
+      }
+      return true;
+    },
+    { message: "shippingStreet, shippingCity, and shippingZip are required for PERSONAL_DELIVERY and CZECH_POST" }
   );
 
 // Rate limit: 20 per hour per IP (relaxed for dev/testing)
@@ -252,6 +266,9 @@ export async function POST(request: NextRequest) {
           shippingCost,
           totalAmount,
           shippingMethod: data.shippingMethod,
+          shippingStreet: data.shippingStreet ?? null,
+          shippingCity: data.shippingCity ?? null,
+          shippingZip: data.shippingZip ?? null,
           packetaPointId: data.packetaPointId ?? null,
           packetaPointName: data.packetaPointName ?? null,
           packetaPointCity: data.packetaPointCity ?? null,
