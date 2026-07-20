@@ -251,19 +251,23 @@ export async function rejectOrder(
 }
 
 /**
- * Update order status (READY, IN_TRANSIT).
+ * Update order status (READY, SHIPPED, PROCESSING, DELIVERED).
  */
 export async function updateOrderStatus(
   orderId: string,
-  status: "READY" | "IN_TRANSIT"
+  status: "READY" | "SHIPPED" | "PROCESSING" | "DELIVERED"
 ): Promise<Order> {
   const order = await prisma.order.findUniqueOrThrow({
     where: { id: orderId },
   });
 
   const validTransitions: Record<string, string[]> = {
-    CONFIRMED: ["READY"],
-    READY: ["IN_TRANSIT"],
+    CONFIRMED: ["READY", "PROCESSING"],
+    PROCESSING: ["READY", "SHIPPED"],
+    PAID: ["PROCESSING", "READY"],
+    READY: ["SHIPPED"],
+    SHIPPED: ["DELIVERED"],
+    DELIVERED: ["COMPLETED"],
   };
 
   if (!validTransitions[order.status]?.includes(status)) {

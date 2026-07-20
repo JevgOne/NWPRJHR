@@ -476,6 +476,7 @@ model Customer {
   invoices  Invoice[]
   referrals Referral[] @relation("ReferrerCustomer")
   inquiries Inquiry[]
+  orders    Order[]
   productReservations ProductReservation[]
 
   @@index([email])
@@ -647,11 +648,15 @@ enum LoyaltyTier {
 
 enum OrderStatus {
   NEW
+  AWAITING_PAYMENT
+  PAID
   CONFIRMED
-  REJECTED
+  PROCESSING
   READY
-  IN_TRANSIT
+  SHIPPED
+  DELIVERED
   COMPLETED
+  REJECTED
   CANCELLED
 }
 
@@ -860,13 +865,39 @@ model LoyaltySettings {
 
 model Order {
   id             String      @id @default(cuid())
-  orderNumber    String?
-  salonId        String
-  salon          Salon       @relation(fields: [salonId], references: [id])
+  orderNumber    String?     @unique
+
+  // Customer — either salon (B2B) OR customer (retail), never both
+  salonId        String?
+  salon          Salon?      @relation(fields: [salonId], references: [id])
+  customerId     String?
+  customer       Customer?   @relation(fields: [customerId], references: [id])
+
+  // Contact (for retail guest checkout)
+  contactEmail   String?
+  contactPhone   String?
+  contactName    String?
 
   status         OrderStatus @default(NEW)
 
+  // Pricing
   estimatedTotal Int
+  shippingCost   Int         @default(0)
+  totalAmount    Int?
+
+  // Shipping
+  shippingMethod    String?
+  packetaPointId    String?
+  packetaPointName  String?
+  packetaPointCity  String?
+  packetaPacketId   String?
+  packetaBarcode    String?
+  shippingTrackingId String?
+
+  // Payment
+  paymentMethod  String?
+  comgateTransId String?
+  paidAt         DateTime?
 
   confirmedAt    DateTime?
   confirmedBy    String?
@@ -881,7 +912,9 @@ model Order {
   internalNote   String?
 
   promoCode      String?
-  promoDiscount  Int?        // discount amount in halere
+  promoDiscount  Int?
+
+  locale         String      @default("cs")
 
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
@@ -893,8 +926,11 @@ model Order {
   reservations   Reservation[]
 
   @@index([salonId])
+  @@index([customerId])
   @@index([status])
   @@index([createdAt])
+  @@index([contactEmail])
+  @@index([comgateTransId])
   @@map("orders")
 }
 
@@ -914,6 +950,12 @@ model OrderItem {
   pieces       Int
   pricePerGram Int
   lineTotal    Int
+
+  // Snapshot (self-contained even after product changes)
+  productName  String?
+  lengthCm     Int?
+  color        String?
+  sku          String?
 
   createdAt    DateTime @default(now())
 

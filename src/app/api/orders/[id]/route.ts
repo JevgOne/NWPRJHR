@@ -84,11 +84,13 @@ export async function POST(
         });
 
         // Notify salon about confirmation
-        createSalonNotification({
-          salonId: order.salonId,
-          type: "ORDER_CONFIRMED",
-          data: { orderId: order.id, orderNumber: order.orderNumber },
-        }).catch(() => {});
+        if (order.salonId) {
+          createSalonNotification({
+            salonId: order.salonId,
+            type: "ORDER_CONFIRMED",
+            data: { orderId: order.id, orderNumber: order.orderNumber },
+          }).catch(() => {});
+        }
 
         // Send order confirmation email
         prisma.order.findUnique({
@@ -147,11 +149,13 @@ export async function POST(
         });
 
         // Notify salon about rejection
-        createSalonNotification({
-          salonId: order.salonId,
-          type: "ORDER_REJECTED",
-          data: { orderId: order.id, orderNumber: order.orderNumber },
-        }).catch(() => {});
+        if (order.salonId) {
+          createSalonNotification({
+            salonId: order.salonId,
+            type: "ORDER_REJECTED",
+            data: { orderId: order.id, orderNumber: order.orderNumber },
+          }).catch(() => {});
+        }
 
         return NextResponse.json(order);
       }
@@ -159,7 +163,7 @@ export async function POST(
       case "status": {
         if (!["OWNER", "EMPLOYEE"].includes(session.user.role))
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-        if (!["READY", "IN_TRANSIT"].includes(body.status))
+        if (!["READY", "SHIPPED", "PROCESSING", "DELIVERED"].includes(body.status))
           return NextResponse.json(
             { error: "Invalid status" },
             { status: 400 }
@@ -176,16 +180,18 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
-        // Notify salon about status change
+        // Notify salon about status change (keep ORDER_IN_TRANSIT NotificationType for SHIPPED — enums are independent)
         const notifType = body.status === "READY" ? "ORDER_READY" as const : "ORDER_IN_TRANSIT" as const;
-        createSalonNotification({
-          salonId: order.salonId,
-          type: notifType,
-          data: { orderId: order.id, orderNumber: order.orderNumber },
-        }).catch(() => {});
+        if (order.salonId) {
+          createSalonNotification({
+            salonId: order.salonId,
+            type: notifType,
+            data: { orderId: order.id, orderNumber: order.orderNumber },
+          }).catch(() => {});
+        }
 
-        // Send shipped email when status changes to IN_TRANSIT
-        if (body.status === "IN_TRANSIT") {
+        // Send shipped email when status changes to SHIPPED
+        if (body.status === "SHIPPED" && order.salonId) {
           prisma.salon.findUnique({
             where: { id: order.salonId },
             select: { email: true, name: true, language: true },
@@ -215,7 +221,7 @@ export async function POST(
           });
 
           if (
-            !["CONFIRMED", "READY", "IN_TRANSIT"].includes(order.status)
+            !["CONFIRMED", "READY", "SHIPPED", "DELIVERED"].includes(order.status)
           ) {
             throw new Error(`Cannot complete order in status ${order.status}`);
           }
@@ -244,7 +250,7 @@ export async function POST(
           sale = await completeSale(
             {
               customerType: "SALON",
-              salonId: result.salonId,
+              salonId: result.salonId ?? undefined,
               items: result.orderItems.map((item) => ({
                 variantId: item.variantId,
                 grams: item.grams,
@@ -272,11 +278,13 @@ export async function POST(
         });
 
         // Notify salon — order completed, invoice will be created after payment confirmation
-        createSalonNotification({
-          salonId: result.salonId,
-          type: "ORDER_READY",
-          data: { saleId: sale.id, saleNumber: sale.saleNumber },
-        }).catch(() => {});
+        if (result.salonId) {
+          createSalonNotification({
+            salonId: result.salonId,
+            type: "ORDER_READY",
+            data: { saleId: sale.id, saleNumber: sale.saleNumber },
+          }).catch(() => {});
+        }
 
         logAudit({
           userId: session.user.id,
@@ -333,7 +341,7 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
-        if (isSalonCancel) {
+        if (isSalonCancel && orderCheck.salon) {
           // Notify admin that salon cancelled their order
           createNotificationForRole({
             role: "OWNER",
@@ -342,7 +350,7 @@ export async function POST(
             message: `Salon ${orderCheck.salon.name} zrušil objednávku ${order.orderNumber ?? id.slice(0, 8)}`,
             data: { orderId: order.id, orderNumber: order.orderNumber, salonName: orderCheck.salon.name },
           }).catch(() => {});
-        } else {
+        } else if (orderCheck.salonId) {
           // Notify salon that admin cancelled their order
           createSalonNotification({
             salonId: orderCheck.salonId,
@@ -355,7 +363,7 @@ export async function POST(
         notifyOrderCancelled({
           orderNumber: order.orderNumber,
           orderId: order.id,
-          salonName: orderCheck.salon.name,
+          salonName: orderCheck.salon?.name ?? "E-shop",
           cancelledBy: isSalonCancel ? "salon" : "admin",
           itemCount: orderCheck._count.items,
         }).catch(() => {});

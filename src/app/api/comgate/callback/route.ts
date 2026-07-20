@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getPaymentStatus } from "@/lib/comgate";
+import { createSaleFromOrder } from "@/lib/order-to-sale";
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -30,8 +31,53 @@ export async function POST(request: NextRequest) {
   });
 
   if (!payment) {
-    console.error("Payment not found for transId:", transId);
-    // Return 200 so Comgate doesn't retry (transaction doesn't exist in our system)
+    // Fallback: check if this transId belongs to an e-shop Order
+    const order = await prisma.order.findFirst({
+      where: { comgateTransId: transId },
+    });
+
+    if (!order) {
+      console.error("Payment/Order not found for transId:", transId);
+      return new NextResponse("OK", { status: 200 });
+    }
+
+    // Handle e-shop Order payment
+    if (verified.status === "PAID" && order.status === "AWAITING_PAYMENT") {
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { status: "PAID" },
+      });
+
+      // Get system user (OWNER) for createSaleFromOrder
+      const systemUser = await prisma.user.findFirst({
+        where: { role: "OWNER" },
+        select: { id: true },
+      });
+
+      if (!systemUser) {
+        console.error("[comgate/callback] No OWNER user found — cannot create Sale for order", order.id);
+        return new NextResponse("OK", { status: 200 });
+      }
+
+      try {
+        await createSaleFromOrder(order.id, systemUser.id);
+      } catch (e) {
+        console.error("[comgate/callback] createSaleFromOrder failed:", { orderId: order.id, error: e });
+      }
+    } else if (verified.status === "CANCELLED") {
+      if (order.status === "AWAITING_PAYMENT") {
+        await prisma.order.update({
+          where: { id: order.id },
+          data: { status: "CANCELLED" },
+        });
+        // Release reservations
+        await prisma.reservation.updateMany({
+          where: { orderId: order.id, active: true },
+          data: { active: false },
+        });
+      }
+    }
+
     return new NextResponse("OK", { status: 200 });
   }
 
