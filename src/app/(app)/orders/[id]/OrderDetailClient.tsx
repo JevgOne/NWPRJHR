@@ -29,6 +29,9 @@ interface OrderDetail {
   packetaPacketId?: string;
   packetaBarcode?: string;
   shippingTrackingId?: string;
+  shippingStreet?: string;
+  shippingCity?: string;
+  shippingZip?: string;
   paidAt?: string;
   createdAt: string;
   confirmedAt?: string;
@@ -273,6 +276,11 @@ export function OrderDetailClient({
           <p className="text-sm text-ink">
             {order.shippingMethod === "PACKETA" ? "Packeta" : order.shippingMethod === "PERSONAL_DELIVERY" ? t("shipPersonal") : order.shippingMethod === "PICKUP" ? t("shipPickup") : order.shippingMethod === "CZECH_POST" ? t("shipPost") : order.shippingMethod}
           </p>
+          {(order.shippingStreet || order.shippingCity) && (
+            <p className="text-sm text-muted">
+              {[order.shippingStreet, order.shippingZip, order.shippingCity].filter(Boolean).join(", ")}
+            </p>
+          )}
           {order.packetaPointName && (
             <p className="text-sm text-muted">{order.packetaPointName}{order.packetaPointCity ? `, ${order.packetaPointCity}` : ""}</p>
           )}

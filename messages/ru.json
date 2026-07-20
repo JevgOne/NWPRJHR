@@ -1080,7 +1080,10 @@
       "addressCity": "Город *",
       "addressCityPlaceholder": "Напр. Praha",
       "addressZip": "Почтовый индекс *",
-      "addressZipPlaceholder": "Напр. 110 00"
+      "addressZipPlaceholder": "Напр. 110 00",
+      "b2bBanner": "Заказ для: {salonName} — скидка {discount}%",
+      "b2bPriceNote": "Цены с учётом Вашей B2B скидки",
+      "b2bFinalPriceNote": "Окончательная цена будет подтверждена при оформлении заказа"
     },
     "paymentResult": {
       "paidTitle": "Оплата прошла успешно!",

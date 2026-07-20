@@ -9,6 +9,9 @@ import { createPayment } from "@/lib/comgate";
 import { createNotificationForRole } from "@/lib/notifications";
 import { sendNotificationEmail } from "@/lib/email";
 import { getRetailOrderConfirmationEmail } from "@/lib/email-templates";
+import { auth } from "@/lib/auth";
+import { getCachedB2BSettings } from "@/lib/b2b-pricing";
+import { roundHalereUp } from "@/lib/rounding";
 
 const publicOrderSchema = z
   .object({
@@ -45,6 +48,7 @@ const publicOrderSchema = z
     promoCode: z.string().max(50).optional(),
     note: z.string().max(2000).optional(),
     locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
+    salonId: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -107,6 +111,33 @@ export async function POST(request: NextRequest) {
   }
 
   const data = parsed.data;
+
+  // B2B validation
+  let salonId: string | null = null;
+  let b2bDiscountPct = 0;
+
+  if (data.salonId) {
+    const session = await auth();
+    if (!session?.user?.salonId || session.user.salonId !== data.salonId) {
+      return NextResponse.json({ error: "Unauthorized B2B request" }, { status: 403 });
+    }
+    if (session.user.role !== "SALON" && session.user.role !== "HAIRDRESSER") {
+      return NextResponse.json({ error: "Not a B2B account" }, { status: 403 });
+    }
+
+    const [salon, b2bSettings] = await Promise.all([
+      prisma.salon.findUnique({ where: { id: data.salonId }, select: { type: true, archived: true } }),
+      getCachedB2BSettings(),
+    ]);
+    if (!salon || salon.archived) {
+      return NextResponse.json({ error: "Salon not found or archived" }, { status: 400 });
+    }
+
+    salonId = data.salonId;
+    b2bDiscountPct = salon.type === "SALON"
+      ? b2bSettings.salonDiscountPct
+      : b2bSettings.hairdresserDiscountPct;
+  }
 
   // 1. Load variants + check stock
   const variantIds = data.items.map((i) => i.variantId);
@@ -181,12 +212,17 @@ export async function POST(request: NextRequest) {
     let lineTotal: number;
 
     if (isByPiece) {
-      pricePerUnit =
-        variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
-      lineTotal = pricePerUnit * item.pieces;
+      const retailPrice = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+      pricePerUnit = b2bDiscountPct > 0
+        ? roundHalereUp(retailPrice - (retailPrice * b2bDiscountPct) / 20000)
+        : retailPrice;
+      lineTotal = roundHalereUp(pricePerUnit * item.pieces);
     } else {
-      pricePerUnit = variant.retailPricePerGram;
-      lineTotal = pricePerUnit * item.grams;
+      const retailPrice = variant.retailPricePerGram;
+      pricePerUnit = b2bDiscountPct > 0
+        ? roundHalereUp(retailPrice - (retailPrice * b2bDiscountPct) / 20000)
+        : retailPrice;
+      lineTotal = roundHalereUp(pricePerUnit * item.grams);
     }
 
     estimatedTotal += lineTotal;
@@ -257,7 +293,9 @@ export async function POST(request: NextRequest) {
       return tx.order.create({
         data: {
           orderNumber,
-          customerId,
+          ...(salonId
+            ? { salonId }
+            : { customerId }),
           contactEmail: data.email,
           contactPhone: data.phone ?? null,
           contactName: `${data.firstName} ${data.lastName}`,

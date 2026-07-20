@@ -1080,7 +1080,10 @@
       "addressCity": "Město *",
       "addressCityPlaceholder": "Např. Praha",
       "addressZip": "PSČ *",
-      "addressZipPlaceholder": "Např. 110 00"
+      "addressZipPlaceholder": "Např. 110 00",
+      "b2bBanner": "Objednávka pro: {salonName} — sleva {discount}%",
+      "b2bPriceNote": "Ceny jsou po Vaší B2B slevě",
+      "b2bFinalPriceNote": "Konečná cena bude potvrzena při odeslání objednávky"
     },
     "paymentResult": {
       "paidTitle": "Platba proběhla úspěšně!",

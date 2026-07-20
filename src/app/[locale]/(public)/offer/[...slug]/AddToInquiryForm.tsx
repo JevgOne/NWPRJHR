@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 import { generateSku } from "@/lib/sku";
+import { roundHalereUp } from "@/lib/rounding";
 
 interface PickerVariant {
   lengthCm: number;
@@ -29,6 +30,7 @@ interface AddToInquiryFormProps {
   variants: PickerVariant[];
   defaultColor?: string;
   defaultLength?: number;
+  discountPct?: number;
 }
 
 function formatPrice(halere: number): string {
@@ -38,7 +40,7 @@ function formatPrice(halere: number): string {
   });
 }
 
-export function AddToInquiryForm({ productId, productName, category, texture, variants, defaultColor, defaultLength }: AddToInquiryFormProps) {
+export function AddToInquiryForm({ productId, productName, category, texture, variants, defaultColor, defaultLength, discountPct = 0 }: AddToInquiryFormProps) {
   const t = useTranslations("public");
   const { addItem } = useInquiryCart();
 
@@ -113,9 +115,12 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
 
   const handleAdd = () => {
     if (!selectedLength || !selectedColor || !selectedVariant) return;
-    const pricePerUnit = isByPiece
+    const retailPrice = isByPiece
       ? (selectedVariant.retailPricePerPiece ?? selectedVariant.pricePerPiece ?? 0)
       : selectedVariant.retailPricePerGram;
+    const pricePerUnit = discountPct > 0
+      ? roundHalereUp(retailPrice - (retailPrice * discountPct) / 20000)
+      : retailPrice;
     addItem({
       productId,
       productName,

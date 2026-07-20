@@ -12,6 +12,20 @@ import { SHIPPING_COSTS, FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
 const STEPS = ["contact", "shipping", "payment", "summary"] as const;
 type Step = (typeof STEPS)[number];
 
+interface B2BInfo {
+  salonId: string;
+  salonName: string;
+  salonType: "SALON" | "HAIRDRESSER";
+  discountPct: number;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPerson?: string;
+  ico?: string;
+  dic?: string;
+  address?: string;
+  city?: string;
+}
+
 function formatPrice(halere: number): string {
   return (halere / 100).toLocaleString("cs-CZ", {
     minimumFractionDigits: 0,
@@ -19,7 +33,7 @@ function formatPrice(halere: number): string {
   });
 }
 
-export function CheckoutClient() {
+export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
   const t = useTranslations("public.checkout");
   const tInquiry = useTranslations("public.inquiry");
   const locale = useLocale();
@@ -27,15 +41,15 @@ export function CheckoutClient() {
 
   const [step, setStep] = useState<Step>("contact");
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
+    firstName: b2bInfo?.contactPerson?.split(" ")[0] ?? "",
+    lastName: b2bInfo?.contactPerson?.split(" ").slice(1).join(" ") ?? "",
+    email: b2bInfo?.contactEmail ?? "",
+    phone: b2bInfo?.contactPhone ?? "",
     note: "",
     promoCode: "",
     shippingMethod: "PERSONAL_DELIVERY",
-    shippingStreet: "",
-    shippingCity: "",
+    shippingStreet: b2bInfo?.address ?? "",
+    shippingCity: b2bInfo?.city ?? "",
     shippingZip: "",
     paymentMethod: "TRANSFER",
     termsAccepted: false,
@@ -225,6 +239,7 @@ export function CheckoutClient() {
           promoCode: promoResult?.valid ? promoResult.code : form.promoCode || undefined,
           note: form.note || undefined,
           locale,
+          salonId: b2bInfo?.salonId,
         }),
       });
 
@@ -359,6 +374,13 @@ export function CheckoutClient() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-ink mb-6">{t("title")}</h1>
+
+      {/* B2B banner */}
+      {b2bInfo && (
+        <div className="bg-rose/5 text-rose rounded-xl px-4 py-2.5 text-sm font-medium mb-6">
+          {t("b2bBanner", { salonName: b2bInfo.salonName, discount: b2bInfo.discountPct / 100 })}
+        </div>
+      )}
 
       {/* Stepper */}
       <div className="flex items-center mb-8 gap-1">

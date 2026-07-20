@@ -1081,6 +1081,7 @@ async function ProductDetailView({
             variants={pickerVariants}
             defaultColor={sp.color}
             defaultLength={sp.length ? parseInt(sp.length, 10) : undefined}
+            discountPct={discountPct}
           />
 
           {/* Delivery strip */}
