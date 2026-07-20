@@ -54,10 +54,10 @@ const publicOrderSchema = z
     { message: "packetaPointId is required for PACKETA shipping" }
   );
 
-// Rate limit: 5 per hour per IP
+// Rate limit: 20 per hour per IP (relaxed for dev/testing)
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 3600_000;
-const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_MAX = 20;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
