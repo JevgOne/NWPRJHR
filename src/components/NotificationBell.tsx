@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 interface NotificationItem {
@@ -11,10 +11,52 @@ interface NotificationItem {
   message: string;
   read: boolean;
   createdAt: string;
+  data?: Record<string, unknown> | null;
+}
+
+function getNotificationUrl(n: NotificationItem): string | null {
+  const d = n.data as Record<string, string> | null | undefined;
+  if (!d) return null;
+  switch (n.type) {
+    case "NEW_ORDER":
+    case "ORDER_CONFIRMED":
+    case "ORDER_READY":
+    case "ORDER_IN_TRANSIT":
+    case "ORDER_REJECTED":
+      return d.orderId ? `/orders/${d.orderId}` : "/orders";
+    case "INVOICE_ISSUED":
+    case "INVOICE_PAID":
+    case "INCOMING_PAYMENT":
+      return d.invoiceId ? `/invoices/${d.invoiceId}` : "/invoices";
+    case "RETURN_REQUEST":
+      return d.returnId ? `/returns/${d.returnId}` : "/returns";
+    case "NEW_COMPLAINT":
+      return d.complaintId ? `/complaints/${d.complaintId}` : "/complaints";
+    case "RESERVATION_CREATED":
+    case "RESERVATION_PAID":
+    case "RESERVATION_EXPIRED":
+      return d.reservationId ? `/reservations/${d.reservationId}` : "/reservations";
+    case "SAMPLE_REQUEST":
+      return "/samples";
+    case "NEW_INQUIRY":
+    case "NEW_CONTACT":
+      return "/inquiries";
+    case "NEW_REVIEW":
+      return "/reviews";
+    case "REGISTRATION":
+      return "/registrations";
+    case "REFERRAL_USED":
+      return "/referrals";
+    case "PAYMENT_REMINDER":
+      return d.invoiceId ? `/invoices/${d.invoiceId}` : "/invoices";
+    default:
+      return null;
+  }
 }
 
 export function NotificationBell() {
   const t = useTranslations("notificationsMgmt");
+  const router = useRouter();
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -152,7 +194,14 @@ export function NotificationBell() {
                   className={`px-4 py-3 border-b last:border-0 cursor-pointer hover:bg-nude-50 ${
                     !n.read ? "bg-rose/10" : ""
                   }`}
-                  onClick={() => !n.read && handleMarkRead(n.id)}
+                  onClick={() => {
+                    if (!n.read) handleMarkRead(n.id);
+                    const url = getNotificationUrl(n);
+                    if (url) {
+                      setIsOpen(false);
+                      router.push(url);
+                    }
+                  }}
                 >
                   <div className="flex items-start gap-2">
                     {!n.read && (
@@ -173,13 +222,16 @@ export function NotificationBell() {
             )}
           </div>
 
-          <Link
-            href="/notifications"
-            className="block text-center text-xs text-espresso py-2 border-t hover:bg-nude-50"
-            onClick={() => setIsOpen(false)}
-          >
-            {t("viewAll")}
-          </Link>
+          {unreadCount > 0 && (
+            <button
+              onClick={() => {
+                handleMarkAllRead();
+              }}
+              className="block w-full text-center text-xs text-espresso py-2 border-t hover:bg-nude-50"
+            >
+              {t("markAllRead")}
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -27,13 +27,17 @@ export async function getStockNumbers(
   variantId: string,
   db: TransactionClient | typeof prisma = prisma
 ): Promise<StockNumbers> {
-  const [physical, reserved, exclusiveStock] = await Promise.all([
+  const [physical, reserved, productReserved, exclusiveStock] = await Promise.all([
     db.delivery.aggregate({
       where: { variantId },
       _sum: { remainingGrams: true, remainingPieces: true },
     }),
     db.reservation.aggregate({
       where: { variantId, active: true },
+      _sum: { grams: true, pieces: true },
+    }),
+    db.productReservation.aggregate({
+      where: { variantId, status: { in: ["PENDING", "PAID"] } },
       _sum: { grams: true, pieces: true },
     }),
     db.delivery.aggregate({
@@ -44,8 +48,8 @@ export async function getStockNumbers(
 
   const physicalGrams = physical._sum.remainingGrams ?? 0;
   const physicalPieces = physical._sum.remainingPieces ?? 0;
-  const reservedGrams = reserved._sum.grams ?? 0;
-  const reservedPieces = reserved._sum.pieces ?? 0;
+  const reservedGrams = (reserved._sum.grams ?? 0) + (productReserved._sum.grams ?? 0);
+  const reservedPieces = (reserved._sum.pieces ?? 0) + (productReserved._sum.pieces ?? 0);
   const exclusiveGrams = exclusiveStock._sum.remainingGrams ?? 0;
   const exclusivePieces = exclusiveStock._sum.remainingPieces ?? 0;
 
@@ -92,14 +96,24 @@ const getCachedAllStockNumbers = unstable_cache(
        GROUP BY variantId`
     );
 
-    const reservedRows = await prisma.$queryRawUnsafe<RawReservationRow[]>(
-      `SELECT variantId,
-              COALESCE(SUM(grams), 0) as reservedGrams,
-              COALESCE(SUM(pieces), 0) as reservedPieces
-       FROM reservations
-       WHERE active = 1
-       GROUP BY variantId`
-    );
+    const [reservedRows, productReservedRows] = await Promise.all([
+      prisma.$queryRawUnsafe<RawReservationRow[]>(
+        `SELECT variantId,
+                COALESCE(SUM(grams), 0) as reservedGrams,
+                COALESCE(SUM(pieces), 0) as reservedPieces
+         FROM reservations
+         WHERE active = 1
+         GROUP BY variantId`
+      ),
+      prisma.$queryRawUnsafe<RawReservationRow[]>(
+        `SELECT variantId,
+                COALESCE(SUM(grams), 0) as reservedGrams,
+                COALESCE(SUM(pieces), 0) as reservedPieces
+         FROM product_reservations
+         WHERE status IN ('PENDING', 'PAID')
+         GROUP BY variantId`
+      ),
+    ]);
 
     const map = new Map<string, StockNumbers>();
 
@@ -116,15 +130,16 @@ const getCachedAllStockNumbers = unstable_cache(
       });
     }
 
-    for (const row of reservedRows) {
+    // Merge both reservation sources
+    for (const row of [...reservedRows, ...productReservedRows]) {
       const existing = map.get(row.variantId);
       const rg = Number(row.reservedGrams);
       const rp = Number(row.reservedPieces);
       if (existing) {
-        existing.reservedGrams = rg;
-        existing.reservedPieces = rp;
-        existing.availableGrams = existing.physicalGrams - rg;
-        existing.availablePieces = existing.physicalPieces - rp;
+        existing.reservedGrams += rg;
+        existing.reservedPieces += rp;
+        existing.availableGrams = existing.physicalGrams - existing.reservedGrams;
+        existing.availablePieces = existing.physicalPieces - existing.reservedPieces;
       } else {
         map.set(row.variantId, {
           physicalGrams: 0,

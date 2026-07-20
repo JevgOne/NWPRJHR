@@ -1,5 +1,6 @@
 import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
+import { getStockNumbers, invalidateStockCache } from "./stock";
 import type { ProductReservation, CustomerType } from "@prisma/client";
 
 export interface CreateReservationInput {
@@ -61,8 +62,24 @@ export async function createProductReservation(
     throw new Error("Variant is not active");
   }
 
+  // Stock availability check
+  const stock = await getStockNumbers(input.variantId);
   const sellingMode = (variant.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE";
   const isByPiece = sellingMode === "BY_PIECE";
+
+  if (isByPiece) {
+    if (input.pieces > 0 && stock.availablePieces < input.pieces) {
+      throw new Error(
+        `Nedostatečný sklad: požadováno ${input.pieces} ks, dostupno ${stock.availablePieces} ks`
+      );
+    }
+  } else {
+    if (input.grams > 0 && stock.availableGrams < input.grams) {
+      throw new Error(
+        `Nedostatečný sklad: požadováno ${input.grams} g, dostupno ${stock.availableGrams} g`
+      );
+    }
+  }
 
   // Calculate price (same logic as sales)
   let discountPct = 0;
@@ -139,6 +156,7 @@ export async function createProductReservation(
     },
   });
 
+  invalidateStockCache();
   return reservation;
 }
 
@@ -204,7 +222,7 @@ export async function cancelReservation(
     throw new Error(`Cannot cancel — status is ${reservation.status}`);
   }
 
-  return prisma.productReservation.update({
+  const updated = await prisma.productReservation.update({
     where: { id: reservationId },
     data: {
       status: "CANCELLED",
@@ -213,6 +231,9 @@ export async function cancelReservation(
         : reservation.internalNote,
     },
   });
+
+  invalidateStockCache();
+  return updated;
 }
 
 /**
@@ -239,5 +260,6 @@ export async function expireOverdueReservations(): Promise<number> {
     data: { status: "EXPIRED" },
   });
 
+  if (result.count > 0) invalidateStockCache();
   return result.count;
 }
