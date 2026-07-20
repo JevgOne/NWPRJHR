@@ -238,7 +238,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder={t("offer.searchPlaceholder")}
-            className="w-full pl-10 pr-20 py-2.5 border border-line rounded-xl text-sm focus:ring-2 focus:ring-rose focus:border-rose"
+            className="w-full pl-10 pr-20 py-2.5 border border-line rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-rose focus:border-rose"
           />
           {searchInput && (
             <button

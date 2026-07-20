@@ -138,7 +138,7 @@ export function SearchOverlay({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("offer.searchPlaceholder")}
-              className="flex-1 text-sm text-ink bg-transparent outline-none placeholder:text-muted/50"
+              className="flex-1 text-base text-ink bg-transparent outline-none placeholder:text-muted/50"
             />
             <button
               onClick={onClose}
