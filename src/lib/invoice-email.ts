@@ -144,6 +144,7 @@ export async function sendPaymentDetailsEmail(opts: {
   iban: string;
   variableSymbol: string;
   saleNumber: string;
+  comgateUrl?: string;
 }): Promise<{ sent: boolean; reason?: string }> {
   if (!process.env.RESEND_API_KEY) {
     return { sent: false, reason: "no_api_key" };
@@ -177,6 +178,7 @@ export async function sendPaymentDetailsEmail(opts: {
     `${t.bankAccountLabel}: ${opts.bankAccount}`,
     `${t.vsLabel}: ${opts.variableSymbol}`,
     `${t.amountLabel}: ${amount}`,
+    ...(opts.comgateUrl ? ["", `${t.orLabel} ${t.payByCardLabel}: ${opts.comgateUrl}`] : []),
     "",
     t.footer,
   ].join("\n");
@@ -198,6 +200,11 @@ export async function sendPaymentDetailsEmail(opts: {
       <div style="text-align:center;margin:24px 0;">
         <img src="cid:qr-payment" width="180" height="180" alt="QR platba" style="border:1px solid #ead9cf;border-radius:8px;" />
       </div>
+
+      ${opts.comgateUrl ? `<div style="text-align:center;margin:20px 0;">
+        <p style="color:#9c8682;font-size:13px;margin:0 0 12px;">${t.orLabel}</p>
+        <a href="${opts.comgateUrl}" style="display:inline-block;background:#c2a36b;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 32px;border-radius:8px;">${t.payByCardLabel}</a>
+      </div>` : ""}
 
       <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
         <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 8px;">${t.detailsLabel}</p>
@@ -251,6 +258,8 @@ const paymentEmailT: Record<Lang, {
   bankAccountLabel: string;
   vsLabel: string;
   amountLabel: string;
+  orLabel: string;
+  payByCardLabel: string;
   footer: string;
 }> = {
   cs: {
@@ -261,6 +270,8 @@ const paymentEmailT: Record<Lang, {
     bankAccountLabel: "Bankovní účet",
     vsLabel: "Variabilní symbol",
     amountLabel: "Částka",
+    orLabel: "— nebo —",
+    payByCardLabel: "Zaplatit kartou online",
     footer: "Po přijetí platby Vám zašleme fakturu emailem. Děkujeme!",
   },
   uk: {
@@ -271,6 +282,8 @@ const paymentEmailT: Record<Lang, {
     bankAccountLabel: "Банківський рахунок",
     vsLabel: "Варіабельний символ",
     amountLabel: "Сума",
+    orLabel: "— або —",
+    payByCardLabel: "Сплатити карткою онлайн",
     footer: "Після отримання оплати ми надішлемо Вам рахунок-фактуру електронною поштою. Дякуємо!",
   },
   ru: {
@@ -281,6 +294,8 @@ const paymentEmailT: Record<Lang, {
     bankAccountLabel: "Банковский счёт",
     vsLabel: "Вариабельный символ",
     amountLabel: "Сумма",
+    orLabel: "— или —",
+    payByCardLabel: "Оплатить картой онлайн",
     footer: "После получения оплаты мы отправим Вам счёт-фактуру по электронной почте. Спасибо!",
   },
 };

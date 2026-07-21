@@ -40,7 +40,30 @@ export async function POST(request: NextRequest) {
     });
 
     if (!order) {
-      console.error("Payment/Order not found for transId:", transId);
+      // Check if this transId belongs to a QR Sale (unified payment flow)
+      const sale = await prisma.sale.findFirst({
+        where: { comgateTransId: transId },
+      });
+
+      if (sale) {
+        if (verified.status === "PAID" && sale.status === "COMPLETED") {
+          // Sale is already completed — create invoice + send email
+          try {
+            const { createInvoiceFromSale } = await import("@/lib/invoicing");
+            const { sendInvoiceEmail } = await import("@/lib/invoice-email");
+            const inv = await createInvoiceFromSale(sale.id);
+            sendInvoiceEmail(inv.id).catch((e) =>
+              console.error("[comgate/callback] Sale invoice email failed:", e)
+            );
+            revalidateTag("dashboard", "max");
+          } catch (e) {
+            console.error("[comgate/callback] Sale invoice creation failed:", e);
+          }
+        }
+        return new NextResponse("OK", { status: 200 });
+      }
+
+      console.error("Payment/Order/Sale not found for transId:", transId);
       return new NextResponse("OK", { status: 200 });
     }
 

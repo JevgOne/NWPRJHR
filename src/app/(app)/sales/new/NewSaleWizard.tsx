@@ -83,7 +83,7 @@ export function NewSaleWizard({
   const [scannerOpen, setScannerOpen] = useState(false);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
-  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "CARD" | "PROMO" | "WRITEOFF">("TRANSFER");
+  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "PROMO" | "WRITEOFF">("TRANSFER");
   const [receiptNumber, setReceiptNumber] = useState("");
   const [reserveMode, setReserveMode] = useState(false);
   const [paymentDueDate, setPaymentDueDate] = useState(
@@ -96,6 +96,7 @@ export function NewSaleWizard({
     saleId: string;
     qrPayment?: string;
     paymentInfo?: { bankAccount: string; variableSymbol: string; amount: number };
+    comgateUrl?: string;
   } | null>(null);
   const previewRequestId = useRef(0);
 
@@ -484,6 +485,7 @@ export function NewSaleWizard({
           saleId: sale.id,
           qrPayment: sale.qrPayment,
           paymentInfo: sale.paymentInfo,
+          comgateUrl: sale.comgateUrl,
         });
         setSubmitting(false);
         return;
@@ -543,6 +545,20 @@ export function NewSaleWizard({
                   <span className="text-muted">{t("amount")}:</span>
                   <span className="font-medium">{formatCZK(transferResult.paymentInfo.amount)} CZK</span>
                 </div>
+              </div>
+            )}
+
+            {transferResult.comgateUrl && (
+              <div className="space-y-2">
+                <p className="text-sm text-muted">{t("orPayByCard")}</p>
+                <a
+                  href={transferResult.comgateUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block w-full py-3 bg-rose text-white text-sm font-medium rounded-lg text-center hover:bg-rose/90 transition-colors"
+                >
+                  {t("payByCard")}
+                </a>
               </div>
             )}
 
@@ -729,9 +745,8 @@ export function NewSaleWizard({
           </label>
           <div className="grid grid-cols-2 gap-2">
             {([
-              { key: "TRANSFER", label: t("paymentTransfer") },
+              { key: "TRANSFER", label: t("paymentInvoice") },
               { key: "CASH", label: t("paymentCash") },
-              { key: "CARD", label: t("paymentCard") },
               { key: "PROMO", label: t("paymentPromo") },
               { key: "WRITEOFF", label: t("paymentWriteoff") },
             ] as const).map((pt) => (
@@ -762,10 +777,7 @@ export function NewSaleWizard({
             </div>
           )}
           {paymentType === "TRANSFER" && (
-            <p className="text-xs text-muted mt-2">{t("transferHint")}</p>
-          )}
-          {paymentType === "CARD" && (
-            <p className="text-xs text-muted mt-2">{t("cardHint")}</p>
+            <p className="text-xs text-muted mt-2">{t("invoiceHint")}</p>
           )}
           {paymentType === "PROMO" && (
             <p className="text-xs text-muted mt-2">{t("promoHint")}</p>

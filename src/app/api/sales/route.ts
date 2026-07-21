@@ -10,6 +10,7 @@ import { logAudit, getClientIp } from "@/lib/audit";
 import { sendInvoiceEmail, sendPaymentDetailsEmail } from "@/lib/invoice-email";
 import { generateSpayd } from "@/lib/spayd";
 import { generateQRCodeDataUrl } from "@/lib/qr-code";
+import { createPayment } from "@/lib/comgate";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
   let invoice: { id: string; number: string } | null = null;
   let qrDataUrl: string | null = null;
   let paymentInfo: { bankAccount: string; variableSymbol: string; amount: number; iban?: string } | null = null;
+  let comgateUrl: string | null = null;
 
   try {
     if (pt === "CASH") {
@@ -52,13 +54,13 @@ export async function POST(request: NextRequest) {
         );
       });
     } else if (pt === "TRANSFER") {
-      // TRANSFER: no invoice yet — generate QR payment data + send email
+      // TRANSFER: generate QR payment data + Comgate card link + send unified email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
       const vs = sale.saleNumber ?? String(Date.now()).slice(-10);
-      const bankAccount = company?.bankAccount || "6424423004/5500";
-      const iban = company?.bankIban || "CZ5550000000006424423004";
+      const bankAccount = company?.bankAccount || "7141812004/5500";
+      const iban = company?.bankIban || "CZ6755000000007141812004";
 
-      // Generate QR code for payment
+      // Generate QR code for bank transfer
       const spayd = generateSpayd({
         iban,
         amount: sale.totalAmount / 100,
@@ -67,7 +69,7 @@ export async function POST(request: NextRequest) {
       });
       qrDataUrl = await generateQRCodeDataUrl(spayd);
 
-      // Send payment details email with QR code
+      // Fetch recipient info for email + Comgate
       const saleForEmail = await prisma.sale.findUnique({
         where: { id: sale.id },
         select: {
@@ -86,6 +88,30 @@ export async function POST(request: NextRequest) {
         ? saleForEmail.salon?.language ?? "cs"
         : "cs";
 
+      // Create Comgate payment for card option
+      if (recipientEmail) {
+        try {
+          const comgateResult = await createPayment({
+            price: sale.totalAmount,
+            label: `Sale ${vs}`.slice(0, 16),
+            refId: vs,
+            email: recipientEmail,
+            fullName: recipientName,
+          });
+          if (comgateResult.success && comgateResult.redirect && comgateResult.transId) {
+            comgateUrl = comgateResult.redirect;
+            await prisma.sale.update({
+              where: { id: sale.id },
+              data: { comgateTransId: comgateResult.transId },
+            });
+          }
+        } catch (e) {
+          console.error("[Sales API] Comgate payment creation failed:", e);
+          // Non-fatal — customer can still pay by transfer
+        }
+      }
+
+      // Send unified email with both payment options
       if (recipientEmail) {
         after(async () => {
           await sendPaymentDetailsEmail({
@@ -97,6 +123,7 @@ export async function POST(request: NextRequest) {
             iban,
             variableSymbol: vs,
             saleNumber: sale.saleNumber ?? "",
+            comgateUrl: comgateUrl ?? undefined,
           }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
         });
       }
@@ -144,6 +171,7 @@ export async function POST(request: NextRequest) {
       invoice: invoice ?? undefined,
       qrPayment: qrDataUrl ?? undefined,
       paymentInfo: paymentInfo ?? undefined,
+      comgateUrl: comgateUrl ?? undefined,
     },
     { status: 201 }
   );
