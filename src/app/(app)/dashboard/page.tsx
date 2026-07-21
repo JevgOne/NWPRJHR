@@ -113,7 +113,8 @@ const getCachedDashboardData = unstable_cache(
         take: 6,
         select: {
           id: true, type: true, grams: true, pieces: true, createdAt: true, note: true,
-          variant: { select: { lengthCm: true, color: true, product: { select: { name: true } } } },
+          deliveryId: true,
+          variant: { select: { lengthCm: true, color: true, product: { select: { id: true, name: true } } } },
         },
       }),
 
@@ -386,7 +387,7 @@ export default async function DashboardPage() {
                 const isIncoming = m.type === "RECEIPT" || m.type === "RETURN";
                 const absGrams = Math.abs(m.grams);
                 return (
-                  <tr key={m.id}>
+                  <tr key={m.id} className="hover:bg-nude-50 transition-colors">
                     <td className="py-2.5 pr-4 text-gray-600 whitespace-nowrap">{fmtDate(m.createdAt)}</td>
                     <td className="py-2.5 pr-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${mtStyle.bg} ${mtStyle.text}`}>
@@ -394,7 +395,9 @@ export default async function DashboardPage() {
                       </span>
                     </td>
                     <td className="py-2.5 pr-4 text-ink">
-                      {m.variant.product.name} · {m.variant.color} #{m.variant.lengthCm}cm
+                      <a href={`/products/${m.variant.product.id}`} className="hover:text-rose-600 hover:underline">
+                        {m.variant.product.name} · {m.variant.color} #{m.variant.lengthCm}cm
+                      </a>
                     </td>
                     <td className="py-2.5 pr-4 text-right font-medium text-ink whitespace-nowrap">
                       {isIncoming ? "+" : "-"}{absGrams} g
@@ -405,6 +408,11 @@ export default async function DashboardPage() {
               })}
             </tbody>
           </table>
+        </div>
+        <div className="mt-3 text-right">
+          <a href="/inventory/movements" className="text-xs text-rose hover:text-rose-deep font-medium">
+            {t("allMovements")} &rarr;
+          </a>
         </div>
       </div>
 

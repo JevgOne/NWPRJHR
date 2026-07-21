@@ -148,7 +148,8 @@
     "type": "Тип",
     "product": "Продукт",
     "quantity": "Кількість",
-    "note": "Примітка"
+    "note": "Примітка",
+    "allMovements": "Показати все"
   },
   "product": {
     "hairExtensions": "Преміальне волосся",

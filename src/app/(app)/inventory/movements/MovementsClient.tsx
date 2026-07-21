@@ -19,6 +19,7 @@ interface Movement {
 const TYPE_COLORS: Record<string, string> = {
   RECEIPT: "bg-green-100 text-green-800",
   ISSUE: "bg-red-100 text-red-800",
+  SALE: "bg-nude-100 text-espresso",
   RETURN: "bg-nude-100 text-espresso",
   COMPLAINT: "bg-orange-100 text-orange-800",
   SAMPLE_OUT: "bg-purple-100 text-purple-800",
@@ -33,6 +34,7 @@ export function MovementsClient({ movements }: { movements: Movement[] }) {
     const map: Record<string, string> = {
       RECEIPT: t("receipt"),
       ISSUE: t("issue"),
+      SALE: t("sale"),
       RETURN: t("return"),
       COMPLAINT: t("complaint"),
       SAMPLE_OUT: t("sample"),

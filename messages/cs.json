@@ -148,7 +148,8 @@
     "type": "Typ",
     "product": "Produkt",
     "quantity": "Množství",
-    "note": "Poznámka"
+    "note": "Poznámka",
+    "allMovements": "Zobrazit vše"
   },
   "product": {
     "hairExtensions": "Prémiové vlasy",

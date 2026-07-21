@@ -243,6 +243,7 @@ enum Currency {
 enum StockMovementType {
   RECEIPT
   ISSUE
+  SALE
   RETURN
   COMPLAINT
   SAMPLE_OUT
@@ -313,11 +314,11 @@ model Delivery {
   purchasePricePerGramCZK Int
 
   initialGrams            Int
-  initialPieces           Int
+  initialPieces           Int               @default(0)
   pieceWeightGrams        Int?
 
   remainingGrams          Int
-  remainingPieces         Int
+  remainingPieces         Int               @default(0)
 
   exclusive               Boolean   @default(false)
 
@@ -364,7 +365,7 @@ model StockMovement {
   type        StockMovementType
 
   grams       Int
-  pieces      Int
+  pieces      Int               @default(0)
 
   userId      String
   user        User              @relation(fields: [userId], references: [id])

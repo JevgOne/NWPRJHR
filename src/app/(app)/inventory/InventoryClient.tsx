@@ -137,7 +137,7 @@ export function InventoryClient({
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
-      if (!showSoldOut && item.availableGrams <= 0) return false;
+      if (!showSoldOut && item.availableGrams <= 0 && item.availablePieces <= 0) return false;
       if (categoryFilter !== "ALL" && item.product.category !== categoryFilter) return false;
       if (originFilter && item.product.origin !== originFilter) return false;
       if (productFilter && item.product.id !== productFilter) return false;

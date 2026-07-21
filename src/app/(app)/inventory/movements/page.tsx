@@ -38,8 +38,8 @@ export default async function MovementsPage() {
     note: m.note,
     createdAt: m.createdAt.toISOString(),
     user: m.user,
-    deliveryBarcode: m.delivery.barcode,
-    deliveryId: m.delivery.id,
+    deliveryBarcode: m.delivery?.barcode ?? null,
+    deliveryId: m.delivery?.id ?? "",
     variant: {
       lengthCm: m.variant.lengthCm,
       color: m.variant.color,
