@@ -73,7 +73,6 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
         { href: "/sales", label: t("sales"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/orders", label: t("orders"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
         { href: "/reservations", label: t("reservations"), roles: ["OWNER", "EMPLOYEE"] },
-        { href: "/inquiries", label: t("inquiries"), roles: ["OWNER", "EMPLOYEE"], badge: newInquiryCount, badgeColor: "bg-blue-500" },
         { href: "/invoices", label: t("invoices"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
         { href: "/payments", label: t("payments"), roles: ["OWNER"] },
       ],

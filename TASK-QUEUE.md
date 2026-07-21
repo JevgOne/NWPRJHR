@@ -29,10 +29,11 @@ Uživatel: "ZASE SE TO NENASKLADNUJE!!!" + screenshot stuck na "Načítání..."
 
 ---
 
-### TASK-108: Comgate credentials — karetní platby (ODLOŽENO)
-Stav: ODLOŽENO — uživatel zatím nemá Comgate
-- CARD platba skrytá z checkoutu (commit 8831d51)
-- Až bude mít Comgate: nastavit env vars, odkrýt label v CheckoutClient.tsx ~řádek 693
+### TASK-108: Comgate karetní platby
+Stav: HOTOVO
+- Merchant 515911, heslo opraveno, test=true, "Povolit všechny IP" zapnuto
+- `.trim()` na env vars (fix %0A), CARD email až po zaplacení
+- Zbývá: nastavit callback URLs v portálu, otestovat platbu
 
 ---
 
@@ -139,14 +140,31 @@ Stav: čeká
 ---
 
 ### TASK-111: Privacy stránka — chybí identifikace firmy
-Stav: čeká
-- `messages/cs.json:1889-1916`
-- Chybí: Altro servis group s.r.o., IČO 23673389
+Stav: HOTOVO (commit 893a06e)
+- Přidáno: Altro servis group s.r.o., IČO 23673389, GDPR rozšíření
 
 ---
 
 ### TASK-071: Performance — pomalé načítání admin panelu
 Stav: čeká
+
+---
+
+### TASK-112: Zásilkovna widget — nefunguje výběr pobočky
+Stav: čeká
+- Widget se neotevírá při výběru Zásilkovny v checkoutu
+- `src/app/[locale]/(public)/checkout/CheckoutClient.tsx`
+- Packeta widget: `public/` script v layout, `PacketaWidget.tsx`
+
+---
+
+### TASK-113: Registrace zákazníků na e-shopu
+Stav: BACKLOG — větší feature
+- Checkout: volba "Vytvořit účet" vs "Nákup bez registrace"
+- Customer model má `passwordHash` — základ připraven
+- Přihlášení zákazníka, předvyplnění formuláře, "Moje objednávky"
+- Email s potvrzením registrace (NE s heslem)
+- Zapomenuté heslo flow
 
 ---
 
