@@ -29,10 +29,10 @@ Uživatel: "ZASE SE TO NENASKLADNUJE!!!" + screenshot stuck na "Načítání..."
 
 ---
 
-### TASK-108: Comgate credentials — karetní platby nefungují
-Stav: ČEKÁ NA UŽIVATELE
-- `COMGATE_MERCHANT` a `COMGATE_SECRET` prázdné na Vercelu → CARD platby vrací 502
-- Uživatel musí nastavit credentials ve Vercel env vars
+### TASK-108: Comgate credentials — karetní platby (ODLOŽENO)
+Stav: ODLOŽENO — uživatel zatím nemá Comgate
+- CARD platba skrytá z checkoutu (commit 8831d51)
+- Až bude mít Comgate: nastavit env vars, odkrýt label v CheckoutClient.tsx ~řádek 693
 
 ---
 

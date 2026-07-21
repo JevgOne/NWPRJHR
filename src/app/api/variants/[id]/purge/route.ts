@@ -63,48 +63,54 @@ export async function DELETE(
   // Delete everything in a transaction
   const productId = variant.productId;
 
-  await prisma.$transaction(async (tx) => {
-    // 1. Delete stock movements
-    await tx.stockMovement.deleteMany({ where: { variantId: id } });
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete stock movements
+      await tx.stockMovement.deleteMany({ where: { variantId: id } });
 
-    // 2. Delete reservations
-    await tx.reservation.deleteMany({ where: { variantId: id } });
+      // 2. Delete reservations
+      await tx.reservation.deleteMany({ where: { variantId: id } });
 
-    // 3. Delete product reservations
-    await tx.productReservation.deleteMany({ where: { variantId: id } });
+      // 3. Delete product reservations
+      await tx.productReservation.deleteMany({ where: { variantId: id } });
 
-    // 4. Delete stock subscriptions
-    await tx.stockSubscription.deleteMany({ where: { variantId: id } });
+      // 4. Delete stock subscriptions
+      await tx.stockSubscription.deleteMany({ where: { variantId: id } });
 
-    // 5. Delete sale items (only from DRAFT/CANCELLED sales)
-    await tx.saleItem.deleteMany({ where: { variantId: id } });
+      // 5. Delete sale items (only from DRAFT/CANCELLED sales)
+      await tx.saleItem.deleteMany({ where: { variantId: id } });
 
-    // 6. Delete order items (only from CANCELLED/AWAITING_PAYMENT orders)
-    await tx.orderItem.deleteMany({ where: { variantId: id } });
+      // 6. Delete order items (only from CANCELLED/AWAITING_PAYMENT orders)
+      await tx.orderItem.deleteMany({ where: { variantId: id } });
 
-    // 7. Delete deliveries (returns + complaints first)
-    const deliveryIds = (
-      await tx.delivery.findMany({ where: { variantId: id }, select: { id: true } })
-    ).map((d) => d.id);
+      // 7. Delete deliveries (returns + complaints first)
+      const deliveryIds = (
+        await tx.delivery.findMany({ where: { variantId: id }, select: { id: true } })
+      ).map((d) => d.id);
 
-    if (deliveryIds.length > 0) {
-      await tx.return.deleteMany({ where: { deliveryId: { in: deliveryIds } } });
-      await tx.complaint.deleteMany({ where: { deliveryId: { in: deliveryIds } } });
-      await tx.delivery.deleteMany({ where: { variantId: id } });
-    }
+      if (deliveryIds.length > 0) {
+        await tx.return.deleteMany({ where: { deliveryId: { in: deliveryIds } } });
+        await tx.complaint.deleteMany({ where: { deliveryId: { in: deliveryIds } } });
+        await tx.delivery.deleteMany({ where: { variantId: id } });
+      }
 
-    // 8. Delete the variant
-    await tx.variant.delete({ where: { id } });
+      // 8. Delete the variant
+      await tx.variant.delete({ where: { id } });
 
-    // 9. If product has no remaining variants, delete product too
-    const remainingVariants = await tx.variant.count({ where: { productId } });
-    if (remainingVariants === 0) {
-      // Clean up product relations
-      await tx.sampleRequest.deleteMany({ where: { productId } });
-      await tx.review.deleteMany({ where: { productId } });
-      await tx.product.delete({ where: { id: productId } });
-    }
-  });
+      // 9. If product has no remaining variants, delete product too
+      const remainingVariants = await tx.variant.count({ where: { productId } });
+      if (remainingVariants === 0) {
+        // Clean up product relations
+        await tx.sampleRequest.deleteMany({ where: { productId } });
+        await tx.review.deleteMany({ where: { productId } });
+        await tx.product.delete({ where: { id: productId } });
+      }
+    });
+  } catch (err) {
+    console.error("[purge] Delete variant failed:", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: `Smazání selhalo: ${message}` }, { status: 500 });
+  }
 
   const remainingVariants = await prisma.variant.count({ where: { productId } }).catch(() => 0);
   const productDeleted = remainingVariants === 0;
