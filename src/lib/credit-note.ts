@@ -25,8 +25,8 @@ export async function createCreditNoteInTx(
 
   const itemsTotal = returnItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const total = -itemsTotal;
-  const vatAmount = -roundHalereUp((itemsTotal * original.vatRate) / 12100);
-  const subtotal = total - vatAmount;
+  const vatAmount = 0;
+  const subtotal = total;
 
   return tx.invoice.create({
     data: {
@@ -46,7 +46,7 @@ export async function createCreditNoteInTx(
       dueDate: new Date(),
       variableSymbol,
       subtotal,
-      vatRate: original.vatRate,
+      vatRate: 0,
       vatAmount,
       total,
       status: "ISSUED",
@@ -58,7 +58,7 @@ export async function createCreditNoteInTx(
           unit: item.unit,
           pricePerUnit: item.pricePerUnit,
           lineTotal: -item.lineTotal,
-          vatRate: original.vatRate,
+          vatRate: 0,
         })),
       },
     },

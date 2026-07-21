@@ -21,6 +21,7 @@ export interface CreateReservationInput {
     counterPerformanceNote?: string;
     bearerPartnerIds?: string[];
   };
+  sendDepositInvoice?: boolean;
 }
 
 /**

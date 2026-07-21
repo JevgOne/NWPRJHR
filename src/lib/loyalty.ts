@@ -54,7 +54,7 @@ export async function getLoyaltyDiscount(
 
 /**
  * Calculate loyalty points earned from a sale.
- * Default: 1 point per 100 CZK (excl. VAT).
+ * Default: 1 point per 100 CZK.
  */
 export async function calculatePoints(
   amountBeforeVatHalere: number

@@ -189,7 +189,6 @@ export function InventoryClient({
         color: i.color,
         category: i.product.category,
         texture: i.product.texture,
-        barcode: i.barcode,
       }));
   }, [filtered, selected]);
 

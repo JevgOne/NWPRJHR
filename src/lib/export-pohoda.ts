@@ -93,14 +93,7 @@ export async function generatePohodaXml(
       invItem.ele("inv:quantity").txt(String(item.quantity));
       invItem.ele("inv:unit").txt(item.unit);
 
-      const vatPercent = item.vatRate / 100;
-      if (vatPercent >= 21) {
-        invItem.ele("inv:rateVAT").txt("high");
-      } else if (vatPercent >= 12) {
-        invItem.ele("inv:rateVAT").txt("low");
-      } else {
-        invItem.ele("inv:rateVAT").txt("none");
-      }
+      invItem.ele("inv:rateVAT").txt("none");
 
       invItem
         .ele("inv:homeCurrency")

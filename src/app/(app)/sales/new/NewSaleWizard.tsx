@@ -107,8 +107,8 @@ export function NewSaleWizard({
       ? roundUp((subtotal * discount.percent) / 10000)
       : 0;
   const totalAmount = roundUp(subtotal - discountAmount);
-  const vatAmount = roundUp((totalAmount * 2100) / 12100);
-  const totalBeforeVat = totalAmount - vatAmount;
+  const vatAmount = 0;
+  const totalBeforeVat = totalAmount;
 
   const fetchPricePreview = useCallback(
     async (variantId: string, grams: number, pieces: number) => {
@@ -148,6 +148,20 @@ export function NewSaleWizard({
           sku = generateSku(p.category, p.texture, v.color, v.lengthCm);
           break;
         }
+      }
+
+      if (label === variantId) {
+        try {
+          const res = await fetch(`/api/variants/${variantId}`);
+          if (res.ok) {
+            const data = await res.json();
+            label = `${data.product?.name ?? ""} ${data.lengthCm}cm ${data.color}`;
+            origin = data.product?.origin ?? null;
+            texture = data.product?.texture ?? null;
+            category = data.product?.category;
+            sku = generateSku(category ?? "", texture, data.color, data.lengthCm);
+          }
+        } catch {}
       }
 
       const preview = await fetchPricePreview(variantId, 50, 0);
@@ -800,14 +814,6 @@ export function NewSaleWizard({
                   <span>-{formatCZK(discountAmount)} CZK</span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span>{t("beforeVat")}</span>
-                <span>{formatCZK(totalBeforeVat)} CZK</span>
-              </div>
-              <div className="flex justify-between">
-                <span>{t("vat")}</span>
-                <span>{formatCZK(vatAmount)} CZK</span>
-              </div>
               <div className="flex justify-between font-bold text-base pt-2 border-t">
                 <span>{t("totalAmount")}</span>
                 <span>{formatCZK(totalAmount)} CZK</span>

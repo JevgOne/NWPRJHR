@@ -6,6 +6,41 @@ import { updateVariantSchema } from "@/lib/validations/product";
 import { calculateRetailPrice } from "@/lib/pricing";
 import { logAudit, getClientIp } from "@/lib/audit";
 
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+
+  const variant = await prisma.variant.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      lengthCm: true,
+      color: true,
+      sellingMode: true,
+      product: {
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          origin: true,
+          texture: true,
+        },
+      },
+    },
+  });
+
+  if (!variant)
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  return NextResponse.json(variant);
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

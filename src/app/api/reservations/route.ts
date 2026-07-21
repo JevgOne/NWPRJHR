@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createReservationSchema } from "@/lib/validations/reservation";
 import { createProductReservation } from "@/lib/reservations";
+import { createDepositInvoice } from "@/lib/invoicing";
 import { createNotificationForRole } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
 
@@ -126,6 +127,16 @@ export async function POST(request: NextRequest) {
   try {
     const reservation = await createProductReservation(parsed.data, session.user.id);
 
+    // Create deposit invoice if requested
+    let depositInvoice = null;
+    if (parsed.data.sendDepositInvoice) {
+      try {
+        depositInvoice = await createDepositInvoice(reservation.id);
+      } catch {
+        // Deposit invoice creation is optional — don't fail the reservation
+      }
+    }
+
     logAudit({
       userId: session.user.id,
       userEmail: session.user.email ?? undefined,
@@ -136,6 +147,7 @@ export async function POST(request: NextRequest) {
         reservationNumber: reservation.reservationNumber,
         variantId: parsed.data.variantId,
         lineTotal: reservation.lineTotal,
+        depositInvoice: depositInvoice ? depositInvoice.number : null,
       },
       ipAddress: getClientIp(request),
     });
@@ -144,11 +156,11 @@ export async function POST(request: NextRequest) {
       role: "OWNER",
       type: "RESERVATION_CREATED",
       title: `Nova rezervace: ${reservation.reservationNumber}`,
-      message: `Vytvorena rezervace za ${(reservation.lineTotal / 100).toFixed(0)} CZK, splatnost ${reservation.paymentDueDate.toLocaleDateString("cs-CZ")}.`,
+      message: `Vytvorena rezervace za ${(reservation.lineTotal / 100).toFixed(0)} CZK, splatnost ${reservation.paymentDueDate.toLocaleDateString("cs-CZ")}.${depositInvoice ? ` Zálohová faktura: ${depositInvoice.number}` : ""}`,
       data: { reservationId: reservation.id, reservationNumber: reservation.reservationNumber },
     }).catch(() => {});
 
-    return NextResponse.json(reservation, { status: 201 });
+    return NextResponse.json({ ...reservation, depositInvoice: depositInvoice ? { id: depositInvoice.id, number: depositInvoice.number } : null }, { status: 201 });
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Reservation creation failed" },

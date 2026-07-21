@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     if (wasPaid) {
       const invoice = await tx.invoice.findUnique({
         where: { id: parsed.data.invoiceId },
-        // invoice.subtotal = revenue before VAT (set from sale.totalBeforeVat in invoicing)
+        // invoice.subtotal = revenue (set from sale.totalBeforeVat in invoicing)
         select: { salonId: true, subtotal: true, type: true, number: true },
       });
       if (invoice?.salonId && invoice.type === "INVOICE") {

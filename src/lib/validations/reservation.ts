@@ -18,6 +18,7 @@ export const createReservationSchema = z.object({
     counterPerformanceNote: z.string().max(500).optional(),
     bearerPartnerIds: z.array(z.string()).optional(),
   }).optional(),
+  sendDepositInvoice: z.boolean().optional(),
 });
 
 export const updateReservationSchema = z.object({

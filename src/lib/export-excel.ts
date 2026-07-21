@@ -68,9 +68,6 @@ export async function generateAccountingExport(
     { header: "Odběratel", key: "buyerName", width: 30 },
     { header: "IČO", key: "buyerICO", width: 12 },
     { header: "DIČ", key: "buyerDIC", width: 14 },
-    { header: "Základ (CZK)", key: "subtotal", width: 14 },
-    { header: "Sazba DPH (%)", key: "vatRate", width: 12 },
-    { header: "DPH (CZK)", key: "vatAmount", width: 12 },
     { header: "Celkem (CZK)", key: "totalAmount", width: 14 },
     { header: "Stav", key: "status", width: 12 },
     { header: "Uhrazeno", key: "paidDate", width: 14 },
@@ -89,9 +86,6 @@ export async function generateAccountingExport(
       buyerName: inv.buyerName,
       buyerICO: inv.buyerIco ?? "",
       buyerDIC: inv.buyerDic ?? "",
-      subtotal: halereToCZK(inv.subtotal),
-      vatRate: inv.vatRate / 100,
-      vatAmount: halereToCZK(inv.vatAmount),
       totalAmount: halereToCZK(inv.total),
       status: inv.status,
       paidDate: paidPayment ? formatDate(inv.payments[0]?.date) : "",
@@ -150,8 +144,8 @@ export async function generateAccountingExport(
     });
   }
 
-  // Sheet 4: Prehled DPH (VAT Overview)
-  const sheet4 = workbook.addWorksheet("Přehled DPH");
+  // Sheet 4: Přehled (Overview)
+  const sheet4 = workbook.addWorksheet("Přehled");
   sheet4.columns = [
     { header: "Položka", key: "item", width: 40 },
     { header: "Částka (CZK)", key: "amount", width: 18 },
@@ -160,32 +154,24 @@ export async function generateAccountingExport(
   const issuedInvoices = invoices.filter((i) => i.type === "INVOICE");
   const creditNotes = invoices.filter((i) => i.type === "CREDIT_NOTE");
 
-  const outputBase = issuedInvoices.reduce((s, i) => s + i.subtotal, 0);
-  const outputVat = issuedInvoices.reduce((s, i) => s + i.vatAmount, 0);
-  const creditBase = creditNotes.reduce((s, i) => s + i.subtotal, 0);
-  const creditVat = creditNotes.reduce((s, i) => s + i.vatAmount, 0);
+  const outputTotal = issuedInvoices.reduce((s, i) => s + i.total, 0);
+  const creditTotal = creditNotes.reduce((s, i) => s + i.total, 0);
   const inputDeliveries = deliveries.reduce(
     (s, d) => s + d.purchasePricePerGramCZK * d.initialGrams,
     0
   );
   const inputCosts = operatingCosts.reduce((s, c) => s + c.amountHalere, 0);
 
+  sheet4.addRow({ item: "Firma není plátce DPH", amount: "" });
+  sheet4.addRow({ item: "", amount: "" });
   sheet4.addRow({ item: "VÝSTUPY", amount: "" });
   sheet4.addRow({
-    item: "Základ DPH z vydaných faktur",
-    amount: halereToCZK(outputBase),
+    item: "Vydané faktury",
+    amount: halereToCZK(outputTotal),
   });
   sheet4.addRow({
-    item: "DPH z vydaných faktur",
-    amount: halereToCZK(outputVat),
-  });
-  sheet4.addRow({
-    item: "Základ DPH z dobropisů (-)",
-    amount: halereToCZK(creditBase),
-  });
-  sheet4.addRow({
-    item: "DPH z dobropisů (-)",
-    amount: halereToCZK(creditVat),
+    item: "Dobropisy (-)",
+    amount: halereToCZK(creditTotal),
   });
   sheet4.addRow({ item: "", amount: "" });
   sheet4.addRow({ item: "VSTUPY", amount: "" });
@@ -216,9 +202,6 @@ export async function generateAccountingExport(
       buyerName: inv.buyerName,
       buyerICO: inv.buyerIco ?? "",
       buyerDIC: inv.buyerDic ?? "",
-      subtotal: halereToCZK(inv.subtotal),
-      vatRate: inv.vatRate / 100,
-      vatAmount: halereToCZK(inv.vatAmount),
       totalAmount: halereToCZK(inv.total),
       status: inv.status,
       paidDate: "",

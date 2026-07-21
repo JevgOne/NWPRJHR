@@ -139,10 +139,7 @@ export async function approveReturn(
       let revenueDeducted = 0;
 
       if (ret.salonId && returnValue > 0) {
-        const vatRate = ret.sale.vatRate;
-        revenueDeducted = Math.floor(
-          (returnValue * 10000) / (10000 + vatRate)
-        );
+        revenueDeducted = returnValue;
 
         // reduceSalonRevenue handles points + tier recalc
         await reduceSalonRevenueInTx(ret.salonId, revenueDeducted, tx);

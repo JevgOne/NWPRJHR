@@ -100,13 +100,13 @@ export async function createInvoiceFromSale(
           unit: isPiece ? t.piece : t.gram,
           pricePerUnit: qty > 0 ? Math.round(item.lineTotal / qty) : 0,
           lineTotal: item.lineTotal,
-          vatRate: 2100,
+          vatRate: 0,
         };
       });
 
       const subtotal = sale.totalBeforeVat;
-      const vatAmount = sale.vatAmount;
-      const rawTotal = subtotal + vatAmount;
+      const vatAmount = 0;
+      const rawTotal = subtotal;
       const roundedTotal = roundHalereUp(rawTotal);
       const roundingAmount = roundedTotal - rawTotal;
 
@@ -138,7 +138,7 @@ export async function createInvoiceFromSale(
           taxDate: new Date(),
           variableSymbol,
           subtotal,
-          vatRate: 2100,
+          vatRate: 0,
           vatAmount,
           total: roundedTotal,
           roundingAmount,
@@ -227,7 +227,7 @@ export async function createInternalDocument(
           unit: isPiece ? t.piece : t.gram,
           pricePerUnit: 0,
           lineTotal: 0,
-          vatRate: 2100,
+          vatRate: 0,
         };
       });
 
@@ -244,7 +244,7 @@ export async function createInternalDocument(
           dueDate: new Date(),
           variableSymbol,
           subtotal: 0,
-          vatRate: 2100,
+          vatRate: 0,
           vatAmount: 0,
           total: 0,
           status: "PAID",
@@ -256,6 +256,307 @@ export async function createInternalDocument(
       });
 
       return invoice;
+    },
+    { timeout: 15000 }
+  );
+}
+
+/**
+ * Create a deposit invoice (zálohová faktura) for 50% of reservation total.
+ */
+export async function createDepositInvoice(
+  reservationId: string,
+  companyId?: string
+): Promise<Invoice> {
+  return prisma.$transaction(
+    async (tx) => {
+      const reservation = await tx.productReservation.findUniqueOrThrow({
+        where: { id: reservationId },
+        include: {
+          variant: { include: { product: true } },
+          salon: true,
+          customer: true,
+        },
+      });
+
+      // Check no deposit invoice already exists for this reservation
+      const existing = await tx.invoice.findFirst({
+        where: { reservationId, type: "DEPOSIT" },
+      });
+      if (existing) {
+        throw new Error("Deposit invoice already exists for this reservation");
+      }
+
+      const company = companyId
+        ? await tx.company.findUniqueOrThrow({ where: { id: companyId } })
+        : await tx.company.findFirstOrThrow({ where: { isDefault: true } });
+
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, "F");
+
+      const buyer =
+        reservation.customerType === "SALON" && reservation.salon
+          ? {
+              buyerName: reservation.salon.name,
+              buyerIco: reservation.salon.ico,
+              buyerDic: reservation.salon.dic,
+              buyerAddress: reservation.salon.city ?? "",
+              buyerEmail: reservation.salon.email,
+              buyerLanguage: reservation.salon.language ?? "cs",
+            }
+          : {
+              buyerName: reservation.customer?.name ?? reservation.contactName ?? "",
+              buyerIco: null as string | null,
+              buyerDic: null as string | null,
+              buyerAddress: reservation.customer?.city ?? "",
+              buyerEmail: reservation.customer?.email ?? reservation.contactEmail ?? null,
+              buyerLanguage: "cs",
+            };
+
+      const lang = buyer.buyerLanguage;
+      const t = getInvoiceTranslations(lang);
+
+      const depositAmount = roundHalereUp(reservation.lineTotal / 2);
+      const vatRate = 0;
+      const vatAmount = 0;
+      const subtotal = depositAmount;
+
+      const description = formatItemDescription(
+        reservation.variant.product,
+        reservation.variant,
+        lang
+      );
+
+      const isPiece = reservation.pieces > 0;
+      const qty = isPiece ? reservation.pieces : reservation.grams;
+
+      const invoice = await tx.invoice.create({
+        data: {
+          type: "DEPOSIT",
+          number,
+          companyId: company.id,
+          salonId: reservation.salonId,
+          customerId: reservation.customerId,
+          ...buyer,
+          reservationId,
+          issueDate: new Date(),
+          dueDate: reservation.paymentDueDate,
+          taxDate: new Date(),
+          variableSymbol,
+          subtotal,
+          vatRate,
+          vatAmount,
+          total: depositAmount,
+          roundingAmount: 0,
+          status: "AWAITING",
+          note: `Záloha 50 % – rezervace ${reservation.reservationNumber}`,
+          items: {
+            create: [
+              {
+                description: `${lang === "cs" ? "Záloha" : "Deposit"}: ${description}`,
+                quantity: qty,
+                unit: isPiece ? t.piece : t.gram,
+                pricePerUnit: qty > 0 ? Math.round(depositAmount / qty) : 0,
+                lineTotal: depositAmount,
+                vatRate,
+              },
+            ],
+          },
+        },
+      });
+
+      return invoice;
+    },
+    { timeout: 15000 }
+  );
+}
+
+/**
+ * Create a settlement invoice (vyúčtovací faktura) for the remaining 50% after reservation completion.
+ * References the original deposit invoice.
+ */
+export async function createSettlementInvoice(
+  reservationId: string,
+  saleId: string,
+  companyId?: string
+): Promise<Invoice> {
+  return prisma.$transaction(
+    async (tx) => {
+      const reservation = await tx.productReservation.findUniqueOrThrow({
+        where: { id: reservationId },
+        include: {
+          variant: { include: { product: true } },
+          salon: true,
+          customer: true,
+        },
+      });
+
+      // Find the deposit invoice
+      const depositInvoice = await tx.invoice.findFirst({
+        where: { reservationId, type: "DEPOSIT" },
+      });
+
+      const company = companyId
+        ? await tx.company.findUniqueOrThrow({ where: { id: companyId } })
+        : await tx.company.findFirstOrThrow({ where: { isDefault: true } });
+
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, "F");
+
+      const buyer =
+        reservation.customerType === "SALON" && reservation.salon
+          ? {
+              buyerName: reservation.salon.name,
+              buyerIco: reservation.salon.ico,
+              buyerDic: reservation.salon.dic,
+              buyerAddress: reservation.salon.city ?? "",
+              buyerEmail: reservation.salon.email,
+              buyerLanguage: reservation.salon.language ?? "cs",
+            }
+          : {
+              buyerName: reservation.customer?.name ?? reservation.contactName ?? "",
+              buyerIco: null as string | null,
+              buyerDic: null as string | null,
+              buyerAddress: reservation.customer?.city ?? "",
+              buyerEmail: reservation.customer?.email ?? reservation.contactEmail ?? null,
+              buyerLanguage: "cs",
+            };
+
+      const lang = buyer.buyerLanguage;
+      const t = getInvoiceTranslations(lang);
+
+      const depositAmount = depositInvoice ? depositInvoice.total : roundHalereUp(reservation.lineTotal / 2);
+      const remainingAmount = reservation.lineTotal - depositAmount;
+      const vatRate = 0;
+      const vatAmount = 0;
+      const subtotal = remainingAmount;
+
+      const description = formatItemDescription(
+        reservation.variant.product,
+        reservation.variant,
+        lang
+      );
+
+      const isPiece = reservation.pieces > 0;
+      const qty = isPiece ? reservation.pieces : reservation.grams;
+
+      const items = [
+        {
+          description,
+          quantity: qty,
+          unit: isPiece ? t.piece : t.gram,
+          pricePerUnit: qty > 0 ? Math.round(reservation.lineTotal / qty) : 0,
+          lineTotal: reservation.lineTotal,
+          vatRate,
+        },
+        {
+          description: `${lang === "cs" ? "Odpočet zálohy" : "Deposit deduction"} (${depositInvoice?.number ?? "—"})`,
+          quantity: 1,
+          unit: lang === "cs" ? "ks" : "pc",
+          pricePerUnit: -depositAmount,
+          lineTotal: -depositAmount,
+          vatRate,
+        },
+      ];
+
+      const invoice = await tx.invoice.create({
+        data: {
+          type: "INVOICE",
+          number,
+          companyId: company.id,
+          salonId: reservation.salonId,
+          customerId: reservation.customerId,
+          ...buyer,
+          saleId,
+          reservationId,
+          originalInvoiceId: depositInvoice?.id ?? null,
+          issueDate: new Date(),
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          taxDate: new Date(),
+          variableSymbol,
+          subtotal,
+          vatRate,
+          vatAmount,
+          total: remainingAmount,
+          roundingAmount: 0,
+          status: "AWAITING",
+          note: `Vyúčtování rezervace ${reservation.reservationNumber}`,
+          items: {
+            create: items,
+          },
+        },
+      });
+
+      return invoice;
+    },
+    { timeout: 15000 }
+  );
+}
+
+/**
+ * Create a credit note (dobropis) for a deposit invoice when reservation is cancelled.
+ */
+export async function createDepositCreditNote(
+  reservationId: string
+): Promise<Invoice | null> {
+  const depositInvoice = await prisma.invoice.findFirst({
+    where: { reservationId, type: "DEPOSIT" },
+    include: { company: true },
+  });
+
+  if (!depositInvoice) return null;
+
+  return prisma.$transaction(
+    async (tx) => {
+      const original = await tx.invoice.findUniqueOrThrow({
+        where: { id: depositInvoice.id },
+        include: { company: true, items: true },
+      });
+
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, "F");
+
+      const creditNote = await tx.invoice.create({
+        data: {
+          type: "CREDIT_NOTE",
+          number,
+          companyId: original.companyId,
+          salonId: original.salonId,
+          customerId: original.customerId,
+          buyerName: original.buyerName,
+          buyerIco: original.buyerIco,
+          buyerDic: original.buyerDic,
+          buyerAddress: original.buyerAddress,
+          buyerEmail: original.buyerEmail,
+          buyerLanguage: original.buyerLanguage,
+          reservationId,
+          originalInvoiceId: original.id,
+          issueDate: new Date(),
+          dueDate: new Date(),
+          variableSymbol,
+          subtotal: -original.subtotal,
+          vatRate: 0,
+          vatAmount: 0,
+          total: -original.total,
+          status: "PAID",
+          note: `Dobropis k záloze ${original.number} — storno rezervace`,
+          items: {
+            create: original.items.map((item) => ({
+              description: item.description,
+              quantity: -Number(item.quantity),
+              unit: item.unit,
+              pricePerUnit: item.pricePerUnit,
+              lineTotal: -item.lineTotal,
+              vatRate: 0,
+            })),
+          },
+        },
+      });
+
+      // Mark original deposit as cancelled
+      await tx.invoice.update({
+        where: { id: original.id },
+        data: { status: "CANCELLED" },
+      });
+
+      return creditNote;
     },
     { timeout: 15000 }
   );
@@ -294,10 +595,8 @@ export async function createCreditNote(
         0
       );
       const total = -itemsTotal;
-      const vatAmount = -roundHalereUp(
-        (itemsTotal * original.vatRate) / 12100
-      );
-      const subtotal = total - vatAmount;
+      const vatAmount = 0;
+      const subtotal = total;
 
       const creditNote = await tx.invoice.create({
         data: {
@@ -317,7 +616,7 @@ export async function createCreditNote(
           dueDate: new Date(),
           variableSymbol,
           subtotal,
-          vatRate: original.vatRate,
+          vatRate: 0,
           vatAmount,
           total,
           status: "PAID",
@@ -329,7 +628,7 @@ export async function createCreditNote(
               unit: item.unit,
               pricePerUnit: item.pricePerUnit,
               lineTotal: -item.lineTotal,
-              vatRate: original.vatRate,
+              vatRate: 0,
             })),
           },
         },

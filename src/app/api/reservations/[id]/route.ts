@@ -7,7 +7,7 @@ import {
   cancelReservation,
 } from "@/lib/reservations";
 import { completeSale } from "@/lib/sales";
-import { createInvoiceFromSale } from "@/lib/invoicing";
+import { createInvoiceFromSale, createSettlementInvoice, createDepositCreditNote } from "@/lib/invoicing";
 import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
 
@@ -76,6 +76,12 @@ export async function POST(
           body.paymentNote
         );
 
+        // Mark deposit invoice as paid if it exists
+        await prisma.invoice.updateMany({
+          where: { reservationId: id, type: "DEPOSIT", status: "AWAITING" },
+          data: { status: "PAID" },
+        });
+
         logAudit({
           userId: session.user.id,
           userEmail: session.user.email ?? undefined,
@@ -143,10 +149,17 @@ export async function POST(
         // Complete reservation
         const reservation = await completeReservation(id);
 
-        // Create invoice
+        // Create invoice: settlement if deposit exists, otherwise regular
         let invoice = null;
         try {
-          invoice = await createInvoiceFromSale(sale.id, body.companyId);
+          const hasDeposit = await prisma.invoice.findFirst({
+            where: { reservationId: id, type: "DEPOSIT" },
+          });
+          if (hasDeposit) {
+            invoice = await createSettlementInvoice(id, sale.id, body.companyId);
+          } else {
+            invoice = await createInvoiceFromSale(sale.id, body.companyId);
+          }
         } catch {
           // Invoice creation is optional
         }

@@ -22,6 +22,7 @@ interface InvoiceTranslations {
   lineTotal: string;
   subtotal: string;
   vat: string;
+  notVatPayer: string;
   total: string;
   rounding: string;
   qrPayment: string;
@@ -52,8 +53,9 @@ const translations: Record<string, InvoiceTranslations> = {
     unit: "Jednotka",
     unitPrice: "Cena za jednotku",
     lineTotal: "Celkem",
-    subtotal: "Základ bez DPH",
-    vat: "DPH 21%",
+    subtotal: "Celkem",
+    vat: "",
+    notVatPayer: "Nejsme plátci DPH",
     total: "Celkem uhrazeno",
     rounding: "Zaokrouhlení",
     qrPayment: "QR Platba",
@@ -82,8 +84,9 @@ const translations: Record<string, InvoiceTranslations> = {
     unit: "Одиниця",
     unitPrice: "Ціна за одиницю",
     lineTotal: "Разом",
-    subtotal: "Без ПДВ",
-    vat: "ПДВ 21%",
+    subtotal: "Разом",
+    vat: "",
+    notVatPayer: "Ми не є платниками ПДВ",
     total: "Разом до сплати",
     rounding: "Округлення",
     qrPayment: "QR-оплата",
@@ -112,8 +115,9 @@ const translations: Record<string, InvoiceTranslations> = {
     unit: "Единица",
     unitPrice: "Цена за единицу",
     lineTotal: "Итого",
-    subtotal: "Без НДС",
-    vat: "НДС 21%",
+    subtotal: "Итого",
+    vat: "",
+    notVatPayer: "Мы не являемся плательщиками НДС",
     total: "Итого к оплате",
     rounding: "Округление",
     qrPayment: "QR-оплата",

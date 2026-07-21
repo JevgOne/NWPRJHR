@@ -16,8 +16,6 @@ interface SaleSummaryProps {
   items: SummaryItem[];
   subtotal: number;
   discountAmount: number;
-  totalBeforeVat: number;
-  vatAmount: number;
   totalAmount: number;
   isOwner: boolean;
   costOfGoods?: number;
@@ -35,8 +33,6 @@ export function SaleSummary({
   items,
   subtotal,
   discountAmount,
-  totalBeforeVat,
-  vatAmount,
   totalAmount,
   isOwner,
   costOfGoods,
@@ -80,14 +76,6 @@ export function SaleSummary({
             <span>-{formatCZK(discountAmount)} CZK</span>
           </div>
         )}
-        <div className="flex justify-between">
-          <span>{t("beforeVat")}</span>
-          <span>{formatCZK(totalBeforeVat)} CZK</span>
-        </div>
-        <div className="flex justify-between">
-          <span>{t("vat")}</span>
-          <span>{formatCZK(vatAmount)} CZK</span>
-        </div>
         <div className="flex justify-between font-bold text-base pt-2 border-t">
           <span>{t("totalAmount")}</span>
           <span>{formatCZK(totalAmount)} CZK</span>

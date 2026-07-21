@@ -508,7 +508,7 @@ model Sale {
   subtotal       Int
   discountAmount Int          @default(0)
   totalBeforeVat Int
-  vatRate        Int          @default(2100)
+  vatRate        Int          @default(0)
   vatAmount      Int
   totalAmount    Int
 
@@ -687,6 +687,7 @@ enum InvoiceStatus {
 enum InvoiceType {
   INVOICE
   CREDIT_NOTE
+  DEPOSIT
 }
 
 // ============================================================
@@ -760,6 +761,9 @@ model Invoice {
   saleId          String?       @unique
   sale            Sale?         @relation(fields: [saleId], references: [id])
 
+  reservationId   String?
+  reservation     ProductReservation? @relation(fields: [reservationId], references: [id])
+
   originalInvoiceId String?
   originalInvoice   Invoice?    @relation("CreditNoteOf", fields: [originalInvoiceId], references: [id])
   creditNotes       Invoice[]   @relation("CreditNoteOf")
@@ -771,7 +775,7 @@ model Invoice {
   variableSymbol  String
 
   subtotal        Int
-  vatRate         Int           @default(2100)
+  vatRate         Int           @default(0)
   vatAmount       Int
   total           Int
 
@@ -800,6 +804,7 @@ model Invoice {
   @@index([dueDate])
   @@index([variableSymbol])
   @@index([type])
+  @@index([reservationId])
   @@map("invoices")
 }
 
@@ -817,7 +822,7 @@ model InvoiceItem {
   unit          String
   pricePerUnit  Int
   lineTotal     Int
-  vatRate       Int       @default(2100)
+  vatRate       Int       @default(0)
 
   @@index([invoiceId])
   @@map("invoice_items")
@@ -1180,6 +1185,8 @@ model ProductReservation {
 
   saleId            String?                   @unique
   invoiceId         String?                   @unique
+
+  invoices          Invoice[]
 
   note              String?
   internalNote      String?

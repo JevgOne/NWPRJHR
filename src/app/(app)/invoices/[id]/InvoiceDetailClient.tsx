@@ -236,14 +236,6 @@ export function InvoiceDetailClient({
         </table>
 
         <div className="mt-3 pt-3 border-t space-y-1 text-sm">
-          <div className="flex justify-between">
-            <span>{t("withoutVat")}</span>
-            <span>{formatCZK(invoice.subtotal)} CZK</span>
-          </div>
-          <div className="flex justify-between">
-            <span>{t("vat")}</span>
-            <span>{formatCZK(invoice.vatAmount)} CZK</span>
-          </div>
           {invoice.roundingAmount !== 0 && (
             <div className="flex justify-between text-muted">
               <span>-</span>
@@ -254,6 +246,7 @@ export function InvoiceDetailClient({
             <span>{t("total")}</span>
             <span>{formatCZK(invoice.total)} CZK</span>
           </div>
+          <p className="text-xs text-muted pt-1">{t("notVatPayer")}</p>
         </div>
       </Card>
 

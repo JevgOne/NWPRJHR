@@ -268,14 +268,6 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
               <span>-{formatCZK(sale.discountAmount)} CZK</span>
             </div>
           )}
-          <div className="flex justify-between">
-            <span>{t("beforeVat")}</span>
-            <span>{formatCZK(sale.totalBeforeVat)} CZK</span>
-          </div>
-          <div className="flex justify-between">
-            <span>{t("vat")}</span>
-            <span>{formatCZK(sale.vatAmount)} CZK</span>
-          </div>
           <div className="flex justify-between font-bold text-base pt-2 border-t">
             <span>{t("totalAmount")}</span>
             <span>{formatCZK(sale.totalAmount)} CZK</span>

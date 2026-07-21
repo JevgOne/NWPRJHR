@@ -350,9 +350,8 @@ export async function generateInvoicePdf(
   textRight(`${formatCZK(data.subtotal)} CZK`, totalsValueX, y, { size: 9 });
   y -= 16;
 
-  // VAT
-  text(sanitizeText(t.vat), totalsLabelX, y, { size: 9, color: muted });
-  textRight(`${formatCZK(data.vatAmount)} CZK`, totalsValueX, y, { size: 9 });
+  // Not VAT payer notice
+  text(sanitizeText(t.notVatPayer), totalsLabelX, y, { size: 8, color: muted });
   y -= 16;
 
   // Rounding
