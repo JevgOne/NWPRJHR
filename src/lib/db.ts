@@ -12,6 +12,22 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const remoteUrl = process.env.TURSO_DATABASE_URL?.replace(/\s+/g, "");
   const authToken = process.env.TURSO_AUTH_TOKEN?.replace(/\s+/g, "");
+  const useEmbeddedReplica = process.env.TURSO_EMBEDDED_REPLICA?.trim() === "true" && remoteUrl;
+
+  try {
+    if (useEmbeddedReplica) {
+      const adapter = new PrismaLibSql({
+        url: "file:/tmp/turso-replica.db",
+        authToken,
+        syncUrl: remoteUrl,
+        syncInterval: 60,
+        readYourWrites: true,
+      });
+      return new PrismaClient({ adapter });
+    }
+  } catch {
+    console.warn("[db] Embedded replica failed, falling back to remote");
+  }
 
   const adapter = new PrismaLibSql({
     url: remoteUrl ?? process.env.DATABASE_URL ?? "file:./dev.db",
