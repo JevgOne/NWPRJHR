@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     return new NextResponse("Missing params", { status: 400 });
   }
 
-  if (merchant !== process.env.COMGATE_MERCHANT) {
+  if (merchant !== (process.env.COMGATE_MERCHANT || "").trim()) {
     return new NextResponse("Invalid merchant", { status: 403 });
   }
 
