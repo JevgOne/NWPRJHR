@@ -41,12 +41,13 @@ export async function POST() {
 
 async function checkAndProcessPayments() {
 
-  // Debug: show all AWAITING_PAYMENT orders
-  const allPending = await prisma.order.findMany({
-    where: { status: "AWAITING_PAYMENT" },
-    select: { orderNumber: true, paymentMethod: true, comgateTransId: true },
+  // Debug: show ALL orders to understand DB state
+  const allOrders = await prisma.order.findMany({
+    select: { orderNumber: true, status: true, paymentMethod: true, comgateTransId: true },
+    orderBy: { createdAt: "desc" },
+    take: 20,
   });
-  console.log("[check-payments] All pending orders:", JSON.stringify(allPending));
+  console.log("[check-payments] All orders:", JSON.stringify(allOrders));
 
   const orders = await prisma.order.findMany({
     where: {
@@ -65,7 +66,7 @@ async function checkAndProcessPayments() {
   });
 
   if (orders.length === 0) {
-    return NextResponse.json({ message: "No pending orders with comgateTransId", checked: 0, allPending });
+    return NextResponse.json({ message: "No pending orders with comgateTransId", checked: 0, allOrders });
   }
 
   const results: { orderNumber: string; transId: string; comgateStatus: string; action: string }[] = [];
