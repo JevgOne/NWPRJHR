@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import confetti from "canvas-confetti";
@@ -401,9 +401,9 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       )}
 
       {/* Stepper */}
-      <div className="flex items-center mb-8 gap-1 mx-auto max-w-md">
+      <div className="flex items-center mb-2 px-4">
         {STEPS.map((s, idx) => (
-          <div key={s} className="flex items-center flex-1">
+          <Fragment key={s}>
             <button
               type="button"
               onClick={() => idx < stepIndex && setStep(s)}
@@ -425,14 +425,14 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               )}
             </button>
             {idx < STEPS.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-1 ${idx < stepIndex ? "bg-emerald-200" : "bg-nude-100"}`} />
+              <div className={`flex-1 h-0.5 mx-2 ${idx < stepIndex ? "bg-emerald-200" : "bg-nude-100"}`} />
             )}
-          </div>
+          </Fragment>
         ))}
       </div>
-      <div className="flex justify-between mb-6 mx-auto max-w-md">
-        {STEPS.map((s) => (
-          <span key={s} className="text-[11px] text-muted flex-1 text-center">
+      <div className="flex justify-between mb-6 px-4">
+        {STEPS.map((s, idx) => (
+          <span key={s} className={`text-[11px] text-muted text-center ${idx < STEPS.length - 1 ? "flex-1" : "w-8"}`}>
             {t(`step_${s}`)}
           </span>
         ))}
@@ -690,31 +690,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 <p className="text-xs text-muted">{tInquiry("paymentTransferDesc")}</p>
               </div>
             </label>
-            <label
-              className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
-                form.paymentMethod === "CARD"
-                  ? "border-rose bg-rose/5"
-                  : "border-line hover:border-muted"
-              }`}
-            >
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="CARD"
-                checked={form.paymentMethod === "CARD"}
-                onChange={(e) => setField("paymentMethod", e.target.value)}
-                className="accent-rose"
-              />
-              <div className="flex-1">
-                <span className="text-sm text-ink">{tInquiry("paymentCard")}</span>
-                <p className="text-xs text-muted">{tInquiry("paymentCardDesc")}</p>
-              </div>
-              <div className="flex gap-1.5 items-center">
-                <span className="text-[10px] text-muted">Visa</span>
-                <span className="text-[10px] text-muted">MC</span>
-                <span className="text-[10px] text-muted">Apple Pay</span>
-              </div>
-            </label>
+            {/* CARD payment hidden — Comgate credentials not configured yet */}
           </div>
 
           {/* Promo code */}
