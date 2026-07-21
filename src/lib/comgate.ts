@@ -72,6 +72,9 @@ async function comgateRequest(
 export async function createPayment(
   params: ComgateCreateParams
 ): Promise<ComgateCreateResult> {
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://www.hairland.cz").replace(/\/$/, "");
+  const callbackUrl = `${baseUrl}/api/comgate/callback`;
+
   const result = await comgateRequest("create", {
     price: String(params.price),
     curr: "CZK",
@@ -84,6 +87,9 @@ export async function createPayment(
     lang: params.lang || "cs",
     prepareOnly: "true",
     test: COMGATE_TEST ? "true" : "false",
+    url_paid: callbackUrl,
+    url_cancelled: callbackUrl,
+    url_pending: callbackUrl,
   });
 
   if (result.code === "0" && result.transId && result.redirect) {

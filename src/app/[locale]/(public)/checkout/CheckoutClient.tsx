@@ -353,7 +353,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           </div>
           <div>
             <div className="text-xs text-muted">IBAN</div>
-            <div className="font-mono text-ink text-sm">{orderResult.paymentInfo.iban}</div>
+            <div className="font-mono text-ink text-sm break-all">{orderResult.paymentInfo.iban}</div>
           </div>
           <div>
             <div className="text-xs text-muted">{t("variableSymbol")}</div>
@@ -390,7 +390,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
   }
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <h1 className="text-2xl font-bold text-ink mb-6">{t("title")}</h1>
 
       {/* B2B banner */}
@@ -667,7 +667,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
 
       {/* Step 3: Payment */}
       {step === "payment" && (
-        <div className="bg-nude-50 rounded-2xl p-5 space-y-4">
+        <div className="bg-nude-50 rounded-2xl p-5 space-y-4 overflow-hidden">
           <h2 className="font-semibold text-ink mb-2">{t("step_payment")}</h2>
           <div className="space-y-2">
             <label
@@ -691,7 +691,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               </div>
             </label>
             <label
-              className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+              className={`flex items-start gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
                 form.paymentMethod === "CARD"
                   ? "border-rose bg-rose/5"
                   : "border-line hover:border-muted"
@@ -703,16 +703,12 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 value="CARD"
                 checked={form.paymentMethod === "CARD"}
                 onChange={(e) => setField("paymentMethod", e.target.value)}
-                className="accent-rose"
+                className="accent-rose mt-1"
               />
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <span className="text-sm text-ink">{tInquiry("paymentCard")}</span>
                 <p className="text-xs text-muted">{tInquiry("paymentCardDesc")}</p>
-              </div>
-              <div className="flex gap-1.5 items-center">
-                <span className="text-[10px] text-muted">Visa</span>
-                <span className="text-[10px] text-muted">MC</span>
-                <span className="text-[10px] text-muted">Apple Pay</span>
+                <p className="text-[10px] text-muted mt-1">Visa · Mastercard · Apple Pay · Google Pay</p>
               </div>
             </label>
           </div>
@@ -740,19 +736,19 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 </button>
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex gap-2 min-w-0">
                 <input
                   type="text"
                   value={form.promoCode}
                   onChange={(e) => { setField("promoCode", e.target.value.toUpperCase()); setPromoResult(null); }}
-                  className="flex-1 px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose uppercase"
+                  className="min-w-0 flex-1 px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose uppercase"
                   placeholder={tInquiry("promoCodePlaceholder")}
                 />
                 <button
                   type="button"
                   onClick={validatePromoCode}
                   disabled={promoValidating || !form.promoCode.trim()}
-                  className="px-4 py-2 bg-ink text-white text-sm font-medium rounded-lg hover:bg-ink/90 transition-colors disabled:opacity-50"
+                  className="px-3 py-2 bg-ink text-white text-sm font-medium rounded-lg hover:bg-ink/90 transition-colors disabled:opacity-50 flex-shrink-0"
                 >
                   {promoValidating ? "..." : tInquiry("promoApply")}
                 </button>
@@ -849,14 +845,14 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           </div>
 
           {/* Contact & shipping summary */}
-          <div className="bg-nude-50 rounded-2xl p-5 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted">{t("step_contact")}</span>
-              <span className="text-ink">{form.firstName} {form.lastName}, {form.email}</span>
+          <div className="bg-nude-50 rounded-2xl p-5 space-y-2 text-sm overflow-hidden">
+            <div className="flex justify-between gap-2">
+              <span className="text-muted flex-shrink-0">{t("step_contact")}</span>
+              <span className="text-ink text-right truncate">{form.firstName} {form.lastName}, {form.email}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">{t("step_shipping")}</span>
-              <span className="text-ink text-right">
+            <div className="flex justify-between gap-2">
+              <span className="text-muted flex-shrink-0">{t("step_shipping")}</span>
+              <span className="text-ink text-right break-words min-w-0">
                 {form.shippingMethod === "PACKETA" && packetaPoint
                   ? `${tInquiry("shippingPacketa")} — ${packetaPoint.name}`
                   : form.shippingMethod === "PERSONAL_DELIVERY"
@@ -867,16 +863,16 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 )}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">{t("step_payment")}</span>
+            <div className="flex justify-between gap-2">
+              <span className="text-muted flex-shrink-0">{t("step_payment")}</span>
               <span className="text-ink">
                 {form.paymentMethod === "CARD" ? tInquiry("paymentCard") : tInquiry("paymentTransfer")}
               </span>
             </div>
             {form.wantsBilling && form.billingName && (
-              <div className="flex justify-between">
-                <span className="text-muted">{t("wantsBilling")}</span>
-                <span className="text-ink text-right">
+              <div className="flex justify-between gap-2">
+                <span className="text-muted flex-shrink-0">{t("wantsBilling")}</span>
+                <span className="text-ink text-right break-words min-w-0">
                   {form.billingName}
                   {form.billingIco && <span className="block text-xs text-muted">IČO: {form.billingIco}</span>}
                   {form.billingDic && <span className="block text-xs text-muted">DIČ: {form.billingDic}</span>}
