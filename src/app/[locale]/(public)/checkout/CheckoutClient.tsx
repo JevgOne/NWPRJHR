@@ -690,7 +690,31 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 <p className="text-xs text-muted">{tInquiry("paymentTransferDesc")}</p>
               </div>
             </label>
-            {/* CARD payment hidden — Comgate credentials not configured yet */}
+            <label
+              className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                form.paymentMethod === "CARD"
+                  ? "border-rose bg-rose/5"
+                  : "border-line hover:border-muted"
+              }`}
+            >
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="CARD"
+                checked={form.paymentMethod === "CARD"}
+                onChange={(e) => setField("paymentMethod", e.target.value)}
+                className="accent-rose"
+              />
+              <div className="flex-1">
+                <span className="text-sm text-ink">{tInquiry("paymentCard")}</span>
+                <p className="text-xs text-muted">{tInquiry("paymentCardDesc")}</p>
+              </div>
+              <div className="flex gap-1.5 items-center">
+                <span className="text-[10px] text-muted">Visa</span>
+                <span className="text-[10px] text-muted">MC</span>
+                <span className="text-[10px] text-muted">Apple Pay</span>
+              </div>
+            </label>
           </div>
 
           {/* Promo code */}
