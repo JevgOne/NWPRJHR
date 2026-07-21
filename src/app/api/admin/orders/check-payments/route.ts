@@ -40,19 +40,10 @@ export async function POST() {
 }
 
 async function checkAndProcessPayments() {
-
-  // Debug: show ALL orders to understand DB state
-  const allOrders = await prisma.order.findMany({
-    select: { orderNumber: true, status: true, paymentMethod: true, comgateTransId: true },
-    orderBy: { createdAt: "desc" },
-    take: 20,
-  });
-  console.log("[check-payments] All orders:", JSON.stringify(allOrders));
-
   const orders = await prisma.order.findMany({
     where: {
       status: "AWAITING_PAYMENT",
-      comgateTransId: { not: null },
+      paymentMethod: "CARD",
     },
     select: {
       id: true,
@@ -62,11 +53,12 @@ async function checkAndProcessPayments() {
       contactName: true,
       totalAmount: true,
       locale: true,
+      createdAt: true,
     },
   });
 
   if (orders.length === 0) {
-    return NextResponse.json({ message: "No pending orders with comgateTransId", checked: 0, allOrders });
+    return NextResponse.json({ message: "No pending CARD orders", checked: 0 });
   }
 
   const results: { orderNumber: string; transId: string; comgateStatus: string; action: string }[] = [];
@@ -77,7 +69,38 @@ async function checkAndProcessPayments() {
   });
 
   for (const order of orders) {
-    const transId = order.comgateTransId!;
+    const transId = order.comgateTransId;
+
+    // No transId — order stuck without Comgate reference
+    // Auto-cancel if older than 30 minutes (CARD reservation window)
+    if (!transId) {
+      const ageMs = Date.now() - new Date(order.createdAt).getTime();
+      if (ageMs > 30 * 60 * 1000) {
+        await prisma.order.update({
+          where: { id: order.id },
+          data: { status: "CANCELLED" },
+        });
+        await prisma.reservation.updateMany({
+          where: { orderId: order.id, active: true },
+          data: { active: false },
+        });
+        results.push({
+          orderNumber: order.orderNumber ?? order.id,
+          transId: "none",
+          comgateStatus: "NO_TRANS_ID",
+          action: "auto_cancelled_no_transid",
+        });
+      } else {
+        results.push({
+          orderNumber: order.orderNumber ?? order.id,
+          transId: "none",
+          comgateStatus: "NO_TRANS_ID",
+          action: "waiting_for_transid",
+        });
+      }
+      continue;
+    }
+
     try {
       const verified = await getPaymentStatus(transId);
 
@@ -92,7 +115,6 @@ async function checkAndProcessPayments() {
       }
 
       if (verified.status === "PAID") {
-        // Update order to PAID
         await prisma.order.update({
           where: { id: order.id },
           data: { status: "PAID" },
@@ -100,7 +122,6 @@ async function checkAndProcessPayments() {
 
         let saleAction = "order_marked_paid";
 
-        // Create sale
         if (systemUser) {
           try {
             await createSaleFromOrder(order.id, systemUser.id);
@@ -110,7 +131,6 @@ async function checkAndProcessPayments() {
           }
         }
 
-        // Send email
         if (order.contactEmail) {
           try {
             const emailData = getRetailPaymentReceivedEmail(order.locale ?? "cs", {

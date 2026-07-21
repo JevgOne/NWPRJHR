@@ -16,12 +16,14 @@ export async function POST(request: NextRequest) {
     console.log("[comgate/callback] Received:", { transId, status, merchant });
 
     if (!transId || !status) {
-      return new NextResponse("Missing params", { status: 400 });
+      console.error("[comgate/callback] Missing params:", { transId, status });
+      return new NextResponse("OK", { status: 200 });
     }
 
-    if (merchant !== (process.env.COMGATE_MERCHANT || "").trim()) {
-      console.error("[comgate/callback] Invalid merchant:", merchant, "expected:", (process.env.COMGATE_MERCHANT || "").trim());
-      return new NextResponse("Invalid merchant", { status: 403 });
+    const expectedMerchant = (process.env.COMGATE_MERCHANT || "").trim();
+    if (expectedMerchant && merchant !== expectedMerchant) {
+      console.error("[comgate/callback] Invalid merchant:", merchant, "expected:", expectedMerchant);
+      return new NextResponse("OK", { status: 200 });
     }
 
     // CRITICAL: Never trust push notification — always verify via status API
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     if (!verified.success) {
       console.error("[comgate/callback] Status verify failed:", verified.error);
-      return new NextResponse("Verify failed", { status: 500 });
+      return new NextResponse("OK", { status: 200 });
     }
 
     console.log("[comgate/callback] Verified status:", verified.status, "for transId:", transId);
@@ -41,9 +43,26 @@ export async function POST(request: NextRequest) {
 
     if (!payment) {
       // Fallback: check if this transId belongs to an e-shop Order
-      const order = await prisma.order.findFirst({
+      let order = await prisma.order.findFirst({
         where: { comgateTransId: transId },
       });
+
+      // Second fallback: find order by refId (orderNumber) from Comgate status
+      if (!order && verified.refId) {
+        order = await prisma.order.findFirst({
+          where: { orderNumber: verified.refId },
+        });
+        if (order) {
+          console.log("[comgate/callback] Found order by refId fallback:", order.id, "orderNumber:", verified.refId);
+          // Save the transId we were missing
+          if (!order.comgateTransId) {
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { comgateTransId: transId },
+            });
+          }
+        }
+      }
 
       if (!order) {
         // Check if this transId belongs to a QR Sale (unified payment flow)

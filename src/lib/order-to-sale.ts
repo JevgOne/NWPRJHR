@@ -102,10 +102,17 @@ export async function generateOrderNumber(
   prefix: string = "E"
 ): Promise<string> {
   const year = new Date().getFullYear();
-  const count = await tx.order.count({
-    where: {
-      orderNumber: { startsWith: `${prefix}${year}` },
-    },
+  const pattern = `${prefix}${year}`;
+  // Use MAX order number instead of COUNT to handle deleted orders
+  const lastOrder = await tx.order.findFirst({
+    where: { orderNumber: { startsWith: pattern } },
+    orderBy: { orderNumber: "desc" },
+    select: { orderNumber: true },
   });
-  return `${prefix}${year}${String(count + 1).padStart(4, "0")}`;
+  let next = 1;
+  if (lastOrder?.orderNumber) {
+    const numPart = lastOrder.orderNumber.slice(pattern.length);
+    next = (parseInt(numPart, 10) || 0) + 1;
+  }
+  return `${pattern}${String(next).padStart(4, "0")}`;
 }
