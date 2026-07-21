@@ -49,6 +49,16 @@ const publicOrderSchema = z
     note: z.string().max(2000).optional(),
     locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
     salonId: z.string().optional(),
+
+    wantsBilling: z.boolean().optional().default(false),
+    billingName: z.string().max(200).optional(),
+    billingIco: z.string().max(20).optional(),
+    billingDic: z.string().max(20).optional(),
+    billingStreet: z.string().max(200).optional(),
+    billingCity: z.string().max(100).optional(),
+    billingZip: z.string().max(20).optional(),
+    noSurvey: z.boolean().optional().default(false),
+    noNewsletter: z.boolean().optional().default(false),
   })
   .refine(
     (data) => {
@@ -313,6 +323,16 @@ export async function POST(request: NextRequest) {
           paymentMethod: data.paymentMethod,
           promoCode: appliedPromoCode ?? null,
           promoDiscount: promoDiscount || null,
+          wantsBilling: data.wantsBilling,
+          billingName: data.billingName ?? null,
+          billingIco: data.billingIco ?? null,
+          billingDic: data.billingDic ?? null,
+          billingStreet: data.billingStreet ?? null,
+          billingCity: data.billingCity ?? null,
+          billingZip: data.billingZip ?? null,
+          noSurvey: data.noSurvey ?? false,
+          noNewsletter: data.noNewsletter ?? false,
+          accessToken: crypto.randomUUID(),
           locale: data.locale,
           note: data.note ?? null,
           items: { create: orderItems },
@@ -406,6 +426,7 @@ export async function POST(request: NextRequest) {
         success: true,
         orderId: order.id,
         orderNumber: order.orderNumber,
+        accessToken: order.accessToken,
         redirect: comgateResult.redirect,
       },
       { status: 201 }
@@ -418,6 +439,7 @@ export async function POST(request: NextRequest) {
       success: true,
       orderId: order.id,
       orderNumber: order.orderNumber,
+      accessToken: order.accessToken,
       paymentInfo: {
         bankAccount: "6424423004/5500",
         iban: "CZ5555000000006424423004",

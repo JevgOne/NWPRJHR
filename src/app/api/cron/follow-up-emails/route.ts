@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
       status: "COMPLETED",
       completedAt: { gte: fourDaysAgo, lte: threeDaysAgo },
       followUpSent: false,
+      noSurvey: false,
     },
     include: {
       salon: { select: { email: true, name: true, language: true } },

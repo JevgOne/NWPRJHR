@@ -53,6 +53,15 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     shippingZip: "",
     paymentMethod: "TRANSFER",
     termsAccepted: false,
+    wantsBilling: false,
+    billingName: b2bInfo?.contactPerson ?? "",
+    billingIco: b2bInfo?.ico ?? "",
+    billingDic: b2bInfo?.dic ?? "",
+    billingStreet: b2bInfo?.address ?? "",
+    billingCity: b2bInfo?.city ?? "",
+    billingZip: "",
+    noSurvey: false,
+    noNewsletter: false,
   });
   const [packetaPoint, setPacketaPoint] = useState<{
     id: string; name: string; city: string;
@@ -240,6 +249,15 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           note: form.note || undefined,
           locale,
           salonId: b2bInfo?.salonId,
+          wantsBilling: form.wantsBilling,
+          billingName: form.billingName || undefined,
+          billingIco: form.billingIco || undefined,
+          billingDic: form.billingDic || undefined,
+          billingStreet: form.billingStreet || undefined,
+          billingCity: form.billingCity || undefined,
+          billingZip: form.billingZip || undefined,
+          noSurvey: form.noSurvey,
+          noNewsletter: form.noNewsletter,
         }),
       });
 
@@ -475,6 +493,81 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               placeholder={t("notePlaceholder")}
             />
           </div>
+
+          {/* Billing toggle */}
+          <label className="flex items-start gap-2 cursor-pointer pt-2">
+            <input
+              type="checkbox"
+              checked={form.wantsBilling}
+              onChange={(e) => setField("wantsBilling", e.target.checked)}
+              className="mt-0.5 accent-rose"
+            />
+            <span className="text-xs text-muted">{t("wantsBilling")}</span>
+          </label>
+
+          {form.wantsBilling && (
+            <div className="space-y-3 pt-2 border-t border-line mt-2">
+              <div>
+                <label className="block text-xs font-medium text-muted mb-1">{t("billingName")}</label>
+                <input
+                  type="text"
+                  value={form.billingName}
+                  onChange={(e) => setField("billingName", e.target.value)}
+                  className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                  placeholder={t("billingNamePlaceholder")}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-muted mb-1">{t("billingIco")}</label>
+                  <input
+                    type="text"
+                    value={form.billingIco}
+                    onChange={(e) => setField("billingIco", e.target.value)}
+                    className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted mb-1">{t("billingDic")}</label>
+                  <input
+                    type="text"
+                    value={form.billingDic}
+                    onChange={(e) => setField("billingDic", e.target.value)}
+                    className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-muted mb-1">{t("billingStreet")}</label>
+                <input
+                  type="text"
+                  value={form.billingStreet}
+                  onChange={(e) => setField("billingStreet", e.target.value)}
+                  className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-muted mb-1">{t("billingCity")}</label>
+                  <input
+                    type="text"
+                    value={form.billingCity}
+                    onChange={(e) => setField("billingCity", e.target.value)}
+                    className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted mb-1">{t("billingZip")}</label>
+                  <input
+                    type="text"
+                    value={form.billingZip}
+                    onChange={(e) => setField("billingZip", e.target.value)}
+                    className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -685,6 +778,36 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               </Link>
             </span>
           </label>
+
+          {/* GDPR info text */}
+          <p className="text-xs text-muted">
+            {t("gdprText")}{" "}
+            <Link href="/privacy" className="text-rose underline" target="_blank">
+              {t("gdprLink")}
+            </Link>.
+          </p>
+
+          {/* Newsletter opt-out */}
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.noNewsletter}
+              onChange={(e) => setField("noNewsletter", e.target.checked)}
+              className="mt-0.5 accent-rose"
+            />
+            <span className="text-xs text-muted">{t("noNewsletter")}</span>
+          </label>
+
+          {/* Survey opt-out */}
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.noSurvey}
+              onChange={(e) => setField("noSurvey", e.target.checked)}
+              className="mt-0.5 accent-rose"
+            />
+            <span className="text-xs text-muted">{t("noSurvey")}</span>
+          </label>
         </div>
       )}
 
@@ -750,6 +873,21 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 {form.paymentMethod === "CARD" ? tInquiry("paymentCard") : tInquiry("paymentTransfer")}
               </span>
             </div>
+            {form.wantsBilling && form.billingName && (
+              <div className="flex justify-between">
+                <span className="text-muted">{t("wantsBilling")}</span>
+                <span className="text-ink text-right">
+                  {form.billingName}
+                  {form.billingIco && <span className="block text-xs text-muted">IČO: {form.billingIco}</span>}
+                  {form.billingDic && <span className="block text-xs text-muted">DIČ: {form.billingDic}</span>}
+                  {form.billingStreet && (
+                    <span className="block text-xs text-muted">
+                      {form.billingStreet}, {form.billingCity} {form.billingZip}
+                    </span>
+                  )}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}

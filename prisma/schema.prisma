@@ -931,6 +931,22 @@ model Order {
   promoCode      String?
   promoDiscount  Int?
 
+  // Billing (optional — only when different from shipping)
+  wantsBilling     Boolean  @default(false)
+  billingName      String?
+  billingIco       String?
+  billingDic       String?
+  billingStreet    String?
+  billingCity      String?
+  billingZip       String?
+
+  // Consent opt-outs (negative consent — true = opted OUT)
+  noSurvey         Boolean  @default(false)
+  noNewsletter     Boolean  @default(false)
+
+  // Public order access token (allows viewing order without login)
+  accessToken      String?  @unique
+
   locale         String      @default("cs")
 
   createdAt      DateTime    @default(now())

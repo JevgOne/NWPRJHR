@@ -1118,7 +1118,19 @@
       "addressZipPlaceholder": "Např. 110 00",
       "b2bBanner": "Objednávka pro: {salonName} — sleva {discount}%",
       "b2bPriceNote": "Ceny jsou po Vaší B2B slevě",
-      "b2bFinalPriceNote": "Konečná cena bude potvrzena při odeslání objednávky"
+      "b2bFinalPriceNote": "Konečná cena bude potvrzena při odeslání objednávky",
+      "gdprText": "Odesláním objednávky souhlasíte se zpracováním osobních údajů v souladu s",
+      "gdprLink": "zásadami ochrany osobních údajů",
+      "noNewsletter": "Nesouhlasím se zasíláním newsletterů a marketingových sdělení",
+      "noSurvey": "Nesouhlasím se zasláním dotazníku spokojenosti",
+      "wantsBilling": "Chci zadat jiné fakturační údaje",
+      "billingName": "Název firmy / Jméno",
+      "billingNamePlaceholder": "Např. Salon Krásné Vlasy s.r.o.",
+      "billingIco": "IČO",
+      "billingDic": "DIČ",
+      "billingStreet": "Fakturační adresa — ulice",
+      "billingCity": "Město",
+      "billingZip": "PSČ"
     },
     "paymentResult": {
       "paidTitle": "Platba proběhla úspěšně!",
