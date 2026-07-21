@@ -616,6 +616,25 @@
     "counterPerformance": "Protiplnění"
   },
   "public": {
+    "meta": {
+      "catLabel": {
+        "VIRGIN": "100% panenské RAW vlasy",
+        "LUXE": "Prémiové luxe vlasy",
+        "STANDARD": "Kvalitní vlasy k prodloužení",
+        "SALE": "Vlasy za akční cenu",
+        "ACCESSORY": "Příslušenství pro vlasy"
+      },
+      "procLabel": {
+        "CLIP_IN": "clip-in",
+        "TAPE_IN": "tape-in",
+        "KERATIN": "s keratinem",
+        "WEFT": "tresové",
+        "MICRO_RING": "micro ring"
+      },
+      "fromOrigin": "z {origin}",
+      "priceFrom": "od {price} Kč",
+      "ctaSuffix": "Doručení do 7 dnů, osobní odběr Praha zdarma"
+    },
     "nav": {
       "home": "Domů",
       "about": "O nás",

@@ -616,6 +616,25 @@
     "counterPerformance": "Встречное предоставление"
   },
   "public": {
+    "meta": {
+      "catLabel": {
+        "VIRGIN": "100% натуральные RAW волосы",
+        "LUXE": "Премиальные люкс волосы",
+        "STANDARD": "Качественные волосы для наращивания",
+        "SALE": "Волосы по акционной цене",
+        "ACCESSORY": "Аксессуары для волос"
+      },
+      "procLabel": {
+        "CLIP_IN": "clip-in",
+        "TAPE_IN": "tape-in",
+        "KERATIN": "с кератином",
+        "WEFT": "трессовые",
+        "MICRO_RING": "micro ring"
+      },
+      "fromOrigin": "из {origin}",
+      "priceFrom": "от {price} Kč",
+      "ctaSuffix": "Доставка до 7 дней, самовывоз Прага бесплатно"
+    },
     "nav": {
       "home": "Главная",
       "about": "О нас",

@@ -301,6 +301,60 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: "Not Found" };
 }
 
+function buildAutoDescription(
+  product: { name: string; category: string; processingType: string; origin?: string | null; texture?: string | null },
+  colorNames: string[],
+  lengths: number[],
+  variants: Array<{ retailPricePerGram: number; sellingMode: string; retailPricePerPiece?: number | null; pricePerPiece?: number | null }>,
+  t: Awaited<ReturnType<typeof getTranslations<"public">>>,
+): string {
+  const parts: string[] = [];
+
+  // 1. Opening: category label + processing + origin
+  const catLabel = t(`meta.catLabel.${product.category}`);
+  const procLabel = product.processingType !== "OTHER" ? t(`meta.procLabel.${product.processingType}`) : "";
+  const originStr = product.origin ? t("meta.fromOrigin", { origin: product.origin }) : "";
+  parts.push([catLabel, procLabel, originStr].filter(Boolean).join(" "));
+
+  // 2. Specs: texture, lengths, colors
+  const specs: string[] = [];
+  if (product.texture) specs.push(product.texture.toLowerCase());
+  if (lengths.length > 0) {
+    specs.push(
+      lengths.length <= 3
+        ? lengths.map((l) => `${l} cm`).join(", ")
+        : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`
+    );
+  }
+  if (colorNames.length > 0) {
+    specs.push(
+      colorNames.length <= 3
+        ? colorNames.join(", ")
+        : `${colorNames.length} ${t("landing.metaColors")}`
+    );
+  }
+  if (specs.length > 0) parts.push(specs.join(", "));
+
+  // 3. Price indicator
+  const prices = variants
+    .filter((v) => v.retailPricePerGram > 0 || (v.retailPricePerPiece ?? 0) > 0)
+    .map((v) =>
+      v.sellingMode === "BY_PIECE"
+        ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0)
+        : v.retailPricePerGram * 100
+    )
+    .filter((p) => p > 0);
+  if (prices.length > 0) {
+    const minPrice = Math.min(...prices);
+    parts.push(t("meta.priceFrom", { price: Math.round(minPrice / 100) }));
+  }
+
+  // 4. CTA suffix
+  parts.push(t("meta.ctaSuffix"));
+
+  return parts.join(". ").slice(0, 155);
+}
+
 async function generateProductMetadataFromProduct(
   product: NonNullable<Awaited<ReturnType<typeof getProduct>>>,
   t: Awaited<ReturnType<typeof getTranslations<"public">>>,
@@ -324,13 +378,7 @@ async function generateProductMetadataFromProduct(
   const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
   const title = product.metaTitle || autoTitle;
 
-  const descParts: string[] = [product.name];
-  if (product.origin) descParts.push(`${t("landing.metaOrigin")} ${product.origin}`);
-  if (colorNames.length > 0) descParts.push(colorNames.length <= 4 ? colorNames.join(", ") : `${colorNames.length} ${t("landing.metaColors")}`);
-  if (product.texture) descParts.push(product.texture.toLowerCase());
-  if (lengthStr) descParts.push(lengthStr);
-  descParts.push(t("landing.metaSuffix"));
-  const autoDescription = descParts.join(". ").slice(0, 155);
+  const autoDescription = buildAutoDescription(product, colorNames, lengths, product.variants, t);
   const description = product.metaDescription || autoDescription;
 
   const productSlug = product.slug ?? product.id;
@@ -620,14 +668,13 @@ async function ProductDetailView({
   } : null;
 
   // Product schema JSON-LD
-  const descParts: string[] = [productName];
-  if (product.origin) descParts.push(`${t("landing.metaOrigin")} ${product.origin}`);
-  if (product.texture) descParts.push(product.texture.toLowerCase());
-  descParts.push(t("landing.metaSuffix"));
-  const fallbackDesc = descParts.join(". ").slice(0, 160);
+  const schemaColorNames = [...new Set(product.variants.map((v) => v.color))].map((c) => {
+    try { return t(`colors.${getHairColor(c).nameKey}`); } catch { return c; }
+  });
+  const schemaFallbackDesc = buildAutoDescription(product, schemaColorNames, lengths, product.variants, t).slice(0, 160);
   const schemaDesc = description
-    ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "…")
-    : fallbackDesc;
+    ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "\u2026")
+    : schemaFallbackDesc;
   const schemaImage = product.photos.length > 0
     ? product.photos
     : [`https://www.hairland.cz/offer/${product.slug ?? product.id}/opengraph-image`];

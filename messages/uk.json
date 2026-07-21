@@ -616,6 +616,25 @@
     "counterPerformance": "Зустрічне надання"
   },
   "public": {
+    "meta": {
+      "catLabel": {
+        "VIRGIN": "100% натуральне RAW волосся",
+        "LUXE": "Преміальне люкс волосся",
+        "STANDARD": "Якісне волосся для нарощування",
+        "SALE": "Волосся за акційною ціною",
+        "ACCESSORY": "Аксесуари для волосся"
+      },
+      "procLabel": {
+        "CLIP_IN": "clip-in",
+        "TAPE_IN": "tape-in",
+        "KERATIN": "з кератином",
+        "WEFT": "тресове",
+        "MICRO_RING": "micro ring"
+      },
+      "fromOrigin": "з {origin}",
+      "priceFrom": "від {price} Kč",
+      "ctaSuffix": "Доставка до 7 днів, самовивіз Прага безкоштовно"
+    },
     "nav": {
       "home": "Головна",
       "about": "Про нас",
