@@ -105,9 +105,10 @@ body {
     width: 40mm;
     height: 30mm;
     padding: 1.5mm;
+    padding-top: 2mm;
     page-break-after: always;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1.5mm;
     overflow: hidden;
     box-sizing: border-box;

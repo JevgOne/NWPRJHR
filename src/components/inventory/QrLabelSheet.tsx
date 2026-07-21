@@ -97,7 +97,7 @@ export function QrLabelSheet({
             {labels.map((label) => (
               <div
                 key={label.variantId}
-                className="bg-white shadow border border-gray-200 flex items-center gap-[1.5mm] p-[1.5mm]"
+                className="bg-white shadow border border-gray-200 flex items-start gap-[1.5mm] p-[1.5mm] pt-[2mm]"
                 style={{ width: "40mm", height: "30mm" }}
               >
                 <img
@@ -106,7 +106,7 @@ export function QrLabelSheet({
                   className="flex-shrink-0"
                   style={{ width: "20mm", height: "20mm" }}
                 />
-                <div className="flex-1 min-w-0 overflow-hidden flex flex-col justify-center">
+                <div className="flex-1 min-w-0 overflow-hidden flex flex-col justify-start">
                   <div className="text-[8px] font-bold text-ink leading-tight font-mono">
                     {generateSku(label.category, label.texture, label.color, label.lengthCm)}
                   </div>
@@ -135,7 +135,7 @@ export function QrLabelSheet({
               alt="QR"
               style={{ width: "20mm", height: "20mm", flexShrink: 0 }}
             />
-            <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
               <div style={{ fontSize: "8px", fontWeight: "bold", lineHeight: 1.2, fontFamily: "monospace" }}>
                 {generateSku(label.category, label.texture, label.color, label.lengthCm)}
               </div>
