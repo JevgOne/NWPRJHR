@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   poweredByHeader: false,
   outputFileTracingIncludes: {
-    "/**": ["./public/fonts/**", "./public/logo-invoice.png", "./public/watermark.png"],
+    "/**": ["./public/fonts/**", "./public/logo-invoice.png"],
   },
   images: {
     formats: ['image/avif', 'image/webp'],

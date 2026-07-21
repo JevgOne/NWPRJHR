@@ -1,9 +1,7 @@
 import type { Delivery, Currency } from "@prisma/client";
 import { prisma } from "./db";
 import { invalidateStockCache } from "./stock";
-import { notifyRestock, notifyLowStock } from "./telegram";
 import { notifyStockSubscribers } from "./stock-notify";
-import { generateSku } from "./sku";
 
 export interface StockInInput {
   variantId: string;
@@ -77,28 +75,6 @@ export async function stockIn(
 
     return d;
   });
-
-  // Telegram: notify about restock
-  try {
-    const variant = await prisma.variant.findUnique({
-      where: { id: data.variantId },
-      include: {
-        product: { select: { name: true, category: true, texture: true } },
-        deliveries: { where: { remainingGrams: { gt: 0 } }, select: { remainingGrams: true } },
-      },
-    });
-    if (variant) {
-      const totalGrams = variant.deliveries.reduce((sum, d) => sum + d.remainingGrams, 0);
-      const sku = generateSku(variant.product.category, variant.product.texture, variant.color, variant.lengthCm);
-      notifyRestock(
-        variant.product.name,
-        `${variant.lengthCm} cm · ${variant.color}`,
-        data.totalGrams,
-        totalGrams,
-        sku,
-      ).catch(() => {});
-    }
-  } catch {}
 
   // Notify stock subscribers (email)
   notifyStockSubscribers(data.variantId).catch(() => {});

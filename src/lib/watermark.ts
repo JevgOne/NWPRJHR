@@ -1,40 +1,6 @@
-import { join } from "path";
-
-let watermarkPng: Buffer | null = null;
-
-async function getWatermarkPng(): Promise<Buffer> {
-  if (watermarkPng) return watermarkPng;
-
-  // Try filesystem first (works locally + some Vercel configs)
-  try {
-    const { readFileSync } = await import("fs");
-    watermarkPng = readFileSync(join(process.cwd(), "public", "watermark.png"));
-    return watermarkPng;
-  } catch {
-    // Fallback: fetch from own public URL
-  }
-
-  try {
-    const base =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "https://www.hairland.cz");
-    const res = await fetch(`${base}/watermark.png`);
-    if (res.ok) {
-      watermarkPng = Buffer.from(await res.arrayBuffer());
-      return watermarkPng;
-    }
-  } catch {
-    // Both methods failed
-  }
-
-  throw new Error("Cannot load watermark PNG");
-}
-
 /**
- * Add logo watermark to an image.
- * Scales the watermark to ~20% of image width, places bottom-right with margin.
+ * Add text watermark "www.hairland.cz" to an image.
+ * Uses Sharp SVG composite — no external PNG file needed.
  * Converts any input format (HEIC/HEIF/JPEG/PNG) to WebP.
  */
 export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
@@ -44,45 +10,28 @@ export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
   const imgWidth = metadata.width ?? 800;
   const imgHeight = metadata.height ?? 800;
 
-  const wmPng = await getWatermarkPng();
-
-  const wmSize = Math.round(imgWidth * 0.20);
+  const fontSize = Math.max(16, Math.round(imgWidth * 0.03));
   const margin = Math.round(imgWidth * 0.03);
 
-  const resized = await sharp(wmPng)
-    .resize(wmSize, wmSize, { fit: "inside" })
-    .ensureAlpha()
-    .png()
-    .toBuffer();
+  const text = "www.hairland.cz";
+  const svgWidth = text.length * fontSize * 0.6;
+  const svgHeight = fontSize * 1.5;
 
-  const resizedMeta = await sharp(resized).metadata();
-  const wmW = resizedMeta.width ?? wmSize;
-  const wmH = resizedMeta.height ?? wmSize;
+  const svg = Buffer.from(`
+    <svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+      <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="bold"
+        fill="white" opacity="0.4"
+        stroke="rgba(0,0,0,0.15)" stroke-width="1"
+      >${text}</text>
+    </svg>
+  `.trim());
 
-  // Apply 35% opacity via dest-in blend
-  const watermark = await sharp(resized)
-    .composite([
-      {
-        input: Buffer.from([255, 255, 255, Math.round(255 * 0.35)]),
-        raw: { width: 1, height: 1, channels: 4 },
-        tile: true,
-        blend: "dest-in",
-      },
-    ])
-    .png()
-    .toBuffer();
-
-  const left = imgWidth - wmW - margin;
-  const top = imgHeight - wmH - margin;
+  const left = Math.max(0, imgWidth - Math.round(svgWidth) - margin);
+  const top = Math.max(0, imgHeight - Math.round(svgHeight) - margin);
 
   return image
-    .composite([
-      {
-        input: watermark,
-        left: Math.max(0, left),
-        top: Math.max(0, top),
-      },
-    ])
+    .composite([{ input: svg, left, top }])
     .webp({ quality: 82 })
     .toBuffer();
 }

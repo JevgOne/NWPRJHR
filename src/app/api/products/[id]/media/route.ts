@@ -36,9 +36,7 @@ async function processPhoto(
     inputBuffer = await fileToBuffer(file);
   } catch (e) {
     console.error("[media] fileToBuffer failed:", e);
-    // Last resort: upload raw file via blob stream
-    const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-    return { buffer: Buffer.alloc(0), contentType: file.type || "application/octet-stream", ext };
+    throw e; // Let caller handle raw stream upload fallback
   }
 
   // 1. Try watermark (WebP output)

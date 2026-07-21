@@ -261,22 +261,6 @@ async function sendRegistrationNotification(text: string): Promise<void> {
 }
 
 /**
- * Notify about stock restock.
- */
-export async function notifyRestock(productName: string, variant: string, addedQty: number, newTotal: number, sku?: string): Promise<void> {
-  const lines = [
-    `📥 <b>NASKLADNĚNÍ / ПОСТУПЛЕНИЕ</b>`,
-    `Na sklad přibylo zboží / На склад поступил товар`,
-    ``,
-    `📦 <b>${esc(productName)}</b>`,
-    `${esc(variant)}${sku ? ` · SKU: ${esc(sku)}` : ""}`,
-    `➕ ${addedQty}g → celkem/всего: <b>${newTotal}g</b>`,
-  ].join("\n");
-
-  await sendTelegramMessage(lines);
-}
-
-/**
  * Notify about low stock.
  */
 export async function notifyLowStock(items: { productName: string; variant: string; remainingGrams: number }[]): Promise<void> {
