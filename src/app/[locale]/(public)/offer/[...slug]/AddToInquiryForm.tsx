@@ -261,7 +261,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
       )}
 
       {/* Step 3: Quantity + add button */}
-      <div className="flex items-end gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-end gap-3">
         <div className="flex-1">
           <div className="text-xs text-muted mb-1.5">{t("inquiry.quantityLabel")}</div>
           <div className="flex items-center gap-2">
@@ -298,7 +298,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
         <button
           onClick={handleAdd}
           disabled={!selectedLength || !selectedColor || quantity > maxQty}
-          className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
+          className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
             added
               ? "bg-emerald-600 text-white"
               : !selectedLength || !selectedColor || quantity > maxQty

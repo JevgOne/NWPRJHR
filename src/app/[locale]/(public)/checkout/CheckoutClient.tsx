@@ -401,7 +401,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       )}
 
       {/* Stepper */}
-      <div className="flex items-center mb-8 gap-1">
+      <div className="flex items-center mb-8 gap-1 mx-auto max-w-md">
         {STEPS.map((s, idx) => (
           <div key={s} className="flex items-center flex-1">
             <button
@@ -430,7 +430,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           </div>
         ))}
       </div>
-      <div className="flex justify-between mb-6">
+      <div className="flex justify-between mb-6 mx-auto max-w-md">
         {STEPS.map((s) => (
           <span key={s} className="text-[11px] text-muted flex-1 text-center">
             {t(`step_${s}`)}
