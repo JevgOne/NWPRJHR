@@ -35,8 +35,12 @@ function hairlandEmailTemplate(
       <p style="margin:0;color:#b8a09b;font-size:12px;letter-spacing:0.3px;">
         &copy; ${new Date().getFullYear()} Hairland.cz &mdash; Prémiové vlasy k prodloužení
       </p>
-      <p style="margin:6px 0 0;">
-        <a href="https://hairland.cz" style="color:#a96d6c;font-size:12px;text-decoration:none;font-weight:500;">hairland.cz</a>
+      <p style="margin:8px 0 0;color:#b8a09b;font-size:12px;">
+        <a href="tel:+420608553103" style="color:#a96d6c;text-decoration:none;">+420 608 553 103</a>
+        &nbsp;&middot;&nbsp;
+        <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
       </p>
       ${unsubLine}
     </div>
