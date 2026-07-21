@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -7,16 +7,33 @@ import { createSaleFromOrder } from "@/lib/order-to-sale";
 import { sendNotificationEmail } from "@/lib/email";
 import { getRetailPaymentReceivedEmail } from "@/lib/email-templates";
 
+const CRON_SECRET = (process.env.CRON_SECRET || "hairland-check-payments-2026").trim();
+
+/**
+ * GET /api/admin/orders/check-payments?secret=xxx
+ * Called by Vercel Cron or manually via curl.
+ */
+export async function GET(request: NextRequest) {
+  const secret = request.nextUrl.searchParams.get("secret");
+  if (secret !== CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return checkAndProcessPayments();
+}
+
 /**
  * POST /api/admin/orders/check-payments
- * Checks ALL "AWAITING_PAYMENT" CARD orders against Comgate status API
- * and processes any that have been paid.
+ * Called from admin UI (requires OWNER session).
  */
 export async function POST() {
   const session = await auth();
   if (!session || session.user.role !== "OWNER") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  return checkAndProcessPayments();
+}
+
+async function checkAndProcessPayments() {
 
   const orders = await prisma.order.findMany({
     where: {
