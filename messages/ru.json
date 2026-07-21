@@ -477,6 +477,8 @@
     "completeOrder": "Завершить",
     "cancelOrder": "Отменить заказ",
     "cancelConfirm": "Точно отменить?",
+    "deleteOrder": "Удалить заказ",
+    "deleteConfirm": "Удалить навсегда? Отменить нельзя.",
     "noOrders": "Нет заказов",
     "estimatedTotal": "Ориентировочная цена",
     "new": "Новый",

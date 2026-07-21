@@ -10,30 +10,33 @@ function hairlandEmailTemplate(
   opts?: { unsubscribeUrl?: string; unsubscribeLabel?: string },
 ): string {
   const unsubLine = opts?.unsubscribeUrl
-    ? `<p style="margin:4px 0 0;color:#9c8682;font-size:11px;">
-        <a href="${opts.unsubscribeUrl}" style="color:#9c8682;text-decoration:underline;">${opts.unsubscribeLabel ?? "Odhl&aacute;sit se z emailů"}</a>
-      </p>`
+    ? `<p style="margin:8px 0 0;"><a href="${opts.unsubscribeUrl}" style="color:#b8a09b;font-size:11px;text-decoration:underline;">${opts.unsubscribeLabel ?? "Odhl&aacute;sit se"}</a></p>`
     : "";
 
   return `<!DOCTYPE html>
 <html lang="cs">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#fdfaf7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(58,44,42,0.08);">
-    <div style="background:#fdfaf7;padding:24px 24px 16px;text-align:center;">
+<body style="margin:0;padding:0;background-color:#f5f0eb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
+    <!-- Logo -->
+    <div style="text-align:center;padding:32px 0 24px;">
       <a href="https://hairland.cz" style="text-decoration:none;">
-        <img src="https://hairland.cz/og-image.jpg" alt="Hairland — Prémiové vlasy" width="400" style="width:100%;max-width:400px;height:auto;display:inline-block;" />
+        <img src="https://www.hairland.cz/logo-invoice.png" alt="Hairland" width="140" height="auto" style="display:inline-block;max-width:140px;" />
       </a>
     </div>
-    <div style="padding:32px 24px;">
-      ${content}
+    <!-- Card -->
+    <div style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <div style="padding:32px 28px;">
+        ${content}
+      </div>
     </div>
-    <div style="background:#f7efe8;padding:20px 24px;text-align:center;border-top:1px solid #ead9cf;">
-      <p style="margin:0;color:#9c8682;font-size:12px;">
-        &copy; ${new Date().getFullYear()} Hairland.cz &mdash; Pr&eacute;miov&eacute; vlasy
+    <!-- Footer -->
+    <div style="text-align:center;padding:24px 0 16px;">
+      <p style="margin:0;color:#b8a09b;font-size:12px;letter-spacing:0.3px;">
+        &copy; ${new Date().getFullYear()} Hairland.cz &mdash; Pr&eacute;miov&eacute; vlasy k prodlou&zcaron;en&iacute;
       </p>
-      <p style="margin:4px 0 0;color:#9c8682;font-size:11px;">
-        <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+      <p style="margin:6px 0 0;">
+        <a href="https://hairland.cz" style="color:#a96d6c;font-size:12px;text-decoration:none;font-weight:500;">hairland.cz</a>
       </p>
       ${unsubLine}
     </div>
@@ -782,6 +785,7 @@ export function getInquiryFollowUpEmail(
 
 const retailOrderConfirmT: Record<Lang, {
   subject: (orderNumber: string) => string;
+  subjectTransfer: (orderNumber: string) => string;
   greeting: (name: string) => string;
   body1: (orderNumber: string) => string;
   bodyTransfer: string;
@@ -799,9 +803,10 @@ const retailOrderConfirmT: Record<Lang, {
 }> = {
   cs: {
     subject: (n) => `Objednávka #${n} přijata — Hairland`,
+    subjectTransfer: (n) => `Objednávka #${n} — čeká na platbu — Hairland`,
     greeting: (name) => `Dobrý den, ${name},`,
     body1: (n) => `děkujeme za Vaši objednávku #${n}.`,
-    bodyTransfer: "Prosíme o úhradu na následující účet. Po přijetí platby Vám objednávku připravíme a odešleme.",
+    bodyTransfer: "Čekáme na Vaši platbu",
     bodyCard: "Vaše platba byla přijata. Objednávku připravíme a budeme Vás informovat o odeslání.",
     itemsHeader: "Položky objednávky:",
     productHeader: "Produkt",
@@ -811,14 +816,15 @@ const retailOrderConfirmT: Record<Lang, {
     totalLabel: "Celkem k úhradě",
     bankAccountLabel: "Bankovní účet",
     vsLabel: "Variabilní symbol",
-    amountLabel: "Částka",
+    amountLabel: "Částka k úhradě",
     footer: "Máte dotaz? Odpovězte na tento email nebo nás kontaktujte na info@hairland.cz.",
   },
   uk: {
     subject: (n) => `Замовлення #${n} прийнято — Hairland`,
+    subjectTransfer: (n) => `Замовлення #${n} — очікуємо оплату — Hairland`,
     greeting: (name) => `Вітаємо, ${name},`,
     body1: (n) => `дякуємо за Ваше замовлення #${n}.`,
-    bodyTransfer: "Будь ласка, оплатіть на наступний рахунок. Після отримання оплати ми підготуємо та відправимо замовлення.",
+    bodyTransfer: "Очікуємо Вашу оплату",
     bodyCard: "Ваша оплата прийнята. Ми підготуємо замовлення та повідомимо Вас про відправку.",
     itemsHeader: "Товари замовлення:",
     productHeader: "Продукт",
@@ -828,14 +834,15 @@ const retailOrderConfirmT: Record<Lang, {
     totalLabel: "Всього до оплати",
     bankAccountLabel: "Банківський рахунок",
     vsLabel: "Варіабельний символ",
-    amountLabel: "Сума",
+    amountLabel: "Сума до оплати",
     footer: "Маєте запитання? Відповідайте на цей лист або зверніться до нас на info@hairland.cz.",
   },
   ru: {
     subject: (n) => `Заказ #${n} принят — Hairland`,
+    subjectTransfer: (n) => `Заказ #${n} — ожидаем оплату — Hairland`,
     greeting: (name) => `Здравствуйте, ${name},`,
     body1: (n) => `благодарим за Ваш заказ #${n}.`,
-    bodyTransfer: "Просим оплатить на следующий счёт. После получения оплаты мы подготовим и отправим заказ.",
+    bodyTransfer: "Ожидаем Вашу оплату",
     bodyCard: "Ваша оплата принята. Мы подготовим заказ и сообщим Вам об отправке.",
     itemsHeader: "Товары заказа:",
     productHeader: "Продукт",
@@ -845,7 +852,7 @@ const retailOrderConfirmT: Record<Lang, {
     totalLabel: "Итого к оплате",
     bankAccountLabel: "Банковский счёт",
     vsLabel: "Вариабельный символ",
-    amountLabel: "Сумма",
+    amountLabel: "Сумма к оплате",
     footer: "Есть вопрос? Ответьте на это письмо или свяжитесь с нами по адресу info@hairland.cz.",
   },
 };
@@ -894,55 +901,50 @@ export function getRetailOrderConfirmationEmail(
 
   const itemRows = data.items
     .map(
-      (i) => `<tr style="border-bottom:1px solid #ead9cf;">
-        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;">${esc(i.productName)}</td>
-        <td style="padding:8px 0;color:#9c8682;font-size:14px;text-align:right;">${i.lengthCm} cm, ${esc(i.color)}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`}</td>
-        <td style="padding:8px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;">${fmtCzk(i.lineTotal)} Kč</td>
+      (i) => `<tr>
+        <td style="padding:10px 0;color:#3a2c2a;font-size:14px;border-bottom:1px solid #f0e8e3;">${esc(i.productName)}<br><span style="color:#9c8682;font-size:12px;">${i.lengthCm} cm · ${esc(i.color)} · ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`}</span></td>
+        <td style="padding:10px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;border-bottom:1px solid #f0e8e3;white-space:nowrap;">${fmtCzk(i.lineTotal)} Kč</td>
       </tr>`
     )
     .join("");
 
-  const discountHtml = data.promoCode && data.promoDiscount
-    ? `<p style="color:#c98b88;font-size:14px;margin:8px 0 0;">${esc(t.discountLabel)}: ${esc(data.promoCode)} -${fmtCzk(data.promoDiscount)} Kč</p>`
+  const discountRow = data.promoCode && data.promoDiscount
+    ? `<tr><td style="padding:4px 0;color:#c98b88;font-size:13px;">${esc(t.discountLabel)} (${esc(data.promoCode)})</td><td style="text-align:right;color:#c98b88;font-size:13px;padding:4px 0;">-${fmtCzk(data.promoDiscount)} Kč</td></tr>`
     : "";
 
   const transferHtml = isTransfer && data.bankAccount
-    ? `<div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
-        <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 12px;">${esc(t.bodyTransfer)}</p>
+    ? `<!-- Payment box -->
+      <div style="background:#fff8f0;border:2px solid #e8c97a;border-radius:12px;padding:20px;margin:24px 0 0;text-align:center;">
+        <p style="color:#b8860b;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 16px;">⏳ ${esc(t.bodyTransfer)}</p>
         <table style="width:100%;border-collapse:collapse;">
-          <tr><td style="padding:4px 0;color:#9c8682;font-size:14px;">${esc(t.bankAccountLabel)}</td><td style="padding:4px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;">${esc(data.bankAccount)}</td></tr>
-          <tr><td style="padding:4px 0;color:#9c8682;font-size:14px;">${esc(t.vsLabel)}</td><td style="padding:4px 0;color:#3a2c2a;font-size:14px;text-align:right;font-weight:600;font-family:monospace;">${esc(data.variableSymbol ?? "")}</td></tr>
-          <tr><td style="padding:4px 0;color:#9c8682;font-size:14px;">${esc(t.amountLabel)}</td><td style="padding:4px 0;color:#3a2c2a;font-size:16px;text-align:right;font-weight:700;">${fmtCzk(data.totalAmount)} Kč</td></tr>
+          <tr><td style="padding:6px 0;color:#9c8682;font-size:13px;text-align:left;">${esc(t.bankAccountLabel)}</td><td style="padding:6px 0;color:#3a2c2a;font-size:15px;text-align:right;font-weight:700;font-family:monospace;">${esc(data.bankAccount)}</td></tr>
+          <tr><td style="padding:6px 0;color:#9c8682;font-size:13px;text-align:left;">${esc(t.vsLabel)}</td><td style="padding:6px 0;color:#3a2c2a;font-size:15px;text-align:right;font-weight:700;font-family:monospace;">${esc(data.variableSymbol ?? "")}</td></tr>
+          <tr><td colspan="2" style="padding:12px 0 0;"><div style="border-top:1px solid #e8c97a;padding-top:12px;text-align:center;"><span style="color:#9c8682;font-size:12px;">${esc(t.amountLabel)}</span><br><span style="color:#3a2c2a;font-size:24px;font-weight:800;">${fmtCzk(data.totalAmount)} Kč</span></div></td></tr>
         </table>
       </div>`
     : "";
 
   const content = `
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.customerName))}</p>
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body1(data.orderNumber))}</p>
-    <div style="background:#f7efe8;border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid #c2a36b;">
-      <p style="color:#3a2c2a;font-size:14px;font-weight:600;margin:0 0 8px;">${esc(t.itemsHeader)}</p>
-      <table style="width:100%;border-collapse:collapse;margin:4px 0;">
-        <tr style="border-bottom:2px solid #ead9cf;">
-          <th style="padding:6px 0;color:#9c8682;font-size:12px;text-align:left;text-transform:uppercase;letter-spacing:0.5px;">${esc(t.productHeader)}</th>
-          <th style="padding:6px 0;color:#9c8682;font-size:12px;text-align:right;text-transform:uppercase;letter-spacing:0.5px;">${esc(t.detailsHeader)}</th>
-          <th style="padding:6px 0;"></th>
-        </tr>
-        ${itemRows}
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 4px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;">${esc(t.body1(data.orderNumber))}</p>
+    <!-- Items -->
+    <table style="width:100%;border-collapse:collapse;">
+      ${itemRows}
+    </table>
+    <!-- Totals -->
+    <div style="margin-top:12px;padding-top:12px;border-top:2px solid #3a2c2a;">
+      <table style="width:100%;">
+        ${discountRow}
+        ${data.shippingCost > 0 ? `<tr><td style="color:#9c8682;font-size:13px;padding:4px 0;">${esc(t.shippingLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:13px;padding:4px 0;">${fmtCzk(data.shippingCost)} Kč</td></tr>` : ""}
+        <tr><td style="color:#3a2c2a;font-size:16px;font-weight:800;padding:8px 0 0;">${esc(t.totalLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:16px;font-weight:800;padding:8px 0 0;">${fmtCzk(data.totalAmount)} Kč</td></tr>
       </table>
-      ${discountHtml}
-      <div style="border-top:1px solid #ead9cf;margin-top:8px;padding-top:8px;">
-        <table style="width:100%;">
-          ${data.shippingCost > 0 ? `<tr><td style="color:#9c8682;font-size:14px;padding:2px 0;">${esc(t.shippingLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:14px;padding:2px 0;">${fmtCzk(data.shippingCost)} Kč</td></tr>` : ""}
-          <tr><td style="color:#3a2c2a;font-size:16px;font-weight:700;padding:4px 0;">${esc(t.totalLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:16px;font-weight:700;padding:4px 0;">${fmtCzk(data.totalAmount)} Kč</td></tr>
-        </table>
-      </div>
     </div>
     ${transferHtml}
-    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+    <p style="color:#b8a09b;font-size:12px;line-height:1.5;margin:24px 0 0;">${esc(t.footer)}</p>
   `;
 
-  return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+  const subject = isTransfer ? t.subjectTransfer(data.orderNumber) : t.subject(data.orderNumber);
+  return { subject, text, html: hairlandEmailTemplate(content) };
 }
 
 // --- Retail Order Shipped Email ---

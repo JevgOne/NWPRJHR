@@ -91,6 +91,7 @@ export function OrderDetailClient({
   const [rejectReason, setRejectReason] = useState("");
   const [showReject, setShowReject] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [trackingId, setTrackingId] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -121,6 +122,24 @@ export function OrderDetailClient({
       if (res.ok) {
         setShowCancelConfirm(false);
         load();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setActionError(data.error || `Error ${res.status}`);
+      }
+    } catch {
+      setActionError(tCommon("error"));
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const doDelete = async () => {
+    setActionError("");
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        window.location.href = "/orders";
       } else {
         const data = await res.json().catch(() => ({}));
         setActionError(data.error || `Error ${res.status}`);
@@ -443,6 +462,45 @@ export function OrderDetailClient({
                 }}
               >
                 {tCommon("confirm")}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Delete — only for CANCELLED/REJECTED orders, owner only */}
+      {["CANCELLED", "REJECTED"].includes(order.status) && isOwner && (
+        <div className="bg-white border border-line rounded-xl px-4 py-4">
+          {actionError && (
+            <div className="mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {actionError}
+            </div>
+          )}
+          {!showDeleteConfirm ? (
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              {t("deleteOrder")}
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              <span className="text-sm text-red-700 font-medium">{t("deleteConfirm")}</span>
+              <Button
+                size="sm"
+                variant="danger"
+                onClick={doDelete}
+                disabled={actionLoading}
+              >
+                {tCommon("confirm")}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                {tCommon("cancel")}
               </Button>
             </div>
           )}

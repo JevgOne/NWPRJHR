@@ -477,6 +477,8 @@
     "completeOrder": "Dokončit",
     "cancelOrder": "Zrušit objednávku",
     "cancelConfirm": "Opravdu zrušit?",
+    "deleteOrder": "Smazat objednávku",
+    "deleteConfirm": "Trvale smazat? Nelze vrátit.",
     "noOrders": "Žádné objednávky",
     "estimatedTotal": "Odhadovaná cena",
     "new": "Nová",

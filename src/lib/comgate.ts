@@ -1,6 +1,6 @@
-const COMGATE_MERCHANT = process.env.COMGATE_MERCHANT || "";
-const COMGATE_SECRET = process.env.COMGATE_SECRET || "";
-const COMGATE_TEST = process.env.COMGATE_TEST === "true";
+const COMGATE_MERCHANT = (process.env.COMGATE_MERCHANT || "").trim();
+const COMGATE_SECRET = (process.env.COMGATE_SECRET || "").trim();
+const COMGATE_TEST = (process.env.COMGATE_TEST || "").trim() === "true";
 const COMGATE_API = "https://payments.comgate.cz/v1.0";
 
 export interface ComgateCreateParams {

@@ -363,37 +363,39 @@ export async function POST(request: NextRequest) {
     data: { orderId: order.id, orderNumber: order.orderNumber },
   }).catch(() => {});
 
-  // 8. Send confirmation email
-  try {
-    const emailData = getRetailOrderConfirmationEmail(data.locale ?? "cs", {
-      customerName: `${data.firstName} ${data.lastName}`,
-      orderNumber: order.orderNumber ?? "",
-      items: orderItems.map((i) => ({
-        productName: i.productName,
-        lengthCm: i.lengthCm,
-        color: i.color,
-        grams: i.grams,
-        pieces: i.pieces,
-        lineTotal: i.lineTotal,
-      })),
-      subtotal: estimatedTotal + promoDiscount,
-      shippingCost,
-      promoCode: appliedPromoCode,
-      promoDiscount: promoDiscount || undefined,
-      totalAmount,
-      paymentMethod: data.paymentMethod,
-      bankAccount: data.paymentMethod === "TRANSFER" ? "6424423004/5500" : undefined,
-      variableSymbol: data.paymentMethod === "TRANSFER" ? (order.orderNumber ?? undefined) : undefined,
-    });
-    sendNotificationEmail({
-      to: data.email,
-      toName: `${data.firstName} ${data.lastName}`,
-      subject: emailData.subject,
-      body: emailData.text,
-      html: emailData.html,
-    }).catch((e) => console.error("[public/orders] Confirmation email failed:", e));
-  } catch (e) {
-    console.error("[public/orders] Email template error:", e);
+  // 8. Send confirmation email (only for TRANSFER — CARD emails are sent after payment callback)
+  if (data.paymentMethod !== "CARD") {
+    try {
+      const emailData = getRetailOrderConfirmationEmail(data.locale ?? "cs", {
+        customerName: `${data.firstName} ${data.lastName}`,
+        orderNumber: order.orderNumber ?? "",
+        items: orderItems.map((i) => ({
+          productName: i.productName,
+          lengthCm: i.lengthCm,
+          color: i.color,
+          grams: i.grams,
+          pieces: i.pieces,
+          lineTotal: i.lineTotal,
+        })),
+        subtotal: estimatedTotal + promoDiscount,
+        shippingCost,
+        promoCode: appliedPromoCode,
+        promoDiscount: promoDiscount || undefined,
+        totalAmount,
+        paymentMethod: data.paymentMethod,
+        bankAccount: "6424423004/5500",
+        variableSymbol: order.orderNumber ?? undefined,
+      });
+      sendNotificationEmail({
+        to: data.email,
+        toName: `${data.firstName} ${data.lastName}`,
+        subject: emailData.subject,
+        body: emailData.text,
+        html: emailData.html,
+      }).catch((e) => console.error("[public/orders] Confirmation email failed:", e));
+    } catch (e) {
+      console.error("[public/orders] Email template error:", e);
+    }
   }
 
   // 9. Handle payment method

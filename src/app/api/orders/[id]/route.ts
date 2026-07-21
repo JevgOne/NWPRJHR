@@ -62,6 +62,47 @@ export async function GET(
   return NextResponse.json(order);
 }
 
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (session.user.role !== "OWNER")
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const { id } = await params;
+
+  const order = await prisma.order.findUnique({ where: { id } });
+  if (!order)
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  if (!["CANCELLED", "REJECTED"].includes(order.status))
+    return NextResponse.json(
+      { error: "Lze smazat pouze zrušené nebo zamítnuté objednávky" },
+      { status: 400 }
+    );
+
+  await prisma.$transaction(async (tx) => {
+    await tx.reservation.deleteMany({ where: { orderId: id } });
+    await tx.orderItem.deleteMany({ where: { orderId: id } });
+    await tx.order.delete({ where: { id } });
+  });
+
+  logAudit({
+    userId: session.user.id,
+    userEmail: session.user.email ?? undefined,
+    action: "DELETE",
+    entity: "Order",
+    entityId: id,
+    detail: { orderNumber: order.orderNumber },
+    ipAddress: getClientIp(_request),
+  });
+
+  return NextResponse.json({ ok: true });
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
