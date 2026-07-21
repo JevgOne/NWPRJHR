@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { MovementsClient } from "./MovementsClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function MovementsPage() {
   const session = await auth();
   if (!session) redirect("/login");

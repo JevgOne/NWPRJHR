@@ -261,6 +261,7 @@ export async function POST(request: NextRequest) {
     });
 
     revalidatePath("/inventory");
+    revalidatePath("/inventory/movements");
     revalidateTag("dashboard", "max");
 
     return NextResponse.json(
