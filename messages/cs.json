@@ -345,7 +345,14 @@
     "batchFilterFrom": "Od",
     "batchFilterTo": "Do",
     "batchStatus": "Stav",
-    "batchAll": "Všechny"
+    "batchAll": "Všechny",
+    "deleteVariant": "Smazat",
+    "deleteConfirmTitle": "Smazat variantu?",
+    "deleteConfirmMessage": "Trvale smaže variantu {variant} a VŠECHNY její dodávky, pohyby a rezervace. Pokud produkt nemá další varianty, smaže se i produkt. Tuto akci nelze vrátit.",
+    "deleteSuccess": "Varianta smazána",
+    "deleteProductToo": "Produkt byl také smazán (neměl žádné další varianty)",
+    "deleteError": "Smazání se nezdařilo",
+    "deleting": "Mazání..."
   },
   "order": {
     "order": "Objednávka",

@@ -345,7 +345,14 @@
     "batchFilterFrom": "Від",
     "batchFilterTo": "До",
     "batchStatus": "Статус",
-    "batchAll": "Всі"
+    "batchAll": "Всі",
+    "deleteVariant": "Видалити",
+    "deleteConfirmTitle": "Видалити варіант?",
+    "deleteConfirmMessage": "Назавжди видалить варіант {variant} та ВСІ його доставки, рухи та резервації. Якщо продукт не має інших варіантів, він також буде видалений. Цю дію неможливо скасувати.",
+    "deleteSuccess": "Варіант видалено",
+    "deleteProductToo": "Продукт також видалено (не мав інших варіантів)",
+    "deleteError": "Помилка видалення",
+    "deleting": "Видалення..."
   },
   "order": {
     "order": "Замовлення",

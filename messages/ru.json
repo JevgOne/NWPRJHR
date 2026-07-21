@@ -345,7 +345,14 @@
     "batchFilterFrom": "От",
     "batchFilterTo": "До",
     "batchStatus": "Статус",
-    "batchAll": "Все"
+    "batchAll": "Все",
+    "deleteVariant": "Удалить",
+    "deleteConfirmTitle": "Удалить вариант?",
+    "deleteConfirmMessage": "Безвозвратно удалит вариант {variant} и ВСЕ его поставки, движения и резервации. Если у продукта нет других вариантов, он тоже будет удалён. Это действие нельзя отменить.",
+    "deleteSuccess": "Вариант удалён",
+    "deleteProductToo": "Продукт тоже удалён (не имел других вариантов)",
+    "deleteError": "Ошибка удаления",
+    "deleting": "Удаление..."
   },
   "order": {
     "order": "Заказ",
