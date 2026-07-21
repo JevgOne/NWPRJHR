@@ -93,6 +93,8 @@ export async function POST(request: NextRequest) {
     if (!parsed.success)
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
+    try {
+
     const data = parsed.data;
 
     // 1. Find product + pre-fetch price settings in parallel (both use data.category)
@@ -139,7 +141,7 @@ export async function POST(request: NextRequest) {
             origin: data.origin,
             texture: data.texture,
             colorTone: autoColorTone(data.color),
-            slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm`),
+            slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm${isByPiece ? `-${Date.now()}` : ""}`),
             photos: "[]",
           },
         });
@@ -261,6 +263,11 @@ export async function POST(request: NextRequest) {
       { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },
       { status: 201 }
     );
+    } catch (err) {
+      console.error("[deliveries POST] Stock-in failed:", err);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      return NextResponse.json({ error: `Naskladnění selhalo: ${message}` }, { status: 500 });
+    }
   }
 
   // Legacy flow: direct variantId
