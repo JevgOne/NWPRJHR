@@ -21,7 +21,7 @@ await client.execute({
     "Praha",
     "110 00",
     "6424423004/5500",
-    "CZ5550000000006424423004",
+    "CZ5555000000006424423004",
     "RZBCCZPP",
     "Raiffeisenbank",
     "info@hairland.cz",

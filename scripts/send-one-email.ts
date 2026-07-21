@@ -16,7 +16,7 @@ async function main() {
   if (which === "qr") {
     // Generate and upload QR
     const spayd = generateSpayd({
-      iban: "CZ5550000000006424423004",
+      iban: "CZ5555000000006424423004",
       amount: 15125,
       variableSymbol: "20260042",
       message: "Faktura 20260042",
@@ -115,7 +115,7 @@ async function main() {
         dic: "CZ23673389",
         address: "Školská 660/3, Nové Město, 110 00 Praha",
         bankAccount: "6424423004/5500",
-        bankIban: "CZ5550000000006424423004",
+        bankIban: "CZ5555000000006424423004",
         bankName: "Raiffeisenbank",
       },
       items: [

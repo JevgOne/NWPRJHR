@@ -7,7 +7,7 @@ async function main() {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   // Correct IBAN for 6424423004/5500
-  const spayd = "SPD*1.0*ACC:CZ5550000000006424423004*AM:15125.00*CC:CZK*X-VS:20260042*MSG:Objednavka 20260042";
+  const spayd = "SPD*1.0*ACC:CZ5555000000006424423004*AM:15125.00*CC:CZK*X-VS:20260042*MSG:Objednavka 20260042";
   const qrBuffer = await generateQRCodeBuffer(spayd);
   const blob = await put(`email-qr/qr-fixed-${Date.now()}.png`, qrBuffer, {
     access: "public",

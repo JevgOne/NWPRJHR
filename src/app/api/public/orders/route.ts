@@ -420,7 +420,7 @@ export async function POST(request: NextRequest) {
       orderNumber: order.orderNumber,
       paymentInfo: {
         bankAccount: "6424423004/5500",
-        iban: "CZ5550000000006424423004",
+        iban: "CZ5555000000006424423004",
         variableSymbol: order.orderNumber,
         amount: totalAmount / 100,
       },
