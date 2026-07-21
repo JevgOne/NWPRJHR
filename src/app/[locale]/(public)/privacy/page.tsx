@@ -37,6 +37,7 @@ export default async function PrivacyPage() {
   const t = await getTranslations("privacy");
 
   const sections = [
+    "controller",
     "dataCollected",
     "purpose",
     "storage",

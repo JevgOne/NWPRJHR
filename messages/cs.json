@@ -1888,31 +1888,35 @@
   },
   "privacy": {
     "title": "Ochrana osobních údajů",
+    "controller": {
+      "title": "Správce osobních údajů",
+      "text": "Správcem osobních údajů je společnost Altro servis group s.r.o., IČO: 23673389, se sídlem Školská 660/3, Nové Město, 110 00 Praha 1, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze (dále jen „správce"). Kontaktní e-mail: info@hairland.cz."
+    },
     "dataCollected": {
       "title": "Jaké údaje shromažďujeme",
-      "text": "Shromažďujeme údaje nezbytné pro poskytování našich služeb: jméno, e-mail, telefon, název salonu, adresu a fakturační údaje (IČO, DIČ). U zaměstnanců evidujeme přihlašovací údaje (e-mail a zahashované heslo)."
+      "text": "Shromažďujeme údaje nezbytné pro poskytování našich služeb: jméno a příjmení, e-mailovou adresu, telefonní číslo, doručovací adresu, fakturační údaje (IČO, DIČ, název firmy) a historii objednávek. U registrovaných uživatelů evidujeme přihlašovací údaje (e-mail a zahashované heslo)."
     },
     "purpose": {
       "title": "Účel zpracování",
-      "text": "Vaše údaje zpracováváme za účelem správy objednávek, fakturace, věrnostního programu a komunikace ohledně vašich objednávek. Údaje nepoužíváme k marketingovým účelům bez vašeho souhlasu."
+      "text": "Vaše údaje zpracováváme za účelem: (a) vyřízení a doručení objednávek, (b) vystavení daňových dokladů, (c) komunikace ohledně objednávek a reklamací, (d) vedení zákaznického účtu, (e) zasílání obchodních sdělení — pouze s vaším souhlasem. Právním základem zpracování je plnění smlouvy (čl. 6 odst. 1 písm. b GDPR) a oprávněný zájem správce (čl. 6 odst. 1 písm. f GDPR)."
     },
     "storage": {
       "title": "Uložení a zabezpečení",
-      "text": "Data jsou uložena v šifrované databázi. Hesla jsou ukládána pomocí silného hashování (bcrypt). Veškerá komunikace probíhá přes HTTPS. Pravidelně provádíme zálohy a data uchováváme po dobu nezbytně nutnou."
+      "text": "Data jsou uložena v šifrované databázi. Hesla jsou ukládána pomocí silného hashování (bcrypt). Veškerá komunikace probíhá přes HTTPS. Osobní údaje uchováváme po dobu trvání smluvního vztahu a dále po dobu stanovenou právními předpisy (zejména daňové a účetní — 10 let). Po uplynutí doby uchovávání jsou údaje bezpečně smazány."
     },
     "rights": {
       "title": "Vaše práva",
-      "text": "Máte právo na přístup ke svým údajům, jejich opravu, export a výmaz. Pro uplatnění těchto práv nás kontaktujte na info@hairland.cz nebo využijte funkci exportu/výmazu v nastavení vašeho účtu."
+      "text": "Máte právo na: přístup ke svým osobním údajům, jejich opravu, výmaz (právo být zapomenut), omezení zpracování, přenositelnost údajů a právo vznést námitku proti zpracování. Pro uplatnění těchto práv nás kontaktujte na info@hairland.cz. Máte rovněž právo podat stížnost u Úřadu pro ochranu osobních údajů (www.uoou.cz)."
     },
     "cookies": {
       "title": "Cookies",
-      "text": "Používáme pouze nezbytné cookies pro přihlášení a funkčnost aplikace. Nepoužíváme sledovací ani marketingové cookies."
+      "text": "Používáme pouze nezbytné cookies pro přihlášení a funkčnost aplikace. Nepoužíváme sledovací ani marketingové cookies. Nezbytné cookies nelze odmítnout, protože jsou nutné pro správné fungování e-shopu."
     },
     "contact": {
       "title": "Kontakt",
-      "text": "V případě dotazů ohledně ochrany osobních údajů nás kontaktujte na info@hairland.cz."
+      "text": "V případě dotazů ohledně ochrany osobních údajů nás kontaktujte na info@hairland.cz nebo písemně na adrese: Altro servis group s.r.o., Školská 660/3, 110 00 Praha 1."
     },
-    "lastUpdated": "Poslední aktualizace: červen 2026"
+    "lastUpdated": "Poslední aktualizace: červenec 2026"
   },
   "gdpr": {
     "exportData": "Exportovat moje data",
