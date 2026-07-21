@@ -352,7 +352,12 @@
     "deleteSuccess": "Varianta smazána",
     "deleteProductToo": "Produkt byl také smazán (neměl žádné další varianty)",
     "deleteError": "Smazání se nezdařilo",
-    "deleting": "Mazání..."
+    "deleting": "Mazání...",
+    "deleteProduct": "Smazat produkt",
+    "deleteProductTitle": "Opravdu smazat?",
+    "deleteProductText": "Tím se trvale smaže {count, plural, one {# produkt} few {# produkty} other {# produktů}} včetně všech variant, dodávek a skladových pohybů.",
+    "deleteProductWarning": "Tato akce je nevratná!",
+    "deleteProductButton": "Smazat trvale"
   },
   "order": {
     "order": "Objednávka",

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateProductSchema } from "@/lib/validations/product";
@@ -143,7 +143,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
@@ -152,20 +152,114 @@ export async function DELETE(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { id } = await params;
-  const product = await prisma.product.update({
+  const hard = request.nextUrl.searchParams.get("hard") === "true";
+
+  if (!hard) {
+    // Soft delete (archive)
+    const product = await prisma.product.update({
+      where: { id },
+      data: { archived: true },
+    });
+
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "ARCHIVE",
+      entity: "Product",
+      entityId: id,
+      ipAddress: getClientIp(request),
+    });
+
+    revalidateTag("products", "max");
+    return NextResponse.json(product);
+  }
+
+  // Hard delete — permanently remove product + all related data
+  const product = await prisma.product.findUnique({
     where: { id },
-    data: { archived: true },
+    select: { id: true, name: true },
   });
+  if (!product)
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const variantIds = (
+    await prisma.variant.findMany({
+      where: { productId: id },
+      select: { id: true },
+    })
+  ).map((v) => v.id);
+
+  // Pre-check: block if sales or orders reference these variants
+  if (variantIds.length > 0) {
+    const [saleItemCount, orderItemCount] = await Promise.all([
+      prisma.saleItem.count({ where: { variantId: { in: variantIds } } }),
+      prisma.orderItem.count({ where: { variantId: { in: variantIds } } }),
+    ]);
+
+    if (saleItemCount > 0 || orderItemCount > 0) {
+      return NextResponse.json(
+        {
+          error: "Produkt má historii prodejů nebo objednávek. Použijte archivaci.",
+          salesCount: saleItemCount,
+          ordersCount: orderItemCount,
+        },
+        { status: 409 }
+      );
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    if (variantIds.length > 0) {
+      // Delete stock movements
+      await tx.stockMovement.deleteMany({ where: { variantId: { in: variantIds } } });
+
+      // Delete returns + complaints (tied to deliveries)
+      const deliveryIds = (
+        await tx.delivery.findMany({ where: { variantId: { in: variantIds } }, select: { id: true } })
+      ).map((d) => d.id);
+      if (deliveryIds.length > 0) {
+        await tx.return.deleteMany({ where: { deliveryId: { in: deliveryIds } } });
+        await tx.complaint.deleteMany({ where: { deliveryId: { in: deliveryIds } } });
+      }
+
+      // Delete deliveries
+      await tx.delivery.deleteMany({ where: { variantId: { in: variantIds } } });
+
+      // Delete reservations
+      await tx.reservation.deleteMany({ where: { variantId: { in: variantIds } } });
+
+      // Delete stock subscriptions (has cascade, but explicit for safety)
+      await tx.stockSubscription.deleteMany({ where: { variantId: { in: variantIds } } });
+
+      // Delete product reservations
+      await tx.productReservation.deleteMany({ where: { variantId: { in: variantIds } } });
+    }
+
+    // Delete sample requests
+    await tx.sampleRequest.deleteMany({ where: { productId: id } });
+
+    // Nullify reviews (productId is nullable)
+    await tx.review.updateMany({ where: { productId: id }, data: { productId: null } });
+
+    // Delete variants + product
+    await tx.variant.deleteMany({ where: { productId: id } });
+    await tx.product.delete({ where: { id } });
+  }, { timeout: 30000 });
 
   logAudit({
     userId: session.user.id,
     userEmail: session.user.email ?? undefined,
-    action: "ARCHIVE",
+    action: "HARD_DELETE",
     entity: "Product",
     entityId: id,
-    ipAddress: getClientIp(_request),
+    detail: { productName: product.name, variantCount: variantIds.length },
+    ipAddress: getClientIp(request),
   });
 
+  revalidatePath("/inventory");
+  revalidatePath("/inventory/movements");
+  revalidateTag("dashboard", "max");
   revalidateTag("products", "max");
-  return NextResponse.json(product);
+
+  return NextResponse.json({ deleted: true, productName: product.name });
 }

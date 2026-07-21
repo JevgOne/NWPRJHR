@@ -352,7 +352,12 @@
     "deleteSuccess": "Вариант удалён",
     "deleteProductToo": "Продукт тоже удалён (не имел других вариантов)",
     "deleteError": "Ошибка удаления",
-    "deleting": "Удаление..."
+    "deleting": "Удаление...",
+    "deleteProduct": "Удалить продукт",
+    "deleteProductTitle": "Точно удалить?",
+    "deleteProductText": "Это безвозвратно удалит {count, plural, one {# продукт} few {# продукта} other {# продуктов}} включая все варианты, поставки и складские движения.",
+    "deleteProductWarning": "Это действие нельзя отменить!",
+    "deleteProductButton": "Удалить навсегда"
   },
   "order": {
     "order": "Заказ",

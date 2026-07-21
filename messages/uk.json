@@ -352,7 +352,12 @@
     "deleteSuccess": "Варіант видалено",
     "deleteProductToo": "Продукт також видалено (не мав інших варіантів)",
     "deleteError": "Помилка видалення",
-    "deleting": "Видалення..."
+    "deleting": "Видалення...",
+    "deleteProduct": "Видалити продукт",
+    "deleteProductTitle": "Дійсно видалити?",
+    "deleteProductText": "Це назавжди видалить {count, plural, one {# продукт} few {# продукти} other {# продуктів}} включаючи всі варіанти, доставки та складські рухи.",
+    "deleteProductWarning": "Цю дію неможливо скасувати!",
+    "deleteProductButton": "Видалити назавжди"
   },
   "order": {
     "order": "Замовлення",

@@ -66,6 +66,9 @@ export function InventoryClient({
   } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<StockItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteProductConfirm, setDeleteProductConfirm] = useState(false);
+  const [deletingProduct, setDeletingProduct] = useState(false);
+  const [deleteProductError, setDeleteProductError] = useState("");
 
   const openQr = async (item: StockItem) => {
     try {
@@ -206,6 +209,33 @@ export function InventoryClient({
     }
   };
 
+  const selectedProductIds = useMemo(() => {
+    const ids = new Set<string>();
+    filtered.filter((i) => selected.has(i.variantId)).forEach((i) => ids.add(i.product.id));
+    return [...ids];
+  }, [filtered, selected]);
+
+  const handleDeleteProduct = async () => {
+    setDeletingProduct(true);
+    setDeleteProductError("");
+    try {
+      for (const productId of selectedProductIds) {
+        const res = await fetch(`/api/products/${productId}?hard=true`, { method: "DELETE" });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: "Unknown error" }));
+          throw new Error(data.error || t("deleteError"));
+        }
+      }
+      setDeleteProductConfirm(false);
+      setSelected(new Set());
+      router.refresh();
+    } catch (err) {
+      setDeleteProductError(err instanceof Error ? err.message : t("deleteError"));
+    } finally {
+      setDeletingProduct(false);
+    }
+  };
+
   const selectedLabelData = useMemo(() => {
     return filtered
       .filter((i) => selected.has(i.variantId))
@@ -302,6 +332,17 @@ export function InventoryClient({
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
             </svg>
             {t("printLabels")} ({selected.size})
+          </button>
+        )}
+        {role === "OWNER" && selected.size > 0 && (
+          <button
+            onClick={() => { setDeleteProductError(""); setDeleteProductConfirm(true); }}
+            className={`${selected.size > 0 && !totalReserved ? "" : "ml-auto "}px-3 py-1 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1.5`}
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+            </svg>
+            {t("deleteProduct")} ({selectedProductIds.length})
           </button>
         )}
       </div>
@@ -482,6 +523,44 @@ export function InventoryClient({
                 className="flex-1 py-2 px-3 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
               >
                 {deleting ? t("deleting") : t("deleteVariant")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteProductConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => !deletingProduct && setDeleteProductConfirm(false)}>
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-red-600">{t("deleteProductTitle")}</h3>
+            </div>
+            <p className="text-xs text-muted mb-4 leading-relaxed">
+              {t("deleteProductText", { count: selectedProductIds.length })}
+            </p>
+            <p className="text-xs text-red-500 mb-4 font-medium">{t("deleteProductWarning")}</p>
+            {deleteProductError && (
+              <p className="text-xs text-red-600 mb-3 p-2 bg-red-50 rounded">{deleteProductError}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteProductConfirm(false)}
+                disabled={deletingProduct}
+                className="flex-1 py-2 px-3 text-sm font-medium border border-line rounded-lg hover:bg-nude-50 transition-colors disabled:opacity-50"
+              >
+                {tCommon("cancel")}
+              </button>
+              <button
+                onClick={handleDeleteProduct}
+                disabled={deletingProduct}
+                className="flex-1 py-2 px-3 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {deletingProduct ? t("deleting") : t("deleteProductButton")}
               </button>
             </div>
           </div>
