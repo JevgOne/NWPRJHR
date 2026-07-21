@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
       // TRANSFER: generate QR payment data + Comgate card link + send unified email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
       const vs = sale.saleNumber ?? String(Date.now()).slice(-10);
-      const bankAccount = company?.bankAccount || "7141812004/5500";
-      const iban = company?.bankIban || "CZ6755000000007141812004";
+      const bankAccount = company?.bankAccount || "6424423004/5500";
+      const iban = company?.bankIban || "CZ5555000000006424423004";
 
       // Generate QR code for bank transfer
       const spayd = generateSpayd({
