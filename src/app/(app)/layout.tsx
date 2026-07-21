@@ -24,7 +24,7 @@ const getCachedBadgeCounts = unstable_cache(
     return { pendingRegCount, newInquiryCount, unreadCount, pendingReviewCount };
   },
   ["app-shell-badges"],
-  { revalidate: 30, tags: ["badges"] }
+  { revalidate: 5, tags: ["badges"] }
 );
 
 export default async function AppLayout({

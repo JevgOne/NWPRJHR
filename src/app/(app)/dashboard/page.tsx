@@ -169,7 +169,7 @@ const getCachedDashboardData = unstable_cache(
     };
   },
   ["dashboard-data"],
-  { revalidate: 60, tags: ["dashboard"] }
+  { revalidate: 10, tags: ["dashboard"] }
 );
 
 export default async function DashboardPage() {

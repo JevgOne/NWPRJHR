@@ -38,10 +38,16 @@ function getNotificationUrl(n: NotificationItem): string | null {
       return "/returns";
     case "NEW_COMPLAINT":
       return "/complaints";
+    case "RESERVATION_CREATED":
+    case "RESERVATION_PAID":
+    case "RESERVATION_EXPIRED":
+      return d.reservationId ? `/reservations/${d.reservationId}` : "/reservations";
     case "REGISTRATION":
       return d.salonId ? `/salons/${d.salonId}` : "/registrations";
     case "NEW_REVIEW":
       return "/reviews";
+    case "REFERRAL_USED":
+      return "/referrals";
     case "NEW_CONTACT":
       return "/notifications";
     default:

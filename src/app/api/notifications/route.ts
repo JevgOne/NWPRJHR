@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -44,6 +45,7 @@ export async function PUT(request: NextRequest) {
       where: { recipientId: session.user.id, read: false },
       data: { read: true, readAt: new Date() },
     });
+    revalidateTag("badges", "max");
     return NextResponse.json({ ok: true });
   }
 

@@ -642,6 +642,8 @@ export async function POST(
           itemCount: orderCheck._count.items,
         }).catch(() => {});
 
+        revalidateTag("badges", "max");
+        revalidateTag("dashboard", "max");
         return NextResponse.json(order);
       }
 

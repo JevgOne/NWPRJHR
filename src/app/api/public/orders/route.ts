@@ -411,6 +411,18 @@ export async function POST(request: NextRequest) {
 
     if (!comgateResult.success) {
       console.error("[public/orders] Comgate create failed:", comgateResult.error);
+      // Release reservations and cancel the order
+      await prisma.$transaction(async (tx) => {
+        await tx.reservation.updateMany({
+          where: { orderId: order.id, active: true },
+          data: { active: false },
+        });
+        await tx.order.update({
+          where: { id: order.id },
+          data: { status: "CANCELLED" },
+        });
+      });
+      invalidateStockCache();
       return NextResponse.json(
         { error: "Payment creation failed" },
         { status: 502 }
