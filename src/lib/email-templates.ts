@@ -19,9 +19,9 @@ function hairlandEmailTemplate(
 <body style="margin:0;padding:0;background-color:#f5f0eb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
     <!-- Logo -->
-    <div style="text-align:center;padding:28px 20px;background-color:#3a2c2a;border-radius:16px 16px 0 0;">
+    <div style="text-align:center;padding:24px 20px;background-color:#3a2c2a;border-radius:16px 16px 0 0;">
       <a href="https://hairland.cz" style="text-decoration:none;">
-        <img src="https://www.hairland.cz/logo-invoice.png" alt="Hairland" width="140" height="auto" style="display:inline-block;max-width:140px;" />
+        <img src="https://www.hairland.cz/logo-email-dark.png" alt="Hairland" width="120" height="120" style="display:inline-block;max-width:120px;" />
       </a>
     </div>
     <!-- Card -->
