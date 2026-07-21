@@ -7,15 +7,21 @@ import { createSaleFromOrder } from "@/lib/order-to-sale";
 import { sendNotificationEmail } from "@/lib/email";
 import { getRetailPaymentReceivedEmail } from "@/lib/email-templates";
 
-const CRON_SECRET = (process.env.CRON_SECRET || "hairland-check-payments-2026").trim();
-
 /**
- * GET /api/admin/orders/check-payments?secret=xxx
- * Called by Vercel Cron or manually via curl.
+ * GET /api/admin/orders/check-payments
+ * Called by Vercel Cron (Authorization: Bearer CRON_SECRET) or manually.
  */
 export async function GET(request: NextRequest) {
-  const secret = request.nextUrl.searchParams.get("secret");
-  if (secret !== CRON_SECRET) {
+  // Vercel Cron sends Authorization: Bearer <CRON_SECRET>
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = (process.env.CRON_SECRET || "").trim();
+  const comgateSecret = (process.env.COMGATE_SECRET || "").trim();
+  const querySecret = request.nextUrl.searchParams.get("secret") || "";
+
+  const isVercelCron = cronSecret && authHeader === `Bearer ${cronSecret}`;
+  const isManual = comgateSecret && querySecret === comgateSecret;
+
+  if (!isVercelCron && !isManual) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   return checkAndProcessPayments();
