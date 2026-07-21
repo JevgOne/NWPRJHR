@@ -96,16 +96,20 @@ export async function POST(request: NextRequest) {
     const data = parsed.data;
 
     // 1. Find product + pre-fetch price settings in parallel (both use data.category)
+    // BY_PIECE products never share with BY_GRAM — always create a new product
+    const isByPiece = data.sellingMode === "BY_PIECE";
     const [existingProduct, priceSetting] = await Promise.all([
-      prisma.product.findFirst({
-        where: {
-          category: data.category,
-          ...(isAccessory
-            ? { archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
-            : { origin: data.origin, texture: data.texture, archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
-          ),
-        },
-      }),
+      isByPiece
+        ? Promise.resolve(null)
+        : prisma.product.findFirst({
+            where: {
+              category: data.category,
+              ...(isAccessory
+                ? { archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
+                : { origin: data.origin, texture: data.texture, archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
+              ),
+            },
+          }),
       prisma.priceSettings.findUnique({ where: { category: data.category } }),
     ]);
 
@@ -147,8 +151,6 @@ export async function POST(request: NextRequest) {
       where: { productId_lengthCm_color: { productId: product.id, lengthCm: data.lengthCm, color: data.color } },
     });
 
-    const isByPiece = data.sellingMode === "BY_PIECE";
-
     // For BY_PIECE: derive per-gram purchase price from per-piece purchase price
     const effectivePurchasePricePerGramRaw = isByPiece && data.purchasePricePerPiece && data.pieceWeightGrams
       ? Math.round(data.purchasePricePerPiece / data.pieceWeightGrams)
@@ -178,16 +180,6 @@ export async function POST(request: NextRequest) {
           wholesalePricePerGram: costPricePerGramCZK,
           retailPricePerGram: retailPrice,
           active: true,
-        },
-      });
-    } else if (isByPiece && variant.sellingMode !== "BY_PIECE") {
-      // Update existing variant to BY_PIECE mode
-      variant = await prisma.variant.update({
-        where: { id: variant.id },
-        data: {
-          sellingMode: "BY_PIECE",
-          pricePerPiece: data.pricePerPiece,
-          retailPricePerPiece: data.retailPricePerPiece,
         },
       });
     }
