@@ -11,7 +11,6 @@ interface LabelData {
   color: string;
   category: string;
   texture?: string | null;
-  barcode?: string | null;
 }
 
 interface QrLabel extends LabelData {
@@ -118,7 +117,7 @@ export function QrLabelSheet({
                     {label.lengthCm}cm · {label.color}
                   </div>
                   <div className="text-[5px] text-muted/40 mt-[0.5mm] font-mono truncate">
-                    {label.barcode ?? label.variantId.slice(-8)}
+                    {label.variantId.slice(-8)}
                   </div>
                 </div>
               </div>
@@ -147,7 +146,7 @@ export function QrLabelSheet({
                 {label.lengthCm}cm · {label.color}
               </div>
               <div style={{ fontSize: "5px", color: "#aaa", marginTop: "0.5mm", fontFamily: "monospace" }}>
-                {label.barcode ?? label.variantId.slice(-8)}
+                {label.variantId.slice(-8)}
               </div>
             </div>
           </div>

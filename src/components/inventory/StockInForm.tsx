@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
+import { generateSku } from "@/lib/sku";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -30,7 +31,6 @@ interface SuccessData {
   totalGrams: number;
   totalPieces: number;
   sellingMode: "BY_GRAM" | "BY_PIECE";
-  barcode: string;
 }
 
 type Category = "VIRGIN" | "LUXE" | "STANDARD" | "SALE" | "ACCESSORY";
@@ -344,7 +344,6 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       totalGrams: computedGrams,
       totalPieces: parsedPieces,
       sellingMode,
-      barcode: result.barcode ?? "",
     });
     setSubmitting(false);
 
@@ -569,8 +568,10 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               <p className="text-xs text-muted">{successData.totalGrams} g</p>
             </div>
           )}
-          {successData.barcode && (
-            <p className="text-xs text-muted font-mono">{successData.barcode}</p>
+          {category && (
+            <p className="text-xs text-muted font-mono">
+              {generateSku(category, texture, color, lengthCm ?? 0)}
+            </p>
           )}
           <p className="text-xs text-muted">{t("qrLinkDesc")}</p>
 
@@ -638,7 +639,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                     const stockLabel = `${successData.totalGrams} g`;
                     const canvas = document.createElement("canvas");
                     const pad = 20;
-                    const textH = 50;
+                    const textH = 70;
                     canvas.width = img.width + pad * 2;
                     canvas.height = img.height + pad * 2 + textH;
                     const ctx = canvas.getContext("2d")!;
@@ -649,14 +650,20 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                     ctx.font = "bold 16px Arial, sans-serif";
                     ctx.textAlign = "center";
                     ctx.fillText(label, canvas.width / 2, img.height + pad + 22);
+                    const sku = category ? generateSku(category, texture, color, lengthCm ?? 0) : "";
+                    if (sku) {
+                      ctx.fillStyle = "#888";
+                      ctx.font = "12px monospace";
+                      ctx.fillText(sku, canvas.width / 2, img.height + pad + 40);
+                    }
                     ctx.fillStyle = "#888";
                     ctx.font = "14px Arial, sans-serif";
-                    ctx.fillText(stockLabel, canvas.width / 2, img.height + pad + 42);
+                    ctx.fillText(stockLabel, canvas.width / 2, img.height + pad + 60);
                     canvas.toBlob((blob) => {
                       if (!blob) return;
                       const url = URL.createObjectURL(blob);
                       const link = document.createElement("a");
-                      link.download = `qr-${successData.barcode || successData.productId}.png`;
+                      link.download = `qr-${sku || successData.productId}.png`;
                       link.href = url;
                       link.click();
                       URL.revokeObjectURL(url);
