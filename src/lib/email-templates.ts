@@ -33,7 +33,7 @@ function hairlandEmailTemplate(
     <!-- Footer -->
     <div style="text-align:center;padding:24px 0 16px;">
       <p style="margin:0;color:#b8a09b;font-size:12px;letter-spacing:0.3px;">
-        &copy; ${new Date().getFullYear()} Hairland.cz &mdash; Pr&eacute;miov&eacute; vlasy k prodlou&zcaron;en&iacute;
+        &copy; ${new Date().getFullYear()} Hairland.cz &mdash; Prémiové vlasy k prodloužení
       </p>
       <p style="margin:6px 0 0;">
         <a href="https://hairland.cz" style="color:#a96d6c;font-size:12px;text-decoration:none;font-weight:500;">hairland.cz</a>
