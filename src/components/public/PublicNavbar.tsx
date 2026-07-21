@@ -305,7 +305,7 @@ export function PublicNavbar() {
                 </span>
               )}
             </Link>
-            <Link href="/inquiry-cart" className="relative p-1.5 text-muted hover:text-rose transition-colors">
+            <Link href="/checkout" className="relative p-1.5 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
@@ -365,7 +365,7 @@ export function PublicNavbar() {
                 <span className="absolute top-0.5 right-0.5 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{wishlistCount}</span>
               )}
             </Link>
-            <Link href="/inquiry-cart" className="relative p-2 text-muted hover:text-rose transition-colors">
+            <Link href="/checkout" className="relative p-2 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
