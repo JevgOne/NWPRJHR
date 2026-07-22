@@ -225,6 +225,76 @@ export default async function DopravaPage() {
           </div>
         </div>
       </section>
+
+      {/* Online payments – Comgate */}
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold text-ink mb-4">
+          Online platby
+        </h2>
+        <div className="bg-nude-50 rounded-xl border border-line p-5 space-y-4">
+          <p className="text-sm text-muted">
+            Platby na našem e-shopu jsou realizovány prostřednictvím platební brány{" "}
+            <a
+              href="https://www.comgate.eu/cs/platebni-brana"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-rose hover:text-rose-deep underline"
+            >
+              Comgate
+            </a>
+            , která umožňuje bezpečné online platby.
+          </p>
+
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-ink">Podporované platební metody:</p>
+            <ul className="space-y-1 text-sm text-muted">
+              <li className="flex items-start gap-2">
+                <span className="text-rose mt-0.5">&#10003;</span>
+                <a
+                  href="https://help.comgate.cz/v1/docs/cs/platby-kartou"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose hover:text-rose-deep underline"
+                >
+                  Platby kartou
+                </a>
+                {" "}(Visa, Mastercard, Apple Pay)
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-rose mt-0.5">&#10003;</span>
+                <a
+                  href="https://help.comgate.cz/docs/bankovni-prevody"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose hover:text-rose-deep underline"
+                >
+                  Bankovní převody
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="pt-2 border-t border-line">
+            <p className="text-xs font-semibold text-ink mb-1">Provozovatel platební brány:</p>
+            <div className="text-xs text-muted space-y-0.5">
+              <p>Comgate, a.s.</p>
+              <p>Gočárova třída 1754 / 48b, Hradec Králové</p>
+              <p>
+                E-mail:{" "}
+                <a href="mailto:podpora@comgate.cz" className="text-rose hover:text-rose-deep underline">
+                  podpora@comgate.cz
+                </a>
+              </p>
+              <p>
+                Tel:{" "}
+                <a href="tel:+420228224267" className="text-rose hover:text-rose-deep underline">
+                  +420 228 224 267
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

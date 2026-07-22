@@ -102,8 +102,21 @@ export function PublicFooter() {
           </div>
         </div>
 
+        {/* Payment info */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-nude-200/30">
+          <span>Platby zajišťuje Comgate</span>
+          <span className="hidden sm:inline">·</span>
+          <span>Visa</span>
+          <span>·</span>
+          <span>Mastercard</span>
+          <span>·</span>
+          <span>Apple Pay</span>
+          <span>·</span>
+          <span>Bankovní převod</span>
+        </div>
+
         {/* Bottom bar: copyright + company info */}
-        <div className="mt-10 pt-6 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
+        <div className="mt-6 pt-6 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
           <span>{t("footer.copyright")}</span>
           <span>
             {t("footer.companyName")} · {t("footer.companyId")} · {t("footer.companyAddress")}

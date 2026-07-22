@@ -30,7 +30,7 @@ export default function PublicLayout({
         </div>
         <Script
           src="https://widget.packeta.com/www/js/library.js"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
       </WishlistProvider>
     </InquiryCartProvider>
