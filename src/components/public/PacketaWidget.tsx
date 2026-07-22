@@ -47,9 +47,24 @@ export function PacketaWidget({ onSelect, selectedPoint, language = "cs" }: Prop
   const t = useTranslations("public.inquiry");
   const apiKey = process.env.NEXT_PUBLIC_PACKETA_API_KEY;
 
-  const openWidget = useCallback(() => {
+  const openWidget = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!window.Packeta) {
-      console.error("Packeta Widget library not loaded");
+      // Try loading the script manually if it hasn't loaded yet
+      const script = document.querySelector('script[src*="packeta"]');
+      if (!script) {
+        const s = document.createElement("script");
+        s.src = "https://widget.packeta.com/www/js/library.js";
+        s.onload = () => {
+          if (window.Packeta && apiKey) {
+            window.Packeta.Widget.pick(apiKey, (point) => { if (point) onSelect(point); }, { country: "cz", language });
+          }
+        };
+        document.head.appendChild(s);
+      }
+      console.error("Packeta Widget library not loaded yet");
       return;
     }
     if (!apiKey) {
