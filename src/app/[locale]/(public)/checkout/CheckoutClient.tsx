@@ -51,7 +51,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     shippingStreet: b2bInfo?.address ?? "",
     shippingCity: b2bInfo?.city ?? "",
     shippingZip: "",
-    paymentMethod: "TRANSFER",
+    paymentMethod: "CARD",
     termsAccepted: false,
     wantsBilling: false,
     billingName: b2bInfo?.contactPerson ?? "",
@@ -118,7 +118,8 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       ? 0
       : SHIPPING_COSTS[form.shippingMethod as keyof typeof SHIPPING_COSTS] ?? 0;
 
-  const total = subtotal + shippingCost;
+  const cashSurcharge = form.paymentMethod === "CASH" ? 5000 : 0; // +50 Kč
+  const total = subtotal + shippingCost + cashSurcharge;
 
   // Promo code validation
   const validatePromoCode = async () => {
@@ -152,7 +153,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
         return form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.email.includes("@");
       case "shipping": {
         if (form.shippingMethod === "PACKETA") return !!packetaPoint;
-        if (form.shippingMethod === "PERSONAL_DELIVERY" || form.shippingMethod === "CZECH_POST") {
+        if (form.shippingMethod === "PERSONAL_DELIVERY") {
           return !!(form.shippingStreet.trim() && form.shippingCity.trim() && form.shippingZip.trim());
         }
         return true;
@@ -579,7 +580,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
             {([
               { value: "PERSONAL_DELIVERY", label: tInquiry("shippingPersonal"), price: tInquiry("shippingFree") },
               { value: "PACKETA", label: tInquiry("shippingPacketa"), price: "89 Kč" },
-              { value: "CZECH_POST", label: tInquiry("shippingPost"), price: "119 Kč" },
             ] as const).map((opt) => (
               <label
                 key={opt.value}
@@ -623,7 +623,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           {form.shippingMethod === "PACKETA" && !packetaPoint && (
             <p className="text-xs text-red-500">{tInquiry("packetaRequired")}</p>
           )}
-          {(form.shippingMethod === "PERSONAL_DELIVERY" || form.shippingMethod === "CZECH_POST") && (
+          {form.shippingMethod === "PERSONAL_DELIVERY" && (
             <div className="space-y-3 pt-2">
               <div>
                 <label className="block text-xs text-muted mb-1">{t("addressStreet")}</label>
@@ -671,26 +671,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           <h2 className="font-semibold text-ink mb-2">{t("step_payment")}</h2>
           <div className="space-y-2">
             <label
-              className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
-                form.paymentMethod === "TRANSFER"
-                  ? "border-rose bg-rose/5"
-                  : "border-line hover:border-muted"
-              }`}
-            >
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="TRANSFER"
-                checked={form.paymentMethod === "TRANSFER"}
-                onChange={(e) => setField("paymentMethod", e.target.value)}
-                className="accent-rose"
-              />
-              <div className="flex-1">
-                <span className="text-sm text-ink">{tInquiry("paymentTransfer")}</span>
-                <p className="text-xs text-muted">{tInquiry("paymentTransferDesc")}</p>
-              </div>
-            </label>
-            <label
               className={`flex items-start gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
                 form.paymentMethod === "CARD"
                   ? "border-rose bg-rose/5"
@@ -706,10 +686,31 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 className="accent-rose mt-1"
               />
               <div className="flex-1 min-w-0">
-                <span className="text-sm text-ink">{tInquiry("paymentCard")}</span>
-                <p className="text-xs text-muted">{tInquiry("paymentCardDesc")}</p>
-                <p className="text-[10px] text-muted mt-1">Visa · Mastercard · Apple Pay · Google Pay</p>
+                <span className="text-sm text-ink">{t("paymentCardOnline")}</span>
+                <p className="text-xs text-muted">{t("paymentCardOnlineDesc")}</p>
+                <p className="text-[10px] text-muted mt-1">Visa · Mastercard · Apple Pay · Google Pay · QR platba</p>
               </div>
+            </label>
+            <label
+              className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                form.paymentMethod === "CASH"
+                  ? "border-rose bg-rose/5"
+                  : "border-line hover:border-muted"
+              }`}
+            >
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="CASH"
+                checked={form.paymentMethod === "CASH"}
+                onChange={(e) => setField("paymentMethod", e.target.value)}
+                className="accent-rose"
+              />
+              <div className="flex-1">
+                <span className="text-sm text-ink">{t("paymentCash")}</span>
+                <p className="text-xs text-muted">{t("paymentCashDesc")}</p>
+              </div>
+              <span className="text-xs text-muted">+50 Kč</span>
             </label>
           </div>
 
@@ -838,6 +839,12 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 {shippingCost === 0 ? tInquiry("shippingFree") : `${formatPrice(shippingCost)} Kč`}
               </span>
             </div>
+            {cashSurcharge > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">{t("paymentCashSurcharge")}</span>
+                <span className="text-ink">+{formatPrice(cashSurcharge)} Kč</span>
+              </div>
+            )}
             <div className="border-t border-line pt-2 flex justify-between font-bold text-ink">
               <span>{t("total")}</span>
               <span>{formatPrice(total)} Kč</span>
@@ -855,10 +862,8 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <span className="text-ink text-right break-words min-w-0">
                 {form.shippingMethod === "PACKETA" && packetaPoint
                   ? `${tInquiry("shippingPacketa")} — ${packetaPoint.name}`
-                  : form.shippingMethod === "PERSONAL_DELIVERY"
-                    ? tInquiry("shippingPersonal")
-                    : tInquiry("shippingPost")}
-                {(form.shippingMethod === "PERSONAL_DELIVERY" || form.shippingMethod === "CZECH_POST") && form.shippingStreet && (
+                  : tInquiry("shippingPersonal")}
+                {form.shippingMethod === "PERSONAL_DELIVERY" && form.shippingStreet && (
                   <span className="block text-xs text-muted">{form.shippingStreet}, {form.shippingCity} {form.shippingZip}</span>
                 )}
               </span>
@@ -866,7 +871,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
             <div className="flex justify-between gap-2">
               <span className="text-muted flex-shrink-0">{t("step_payment")}</span>
               <span className="text-ink">
-                {form.paymentMethod === "CARD" ? tInquiry("paymentCard") : tInquiry("paymentTransfer")}
+                {form.paymentMethod === "CARD" ? t("paymentCardOnline") : t("paymentCash")}
               </span>
             </div>
             {form.wantsBilling && form.billingName && (

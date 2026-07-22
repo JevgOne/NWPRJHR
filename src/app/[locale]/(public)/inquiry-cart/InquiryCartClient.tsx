@@ -21,7 +21,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
   const reasonMessage = mode === "consult" && reason
     ? (reason === "real-photo" ? t("reasonRealPhoto") : reason === "photo-match" ? t("reasonPhotoMatch") : "")
     : "";
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", city: "", message: reasonMessage, promoCode: "", shippingMethod: "PERSONAL_DELIVERY", paymentMethod: "TRANSFER" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", city: "", message: reasonMessage, promoCode: "", shippingMethod: "PERSONAL_DELIVERY", paymentMethod: "CARD" });
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -376,7 +376,6 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                   {([
                     { value: "PERSONAL_DELIVERY", label: t("shippingPersonal"), price: t("shippingFree") },
                     { value: "PACKETA", label: t("shippingPacketa"), price: "89 Kč" },
-                    { value: "CZECH_POST", label: t("shippingPost"), price: "99 Kč", disabled: true },
                   ] as const).map((opt) => (
                     <label
                       key={opt.value}
@@ -384,7 +383,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                         form.shippingMethod === opt.value
                           ? "border-rose bg-rose/5"
                           : "border-line hover:border-muted"
-                      } ${"disabled" in opt && opt.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      }`}
                     >
                       <input
                         type="radio"
@@ -395,14 +394,10 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                           setField("shippingMethod", e.target.value);
                           if (e.target.value !== "PACKETA") setPacketaPoint(null);
                         }}
-                        disabled={"disabled" in opt && opt.disabled}
                         className="accent-rose"
                       />
                       <span className="flex-1 text-sm text-ink">{opt.label}</span>
                       <span className="text-xs text-muted">{opt.price}</span>
-                      {"disabled" in opt && opt.disabled && (
-                        <span className="text-[10px] text-muted">{t("shippingSoon")}</span>
-                      )}
                     </label>
                   ))}
                 </div>
@@ -427,8 +422,8 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                 <h3 className="text-sm font-semibold text-ink mb-2">{t("paymentTitle")}</h3>
                 <div className="space-y-2">
                   <label
-                    className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
-                      form.paymentMethod === "TRANSFER"
+                    className={`flex items-start gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                      form.paymentMethod === "CARD"
                         ? "border-rose bg-rose/5"
                         : "border-line hover:border-muted"
                     }`}
@@ -436,14 +431,15 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="TRANSFER"
-                      checked={form.paymentMethod === "TRANSFER"}
+                      value="CARD"
+                      checked={form.paymentMethod === "CARD"}
                       onChange={(e) => setField("paymentMethod", e.target.value)}
-                      className="accent-rose"
+                      className="accent-rose mt-1"
                     />
                     <div className="flex-1">
-                      <span className="text-sm text-ink">{t("paymentTransfer")}</span>
-                      <p className="text-xs text-muted">{t("paymentTransferDesc")}</p>
+                      <span className="text-sm text-ink">{t("paymentCard")}</span>
+                      <p className="text-xs text-muted">{t("paymentCardDesc")}</p>
+                      <p className="text-[10px] text-muted mt-1">Visa · Mastercard · Apple Pay · Google Pay · QR</p>
                     </div>
                   </label>
                   <label
@@ -465,31 +461,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                       <span className="text-sm text-ink">{t("paymentCash")}</span>
                       <p className="text-xs text-muted">{t("paymentCashDesc")}</p>
                     </div>
-                  </label>
-                  <label
-                    className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
-                      form.paymentMethod === "CARD"
-                        ? "border-rose bg-rose/5"
-                        : "border-line hover:border-muted"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="CARD"
-                      checked={form.paymentMethod === "CARD"}
-                      onChange={(e) => setField("paymentMethod", e.target.value)}
-                      className="accent-rose"
-                    />
-                    <div className="flex-1">
-                      <span className="text-sm text-ink">{t("paymentCard")}</span>
-                      <p className="text-xs text-muted">{t("paymentCardDesc")}</p>
-                    </div>
-                    <div className="flex gap-1.5 items-center">
-                      <span className="text-[10px] text-muted">Visa</span>
-                      <span className="text-[10px] text-muted">MC</span>
-                      <span className="text-[10px] text-muted">Apple Pay</span>
-                    </div>
+                    <span className="text-xs text-muted">+50 Kč</span>
                   </label>
                 </div>
               </div>

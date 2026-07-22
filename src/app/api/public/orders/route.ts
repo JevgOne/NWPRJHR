@@ -43,7 +43,7 @@ const publicOrderSchema = z
     packetaPointName: z.string().max(200).optional(),
     packetaPointCity: z.string().max(100).optional(),
 
-    paymentMethod: z.enum(["TRANSFER", "CARD"]),
+    paymentMethod: z.enum(["TRANSFER", "CARD", "CASH"]),
 
     promoCode: z.string().max(50).optional(),
     note: z.string().max(2000).optional(),
@@ -278,12 +278,13 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // 5. Shipping cost
+  // 5. Shipping cost + cash surcharge
   const shippingCost = getShippingCost(data.shippingMethod, estimatedTotal);
-  const totalAmount = estimatedTotal + shippingCost;
+  const cashSurcharge = data.paymentMethod === "CASH" ? 5000 : 0; // +50 Kč
+  const totalAmount = estimatedTotal + shippingCost + cashSurcharge;
 
   // 6. Create Order + Items + Reservations in transaction
-  // Reservation expiry: CARD = 30 min, TRANSFER = 48 hours
+  // Reservation expiry: CARD = 30 min, CASH/TRANSFER = 48 hours
   const reservationMinutes = data.paymentMethod === "CARD" ? 30 : 48 * 60;
   const expiresAt = new Date(Date.now() + reservationMinutes * 60 * 1000);
 
@@ -447,19 +448,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // TRANSFER payment
+  // CASH or TRANSFER payment — no online payment needed
   return NextResponse.json(
     {
       success: true,
       orderId: order.id,
       orderNumber: order.orderNumber,
       accessToken: order.accessToken,
-      paymentInfo: {
-        bankAccount: "6424423004/5500",
-        iban: "CZ5555000000006424423004",
-        variableSymbol: order.orderNumber,
-        amount: totalAmount / 100,
-      },
+      ...(data.paymentMethod === "TRANSFER"
+        ? {
+            paymentInfo: {
+              bankAccount: "6424423004/5500",
+              iban: "CZ5555000000006424423004",
+              variableSymbol: order.orderNumber,
+              amount: totalAmount / 100,
+            },
+          }
+        : {}),
     },
     { status: 201 }
   );
