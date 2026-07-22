@@ -10,7 +10,7 @@ function hairlandEmailTemplate(
   opts?: { unsubscribeUrl?: string; unsubscribeLabel?: string },
 ): string {
   const unsubLine = opts?.unsubscribeUrl
-    ? `<p style="margin:8px 0 0;"><a href="${opts.unsubscribeUrl}" style="color:#b8a09b;font-size:11px;text-decoration:underline;">${opts.unsubscribeLabel ?? "Odhl&aacute;sit se"}</a></p>`
+    ? `<p style="margin:8px 0 0;"><a href="${opts.unsubscribeUrl}" style="color:#b8a09b;font-size:11px;text-decoration:underline;">${opts.unsubscribeLabel ?? "Odhlásit se"}</a></p>`
     : "";
 
   return `<!DOCTYPE html>

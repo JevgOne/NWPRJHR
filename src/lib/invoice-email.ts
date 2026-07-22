@@ -218,7 +218,12 @@ export async function sendPaymentDetailsEmail(opts: {
       <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${t.footer}</p>
     </div>
     <div style="background:#f7efe8;padding:20px 24px;text-align:center;border-top:1px solid #ead9cf;">
-      <p style="margin:0;color:#9c8682;font-size:12px;">&copy; ${new Date().getFullYear()} Hairland.cz</p>
+      <p style="margin:0;color:#9c8682;font-size:12px;">© ${new Date().getFullYear()} Hairland.cz — Prémiové vlasy k prodloužení</p>
+      <p style="margin:8px 0 0;color:#9c8682;font-size:12px;">
+        <a href="tel:+420608553103" style="color:#a96d6c;text-decoration:none;">+420 608 553 103</a>
+        · <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
+        · <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+      </p>
     </div>
   </div>
 </body>
@@ -426,7 +431,12 @@ export function getInvoiceEmailContent(
       <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${t.footer}</p>
     </div>
     <div style="background:#f7efe8;padding:20px 24px;text-align:center;border-top:1px solid #ead9cf;">
-      <p style="margin:0;color:#9c8682;font-size:12px;">&copy; ${new Date().getFullYear()} Hairland.cz</p>
+      <p style="margin:0;color:#9c8682;font-size:12px;">© ${new Date().getFullYear()} Hairland.cz — Prémiové vlasy k prodloužení</p>
+      <p style="margin:8px 0 0;color:#9c8682;font-size:12px;">
+        <a href="tel:+420608553103" style="color:#a96d6c;text-decoration:none;">+420 608 553 103</a>
+        · <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
+        · <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+      </p>
     </div>
   </div>
 </body>
