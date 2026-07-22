@@ -647,6 +647,120 @@ export async function POST(
         return NextResponse.json(order);
       }
 
+      case "edit-item": {
+        if (session.user.role !== "OWNER")
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+        const { orderItemId, newVariantId, newGrams } = body as {
+          orderItemId: string;
+          newVariantId: string;
+          newGrams?: number;
+        };
+
+        if (!orderItemId || !newVariantId)
+          return NextResponse.json({ error: "orderItemId and newVariantId required" }, { status: 400 });
+
+        const result = await prisma.$transaction(async (tx) => {
+          const orderCheck = await tx.order.findUniqueOrThrow({
+            where: { id },
+            include: { items: true },
+          });
+
+          if (["COMPLETED", "CANCELLED", "REJECTED"].includes(orderCheck.status))
+            throw new Error("Cannot edit items on a finalized order");
+
+          const item = orderCheck.items.find((i) => i.id === orderItemId);
+          if (!item) throw new Error("Order item not found");
+
+          const newVariant = await tx.variant.findUniqueOrThrow({
+            where: { id: newVariantId },
+            include: { product: { select: { name: true } } },
+          });
+
+          const grams = newGrams ?? item.grams;
+          const isByPiece = newVariant.sellingMode === "BY_PIECE";
+          const pricePerUnit = isByPiece
+            ? (newVariant.retailPricePerPiece ?? newVariant.pricePerPiece ?? 0)
+            : newVariant.retailPricePerGram;
+          const lineTotal = isByPiece
+            ? pricePerUnit * item.pieces
+            : pricePerUnit * grams;
+
+          // Update the order item
+          await tx.orderItem.update({
+            where: { id: orderItemId },
+            data: {
+              variantId: newVariantId,
+              grams,
+              pricePerGram: pricePerUnit,
+              lineTotal,
+            },
+          });
+
+          // Update reservation if exists
+          const reservation = await tx.reservation.findFirst({
+            where: { orderId: id, variantId: item.variantId, active: true },
+          });
+          if (reservation) {
+            await tx.reservation.update({
+              where: { id: reservation.id },
+              data: { variantId: newVariantId, grams },
+            });
+          }
+
+          // Recalculate order totals
+          const allItems = await tx.orderItem.findMany({ where: { orderId: id } });
+          const newEstimatedTotal = allItems.reduce((sum, i) => sum + i.lineTotal, 0);
+
+          const shippingCost = orderCheck.shippingCost ?? 0;
+          const promoDiscount = orderCheck.promoDiscount ?? 0;
+          const cashSurcharge = orderCheck.paymentMethod === "CASH" ? 5000 : 0;
+          const newTotalAmount = Math.max(0, newEstimatedTotal - promoDiscount) + shippingCost + cashSurcharge;
+
+          await tx.order.update({
+            where: { id },
+            data: {
+              estimatedTotal: Math.max(0, newEstimatedTotal - promoDiscount),
+              totalAmount: newTotalAmount,
+            },
+          });
+
+          return { variantName: newVariant.product.name, color: newVariant.color, lengthCm: newVariant.lengthCm };
+        }, { timeout: 15000 });
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "EDIT_ITEM",
+          entity: "Order",
+          entityId: id,
+          detail: { orderItemId, newVariantId, newVariant: result },
+          ipAddress: getClientIp(request),
+        });
+
+        // Reload and return full order
+        const updated = await prisma.order.findUnique({
+          where: { id },
+          include: {
+            salon: { select: { id: true, name: true, tier: true } },
+            customer: { select: { id: true, name: true, email: true } },
+            items: {
+              include: {
+                variant: {
+                  select: {
+                    id: true, lengthCm: true, color: true,
+                    product: { select: { name: true, nameUk: true, nameRu: true } },
+                  },
+                },
+              },
+            },
+            sale: { select: { id: true, saleNumber: true } },
+          },
+        });
+
+        return NextResponse.json(updated);
+      }
+
       default:
         return NextResponse.json(
           { error: "Unknown action" },

@@ -98,6 +98,49 @@ export function OrderDetailClient({
   const isOwner = role === "OWNER";
   const isStaff = ["OWNER", "EMPLOYEE"].includes(role);
 
+  // Edit item state
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [variantSearch, setVariantSearch] = useState("");
+  const [variantResults, setVariantResults] = useState<{
+    id: string; sku: string; productName: string; color: string; lengthCm: number; retailPricePerGram: number;
+  }[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+
+  const searchVariants = async (query: string) => {
+    setVariantSearch(query);
+    if (query.length < 2) { setVariantResults([]); return; }
+    setSearchLoading(true);
+    try {
+      const res = await fetch(`/api/variants/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      setVariantResults(Array.isArray(data) ? data : []);
+    } catch { setVariantResults([]); }
+    finally { setSearchLoading(false); }
+  };
+
+  const selectVariant = async (orderItemId: string, newVariantId: string) => {
+    setEditLoading(true);
+    setActionError("");
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "edit-item", orderItemId, newVariantId }),
+      });
+      if (res.ok) {
+        setEditingItemId(null);
+        setVariantSearch("");
+        setVariantResults([]);
+        load();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setActionError(data.error || "Chyba při úpravě");
+      }
+    } catch { setActionError("Chyba při úpravě"); }
+    finally { setEditLoading(false); }
+  };
+
   const load = () => {
     fetch(`/api/orders/${id}`)
       .then((r) => r.json())
@@ -211,11 +254,56 @@ export function OrderDetailClient({
           <tbody>
             {order.items.map((item, i) => (
               <tr key={item.id} className={i < order.items.length - 1 ? "border-b border-line/50" : ""}>
-                <td className="py-3 px-4 font-medium text-ink">
-                  {item.variant.product.name}{" "}
-                  <span className="text-muted font-normal">
-                    {item.variant.color} {item.variant.lengthCm}cm
-                  </span>
+                <td className="py-3 px-4">
+                  <div className="font-medium text-ink">
+                    {item.variant.product.name}{" "}
+                    <span className="text-muted font-normal">
+                      {item.variant.color} {item.variant.lengthCm}cm
+                    </span>
+                  </div>
+                  {/* Edit variant inline */}
+                  {isOwner && !isFinal && editingItemId === item.id && (
+                    <div className="mt-2 space-y-2">
+                      <Input
+                        placeholder="Hledat SKU, název, barvu..."
+                        value={variantSearch}
+                        onChange={(e) => searchVariants(e.target.value)}
+                        className="text-xs"
+                        autoFocus
+                      />
+                      {searchLoading && <p className="text-xs text-muted">Hledám...</p>}
+                      {variantResults.length > 0 && (
+                        <div className="max-h-48 overflow-y-auto border border-line rounded-lg divide-y divide-line/50">
+                          {variantResults.map((v) => (
+                            <button
+                              key={v.id}
+                              type="button"
+                              disabled={editLoading || v.id === item.variant.id}
+                              className={`w-full text-left px-3 py-2 text-xs hover:bg-nude-50 transition-colors ${v.id === item.variant.id ? "bg-nude-100 opacity-50" : ""}`}
+                              onClick={() => selectVariant(item.id, v.id)}
+                            >
+                              <span className="font-mono text-muted">{v.sku}</span>
+                              <span className="ml-2 font-medium">{v.productName}</span>
+                              <span className="ml-1 text-muted">{v.color} {v.lengthCm}cm</span>
+                              <span className="ml-2 text-muted">{formatCZK(v.retailPricePerGram)}/g</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <Button size="sm" variant="ghost" onClick={() => { setEditingItemId(null); setVariantSearch(""); setVariantResults([]); }}>
+                        Zrušit
+                      </Button>
+                    </div>
+                  )}
+                  {isOwner && !isFinal && editingItemId !== item.id && (
+                    <button
+                      type="button"
+                      className="text-[11px] text-rose hover:underline mt-1"
+                      onClick={() => { setEditingItemId(item.id); setVariantSearch(""); setVariantResults([]); }}
+                    >
+                      Změnit variantu
+                    </button>
+                  )}
                 </td>
                 <td className="py-3 px-4 text-right text-muted">
                   {item.grams}g{item.pieces > 0 ? ` / ${item.pieces}ks` : ""}
