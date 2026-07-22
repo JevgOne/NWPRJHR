@@ -1074,7 +1074,17 @@
       "paymentCard": "Оплата картой онлайн",
       "paymentCardDesc": "Visa, Mastercard, Apple Pay, Google Pay — мгновенная оплата",
       "proceedToCheckout": "Перейти к заказу",
-      "orSendInquiry": "или отправьте необязывающий запрос ниже (без онлайн оплаты)"
+      "orSendInquiry": "или отправьте необязывающий запрос ниже (без онлайн оплаты)",
+      "cartSubtitle": "{count, plural, one {# товар} few {# товара} other {# товаров}} в корзине",
+      "subtotal": "Промежуточный итог",
+      "shippingEstimate": "Доставка",
+      "shippingCalculatedAtCheckout": "Рассчитывается при заказе",
+      "cartTotal": "Итого",
+      "perUnit": "{price} Kč/{unit}",
+      "lineTotal": "{price} Kč",
+      "continueShopping": "Продолжить покупки",
+      "clearCart": "Очистить корзину",
+      "itemRemoved": "Товар удалён"
     },
     "checkout": {
       "title": "Заказ",
