@@ -25,9 +25,9 @@ export async function POST(
     include: { invoice: true },
   });
 
-  if (sale.paymentType !== "TRANSFER") {
+  if (sale.paymentType !== "TRANSFER" && sale.paymentType !== "CARD" && sale.paymentType !== "CASH") {
     return NextResponse.json(
-      { error: "Only TRANSFER sales can have payment confirmed" },
+      { error: "Only TRANSFER, CARD, or CASH sales can have invoices created" },
       { status: 400 }
     );
   }
