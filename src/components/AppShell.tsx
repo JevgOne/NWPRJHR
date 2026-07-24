@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -30,22 +30,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const role = session.user.role;
 
-  const { pendingRegCount, newInquiryCount, unreadCount: initialUnread, pendingReviewCount } = badgeCounts;
-
-  // Keep notification count live (poll every 30s like NotificationBell)
-  const [liveUnread, setLiveUnread] = useState(initialUnread);
-  useEffect(() => {
-    let active = true;
-    const poll = () => {
-      fetch("/api/notifications?unread=true&limit=1")
-        .then(r => r.ok ? r.json() : null)
-        .then(data => { if (active && data) setLiveUnread(data.unreadCount); })
-        .catch(() => {});
-    };
-    poll();
-    const id = setInterval(poll, 60000);
-    return () => { active = false; clearInterval(id); };
-  }, []);
+  const { pendingRegCount, newInquiryCount, unreadCount, pendingReviewCount } = badgeCounts;
 
   type NavItem = { href: string; label: string; roles: string[]; badge?: number; badgeColor?: string };
   type NavGroup = { label: string | null; items: NavItem[] };
@@ -56,7 +41,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       items: [
         { href: "/dashboard", label: t("dashboard"), roles: ["OWNER", "EMPLOYEE", "SALON"] },
         { href: "/calendar", label: t("calendar"), roles: ["OWNER", "EMPLOYEE"] },
-        { href: "/notifications", label: t("notifications"), roles: ["OWNER", "EMPLOYEE", "SALON"], badge: liveUnread, badgeColor: "bg-red-500" },
+        { href: "/notifications", label: t("notifications"), roles: ["OWNER", "EMPLOYEE", "SALON"], badge: unreadCount, badgeColor: "bg-red-500" },
       ],
     },
     {

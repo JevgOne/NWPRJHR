@@ -11,18 +11,25 @@ export async function GET(request: NextRequest) {
 
   const sp = request.nextUrl.searchParams;
   const status = sp.get("status");
+  const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
+  const limit = Math.min(100, parseInt(sp.get("limit") ?? "50"));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
   if (status) where.status = status;
 
-  const inquiries = await prisma.inquiry.findMany({
-    where,
-    include: {
-      items: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const [total, inquiries] = await Promise.all([
+    prisma.inquiry.count({ where }),
+    prisma.inquiry.findMany({
+      where,
+      include: {
+        items: true,
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+  ]);
 
   // Look up promo code discounts
   const promoCodes = new Set(
@@ -107,5 +114,10 @@ export async function GET(request: NextRequest) {
     };
   });
 
-  return NextResponse.json(result);
+  return NextResponse.json({
+    data: result,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  });
 }

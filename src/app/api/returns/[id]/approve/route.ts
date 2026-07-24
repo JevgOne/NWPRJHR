@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { approveReturn } from "@/lib/returns";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { revalidateTag } from "next/cache";
 
 export async function POST(
   _request: NextRequest,
@@ -27,6 +28,7 @@ export async function POST(
       ipAddress: getClientIp(_request),
     });
 
+    revalidateTag("dashboard", "max");
     return NextResponse.json(ret);
   } catch (e) {
     if (e instanceof Error) {

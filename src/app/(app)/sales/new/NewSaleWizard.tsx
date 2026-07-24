@@ -40,6 +40,7 @@ interface SaleItem {
   texture?: string | null;
   sku?: string;
   category?: string;
+  processingType?: string;
 }
 
 interface DiscountData {
@@ -138,6 +139,7 @@ export function NewSaleWizard({
       let texture: string | null = fallbackProduct?.texture ?? null;
       let sku: string | undefined;
       let category: string | undefined = fallbackProduct?.category;
+      let processingType: string | undefined;
 
       for (const p of products) {
         const v = p.variants.find((v) => v.id === variantId);
@@ -146,6 +148,7 @@ export function NewSaleWizard({
           origin = p.origin;
           texture = p.texture;
           category = p.category;
+          processingType = p.processingType;
           sku = generateSku(p.category, p.texture, v.color, v.lengthCm);
           break;
         }
@@ -189,6 +192,7 @@ export function NewSaleWizard({
             texture,
             sku,
             category,
+            processingType,
           },
         ]);
       } else {
@@ -208,6 +212,7 @@ export function NewSaleWizard({
             texture,
             sku,
             category,
+            processingType,
           },
         ]);
       }

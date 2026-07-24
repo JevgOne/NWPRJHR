@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
 declare global {
@@ -46,41 +46,61 @@ interface Props {
 export function PacketaWidget({ onSelect, selectedPoint, language = "cs" }: Props) {
   const t = useTranslations("public.inquiry");
   const apiKey = process.env.NEXT_PUBLIC_PACKETA_API_KEY;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const openWidget = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    setError("");
 
-    if (!window.Packeta) {
-      // Try loading the script manually if it hasn't loaded yet
-      const script = document.querySelector('script[src*="packeta"]');
-      if (!script) {
-        const s = document.createElement("script");
-        s.src = "https://widget.packeta.com/www/js/library.js";
-        s.onload = () => {
-          if (window.Packeta && apiKey) {
-            window.Packeta.Widget.pick(apiKey, (point) => { if (point) onSelect(point); }, { country: "cz", language });
-          }
-        };
-        document.head.appendChild(s);
-      }
-      console.error("Packeta Widget library not loaded yet");
-      return;
-    }
     if (!apiKey) {
-      console.error("NEXT_PUBLIC_PACKETA_API_KEY not configured");
+      setError("Widget není nakonfigurován");
       return;
     }
 
-    window.Packeta.Widget.pick(
-      apiKey,
-      (point) => {
-        if (point) {
-          onSelect(point);
-        }
-      },
-      { country: "cz", language }
-    );
+    const pickPoint = () => {
+      setLoading(false);
+      if (window.Packeta) {
+        window.Packeta.Widget.pick(
+          apiKey,
+          (point) => { if (point) onSelect(point); },
+          { country: "cz", language }
+        );
+      } else {
+        setError("Widget se nepodařilo načíst. Zkuste to znovu.");
+      }
+    };
+
+    if (window.Packeta) {
+      pickPoint();
+      return;
+    }
+
+    // Script not loaded yet — wait for it
+    setLoading(true);
+    let script = document.querySelector('script[src*="packeta"]') as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement("script");
+      script.src = "https://widget.packeta.com/www/js/library.js";
+      document.head.appendChild(script);
+    }
+
+    const onLoad = () => { pickPoint(); };
+    const onError = () => {
+      setLoading(false);
+      setError("Nepodařilo se načíst Zásilkovna widget");
+    };
+    script.addEventListener("load", onLoad, { once: true });
+    script.addEventListener("error", onError, { once: true });
+
+    // If script already loaded (e.g. cached), check after microtask
+    setTimeout(() => {
+      if (window.Packeta) {
+        script?.removeEventListener("load", onLoad);
+        pickPoint();
+      }
+    }, 100);
   }, [apiKey, onSelect, language]);
 
   return (
@@ -88,11 +108,15 @@ export function PacketaWidget({ onSelect, selectedPoint, language = "cs" }: Prop
       <button
         type="button"
         onClick={openWidget}
+        disabled={loading}
         className="w-full px-4 py-3 border-2 border-dashed border-line rounded-lg
                    text-sm text-ink hover:border-rose hover:bg-rose/5
-                   transition-colors flex items-center justify-center gap-2"
+                   transition-colors flex items-center justify-center gap-2
+                   disabled:opacity-50 disabled:cursor-wait"
       >
-        {selectedPoint ? (
+        {loading ? (
+          <span className="text-muted">Načítání...</span>
+        ) : selectedPoint ? (
           <span>
             <span className="font-medium">{selectedPoint.name}</span>
             <span className="text-muted ml-1">({selectedPoint.city})</span>
@@ -102,6 +126,7 @@ export function PacketaWidget({ onSelect, selectedPoint, language = "cs" }: Prop
           <span>{t("packetaSelect")}</span>
         )}
       </button>
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   );
 }

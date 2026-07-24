@@ -23,6 +23,14 @@ export async function POST(request: NextRequest) {
   if (session.user.role !== "OWNER" && session.user.role !== "EMPLOYEE")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error("[upload/photos] BLOB_READ_WRITE_TOKEN not configured");
+    return NextResponse.json(
+      { error: "Upload není nakonfigurován. Kontaktujte administrátora." },
+      { status: 500 }
+    );
+  }
+
   const formData = await request.formData();
   const files = formData.getAll("files") as File[];
 

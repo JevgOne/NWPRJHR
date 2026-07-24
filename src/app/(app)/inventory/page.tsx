@@ -4,8 +4,33 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { getAllStockNumbers } from "@/lib/stock";
 import { InventoryClient } from "./InventoryClient";
+import { unstable_cache } from "next/cache";
 
-export const dynamic = "force-dynamic";
+const getCachedInventoryData = unstable_cache(
+  async () => {
+    const [variants, allStock, latestBarcodes] = await Promise.all([
+      prisma.variant.findMany({
+        where: { active: true },
+        include: {
+          product: {
+            select: { id: true, name: true, category: true, origin: true, texture: true },
+          },
+        },
+        orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
+      }),
+      getAllStockNumbers(),
+      prisma.delivery.findMany({
+        where: { variant: { active: true }, barcode: { not: null } },
+        orderBy: { stockedAt: "desc" },
+        distinct: ["variantId"],
+        select: { variantId: true, barcode: true },
+      }),
+    ]);
+    return { variants, allStock: Array.from(allStock.entries()), latestBarcodes };
+  },
+  ["admin-inventory"],
+  { revalidate: 60, tags: ["stock", "products"] }
+);
 
 export default async function InventoryPage() {
   const session = await auth();
@@ -15,26 +40,12 @@ export default async function InventoryPage() {
 
   if (role === "SALON" || role === "HAIRDRESSER") redirect("/dashboard");
 
-  const [t, variants, allStock, latestBarcodes] = await Promise.all([
+  const [t, { variants, allStock: stockEntries, latestBarcodes }] = await Promise.all([
     getTranslations(),
-    prisma.variant.findMany({
-      where: { active: true },
-      include: {
-        product: {
-          select: { id: true, name: true, category: true, origin: true, texture: true },
-        },
-      },
-      orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
-    }),
-    getAllStockNumbers(),
-    prisma.delivery.findMany({
-      where: { variant: { active: true }, barcode: { not: null } },
-      orderBy: { stockedAt: "desc" },
-      distinct: ["variantId"],
-      select: { variantId: true, barcode: true },
-    }),
+    getCachedInventoryData(),
   ]);
 
+  const allStock = new Map(stockEntries);
   const barcodeMap = new Map(
     latestBarcodes.map((d) => [d.variantId, d.barcode]),
   );

@@ -10,6 +10,7 @@ import { completeSale } from "@/lib/sales";
 import { createInvoiceFromSale, createSettlementInvoice, createDepositCreditNote } from "@/lib/invoicing";
 import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { revalidateTag } from "next/cache";
 
 export async function GET(
   _request: NextRequest,
@@ -178,6 +179,7 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
+        revalidateTag("dashboard", "max");
         return NextResponse.json({
           reservation,
           sale: { id: sale.id, saleNumber: sale.saleNumber },
@@ -206,6 +208,7 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
+        revalidateTag("dashboard", "max");
         return NextResponse.json(reservation);
       }
 

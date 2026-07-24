@@ -181,9 +181,9 @@ export async function POST(request: NextRequest) {
 
     await sendNotificationEmail({
       to: contactTo,
-      subject: `[Hairland] ${items.length > 0 ? "Nová poptávka" : "Žádost o poradenství"}: ${name}${salonName ? ` (${salonName})` : ""}`,
+      subject: `[Hairland] ${items.length > 0 ? "Nová objednávka z webu" : "Žádost o poradenství"}: ${name}${salonName ? ` (${salonName})` : ""}`,
       body: [
-        `${items.length > 0 ? "Nová poptávka" : "Žádost o poradenství"} #${inquiry.id.slice(-6)}`,
+        `${items.length > 0 ? "Nová objednávka z webu" : "Žádost o poradenství"} #${inquiry.id.slice(-6)}`,
         "",
         `Jméno: ${name}`,
         `Email: ${email}`,
@@ -212,9 +212,9 @@ export async function POST(request: NextRequest) {
           data: owners.map((o) => ({
             recipientId: o.id,
             type: "NEW_INQUIRY" as const,
-            title: `${items.length > 0 ? "Nová poptávka" : "Žádost o poradenství"}: ${name}${salonName ? ` (${salonName})` : ""}`,
+            title: `${items.length > 0 ? "Nová objednávka z webu" : "Žádost o poradenství"}: ${name}${salonName ? ` (${salonName})` : ""}`,
             message: items.length > 0
-              ? `${name} poptává ${items.length} položek. ${items.map((i) => i.productName).join(", ")}`
+              ? `${name} objednává ${items.length} položek. ${items.map((i) => i.productName).join(", ")}`
               : `${name} žádá o poradenství${customerPhotos.length > 0 ? ` (${customerPhotos.length} fotek)` : ""}.`,
             data: JSON.stringify({ inquiryId: inquiry.id, name, itemCount: items.length }),
           })),

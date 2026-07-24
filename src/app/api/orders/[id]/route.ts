@@ -206,6 +206,9 @@ export async function POST(
           }).catch(() => {});
         }
 
+        // Clean up old notifications for rejected order
+        deleteNotificationsForEntity("orderId", id).catch(() => {});
+
         return NextResponse.json(order);
       }
 

@@ -38,12 +38,13 @@ function getNotificationUrl(n: NotificationItem): string | null {
     case "SAMPLE_REQUEST":
       return "/samples";
     case "NEW_INQUIRY":
-    case "NEW_CONTACT":
       return "/inquiries";
+    case "NEW_CONTACT":
+      return "/notifications";
     case "NEW_REVIEW":
       return "/reviews";
     case "REGISTRATION":
-      return "/registrations";
+      return d.salonId ? `/salons/${d.salonId}` : "/registrations";
     case "REFERRAL_USED":
       return "/referrals";
     case "PAYMENT_REMINDER":

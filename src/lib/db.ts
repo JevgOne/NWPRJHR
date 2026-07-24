@@ -20,7 +20,7 @@ function createPrismaClient() {
         url: "file:/tmp/turso-replica.db",
         authToken,
         syncUrl: remoteUrl,
-        syncInterval: 60,
+        syncInterval: 10,
         readYourWrites: true,
       });
       return new PrismaClient({ adapter });

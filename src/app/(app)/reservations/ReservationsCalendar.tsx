@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
@@ -171,10 +171,10 @@ const DAY_NAMES = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
 
 function getDayBgIntensity(count: number): string {
   if (count === 0) return "";
-  if (count <= 2) return "bg-rose/[0.03]";
-  if (count <= 5) return "bg-rose/[0.06]";
-  if (count <= 10) return "bg-rose/[0.10]";
-  return "bg-rose/[0.15]";
+  if (count <= 2) return "bg-gradient-to-br from-rose/[0.03] to-transparent";
+  if (count <= 5) return "bg-gradient-to-br from-rose/[0.06] to-rose/[0.02]";
+  if (count <= 10) return "bg-gradient-to-br from-rose/[0.12] to-rose/[0.04]";
+  return "bg-gradient-to-br from-rose/[0.18] to-rose/[0.06]";
 }
 
 function getEntryAmount(entry: CalendarEntry): number {
@@ -342,7 +342,9 @@ export function ActivityCalendar() {
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [showStatusLegend, setShowStatusLegend] = useState(false);
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
+  const [currentDay, setCurrentDay] = useState(() => new Date());
+  const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const now = new Date();
     const dow = now.getDay();
@@ -371,7 +373,24 @@ export function ActivityCalendar() {
     localStorage.setItem("calendar-filters", JSON.stringify(filters));
   }, [filters]);
 
+  // Mobile default to day view
+  useEffect(() => {
+    const isMobile = window.innerWidth < 640;
+    if (isMobile && viewMode === "month") setViewMode("day");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const { from, to } = useMemo(() => {
+    if (viewMode === "day") {
+      const start = new Date(currentDay);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(currentDay);
+      end.setHours(23, 59, 59, 999);
+      // Fetch whole month for day view so we can see which days have data
+      const monthStart = new Date(start.getFullYear(), start.getMonth(), 1);
+      const monthEnd = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59);
+      return { from: monthStart.toISOString(), to: monthEnd.toISOString() };
+    }
     if (viewMode === "week") {
       const end = new Date(currentWeekStart);
       end.setDate(end.getDate() + 6);
@@ -382,7 +401,7 @@ export function ActivityCalendar() {
       from: currentMonth.toISOString(),
       to: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0, 23, 59, 59).toISOString(),
     };
-  }, [viewMode, currentMonth, currentWeekStart]);
+  }, [viewMode, currentMonth, currentWeekStart, currentDay]);
 
   useEffect(() => {
     setLoading(true);
@@ -488,6 +507,47 @@ export function ActivityCalendar() {
     d.setDate(d.getDate() + 7);
     setCurrentWeekStart(d);
   };
+  const prevDay = () => {
+    const d = new Date(currentDay);
+    d.setDate(d.getDate() - 1);
+    setCurrentDay(d);
+  };
+  const nextDay = () => {
+    const d = new Date(currentDay);
+    d.setDate(d.getDate() + 1);
+    setCurrentDay(d);
+  };
+
+  const goNext = useCallback(() => {
+    setSlideDir("left");
+    if (viewMode === "day") nextDay();
+    else if (viewMode === "week") nextWeek();
+    else nextMonth();
+    setTimeout(() => setSlideDir(null), 200);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode, currentDay, currentWeekStart, currentMonth]);
+
+  const goPrev = useCallback(() => {
+    setSlideDir("right");
+    if (viewMode === "day") prevDay();
+    else if (viewMode === "week") prevWeek();
+    else prevMonth();
+    setTimeout(() => setSlideDir(null), 200);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode, currentDay, currentWeekStart, currentMonth]);
+
+  // Swipe touch handling
+  const touchStartX = useRef(0);
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goNext();
+      else goPrev();
+    }
+  }, [goNext, goPrev]);
 
   const monthLabel = currentMonth.toLocaleDateString("cs-CZ", {
     month: "long",
@@ -538,10 +598,61 @@ export function ActivityCalendar() {
     return map;
   }, [viewMode, reservations, sales, orders, deliveries, filters]);
 
+  // Day view entries
+  const dayViewEntries = useMemo(() => {
+    if (viewMode !== "day") return [];
+    const dayNum = currentDay.getDate();
+    return byDay.get(dayNum) ?? [];
+  }, [viewMode, currentDay, byDay]);
+
+  const dayLabel = currentDay.toLocaleDateString("cs-CZ", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  // Stats for current period
+  const stats = useMemo(() => {
+    let totalReservations = 0, totalSales = 0, totalOrders = 0, totalRevenue = 0;
+    if (filters.reservations) {
+      totalReservations = reservations.length;
+      for (const r of reservations) totalRevenue += r.lineTotal;
+    }
+    if (filters.sales) {
+      totalSales = sales.length;
+      for (const s of sales) totalRevenue += s.totalAmount;
+    }
+    if (filters.orders) {
+      totalOrders = orders.length;
+    }
+    return { totalReservations, totalSales, totalOrders, totalRevenue };
+  }, [reservations, sales, orders, filters]);
+
   const selectedEntries = selectedDay ? byDay.get(parseInt(selectedDay)) ?? [] : [];
 
   return (
     <div className="space-y-4">
+      {/* Stats header */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-white rounded-xl border border-line p-3 text-center">
+          <div className="text-2xl font-bold text-ink">{stats.totalReservations}</div>
+          <div className="text-xs text-muted">{tCal("reservation")}</div>
+        </div>
+        <div className="bg-white rounded-xl border border-line p-3 text-center">
+          <div className="text-2xl font-bold text-ink">{stats.totalSales}</div>
+          <div className="text-xs text-muted">{tCal("sales")}</div>
+        </div>
+        <div className="bg-white rounded-xl border border-line p-3 text-center">
+          <div className="text-2xl font-bold text-ink">{formatCZK(stats.totalRevenue)}</div>
+          <div className="text-xs text-muted">{tCal("totalRevenue")}</div>
+        </div>
+        <div className="bg-white rounded-xl border border-line p-3 text-center">
+          <div className="text-2xl font-bold text-ink">{stats.totalOrders}</div>
+          <div className="text-xs text-muted">{tCal("orders")}</div>
+        </div>
+      </div>
+
       {/* Filter chips = legend */}
       <div className="flex flex-wrap gap-2">
         {([
@@ -637,16 +748,24 @@ export function ActivityCalendar() {
       {/* Navigation + view toggle */}
       <div className="flex items-center justify-between gap-2">
         <button
-          onClick={viewMode === "month" ? prevMonth : prevWeek}
+          onClick={goPrev}
           className="px-3 py-1.5 rounded-lg border border-line hover:bg-nude-50 text-sm"
         >
           &lt;
         </button>
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold text-ink capitalize">
-            {viewMode === "month" ? monthLabel : weekLabel}
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+          <h2 className="text-base sm:text-lg font-bold text-ink capitalize">
+            {viewMode === "day" ? dayLabel : viewMode === "month" ? monthLabel : weekLabel}
           </h2>
           <div className="flex gap-1 bg-nude-50 rounded-lg p-0.5">
+            <button
+              onClick={() => setViewMode("day")}
+              className={`sm:hidden px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                viewMode === "day" ? "bg-white shadow-sm text-ink" : "text-muted hover:text-ink"
+              }`}
+            >
+              {tCal("day")}
+            </button>
             <button
               onClick={() => setViewMode("month")}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
@@ -666,7 +785,7 @@ export function ActivityCalendar() {
           </div>
         </div>
         <button
-          onClick={viewMode === "month" ? nextMonth : nextWeek}
+          onClick={goNext}
           className="px-3 py-1.5 rounded-lg border border-line hover:bg-nude-50 text-sm"
         >
           &gt;
@@ -677,9 +796,117 @@ export function ActivityCalendar() {
       {loading ? (
         <p className="text-muted text-center py-8">...</p>
       ) : (
-        <>
-          {/* Desktop: calendar grid or weekly view */}
-          {viewMode === "week" ? (
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className={`transition-all duration-200 ${
+            slideDir === "left" ? "-translate-x-2 opacity-80" :
+            slideDir === "right" ? "translate-x-2 opacity-80" : ""
+          }`}
+        >
+          {/* Day view (mobile-first) */}
+          {viewMode === "day" ? (
+            <div className="space-y-2">
+              {dayViewEntries.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-4xl mb-2 opacity-30">📅</div>
+                  <p className="text-sm text-muted">{tCal("noEntriesDay")}</p>
+                </div>
+              ) : (
+                dayViewEntries.map((entry) => {
+                  const cancelled = isCancelledEntry(entry);
+
+                  if (entry.kind === "reservation") {
+                    const r = entry.data;
+                    return (
+                      <Link
+                        key={`r-${r.id}`}
+                        href={`/reservations/${r.id}`}
+                        className={`flex items-start gap-3 p-3 bg-white rounded-xl border border-line hover:bg-nude-50 transition-colors ${cancelled ? "opacity-50" : ""}`}
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${RESERVATION_DOT[r.status] ?? "bg-gray-300"}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-medium bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded">📋 {tCal("reservation")}</span>
+                            <span className="text-sm font-medium text-ink">{r.reservationNumber ?? r.id.slice(0, 8)}</span>
+                            <span className={`text-xs font-medium ${RESERVATION_TEXT[r.status] ?? "text-gray-500"}`}>
+                              {STATUS_EMOJI[r.status] ?? ""} {t(r.status.toLowerCase())}
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted mt-1">{r.salon?.name ?? r.customer?.name ?? r.contactName ?? "—"}</div>
+                          <div className="text-xs text-muted">{r.variant.product.name} {r.variant.color} {r.variant.lengthCm}cm</div>
+                          <div className="text-sm font-medium text-ink mt-1">{formatCZK(r.lineTotal)} CZK</div>
+                        </div>
+                      </Link>
+                    );
+                  }
+
+                  if (entry.kind === "sale") {
+                    const s = entry.data;
+                    return (
+                      <Link
+                        key={`s-${s.id}`}
+                        href={`/sales/${s.id}`}
+                        className={`flex items-start gap-3 p-3 bg-white rounded-xl border border-line hover:bg-nude-50 transition-colors ${cancelled ? "opacity-50" : ""}`}
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${SALE_DOT[s.paymentType] ?? "bg-gray-300"}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-medium bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">💰 {tCal("sale")}</span>
+                            <span className="text-sm font-medium text-ink">{s.saleNumber ?? s.id.slice(0, 8)}</span>
+                          </div>
+                          <div className="text-xs text-muted mt-1">{s.salonName ?? s.customerName ?? "—"}</div>
+                          <div className="text-sm font-medium text-ink mt-1">{formatCZK(s.totalAmount)} CZK</div>
+                        </div>
+                      </Link>
+                    );
+                  }
+
+                  if (entry.kind === "delivery") {
+                    const dl = entry.data;
+                    return (
+                      <Link
+                        key={`d-${dl.id}`}
+                        href={`/inventory/deliveries/${dl.id}`}
+                        className="flex items-start gap-3 p-3 bg-white rounded-xl border border-line hover:bg-nude-50 transition-colors"
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${DELIVERY_DOT}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-medium bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded">📥 {tCal("delivery")}</span>
+                            {dl.variant && <span className="text-sm font-medium text-ink">{dl.variant.product.name} {dl.variant.color} {dl.variant.lengthCm}cm</span>}
+                          </div>
+                          <div className="text-xs text-muted mt-1">{dl.initialGrams} g, {dl.initialPieces} ks</div>
+                        </div>
+                      </Link>
+                    );
+                  }
+
+                  const o = entry.data;
+                  return (
+                    <Link
+                      key={`o-${o.id}`}
+                      href={`/orders/${o.id}`}
+                      className={`flex items-start gap-3 p-3 bg-white rounded-xl border border-line hover:bg-nude-50 transition-colors ${cancelled ? "opacity-50" : ""}`}
+                    >
+                      <span className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${ORDER_DOT[o.status] ?? "bg-gray-300"}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-medium bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">📦 {tCal("order")}</span>
+                          <span className="text-sm font-medium text-ink">{o.orderNumber ?? o.id.slice(0, 8)}</span>
+                          <span className={`text-xs font-medium ${ORDER_TEXT[o.status] ?? "text-gray-500"}`}>
+                            {STATUS_EMOJI[o.status] ?? ""} {tCal(`order_${o.status.toLowerCase()}`)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted mt-1">{o.salon?.name ?? o.customer?.name ?? o.contactName ?? "—"}</div>
+                        <div className="text-sm font-medium text-ink mt-1">{formatCZK(o.totalAmount ?? o.estimatedTotal)} CZK</div>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+          ) : viewMode === "week" ? (
             <div className="border border-line rounded-xl overflow-x-auto">
               <div className="grid grid-cols-7 bg-nude-50 border-b border-line">
                 {weekDays.map((wd) => {
@@ -774,54 +1001,68 @@ export function ActivityCalendar() {
             </div>
           )}
 
-          {/* Mobile: compact list view */}
-          <div className="sm:hidden space-y-1 mt-3">
-            {Array.from(byDay.entries())
-              .sort(([a], [b]) => a - b)
-              .map(([day, entries]) => {
-                const totalAmount = entries.reduce((sum, e) => sum + getEntryAmount(e), 0);
-                return (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDay(selectedDay === String(day) ? null : String(day))}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl border transition-colors text-left ${
-                      selectedDay === String(day)
-                        ? "bg-rose/10 border-rose/20"
-                        : "bg-white border-line hover:bg-nude-50"
-                    }`}
-                  >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                      isCurrentMonth && day === today.getDate()
-                        ? "bg-rose text-white"
-                        : "bg-nude-50 text-ink"
-                    }`}>
-                      {day}
-                    </div>
-                    <div className="flex gap-1.5 flex-1 min-w-0">
-                      <DaySummaryInline entries={entries} />
-                    </div>
-                    {totalAmount > 0 && (
-                      <span className="text-xs text-muted flex-shrink-0">
-                        {formatCZK(totalAmount)} CZK
-                      </span>
-                    )}
-                  </button>
-                );
-              })
-            }
-            {byDay.size === 0 && (
-              <p className="text-sm text-muted text-center py-6">{tCal("noEntries")}</p>
-            )}
-          </div>
-        </>
+          {/* Mobile: compact list view (hidden in day view — day view replaces this) */}
+          {viewMode !== "day" && (
+            <div className="sm:hidden space-y-1 mt-3">
+              {Array.from(byDay.entries())
+                .sort(([a], [b]) => a - b)
+                .map(([day, entries]) => {
+                  const totalAmount = entries.reduce((sum, e) => sum + getEntryAmount(e), 0);
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setSelectedDay(selectedDay === String(day) ? null : String(day))}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl border transition-colors text-left ${
+                        selectedDay === String(day)
+                          ? "bg-rose/10 border-rose/20"
+                          : "bg-white border-line hover:bg-nude-50"
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                        isCurrentMonth && day === today.getDate()
+                          ? "bg-rose text-white"
+                          : "bg-nude-50 text-ink"
+                      }`}>
+                        {day}
+                      </div>
+                      <div className="flex gap-1.5 flex-1 min-w-0">
+                        <DaySummaryInline entries={entries} />
+                      </div>
+                      {totalAmount > 0 && (
+                        <span className="text-xs text-muted flex-shrink-0">
+                          {formatCZK(totalAmount)} CZK
+                        </span>
+                      )}
+                    </button>
+                  );
+                })
+              }
+              {byDay.size === 0 && (
+                <p className="text-sm text-muted text-center py-6">{tCal("noEntries")}</p>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
-      {/* Selected day detail */}
-      {selectedDay && (
-        <div className="bg-white border border-line rounded-xl p-4 space-y-2">
-          <h3 className="text-sm font-bold text-ink">
-            {parseInt(selectedDay)}. {currentMonth.toLocaleDateString("cs-CZ", { month: "long", year: "numeric" })}
-          </h3>
+      {/* Selected day detail — bottom sheet on mobile, inline on desktop */}
+      {selectedDay && viewMode !== "day" && (
+        <div className="fixed sm:relative bottom-0 left-0 right-0 sm:static
+          bg-white border-t sm:border border-line rounded-t-2xl sm:rounded-xl
+          shadow-xl sm:shadow-none p-4 space-y-2
+          max-h-[60vh] sm:max-h-none overflow-y-auto
+          animate-slide-up sm:animate-none z-30">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink">
+              {parseInt(selectedDay)}. {currentMonth.toLocaleDateString("cs-CZ", { month: "long", year: "numeric" })}
+            </h3>
+            <button
+              onClick={() => setSelectedDay(null)}
+              className="sm:hidden w-7 h-7 flex items-center justify-center rounded-full bg-nude-50 text-muted hover:text-ink text-xs"
+            >
+              ✕
+            </button>
+          </div>
           {selectedEntries.length === 0 ? (
             <p className="text-sm text-muted">{tCal("noEntriesDay")}</p>
           ) : (

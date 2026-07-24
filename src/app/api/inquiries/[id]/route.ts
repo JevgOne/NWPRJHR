@@ -3,6 +3,7 @@ import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { deleteNotificationsForEntity } from "@/lib/notifications";
 
 export async function PUT(
   request: NextRequest,
@@ -49,6 +50,9 @@ export async function PUT(
 
   if (body.status) {
     revalidateTag("badges", "max");
+    if (body.status === "CANCELLED") {
+      deleteNotificationsForEntity("inquiryId", id).catch(() => {});
+    }
   }
 
   logAudit({

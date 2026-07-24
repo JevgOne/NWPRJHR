@@ -71,6 +71,9 @@ export function InquiriesClient() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [filter, setFilter] = useState("ALL");
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editStatus, setEditStatus] = useState("");
@@ -106,13 +109,19 @@ export function InquiriesClient() {
 
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
-    const params = filter !== "ALL" ? `?status=${filter}` : "";
-    const res = await fetch(`/api/inquiries${params}`);
+    const params = new URLSearchParams();
+    if (filter !== "ALL") params.set("status", filter);
+    params.set("page", String(page));
+    params.set("limit", "50");
+    const res = await fetch(`/api/inquiries?${params}`);
     if (res.ok) {
-      setInquiries(await res.json());
+      const json = await res.json();
+      setInquiries(json.data);
+      setTotalPages(json.totalPages);
+      setTotal(json.total);
     }
     setLoading(false);
-  }, [filter]);
+  }, [filter, page]);
 
   useEffect(() => {
     fetchInquiries();
@@ -159,7 +168,7 @@ export function InquiriesClient() {
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setFilter(tab.key)}
+            onClick={() => { setFilter(tab.key); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               filter === tab.key
                 ? "bg-rose text-white"
@@ -491,6 +500,33 @@ export function InquiriesClient() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 px-2">
+          <span className="text-sm text-muted">
+            {t("showingOf", { count: inquiries.length, total })}
+          </span>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="px-3 py-1.5 rounded-lg border border-line text-sm disabled:opacity-30 hover:bg-nude-50"
+            >
+              &lt;
+            </button>
+            <span className="px-3 py-1.5 text-sm text-muted">
+              {page} / {totalPages}
+            </span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-3 py-1.5 rounded-lg border border-line text-sm disabled:opacity-30 hover:bg-nude-50"
+            >
+              &gt;
+            </button>
+          </div>
         </div>
       )}
     </div>

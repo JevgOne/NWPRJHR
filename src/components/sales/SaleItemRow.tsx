@@ -20,6 +20,7 @@ interface SaleItemData {
   texture?: string | null;
   sku?: string;
   category?: string;
+  processingType?: string;
 }
 
 interface SaleItemRowProps {
@@ -69,6 +70,7 @@ export function SaleItemRow({
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted">
         {item.origin ? <span>{item.origin}</span> : item.category && <span className="text-muted/70">{item.category}</span>}
         {item.texture && <span>{item.texture}</span>}
+        {item.processingType && <span>{item.processingType}</span>}
         {item.sku && <span className="font-mono">{item.sku}</span>}
       </div>
 

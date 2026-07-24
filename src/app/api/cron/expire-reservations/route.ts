@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { expireOverdueReservations } from "@/lib/reservations";
-import { createNotificationForRole } from "@/lib/notifications";
+import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { invalidateStockCache } from "@/lib/stock";
+import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const secret = request.headers.get("x-cron-secret");
@@ -55,6 +56,11 @@ export async function GET(request: NextRequest) {
         data: { status: "CANCELLED" },
       });
       expiredOrderCount = result.count;
+
+      // Clean up old notifications for expired orders
+      for (const oid of orderIds) {
+        deleteNotificationsForEntity("orderId", oid as string).catch(() => {});
+      }
     }
 
     invalidateStockCache();
@@ -68,6 +74,10 @@ export async function GET(request: NextRequest) {
         data: { expiredOrderCount },
       }).catch(() => {});
     }
+  }
+
+  if (expiredCount > 0 || expiredOrderCount > 0) {
+    revalidateTag("dashboard", "max");
   }
 
   return NextResponse.json({

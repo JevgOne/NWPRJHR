@@ -188,8 +188,8 @@ export function translateNotification(
         message: `Faktura ${data?.invoiceNumber ?? ""} je po splatnosti`,
       },
       NEW_INQUIRY: {
-        title: "Nová poptávka",
-        message: `Přišla nová poptávka od ${data?.name ?? ""} (${data?.itemCount ?? 0} položek)`,
+        title: "Nová objednávka z webu",
+        message: `Přišla nová objednávka z webu od ${data?.name ?? ""} (${data?.itemCount ?? 0} položek)`,
       },
       REGISTRATION: {
         title: "Nová registrace",
@@ -398,7 +398,7 @@ export function translateNotification(
  * Matches notifications by JSON data field containing the entity ID.
  */
 export async function deleteNotificationsForEntity(
-  entityKey: "orderId" | "reservationId" | "invoiceId" | "returnId" | "complaintId",
+  entityKey: "orderId" | "reservationId" | "invoiceId" | "returnId" | "complaintId" | "inquiryId",
   entityId: string
 ): Promise<number> {
   // Prisma doesn't support JSON field filtering on SQLite well,

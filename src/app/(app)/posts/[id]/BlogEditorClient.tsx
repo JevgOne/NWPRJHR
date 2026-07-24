@@ -117,15 +117,24 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const formData = new FormData();
-    formData.append("files", file);
-    const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
-    if (res.ok) {
+    setError("");
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+      const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Upload selhal (${res.status})`);
+      }
       const data = await res.json();
       const url = data.photoUrls?.[0] ?? data.urls?.[0];
-      if (url) setCoverImage(url);
+      if (!url) throw new Error("Server nevrátil URL obrázku");
+      setCoverImage(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nahrávání obrázku selhalo");
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   // Get/set by current lang

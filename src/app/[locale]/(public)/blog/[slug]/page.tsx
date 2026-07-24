@@ -27,6 +27,37 @@ function localized<T extends Record<string, unknown>>(
   return (post[field] as string) ?? "";
 }
 
+function stripMarkdown(md: string): string {
+  return md
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^- /gm, "")
+    .replace(/\n+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function generateSeoDescription(post: Record<string, unknown>, locale: string): string {
+  if (post.metaDescription) return post.metaDescription as string;
+
+  const excerpt = localized(post, "excerpt", locale);
+  if (excerpt) {
+    if (excerpt.length <= 155) return excerpt;
+    return excerpt.slice(0, 152).replace(/\s+\S*$/, "") + "...";
+  }
+
+  const content = localized(post, "content", locale);
+  if (content) {
+    const plain = stripMarkdown(content);
+    if (plain.length <= 155) return plain;
+    return plain.slice(0, 152).replace(/\s+\S*$/, "") + "...";
+  }
+
+  return localized(post, "title", locale);
+}
+
 const getCachedBlogPost = unstable_cache(
   async (slug: string) => {
     return prisma.blogPost.findUnique({ where: { slug } });
@@ -39,8 +70,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const [post, locale] = await Promise.all([getCachedBlogPost(slug), getLocale()]);
   if (!post) return {};
-  const seoTitle = post.metaTitle || post.title;
-  const seoDesc = post.metaDescription || post.excerpt || post.title;
+  const seoTitle = post.metaTitle || localized(post, "title", locale);
+  const seoDesc = generateSeoDescription(post, locale);
   const seoImage = post.ogImage || post.coverImage;
   return {
     title: `${seoTitle} | Blog`,

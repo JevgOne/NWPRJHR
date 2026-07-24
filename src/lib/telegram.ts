@@ -144,9 +144,9 @@ export async function notifyInquiry(inquiryId: string, data: {
     .join("\n\n");
 
   const lines = [
-    `📦 <b>NOVÁ POPTÁVKA / НОВЫЙ ЗАПРОС</b>`,
-    `Nový zákazník odeslal poptávku přes web`,
-    `Новый клиент отправил запрос через сайт`,
+    `📦 <b>NOVÁ OBJEDNÁVKA Z WEBU / НОВЫЙ ЗАКАЗ С САЙТА</b>`,
+    `Nový zákazník odeslal objednávku přes web`,
+    `Новый клиент отправил заказ через сайт`,
     ``,
     `👤 <b>${esc(data.name)}</b>`,
     `📧 ${esc(data.email)}`,
