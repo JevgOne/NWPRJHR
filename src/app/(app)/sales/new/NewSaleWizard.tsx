@@ -674,6 +674,27 @@ export function NewSaleWizard({
             />
           ))}
 
+          {items.length > 0 && (
+            <div className="border-2 border-dashed border-line rounded-lg p-3 flex gap-2">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="flex-1"
+                onClick={() => setScannerOpen(true)}
+              >
+                + {t("addAnotherQr")}
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="flex-1"
+                onClick={() => setShowProductPicker(!showProductPicker)}
+              >
+                + {t("addAnotherManual")}
+              </Button>
+            </div>
+          )}
+
           <BarcodeScanner
             active={scannerOpen}
             onScan={handleBarcodeScan}

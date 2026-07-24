@@ -108,8 +108,16 @@ Stav: čeká
 
 ---
 
+### TASK-114: Prodej — přidání více produktů (QR) do jedné faktury
+Stav: plánování
+Uživatel: "když prodavame salonu vlasy a on si chce vzít 2-3 druhy jinych, tak se tam neda přidat nic po tom co načtu QR, že bych mohl jeste přidat QR/produkt a načetlo by se to do jedné faktury"
+- Po naskenování QR nejde přidat další produkt do stejného prodeje
+- Potřeba: tlačítko "Přidat další QR/produkt" → vše na jednu fakturu
+
+---
+
 ### TASK-079: Prodejní karta — chybí info o produktu
-Stav: čeká
+Stav: hotovo
 Uživatel: "nejsou tam puvod vlasu, atd všechny informace + není tam videt kolik je skladem G."
 - `src/components/sales/SaleItemRow.tsx`
 

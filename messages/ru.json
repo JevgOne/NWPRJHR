@@ -1540,6 +1540,8 @@
     "manualEntry": "Ручной ввод кода",
     "scannerNotSupported": "Сканер не поддерживается в этом браузере",
     "barcodeNotFound": "Штрих-код не найден",
+    "addAnotherQr": "Сканировать другой QR",
+    "addAnotherManual": "Добавить ещё вручную",
     "paymentType": "Тип оплаты",
     "paymentTransfer": "Перевод",
     "paymentInvoice": "Счёт",

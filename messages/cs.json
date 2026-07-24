@@ -1540,6 +1540,8 @@
     "manualEntry": "Ruční zadání kódu",
     "scannerNotSupported": "Skener není podporován v tomto prohlížeči",
     "barcodeNotFound": "Čárový kód nenalezen",
+    "addAnotherQr": "Naskenovat další QR",
+    "addAnotherManual": "Přidat další ručně",
     "paymentType": "Typ platby",
     "paymentTransfer": "Převod",
     "paymentInvoice": "Faktura",
