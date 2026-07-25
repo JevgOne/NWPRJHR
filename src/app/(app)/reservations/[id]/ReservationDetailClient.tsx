@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
+import { ReservationLabel } from "@/components/reservations/ReservationLabel";
 import type { Role } from "@prisma/client";
 
 interface ReservationDetail {
@@ -73,6 +74,7 @@ export function ReservationDetailClient({
   const [loading, setLoading] = useState(true);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showLabel, setShowLabel] = useState(false);
 
   const isOwner = role === "OWNER";
 
@@ -126,11 +128,20 @@ export function ReservationDetailClient({
             {new Date(reservation.createdAt).toLocaleDateString("cs-CZ")}
           </p>
         </div>
-        <Link href="/reservations">
-          <Button variant="ghost" size="sm">
-            ← {tCommon("back")}
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setShowLabel(true)}
+          >
+            {t("printLabel")}
           </Button>
-        </Link>
+          <Link href="/reservations">
+            <Button variant="ghost" size="sm">
+              ← {tCommon("back")}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Status banner */}
@@ -327,6 +338,29 @@ export function ReservationDetailClient({
         {t("createdBy")}:{" "}
         {reservation.createdByUser.name ?? reservation.createdByUser.email}
       </div>
+
+      {showLabel && reservation && (
+        <ReservationLabel
+          data={{
+            id: reservation.id,
+            reservationNumber: reservation.reservationNumber,
+            customerName:
+              reservation.salon?.name ??
+              reservation.customer?.name ??
+              reservation.contactName ??
+              "—",
+            contactEmail: reservation.contactEmail ?? undefined,
+            contactPhone: reservation.contactPhone ?? undefined,
+            productName: reservation.variant.product.name,
+            color: reservation.variant.color,
+            lengthCm: reservation.variant.lengthCm,
+            grams: reservation.grams,
+            pieces: reservation.pieces,
+            sellingMode: reservation.sellingMode,
+          }}
+          onClose={() => setShowLabel(false)}
+        />
+      )}
     </div>
   );
 }

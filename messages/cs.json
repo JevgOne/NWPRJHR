@@ -3026,7 +3026,10 @@
     "calendarView": "Kalendář",
     "calendarTitle": "Kalendář rezervací",
     "today": "Dnes",
-    "noReservationsDay": "Žádné rezervace"
+    "noReservationsDay": "Žádné rezervace",
+    "printLabel": "Vytisknout štítek",
+    "labelPreview": "Náhled štítku",
+    "generatingLabel": "Generuji štítek..."
   },
   "calendar": {
     "sales": "Prodeje",

@@ -3026,7 +3026,10 @@
     "calendarView": "Календар",
     "calendarTitle": "Календар резервацій",
     "today": "Сьогодні",
-    "noReservationsDay": "Немає резервацій"
+    "noReservationsDay": "Немає резервацій",
+    "printLabel": "Друкувати етикетку",
+    "labelPreview": "Попередній перегляд",
+    "generatingLabel": "Генерую етикетку..."
   },
   "calendar": {
     "sales": "Продажі",
