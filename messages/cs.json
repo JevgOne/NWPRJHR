@@ -300,6 +300,7 @@
     "sellingMode": "Typ prodeje",
     "byGram": "Na gramy",
     "byPiece": "Na kusy (culíky)",
+    "byPieceTip": "Tip: Pro exkluzivní culíky zvolte \"Na kusy\" aby se vytvořil unikátní produkt.",
     "purchasePricePerPiece": "Nákup za kus (dopočteno)",
     "pricePerPieceCzk": "Partnerská cena za kus (Kč)",
     "retailPricePerPieceCzk": "Prodejní cena za kus (Kč)",

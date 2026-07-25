@@ -691,10 +691,9 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 setColor("");
                 setLengthCm(null);
                 setCustomLength("");
-                setSellingMode("BY_GRAM");
+                // Keep sellingMode and exclusive — user likely stocking same type
                 setTotalPieces("");
                 setPieceWeightGrams("");
-                setExclusive(false);
                 setSupplierId("");
                 setPurchasePricePer100g("");
                 setTotalGrams("");
@@ -950,6 +949,11 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 {t("byPiece")}
               </button>
             </div>
+            {sellingMode === "BY_GRAM" && category === "LUXE" && (
+              <p className="text-xs text-amber-700 bg-amber-50 rounded-lg p-2 mt-2">
+                {t("byPieceTip")}
+              </p>
+            )}
           </div>
         )}
 

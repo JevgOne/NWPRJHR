@@ -131,11 +131,12 @@ export async function POST(request: NextRequest) {
           },
         });
       } else {
+        const exSuffix = isByPiece && data.exclusive;
         product = await prisma.product.create({
           data: {
-            name: `${catNames.cs} — ${data.texture}`,
-            nameUk: `${catNames.uk} — ${data.texture}`,
-            nameRu: `${catNames.ru} — ${data.texture}`,
+            name: `${catNames.cs} — ${data.texture}${exSuffix ? " (Exkluziv)" : ""}`,
+            nameUk: `${catNames.uk} — ${data.texture}${exSuffix ? " (Ексклюзив)" : ""}`,
+            nameRu: `${catNames.ru} — ${data.texture}${exSuffix ? " (Эксклюзив)" : ""}`,
             category: data.category,
             processingType: "OTHER",
             origin: data.origin,
