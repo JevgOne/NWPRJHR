@@ -381,7 +381,7 @@ export function OrderDetailClient({
         <div className="bg-white border border-line rounded-xl px-4 py-3 space-y-1">
           <p className="text-xs font-medium text-muted uppercase mb-2">{t("shippingInfo")}</p>
           <p className="text-sm text-ink">
-            {order.shippingMethod === "PACKETA" ? "Packeta" : order.shippingMethod === "PERSONAL_DELIVERY" ? t("shipPersonal") : order.shippingMethod === "PICKUP" ? t("shipPickup") : order.shippingMethod === "CZECH_POST" ? t("shipPost") : order.shippingMethod}
+            {order.shippingMethod === "PACKETA" ? "Packeta" : order.shippingMethod === "PERSONAL_DELIVERY" ? t("shipPersonal") : order.shippingMethod === "PICKUP" ? t("shipPickup") : order.shippingMethod}
           </p>
           {(order.shippingStreet || order.shippingCity) && (
             <p className="text-sm text-muted">

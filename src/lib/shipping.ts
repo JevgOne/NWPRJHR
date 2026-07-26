@@ -1,6 +1,5 @@
 export const SHIPPING_COSTS = {
   PACKETA: 8900,
-  CZECH_POST: 11900,
   PERSONAL_DELIVERY: 0,
   PICKUP: 0,
 } as const;

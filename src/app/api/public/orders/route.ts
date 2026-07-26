@@ -34,7 +34,6 @@ const publicOrderSchema = z
     shippingMethod: z.enum([
       "PACKETA",
       "PERSONAL_DELIVERY",
-      "CZECH_POST",
     ]),
     shippingStreet: z.string().max(200).optional(),
     shippingCity: z.string().max(100).optional(),
@@ -72,14 +71,14 @@ const publicOrderSchema = z
   .refine(
     (data) => {
       if (
-        (data.shippingMethod === "PERSONAL_DELIVERY" || data.shippingMethod === "CZECH_POST") &&
+        data.shippingMethod === "PERSONAL_DELIVERY" &&
         (!data.shippingStreet || !data.shippingCity || !data.shippingZip)
       ) {
         return false;
       }
       return true;
     },
-    { message: "shippingStreet, shippingCity, and shippingZip are required for PERSONAL_DELIVERY and CZECH_POST" }
+    { message: "shippingStreet, shippingCity, and shippingZip are required for PERSONAL_DELIVERY" }
   );
 
 // Rate limit: 20 per hour per IP (relaxed for dev/testing)

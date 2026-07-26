@@ -643,7 +643,7 @@ async function ProductDetailView({
     { q: "Kolik gramů vlasů potřebuji k prodloužení?", a: "Záleží na požadovaném objemu a délce vlastních vlasů. Pro jemné doplnění hustoty stačí 100 g, pro střední objem 150 g a pro plný objem nebo velmi dlouhé prodloužení 200 g a více. Podrobný průvodce gramáží najdete na naší stránce." },
     // Konzultace a doručení
     { q: "Nabízíte osobní konzultaci před nákupem?", a: "Ano, nabízíme bezplatnou osobní konzultaci v Praze, kde vám pomůžeme vybrat správný odstín, délku a gramáž přírodních vlasů k prodloužení. Můžete si vlasy prohlédnout a osahat naživo. Konzultaci si domluvte na +420 608 553 103 nebo přes WhatsApp." },
-    { q: "Jak funguje doručení a kolik stojí?", a: "V Praze nabízíme osobní doručení zdarma — přivezeme vlasy přímo k vám nebo do salonu. Pro ostatní lokality v ČR zasíláme Českou poštou nebo přepravní službou." },
+    { q: "Jak funguje doručení a kolik stojí?", a: "V Praze nabízíme osobní doručení zdarma — přivezeme vlasy přímo k vám nebo do salonu. Pro ostatní lokality v ČR zasíláme přes Zásilkovnu." },
     // Platba a vrácení
     { q: "Jaké platební metody přijímáte?", a: "Přijímáme platbu bankovním převodem a hotovost při osobním převzetí v Praze. Pro B2B zákazníky (kadeřníky a salony) nabízíme fakturaci se splatností." },
     { q: "Mohu vlasy vrátit, pokud mi nesedí?", a: "Nepoužité vlasy v původním obalu lze vrátit do 14 dnů od převzetí. Vlasy nesmí být střižené, barvené ani jinak upravované. Kontaktujte nás a domluvíme se na postupu vrácení nebo výměny." },

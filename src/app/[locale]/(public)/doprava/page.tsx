@@ -47,9 +47,9 @@ const shippingJsonLd = {
     },
     {
       "@type": "MonetaryAmount",
-      value: "99",
+      value: "89",
       currency: "CZK",
-      description: "Česká pošta — zbytek ČR",
+      description: "Zásilkovna — celá ČR",
     },
   ],
   shippingDestination: {
@@ -105,12 +105,12 @@ export default async function DopravaPage() {
             </p>
           </div>
           <div className="bg-nude-50 rounded-xl border border-line p-5">
-            <div className="text-lg font-bold text-ink mb-1">{t("czechPostPrice")}</div>
+            <div className="text-lg font-bold text-ink mb-1">{t("packetaPrice")}</div>
             <div className="text-sm font-medium text-rose mb-2">
-              {t("czechPost")}
+              {t("packeta")}
             </div>
             <p className="text-sm text-muted">
-              {t("czechPostDesc")}
+              {t("packetaDesc")}
             </p>
           </div>
           <div className="bg-nude-50 rounded-xl border border-line p-5">
@@ -146,8 +146,8 @@ export default async function DopravaPage() {
                 <td className="p-3 text-ink">{t("sameDay")}</td>
               </tr>
               <tr className="border-b border-line">
-                <td className="p-3 text-ink">{t("czechPostSimple")}</td>
-                <td className="p-3 text-ink">{t("twoThreeDays")}</td>
+                <td className="p-3 text-ink">{t("packetaSimple")}</td>
+                <td className="p-3 text-ink">{t("oneThreeDays")}</td>
               </tr>
               <tr>
                 <td className="p-3 text-ink">{t("personalPickupSimple")}</td>

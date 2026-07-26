@@ -30,7 +30,7 @@ const inquirySchema = z.object({
   locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
   customerPhotos: z.array(z.string().url().or(z.string().startsWith("/uploads/"))).max(3).optional().default([]),
   items: z.array(inquiryItemSchema).max(50).default([]),
-  shippingMethod: z.enum(["PERSONAL_DELIVERY", "PACKETA", "CZECH_POST", "PICKUP"]).optional(),
+  shippingMethod: z.enum(["PERSONAL_DELIVERY", "PACKETA", "PICKUP"]).optional(),
   paymentMethod: z.enum(["TRANSFER", "CASH", "CARD"]).optional(),
   packetaPointId: z.string().max(50).optional(),
   packetaPointName: z.string().max(200).optional(),

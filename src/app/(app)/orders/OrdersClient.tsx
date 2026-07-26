@@ -182,7 +182,7 @@ export function OrdersClient({ role }: { role: Role }) {
                       {o.paymentMethod === "CARD" ? t("payCard") : o.paymentMethod === "TRANSFER" ? t("payTransfer") : "—"}
                     </td>
                     <td className="py-2 pr-3 text-xs text-muted">
-                      {o.shippingMethod === "PACKETA" ? "Packeta" : o.shippingMethod === "PERSONAL_DELIVERY" ? t("shipPersonal") : o.shippingMethod === "PICKUP" ? t("shipPickup") : o.shippingMethod === "CZECH_POST" ? t("shipPost") : "—"}
+                      {o.shippingMethod === "PACKETA" ? "Packeta" : o.shippingMethod === "PERSONAL_DELIVERY" ? t("shipPersonal") : o.shippingMethod === "PICKUP" ? t("shipPickup") : o.shippingMethod ?? "—"}
                     </td>
                     <td className="py-2 pr-3">
                       <span

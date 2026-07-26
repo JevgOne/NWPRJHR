@@ -354,7 +354,7 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
                 ? "Osobní rozvoz"
                 : sale.shippingMethod === "PICKUP"
                 ? "Osobní vyzvednutí"
-                : "Česká pošta"}
+                : sale.shippingMethod}
             </span>
             {sale.shippingStatus && (
               <>

@@ -279,7 +279,7 @@ export function InquiriesClient() {
                                 ? "Osobní rozvoz"
                                 : inq.shippingMethod === "PICKUP"
                                 ? "Osobní vyzvednutí"
-                                : "Česká pošta"
+                                : inq.shippingMethod
                             }
                           />
                         )}
