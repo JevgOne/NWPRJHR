@@ -156,6 +156,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
   const [editInstagram, setEditInstagram] = useState("");
+  const [editNote, setEditNote] = useState("");
 
   useEffect(() => {
     fetch(`/api/customers/${id}`)
@@ -168,6 +169,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
         setEditPhone(data.phone || "");
         setEditCity(data.city || "");
         setEditInstagram(data.instagram || "");
+        setEditNote(data.note || "");
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -184,6 +186,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
         phone: editPhone || undefined,
         city: editCity || undefined,
         instagram: editInstagram || undefined,
+        note: editNote || undefined,
       }),
     });
     if (res.ok) {
@@ -274,6 +277,17 @@ export function CustomerDetailClient({ id }: { id: string }) {
             onChange={(e) => setEditInstagram(e.target.value)}
             placeholder="@username"
           />
+          <div>
+            <label className="block text-sm font-medium text-ink mb-1">{t("note")}</label>
+            <textarea
+              className="w-full rounded-lg border border-line px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-rose/20 focus:border-rose"
+              rows={3}
+              value={editNote}
+              onChange={(e) => setEditNote(e.target.value)}
+              placeholder={t("notePlaceholder")}
+              maxLength={1000}
+            />
+          </div>
           <div className="flex gap-2">
             <Button size="sm" onClick={handleSave}>
               {tCommon("save")}
@@ -320,6 +334,12 @@ export function CustomerDetailClient({ id }: { id: string }) {
                 <span className="text-ink font-medium">-</span>
               )}
             </div>
+            {customer.note && (
+              <div className="flex items-start gap-2 sm:col-span-2">
+                <span className="text-muted w-20 shrink-0">{t("note")}</span>
+                <span className="text-ink font-medium text-sm">{customer.note}</span>
+              </div>
+            )}
             {customer.firstPurchaseDate && (
               <div className="flex items-center gap-2">
                 <span className="text-muted w-20 shrink-0">{t("firstPurchase")}</span>
@@ -552,6 +572,39 @@ export function CustomerDetailClient({ id }: { id: string }) {
         </div>
       )}
 
+      {/* Referrals */}
+      {customer.referrals.length > 0 && (
+        <div className="bg-white border border-line rounded-xl overflow-hidden">
+          <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
+            <h2 className="text-sm font-semibold text-espresso">
+              {t("referralsTitle")} ({customer.referrals.length})
+            </h2>
+          </div>
+          <div className="divide-y divide-line/50">
+            {customer.referrals.map((ref) => (
+              <div key={ref.id} className="px-4 py-3 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-mono text-ink">{ref.code}</span>
+                  <span className="text-xs text-muted">
+                    {t("referralUsed")}: {ref.usedCount}
+                    {ref.maxUses !== null && `/${ref.maxUses}`}
+                  </span>
+                </div>
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    ref.active
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {ref.active ? t("referralActive") : t("referralInactive")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Inquiries */}
       <div className="bg-white border border-line rounded-xl overflow-hidden">
         <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
@@ -564,7 +617,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
         ) : (
           <div className="divide-y divide-line/50">
             {customer.inquiries.map((inq) => (
-              <Link key={inq.id} href={`/inquiries`}>
+              <Link key={inq.id} href={`/inquiries/${inq.id}`}>
                 <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
                   <span className="text-sm text-ink">
                     {new Date(inq.createdAt).toLocaleDateString("cs-CZ")}
