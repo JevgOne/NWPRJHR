@@ -396,7 +396,9 @@
     "buyer": "Покупатель",
     "noInvoices": "Нет счетов",
     "deleteInvoice": "Удалить счёт",
-    "deleteConfirm": "Действительно удалить этот счёт?"
+    "deleteConfirm": "Действительно удалить этот счёт?",
+    "description": "Описание",
+    "quantity": "Количество"
   },
   "company": {
     "title": "Компании",
@@ -3052,7 +3054,8 @@
     "deposit": "Задаток",
     "resendDepositLink": "Отправить повторно ссылку на оплату",
     "depositPaid": "Задаток оплачен",
-    "depositPending": "Ожидает оплаты"
+    "depositPending": "Ожидает оплаты",
+    "depositCancelled": "Отменено"
   },
   "calendar": {
     "sales": "Продажи",

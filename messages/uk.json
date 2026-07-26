@@ -396,7 +396,9 @@
     "buyer": "Покупець",
     "noInvoices": "Немає рахунків",
     "deleteInvoice": "Видалити рахунок",
-    "deleteConfirm": "Дійсно видалити цей рахунок?"
+    "deleteConfirm": "Дійсно видалити цей рахунок?",
+    "description": "Опис",
+    "quantity": "Кількість"
   },
   "company": {
     "title": "Компанії",
@@ -3052,7 +3054,8 @@
     "deposit": "Завдаток",
     "resendDepositLink": "Надіслати повторно посилання на оплату",
     "depositPaid": "Завдаток оплачено",
-    "depositPending": "Очікує оплати"
+    "depositPending": "Очікує оплати",
+    "depositCancelled": "Скасовано"
   },
   "calendar": {
     "sales": "Продажі",

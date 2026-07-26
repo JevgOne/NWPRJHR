@@ -31,14 +31,14 @@ function formatCZK(halere: number): string {
 const statusColors: Record<string, string> = {
   NEW: "bg-nude-100 text-espresso",
   AWAITING_PAYMENT: "bg-orange-100 text-orange-700",
-  PAID: "bg-blue-100 text-blue-700",
+  PAID: "bg-emerald-50 text-emerald-700 border border-emerald-200",
   CONFIRMED: "bg-rose/15 text-espresso",
   PROCESSING: "bg-indigo-100 text-indigo-700",
   REJECTED: "bg-red-100 text-red-700",
   READY: "bg-green-100 text-green-700",
-  SHIPPED: "bg-yellow-100 text-yellow-700",
+  SHIPPED: "bg-blue-50 text-blue-700 border border-blue-200",
   DELIVERED: "bg-emerald-100 text-emerald-700",
-  COMPLETED: "bg-nude-100 text-gray-600",
+  COMPLETED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
   CANCELLED: "bg-nude-100 text-muted",
 };
 

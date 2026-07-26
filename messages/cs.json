@@ -396,7 +396,9 @@
     "buyer": "Odběratel",
     "noInvoices": "Žádné faktury",
     "deleteInvoice": "Smazat fakturu",
-    "deleteConfirm": "Opravdu smazat tuto fakturu?"
+    "deleteConfirm": "Opravdu smazat tuto fakturu?",
+    "description": "Popis",
+    "quantity": "Množství"
   },
   "company": {
     "title": "Firmy",
@@ -3052,7 +3054,8 @@
     "deposit": "Záloha",
     "resendDepositLink": "Poslat znovu platební odkaz",
     "depositPaid": "Záloha zaplacena",
-    "depositPending": "Čeká na zaplacení"
+    "depositPending": "Čeká na zaplacení",
+    "depositCancelled": "Stornováno"
   },
   "calendar": {
     "sales": "Prodeje",

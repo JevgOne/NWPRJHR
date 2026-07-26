@@ -267,7 +267,7 @@ export function ReservationDetailClient({
                   ? "bg-gray-50 text-gray-500"
                   : "bg-amber-50 text-amber-700"
               }`}>
-                {inv.status === "PAID" ? t("depositPaid") : t("depositPending")}
+                {inv.status === "PAID" ? t("depositPaid") : inv.status === "CANCELLED" ? t("depositCancelled") : t("depositPending")}
               </span>
             </div>
           ))}

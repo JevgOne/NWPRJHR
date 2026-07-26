@@ -40,8 +40,8 @@ function formatCZK(halere: number): string {
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  PAID: "bg-green-100 text-green-700",
-  COMPLETED: "bg-nude-100 text-gray-600",
+  PAID: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  COMPLETED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
   EXPIRED: "bg-red-100 text-red-700",
   CANCELLED: "bg-nude-100 text-muted",
 };

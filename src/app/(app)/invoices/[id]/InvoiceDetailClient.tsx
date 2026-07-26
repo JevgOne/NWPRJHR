@@ -182,7 +182,7 @@ export function InvoiceDetailClient({
           </div>
         </Card>
         <Card padding="sm">
-          <h3 className="text-xs text-muted mb-1 uppercase">-</h3>
+          <h3 className="text-xs text-muted mb-1 uppercase">{t("buyer")}</h3>
           <div className="text-sm">
             <div className="font-medium">{invoice.buyerName}</div>
             {invoice.buyerIco && <div>ICO: {invoice.buyerIco}</div>}
@@ -211,8 +211,8 @@ export function InvoiceDetailClient({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-muted">
-              <th className="py-1 pr-2">-</th>
-              <th className="py-1 pr-2 text-right">-</th>
+              <th className="py-1 pr-2">{t("description")}</th>
+              <th className="py-1 pr-2 text-right">{t("quantity")}</th>
               <th className="py-1 pr-2 text-right">{t("pricePerGram")}</th>
               <th className="py-1 text-right">{t("total")}</th>
             </tr>
