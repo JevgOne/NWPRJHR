@@ -7,6 +7,68 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
+interface SaleItem {
+  grams: number;
+  pieces: number;
+  lineTotal: number;
+  variant: {
+    color: string;
+    lengthCm: number;
+    sellingMode: string;
+    product: { name: string };
+  };
+}
+
+interface SaleSummary {
+  id: string;
+  saleNumber?: string;
+  totalAmount: number;
+  completedAt: string;
+  paymentType?: string;
+  items: SaleItem[];
+}
+
+interface ReservationSummary {
+  id: string;
+  reservationNumber?: string;
+  status: string;
+  lineTotal: number;
+  grams: number;
+  pieces: number;
+  sellingMode: string;
+  paymentDueDate: string;
+  paidAt?: string | null;
+  createdAt: string;
+  variant: {
+    color: string;
+    lengthCm: number;
+    product: { name: string };
+  };
+  invoices: {
+    id: string;
+    number: string;
+    total: number;
+    status: string;
+  }[];
+}
+
+interface InvoiceSummary {
+  id: string;
+  number: string;
+  type: string;
+  total: number;
+  status: string;
+  issueDate: string;
+}
+
+interface OrderSummary {
+  id: string;
+  orderNumber?: string;
+  status: string;
+  totalAmount: number;
+  createdAt: string;
+}
+
 interface CustomerDetail {
   id: string;
   name: string;
@@ -20,24 +82,63 @@ interface CustomerDetail {
   totalSpent: number;
   salesCount: number;
   inquiriesCount: number;
-  sales: {
-    id: string;
-    saleNumber?: string;
-    totalAmount: number;
-    completedAt: string;
-  }[];
+  totalGramsBought: number;
+  totalPiecesBought: number;
+  averageOrderValue: number;
+  firstPurchaseDate?: string | null;
+  lastPurchaseDate?: string | null;
+  reservationsCount: number;
+  activeReservations: number;
+  ordersCount: number;
+  invoicesCount: number;
+  sales: SaleSummary[];
   inquiries: {
     id: string;
     status: string;
     createdAt: string;
     items: { id: string }[];
   }[];
+  productReservations: ReservationSummary[];
+  invoices: InvoiceSummary[];
+  orders: OrderSummary[];
+  referrals: {
+    id: string;
+    code: string;
+    usedCount: number;
+    maxUses: number | null;
+    active: boolean;
+  }[];
 }
+
+const RES_STATUS_STYLE: Record<string, string> = {
+  PENDING: "bg-amber-50 text-amber-700 border border-amber-200",
+  PAID: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  COMPLETED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  EXPIRED: "bg-red-50 text-red-700 border border-red-200",
+  CANCELLED: "bg-gray-100 text-gray-500",
+};
+
+const INV_STATUS_STYLE: Record<string, string> = {
+  PAID: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  CANCELLED: "bg-gray-100 text-gray-500",
+  AWAITING: "bg-amber-50 text-amber-700 border border-amber-200",
+};
+
+const ORDER_STATUS_STYLE: Record<string, string> = {
+  PAID: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  COMPLETED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  DELIVERED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  SHIPPED: "bg-blue-50 text-blue-700 border border-blue-200",
+  AWAITING_PAYMENT: "bg-amber-50 text-amber-700 border border-amber-200",
+  NEW: "bg-amber-50 text-amber-700 border border-amber-200",
+  CANCELLED: "bg-gray-100 text-gray-500",
+  REJECTED: "bg-red-50 text-red-700 border border-red-200",
+};
 
 function formatCZK(halere: number): string {
   return (halere / 100).toLocaleString("cs-CZ", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   });
 }
 
@@ -45,6 +146,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
   const t = useTranslations("customer");
   const tSale = useTranslations("sale");
   const tCommon = useTranslations("common");
+  const tRes = useTranslations("reservation");
   const [customer, setCustomer] = useState<CustomerDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -91,13 +193,14 @@ export function CustomerDetailClient({ id }: { id: string }) {
     }
   };
 
-  if (loading) return <p className="text-muted">{tCommon("loading")}</p>;
-  if (!customer) return <p className="text-red-500">{tCommon("error")}</p>;
+  if (loading) return <p className="text-muted py-8 text-center">{tCommon("loading")}</p>;
+  if (!customer) return <p className="text-red-500 py-8 text-center">{tCommon("error")}</p>;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <div className="max-w-3xl mx-auto space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">{customer.name}</h1>
+        <h1 className="text-xl font-bold text-ink">{customer.name}</h1>
         <div className="flex gap-2">
           <Button
             variant="secondary"
@@ -114,6 +217,27 @@ export function CustomerDetailClient({ id }: { id: string }) {
         </div>
       </div>
 
+      {/* Summary cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+          <p className="text-2xl font-bold text-ink">{formatCZK(customer.totalSpent)}</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t("totalSpent")}</p>
+        </div>
+        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+          <p className="text-2xl font-bold text-ink">{customer.salesCount}</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t("salesCount")}</p>
+        </div>
+        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+          <p className="text-2xl font-bold text-ink">{customer.totalGramsBought}g</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t("totalGrams")}</p>
+        </div>
+        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+          <p className="text-2xl font-bold text-ink">{formatCZK(customer.averageOrderValue)}</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t("avgOrder")}</p>
+        </div>
+      </div>
+
+      {/* Contact info / Edit form */}
       {editing ? (
         <Card className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
@@ -164,67 +288,285 @@ export function CustomerDetailClient({ id }: { id: string }) {
           </div>
         </Card>
       ) : (
-        <Card>
-          <div className="grid grid-cols-2 gap-y-2 text-sm">
-            <span className="text-muted">{t("email")}</span>
-            <span>{customer.email || "-"}</span>
-            <span className="text-muted">{t("phone")}</span>
-            <span>{customer.phone || "-"}</span>
-            <span className="text-muted">{t("city")}</span>
-            <span>{customer.city || "-"}</span>
-            <span className="text-muted">Instagram</span>
-            <span>{customer.instagram || "-"}</span>
-            <span className="text-muted">{t("totalSpent")}</span>
-            <span className="font-medium">
-              {formatCZK(customer.totalSpent)} CZK
-            </span>
+        <div className="bg-white border border-line rounded-xl overflow-hidden">
+          <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
+            <h2 className="text-sm font-semibold text-espresso">{t("title")}</h2>
           </div>
-        </Card>
+          <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-muted w-20 shrink-0">{t("email")}</span>
+              <span className="text-ink font-medium truncate">{customer.email || "-"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted w-20 shrink-0">{t("phone")}</span>
+              <span className="text-ink font-medium">{customer.phone || "-"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted w-20 shrink-0">{t("city")}</span>
+              <span className="text-ink font-medium">{customer.city || "-"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted w-20 shrink-0">Instagram</span>
+              {customer.instagram ? (
+                <a
+                  href={`https://instagram.com/${customer.instagram.replace("@", "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose hover:underline font-medium"
+                >
+                  {customer.instagram}
+                </a>
+              ) : (
+                <span className="text-ink font-medium">-</span>
+              )}
+            </div>
+            {customer.firstPurchaseDate && (
+              <div className="flex items-center gap-2">
+                <span className="text-muted w-20 shrink-0">{t("firstPurchase")}</span>
+                <span className="text-ink font-medium">
+                  {new Date(customer.firstPurchaseDate).toLocaleDateString("cs-CZ")}
+                </span>
+              </div>
+            )}
+            {customer.lastPurchaseDate && (
+              <div className="flex items-center gap-2">
+                <span className="text-muted w-20 shrink-0">{t("lastPurchase")}</span>
+                <span className="text-ink font-medium">
+                  {new Date(customer.lastPurchaseDate).toLocaleDateString("cs-CZ")}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
       )}
 
-      <Card>
-        <h2 className="font-medium mb-3">
-          {t("purchaseHistory")} ({customer.salesCount})
-        </h2>
+      {/* Reservations */}
+      {customer.productReservations.length > 0 && (
+        <div className="bg-white border border-line rounded-xl overflow-hidden">
+          <div className="bg-nude-100 px-4 py-2.5 border-b border-line flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-espresso">
+              {t("reservations")} ({customer.reservationsCount})
+            </h2>
+            {customer.activeReservations > 0 && (
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+                {customer.activeReservations} {t("active")}
+              </span>
+            )}
+          </div>
+          <div className="divide-y divide-line/50">
+            {customer.productReservations.map((res) => {
+              const isActive = res.status === "PENDING" || res.status === "PAID";
+              return (
+                <Link key={res.id} href={`/reservations/${res.id}`}>
+                  <div
+                    className={`px-4 py-3 hover:bg-nude-50 transition-colors ${
+                      isActive ? "border-l-3 border-l-amber-400 bg-amber-50/30" : ""
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                            RES_STATUS_STYLE[res.status] ?? "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {tRes(res.status.toLowerCase())}
+                        </span>
+                        {res.reservationNumber && (
+                          <span className="text-xs text-muted font-mono">
+                            {res.reservationNumber}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium text-ink">
+                        {formatCZK(res.lineTotal)} CZK
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-xs text-muted">
+                        {res.variant.product.name} {res.variant.color} {res.variant.lengthCm}cm
+                        {res.sellingMode === "BY_PIECE"
+                          ? ` (${res.pieces}ks)`
+                          : ` (${res.grams}g)`}
+                      </span>
+                      {res.invoices.length > 0 && (
+                        <span
+                          className={`text-xs ${
+                            res.invoices[0].status === "PAID"
+                              ? "text-emerald-600"
+                              : "text-amber-600"
+                          }`}
+                        >
+                          {t("deposit")}:{" "}
+                          {res.invoices[0].status === "PAID"
+                            ? t("paid")
+                            : t("awaiting")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Sales history */}
+      <div className="bg-white border border-line rounded-xl overflow-hidden">
+        <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
+          <h2 className="text-sm font-semibold text-espresso">
+            {t("purchaseHistory")} ({customer.salesCount})
+          </h2>
+        </div>
         {customer.sales.length === 0 ? (
-          <p className="text-muted text-sm">{tSale("noSales")}</p>
+          <p className="text-muted text-sm py-8 text-center italic">{tSale("noSales")}</p>
         ) : (
-          <div className="space-y-2">
+          <div className="divide-y divide-line/50">
             {customer.sales.map((sale) => (
               <Link key={sale.id} href={`/sales/${sale.id}`}>
-                <div className="flex justify-between items-center p-2 rounded hover:bg-nude-50 text-sm">
-                  <div className="flex items-center gap-2">
-                    {sale.saleNumber && (
-                      <span className="text-xs text-muted">#{sale.saleNumber}</span>
-                    )}
-                    <span>
-                      {sale.completedAt
-                        ? new Date(sale.completedAt).toLocaleDateString("cs-CZ")
-                        : "-"}
+                <div className="px-4 py-3 hover:bg-nude-50 transition-colors">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      {sale.saleNumber && (
+                        <span className="text-xs text-muted font-mono">
+                          #{sale.saleNumber}
+                        </span>
+                      )}
+                      <span className="text-sm text-ink">
+                        {sale.completedAt
+                          ? new Date(sale.completedAt).toLocaleDateString("cs-CZ")
+                          : "-"}
+                      </span>
+                      {sale.paymentType && (
+                        <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium">
+                          {sale.paymentType}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-ink">
+                      {formatCZK(sale.totalAmount)} CZK
                     </span>
                   </div>
-                  <span className="font-medium">
-                    {formatCZK(sale.totalAmount)} CZK
-                  </span>
+                  {sale.items.length > 0 && (
+                    <div className="text-xs text-muted mt-1">
+                      {sale.items.map((item, i) => (
+                        <span key={i}>
+                          {i > 0 && ", "}
+                          {item.variant.product.name} {item.variant.color}{" "}
+                          {item.variant.lengthCm}cm
+                          {item.variant.sellingMode === "BY_PIECE"
+                            ? ` (${item.pieces}ks)`
+                            : ` (${item.grams}g)`}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}
           </div>
         )}
-      </Card>
+      </div>
 
-      <Card>
-        <h2 className="font-medium mb-3">
-          {t("inquiries")} ({customer.inquiriesCount})
-        </h2>
+      {/* Invoices */}
+      {customer.invoices.length > 0 && (
+        <div className="bg-white border border-line rounded-xl overflow-hidden">
+          <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
+            <h2 className="text-sm font-semibold text-espresso">
+              {t("invoicesTitle")} ({customer.invoicesCount})
+            </h2>
+          </div>
+          <div className="divide-y divide-line/50">
+            {customer.invoices.map((inv) => (
+              <Link key={inv.id} href={`/invoices/${inv.id}`}>
+                <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-muted">{inv.number}</span>
+                    <span className="text-xs text-muted">
+                      {new Date(inv.issueDate).toLocaleDateString("cs-CZ")}
+                    </span>
+                    {inv.type !== "INVOICE" && (
+                      <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium">
+                        {inv.type}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-ink">
+                      {formatCZK(inv.total)} CZK
+                    </span>
+                    <span
+                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        INV_STATUS_STYLE[inv.status] ?? "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {inv.status}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Orders */}
+      {customer.orders.length > 0 && (
+        <div className="bg-white border border-line rounded-xl overflow-hidden">
+          <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
+            <h2 className="text-sm font-semibold text-espresso">
+              {t("ordersTitle")} ({customer.ordersCount})
+            </h2>
+          </div>
+          <div className="divide-y divide-line/50">
+            {customer.orders.map((order) => (
+              <Link key={order.id} href={`/orders/${order.id}`}>
+                <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    {order.orderNumber && (
+                      <span className="text-xs text-muted font-mono">
+                        #{order.orderNumber}
+                      </span>
+                    )}
+                    <span className="text-xs text-muted">
+                      {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-ink">
+                      {order.totalAmount ? formatCZK(order.totalAmount) : "-"} CZK
+                    </span>
+                    <span
+                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        ORDER_STATUS_STYLE[order.status] ?? "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Inquiries */}
+      <div className="bg-white border border-line rounded-xl overflow-hidden">
+        <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
+          <h2 className="text-sm font-semibold text-espresso">
+            {t("inquiries")} ({customer.inquiriesCount})
+          </h2>
+        </div>
         {customer.inquiries.length === 0 ? (
-          <p className="text-muted text-sm">{t("noInquiries")}</p>
+          <p className="text-muted text-sm py-8 text-center italic">{t("noInquiries")}</p>
         ) : (
-          <div className="space-y-2">
+          <div className="divide-y divide-line/50">
             {customer.inquiries.map((inq) => (
               <Link key={inq.id} href={`/inquiries`}>
-                <div className="flex justify-between items-center p-2 rounded hover:bg-nude-50 text-sm">
-                  <span>
+                <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
+                  <span className="text-sm text-ink">
                     {new Date(inq.createdAt).toLocaleDateString("cs-CZ")}
                   </span>
                   <span className="text-xs text-muted">
@@ -233,14 +575,14 @@ export function CustomerDetailClient({ id }: { id: string }) {
                       : t("consultation")}
                   </span>
                   <span
-                    className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                    className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                       inq.status === "NEW"
-                        ? "bg-blue-100 text-blue-800"
+                        ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : inq.status === "CONTACTED"
-                          ? "bg-yellow-100 text-yellow-800"
+                          ? "bg-amber-50 text-amber-700 border border-amber-200"
                           : inq.status === "COMPLETED"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-red-50 text-red-700 border border-red-200"
                     }`}
                   >
                     {inq.status}
@@ -250,7 +592,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
             ))}
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

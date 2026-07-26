@@ -27,11 +27,20 @@ export async function GET(
           saleNumber: true,
           totalAmount: true,
           completedAt: true,
+          paymentType: true,
           items: {
             select: {
               grams: true,
               pieces: true,
               lineTotal: true,
+              variant: {
+                select: {
+                  color: true,
+                  lengthCm: true,
+                  sellingMode: true,
+                  product: { select: { name: true } },
+                },
+              },
             },
           },
         },
@@ -47,6 +56,70 @@ export async function GET(
         },
         take: 50,
       },
+      productReservations: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          reservationNumber: true,
+          status: true,
+          lineTotal: true,
+          grams: true,
+          pieces: true,
+          sellingMode: true,
+          paymentDueDate: true,
+          paidAt: true,
+          createdAt: true,
+          variant: {
+            select: {
+              color: true,
+              lengthCm: true,
+              product: { select: { name: true } },
+            },
+          },
+          invoices: {
+            where: { type: "DEPOSIT" },
+            select: {
+              id: true,
+              number: true,
+              total: true,
+              status: true,
+            },
+          },
+        },
+        take: 50,
+      },
+      invoices: {
+        orderBy: { issueDate: "desc" },
+        select: {
+          id: true,
+          number: true,
+          type: true,
+          total: true,
+          status: true,
+          issueDate: true,
+        },
+        take: 50,
+      },
+      orders: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          orderNumber: true,
+          status: true,
+          totalAmount: true,
+          createdAt: true,
+        },
+        take: 50,
+      },
+      referrals: {
+        select: {
+          id: true,
+          code: true,
+          usedCount: true,
+          maxUses: true,
+          active: true,
+        },
+      },
     },
   });
 
@@ -54,12 +127,42 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const totalSpent = customer.sales.reduce((s, sale) => s + sale.totalAmount, 0);
+  const totalGramsBought = customer.sales.reduce(
+    (s, sale) => s + sale.items.reduce((g, item) => g + item.grams, 0),
+    0
+  );
+  const totalPiecesBought = customer.sales.reduce(
+    (s, sale) => s + sale.items.reduce((p, item) => p + item.pieces, 0),
+    0
+  );
+  const averageOrderValue =
+    customer.sales.length > 0
+      ? Math.round(totalSpent / customer.sales.length)
+      : 0;
+  const firstPurchaseDate =
+    customer.sales.length > 0
+      ? customer.sales[customer.sales.length - 1]?.completedAt
+      : null;
+  const lastPurchaseDate =
+    customer.sales.length > 0 ? customer.sales[0]?.completedAt : null;
+  const activeReservations = customer.productReservations.filter(
+    (r) => r.status === "PENDING" || r.status === "PAID"
+  ).length;
 
   return NextResponse.json({
     ...customer,
     totalSpent,
+    totalGramsBought,
+    totalPiecesBought,
+    averageOrderValue,
+    firstPurchaseDate,
+    lastPurchaseDate,
     salesCount: customer.sales.length,
     inquiriesCount: customer.inquiries.length,
+    reservationsCount: customer.productReservations.length,
+    activeReservations,
+    ordersCount: customer.orders.length,
+    invoicesCount: customer.invoices.length,
   });
 }
 
