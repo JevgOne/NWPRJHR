@@ -83,6 +83,7 @@ export function ReservationDetailClient({
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
+  const [completePaymentType, setCompletePaymentType] = useState("CASH");
 
   const isOwner = role === "OWNER";
 
@@ -319,13 +320,24 @@ export function ReservationDetailClient({
             )}
 
             {reservation.status === "PAID" && (
-              <Button
-                size="sm"
-                onClick={() => doAction("complete")}
-                disabled={actionLoading}
-              >
-                {t("complete")}
-              </Button>
+              <div className="flex items-center gap-2">
+                <select
+                  value={completePaymentType}
+                  onChange={(e) => setCompletePaymentType(e.target.value)}
+                  className="text-sm border border-line rounded-lg px-2 py-1.5 bg-white text-ink"
+                >
+                  <option value="CASH">Hotově</option>
+                  <option value="CARD">Kartou</option>
+                  <option value="TRANSFER">Převodem</option>
+                </select>
+                <Button
+                  size="sm"
+                  onClick={() => doAction("complete", { paymentType: completePaymentType })}
+                  disabled={actionLoading}
+                >
+                  {t("complete")}
+                </Button>
+              </div>
             )}
 
             {/* Cancel */}

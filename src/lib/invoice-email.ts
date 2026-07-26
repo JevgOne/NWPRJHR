@@ -24,8 +24,10 @@ export async function sendInvoiceEmail(
     include: {
       company: true,
       items: true,
+      payments: { orderBy: { date: "asc" as const }, take: 1 },
       sale: {
         select: {
+          paymentType: true,
           salon: { select: { email: true, name: true, language: true, phone: true } },
           customer: { select: { email: true, name: true, phone: true, instagram: true } },
           customerType: true,
@@ -33,6 +35,11 @@ export async function sendInvoiceEmail(
       },
     },
   });
+
+  // Don't send payment confirmation for unpaid invoices
+  if (invoice.status === "AWAITING") {
+    return { sent: false, reason: "not_paid" };
+  }
 
   // Don't send emails for internal documents
   if (invoice.type === "CREDIT_NOTE") {
@@ -56,11 +63,21 @@ export async function sendInvoiceEmail(
       : invoice.sale?.customer?.name ?? invoice.buyerName;
 
   // Generate PDF
+  const paymentMethodLabel = invoice.sale?.paymentType === "CASH"
+    ? "Hotově"
+    : invoice.sale?.paymentType === "CARD"
+    ? "Kartou"
+    : invoice.sale?.paymentType === "TRANSFER"
+    ? "Převodem"
+    : null;
+
   const pdfData: InvoicePdfData = {
-    type: invoice.type as "INVOICE" | "CREDIT_NOTE",
+    type: invoice.type as "INVOICE" | "CREDIT_NOTE" | "DEPOSIT",
     number: invoice.number,
     issueDate: invoice.issueDate,
     dueDate: invoice.dueDate,
+    paidDate: invoice.status === "PAID" ? new Date() : null,
+    paymentMethod: paymentMethodLabel,
     taxDate: invoice.taxDate,
     variableSymbol: invoice.variableSymbol,
     buyerName: invoice.buyerName,

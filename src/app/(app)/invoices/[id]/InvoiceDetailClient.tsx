@@ -54,10 +54,18 @@ interface InvoiceDetail {
     date: string;
     source: string;
   }[];
-  sale?: { id: string; saleNumber?: string };
+  sale?: { id: string; saleNumber?: string; paymentType?: string };
   originalInvoice?: { id: string; number: string };
   creditNotes?: { id: string; number: string; total: number }[];
 }
+
+const paymentMethodLabels: Record<string, string> = {
+  CASH: "Hotově",
+  CARD: "Kartou",
+  TRANSFER: "Převodem",
+  PROMO: "Promo",
+  WRITEOFF: "Odpis",
+};
 
 function formatCZK(halere: number): string {
   return (halere / 100).toLocaleString("cs-CZ", {
@@ -201,6 +209,20 @@ export function InvoiceDetailClient({
           <span>
             {new Date(invoice.issueDate).toLocaleDateString("cs-CZ")}
           </span>
+          {invoice.payments.length > 0 && invoice.status === "PAID" && (
+            <>
+              <span className="text-muted">{t("paidDate")}</span>
+              <span>
+                {new Date(invoice.payments[0].date).toLocaleDateString("cs-CZ")}
+              </span>
+            </>
+          )}
+          {invoice.sale?.paymentType && (
+            <>
+              <span className="text-muted">{t("paymentMethod")}</span>
+              <span>{paymentMethodLabels[invoice.sale.paymentType] ?? invoice.sale.paymentType}</span>
+            </>
+          )}
           <span className="text-muted">{t("variableSymbol")}</span>
           <span className="font-mono">{invoice.variableSymbol}</span>
         </div>

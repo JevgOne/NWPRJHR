@@ -398,7 +398,9 @@
     "deleteInvoice": "Видалити рахунок",
     "deleteConfirm": "Дійсно видалити цей рахунок?",
     "description": "Опис",
-    "quantity": "Кількість"
+    "quantity": "Кількість",
+    "paidDate": "Дата оплати",
+    "paymentMethod": "Спосіб оплати"
   },
   "company": {
     "title": "Компанії",

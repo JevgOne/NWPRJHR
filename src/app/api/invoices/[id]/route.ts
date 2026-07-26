@@ -19,7 +19,7 @@ export async function GET(
       company: true,
       items: true,
       payments: true,
-      sale: { select: { id: true, saleNumber: true, customerType: true } },
+      sale: { select: { id: true, saleNumber: true, customerType: true, paymentType: true } },
       creditNotes: { select: { id: true, number: true, total: true } },
       originalInvoice: { select: { id: true, number: true } },
     },

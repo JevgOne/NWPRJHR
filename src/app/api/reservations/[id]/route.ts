@@ -143,6 +143,7 @@ export async function POST(
               },
             ],
             note: `Reservation ${res.reservationNumber}`,
+            paymentType: body.paymentType ?? "CASH",
             discount: res.discountPercent
               ? {
                   percent: res.discountPercent,
@@ -170,7 +171,10 @@ export async function POST(
             where: { reservationId: id, type: "DEPOSIT" },
           });
           if (hasDeposit) {
-            invoice = await createSettlementInvoice(id, sale.id, body.companyId);
+            const isPaidNow = sale.paymentType === "CASH" || sale.paymentType === "CARD";
+            invoice = await createSettlementInvoice(id, sale.id, body.companyId, {
+              paid: isPaidNow,
+            });
           } else {
             invoice = await createInvoiceFromSale(sale.id, body.companyId);
           }

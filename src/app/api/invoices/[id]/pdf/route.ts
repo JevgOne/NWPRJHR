@@ -19,8 +19,10 @@ export async function GET(
       company: true,
       items: true,
       originalInvoice: { select: { number: true } },
+      payments: { orderBy: { date: "asc" as const }, take: 1 },
       sale: {
         select: {
+          paymentType: true,
           customerType: true,
           customer: { select: { email: true, phone: true, instagram: true } },
           salon: { select: { email: true, phone: true } },
@@ -38,11 +40,21 @@ export async function GET(
   )
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
+  const paymentMethodLabel = invoice.sale?.paymentType === "CASH"
+    ? "Hotově"
+    : invoice.sale?.paymentType === "CARD"
+    ? "Kartou"
+    : invoice.sale?.paymentType === "TRANSFER"
+    ? "Převodem"
+    : null;
+
   const pdfData: InvoicePdfData = {
-    type: invoice.type as "INVOICE" | "CREDIT_NOTE",
+    type: invoice.type as "INVOICE" | "CREDIT_NOTE" | "DEPOSIT",
     number: invoice.number,
     issueDate: invoice.issueDate,
     dueDate: invoice.dueDate,
+    paidDate: invoice.status === "PAID" ? new Date() : null,
+    paymentMethod: paymentMethodLabel,
     taxDate: invoice.taxDate,
     variableSymbol: invoice.variableSymbol,
     buyerName: invoice.buyerName,

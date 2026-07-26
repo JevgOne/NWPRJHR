@@ -33,6 +33,9 @@ interface InvoiceTranslations {
   bankName: string;
   page: string;
   referencesInvoice: string;
+  depositTitle: string;
+  paidDate: string;
+  paymentMethod: string;
 }
 
 const translations: Record<string, InvoiceTranslations> = {
@@ -66,6 +69,9 @@ const translations: Record<string, InvoiceTranslations> = {
     bankName: "Banka",
     page: "Strana",
     referencesInvoice: "Opravný doklad k faktuře",
+    depositTitle: "Doklad o záloze",
+    paidDate: "Datum úhrady",
+    paymentMethod: "Způsob platby",
   },
   uk: {
     title: "Рахунок-фактура",
@@ -97,6 +103,9 @@ const translations: Record<string, InvoiceTranslations> = {
     bankName: "Банк",
     page: "Сторінка",
     referencesInvoice: "Коригування до рахунку",
+    depositTitle: "Квитанція про аванс",
+    paidDate: "Дата оплати",
+    paymentMethod: "Спосіб оплати",
   },
   ru: {
     title: "Счёт-фактура",
@@ -128,6 +137,9 @@ const translations: Record<string, InvoiceTranslations> = {
     bankName: "Банк",
     page: "Страница",
     referencesInvoice: "Корректировка к счёту",
+    depositTitle: "Документ об авансе",
+    paidDate: "Дата оплаты",
+    paymentMethod: "Способ оплаты",
   },
 };
 

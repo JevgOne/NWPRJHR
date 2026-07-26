@@ -398,7 +398,9 @@
     "deleteInvoice": "Удалить счёт",
     "deleteConfirm": "Действительно удалить этот счёт?",
     "description": "Описание",
-    "quantity": "Количество"
+    "quantity": "Количество",
+    "paidDate": "Дата оплаты",
+    "paymentMethod": "Способ оплаты"
   },
   "company": {
     "title": "Компании",

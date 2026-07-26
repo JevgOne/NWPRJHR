@@ -55,7 +55,7 @@ export function InvoicesClient({ role }: { role: Role }) {
       .finally(() => setLoading(false));
   }, [page, statusFilter]);
 
-  const statuses = ["", "PAID", "CANCELLED"];
+  const statuses = ["", "AWAITING", "PAID", "OVERDUE", "CANCELLED"];
 
   return (
     <div className="space-y-4">

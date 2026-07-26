@@ -398,7 +398,9 @@
     "deleteInvoice": "Smazat fakturu",
     "deleteConfirm": "Opravdu smazat tuto fakturu?",
     "description": "Popis",
-    "quantity": "Množství"
+    "quantity": "Množství",
+    "paidDate": "Datum úhrady",
+    "paymentMethod": "Způsob platby"
   },
   "company": {
     "title": "Firmy",

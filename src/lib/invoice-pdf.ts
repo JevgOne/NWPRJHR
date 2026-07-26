@@ -24,10 +24,12 @@ function getLogoPngBytes(): Uint8Array | null {
  * All monetary amounts are integers in halere (1 CZK = 100 halere).
  */
 export interface InvoicePdfData {
-  type: "INVOICE" | "CREDIT_NOTE";
+  type: "INVOICE" | "CREDIT_NOTE" | "DEPOSIT";
   number: string;
   issueDate: Date;
   dueDate: Date;
+  paidDate?: Date | null;
+  paymentMethod?: string | null;
   taxDate?: Date | null;
   variableSymbol: string;
   buyerName: string;
@@ -200,7 +202,11 @@ export async function generateInvoicePdf(
   // Invoice number — top right, prominent
   textRight(data.number, rightEdge, y - 2, { font: fontBold, size: 16, color: espresso });
 
-  const title = data.type === "CREDIT_NOTE" ? t.creditNoteTitle : t.title;
+  const title = data.type === "CREDIT_NOTE"
+    ? t.creditNoteTitle
+    : data.type === "DEPOSIT"
+    ? t.depositTitle
+    : t.title;
   textRight(sanitizeText(title), rightEdge, y - 18, { size: 9, color: muted });
 
   y -= 50;
@@ -212,7 +218,8 @@ export async function generateInvoicePdf(
   // ---- INFO ROW (dates + VS) ----
   const infoItems: [string, string][] = [
     [t.issueDate, formatDate(data.issueDate)],
-    ...(data.taxDate ? [[t.taxDate, formatDate(data.taxDate)] as [string, string]] : []),
+    ...(data.paidDate ? [[t.paidDate, formatDate(data.paidDate)] as [string, string]] : []),
+    ...(data.paymentMethod ? [[t.paymentMethod, data.paymentMethod] as [string, string]] : []),
     [t.vs, data.variableSymbol],
   ];
 
@@ -369,6 +376,19 @@ export async function generateInvoicePdf(
   text(sanitizeText(t.total), totalsLabelX, totalTextY, { font: fontBold, size: 11, color: white });
   textRight(`${formatCZK(data.total)} CZK`, totalsValueX, totalTextY, { font: fontBold, size: 11, color: white });
   y -= totalBoxH + 15;
+
+  // ---- PAID STAMP ----
+  if (data.paidDate) {
+    const stampW = 120;
+    const stampH = 22;
+    const stampX = totalsLabelX - 10;
+    const paidGreen = rgb(0.18, 0.65, 0.35);
+    rect(stampX, y - stampH + 8, stampW, stampH, paidGreen);
+    text("ZAPLACENO", stampX + 12, y - stampH / 2 + 5, {
+      font: fontBold, size: 10, color: white,
+    });
+    y -= stampH + 10;
+  }
 
   // ---- QR CODE ----
   if (

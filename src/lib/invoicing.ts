@@ -377,7 +377,8 @@ export async function createDepositInvoice(
 export async function createSettlementInvoice(
   reservationId: string,
   saleId: string,
-  companyId?: string
+  companyId?: string,
+  options?: { paid?: boolean }
 ): Promise<Invoice> {
   return prisma.$transaction(
     async (tx) => {
@@ -469,7 +470,7 @@ export async function createSettlementInvoice(
           reservationId,
           originalInvoiceId: depositInvoice?.id ?? null,
           issueDate: new Date(),
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          dueDate: options?.paid ? new Date() : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           taxDate: new Date(),
           variableSymbol,
           subtotal,
@@ -477,7 +478,7 @@ export async function createSettlementInvoice(
           vatAmount,
           total: remainingAmount,
           roundingAmount: 0,
-          status: "AWAITING",
+          status: options?.paid ? "PAID" : "AWAITING",
           note: `Vyúčtování rezervace ${reservation.reservationNumber}`,
           items: {
             create: items,
