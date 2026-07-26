@@ -127,13 +127,63 @@ export async function POST(request: NextRequest) {
   try {
     const reservation = await createProductReservation(parsed.data, session.user.id);
 
-    // Create deposit invoice if requested
+    // Create deposit invoice if requested + Comgate payment + email
     let depositInvoice = null;
     if (parsed.data.sendDepositInvoice) {
       try {
         depositInvoice = await createDepositInvoice(reservation.id);
-      } catch {
-        // Deposit invoice creation is optional — don't fail the reservation
+
+        const contactEmail = parsed.data.contactEmail
+          || (reservation.customerId
+            ? (await prisma.customer.findUnique({ where: { id: reservation.customerId }, select: { email: true } }))?.email
+            : null)
+          || (reservation.salonId
+            ? (await prisma.salon.findUnique({ where: { id: reservation.salonId }, select: { email: true } }))?.email
+            : null);
+
+        if (contactEmail && depositInvoice) {
+          const { createPayment } = await import("@/lib/comgate");
+          const comgateResult = await createPayment({
+            price: depositInvoice.total,
+            label: `Zaloha ${(reservation.reservationNumber ?? "").slice(-8)}`.slice(0, 16),
+            refId: depositInvoice.variableSymbol || depositInvoice.id.slice(-8),
+            email: contactEmail,
+            fullName: parsed.data.contactName || "",
+          });
+
+          let comgateUrl: string | undefined;
+          if (comgateResult.success && comgateResult.transId && comgateResult.redirect) {
+            await prisma.payment.create({
+              data: {
+                invoiceId: depositInvoice.id,
+                amount: depositInvoice.total,
+                date: new Date(),
+                matchedVS: depositInvoice.variableSymbol,
+                source: "COMGATE",
+                comgateTransId: comgateResult.transId,
+                note: "Záloha - čeká na platbu",
+              },
+            });
+            comgateUrl = comgateResult.redirect;
+          }
+
+          const company = await prisma.company.findFirstOrThrow({ where: { isDefault: true } });
+          const { sendPaymentDetailsEmail } = await import("@/lib/invoice-email");
+          sendPaymentDetailsEmail({
+            recipientEmail: contactEmail,
+            recipientName: parsed.data.contactName || "",
+            lang: "cs",
+            amount: depositInvoice.total,
+            bankAccount: company.bankAccount,
+            iban: company.bankIban ?? "",
+            variableSymbol: depositInvoice.variableSymbol,
+            saleNumber: reservation.reservationNumber ?? "",
+            comgateUrl,
+          }).catch((e) => console.error("[reservation] Deposit email failed:", e));
+        }
+      } catch (e) {
+        console.error("[reservation] Deposit flow error:", e);
+        // Deposit flow is optional — don't fail the reservation
       }
     }
 

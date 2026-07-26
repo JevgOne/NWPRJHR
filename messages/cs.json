@@ -1605,7 +1605,20 @@
     "inquiryCount": "obj.",
     "salesCount": "prod.",
     "inquiryItems": "položek",
-    "consultation": "Poradenství"
+    "consultation": "Poradenství",
+    "totalGrams": "Celkem gramů",
+    "avgOrder": "Prům. nákup",
+    "reservations": "Rezervace",
+    "active": "aktivní",
+    "noReservations": "Žádné rezervace",
+    "deposit": "Záloha",
+    "paid": "Zaplacena",
+    "awaiting": "Čeká na platbu",
+    "invoicesTitle": "Faktury",
+    "noInvoices": "Žádné faktury",
+    "ordersTitle": "Objednávky",
+    "firstPurchase": "První nákup",
+    "lastPurchase": "Poslední nákup"
   },
   "discountHistory": {
     "title": "Přehled slev",
@@ -3030,7 +3043,13 @@
     "noReservationsDay": "Žádné rezervace",
     "printLabel": "Vytisknout štítek",
     "labelPreview": "Náhled štítku",
-    "generatingLabel": "Generuji štítek..."
+    "generatingLabel": "Generuji štítek...",
+    "sendDepositInvoice": "Odeslat zálohu na email",
+    "depositHint": "Zákaznice dostane email se zálohovou fakturou (50 %) a platebním odkazem",
+    "deposit": "Záloha",
+    "resendDepositLink": "Poslat znovu platební odkaz",
+    "depositPaid": "Záloha zaplacena",
+    "depositPending": "Čeká na zaplacení"
   },
   "calendar": {
     "sales": "Prodeje",

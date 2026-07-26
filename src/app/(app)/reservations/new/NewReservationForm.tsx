@@ -74,6 +74,7 @@ export function NewReservationForm({
 
   const [scannerOpen, setScannerOpen] = useState(false);
   const [showProductPicker, setShowProductPicker] = useState(!initialVariantId);
+  const [sendDeposit, setSendDeposit] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -151,6 +152,7 @@ export function NewReservationForm({
       pieces: isByPiece ? pieces : 0,
       paymentDueDate,
       note: note || undefined,
+      sendDepositInvoice: contactEmail ? sendDeposit : false,
     };
 
     try {
@@ -298,6 +300,20 @@ export function NewReservationForm({
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
+          {contactEmail && (
+            <div className="mt-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={sendDeposit}
+                  onChange={(e) => setSendDeposit(e.target.checked)}
+                  className="rounded border-line text-rose focus:ring-rose"
+                />
+                <span className="text-sm text-ink">{t("sendDepositInvoice")}</span>
+              </label>
+              <p className="text-xs text-muted mt-1 ml-6">{t("depositHint")}</p>
+            </div>
+          )}
         </Card>
       )}
 

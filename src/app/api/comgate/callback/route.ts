@@ -38,7 +38,14 @@ export async function POST(request: NextRequest) {
 
     const payment = await prisma.payment.findFirst({
       where: { comgateTransId: transId },
-      include: { invoice: true },
+      include: {
+        invoice: {
+          select: {
+            id: true, status: true, number: true,
+            type: true, reservationId: true,
+          },
+        },
+      },
     });
 
     if (!payment) {
@@ -175,6 +182,21 @@ export async function POST(request: NextRequest) {
             note: `Zaplaceno online kartou (Comgate ${transId})`,
           },
         });
+
+        // If deposit invoice for a reservation, auto mark reservation as paid
+        if (payment.invoice.type === "DEPOSIT" && payment.invoice.reservationId) {
+          try {
+            const { markReservationPaid } = await import("@/lib/reservations");
+            await markReservationPaid(
+              payment.invoice.reservationId,
+              "system",
+              `Zaplaceno online kartou (Comgate ${transId})`
+            );
+            console.log("[comgate/callback] Reservation marked as paid:", payment.invoice.reservationId);
+          } catch (e) {
+            console.error("[comgate/callback] markReservationPaid failed:", e);
+          }
+        }
 
         // Notify owners
         const owners = await prisma.user.findMany({

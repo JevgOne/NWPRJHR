@@ -1605,7 +1605,20 @@
     "inquiryCount": "зак.",
     "salesCount": "прод.",
     "inquiryItems": "позиций",
-    "consultation": "Консультация"
+    "consultation": "Консультация",
+    "totalGrams": "Всего граммов",
+    "avgOrder": "Сред. заказ",
+    "reservations": "Резервации",
+    "active": "активные",
+    "noReservations": "Нет резерваций",
+    "deposit": "Задаток",
+    "paid": "Оплачен",
+    "awaiting": "Ожидает оплаты",
+    "invoicesTitle": "Счета",
+    "noInvoices": "Нет счетов",
+    "ordersTitle": "Заказы",
+    "firstPurchase": "Первая покупка",
+    "lastPurchase": "Последняя покупка"
   },
   "discountHistory": {
     "title": "Обзор скидок",
@@ -3030,7 +3043,13 @@
     "noReservationsDay": "Нет резерваций",
     "printLabel": "Распечатать этикетку",
     "labelPreview": "Предварительный просмотр",
-    "generatingLabel": "Генерирую этикетку..."
+    "generatingLabel": "Генерирую этикетку...",
+    "sendDepositInvoice": "Отправить задаток на email",
+    "depositHint": "Клиентка получит email со счётом на задаток (50 %) и ссылкой на оплату",
+    "deposit": "Задаток",
+    "resendDepositLink": "Отправить повторно ссылку на оплату",
+    "depositPaid": "Задаток оплачен",
+    "depositPending": "Ожидает оплаты"
   },
   "calendar": {
     "sales": "Продажи",

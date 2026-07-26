@@ -1605,7 +1605,20 @@
     "inquiryCount": "зам.",
     "salesCount": "прод.",
     "inquiryItems": "позицій",
-    "consultation": "Консультація"
+    "consultation": "Консультація",
+    "totalGrams": "Усього грамів",
+    "avgOrder": "Сер. замовлення",
+    "reservations": "Резервації",
+    "active": "активні",
+    "noReservations": "Немає резервацій",
+    "deposit": "Завдаток",
+    "paid": "Оплачено",
+    "awaiting": "Очікує оплати",
+    "invoicesTitle": "Рахунки",
+    "noInvoices": "Немає рахунків",
+    "ordersTitle": "Замовлення",
+    "firstPurchase": "Перша покупка",
+    "lastPurchase": "Остання покупка"
   },
   "discountHistory": {
     "title": "Огляд знижок",
@@ -3030,7 +3043,13 @@
     "noReservationsDay": "Немає резервацій",
     "printLabel": "Друкувати етикетку",
     "labelPreview": "Попередній перегляд",
-    "generatingLabel": "Генерую етикетку..."
+    "generatingLabel": "Генерую етикетку...",
+    "sendDepositInvoice": "Надіслати завдаток на email",
+    "depositHint": "Клієнтка отримає email із рахунком на завдаток (50 %) та посиланням на оплату",
+    "deposit": "Завдаток",
+    "resendDepositLink": "Надіслати повторно посилання на оплату",
+    "depositPaid": "Завдаток оплачено",
+    "depositPending": "Очікує оплати"
   },
   "calendar": {
     "sales": "Продажі",

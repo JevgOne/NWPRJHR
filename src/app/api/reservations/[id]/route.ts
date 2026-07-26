@@ -37,6 +37,19 @@ export async function GET(
       salon: { select: { id: true, name: true } },
       customer: { select: { id: true, name: true } },
       createdByUser: { select: { name: true, email: true } },
+      invoices: {
+        where: { type: "DEPOSIT" },
+        select: {
+          id: true,
+          number: true,
+          total: true,
+          status: true,
+          variableSymbol: true,
+          payments: {
+            select: { comgateTransId: true, matchedAt: true },
+          },
+        },
+      },
     },
   });
 
@@ -189,8 +202,104 @@ export async function POST(
         });
       }
 
+      case "resend_deposit": {
+        const depositInvoice = await prisma.invoice.findFirst({
+          where: { reservationId: id, type: "DEPOSIT" },
+        });
+        if (!depositInvoice) {
+          return NextResponse.json({ error: "No deposit invoice found" }, { status: 400 });
+        }
+
+        const res = await prisma.productReservation.findUniqueOrThrow({
+          where: { id },
+          include: { salon: true, customer: true },
+        });
+
+        const email = res.contactEmail || res.customer?.email || res.salon?.email;
+        if (!email) {
+          return NextResponse.json({ error: "No email address" }, { status: 400 });
+        }
+
+        const { createPayment } = await import("@/lib/comgate");
+        const comgateResult = await createPayment({
+          price: depositInvoice.total,
+          label: `Zaloha ${(res.reservationNumber ?? "").slice(-8)}`.slice(0, 16),
+          refId: depositInvoice.variableSymbol || depositInvoice.id.slice(-8),
+          email,
+          fullName: res.contactName || "",
+        });
+
+        let comgateUrl: string | undefined;
+        if (comgateResult.success && comgateResult.transId && comgateResult.redirect) {
+          await prisma.payment.create({
+            data: {
+              invoiceId: depositInvoice.id,
+              amount: depositInvoice.total,
+              date: new Date(),
+              matchedVS: depositInvoice.variableSymbol,
+              source: "COMGATE",
+              comgateTransId: comgateResult.transId,
+              note: "Záloha - opakovaný odkaz",
+            },
+          });
+          comgateUrl = comgateResult.redirect;
+        }
+
+        const company = await prisma.company.findFirstOrThrow({ where: { isDefault: true } });
+        const { sendPaymentDetailsEmail } = await import("@/lib/invoice-email");
+        await sendPaymentDetailsEmail({
+          recipientEmail: email,
+          recipientName: res.contactName || "",
+          lang: "cs",
+          amount: depositInvoice.total,
+          bankAccount: company.bankAccount,
+          iban: company.bankIban ?? "",
+          variableSymbol: depositInvoice.variableSymbol,
+          saleNumber: res.reservationNumber ?? "",
+          comgateUrl,
+        });
+
+        return NextResponse.json({ success: true });
+      }
+
       case "cancel": {
         const reservation = await cancelReservation(id, body.reason);
+
+        // Create credit note for deposit + Comgate refund if applicable
+        try {
+          // Find deposit invoice before creating credit note
+          const depositInv = await prisma.invoice.findFirst({
+            where: { reservationId: id, type: "DEPOSIT" },
+            select: { id: true },
+          });
+
+          const creditNote = await createDepositCreditNote(id);
+          if (creditNote) {
+            console.log("[reservation/cancel] Credit note created:", creditNote.number);
+          }
+
+          if (depositInv) {
+            const paidPayment = await prisma.payment.findFirst({
+              where: {
+                invoiceId: depositInv.id,
+                source: "COMGATE",
+                matchedAt: { not: null },
+                comgateTransId: { not: null },
+              },
+            });
+            if (paidPayment?.comgateTransId) {
+              const { refundPayment } = await import("@/lib/comgate");
+              const refundResult = await refundPayment(paidPayment.comgateTransId, paidPayment.amount);
+              if (refundResult.success) {
+                console.log("[reservation/cancel] Comgate refund OK:", paidPayment.comgateTransId);
+              } else {
+                console.error("[reservation/cancel] Comgate refund failed:", refundResult.error);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("[reservation/cancel] Credit note/refund error:", e);
+        }
 
         // Clean up notifications for cancelled reservation
         deleteNotificationsForEntity("reservationId", id).catch(() => {});

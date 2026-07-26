@@ -44,6 +44,14 @@ interface ReservationDetail {
   salon?: { id: string; name: string } | null;
   customer?: { id: string; name: string } | null;
   createdByUser: { name?: string | null; email: string };
+  invoices?: {
+    id: string;
+    number: string;
+    total: number;
+    status: string;
+    variableSymbol: string;
+    payments: { comgateTransId: string | null; matchedAt: string | null }[];
+  }[];
 }
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
@@ -239,6 +247,43 @@ export function ReservationDetailClient({
           <p className="text-sm text-muted mt-1">{reservation.paymentNote}</p>
         )}
       </div>
+
+      {/* Deposit info */}
+      {reservation.invoices && reservation.invoices.length > 0 && (
+        <div className="bg-white border border-line rounded-xl px-4 py-3">
+          <p className="text-xs font-medium text-muted uppercase mb-2">{t("deposit")}</p>
+          {reservation.invoices.map((inv) => (
+            <div key={inv.id} className="flex items-center justify-between">
+              <div>
+                <span className="text-sm font-mono text-ink">{inv.number}</span>
+                <span className="text-xs text-muted ml-2">
+                  {formatCZK(inv.total)} CZK
+                </span>
+              </div>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                inv.status === "PAID"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : inv.status === "CANCELLED"
+                  ? "bg-gray-50 text-gray-500"
+                  : "bg-amber-50 text-amber-700"
+              }`}>
+                {inv.status === "PAID" ? t("depositPaid") : t("depositPending")}
+              </span>
+            </div>
+          ))}
+          {reservation.status === "PENDING" && isOwner && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="mt-2"
+              onClick={() => doAction("resend_deposit")}
+              disabled={actionLoading}
+            >
+              {t("resendDepositLink")}
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Notes */}
       {reservation.note && (
