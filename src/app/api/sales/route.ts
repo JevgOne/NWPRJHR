@@ -46,7 +46,9 @@ export async function POST(request: NextRequest) {
   try {
     if (pt === "CASH") {
       // CASH: payment received -> create invoice + send email immediately
+      console.log("[Sales API] Creating invoice for CASH sale:", sale.id);
       const inv = await createInvoiceFromSale(sale.id);
+      console.log("[Sales API] Invoice created:", inv.id, inv.number);
       invoice = { id: inv.id, number: inv.number };
       after(async () => {
         try {

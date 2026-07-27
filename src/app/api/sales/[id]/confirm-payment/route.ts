@@ -40,7 +40,14 @@ export async function POST(
   }
 
   // 1. Create invoice
-  const invoice = await createInvoiceFromSale(sale.id, body.companyId);
+  let invoice;
+  try {
+    invoice = await createInvoiceFromSale(sale.id, body.companyId);
+  } catch (e) {
+    console.error("[ConfirmPayment] createInvoiceFromSale failed:", e);
+    const msg = e instanceof Error ? e.message : "Invoice creation failed";
+    return NextResponse.json({ error: `Faktura se nepodařila vytvořit: ${msg}` }, { status: 500 });
+  }
 
   // 2. Mark invoice as PAID + record payment + add salon revenue
   await prisma.$transaction(async (tx) => {
