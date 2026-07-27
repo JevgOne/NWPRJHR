@@ -150,6 +150,20 @@ export async function createInvoiceFromSale(
         },
       });
 
+      // For PAID invoices (CASH), auto-create payment record
+      if (!isProforma) {
+        await tx.payment.create({
+          data: {
+            invoiceId: invoice.id,
+            amount: roundedTotal,
+            date: new Date(),
+            matchedVS: variableSymbol,
+            source: "MANUAL",
+            note: paymentNote ?? "Auto-platba při vytvoření faktury",
+          },
+        });
+      }
+
       return invoice;
     },
     { timeout: 15000 }
