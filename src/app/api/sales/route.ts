@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
           console.error("[Sales API] Invoice email EXCEPTION:", e);
         }
       });
-    } else if (pt === "TRANSFER") {
-      // TRANSFER: generate QR payment data + Comgate card link + send unified email
+    } else if (pt === "TRANSFER" || pt === "CARD") {
+      // TRANSFER/CARD: generate QR payment data + Comgate card link + send unified email
       const company = await prisma.company.findFirst({ where: { isDefault: true } });
       const vs = sale.saleNumber ?? String(Date.now()).slice(-10);
       const bankAccount = company?.bankAccount || "6424423004/5500";

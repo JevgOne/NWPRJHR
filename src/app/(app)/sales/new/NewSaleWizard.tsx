@@ -84,7 +84,7 @@ export function NewSaleWizard({
   const [scannerOpen, setScannerOpen] = useState(false);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
-  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "PROMO" | "WRITEOFF">("TRANSFER");
+  const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "CARD" | "PROMO" | "WRITEOFF">("TRANSFER");
   const [receiptNumber, setReceiptNumber] = useState("");
   const [reserveMode, setReserveMode] = useState(false);
   const [paymentDueDate, setPaymentDueDate] = useState(
@@ -485,7 +485,7 @@ export function NewSaleWizard({
 
       const sale = await res.json();
 
-      if (paymentType === "TRANSFER" && (sale.qrPayment || sale.paymentInfo)) {
+      if ((paymentType === "TRANSFER" || paymentType === "CARD") && (sale.qrPayment || sale.paymentInfo || sale.comgateUrl)) {
         setTransferResult({
           saleId: sale.id,
           qrPayment: sale.qrPayment,
@@ -773,6 +773,7 @@ export function NewSaleWizard({
             {([
               { key: "TRANSFER", label: t("paymentInvoice") },
               { key: "CASH", label: t("paymentCash") },
+              { key: "CARD", label: t("paymentCard") },
               { key: "PROMO", label: t("paymentPromo") },
               { key: "WRITEOFF", label: t("paymentWriteoff") },
             ] as const).map((pt) => (
@@ -807,6 +808,9 @@ export function NewSaleWizard({
           )}
           {paymentType === "PROMO" && (
             <p className="text-xs text-muted mt-2">{t("promoHint")}</p>
+          )}
+          {paymentType === "CARD" && (
+            <p className="text-xs text-muted mt-2">{t("cardHint")}</p>
           )}
           {paymentType === "WRITEOFF" && (
             <p className="text-xs text-muted mt-2">{t("writeoffHint")}</p>
