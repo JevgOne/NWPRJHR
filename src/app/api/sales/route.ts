@@ -49,9 +49,13 @@ export async function POST(request: NextRequest) {
       const inv = await createInvoiceFromSale(sale.id);
       invoice = { id: inv.id, number: inv.number };
       after(async () => {
-        await sendInvoiceEmail(inv.id, { skipQr: true }).catch((e) =>
-          console.error("[Sales API] Invoice email failed:", e)
-        );
+        try {
+          console.log("[Sales API] Sending invoice email for CASH sale, invoiceId:", inv.id);
+          const result = await sendInvoiceEmail(inv.id, { skipQr: true });
+          console.log("[Sales API] Invoice email result:", JSON.stringify(result));
+        } catch (e) {
+          console.error("[Sales API] Invoice email EXCEPTION:", e);
+        }
       });
     } else if (pt === "TRANSFER") {
       // TRANSFER: generate QR payment data + Comgate card link + send unified email

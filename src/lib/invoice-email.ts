@@ -15,7 +15,9 @@ export async function sendInvoiceEmail(
   invoiceId: string,
   opts?: { skipQr?: boolean }
 ): Promise<InvoiceEmailResult> {
+  console.log("[InvoiceEmail] Starting for invoiceId:", invoiceId);
   if (!process.env.RESEND_API_KEY) {
+    console.log("[InvoiceEmail] No RESEND_API_KEY — skipping");
     return { sent: false, reason: "no_api_key" };
   }
 
@@ -36,13 +38,17 @@ export async function sendInvoiceEmail(
     },
   });
 
+  console.log("[InvoiceEmail] Invoice found:", invoice.id, "status:", invoice.status, "type:", invoice.type);
+
   // Don't send payment confirmation for unpaid invoices
   if (invoice.status === "AWAITING") {
+    console.log("[InvoiceEmail] Skipping — status AWAITING");
     return { sent: false, reason: "not_paid" };
   }
 
   // Don't send emails for internal documents
   if (invoice.type === "CREDIT_NOTE") {
+    console.log("[InvoiceEmail] Skipping — CREDIT_NOTE");
     return { sent: false, reason: "internal_document" };
   }
 
@@ -52,7 +58,10 @@ export async function sendInvoiceEmail(
       ? invoice.sale?.salon?.email
       : invoice.sale?.customer?.email ?? invoice.buyerEmail;
 
+  console.log("[InvoiceEmail] Recipient:", recipientEmail, "customerType:", invoice.sale?.customerType);
+
   if (!recipientEmail) {
+    console.log("[InvoiceEmail] No recipient email — skipping");
     return { sent: false, reason: "no_recipient_email" };
   }
 
@@ -130,7 +139,8 @@ export async function sendInvoiceEmail(
   const { Resend } = await import("resend");
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  await resend.emails.send({
+  console.log("[InvoiceEmail] Sending via Resend to:", recipientEmail, "from:", process.env.EMAIL_FROM ?? "info@hairland.cz");
+  const sendResult = await resend.emails.send({
     from: process.env.EMAIL_FROM ?? "info@hairland.cz",
     replyTo: "info@hairland.cz",
     to: recipientEmail,
@@ -144,6 +154,7 @@ export async function sendInvoiceEmail(
       },
     ],
   });
+  console.log("[InvoiceEmail] Resend response:", JSON.stringify(sendResult));
 
   return { sent: true, to: recipientEmail };
 }
