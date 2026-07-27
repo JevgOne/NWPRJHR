@@ -26,7 +26,6 @@ export async function sendInvoiceEmail(
     include: {
       company: true,
       items: true,
-      payments: { orderBy: { date: "asc" as const }, take: 1 },
       sale: {
         select: {
           paymentType: true,
