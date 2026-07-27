@@ -37,6 +37,28 @@ export async function GET(
   return NextResponse.json(invoice);
 }
 
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (session.user.role !== "OWNER")
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const { id } = await params;
+  const body = await request.json().catch(() => ({}));
+
+  if (body.action === "resend-email") {
+    const { sendInvoiceEmail } = await import("@/lib/invoice-email");
+    const result = await sendInvoiceEmail(id);
+    return NextResponse.json(result);
+  }
+
+  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

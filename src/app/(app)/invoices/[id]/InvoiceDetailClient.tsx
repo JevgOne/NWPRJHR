@@ -94,6 +94,30 @@ export function InvoiceDetailClient({
   const isOwner = role === "OWNER";
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendResult, setResendResult] = useState<string | null>(null);
+
+  const handleResendEmail = async () => {
+    setResending(true);
+    setResendResult(null);
+    try {
+      const res = await fetch(`/api/invoices/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "resend-email" }),
+      });
+      const data = await res.json();
+      if (data.sent) {
+        setResendResult(`Email odeslán na ${data.to}`);
+      } else {
+        setResendResult(`Neodesláno: ${data.reason}`);
+      }
+    } catch {
+      setResendResult("Chyba při odesílání");
+    } finally {
+      setResending(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm(t("deleteConfirm"))) return;
@@ -162,7 +186,13 @@ export function InvoiceDetailClient({
           </h1>
           <InvoiceStatusBadge status={invoice.status} />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {isOwner && invoice.status === "PAID" && (
+            <Button variant="secondary" size="sm" onClick={handleResendEmail} disabled={resending}>
+              {resending ? "Odesílám..." : "Přeposlat email"}
+            </Button>
+          )}
+          {resendResult && <span className="text-xs text-muted">{resendResult}</span>}
           <a href={`/api/invoices/${id}/pdf`} download>
             <Button variant="secondary" size="sm">
               {t("downloadPdf")}
