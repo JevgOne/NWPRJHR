@@ -18,14 +18,14 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
   const streamRef = useRef<MediaStream | null>(null);
   const [manualCode, setManualCode] = useState("");
   const [error, setError] = useState("");
-  const [scanning, setScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
-    setScanning(false);
+    setCameraReady(false);
   }, []);
 
   const handleScan = useCallback(
@@ -58,11 +58,14 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
           return;
         }
         streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play();
+
+        // Wait for video element to be available (it's always rendered when active=true)
+        const video = videoRef.current;
+        if (video) {
+          video.srcObject = stream;
+          await video.play();
         }
-        setScanning(true);
+        setCameraReady(true);
 
         if ("BarcodeDetector" in window) {
           // Native BarcodeDetector API (Chrome, Edge, Android)
@@ -91,17 +94,16 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
             const { BrowserMultiFormatReader } = await import("@zxing/library");
             zxingReader = new BrowserMultiFormatReader();
 
-            // Use decodeFromStream to avoid opening a second camera stream
-            zxingReader.decodeFromStream(
-              stream,
-              videoRef.current,
+            const deviceId = stream.getVideoTracks()[0]?.getSettings()?.deviceId;
+            zxingReader.decodeFromVideoDevice(
+              deviceId ?? null,
+              video,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (result: any, err: any) => {
                 if (cancelled) return;
                 if (result) {
                   handleScan(result.getText());
                 }
-                // err is expected when no barcode found in frame
                 if (err && err.name !== "NotFoundException") {
                   // real error — ignore silently
                 }
@@ -139,22 +141,28 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
         </Button>
       </div>
 
-      {scanning && (
-        <div className="flex-1 relative">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            playsInline
-            muted
-          />
+      <div className="flex-1 relative">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          playsInline
+          muted
+          autoPlay
+        />
+        {cameraReady && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-64 h-64 border-2 border-white/60 rounded-lg" />
           </div>
-        </div>
-      )}
+        )}
+        {!cameraReady && !error && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-white/60 text-sm">Spouštím kameru…</p>
+          </div>
+        )}
+      </div>
 
       {error && (
-        <div className="flex-1 flex items-center justify-center text-white px-8 text-center">
+        <div className="p-4 text-center text-white bg-red-900/50">
           {error}
         </div>
       )}
