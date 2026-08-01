@@ -91,10 +91,9 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
             const { BrowserMultiFormatReader } = await import("@zxing/library");
             zxingReader = new BrowserMultiFormatReader();
 
-            const deviceId = stream.getVideoTracks()[0]?.getSettings()?.deviceId;
-
-            zxingReader.decodeFromVideoDevice(
-              deviceId ?? null,
+            // Use decodeFromStream to avoid opening a second camera stream
+            zxingReader.decodeFromStream(
+              stream,
               videoRef.current,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (result: any, err: any) => {
@@ -149,7 +148,7 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
             muted
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-64 h-40 border-2 border-white/60 rounded-lg" />
+            <div className="w-64 h-64 border-2 border-white/60 rounded-lg" />
           </div>
         </div>
       )}

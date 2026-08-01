@@ -305,12 +305,34 @@ export function NewSaleWizard({
 
       if (!variantId) return;
 
-      // Prevent duplicate — if variant already in items, skip
-      if (items.some((i) => i.variantId === variantId)) return;
+      // If variant already in items — increment pieces for BY_PIECE, skip for BY_GRAM
+      const existingIndex = items.findIndex((i) => i.variantId === variantId);
+      if (existingIndex !== -1) {
+        const existing = items[existingIndex];
+        if (existing.sellingMode === "BY_PIECE") {
+          const newPieces = existing.pieces + 1;
+          const preview = await fetchPricePreview(variantId, 0, newPieces);
+          setItems((prev) => {
+            const updated = [...prev];
+            if (updated[existingIndex]) {
+              updated[existingIndex] = {
+                ...updated[existingIndex],
+                pieces: newPieces,
+                lineTotal: preview?.lineTotal ?? roundUp((existing.pricePerPiece ?? 0) * newPieces),
+                availableGrams: preview?.availableStock?.grams ?? existing.availableGrams,
+                availablePieces: preview?.availableStock?.pieces ?? existing.availablePieces,
+              };
+            }
+            return updated;
+          });
+        }
+        // BY_GRAM: user can adjust grams manually, no action needed
+        return;
+      }
 
       await addItemFromVariantId(variantId, barcodeProduct);
     },
-    [addItemFromVariantId, t, customerType, items]
+    [addItemFromVariantId, fetchPricePreview, t, customerType, items]
   );
 
   const toggleSellByGrams = useCallback((index: number) => {
