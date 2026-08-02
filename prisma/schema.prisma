@@ -147,6 +147,9 @@ model Product {
   photos         String          @default("[]")
   video          String?
   archived       Boolean         @default(false)
+  orderOnly      Boolean         @default(false)
+  supplierCode   String?
+  photoCode      String?
   slug           String?         @unique
   metaTitle       String?
   metaDescription String?

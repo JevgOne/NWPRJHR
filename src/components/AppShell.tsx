@@ -48,6 +48,7 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
       label: t("groupProducts"),
       items: [
         { href: "/products", label: t("products"), roles: ["OWNER", "EMPLOYEE"] },
+        { href: "/order-products", label: t("orderProducts"), roles: ["OWNER"] },
         { href: "/inventory", label: t("inventory"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/suppliers", label: t("suppliers"), roles: ["OWNER"] },
       ],

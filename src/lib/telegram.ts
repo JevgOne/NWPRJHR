@@ -261,21 +261,39 @@ async function sendRegistrationNotification(text: string): Promise<void> {
 }
 
 /**
- * Notify about low stock.
+ * Notify about inquiry containing "available to order" items.
  */
-export async function notifyLowStock(items: { productName: string; variant: string; remainingGrams: number }[]): Promise<void> {
-  const itemLines = items
-    .map((i) => `   ⚠️ ${esc(i.productName)} · ${esc(i.variant)} — zbývá <b>${i.remainingGrams}g</b>`)
-    .join("\n");
+export async function notifyOrderableInquiry(inquiryId: string, data: {
+  name: string;
+  email: string;
+  phone?: string;
+  items: { productName: string; lengthCm: number; color: string; quantity: number; unit: string; orderLeadDays?: number | null }[];
+}): Promise<void> {
+  const itemLines = data.items
+    .map((i) => {
+      const lead = i.orderLeadDays ? ` (~${i.orderLeadDays} dní/дней)` : "";
+      return `   🟡 ${originFlag(esc(i.productName))}\n   ${i.lengthCm} cm · ${formatColor(i.color)} · ${i.quantity}${i.unit}${lead}`;
+    })
+    .join("\n\n");
 
   const lines = [
-    `🔴 <b>NÍZKÝ STAV SKLADU / МАЛО НА СКЛАДЕ</b>`,
-    `Následující položky brzy dojdou / Следующие позиции скоро закончатся`,
+    `🟡 <b>POPTÁVKA NA OBJEDNÁVKU / ЗАКАЗ ПОД ЗАКАЗ</b>`,
+    `Zákazník poptává zboží, které není skladem`,
+    `Клиент запрашивает товар, которого нет на складе`,
     ``,
+    `👤 <b>${esc(data.name)}</b>`,
+    `📧 ${esc(data.email)}`,
+    data.phone ? `📱 ${esc(data.phone)}` : null,
+    ``,
+    `📦 <b>Na objednávku / Под заказ (${data.items.length}):</b>`,
     itemLines,
-  ].join("\n");
+    ``,
+    `⏳ Vyžaduje objednání u dodavatele / Требуется заказ у поставщика`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
-  await sendTelegramMessage(lines);
+  await sendWithClaimButton(lines, "inquiry", inquiryId);
 }
 
 /**

@@ -11,7 +11,7 @@ const getCachedAdminProducts = unstable_cache(
   async () => {
     const [products, allStock] = await Promise.all([
       prisma.product.findMany({
-        where: { archived: false },
+        where: { archived: false, orderOnly: false },
         select: {
           id: true,
           name: true,
@@ -28,6 +28,9 @@ const getCachedAdminProducts = unstable_cache(
           photos: true,
           video: true,
           archived: true,
+          orderOnly: true,
+          supplierCode: true,
+          photoCode: true,
           slug: true,
           metaTitle: true,
           metaDescription: true,

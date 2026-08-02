@@ -23,6 +23,7 @@ const PROTECTED_PREFIXES = [
   "/inquiries", "/stylists", "/suppliers", "/salon",
   "/reservations",
   "/calendar",
+  "/order-products",
 ];
 
 function isProtectedPath(pathname: string): boolean {

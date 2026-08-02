@@ -3,7 +3,7 @@ import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
 import { fifoDeduct } from "./fifo";
 import { invalidateStockCache } from "./stock";
-import { notifyLowStock } from "./telegram";
+// notifyLowStock removed — stock alerts handled elsewhere
 
 export interface SaleItemInput {
   variantId: string;
@@ -244,29 +244,6 @@ export async function completeSale(
     },
     { timeout: 15000 }
   );
-
-  // Check for low stock after sale
-  const LOW_STOCK_THRESHOLD = 200; // grams
-  try {
-    const variantIds = [...new Set(input.items.map((i) => i.variantId))];
-    const variants = await prisma.variant.findMany({
-      where: { id: { in: variantIds } },
-      include: {
-        product: { select: { name: true } },
-        deliveries: { where: { remainingGrams: { gt: 0 } }, select: { remainingGrams: true } },
-      },
-    });
-    const lowItems = variants
-      .map((v) => {
-        const totalGrams = v.deliveries.reduce((sum, d) => sum + d.remainingGrams, 0);
-        return { productName: v.product.name, variant: `${v.lengthCm} cm · ${v.color}`, remainingGrams: totalGrams };
-      })
-      .filter((i) => i.remainingGrams > 0 && i.remainingGrams <= LOW_STOCK_THRESHOLD);
-
-    if (lowItems.length > 0) {
-      notifyLowStock(lowItems).catch(() => {});
-    }
-  } catch {}
 
   invalidateStockCache();
   return sale;

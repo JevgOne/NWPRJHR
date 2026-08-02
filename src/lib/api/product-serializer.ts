@@ -75,7 +75,7 @@ export function serializeVariantForRole(
 }
 
 export function serializeProductForRole(
-  product: Product & { variants?: Variant[] },
+  product: Omit<Product, "orderOnly" | "supplierCode" | "photoCode"> & Partial<Pick<Product, "orderOnly" | "supplierCode" | "photoCode">> & { variants?: Variant[] },
   role: Role,
   salonDiscountPercent?: number
 ) {
