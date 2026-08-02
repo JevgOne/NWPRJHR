@@ -93,6 +93,7 @@ export function NewSaleWizard({
   const [reservationNote, setReservationNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [scanFeedback, setScanFeedback] = useState<{ message: string; type: "success" | "warn" | "error" } | null>(null);
   const [transferResult, setTransferResult] = useState<{
     saleId: string;
     qrPayment?: string;
@@ -275,9 +276,17 @@ export function NewSaleWizard({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerType, salonId]);
 
+  // Auto-clear scan feedback after 2s
+  useEffect(() => {
+    if (scanFeedback) {
+      const timer = setTimeout(() => setScanFeedback(null), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [scanFeedback]);
+
   const handleBarcodeScan = useCallback(
     async (scanned: string) => {
-      setScannerOpen(false);
+      // Don't close scanner — allow continuous scanning
 
       // Auto-set RETAIL if no customer type selected
       if (!customerType) {
@@ -295,7 +304,7 @@ export function NewSaleWizard({
         // Treat as barcode (HR-XXXXX)
         const res = await fetch(`/api/deliveries/barcode/${encodeURIComponent(scanned)}`);
         if (!res.ok) {
-          setError(t("barcodeNotFound"));
+          setScanFeedback({ message: t("barcodeNotFound"), type: "error" });
           return;
         }
         const delivery = await res.json();
@@ -305,7 +314,7 @@ export function NewSaleWizard({
 
       if (!variantId) return;
 
-      // If variant already in items — increment pieces for BY_PIECE, skip for BY_GRAM
+      // If variant already in items — increment pieces for BY_PIECE, show feedback for BY_GRAM
       const existingIndex = items.findIndex((i) => i.variantId === variantId);
       if (existingIndex !== -1) {
         const existing = items[existingIndex];
@@ -325,12 +334,15 @@ export function NewSaleWizard({
             }
             return updated;
           });
+          setScanFeedback({ message: t("itemAdded"), type: "success" });
+        } else {
+          setScanFeedback({ message: t("itemAlreadyAdded"), type: "warn" });
         }
-        // BY_GRAM: user can adjust grams manually, no action needed
         return;
       }
 
       await addItemFromVariantId(variantId, barcodeProduct);
+      setScanFeedback({ message: t("itemAdded"), type: "success" });
     },
     [addItemFromVariantId, fetchPricePreview, t, customerType, items]
   );
@@ -722,6 +734,13 @@ export function NewSaleWizard({
             onScan={handleBarcodeScan}
             onClose={() => setScannerOpen(false)}
           />
+          {scannerOpen && scanFeedback && (
+            <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[60] text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium ${
+              scanFeedback.type === "error" ? "bg-red-600" : scanFeedback.type === "warn" ? "bg-amber-600" : "bg-green-600"
+            }`}>
+              {scanFeedback.message}
+            </div>
+          )}
         </div>
       </Card>
 

@@ -938,10 +938,18 @@ function SummaryItemRow({ item }: { item: InquiryCartItem }) {
   const lineTotal = price * item.quantity;
   return (
     <div className="flex items-center gap-3 py-2">
-      <span
-        className="w-6 h-6 rounded-full border border-line flex-shrink-0"
-        style={{ backgroundColor: getHairColor(item.color).hex }}
-      />
+      {item.imageUrl ? (
+        <img
+          src={item.imageUrl}
+          alt={item.productName}
+          className="w-8 h-8 rounded-lg border border-line/50 flex-shrink-0 object-cover"
+        />
+      ) : (
+        <span
+          className="w-6 h-6 rounded-full border border-line flex-shrink-0"
+          style={{ backgroundColor: getHairColor(item.color).hex }}
+        />
+      )}
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium text-ink truncate">{item.productName}</div>
         <div className="text-xs text-muted">

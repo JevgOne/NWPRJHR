@@ -1546,6 +1546,8 @@
     "barcodeNotFound": "Čárový kód nenalezen",
     "addAnotherQr": "Naskenovat další QR",
     "addAnotherManual": "Přidat další ručně",
+    "itemAdded": "Produkt přidán",
+    "itemAlreadyAdded": "Tento produkt je již v prodeji",
     "paymentType": "Typ platby",
     "paymentTransfer": "Převod",
     "paymentInvoice": "Faktura",

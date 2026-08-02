@@ -19,6 +19,10 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
   const [manualCode, setManualCode] = useState("");
   const [error, setError] = useState("");
   const [cameraReady, setCameraReady] = useState(false);
+  const lastScannedRef = useRef<string>("");
+  const cooldownRef = useRef(false);
+  const onScanRef = useRef(onScan);
+  onScanRef.current = onScan;
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -30,11 +34,17 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
 
   const handleScan = useCallback(
     (code: string) => {
+      // Prevent rapid re-scans of the same code
+      if (cooldownRef.current && code === lastScannedRef.current) return;
+      lastScannedRef.current = code;
+      cooldownRef.current = true;
+      setTimeout(() => { cooldownRef.current = false; }, 2000);
+
       if (navigator.vibrate) navigator.vibrate(100);
-      stopCamera();
-      onScan(code);
+      // Don't stop camera — keep scanning for more codes
+      onScanRef.current(code);
     },
-    [onScan, stopCamera]
+    []
   );
 
   useEffect(() => {
@@ -80,7 +90,7 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
               const barcodes = await detector.detect(videoRef.current);
               if (barcodes.length > 0) {
                 handleScan(barcodes[0].rawValue);
-                return;
+                // Don't return — keep scanning for more codes
               }
             } catch {
               // frame not ready
@@ -128,7 +138,9 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
       }
       stopCamera();
     };
-  }, [active, handleScan, stopCamera, t]);
+  // handleScan is stable (uses refs), so it won't cause effect re-runs
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, stopCamera, t]);
 
   if (!active) return null;
 
@@ -178,12 +190,16 @@ export function BarcodeScanner({ onScan, onClose, active }: BarcodeScannerProps)
             onKeyDown={(e) => {
               if (e.key === "Enter" && manualCode.trim()) {
                 handleScan(manualCode.trim());
+                setManualCode("");
               }
             }}
           />
           <Button
             onClick={() => {
-              if (manualCode.trim()) handleScan(manualCode.trim());
+              if (manualCode.trim()) {
+                handleScan(manualCode.trim());
+                setManualCode("");
+              }
             }}
             disabled={!manualCode.trim()}
           >

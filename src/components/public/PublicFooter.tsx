@@ -119,7 +119,7 @@ export function PublicFooter() {
         <div className="mt-6 pt-6 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
           <span>{t("footer.copyright")}</span>
           <span>
-            {t("footer.companyName")} · {t("footer.companyId")} · {t("footer.companyAddress")}
+            {t("footer.companyName")} · {t("footer.companyId")}
           </span>
         </div>
       </div>

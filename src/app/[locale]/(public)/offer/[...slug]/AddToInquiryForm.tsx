@@ -31,6 +31,7 @@ interface AddToInquiryFormProps {
   defaultColor?: string;
   defaultLength?: number;
   discountPct?: number;
+  imageUrl?: string;
 }
 
 function formatPrice(halere: number): string {
@@ -40,7 +41,7 @@ function formatPrice(halere: number): string {
   });
 }
 
-export function AddToInquiryForm({ productId, productName, category, texture, variants, defaultColor, defaultLength, discountPct = 0 }: AddToInquiryFormProps) {
+export function AddToInquiryForm({ productId, productName, category, texture, variants, defaultColor, defaultLength, discountPct = 0, imageUrl }: AddToInquiryFormProps) {
   const t = useTranslations("public");
   const { addItem } = useInquiryCart();
 
@@ -130,6 +131,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
       unit: showAsPiece ? inquiryUnit : "g",
       sku: generateSku(category, texture, selectedColor, selectedLength),
       pricePerUnit,
+      imageUrl,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);

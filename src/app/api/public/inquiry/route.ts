@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
 import { getInquiryConfirmationEmail } from "@/lib/email-templates";
-import { notifyInquiry } from "@/lib/telegram";
+import { notifyInquiry, notifyOrderableInquiry } from "@/lib/telegram";
 import { generateSku } from "@/lib/sku";
 import { upsertCustomerFromContact } from "@/lib/customer-upsert";
 import { z } from "zod";
@@ -231,6 +231,41 @@ export async function POST(request: NextRequest) {
       message: message || undefined,
       items: itemsWithSku,
     }).catch(() => {});
+
+    // Telegram: orderable items notification
+    if (items.length > 0) {
+      (async () => {
+        try {
+          const variants = await prisma.variant.findMany({
+            where: {
+              productId: { in: [...new Set(items.map((i) => i.productId))] },
+              active: true,
+              availableToOrder: true,
+            },
+            select: { productId: true, lengthCm: true, color: true, orderLeadDays: true },
+          });
+          const orderableSet = new Set(
+            variants.map((v) => `${v.productId}:${v.lengthCm}:${v.color}`)
+          );
+          const orderableItems = items
+            .filter((i) => orderableSet.has(`${i.productId}:${i.lengthCm}:${i.color}`))
+            .map((i) => {
+              const v = variants.find(
+                (vr) => vr.productId === i.productId && vr.lengthCm === i.lengthCm && vr.color === i.color
+              );
+              return { ...i, orderLeadDays: v?.orderLeadDays ?? null };
+            });
+          if (orderableItems.length > 0) {
+            await notifyOrderableInquiry(inquiry.id, {
+              name,
+              email,
+              phone: phone || undefined,
+              items: orderableItems,
+            });
+          }
+        } catch {}
+      })();
+    }
 
     // Confirmation email to customer
     const inquiryEmailData = getInquiryConfirmationEmail(locale, {

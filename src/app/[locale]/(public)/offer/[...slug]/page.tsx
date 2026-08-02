@@ -1129,6 +1129,7 @@ async function ProductDetailView({
             defaultColor={sp.color}
             defaultLength={sp.length ? parseInt(sp.length, 10) : undefined}
             discountPct={discountPct}
+            imageUrl={product.photos[0]}
           />
 
           {/* Delivery strip */}
