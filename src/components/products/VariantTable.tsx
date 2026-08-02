@@ -136,6 +136,25 @@ export function VariantTable({
     (a, b) => a - b
   );
 
+  async function handleSaveField(variantId: string, field: string, value: unknown) {
+    setSaving(variantId);
+    try {
+      const res = await fetch(`/api/variants/${variantId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: value }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(`Chyba při ukládání: ${err.error || res.statusText}`);
+      }
+      router.refresh();
+    } finally {
+      setSaving(null);
+      setEditingCell(null);
+    }
+  }
+
   async function handleSavePrice(variantId: string, field: string, newPriceHalere: number) {
     setSaving(variantId);
     try {
@@ -262,15 +281,77 @@ export function VariantTable({
                       !variant.active ? "opacity-30" : ""
                     } ${hasStock ? "bg-white" : "bg-gray-50/50"}`}
                   >
+                    {/* Length (editable for owner) */}
+                    {isOwner && editingCell === `length-${variant.id}` ? (
+                      <div className="mb-1">
+                        <input
+                          type="number"
+                          className="w-16 border border-line rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-rose/30"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onBlur={() => {
+                            const val = parseInt(editValue);
+                            if (val > 0 && val <= 150) handleSaveField(variant.id, "lengthCm", val);
+                            else setEditingCell(null);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              const val = parseInt(editValue);
+                              if (val > 0 && val <= 150) handleSaveField(variant.id, "lengthCm", val);
+                            }
+                            if (e.key === "Escape") setEditingCell(null);
+                          }}
+                          autoFocus
+                          disabled={isSaving}
+                        />
+                      </div>
+                    ) : isOwner ? (
+                      <button
+                        className="text-[10px] text-muted hover:text-rose transition-colors mb-1 block"
+                        onClick={() => {
+                          setEditingCell(`length-${variant.id}`);
+                          setEditValue(variant.lengthCm.toString());
+                        }}
+                      >
+                        {variant.lengthCm} cm
+                      </button>
+                    ) : null}
+
                     {/* Color indicator + name */}
                     <div className="flex items-center gap-2 mb-1">
                       <span
                         className="w-6 h-6 rounded-full border-2 border-white shadow-sm flex-shrink-0"
                         style={{ backgroundColor: hc.hex }}
                       />
-                      <span className="text-xs font-medium text-espresso truncate">
-                        {colorName(variant.color)}
-                      </span>
+                      {isOwner && editingCell === `color-${variant.id}` ? (
+                        <input
+                          type="text"
+                          className="w-16 border border-line rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-rose/30"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onBlur={() => {
+                            if (editValue.trim()) handleSaveField(variant.id, "color", editValue.trim());
+                            else setEditingCell(null);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && editValue.trim()) handleSaveField(variant.id, "color", editValue.trim());
+                            if (e.key === "Escape") setEditingCell(null);
+                          }}
+                          autoFocus
+                          disabled={isSaving}
+                        />
+                      ) : (
+                        <button
+                          className={`text-xs font-medium text-espresso truncate ${isOwner ? "hover:text-rose transition-colors" : ""}`}
+                          onClick={() => {
+                            if (!isOwner) return;
+                            setEditingCell(`color-${variant.id}`);
+                            setEditValue(variant.color);
+                          }}
+                        >
+                          {colorName(variant.color)}
+                        </button>
+                      )}
                     </div>
                     {/* SKU */}
                     <button
@@ -378,13 +459,14 @@ export function VariantTable({
                         : (variant.retailPricePerGram ?? 0) * 100;
                       const margin = sellPrice - costDisplay;
                       const marginPct = costDisplay > 0 ? Math.round((margin / costDisplay) * 100) : 0;
+                      const costField = isByPiece ? "pricePerPiece" : "costPricePerGram";
                       const unit = isByPiece ? "/ks" : "/100g";
                       return (
                         <div className="flex items-center gap-1 mt-1">
                           {editingCell === `cost-${cellKey}` ? (
                             <PriceInput
                               variantId={variant.id}
-                              field="costPricePerGram"
+                              field={costField}
                               cellKey={`cost-${cellKey}`}
                               per100g={!isByPiece}
                             />

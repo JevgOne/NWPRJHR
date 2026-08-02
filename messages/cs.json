@@ -200,7 +200,9 @@
     "note": "Poznámka",
     "deactivate": "Deaktivovat",
     "reactivate": "Aktivovat",
-    "cannotDeleteDelivery": "Nelze smazat — částečně spotřebováno"
+    "cannotDeleteDelivery": "Nelze smazat — částečně spotřebováno",
+    "supplierCode": "Kód dodavatele",
+    "photoCode": "Foto kód"
   },
   "colorTone": {
     "blond": "Blond",

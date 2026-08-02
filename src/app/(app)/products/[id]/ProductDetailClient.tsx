@@ -42,6 +42,9 @@ interface ProductDetail {
   metaTitle?: string | null;
   metaDescription?: string | null;
   ogImage?: string | null;
+  orderOnly?: boolean;
+  supplierCode?: string | null;
+  photoCode?: string | null;
   variants?: Array<{
     id: string;
     lengthCm: number;
@@ -87,6 +90,9 @@ interface EditValues {
   descriptionUk: string;
   descriptionRu: string;
   slug: string;
+  orderOnly: boolean;
+  supplierCode: string;
+  photoCode: string;
 }
 
 export function ProductDetailClient({
@@ -125,6 +131,9 @@ export function ProductDetailClient({
     descriptionUk: product.descriptionUk ?? "",
     descriptionRu: product.descriptionRu ?? "",
     slug: product.slug ?? "",
+    orderOnly: product.orderOnly ?? false,
+    supplierCode: product.supplierCode ?? "",
+    photoCode: product.photoCode ?? "",
   });
 
   // Phase 3: Deliveries
@@ -156,6 +165,9 @@ export function ProductDetailClient({
       descriptionUk: product.descriptionUk ?? "",
       descriptionRu: product.descriptionRu ?? "",
       slug: product.slug ?? "",
+      orderOnly: product.orderOnly ?? false,
+      supplierCode: product.supplierCode ?? "",
+      photoCode: product.photoCode ?? "",
     });
     setEditMode(true);
   }, [product]);
@@ -177,6 +189,9 @@ export function ProductDetailClient({
     if (editValues.descriptionUk !== (product.descriptionUk ?? "")) changes.descriptionUk = editValues.descriptionUk || null;
     if (editValues.descriptionRu !== (product.descriptionRu ?? "")) changes.descriptionRu = editValues.descriptionRu || null;
     if (editValues.slug !== (product.slug ?? "")) changes.slug = editValues.slug || undefined;
+    if (editValues.orderOnly !== (product.orderOnly ?? false)) changes.orderOnly = editValues.orderOnly;
+    if (editValues.supplierCode !== (product.supplierCode ?? "")) changes.supplierCode = editValues.supplierCode || null;
+    if (editValues.photoCode !== (product.photoCode ?? "")) changes.photoCode = editValues.photoCode || null;
 
     if (Object.keys(changes).length === 0) {
       setEditMode(false);
@@ -547,6 +562,44 @@ export function ProductDetailClient({
                 >
                   Auto
                 </Button>
+              </div>
+            </div>
+
+            {/* Management fields */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-medium text-muted">Na objednávku</label>
+                <button
+                  type="button"
+                  className={`relative w-8 h-4 rounded-full transition-colors ${
+                    editValues.orderOnly ? "bg-amber-500" : "bg-gray-300"
+                  }`}
+                  onClick={() => setEditValues(prev => ({ ...prev, orderOnly: !prev.orderOnly }))}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${
+                    editValues.orderOnly ? "translate-x-4" : ""
+                  }`} />
+                </button>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-muted mb-1">{t("product.supplierCode")}</label>
+                <input
+                  type="text"
+                  value={editValues.supplierCode}
+                  onChange={(e) => updateEditField("supplierCode", e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose"
+                  placeholder="—"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-muted mb-1">{t("product.photoCode")}</label>
+                <input
+                  type="text"
+                  value={editValues.photoCode}
+                  onChange={(e) => updateEditField("photoCode", e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-line rounded-lg focus:ring-1 focus:ring-rose focus:border-rose"
+                  placeholder="—"
+                />
               </div>
             </div>
           </div>

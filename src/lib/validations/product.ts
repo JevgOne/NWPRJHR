@@ -28,6 +28,9 @@ export const createProductSchema = z.object({
     .string()
     .regex(/^[a-z0-9-]+$/)
     .optional(),
+  orderOnly: z.boolean().optional(),
+  supplierCode: z.string().max(100).nullable().optional(),
+  photoCode: z.string().max(100).nullable().optional(),
 });
 
 export const updateProductSchema = createProductSchema.partial();

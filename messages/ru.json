@@ -200,7 +200,9 @@
     "note": "Примечание",
     "deactivate": "Деактивировать",
     "reactivate": "Активировать",
-    "cannotDeleteDelivery": "Нельзя удалить — частично использовано"
+    "cannotDeleteDelivery": "Нельзя удалить — частично использовано",
+    "supplierCode": "Код поставщика",
+    "photoCode": "Фото код"
   },
   "colorTone": {
     "blond": "Блонд",

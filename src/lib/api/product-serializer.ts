@@ -99,8 +99,13 @@ export function serializeProductForRole(
     metaTitle: product.metaTitle,
     metaDescription: product.metaDescription,
     ogImage: product.ogImage,
-    createdAt: product.createdAt,
-    updatedAt: product.updatedAt,
+    createdAt: product.createdAt instanceof Date ? product.createdAt.toISOString() : product.createdAt,
+    updatedAt: product.updatedAt instanceof Date ? product.updatedAt.toISOString() : product.updatedAt,
+    ...(role === "OWNER" ? {
+      orderOnly: product.orderOnly,
+      supplierCode: product.supplierCode,
+      photoCode: product.photoCode,
+    } : {}),
   };
 
   if (!product.variants) return base;
