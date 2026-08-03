@@ -382,9 +382,9 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
                   <span className="text-muted">{t("shippingEstimate")}</span>
                   <span className="text-xs text-muted">{t("shippingCalculatedAtCheckout")}</span>
                 </div>
-                <div className="border-t border-line pt-2.5 flex justify-between">
+                <div className="border-t border-line pt-2.5 flex justify-between items-baseline">
                   <span className="text-base font-semibold text-ink">{t("cartTotal")}</span>
-                  <span className="text-base font-semibold text-ink">{formatPrice(subtotalAfterDiscount)} Kč</span>
+                  <span className="text-xl font-bold text-espresso">{formatPrice(subtotalAfterDiscount)} Kč</span>
                 </div>
               </div>
             )}
@@ -392,9 +392,12 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
             {/* Proceed to checkout */}
             <Link
               href="/checkout"
-              className="block w-full py-3.5 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors text-center text-sm"
+              className="flex items-center justify-center gap-2 w-full py-3.5 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors text-center text-sm"
             >
               {t("proceedToCheckout")}
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
             </Link>
 
             <p className="text-[11px] text-muted text-center mt-3">
@@ -408,7 +411,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
 }
 
 // =====================================================
-// Cart item card — larger, more detailed
+// Cart item card — premium, compact design
 // =====================================================
 function CartItemCard({
   item,
@@ -419,94 +422,100 @@ function CartItemCard({
   onRemove: () => void;
   onUpdateQty: (qty: number) => void;
 }) {
+  const tColors = useTranslations("public.colors");
   const step = item.unit === "ks" ? 1 : 50;
   const minQty = item.unit === "ks" ? 1 : 50;
   const hairColor = getHairColor(item.color);
   const lineTotal = (item.pricePerUnit ?? 0) * item.quantity;
   const hasPrice = item.pricePerUnit && item.pricePerUnit > 0;
 
+  let colorName = item.color;
+  try {
+    colorName = tColors(hairColor.nameKey as "c1");
+  } catch {
+    // fallback to raw color code
+  }
+
   return (
-    <div className="bg-white rounded-2xl border border-line overflow-hidden">
-      {/* Top: image + info side by side */}
+    <div className="bg-white rounded-2xl border border-nude-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-shadow overflow-hidden">
       <div className="flex gap-4 p-4">
-        {/* Product image — larger, square */}
+        {/* Product image */}
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
             alt={item.productName}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl flex-shrink-0 object-cover"
+            className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl flex-shrink-0 object-cover shadow-sm"
           />
         ) : (
           <div
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl flex-shrink-0"
-            style={{ backgroundColor: hairColor.hex }}
+            className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl flex-shrink-0 shadow-sm"
+            style={{
+              background: `linear-gradient(135deg, ${hairColor.hex} 0%, ${hairColor.hex}dd 60%, ${hairColor.hex}99 100%)`,
+            }}
           />
         )}
 
-        {/* Info + remove */}
+        {/* Info area */}
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-semibold text-ink leading-tight">{item.productName}</h3>
+              <h3 className="text-sm font-semibold text-espresso leading-tight">{item.productName}</h3>
               <button
                 onClick={onRemove}
-                className="text-muted/40 hover:text-red-500 transition-colors p-0.5 flex-shrink-0"
+                className="text-muted/30 hover:text-red-500 transition-colors p-1 flex-shrink-0"
                 aria-label="Remove"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                 </svg>
               </button>
             </div>
             <div className="flex items-center gap-1.5 mt-1.5">
               <span
-                className="w-3 h-3 rounded-full border border-line/50 flex-shrink-0"
+                className="w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm flex-shrink-0"
                 style={{ backgroundColor: hairColor.hex }}
               />
-              <span className="text-xs text-muted">{item.color}</span>
+              <span className="text-xs text-muted font-medium">{colorName}</span>
               <span className="text-xs text-line">·</span>
-              <span className="text-xs text-muted">{item.lengthCm} cm</span>
-              {item.sku && (
-                <>
-                  <span className="text-xs text-line">·</span>
-                  <span className="text-xs text-muted/60 font-mono">{item.sku}</span>
-                </>
-              )}
+              <span className="text-xs text-muted font-medium">{item.lengthCm} cm</span>
             </div>
+            {item.sku && (
+              <p className="font-mono text-[10px] text-muted/50 mt-1">{item.sku}</p>
+            )}
           </div>
-          {hasPrice && (
-            <p className="text-xs text-muted/70 mt-1">
-              {formatPrice(item.pricePerUnit!)} Kč/{item.unit}
-            </p>
-          )}
-        </div>
-      </div>
 
-      {/* Bottom bar: quantity + total — full width, clean separation */}
-      <div className="flex items-center justify-between px-4 py-3 bg-nude-50/50 border-t border-line/20">
-        <div className="flex items-center">
-          <button
-            onClick={() => onUpdateQty(Math.max(minQty, item.quantity - step))}
-            className="w-8 h-8 rounded-l-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-100 transition-colors text-sm"
-          >
-            −
-          </button>
-          <span className="h-8 px-4 border-t border-b border-line bg-white text-sm font-medium text-ink flex items-center justify-center min-w-[60px]">
-            {item.quantity} {item.unit}
-          </span>
-          <button
-            onClick={() => onUpdateQty(item.quantity + step)}
-            className="w-8 h-8 rounded-r-lg border border-line bg-white text-muted flex items-center justify-center hover:bg-nude-100 transition-colors text-sm"
-          >
-            +
-          </button>
-        </div>
+          {/* Quantity + Price */}
+          <div className="flex items-end justify-between mt-3">
+            {/* Pill-shaped quantity selector */}
+            <div className="inline-flex items-center rounded-full bg-nude-100">
+              <button
+                onClick={() => onUpdateQty(Math.max(minQty, item.quantity - step))}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:bg-nude-200 transition-colors text-sm font-medium"
+              >
+                −
+              </button>
+              <span className="px-2 min-w-[52px] text-center text-sm font-semibold text-ink">
+                {item.quantity} {item.unit}
+              </span>
+              <button
+                onClick={() => onUpdateQty(item.quantity + step)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:bg-nude-200 transition-colors text-sm font-medium"
+              >
+                +
+              </button>
+            </div>
 
-        {hasPrice && (
-          <span className="text-base font-bold text-ink tracking-tight">
-            {formatPrice(lineTotal)} Kč
-          </span>
-        )}
+            {/* Price */}
+            {hasPrice && (
+              <div className="text-right">
+                <p className="text-[10px] text-muted/60">{formatPrice(item.pricePerUnit!)} Kč/{item.unit}</p>
+                <p className="text-lg font-bold text-espresso tracking-tight leading-tight">
+                  {formatPrice(lineTotal)} Kč
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
