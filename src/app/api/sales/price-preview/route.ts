@@ -33,25 +33,31 @@ export async function POST(request: NextRequest) {
     pieces: stock.availablePieces,
   };
 
-  // Automatic selling mode: BY_PIECE only if variant has exclusive pieces in stock
-  // Everything else is always BY_GRAM — ignores variant.sellingMode field
-  let effectiveMode: "BY_GRAM" | "BY_PIECE" = "BY_GRAM";
-
-  const exclusivePieces = await prisma.delivery.aggregate({
-    where: { variantId, exclusive: true, remainingPieces: { gt: 0 } },
-    _sum: { remainingPieces: true },
+  // Respect variant.sellingMode, plus check exclusive deliveries for BY_GRAM variants
+  const variant = await prisma.variant.findUnique({
+    where: { id: variantId },
+    select: { sellingMode: true },
   });
-  if ((exclusivePieces._sum.remainingPieces ?? 0) > 0) {
-    effectiveMode = "BY_PIECE";
+  let effectiveMode: "BY_GRAM" | "BY_PIECE" =
+    (variant?.sellingMode as "BY_GRAM" | "BY_PIECE") ?? "BY_GRAM";
+
+  if (effectiveMode === "BY_GRAM") {
+    const exclusivePieces = await prisma.delivery.aggregate({
+      where: { variantId, exclusive: true, remainingPieces: { gt: 0 } },
+      _sum: { remainingPieces: true },
+    });
+    if ((exclusivePieces._sum.remainingPieces ?? 0) > 0) {
+      effectiveMode = "BY_PIECE";
+    }
   }
 
   if (effectiveMode === "BY_PIECE") {
-    // Check if there are also non-exclusive grams for partial gram sales
-    const nonExclusiveStock = await prisma.delivery.aggregate({
-      where: { variantId, exclusive: false, remainingGrams: { gt: 0 } },
+    // Check if there are any grams available for partial gram sales
+    const gramStock = await prisma.delivery.aggregate({
+      where: { variantId, remainingGrams: { gt: 0 } },
       _sum: { remainingGrams: true },
     });
-    const hasNonExclusiveGrams = (nonExclusiveStock._sum.remainingGrams ?? 0) > 0;
+    const hasNonExclusiveGrams = (gramStock._sum.remainingGrams ?? 0) > 0;
 
     const lineTotal = (pieces ?? 0) > 0
       ? roundHalereUp((pricing.pricePerPiece ?? 0) * (pieces ?? 0))

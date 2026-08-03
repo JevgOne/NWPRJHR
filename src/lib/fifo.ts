@@ -44,11 +44,7 @@ export async function fifoDeduct(
     ORDER BY "stockedAt" ASC
   `;
 
-  // For gram-only sales, exclude exclusive deliveries (they can only be sold as whole pieces)
-  const isGramOnlySale = requestedPieces === 0 && requestedGrams > 0;
-  const eligibleDeliveries = isGramOnlySale
-    ? deliveries.filter((d) => !d.exclusive)
-    : deliveries;
+  const eligibleDeliveries = deliveries;
 
   const totalAvailableGrams = eligibleDeliveries.reduce(
     (sum, d) => sum + d.remainingGrams,

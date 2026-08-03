@@ -703,7 +703,7 @@ export function NewSaleWizard({
               item={item}
               onGramsChange={(g) => updateItem(i, { grams: g })}
               onPiecesChange={(p) => updateItem(i, { pieces: p })}
-              onToggleSellByGrams={item.sellingMode === "BY_PIECE" && item.hasNonExclusiveGrams ? () => toggleSellByGrams(i) : undefined}
+              onToggleSellByGrams={item.sellingMode === "BY_PIECE" ? () => toggleSellByGrams(i) : undefined}
               onRemove={() => setItems((prev) => prev.filter((_, j) => j !== i))}
             />
           ))}
