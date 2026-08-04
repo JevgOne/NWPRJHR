@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("b2b"), getLocale()]);
@@ -37,10 +38,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ProPage() {
-  const t = await getTranslations("b2b");
+  const [t, tNav] = await Promise.all([
+    getTranslations("b2b"),
+    getTranslations("public.nav"),
+  ]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Breadcrumbs items={[
+        { label: tNav("home"), href: "/" },
+        { label: t("heroTitle") },
+      ]} />
       {/* Hero */}
       <div className="text-center mb-12">
         <h1 className="text-3xl font-bold text-ink mb-3">{t("heroTitle")}</h1>

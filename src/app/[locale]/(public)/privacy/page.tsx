@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -34,7 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PrivacyPage() {
-  const t = await getTranslations("privacy");
+  const [t, tNav] = await Promise.all([
+    getTranslations("privacy"),
+    getTranslations("public.nav"),
+  ]);
 
   const sections = [
     "controller",
@@ -48,6 +52,10 @@ export default async function PrivacyPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Breadcrumbs items={[
+        { label: tNav("home"), href: "/" },
+        { label: t("title") },
+      ]} />
       <h1 className="text-3xl font-bold text-ink mb-8">{t("title")}</h1>
 
       <div className="space-y-8">

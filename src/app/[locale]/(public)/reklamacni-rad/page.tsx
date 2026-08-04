@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { ComplaintForm } from "./ComplaintForm";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -37,11 +38,18 @@ export async function generateMetadata(): Promise<Metadata> {
 const sections = [1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 export default async function ReklamacniRadPage() {
-  const t = await getTranslations("public.complaints");
-  const tForm = await getTranslations("public.complaintForm");
+  const [t, tForm, tNav] = await Promise.all([
+    getTranslations("public.complaints"),
+    getTranslations("public.complaintForm"),
+    getTranslations("public.nav"),
+  ]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Breadcrumbs items={[
+        { label: tNav("home"), href: "/" },
+        { label: t("title") },
+      ]} />
       <h1 className="text-3xl font-bold text-ink mb-2">{t("title")}</h1>
       <p className="text-sm text-muted mb-8">{t("subtitle")}</p>
 

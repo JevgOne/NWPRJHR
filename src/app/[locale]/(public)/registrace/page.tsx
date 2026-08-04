@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { RegisterForm } from "./RegisterForm";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("public.register"), getLocale()]);
@@ -36,9 +37,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const t = await getTranslations("public.nav");
+  const tReg = await getTranslations("public.register");
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Breadcrumbs items={[
+        { label: t("home"), href: "/" },
+        { label: tReg("pageTitle") },
+      ]} />
       <RegisterForm />
     </div>
   );

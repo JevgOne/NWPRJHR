@@ -38,8 +38,36 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const t = await getTranslations("public");
 
+  const aboutJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Hairland",
+    legalName: "Alvento Solutions s.r.o.",
+    url: "https://www.hairland.cz",
+    logo: "https://www.hairland.cz/icons/icon-512x512.png",
+    description: "Prémiové RAW vlasy k prodloužení z přímého importu",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Školská 660/3",
+      addressLocality: "Praha",
+      postalCode: "110 00",
+      addressCountry: "CZ",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+420608553103",
+      contactType: "sales",
+      availableLanguage: ["Czech", "Ukrainian", "Russian"],
+    },
+    sameAs: [
+      "https://www.instagram.com/hairland.cz/",
+      "https://www.facebook.com/profile.php?id=61591480246246",
+    ],
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }} />
       <Breadcrumbs items={[
         { label: t("nav.home"), href: "/" },
         { label: t("nav.about") },

@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -35,12 +36,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ObchodniPodminkyPage() {
-  const t = await getTranslations("public.terms");
+  const [t, tNav] = await Promise.all([
+    getTranslations("public.terms"),
+    getTranslations("public.nav"),
+  ]);
 
   const sectionNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Breadcrumbs items={[
+        { label: tNav("home"), href: "/" },
+        { label: t("title") },
+      ]} />
       <h1 className="text-3xl font-bold text-ink mb-2">
         {t("title")}
       </h1>

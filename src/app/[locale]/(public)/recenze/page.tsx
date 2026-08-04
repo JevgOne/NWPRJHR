@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import { Link } from "@/i18n/navigation";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { WriteReviewForm } from "../offer/[...slug]/WriteReviewForm";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -127,6 +128,7 @@ export default async function RecenzePage({
 }) {
   const params = await searchParams;
   const t = await getTranslations("public.reviewsPage");
+  const tNav = await getTranslations("public.nav");
   const { reviews, stats } = await getReviewData();
 
   const sourceFilter = (params.source as FilterSource) || "all";
@@ -190,6 +192,11 @@ export default async function RecenzePage({
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       )}
+
+      <Breadcrumbs items={[
+        { label: tNav("home"), href: "/" },
+        { label: t("title") },
+      ]} />
 
       {/* H1 */}
       <div className="text-center mb-10">

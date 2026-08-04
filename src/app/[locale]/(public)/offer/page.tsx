@@ -57,10 +57,26 @@ export async function generateMetadata({
   if (sp.colorTone) parts.push(sp.colorTone);
 
   const title = `${parts.join(" | ")} — ${t("products.title")}`;
+  const description = `${parts.join(", ")} — ${defaultDesc}`;
   return {
     title,
-    description: `${parts.join(", ")} — ${defaultDesc}`,
+    description,
     alternates: getAlternates("/offer"),
+    openGraph: {
+      type: "website",
+      title: `${title} | Hairland`,
+      description,
+      url: "https://www.hairland.cz/offer",
+      siteName: "Hairland",
+      locale: OG_LOCALES[locale] ?? "cs_CZ",
+      images: [{ url: "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Hairland`,
+      description,
+      images: ["https://www.hairland.cz/og/og-offer.jpg"],
+    },
   };
 }
 
