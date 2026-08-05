@@ -11,6 +11,7 @@ interface LabelData {
   color: string;
   category: string;
   texture?: string | null;
+  grams?: number;
 }
 
 interface QrLabel extends LabelData {
@@ -97,28 +98,20 @@ export function QrLabelSheet({
             {labels.map((label) => (
               <div
                 key={label.variantId}
-                className="bg-white shadow border border-gray-200 flex items-start gap-[1.5mm] p-[1.5mm] pt-[2mm]"
+                className="bg-white shadow border border-gray-200 flex flex-col items-center justify-between p-[1.5mm]"
                 style={{ width: "40mm", height: "30mm" }}
               >
+                <div className="text-[8px] font-bold text-ink leading-tight font-mono text-center truncate w-full">
+                  {generateSku(label.category, label.texture, label.color, label.lengthCm)}
+                </div>
                 <img
                   src={label.qrDataUrl}
                   alt="QR"
                   className="flex-shrink-0"
-                  style={{ width: "18mm", height: "18mm" }}
+                  style={{ width: "16mm", height: "16mm" }}
                 />
-                <div className="flex-1 min-w-0 overflow-hidden flex flex-col justify-start">
-                  <div className="text-[10px] font-bold text-ink leading-tight font-mono">
-                    {generateSku(label.category, label.texture, label.color, label.lengthCm)}
-                  </div>
-                  <div className="text-[6px] text-muted leading-tight mt-[0.5mm] truncate">
-                    {label.productName}
-                  </div>
-                  <div className="text-[6px] text-muted leading-tight mt-[0.5mm]">
-                    {label.lengthCm}cm · {label.color}
-                  </div>
-                  <div className="text-[5px] text-muted/40 mt-[0.5mm] font-mono truncate">
-                    {label.variantId.slice(-8)}
-                  </div>
+                <div className="text-[7px] text-ink leading-tight text-center">
+                  {label.lengthCm} cm · {label.grams ? `${label.grams} g` : label.color}
                 </div>
               </div>
             ))}
@@ -129,25 +122,17 @@ export function QrLabelSheet({
       {/* Print-only content — one label per page for thermal printer */}
       <div className="print-only hidden">
         {labels.map((label) => (
-          <div key={label.variantId} className="qr-label">
+          <div key={label.variantId} className="qr-label" style={{ flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ fontSize: "8px", fontWeight: "bold", lineHeight: 1.2, fontFamily: "monospace", textAlign: "center", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {generateSku(label.category, label.texture, label.color, label.lengthCm)}
+            </div>
             <img
               src={label.qrDataUrl}
               alt="QR"
-              style={{ width: "18mm", height: "18mm", flexShrink: 0 }}
+              style={{ width: "16mm", height: "16mm", flexShrink: 0 }}
             />
-            <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
-              <div style={{ fontSize: "10px", fontWeight: "bold", lineHeight: 1.2, fontFamily: "monospace" }}>
-                {generateSku(label.category, label.texture, label.color, label.lengthCm)}
-              </div>
-              <div style={{ fontSize: "6px", color: "#444", marginTop: "0.5mm" }}>
-                {label.productName}
-              </div>
-              <div style={{ fontSize: "6px", color: "#444", marginTop: "0.5mm" }}>
-                {label.lengthCm}cm · {label.color}
-              </div>
-              <div style={{ fontSize: "5px", color: "#aaa", marginTop: "0.5mm", fontFamily: "monospace" }}>
-                {label.variantId.slice(-8)}
-              </div>
+            <div style={{ fontSize: "7px", color: "#000", textAlign: "center" }}>
+              {label.lengthCm} cm · {label.grams ? `${label.grams} g` : label.color}
             </div>
           </div>
         ))}

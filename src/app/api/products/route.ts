@@ -108,6 +108,6 @@ export async function POST(request: NextRequest) {
     ipAddress: getClientIp(request),
   });
 
-  revalidateTag("products", "max");
+  revalidateTag("products");
   return NextResponse.json(product, { status: 201 });
 }

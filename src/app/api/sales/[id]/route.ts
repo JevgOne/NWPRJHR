@@ -154,7 +154,7 @@ export async function POST(
       ipAddress: getClientIp(request),
     });
 
-    revalidateTag("dashboard", "max");
+    revalidateTag("dashboard");
 
     return NextResponse.json({ success: true, sale: result.sale });
   } catch (e) {

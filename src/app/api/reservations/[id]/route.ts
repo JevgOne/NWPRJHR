@@ -196,7 +196,7 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
-        revalidateTag("dashboard", "max");
+        revalidateTag("dashboard");
         return NextResponse.json({
           reservation,
           sale: { id: sale.id, saleNumber: sale.saleNumber },
@@ -321,7 +321,7 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
-        revalidateTag("dashboard", "max");
+        revalidateTag("dashboard");
         return NextResponse.json(reservation);
       }
 

@@ -198,7 +198,7 @@ export async function POST(
     },
   });
 
-  revalidateTag("products", "max");
+  revalidateTag("products");
 
   return NextResponse.json({
     photos: allPhotos,

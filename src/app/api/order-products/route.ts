@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  revalidateTag("products", "max");
+  revalidateTag("products");
 
   return NextResponse.json({ id: product.id }, { status: 201 });
 }

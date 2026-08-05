@@ -288,7 +288,7 @@ export async function POST(
         // Trigger createSaleFromOrder (FIFO + invoice)
         try {
           await createSaleFromOrder(id, session.user.id);
-          revalidateTag("dashboard", "max");
+          revalidateTag("dashboard");
         } catch (e) {
           console.error("[mark-paid] createSaleFromOrder failed:", e);
           // Revert to AWAITING_PAYMENT so admin can retry
@@ -488,7 +488,7 @@ export async function POST(
               where: { id },
               data: { status: "COMPLETED", completedAt: new Date() },
             });
-            revalidateTag("dashboard", "max");
+            revalidateTag("dashboard");
             logAudit({
               userId: session.user.id,
               userEmail: session.user.email ?? undefined,
@@ -550,7 +550,7 @@ export async function POST(
           data: { saleId: sale.id },
         });
 
-        revalidateTag("dashboard", "max");
+        revalidateTag("dashboard");
 
         if (result.salonId) {
           createSalonNotification({
@@ -645,8 +645,8 @@ export async function POST(
           itemCount: orderCheck._count.items,
         }).catch(() => {});
 
-        revalidateTag("badges", "max");
-        revalidateTag("dashboard", "max");
+        revalidateTag("badges");
+        revalidateTag("dashboard");
         return NextResponse.json(order);
       }
 

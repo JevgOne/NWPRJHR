@@ -246,6 +246,7 @@ export function InventoryClient({
         color: i.color,
         category: i.product.category,
         texture: i.product.texture,
+        grams: i.availableGrams,
       }));
   }, [filtered, selected]);
 

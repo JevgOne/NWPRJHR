@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
               sendInvoiceEmail(inv.id).catch((e) =>
                 console.error("[comgate/callback] Sale invoice email failed:", e)
               );
-              revalidateTag("dashboard", "max");
+              revalidateTag("dashboard");
             } catch (e) {
               console.error("[comgate/callback] Sale invoice creation failed:", e);
             }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         try {
           await createSaleFromOrder(order.id, systemUser.id);
           console.log("[comgate/callback] Sale created for order:", order.id);
-          revalidateTag("dashboard", "max");
+          revalidateTag("dashboard");
         } catch (e) {
           console.error("[comgate/callback] createSaleFromOrder failed:", { orderId: order.id, error: e });
         }
