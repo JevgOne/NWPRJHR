@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
@@ -179,7 +180,7 @@ export default async function CenikVlasyPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -187,17 +188,22 @@ export default async function CenikVlasyPage() {
 
       <Breadcrumbs items={[{ label: "Hairland", href: "/" }, { label: t("title") }]} />
 
-      {/* Hero */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blush-100 to-blush-300 flex items-center justify-center">
-            <svg className="w-5 h-5 text-rose-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-ink">{t("title")}</h1>
-        </div>
-        <p className="text-muted max-w-2xl leading-relaxed">{t("subtitle")}</p>
+      {/* Hero — logo + title */}
+      <div className="text-center mb-10">
+        <Image
+          src="/logo-light.svg"
+          alt="Hairland"
+          width={80}
+          height={80}
+          className="h-14 w-auto mx-auto mb-5"
+          unoptimized
+        />
+        <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-2">
+          {t("title")}
+        </h1>
+        <p className="text-muted max-w-lg mx-auto text-sm leading-relaxed">
+          {t("subtitle")}
+        </p>
       </div>
 
       {/* ── SECTION 1: Hair prices ── */}
@@ -239,36 +245,25 @@ export default async function CenikVlasyPage() {
                       </div>
 
                       {/* Price rows */}
-                      <div className="grid gap-1.5">
+                      <div className="divide-y divide-nude-100/80">
                         {rows.map((row, i) => {
                           const pricePer100 = row.minPrice === row.maxPrice
                             ? `${fmtPrice(row.avgPrice * 100)} Kč`
                             : `${fmtPrice(row.minPrice * 100)}–${fmtPrice(row.maxPrice * 100)} Kč`;
-                          const perGram = row.minPrice === row.maxPrice
-                            ? `${fmtPrice(row.avgPrice)} Kč/g`
-                            : `${fmtPrice(row.minPrice)}–${fmtPrice(row.maxPrice)} Kč/g`;
 
                           return (
-                            <div key={`${row.lengthCm}-${row.colorTone}-${i}`} className="flex items-center justify-between py-2 px-3 rounded-lg bg-nude-50/60 hover:bg-nude-50 transition-colors">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <span className="text-sm font-semibold text-ink w-14 flex-shrink-0">{row.lengthCm} cm</span>
-                                <span className="text-xs text-muted truncate">{row.colorTone}</span>
+                            <div key={`${row.lengthCm}-${row.colorTone}-${i}`} className="flex items-center justify-between py-2.5 group">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <span className="text-sm font-medium text-ink w-14 flex-shrink-0">{row.lengthCm} cm</span>
+                                <span className="text-xs text-espresso/50 truncate">{row.colorTone}</span>
                                 {row.inStock ? (
-                                  <span className="flex items-center gap-1 text-[11px] text-emerald-600 flex-shrink-0">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                    {t("inStock")}
-                                  </span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title={t("inStock")} />
                                 ) : (
-                                  <span className="flex items-center gap-1 text-[11px] text-amber-600 flex-shrink-0">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                                    {t("toOrder")}
-                                  </span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title={t("toOrder")} />
                                 )}
                               </div>
-                              <div className="flex items-baseline gap-3 flex-shrink-0">
-                                <span className="text-xs text-muted hidden sm:inline">{perGram}</span>
-                                <span className="text-sm font-bold text-ink min-w-[90px] text-right">{pricePer100}</span>
-                              </div>
+                              <span className="flex-1 mx-3 border-b border-dotted border-nude-200/60" />
+                              <span className="text-sm font-bold text-ink flex-shrink-0">{pricePer100}</span>
                             </div>
                           );
                         })}
@@ -294,23 +289,23 @@ export default async function CenikVlasyPage() {
         <h2 className="text-xl font-semibold text-ink mb-2">{t("extensionTitle")}</h2>
         <p className="text-sm text-muted mb-6 max-w-2xl">{t("extensionDesc")}</p>
 
-        <div className="bg-white rounded-xl border border-line overflow-hidden mb-6">
-          <div className="divide-y divide-nude-100">
-            {[
-              { label: "do 50 g", price: "4 000 Kč" },
-              { label: "do 100 g", price: "5 500 Kč" },
-              { label: "do 150 g", price: "6 500 Kč" },
-              { label: "do 200 g", price: "7 500 Kč" },
-            ].map(({ label, price }) => (
-              <div key={label} className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-                <span className="text-sm text-ink">{label}</span>
-                <span className="text-sm font-bold text-ink">{price}</span>
-              </div>
-            ))}
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <span className="text-sm text-ink">{t("shortCut")}</span>
-              <span className="text-sm font-bold text-ink">9 000 Kč</span>
+        <div className="bg-white rounded-xl border border-line p-5 mb-4">
+          {[
+            { label: "do 50 g", price: "4 000 Kč" },
+            { label: "do 100 g", price: "5 500 Kč" },
+            { label: "do 150 g", price: "6 500 Kč" },
+            { label: "do 200 g", price: "7 500 Kč" },
+          ].map(({ label, price }, i) => (
+            <div key={label} className={`flex items-center py-2.5 ${i > 0 ? "mt-1" : ""}`}>
+              <span className="text-sm text-ink">{label}</span>
+              <span className="flex-1 mx-3 border-b border-dotted border-nude-300/50" />
+              <span className="text-sm font-bold text-ink">{price}</span>
             </div>
+          ))}
+          <div className="flex items-center py-2.5 mt-1">
+            <span className="text-sm text-ink">{t("shortCut")}</span>
+            <span className="flex-1 mx-3 border-b border-dotted border-nude-300/50" />
+            <span className="text-sm font-bold text-ink">9 000 Kč</span>
           </div>
         </div>
         <p className="text-xs text-muted mb-8 flex items-start gap-2">
@@ -322,42 +317,36 @@ export default async function CenikVlasyPage() {
 
         {/* Other services */}
         <h3 className="text-base font-semibold text-ink mb-3">{t("otherServicesTitle")}</h3>
-        <div className="bg-white rounded-xl border border-line overflow-hidden mb-6">
-          <div className="divide-y divide-nude-100">
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <span className="text-sm text-ink">{t("removal")}</span>
-              <span className="text-sm font-bold text-ink">1 000 Kč</span>
+        <div className="bg-white rounded-xl border border-line p-5 mb-6">
+          {[
+            { label: t("removal"), price: "1 000 Kč" },
+            { label: t("removalOther"), price: "1 000 Kč" },
+            { label: t("braiding"), price: `1 000 Kč / ${t("perHour")}` },
+            { label: t("headWash"), price: "300 Kč" },
+          ].map(({ label, price }, i) => (
+            <div key={i} className={`flex items-center py-2.5 ${i > 0 ? "mt-1" : ""}`}>
+              <span className="text-sm text-ink">{label}</span>
+              <span className="flex-1 mx-3 border-b border-dotted border-nude-300/50" />
+              <span className="text-sm font-bold text-ink whitespace-nowrap">{price}</span>
             </div>
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <span className="text-sm text-ink">{t("removalOther")}</span>
-              <span className="text-sm font-bold text-ink">1 000 Kč</span>
-            </div>
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <span className="text-sm text-ink">{t("braiding")}</span>
-              <span className="text-sm font-bold text-ink">1 000 Kč <span className="font-normal text-muted text-xs">/ {t("perHour")}</span></span>
-            </div>
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <span className="text-sm text-ink">{t("headWash")}</span>
-              <span className="text-sm font-bold text-ink">300 Kč</span>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Coloring */}
         <h3 className="text-base font-semibold text-ink mb-3">{t("coloringTitle")}</h3>
-        <div className="bg-white rounded-xl border border-line overflow-hidden">
-          <div className="divide-y divide-nude-100">
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <span className="text-sm text-ink">{t("rootColoring")}</span>
-              <span className="text-sm font-bold text-ink">{t("coloringFrom")} 2 000 Kč</span>
+        <div className="bg-white rounded-xl border border-line p-5">
+          <div className="flex items-center py-2.5">
+            <span className="text-sm text-ink">{t("rootColoring")}</span>
+            <span className="flex-1 mx-3 border-b border-dotted border-nude-300/50" />
+            <span className="text-sm font-bold text-ink whitespace-nowrap">{t("coloringFrom")} 2 000 Kč</span>
+          </div>
+          <div className="flex items-center py-2.5 mt-1">
+            <div className="min-w-0">
+              <span className="text-sm text-ink">{t("otherColoring")}</span>
+              <p className="text-xs text-muted mt-0.5">{t("otherColoringNote")}</p>
             </div>
-            <div className="flex items-center justify-between px-5 py-3.5 hover:bg-nude-50/50 transition-colors">
-              <div>
-                <span className="text-sm text-ink">{t("otherColoring")}</span>
-                <p className="text-xs text-muted mt-0.5">{t("otherColoringNote")}</p>
-              </div>
-              <span className="text-sm font-medium text-muted italic whitespace-nowrap ml-4">{t("afterConsultation")}</span>
-            </div>
+            <span className="flex-1 mx-3 border-b border-dotted border-nude-300/50" />
+            <span className="text-sm text-muted italic whitespace-nowrap">{t("afterConsultation")}</span>
           </div>
         </div>
       </section>
