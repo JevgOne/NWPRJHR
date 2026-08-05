@@ -258,6 +258,64 @@ export default async function CenikVlasyPage() {
         })}
       </div>
 
+      {/* Extension service pricing */}
+      <section className="mt-10">
+        <h2 className="text-lg sm:text-xl font-bold text-ink mb-4">
+          {t("extensionTitle")}
+        </h2>
+        <p className="text-sm text-muted mb-5">{t("extensionDesc")}</p>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border border-espresso/15 rounded-xl overflow-hidden">
+            <thead>
+              <tr className="bg-espresso/5">
+                <th className="text-left px-4 py-3 font-semibold text-ink">{t("extensionService")}</th>
+                <th className="text-right px-4 py-3 font-semibold text-ink">{t("extensionPrice")}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-nude-100">
+              <tr className="hover:bg-nude-50 transition-colors">
+                <td className="px-4 py-3 text-ink">
+                  <div className="font-medium">{t("extensionBase")}</div>
+                  <div className="text-xs text-muted mt-0.5">{t("extensionBaseNote")}</div>
+                </td>
+                <td className="px-4 py-3 text-right font-semibold text-ink whitespace-nowrap">5 500 Kč</td>
+              </tr>
+              <tr className="hover:bg-nude-50 transition-colors">
+                <td className="px-4 py-3 text-ink">
+                  <div className="font-medium">{t("extensionExtra")}</div>
+                  <div className="text-xs text-muted mt-0.5">{t("extensionExtraNote")}</div>
+                </td>
+                <td className="px-4 py-3 text-right font-semibold text-ink whitespace-nowrap">3 000 Kč</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Example calculations */}
+        <div className="mt-4 bg-nude-50 rounded-xl border border-nude-200 p-4 sm:p-5">
+          <p className="text-xs font-semibold text-espresso uppercase tracking-wider mb-3">{t("extensionExample")}</p>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted">100 g</span>
+              <span className="font-medium text-ink">5 500 Kč</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">150 g</span>
+              <span className="font-medium text-ink">8 500 Kč</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">200 g</span>
+              <span className="font-medium text-ink">11 500 Kč</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">250 g</span>
+              <span className="font-medium text-ink">14 500 Kč</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Processing types section */}
       <section className="mt-12">
         <h2 className="text-lg sm:text-xl font-bold text-ink mb-4">
