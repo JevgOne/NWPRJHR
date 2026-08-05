@@ -67,7 +67,9 @@
     "inquiryCartTitle": "Košík objednávky",
     "inquiryCartDescription": "Váš košík — objednávka prémiových vlasů k prodloužení. Odpovíme do 24 hodin.",
     "checkoutTitle": "Objednávka",
-    "checkoutDescription": "Dokončete objednávku prémiových vlasů Hairland — rychlé doručení po celé ČR."
+    "checkoutDescription": "Dokončete objednávku prémiových vlasů Hairland — rychlé doručení po celé ČR.",
+    "cenikTitle": "Ceník vlasů k prodloužení — aktuální ceny",
+    "cenikDescription": "Orientační ceník RAW vlasů k prodloužení — ceny za gram dle kategorie a délky. Clip-in, tape-in, keratin, micro ring. Aktuální ceny Hairland."
   },
   "roles": {
     "owner": "Majitel",
@@ -1225,7 +1227,8 @@
       "companyId": "IČO 23673389",
       "companyAddress": "Školská 660/3, Praha",
       "weightGuide": "Průvodce gramáží",
-      "reviews": "Recenze"
+      "reviews": "Recenze",
+      "pricelist": "Ceník vlasů"
     },
     "batchPopup": {
       "title": "Nová várka vlasů na cestě!",
@@ -3110,5 +3113,27 @@
     "confirmNewPassword": "Potvrzení nového hesla",
     "passwordHint": "Heslo musí mít alespoň 6 znaků.",
     "saved": "Profil byl úspěšně uložen."
+  },
+  "pricelist": {
+    "title": "Ceník vlasů k prodloužení",
+    "subtitle": "Orientační ceník RAW vlasů podle kategorie a délky. Ceny se automaticky aktualizují podle aktuálních skladových zásob a průměrných cen variant.",
+    "infoTitle": "Orientační ceny",
+    "infoDesc": "Uvedené ceny jsou průměrné a mohou se lišit dle konkrétního odstínu, textury a původu vlasů. Přesnou cenu vždy uvidíte u konkrétního produktu v nabídce.",
+    "products": "produktů",
+    "showProducts": "Zobrazit produkty",
+    "length": "Délka",
+    "pricePerGram": "Cena za gram",
+    "pricePer100g": "Cena za 100 g",
+    "availability": "Dostupnost",
+    "inStock": "Skladem",
+    "toOrder": "Na objednávku",
+    "processingTitle": "Zpracování na zakázku",
+    "processingDesc": "Všechny vlasy zpracováváme na zakázku do 7 pracovních dnů — vyberte si metodu podle potřeby:",
+    "b2bTitle": "Velkoobchodní ceny pro salony",
+    "b2bDesc": "Spolupracujete s námi jako salon nebo kadeřnice? Nabízíme B2B slevy 15–30 % z maloobchodních cen.",
+    "b2bLink": "Více o spolupráci pro salony",
+    "ctaText": "Nenašli jste, co hledáte? Rádi vám poradíme s výběrem.",
+    "ctaOffer": "Prohlédnout nabídku",
+    "ctaContact": "Kontaktovat nás"
   }
 }
