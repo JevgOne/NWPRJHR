@@ -28,7 +28,7 @@ export async function POST(
       ipAddress: getClientIp(_request),
     });
 
-    revalidateTag("dashboard", "max");
+    revalidateTag("dashboard", { expire: 0 });
     return NextResponse.json(ret);
   } catch (e) {
     if (e instanceof Error) {

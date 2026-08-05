@@ -47,7 +47,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     ipAddress: getClientIp(req),
   });
 
-  revalidateTag("stylists", "max");
+  revalidateTag("stylists", { expire: 0 });
 
   return NextResponse.json(stylist);
 }
@@ -70,7 +70,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     ipAddress: getClientIp(req),
   });
 
-  revalidateTag("stylists", "max");
+  revalidateTag("stylists", { expire: 0 });
 
   return NextResponse.json({ ok: true });
 }

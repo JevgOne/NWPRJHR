@@ -25,7 +25,7 @@ export async function createNotification(input: {
   });
 
   // Revalidate sidebar badge counts
-  try { revalidateTag("badges", "max"); } catch { /* may fail in non-RSC context */ }
+  try { revalidateTag("badges", { expire: 0 }); } catch { /* may fail in non-RSC context */ }
 
   if (input.sendEmail) {
     const recipient = await prisma.user.findUniqueOrThrow({

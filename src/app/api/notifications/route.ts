@@ -45,7 +45,7 @@ export async function PUT(request: NextRequest) {
       where: { recipientId: session.user.id, read: false },
       data: { read: true, readAt: new Date() },
     });
-    revalidateTag("badges", "max");
+    revalidateTag("badges", { expire: 0 });
     return NextResponse.json({ ok: true });
   }
 

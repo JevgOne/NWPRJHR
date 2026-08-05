@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     ipAddress: getClientIp(req),
   });
 
-  revalidateTag("stylists", "max");
+  revalidateTag("stylists", { expire: 0 });
 
   return NextResponse.json(stylist, { status: 201 });
 }

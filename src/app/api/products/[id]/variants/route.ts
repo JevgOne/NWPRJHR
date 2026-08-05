@@ -88,6 +88,6 @@ export async function POST(
     });
   }
 
-  revalidateTag("products", "max");
+  revalidateTag("products", { expire: 0 });
   return NextResponse.json({ created: created.count }, { status: 201 });
 }

@@ -123,7 +123,7 @@ export async function PUT(
     ipAddress: getClientIp(request),
   });
 
-  revalidateTag("products", "max");
+  revalidateTag("products", { expire: 0 });
   return NextResponse.json(variant);
 }
 
@@ -151,6 +151,6 @@ export async function DELETE(
     ipAddress: getClientIp(_request),
   });
 
-  revalidateTag("products", "max");
+  revalidateTag("products", { expire: 0 });
   return NextResponse.json(variant);
 }

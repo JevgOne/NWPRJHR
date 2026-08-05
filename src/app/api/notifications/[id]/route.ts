@@ -28,6 +28,6 @@ export async function PUT(
     data: { read: true, readAt: new Date() },
   });
 
-  revalidateTag("badges", "max");
+  revalidateTag("badges", { expire: 0 });
   return NextResponse.json(updated);
 }

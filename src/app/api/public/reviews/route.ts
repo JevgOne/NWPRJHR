@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
   }
 
-  revalidateTag("reviews", "max");
-  revalidateTag("badges", "max");
+  revalidateTag("reviews", { expire: 0 });
+  revalidateTag("badges", { expire: 0 });
 
   return NextResponse.json({ success: true, id: review.id });
 }
