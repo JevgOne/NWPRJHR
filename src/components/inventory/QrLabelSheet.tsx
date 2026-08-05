@@ -95,47 +95,53 @@ export function QrLabelSheet({
         </div>
         <div className="flex-1 overflow-auto p-6 bg-gray-100">
           <div className="flex flex-wrap gap-4 justify-center">
-            {labels.map((label) => (
-              <div
-                key={label.variantId}
-                className="bg-white shadow border border-gray-200 flex flex-col items-center justify-between p-[1.5mm]"
-                style={{ width: "40mm", height: "30mm" }}
-              >
-                <div className="text-[8px] font-bold text-ink leading-tight font-mono text-center truncate w-full">
-                  {generateSku(label.category, label.texture, label.color, label.lengthCm)}
+            {labels.map((label) => {
+              const sku = generateSku(label.category, label.texture, label.color, label.lengthCm);
+              return (
+                <div
+                  key={label.variantId}
+                  className="bg-white shadow border border-gray-200 flex flex-col items-center justify-between p-[2mm]"
+                  style={{ width: "40mm", height: "30mm" }}
+                >
+                  <div className="text-[10px] font-bold text-ink leading-tight font-mono text-center w-full">
+                    {sku}
+                  </div>
+                  <div className="text-[8px] text-ink leading-tight text-center">
+                    {label.lengthCm} cm · {label.grams ? `${label.grams} g` : label.color}
+                  </div>
+                  <img
+                    src={label.qrDataUrl}
+                    alt="QR"
+                    className="flex-shrink-0"
+                    style={{ width: "15mm", height: "15mm" }}
+                  />
                 </div>
-                <img
-                  src={label.qrDataUrl}
-                  alt="QR"
-                  className="flex-shrink-0"
-                  style={{ width: "16mm", height: "16mm" }}
-                />
-                <div className="text-[7px] text-ink leading-tight text-center">
-                  {label.lengthCm} cm · {label.grams ? `${label.grams} g` : label.color}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Print-only content — one label per page for thermal printer */}
       <div className="print-only hidden">
-        {labels.map((label) => (
-          <div key={label.variantId} className="qr-label" style={{ flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ fontSize: "8px", fontWeight: "bold", lineHeight: 1.2, fontFamily: "monospace", textAlign: "center", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {generateSku(label.category, label.texture, label.color, label.lengthCm)}
+        {labels.map((label) => {
+          const sku = generateSku(label.category, label.texture, label.color, label.lengthCm);
+          return (
+            <div key={label.variantId} className="qr-label" style={{ flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "2mm" }}>
+              <div style={{ fontSize: "10px", fontWeight: "bold", lineHeight: 1.2, fontFamily: "monospace", textAlign: "center", width: "100%" }}>
+                {sku}
+              </div>
+              <div style={{ fontSize: "8px", color: "#000", textAlign: "center" }}>
+                {label.lengthCm} cm · {label.grams ? `${label.grams} g` : label.color}
+              </div>
+              <img
+                src={label.qrDataUrl}
+                alt="QR"
+                style={{ width: "15mm", height: "15mm", flexShrink: 0 }}
+              />
             </div>
-            <img
-              src={label.qrDataUrl}
-              alt="QR"
-              style={{ width: "16mm", height: "16mm", flexShrink: 0 }}
-            />
-            <div style={{ fontSize: "7px", color: "#000", textAlign: "center" }}>
-              {label.lengthCm} cm · {label.grams ? `${label.grams} g` : label.color}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );
