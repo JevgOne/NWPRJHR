@@ -199,8 +199,8 @@ export async function DELETE(
 
   invalidateStockCache();
   revalidatePath("/inventory");
-  revalidateTag("stock", "max");
-  revalidateTag("products", "max");
-  revalidateTag("dashboard", "max");
+  revalidateTag("stock", { expire: 0 });
+  revalidateTag("products", { expire: 0 });
+  revalidateTag("dashboard", { expire: 0 });
   return NextResponse.json({ ok: true });
 }

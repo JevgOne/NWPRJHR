@@ -166,5 +166,5 @@ export async function getAllStockNumbers(): Promise<Map<string, StockNumbers>> {
 }
 
 export function invalidateStockCache() {
-  try { revalidateTag("stock", "max"); } catch { /* noop outside request context */ }
+  try { revalidateTag("stock", { expire: 0 }); } catch { /* noop outside request context */ }
 }

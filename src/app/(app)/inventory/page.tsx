@@ -6,6 +6,8 @@ import { getAllStockNumbers } from "@/lib/stock";
 import { InventoryClient } from "./InventoryClient";
 import { unstable_cache } from "next/cache";
 
+export const dynamic = "force-dynamic";
+
 const getCachedInventoryData = unstable_cache(
   async () => {
     const [variants, allStock, latestBarcodes] = await Promise.all([
