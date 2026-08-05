@@ -4,7 +4,6 @@ import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 import { getCachedAllProducts } from "@/lib/cached-products";
-import { formatCZK } from "@/lib/pricing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -31,28 +30,44 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const CATEGORY_ORDER = ["VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
+const TEXTURE_ORDER = ["Rovné", "Mírně vlnité", "Vlnité"] as const;
 
-const CATEGORY_STYLES: Record<string, { pill: string; card: string; accent: string }> = {
-  VIRGIN: { pill: "bg-amber-100 text-amber-800", card: "border-amber-200/60 hover:border-amber-300", accent: "text-amber-700" },
-  LUXE: { pill: "bg-violet-100 text-violet-800", card: "border-violet-200/60 hover:border-violet-300", accent: "text-violet-700" },
-  STANDARD: { pill: "bg-emerald-100 text-emerald-800", card: "border-emerald-200/60 hover:border-emerald-300", accent: "text-emerald-700" },
-  SALE: { pill: "bg-rose-100 text-rose-800", card: "border-rose-200/60 hover:border-rose-300", accent: "text-rose-700" },
+const CATEGORY_STYLES: Record<string, { pill: string; card: string }> = {
+  VIRGIN: { pill: "bg-amber-100 text-amber-800", card: "border-amber-200/60" },
+  LUXE: { pill: "bg-violet-100 text-violet-800", card: "border-violet-200/60" },
+  STANDARD: { pill: "bg-emerald-100 text-emerald-800", card: "border-emerald-200/60" },
+  SALE: { pill: "bg-rose-100 text-rose-800", card: "border-rose-200/60" },
+};
+
+const TEXTURE_ICONS: Record<string, string> = {
+  "Rovné": "━━━",
+  "Mírně vlnité": "〜〜",
+  "Vlnité": "∿∿∿",
 };
 
 type PriceRow = {
   lengthCm: number;
-  avgPricePerGram: number;
-  minPricePerGram: number;
-  maxPricePerGram: number;
-  variantCount: number;
+  colorTone: string;
+  avgPrice: number;
+  minPrice: number;
+  maxPrice: number;
   inStock: boolean;
+};
+
+type TextureGroup = {
+  texture: string;
+  rows: PriceRow[];
 };
 
 type CategoryData = {
   category: string;
-  rows: PriceRow[];
+  textures: TextureGroup[];
   productCount: number;
 };
+
+function fmtPrice(halere: number): string {
+  return Math.round(halere / 100).toLocaleString("cs-CZ");
+}
 
 function buildPriceData(
   products: Awaited<ReturnType<typeof getCachedAllProducts>>,
@@ -61,44 +76,80 @@ function buildPriceData(
 
   for (const cat of CATEGORY_ORDER) {
     const catProducts = products.filter(
-      (p) => p.category === cat && p.variants.some((v) => v.retailPricePerGram > 0),
+      (p) => p.category === cat && p.variants.some((v) => v.retailPricePerGram > 0 && v.sellingMode === "BY_GRAM"),
     );
     if (catProducts.length === 0) continue;
 
-    const byLength = new Map<number, { prices: number[]; hasStock: boolean }>();
+    // Group by texture → length+colorTone
+    const textureMap = new Map<string, Map<string, { prices: number[]; hasStock: boolean }>>();
+
     for (const p of catProducts) {
+      const texture = p.texture || "Rovné";
+      if (!textureMap.has(texture)) textureMap.set(texture, new Map());
+      const lengthMap = textureMap.get(texture)!;
+
       for (const v of p.variants) {
         if (v.sellingMode !== "BY_GRAM" || v.retailPricePerGram <= 0) continue;
-        const existing = byLength.get(v.lengthCm);
+        const colorTone = p.colorTone || "—";
+        const key = `${v.lengthCm}|${colorTone}`;
+        const existing = lengthMap.get(key);
         if (existing) {
           existing.prices.push(v.retailPricePerGram);
           if (v.availableGrams > 0) existing.hasStock = true;
         } else {
-          byLength.set(v.lengthCm, { prices: [v.retailPricePerGram], hasStock: v.availableGrams > 0 });
+          lengthMap.set(key, { prices: [v.retailPricePerGram], hasStock: v.availableGrams > 0 });
         }
       }
     }
 
-    const rows: PriceRow[] = [...byLength.entries()]
-      .sort(([a], [b]) => a - b)
-      .map(([lengthCm, data]) => ({
-        lengthCm,
-        avgPricePerGram: Math.round(data.prices.reduce((a, b) => a + b, 0) / data.prices.length),
-        minPricePerGram: Math.min(...data.prices),
-        maxPricePerGram: Math.max(...data.prices),
-        variantCount: data.prices.length,
-        inStock: data.hasStock,
-      }));
+    const textures: TextureGroup[] = [];
+    for (const tex of TEXTURE_ORDER) {
+      const lengthMap = textureMap.get(tex);
+      if (!lengthMap || lengthMap.size === 0) continue;
 
-    if (rows.length === 0) continue;
-    result.push({ category: cat, rows, productCount: catProducts.length });
+      const rows: PriceRow[] = [...lengthMap.entries()]
+        .map(([key, data]) => {
+          const [lengthStr, colorTone] = key.split("|");
+          const avg = data.prices.reduce((a, b) => a + b, 0) / data.prices.length;
+          return {
+            lengthCm: Number(lengthStr),
+            colorTone,
+            avgPrice: Math.round(avg),
+            minPrice: Math.min(...data.prices),
+            maxPrice: Math.max(...data.prices),
+            inStock: data.hasStock,
+          };
+        })
+        .sort((a, b) => a.lengthCm - b.lengthCm || a.colorTone.localeCompare(b.colorTone));
+
+      textures.push({ texture: tex, rows });
+    }
+
+    // Also pick up textures not in the standard order
+    for (const [tex, lengthMap] of textureMap) {
+      if (TEXTURE_ORDER.includes(tex as any) || lengthMap.size === 0) continue;
+      const rows: PriceRow[] = [...lengthMap.entries()]
+        .map(([key, data]) => {
+          const [lengthStr, colorTone] = key.split("|");
+          const avg = data.prices.reduce((a, b) => a + b, 0) / data.prices.length;
+          return {
+            lengthCm: Number(lengthStr),
+            colorTone,
+            avgPrice: Math.round(avg),
+            minPrice: Math.min(...data.prices),
+            maxPrice: Math.max(...data.prices),
+            inStock: data.hasStock,
+          };
+        })
+        .sort((a, b) => a.lengthCm - b.lengthCm);
+      textures.push({ texture: tex, rows });
+    }
+
+    if (textures.length === 0) continue;
+    result.push({ category: cat, textures, productCount: catProducts.length });
   }
 
   return result;
-}
-
-function fmtPrice(halere: number): string {
-  return Math.round(halere / 100).toLocaleString("cs-CZ");
 }
 
 export default async function CenikVlasyPage() {
@@ -149,18 +200,18 @@ export default async function CenikVlasyPage() {
         <p className="text-muted max-w-2xl leading-relaxed">{t("subtitle")}</p>
       </div>
 
-      {/* ── SECTION 1: Hair prices by category ── */}
+      {/* ── SECTION 1: Hair prices ── */}
       <section className="mb-14">
         <h2 className="text-xl font-semibold text-ink mb-2">{t("hairPricesTitle")}</h2>
         <p className="text-sm text-muted mb-6 max-w-2xl">{t("hairPricesDesc")}</p>
 
-        <div className="space-y-4">
-          {priceData.map(({ category, rows, productCount }) => {
+        <div className="space-y-6">
+          {priceData.map(({ category, textures, productCount }) => {
             const style = CATEGORY_STYLES[category] ?? CATEGORY_STYLES.STANDARD;
             return (
-              <div key={category} className={`bg-white rounded-xl border ${style.card} transition-colors p-5`}>
+              <div key={category} className={`bg-white rounded-xl border ${style.card} p-5`}>
                 {/* Category header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2.5">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${style.pill}`}>
                       {tCat(category.toLowerCase())}
@@ -175,47 +226,61 @@ export default async function CenikVlasyPage() {
                   </Link>
                 </div>
 
-                {/* Price rows */}
-                <div className="grid gap-2">
-                  {rows.map((row) => {
-                    const priceRange = row.minPricePerGram === row.maxPricePerGram;
-                    const per100 = priceRange
-                      ? `${fmtPrice(row.avgPricePerGram * 100)} Kč`
-                      : `${fmtPrice(row.minPricePerGram * 100)}–${fmtPrice(row.maxPricePerGram * 100)} Kč`;
-                    const perGram = priceRange
-                      ? `${fmtPrice(row.avgPricePerGram)} Kč/g`
-                      : `${fmtPrice(row.minPricePerGram)}–${fmtPrice(row.maxPricePerGram)} Kč/g`;
-
-                    return (
-                      <div key={row.lengthCm} className="flex items-center justify-between py-2 px-3 rounded-lg bg-nude-50/60 hover:bg-nude-50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-semibold text-ink w-14">{row.lengthCm} cm</span>
-                          {row.inStock ? (
-                            <span className="flex items-center gap-1 text-[11px] text-emerald-600">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              {t("inStock")}
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1 text-[11px] text-amber-600">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                              {t("toOrder")}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-xs text-muted hidden sm:inline">{perGram}</span>
-                          <span className="text-sm font-bold text-ink min-w-[90px] text-right">{per100}</span>
-                        </div>
+                {/* Texture sub-sections */}
+                <div className="space-y-5">
+                  {textures.map(({ texture, rows }) => (
+                    <div key={texture}>
+                      {/* Texture label */}
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <span className="text-sm text-muted font-mono tracking-wider" aria-hidden>
+                          {TEXTURE_ICONS[texture] ?? "—"}
+                        </span>
+                        <span className="text-sm font-semibold text-ink">{texture}</span>
                       </div>
-                    );
-                  })}
+
+                      {/* Price rows */}
+                      <div className="grid gap-1.5">
+                        {rows.map((row, i) => {
+                          const pricePer100 = row.minPrice === row.maxPrice
+                            ? `${fmtPrice(row.avgPrice * 100)} Kč`
+                            : `${fmtPrice(row.minPrice * 100)}–${fmtPrice(row.maxPrice * 100)} Kč`;
+                          const perGram = row.minPrice === row.maxPrice
+                            ? `${fmtPrice(row.avgPrice)} Kč/g`
+                            : `${fmtPrice(row.minPrice)}–${fmtPrice(row.maxPrice)} Kč/g`;
+
+                          return (
+                            <div key={`${row.lengthCm}-${row.colorTone}-${i}`} className="flex items-center justify-between py-2 px-3 rounded-lg bg-nude-50/60 hover:bg-nude-50 transition-colors">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <span className="text-sm font-semibold text-ink w-14 flex-shrink-0">{row.lengthCm} cm</span>
+                                <span className="text-xs text-muted truncate">{row.colorTone}</span>
+                                {row.inStock ? (
+                                  <span className="flex items-center gap-1 text-[11px] text-emerald-600 flex-shrink-0">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                    {t("inStock")}
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center gap-1 text-[11px] text-amber-600 flex-shrink-0">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                    {t("toOrder")}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-baseline gap-3 flex-shrink-0">
+                                <span className="text-xs text-muted hidden sm:inline">{perGram}</span>
+                                <span className="text-sm font-bold text-ink min-w-[90px] text-right">{pricePer100}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Note */}
         <p className="text-xs text-muted mt-4 flex items-start gap-2">
           <svg className="w-3.5 h-3.5 text-muted flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
@@ -224,13 +289,12 @@ export default async function CenikVlasyPage() {
         </p>
       </section>
 
-      {/* ── SECTION 2: Extension service pricing ── */}
+      {/* ── SECTION 2: Extension & services ── */}
       <section className="mb-14">
         <h2 className="text-xl font-semibold text-ink mb-2">{t("extensionTitle")}</h2>
         <p className="text-sm text-muted mb-6 max-w-2xl">{t("extensionDesc")}</p>
 
-        {/* Extension prices */}
-        <div className="bg-white rounded-xl border border-line overflow-hidden mb-4">
+        <div className="bg-white rounded-xl border border-line overflow-hidden mb-6">
           <div className="divide-y divide-nude-100">
             {[
               { label: "do 50 g", price: "4 000 Kč" },
@@ -321,7 +385,7 @@ export default async function CenikVlasyPage() {
         </div>
       </section>
 
-      {/* ── B2B note ── */}
+      {/* ── B2B ── */}
       <section className="mb-10 bg-espresso/5 rounded-xl p-5 sm:p-6">
         <h2 className="text-base font-semibold text-ink mb-2">{t("b2bTitle")}</h2>
         <p className="text-sm text-muted mb-3">{t("b2bDesc")}</p>
