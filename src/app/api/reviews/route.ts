@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
   }
 
-  revalidateTag("reviews");
+  revalidateTag("reviews", "max");
 
   return NextResponse.json(review);
 }

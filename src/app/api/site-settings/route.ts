@@ -36,7 +36,7 @@ export async function PUT(request: NextRequest) {
     update: { value: String(value) },
   });
 
-  revalidateTag("site-settings");
+  revalidateTag("site-settings", "max");
 
   return NextResponse.json(setting);
 }

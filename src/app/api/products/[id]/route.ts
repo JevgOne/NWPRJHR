@@ -138,7 +138,7 @@ export async function PUT(
     ipAddress: getClientIp(request),
   });
 
-  revalidateTag("products");
+  revalidateTag("products", "max");
   return NextResponse.json(product);
 }
 
@@ -170,7 +170,7 @@ export async function DELETE(
       ipAddress: getClientIp(request),
     });
 
-    revalidateTag("products");
+    revalidateTag("products", "max");
     return NextResponse.json(product);
   }
 
@@ -258,8 +258,8 @@ export async function DELETE(
 
   revalidatePath("/inventory");
   revalidatePath("/inventory/movements");
-  revalidateTag("dashboard");
-  revalidateTag("products");
+  revalidateTag("dashboard", "max");
+  revalidateTag("products", "max");
 
   return NextResponse.json({ deleted: true, productName: product.name });
 }

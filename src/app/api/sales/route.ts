@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
     ipAddress: getClientIp(request),
   });
 
-  revalidateTag("dashboard");
+  revalidateTag("dashboard", "max");
 
   return NextResponse.json(
     {

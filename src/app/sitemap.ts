@@ -8,6 +8,8 @@ import {
   ORIGIN_SLUG_MAP,
 } from "@/lib/attribute-slugs";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = "https://www.hairland.cz";
 const STATIC_DATE = "2026-06-01";
 

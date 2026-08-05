@@ -188,6 +188,6 @@ async function checkAndProcessPayments() {
     }
   }
 
-  revalidateTag("dashboard");
+  revalidateTag("dashboard", "max");
   return NextResponse.json({ checked: results.length, results });
 }

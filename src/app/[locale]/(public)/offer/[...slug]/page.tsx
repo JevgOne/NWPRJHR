@@ -1289,23 +1289,27 @@ export async function generateStaticParams() {
     params.push({ slug: ["zeme", slug] });
   }
 
-  // Lengths — dynamic from DB
-  const lengths = await prisma.variant.findMany({
-    where: { active: true },
-    select: { lengthCm: true },
-    distinct: ["lengthCm"],
-  });
-  for (const { lengthCm } of lengths) {
-    params.push({ slug: ["delka", `${lengthCm}cm`] });
-  }
+  // Lengths + products from DB — wrapped in try/catch to avoid build failures
+  // when the database is unavailable (e.g. Vercel build with embedded replica)
+  try {
+    const lengths = await prisma.variant.findMany({
+      where: { active: true },
+      select: { lengthCm: true },
+      distinct: ["lengthCm"],
+    });
+    for (const { lengthCm } of lengths) {
+      params.push({ slug: ["delka", `${lengthCm}cm`] });
+    }
 
-  // Products — existing slugs
-  const products = await prisma.product.findMany({
-    where: { archived: false, slug: { not: null } },
-    select: { slug: true },
-  });
-  for (const p of products) {
-    if (p.slug) params.push({ slug: [p.slug] });
+    const products = await prisma.product.findMany({
+      where: { archived: false, slug: { not: null } },
+      select: { slug: true },
+    });
+    for (const p of products) {
+      if (p.slug) params.push({ slug: [p.slug] });
+    }
+  } catch (e) {
+    console.warn("[generateStaticParams] DB unavailable, skipping dynamic params:", e);
   }
 
   return params;

@@ -49,7 +49,7 @@ export async function PUT(
   });
 
   if (body.status) {
-    revalidateTag("badges");
+    revalidateTag("badges", "max");
     if (body.status === "CANCELLED") {
       deleteNotificationsForEntity("inquiryId", id).catch(() => {});
     }

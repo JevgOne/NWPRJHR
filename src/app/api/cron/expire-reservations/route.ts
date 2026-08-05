@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (expiredCount > 0 || expiredOrderCount > 0) {
-    revalidateTag("dashboard");
+    revalidateTag("dashboard", "max");
   }
 
   return NextResponse.json({

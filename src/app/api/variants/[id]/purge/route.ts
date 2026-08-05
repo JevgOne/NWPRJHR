@@ -150,8 +150,8 @@ export async function DELETE(
 
   revalidatePath("/inventory");
   revalidatePath("/inventory/movements");
-  revalidateTag("dashboard");
-  revalidateTag("products");
+  revalidateTag("dashboard", "max");
+  revalidateTag("products", "max");
 
   return NextResponse.json({
     ok: true,

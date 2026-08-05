@@ -257,9 +257,9 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/inventory");
     revalidatePath("/inventory/movements");
-    revalidateTag("stock");
-    revalidateTag("dashboard");
-    revalidateTag("products");
+    revalidateTag("stock", "max");
+    revalidateTag("dashboard", "max");
+    revalidateTag("products", "max");
 
     return NextResponse.json(
       { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },
@@ -314,9 +314,9 @@ export async function POST(request: NextRequest) {
   });
 
   revalidatePath("/inventory");
-  revalidateTag("stock");
-  revalidateTag("dashboard");
-  revalidateTag("products");
+  revalidateTag("stock", "max");
+  revalidateTag("dashboard", "max");
+  revalidateTag("products", "max");
 
   return NextResponse.json(
     { ...delivery, productId: variant?.productId, productName: variant?.product.name, productSlug: variant?.product.slug },

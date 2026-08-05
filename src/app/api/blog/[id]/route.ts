@@ -93,7 +93,7 @@ export async function PUT(
 
   const post = await prisma.blogPost.update({ where: { id }, data: updateData });
 
-  revalidateTag("blog");
+  revalidateTag("blog", "max");
 
   logAudit({
     userId: session.user.id,
@@ -121,7 +121,7 @@ export async function DELETE(
   const { id } = await params;
   await prisma.blogPost.delete({ where: { id } });
 
-  revalidateTag("blog");
+  revalidateTag("blog", "max");
 
   logAudit({
     userId: session.user.id,

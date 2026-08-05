@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  revalidateTag("blog");
+  revalidateTag("blog", "max");
 
   logAudit({
     userId: session.user.id,

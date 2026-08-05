@@ -90,8 +90,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
     }).catch(() => {});
   }
 
-  revalidateTag("reviews");
-  revalidateTag("badges");
+  revalidateTag("reviews", "max");
+  revalidateTag("badges", "max");
 
   return NextResponse.json(review);
 }
@@ -123,8 +123,8 @@ export async function DELETE(_request: NextRequest, { params }: Props) {
     ipAddress: getClientIp(_request),
   });
 
-  revalidateTag("reviews");
-  revalidateTag("badges");
+  revalidateTag("reviews", "max");
+  revalidateTag("badges", "max");
 
   return NextResponse.json({ success: true });
 }

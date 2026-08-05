@@ -18,7 +18,7 @@ export async function DELETE(
     data: { archived: true },
   });
 
-  revalidateTag("products");
+  revalidateTag("products", "max");
 
   return NextResponse.json({ ok: true });
 }
