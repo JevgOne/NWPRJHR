@@ -313,7 +313,7 @@ export async function sendDepositEmail(opts: {
     <!-- Header -->
     <div style="background:#3a2c2a;padding:28px 32px;text-align:center;">
       <a href="https://hairland.cz" style="text-decoration:none;">
-        <span style="font-size:26px;font-weight:400;color:#c2a36b;letter-spacing:3px;text-transform:uppercase;">Hairland</span>
+        <img src="https://hairland.cz/logo-email-dark.png" alt="Hairland" width="140" height="140" style="display:block;margin:0 auto;" />
       </a>
     </div>
 
