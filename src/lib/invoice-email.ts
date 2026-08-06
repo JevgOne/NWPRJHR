@@ -307,41 +307,60 @@ export async function sendDepositEmail(opts: {
   const html = `<!DOCTYPE html>
 <html lang="cs">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#fdfaf7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(58,44,42,0.08);">
-    <div style="background:#fdfaf7;padding:24px 24px 16px;text-align:center;">
+<body style="margin:0;padding:0;background-color:#fdfaf7;font-family:Georgia,'Times New Roman',serif;">
+  <div style="max-width:560px;margin:0 auto;background:#ffffff;overflow:hidden;margin-top:32px;margin-bottom:32px;">
+
+    <!-- Header -->
+    <div style="background:#3a2c2a;padding:28px 32px;text-align:center;">
       <a href="https://hairland.cz" style="text-decoration:none;">
-        <span style="font-size:28px;font-weight:700;color:#3a2c2a;letter-spacing:1px;">Hairland</span>
+        <span style="font-size:26px;font-weight:400;color:#c2a36b;letter-spacing:3px;text-transform:uppercase;">Hairland</span>
       </a>
     </div>
-    <div style="padding:32px 24px;">
-      <p style="color:#3a2c2a;font-size:16px;line-height:1.6;margin:0 0 12px;">${greeting},</p>
-      <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;">
-        pro potvrzení Vaší rezervace prosíme o úhradu zálohy ve výši <strong>${amount}</strong>.
+
+    <!-- Gold accent line -->
+    <div style="height:2px;background:linear-gradient(90deg,#efe0d6,#c2a36b,#efe0d6);"></div>
+
+    <!-- Body -->
+    <div style="padding:40px 36px 32px;">
+      <p style="color:#3a2c2a;font-size:17px;line-height:1.7;margin:0 0 8px;font-weight:400;">${greeting},</p>
+      <p style="color:#3a2c2a;font-size:15px;line-height:1.7;margin:0 0 32px;">
+        děkujeme za Vaši rezervaci. Pro její potvrzení prosíme o úhradu zálohy.
       </p>
 
-      <div style="text-align:center;margin:32px 0;">
-        <a href="${opts.comgateUrl}" style="display:inline-block;background:#c2a36b;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:16px 48px;border-radius:10px;letter-spacing:0.5px;">
-          Zaplatit zálohu ${amount}
+      <!-- Amount box -->
+      <div style="background:#fdfaf7;border:1px solid #efe0d6;border-radius:8px;padding:20px;text-align:center;margin:0 0 28px;">
+        <p style="color:#9c8682;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 8px;">Záloha k úhradě</p>
+        <p style="color:#3a2c2a;font-size:28px;font-weight:700;margin:0;letter-spacing:0.5px;">${amount}</p>
+      </div>
+
+      <!-- CTA button -->
+      <div style="text-align:center;margin:0 0 28px;">
+        <a href="${opts.comgateUrl}" style="display:inline-block;background:#c98b88;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:15px 52px;border-radius:6px;letter-spacing:0.3px;font-family:'Segoe UI',Tahoma,sans-serif;">
+          Zaplatit online
         </a>
       </div>
 
-      <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:24px 0 0;text-align:center;">
-        Po kliknutí budete přesměrováni na zabezpečenou platební bránu.
+      <p style="color:#9c8682;font-size:12px;line-height:1.5;text-align:center;margin:0 0 28px;">
+        Budete přesměrováni na zabezpečenou platební bránu Comgate.
       </p>
 
-      <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">
-        Děkujeme za Vaši důvěru. V případě dotazů nás neváhejte kontaktovat.
+      <!-- Divider -->
+      <div style="height:1px;background:#efe0d6;margin:0 0 20px;"></div>
+
+      <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:0;">
+        V případě dotazů nás kontaktujte na
+        <a href="mailto:info@hairland.cz" style="color:#c98b88;text-decoration:none;">info@hairland.cz</a>
+        nebo <a href="tel:+420608553103" style="color:#c98b88;text-decoration:none;">+420 608 553 103</a>.
       </p>
     </div>
-    <div style="background:#f7efe8;padding:20px 24px;text-align:center;border-top:1px solid #ead9cf;">
-      <p style="margin:0;color:#9c8682;font-size:12px;">&copy; ${new Date().getFullYear()} Hairland.cz &mdash; Prémiové vlasy k prodloužení</p>
-      <p style="margin:8px 0 0;color:#9c8682;font-size:12px;">
-        <a href="tel:+420608553103" style="color:#a96d6c;text-decoration:none;">+420 608 553 103</a>
-        &middot; <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
-        &middot; <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+
+    <!-- Footer -->
+    <div style="background:#3a2c2a;padding:20px 32px;text-align:center;">
+      <p style="margin:0;color:#9c8682;font-size:11px;letter-spacing:0.5px;">
+        &copy; ${new Date().getFullYear()} <a href="https://hairland.cz" style="color:#c2a36b;text-decoration:none;">Hairland.cz</a> &mdash; Prémiové vlasy k prodloužení
       </p>
     </div>
+
   </div>
 </body>
 </html>`;
