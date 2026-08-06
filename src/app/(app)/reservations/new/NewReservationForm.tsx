@@ -152,7 +152,7 @@ export function NewReservationForm({
       pieces: isByPiece ? pieces : 0,
       paymentDueDate,
       note: note || undefined,
-      sendDepositInvoice: contactEmail ? sendDeposit : false,
+      sendDepositInvoice: sendDeposit,
     };
 
     try {
@@ -300,7 +300,7 @@ export function NewReservationForm({
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
-          {contactEmail && (
+          {(contactEmail || customerId || salonId) && (
             <div className="mt-3">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
