@@ -157,8 +157,10 @@ export function CustomerDetailClient({ id }: { id: string }) {
   const [editCity, setEditCity] = useState("");
   const [editInstagram, setEditInstagram] = useState("");
   const [editNote, setEditNote] = useState("");
+  const [depositLoading, setDepositLoading] = useState<string | null>(null);
+  const [depositSuccess, setDepositSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadCustomer = () => {
     fetch(`/api/customers/${id}`)
       .then((r) => r.json())
       .then((data) => {
@@ -173,7 +175,27 @@ export function CustomerDetailClient({ id }: { id: string }) {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [id]);
+  };
+
+  useEffect(() => { loadCustomer(); }, [id]);
+
+  const handleSendDeposit = async (reservationId: string) => {
+    setDepositLoading(reservationId);
+    setDepositSuccess(null);
+    try {
+      const res = await fetch(`/api/reservations/${reservationId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "resend_deposit" }),
+      });
+      if (res.ok) {
+        setDepositSuccess(reservationId);
+        loadCustomer();
+      }
+    } finally {
+      setDepositLoading(null);
+    }
+  };
 
   const handleSave = async () => {
     const res = await fetch(`/api/customers/${id}`, {
@@ -376,14 +398,24 @@ export function CustomerDetailClient({ id }: { id: string }) {
           <div className="divide-y divide-line/50">
             {customer.productReservations.map((res) => {
               const isActive = res.status === "PENDING" || res.status === "PAID";
+              const depositInvoice = res.invoices?.[0];
+              const hasDeposit = res.invoices && res.invoices.length > 0;
+              const depositPaid = depositInvoice?.status === "PAID";
+              const depositAmount = hasDeposit
+                ? depositInvoice.total
+                : Math.ceil(res.lineTotal / 2);
+              const remaining = res.lineTotal - (hasDeposit && !depositPaid ? 0 : hasDeposit && depositPaid ? depositInvoice.total : 0);
+
               return (
-                <Link key={res.id} href={`/reservations/${res.id}`}>
-                  <div
-                    className={`px-4 py-3 hover:bg-nude-50 transition-colors ${
-                      isActive ? "border-l-3 border-l-amber-400 bg-amber-50/30" : ""
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
+                <div
+                  key={res.id}
+                  className={`px-4 py-3 ${
+                    isActive ? "border-l-3 border-l-amber-400 bg-amber-50/30" : ""
+                  }`}
+                >
+                  {/* Row 1: Status + number + total */}
+                  <Link href={`/reservations/${res.id}`}>
+                    <div className="flex justify-between items-center hover:opacity-80 transition-opacity">
                       <div className="flex items-center gap-2">
                         <span
                           className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
@@ -398,34 +430,91 @@ export function CustomerDetailClient({ id }: { id: string }) {
                           </span>
                         )}
                       </div>
-                      <span className="text-sm font-medium text-ink">
+                      <span className="text-sm font-bold text-ink">
                         {formatCZK(res.lineTotal)} CZK
                       </span>
                     </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-xs text-muted">
-                        {res.variant.product.name} {res.variant.color} {res.variant.lengthCm}cm
-                        {res.sellingMode === "BY_PIECE"
-                          ? ` (${res.pieces}ks)`
-                          : ` (${res.grams}g)`}
-                      </span>
-                      {res.invoices.length > 0 && (
-                        <span
-                          className={`text-xs ${
-                            res.invoices[0].status === "PAID"
-                              ? "text-emerald-600"
-                              : "text-amber-600"
-                          }`}
-                        >
-                          {t("deposit")}:{" "}
-                          {res.invoices[0].status === "PAID"
-                            ? t("paid")
-                            : t("awaiting")}
-                        </span>
+                  </Link>
+
+                  {/* Row 2: Product info */}
+                  <div className="text-xs text-muted mt-1">
+                    {res.variant.product.name} — {res.variant.color} {res.variant.lengthCm}cm
+                    {res.sellingMode === "BY_PIECE"
+                      ? ` (${res.pieces}ks)`
+                      : ` (${res.grams}g)`}
+                  </div>
+
+                  {/* Row 3: Deposit & payment overview */}
+                  {isActive && (
+                    <div className="mt-2 pt-2 border-t border-line/50">
+                      {hasDeposit ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted">Záloha 50%</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-ink">
+                                {formatCZK(depositInvoice.total)} CZK
+                              </span>
+                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                                depositPaid
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : "bg-amber-50 text-amber-700"
+                              }`}>
+                                {depositPaid ? "Zaplaceno" : "Čeká na platbu"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted">Doplatek</span>
+                            <span className="text-xs font-medium text-ink">
+                              {formatCZK(res.lineTotal - depositInvoice.total)} CZK
+                              {depositPaid ? "" : " (po zaplacení zálohy)"}
+                            </span>
+                          </div>
+                          {!depositPaid && res.status === "PENDING" && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="mt-1"
+                              onClick={() => handleSendDeposit(res.id)}
+                              disabled={depositLoading === res.id}
+                            >
+                              {depositLoading === res.id ? "Odesílám..." : "Znovu odeslat platební odkaz"}
+                            </Button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted">Záloha 50%</span>
+                            <span className="text-xs font-medium text-ink">
+                              {formatCZK(depositAmount)} CZK
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted">Doplatek 50%</span>
+                            <span className="text-xs font-medium text-ink">
+                              {formatCZK(res.lineTotal - depositAmount)} CZK
+                            </span>
+                          </div>
+                          {res.status === "PENDING" && (
+                            <Button
+                              size="sm"
+                              className="mt-1"
+                              onClick={() => handleSendDeposit(res.id)}
+                              disabled={depositLoading === res.id}
+                            >
+                              {depositLoading === res.id ? "Odesílám..." : "Odeslat zálohu klientovi"}
+                            </Button>
+                          )}
+                          {depositSuccess === res.id && (
+                            <p className="text-xs text-emerald-600 mt-1">Záloha odeslána na {customer.email}</p>
+                          )}
+                        </div>
                       )}
                     </div>
-                  </div>
-                </Link>
+                  )}
+                </div>
               );
             })}
           </div>
