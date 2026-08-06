@@ -628,7 +628,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
       <div className="bg-white border border-line rounded-xl overflow-hidden">
         <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
           <h2 className="text-sm font-semibold text-espresso">
-            {t("purchaseHistory")} ({customer.salesCount})
+            Historie nákupů ({customer.salesCount})
           </h2>
         </div>
         {customer.sales.length === 0 ? (
@@ -652,7 +652,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
                       </span>
                       {sale.paymentType && (
                         <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium">
-                          {sale.paymentType}
+                          {{ CASH: "Hotově", CARD: "Kartou", TRANSFER: "Převodem", PROMO: "Promo", WRITEOFF: "Odpis" }[sale.paymentType] ?? sale.paymentType}
                         </span>
                       )}
                     </div>
@@ -690,35 +690,53 @@ export function CustomerDetailClient({ id }: { id: string }) {
             </h2>
           </div>
           <div className="divide-y divide-line/50">
-            {customer.invoices.map((inv) => (
-              <Link key={inv.id} href={`/invoices/${inv.id}`}>
-                <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-muted">{inv.number}</span>
-                    <span className="text-xs text-muted">
-                      {new Date(inv.issueDate).toLocaleDateString("cs-CZ")}
-                    </span>
-                    {inv.type !== "INVOICE" && (
-                      <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium">
-                        {inv.type}
+            {customer.invoices.map((inv) => {
+              const typeLabel: Record<string, string> = {
+                DEPOSIT: "Zálohová faktura",
+                INVOICE: "Faktura",
+                CREDIT_NOTE: "Dobropis",
+                SETTLEMENT: "Vyúčtování",
+                PROFORMA: "Proforma",
+              };
+              const statusLabel: Record<string, string> = {
+                PAID: "Uhrazeno",
+                AWAITING: "Čeká na úhradu",
+                CANCELLED: "Stornováno",
+              };
+              return (
+                <Link key={inv.id} href={`/invoices/${inv.id}`}>
+                  <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-muted">{inv.number}</span>
+                      <span className="text-xs text-muted">
+                        {new Date(inv.issueDate).toLocaleDateString("cs-CZ")}
                       </span>
-                    )}
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                        inv.type === "CREDIT_NOTE"
+                          ? "bg-red-50 text-red-600 border border-red-200"
+                          : inv.type === "DEPOSIT"
+                          ? "bg-amber-50 text-amber-700 border border-amber-200"
+                          : "bg-gray-100 text-gray-600"
+                      }`}>
+                        {typeLabel[inv.type] ?? inv.type}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-ink">
+                        {formatCZK(inv.total)} CZK
+                      </span>
+                      <span
+                        className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                          INV_STATUS_STYLE[inv.status] ?? "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {statusLabel[inv.status] ?? inv.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-ink">
-                      {formatCZK(inv.total)} CZK
-                    </span>
-                    <span
-                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                        INV_STATUS_STYLE[inv.status] ?? "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {inv.status}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -732,34 +750,46 @@ export function CustomerDetailClient({ id }: { id: string }) {
             </h2>
           </div>
           <div className="divide-y divide-line/50">
-            {customer.orders.map((order) => (
-              <Link key={order.id} href={`/orders/${order.id}`}>
-                <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    {order.orderNumber && (
-                      <span className="text-xs text-muted font-mono">
-                        #{order.orderNumber}
+            {customer.orders.map((order) => {
+              const orderStatusLabel: Record<string, string> = {
+                NEW: "Nová",
+                AWAITING_PAYMENT: "Čeká na platbu",
+                PAID: "Zaplaceno",
+                SHIPPED: "Odesláno",
+                DELIVERED: "Doručeno",
+                COMPLETED: "Dokončeno",
+                CANCELLED: "Zrušeno",
+                REJECTED: "Zamítnuto",
+              };
+              return (
+                <Link key={order.id} href={`/orders/${order.id}`}>
+                  <div className="px-4 py-3 hover:bg-nude-50 transition-colors flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      {order.orderNumber && (
+                        <span className="text-xs text-muted font-mono">
+                          #{order.orderNumber}
+                        </span>
+                      )}
+                      <span className="text-xs text-muted">
+                        {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
                       </span>
-                    )}
-                    <span className="text-xs text-muted">
-                      {new Date(order.createdAt).toLocaleDateString("cs-CZ")}
-                    </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-ink">
+                        {order.totalAmount ? formatCZK(order.totalAmount) : "-"} CZK
+                      </span>
+                      <span
+                        className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                          ORDER_STATUS_STYLE[order.status] ?? "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {orderStatusLabel[order.status] ?? order.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-ink">
-                      {order.totalAmount ? formatCZK(order.totalAmount) : "-"} CZK
-                    </span>
-                    <span
-                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                        ORDER_STATUS_STYLE[order.status] ?? "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -830,7 +860,7 @@ export function CustomerDetailClient({ id }: { id: string }) {
                             : "bg-red-50 text-red-700 border border-red-200"
                     }`}
                   >
-                    {inq.status}
+                    {{ NEW: "Nový", CONTACTED: "Kontaktován", COMPLETED: "Vyřízeno", CANCELLED: "Zrušeno" }[inq.status] ?? inq.status}
                   </span>
                 </div>
               </Link>
