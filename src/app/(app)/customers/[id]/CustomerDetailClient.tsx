@@ -243,24 +243,45 @@ export function CustomerDetailClient({ id }: { id: string }) {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
-          <p className="text-2xl font-bold text-ink">{formatCZK(customer.totalSpent)}</p>
-          <p className="text-xs text-muted uppercase tracking-wide">{t("totalSpent")}</p>
-        </div>
-        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
-          <p className="text-2xl font-bold text-ink">{customer.salesCount}</p>
-          <p className="text-xs text-muted uppercase tracking-wide">{t("salesCount")}</p>
-        </div>
-        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
-          <p className="text-2xl font-bold text-ink">{customer.totalGramsBought}g</p>
-          <p className="text-xs text-muted uppercase tracking-wide">{t("totalGrams")}</p>
-        </div>
-        <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
-          <p className="text-2xl font-bold text-ink">{formatCZK(customer.averageOrderValue)}</p>
-          <p className="text-xs text-muted uppercase tracking-wide">{t("avgOrder")}</p>
-        </div>
-      </div>
+      {(() => {
+        const activeResTotal = customer.productReservations
+          .filter((r) => r.status === "PENDING" || r.status === "PAID")
+          .reduce((sum, r) => sum + r.lineTotal, 0);
+        const hasStats = customer.totalSpent > 0 || customer.salesCount > 0;
+        return (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+              <p className="text-2xl font-bold text-ink">
+                {hasStats ? formatCZK(customer.totalSpent) : "—"}
+              </p>
+              <p className="text-xs text-muted uppercase tracking-wide">Utraceno celkem</p>
+            </div>
+            <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+              <p className="text-2xl font-bold text-ink">{customer.salesCount}</p>
+              <p className="text-xs text-muted uppercase tracking-wide">Prodeje</p>
+            </div>
+            <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+              <p className="text-2xl font-bold text-ink">
+                {customer.totalGramsBought > 0 ? `${customer.totalGramsBought}g` : "—"}
+              </p>
+              <p className="text-xs text-muted uppercase tracking-wide">Nakoupeno gramů</p>
+            </div>
+            {activeResTotal > 0 ? (
+              <div className="bg-white border border-line border-t-2 border-t-amber-400 rounded-xl px-4 py-3 text-center">
+                <p className="text-2xl font-bold text-amber-700">{formatCZK(activeResTotal)}</p>
+                <p className="text-xs text-amber-600 uppercase tracking-wide">Rezervováno</p>
+              </div>
+            ) : (
+              <div className="bg-white border border-line border-t-2 border-t-gold rounded-xl px-4 py-3 text-center">
+                <p className="text-2xl font-bold text-ink">
+                  {hasStats ? formatCZK(customer.averageOrderValue) : "—"}
+                </p>
+                <p className="text-xs text-muted uppercase tracking-wide">Prům. nákup</p>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Contact info / Edit form */}
       {editing ? (
@@ -326,72 +347,108 @@ export function CustomerDetailClient({ id }: { id: string }) {
       ) : (
         <div className="bg-white border border-line rounded-xl overflow-hidden">
           <div className="bg-nude-100 px-4 py-2.5 border-b border-line">
-            <h2 className="text-sm font-semibold text-espresso">{t("title")}</h2>
+            <h2 className="text-sm font-semibold text-espresso">Kontaktní údaje</h2>
           </div>
-          <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-muted w-20 shrink-0">{t("email")}</span>
-              <span className="text-ink font-medium truncate">{customer.email || "-"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted w-20 shrink-0">{t("phone")}</span>
-              <span className="text-ink font-medium">{customer.phone || "-"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted w-20 shrink-0">{t("city")}</span>
-              <span className="text-ink font-medium">{customer.city || "-"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted w-20 shrink-0">Instagram</span>
-              {customer.instagram ? (
-                <a
-                  href={`https://instagram.com/${customer.instagram.replace("@", "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-rose hover:underline font-medium"
-                >
-                  {customer.instagram}
-                </a>
-              ) : (
-                <span className="text-ink font-medium">-</span>
+          <div className="px-4 py-3 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {customer.email && (
+                <div className="flex items-center gap-3 bg-nude-50/50 rounded-lg px-3 py-2">
+                  <svg className="w-4 h-4 text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-muted uppercase tracking-wider">E-mail</p>
+                    <p className="text-sm text-ink font-medium truncate">{customer.email}</p>
+                  </div>
+                </div>
+              )}
+              {customer.phone && (
+                <div className="flex items-center gap-3 bg-nude-50/50 rounded-lg px-3 py-2">
+                  <svg className="w-4 h-4 text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                  </svg>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-muted uppercase tracking-wider">Telefon</p>
+                    <p className="text-sm text-ink font-medium">{customer.phone}</p>
+                  </div>
+                </div>
+              )}
+              {customer.city && (
+                <div className="flex items-center gap-3 bg-nude-50/50 rounded-lg px-3 py-2">
+                  <svg className="w-4 h-4 text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0115 0z" />
+                  </svg>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-muted uppercase tracking-wider">Město</p>
+                    <p className="text-sm text-ink font-medium">{customer.city}</p>
+                  </div>
+                </div>
+              )}
+              {customer.instagram && (
+                <div className="flex items-center gap-3 bg-nude-50/50 rounded-lg px-3 py-2">
+                  <svg className="w-4 h-4 text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="5" />
+                    <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
+                  </svg>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-muted uppercase tracking-wider">Instagram</p>
+                    <a
+                      href={`https://instagram.com/${customer.instagram.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-rose hover:underline font-medium"
+                    >
+                      {customer.instagram}
+                    </a>
+                  </div>
+                </div>
               )}
             </div>
+            {!customer.email && !customer.phone && !customer.city && !customer.instagram && (
+              <p className="text-sm text-muted italic py-1">Žádné kontaktní údaje</p>
+            )}
             {customer.note && (
-              <div className="flex items-start gap-2 sm:col-span-2">
-                <span className="text-muted w-20 shrink-0">{t("note")}</span>
-                <span className="text-ink font-medium text-sm">{customer.note}</span>
+              <div className="bg-amber-50/50 border border-amber-100 rounded-lg px-3 py-2">
+                <p className="text-[10px] text-amber-600 uppercase tracking-wider mb-0.5">Poznámka</p>
+                <p className="text-sm text-ink">{customer.note}</p>
               </div>
             )}
-            {customer.firstPurchaseDate && (
-              <div className="flex items-center gap-2">
-                <span className="text-muted w-20 shrink-0">{t("firstPurchase")}</span>
-                <span className="text-ink font-medium">
-                  {new Date(customer.firstPurchaseDate).toLocaleDateString("cs-CZ")}
-                </span>
-              </div>
-            )}
-            {customer.lastPurchaseDate && (
-              <div className="flex items-center gap-2">
-                <span className="text-muted w-20 shrink-0">{t("lastPurchase")}</span>
-                <span className="text-ink font-medium">
-                  {new Date(customer.lastPurchaseDate).toLocaleDateString("cs-CZ")}
-                </span>
+            {(customer.firstPurchaseDate || customer.lastPurchaseDate) && (
+              <div className="flex gap-4 pt-1 border-t border-line/50">
+                {customer.firstPurchaseDate && (
+                  <div className="text-xs">
+                    <span className="text-muted">První nákup: </span>
+                    <span className="text-ink font-medium">
+                      {new Date(customer.firstPurchaseDate).toLocaleDateString("cs-CZ")}
+                    </span>
+                  </div>
+                )}
+                {customer.lastPurchaseDate && (
+                  <div className="text-xs">
+                    <span className="text-muted">Poslední nákup: </span>
+                    <span className="text-ink font-medium">
+                      {new Date(customer.lastPurchaseDate).toLocaleDateString("cs-CZ")}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Reservations */}
+      {/* Rezervace */}
       {customer.productReservations.length > 0 && (
         <div className="bg-white border border-line rounded-xl overflow-hidden">
           <div className="bg-nude-100 px-4 py-2.5 border-b border-line flex items-center justify-between">
             <h2 className="text-sm font-semibold text-espresso">
-              {t("reservations")} ({customer.reservationsCount})
+              Rezervace ({customer.reservationsCount})
             </h2>
             {customer.activeReservations > 0 && (
               <span className="text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
-                {customer.activeReservations} {t("active")}
+                {customer.activeReservations} aktivní
               </span>
             )}
           </div>
@@ -404,113 +461,159 @@ export function CustomerDetailClient({ id }: { id: string }) {
               const depositAmount = hasDeposit
                 ? depositInvoice.total
                 : Math.ceil(res.lineTotal / 2);
-              const remaining = res.lineTotal - (hasDeposit && !depositPaid ? 0 : hasDeposit && depositPaid ? depositInvoice.total : 0);
+              const dueDate = new Date(res.paymentDueDate);
+              const createdDate = new Date(res.createdAt);
+
+              const statusLabel: Record<string, string> = {
+                PENDING: "Čeká na platbu",
+                PAID: "Zaplaceno",
+                COMPLETED: "Dokončeno",
+                EXPIRED: "Vypršela",
+                CANCELLED: "Zrušena",
+              };
 
               return (
                 <div
                   key={res.id}
-                  className={`px-4 py-3 ${
-                    isActive ? "border-l-3 border-l-amber-400 bg-amber-50/30" : ""
+                  className={`px-4 py-4 ${
+                    isActive ? "border-l-3 border-l-amber-400 bg-amber-50/20" : ""
                   }`}
                 >
-                  {/* Row 1: Status + number + total */}
-                  <Link href={`/reservations/${res.id}`}>
-                    <div className="flex justify-between items-center hover:opacity-80 transition-opacity">
-                      <div className="flex items-center gap-2">
+                  {/* Hlavička: status + číslo + celková cena */}
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
                         <span
                           className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                             RES_STATUS_STYLE[res.status] ?? "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {tRes(res.status.toLowerCase())}
+                          {statusLabel[res.status] ?? res.status}
                         </span>
                         {res.reservationNumber && (
-                          <span className="text-xs text-muted font-mono">
+                          <Link href={`/reservations/${res.id}`} className="text-xs text-rose hover:underline font-mono">
                             {res.reservationNumber}
-                          </span>
+                          </Link>
                         )}
                       </div>
-                      <span className="text-sm font-bold text-ink">
-                        {formatCZK(res.lineTotal)} CZK
-                      </span>
+                      <p className="text-sm text-ink font-medium">
+                        {res.variant.product.name} — {res.variant.color}, {res.variant.lengthCm} cm
+                        {res.sellingMode === "BY_PIECE"
+                          ? ` (${res.pieces} ks)`
+                          : ` (${res.grams} g)`}
+                      </p>
+                      <p className="text-xs text-muted mt-0.5">
+                        Vytvořeno {createdDate.toLocaleDateString("cs-CZ")}
+                        {isActive && <> — splatnost do {dueDate.toLocaleDateString("cs-CZ")}</>}
+                      </p>
                     </div>
-                  </Link>
-
-                  {/* Row 2: Product info */}
-                  <div className="text-xs text-muted mt-1">
-                    {res.variant.product.name} — {res.variant.color} {res.variant.lengthCm}cm
-                    {res.sellingMode === "BY_PIECE"
-                      ? ` (${res.pieces}ks)`
-                      : ` (${res.grams}g)`}
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-ink">{formatCZK(res.lineTotal)} CZK</p>
+                      <p className="text-[10px] text-muted uppercase">celková cena</p>
+                    </div>
                   </div>
 
-                  {/* Row 3: Deposit & payment overview */}
+                  {/* Přehled plateb */}
                   {isActive && (
-                    <div className="mt-2 pt-2 border-t border-line/50">
+                    <div className="mt-3 bg-white border border-line rounded-lg px-3 py-2.5">
+                      <p className="text-[10px] font-semibold text-muted uppercase tracking-wider mb-2">Platební přehled</p>
+
                       {hasDeposit ? (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted">Záloha 50%</span>
+                        <>
+                          {/* Záloha odeslána */}
+                          <div className="flex items-center justify-between py-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-medium text-ink">
-                                {formatCZK(depositInvoice.total)} CZK
-                              </span>
-                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                              <div className={`w-2 h-2 rounded-full ${depositPaid ? "bg-emerald-500" : "bg-amber-400"}`} />
+                              <span className="text-sm text-ink">Zálohová faktura ({depositInvoice.number})</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-semibold text-ink">{formatCZK(depositInvoice.total)} CZK</span>
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                                 depositPaid
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "bg-amber-50 text-amber-700"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  : "bg-amber-50 text-amber-700 border border-amber-200"
                               }`}>
                                 {depositPaid ? "Zaplaceno" : "Čeká na platbu"}
                               </span>
                             </div>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted">Doplatek</span>
-                            <span className="text-xs font-medium text-ink">
+
+                          {/* Doplatek */}
+                          <div className="flex items-center justify-between py-1 border-t border-dashed border-line/50">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-gray-300" />
+                              <span className="text-sm text-muted">
+                                Doplatek {depositPaid ? "(hotově, kartou nebo převodem)" : "(po zaplacení zálohy)"}
+                              </span>
+                            </div>
+                            <span className="text-sm font-semibold text-ink">
                               {formatCZK(res.lineTotal - depositInvoice.total)} CZK
-                              {depositPaid ? "" : " (po zaplacení zálohy)"}
                             </span>
                           </div>
+
+                          {/* Tlačítko: znovu odeslat */}
                           {!depositPaid && res.status === "PENDING" && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              className="mt-1"
-                              onClick={() => handleSendDeposit(res.id)}
-                              disabled={depositLoading === res.id}
-                            >
-                              {depositLoading === res.id ? "Odesílám..." : "Znovu odeslat platební odkaz"}
-                            </Button>
+                            <div className="mt-2 pt-2 border-t border-line/50">
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => handleSendDeposit(res.id)}
+                                disabled={depositLoading === res.id}
+                              >
+                                {depositLoading === res.id
+                                  ? "Odesílám..."
+                                  : `Znovu odeslat platební odkaz na ${customer.email ?? "email"}`}
+                              </Button>
+                            </div>
                           )}
-                        </div>
+                        </>
                       ) : (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted">Záloha 50%</span>
-                            <span className="text-xs font-medium text-ink">
-                              {formatCZK(depositAmount)} CZK
-                            </span>
+                        <>
+                          {/* Záloha ještě neodeslána */}
+                          <div className="flex items-center justify-between py-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-gray-300" />
+                              <span className="text-sm text-muted">Záloha 50%</span>
+                            </div>
+                            <span className="text-sm font-semibold text-ink">{formatCZK(depositAmount)} CZK</span>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted">Doplatek 50%</span>
-                            <span className="text-xs font-medium text-ink">
-                              {formatCZK(res.lineTotal - depositAmount)} CZK
-                            </span>
+                          <div className="flex items-center justify-between py-1 border-t border-dashed border-line/50">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-gray-300" />
+                              <span className="text-sm text-muted">Doplatek 50% (hotově, kartou nebo převodem)</span>
+                            </div>
+                            <span className="text-sm font-semibold text-ink">{formatCZK(res.lineTotal - depositAmount)} CZK</span>
                           </div>
-                          {res.status === "PENDING" && (
-                            <Button
-                              size="sm"
-                              className="mt-1"
-                              onClick={() => handleSendDeposit(res.id)}
-                              disabled={depositLoading === res.id}
-                            >
-                              {depositLoading === res.id ? "Odesílám..." : "Odeslat zálohu klientovi"}
-                            </Button>
+
+                          {/* Tlačítko: odeslat zálohu */}
+                          {res.status === "PENDING" && customer.email && (
+                            <div className="mt-2 pt-2 border-t border-line/50">
+                              <p className="text-xs text-muted mb-2">
+                                Klientovi se odešle výzva k zaplacení zálohy {formatCZK(depositAmount)} CZK
+                                na email {customer.email} s platebním odkazem přes Comgate.
+                              </p>
+                              <Button
+                                size="sm"
+                                onClick={() => handleSendDeposit(res.id)}
+                                disabled={depositLoading === res.id}
+                              >
+                                {depositLoading === res.id
+                                  ? "Odesílám výzvu..."
+                                  : `Odeslat výzvu k zaplacení zálohy na ${customer.email}`}
+                              </Button>
+                              {depositSuccess === res.id && (
+                                <p className="text-xs text-emerald-600 font-medium mt-2">
+                                  Výzva k zaplacení zálohy odeslána na {customer.email}
+                                </p>
+                              )}
+                            </div>
                           )}
-                          {depositSuccess === res.id && (
-                            <p className="text-xs text-emerald-600 mt-1">Záloha odeslána na {customer.email}</p>
+                          {res.status === "PENDING" && !customer.email && (
+                            <p className="text-xs text-red-500 mt-2">
+                              Chybí email — doplňte email zákazníka pro odeslání výzvy k platbě.
+                            </p>
                           )}
-                        </div>
+                        </>
                       )}
                     </div>
                   )}
