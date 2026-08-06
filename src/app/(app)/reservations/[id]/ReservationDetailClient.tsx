@@ -249,39 +249,82 @@ export function ReservationDetailClient({
         )}
       </div>
 
-      {/* Deposit info */}
-      {reservation.invoices && reservation.invoices.length > 0 && (
+      {/* Deposit & payment overview */}
+      {isOwner && (
         <div className="bg-white border border-line rounded-xl px-4 py-3">
           <p className="text-xs font-medium text-muted uppercase mb-2">{t("deposit")}</p>
-          {reservation.invoices.map((inv) => (
-            <div key={inv.id} className="flex items-center justify-between">
-              <div>
-                <span className="text-sm font-mono text-ink">{inv.number}</span>
-                <span className="text-xs text-muted ml-2">
-                  {formatCZK(inv.total)} CZK
-                </span>
+          {reservation.invoices && reservation.invoices.length > 0 ? (
+            <>
+              {reservation.invoices.map((inv) => {
+                const isPaid = inv.status === "PAID" || inv.payments?.some((p) => p.matchedAt);
+                return (
+                  <div key={inv.id} className="flex items-center justify-between mb-1">
+                    <div>
+                      <span className="text-sm font-mono text-ink">{inv.number}</span>
+                      <span className="text-xs text-muted ml-2">
+                        {formatCZK(inv.total)} CZK
+                      </span>
+                    </div>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                      isPaid
+                        ? "bg-emerald-50 text-emerald-700"
+                        : inv.status === "CANCELLED"
+                        ? "bg-gray-50 text-gray-500"
+                        : "bg-amber-50 text-amber-700"
+                    }`}>
+                      {isPaid ? t("depositPaid") : inv.status === "CANCELLED" ? t("depositCancelled") : t("depositPending")}
+                    </span>
+                  </div>
+                );
+              })}
+              {/* Remaining balance */}
+              {(() => {
+                const depositTotal = reservation.invoices
+                  .filter((inv) => inv.status !== "CANCELLED")
+                  .reduce((sum, inv) => sum + inv.total, 0);
+                const remaining = reservation.lineTotal - depositTotal;
+                if (remaining > 0) {
+                  return (
+                    <div className="mt-2 pt-2 border-t border-line flex items-center justify-between">
+                      <span className="text-sm text-muted">Doplatek</span>
+                      <span className="text-sm font-semibold text-ink">{formatCZK(remaining)} CZK</span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+              {reservation.status === "PENDING" && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="mt-2"
+                  onClick={() => doAction("resend_deposit")}
+                  disabled={actionLoading}
+                >
+                  {t("resendDepositLink")}
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-muted">Záloha 50%</span>
+                <span className="text-sm font-semibold text-ink">{formatCZK(Math.ceil(reservation.lineTotal / 2))} CZK</span>
               </div>
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                inv.status === "PAID"
-                  ? "bg-emerald-50 text-emerald-700"
-                  : inv.status === "CANCELLED"
-                  ? "bg-gray-50 text-gray-500"
-                  : "bg-amber-50 text-amber-700"
-              }`}>
-                {inv.status === "PAID" ? t("depositPaid") : inv.status === "CANCELLED" ? t("depositCancelled") : t("depositPending")}
-              </span>
-            </div>
-          ))}
-          {reservation.status === "PENDING" && isOwner && (
-            <Button
-              size="sm"
-              variant="secondary"
-              className="mt-2"
-              onClick={() => doAction("resend_deposit")}
-              disabled={actionLoading}
-            >
-              {t("resendDepositLink")}
-            </Button>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-muted">Doplatek 50%</span>
+                <span className="text-sm font-semibold text-ink">{formatCZK(reservation.lineTotal - Math.ceil(reservation.lineTotal / 2))} CZK</span>
+              </div>
+              {reservation.status === "PENDING" && (
+                <Button
+                  size="sm"
+                  onClick={() => doAction("resend_deposit")}
+                  disabled={actionLoading}
+                >
+                  Odeslat zálohu klientovi
+                </Button>
+              )}
+            </>
           )}
         </div>
       )}

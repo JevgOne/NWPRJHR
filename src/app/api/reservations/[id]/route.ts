@@ -7,7 +7,7 @@ import {
   cancelReservation,
 } from "@/lib/reservations";
 import { completeSale } from "@/lib/sales";
-import { createInvoiceFromSale, createSettlementInvoice, createDepositCreditNote } from "@/lib/invoicing";
+import { createInvoiceFromSale, createSettlementInvoice, createDepositCreditNote, createDepositInvoice } from "@/lib/invoicing";
 import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { revalidateTag } from "next/cache";
@@ -206,12 +206,98 @@ export async function POST(
         });
       }
 
+      case "create_deposit": {
+        // Create deposit invoice for existing reservation (if none exists)
+        const existing = await prisma.invoice.findFirst({
+          where: { reservationId: id, type: "DEPOSIT" },
+        });
+        if (existing) {
+          return NextResponse.json(
+            { error: "Deposit invoice already exists", invoiceId: existing.id },
+            { status: 400 }
+          );
+        }
+
+        const depositInvoice = await createDepositInvoice(id);
+
+        const resForDeposit = await prisma.productReservation.findUniqueOrThrow({
+          where: { id },
+          include: { salon: true, customer: true },
+        });
+
+        const depositEmail =
+          resForDeposit.contactEmail ||
+          resForDeposit.customer?.email ||
+          resForDeposit.salon?.email;
+
+        if (depositEmail && depositInvoice) {
+          const { createPayment } = await import("@/lib/comgate");
+          const comgateResult = await createPayment({
+            price: depositInvoice.total,
+            label: `Zaloha ${(resForDeposit.reservationNumber ?? "").slice(-8)}`.slice(0, 16),
+            refId: depositInvoice.variableSymbol || depositInvoice.id.slice(-8),
+            email: depositEmail,
+            fullName: resForDeposit.contactName || "",
+          });
+
+          let comgateUrl: string | undefined;
+          if (comgateResult.success && comgateResult.transId && comgateResult.redirect) {
+            await prisma.payment.create({
+              data: {
+                invoiceId: depositInvoice.id,
+                amount: depositInvoice.total,
+                date: new Date(),
+                matchedVS: depositInvoice.variableSymbol,
+                source: "COMGATE",
+                comgateTransId: comgateResult.transId,
+                note: "Záloha - čeká na platbu",
+              },
+            });
+            comgateUrl = comgateResult.redirect;
+          }
+
+          const company = await prisma.company.findFirstOrThrow({ where: { isDefault: true } });
+          const { sendPaymentDetailsEmail } = await import("@/lib/invoice-email");
+          await sendPaymentDetailsEmail({
+            recipientEmail: depositEmail,
+            recipientName: resForDeposit.contactName || "",
+            lang: "cs",
+            amount: depositInvoice.total,
+            bankAccount: company.bankAccount,
+            iban: company.bankIban ?? "",
+            variableSymbol: depositInvoice.variableSymbol,
+            saleNumber: resForDeposit.reservationNumber ?? "",
+            comgateUrl,
+          });
+        }
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "CREATE_DEPOSIT",
+          entity: "ProductReservation",
+          entityId: id,
+          detail: {
+            reservationNumber: resForDeposit.reservationNumber,
+            invoiceId: depositInvoice.id,
+          },
+          ipAddress: getClientIp(request),
+        });
+
+        return NextResponse.json({
+          success: true,
+          invoice: { id: depositInvoice.id, number: depositInvoice.number },
+          emailSent: !!depositEmail,
+        });
+      }
+
       case "resend_deposit": {
-        const depositInvoice = await prisma.invoice.findFirst({
+        let depositInvoice = await prisma.invoice.findFirst({
           where: { reservationId: id, type: "DEPOSIT" },
         });
         if (!depositInvoice) {
-          return NextResponse.json({ error: "No deposit invoice found" }, { status: 400 });
+          // Auto-create deposit invoice if it doesn't exist yet
+          depositInvoice = await createDepositInvoice(id);
         }
 
         const res = await prisma.productReservation.findUniqueOrThrow({
