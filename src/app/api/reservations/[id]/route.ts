@@ -256,19 +256,16 @@ export async function POST(
             comgateUrl = comgateResult.redirect;
           }
 
-          const company = await prisma.company.findFirstOrThrow({ where: { isDefault: true } });
-          const { sendPaymentDetailsEmail } = await import("@/lib/invoice-email");
-          await sendPaymentDetailsEmail({
-            recipientEmail: depositEmail,
-            recipientName: resForDeposit.contactName || "",
-            lang: "cs",
-            amount: depositInvoice.total,
-            bankAccount: company.bankAccount,
-            iban: company.bankIban ?? "",
-            variableSymbol: depositInvoice.variableSymbol,
-            saleNumber: resForDeposit.reservationNumber ?? "",
-            comgateUrl,
-          });
+          if (comgateUrl) {
+            const { sendDepositEmail } = await import("@/lib/invoice-email");
+            await sendDepositEmail({
+              recipientEmail: depositEmail,
+              recipientName: resForDeposit.contactName || resForDeposit.customer?.name || resForDeposit.salon?.name || "",
+              amount: depositInvoice.total,
+              comgateUrl,
+              reservationNumber: resForDeposit.reservationNumber ?? "",
+            });
+          }
         }
 
         logAudit({
@@ -335,19 +332,16 @@ export async function POST(
           comgateUrl = comgateResult.redirect;
         }
 
-        const company = await prisma.company.findFirstOrThrow({ where: { isDefault: true } });
-        const { sendPaymentDetailsEmail } = await import("@/lib/invoice-email");
-        await sendPaymentDetailsEmail({
-          recipientEmail: email,
-          recipientName: res.contactName || "",
-          lang: "cs",
-          amount: depositInvoice.total,
-          bankAccount: company.bankAccount,
-          iban: company.bankIban ?? "",
-          variableSymbol: depositInvoice.variableSymbol,
-          saleNumber: res.reservationNumber ?? "",
-          comgateUrl,
-        });
+        if (comgateUrl) {
+          const { sendDepositEmail } = await import("@/lib/invoice-email");
+          await sendDepositEmail({
+            recipientEmail: email,
+            recipientName: res.contactName || res.customer?.name || res.salon?.name || "",
+            amount: depositInvoice.total,
+            comgateUrl,
+            reservationNumber: res.reservationNumber ?? "",
+          });
+        }
 
         return NextResponse.json({ success: true });
       }

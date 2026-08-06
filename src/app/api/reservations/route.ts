@@ -167,19 +167,16 @@ export async function POST(request: NextRequest) {
             comgateUrl = comgateResult.redirect;
           }
 
-          const company = await prisma.company.findFirstOrThrow({ where: { isDefault: true } });
-          const { sendPaymentDetailsEmail } = await import("@/lib/invoice-email");
-          sendPaymentDetailsEmail({
-            recipientEmail: contactEmail,
-            recipientName: parsed.data.contactName || "",
-            lang: "cs",
-            amount: depositInvoice.total,
-            bankAccount: company.bankAccount,
-            iban: company.bankIban ?? "",
-            variableSymbol: depositInvoice.variableSymbol,
-            saleNumber: reservation.reservationNumber ?? "",
-            comgateUrl,
-          }).catch((e) => console.error("[reservation] Deposit email failed:", e));
+          if (comgateUrl) {
+            const { sendDepositEmail } = await import("@/lib/invoice-email");
+            sendDepositEmail({
+              recipientEmail: contactEmail,
+              recipientName: parsed.data.contactName || "",
+              amount: depositInvoice.total,
+              comgateUrl,
+              reservationNumber: reservation.reservationNumber ?? "",
+            }).catch((e) => console.error("[reservation] Deposit email failed:", e));
+          }
         }
       } catch (e) {
         console.error("[reservation] Deposit flow error:", e);
