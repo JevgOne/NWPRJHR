@@ -923,7 +923,7 @@
       "registerSalon": "Nakupujete u nás? Nechte se zde uvést",
       "hairTypesTitle": "Typy vlasů k prodloužení",
       "hairTypesVirgin": "Panenské vlasy (Virgin)",
-      "hairTypesVirginDesc": "Nikdy chemicky neošetřené, kutikula v původním směru",
+      "hairTypesVirginDesc": "Nikdy chemicky neošetřené, z jedné hlavy",
       "hairTypesSlavic": "Luxe vlasy",
       "hairTypesSlavicDesc": "Nebarvené vlasy z jedné hlavy. Nejvyšší kvalita zpracování, přirozený lesk a jemnost.",
       "hairTypesUkrainian": "Ukrajinské vlasy",
@@ -1178,9 +1178,9 @@
       "cancelledDesc": "Platba byla zrušena nebo zamítnuta. Můžete to zkusit znovu nebo zvolit jinou platební metodu."
     },
     "categoryInfo": {
-      "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, kompletní kutikula zachována ve správném směru. Přirozeně lesklé, hedvábné a odolné.",
+      "virginDesc": "Nejvyšší kvalita panenských vlasů. 100% neošetřené, z jedné hlavy. Přirozeně lesklé, hedvábné a odolné.",
       "virginFeature1": "100% neošetřené panenské vlasy",
-      "virginFeature2": "Kompletní kutikula — bez zamotávání",
+      "virginFeature2": "Z jedné hlavy — bez zamotávání",
       "virginFeature3": "Vydrží 2+ roky při správné péči",
       "virginFeature4": "Lze barvit i odbarvovat",
       "luxeDesc": "Luxusní vlasy s jemným šetrným ošetřením. Zachovaná přirozená struktura a hedvábný lesk. Prémiová volba pro náročné zákaznice, které chtějí maximální kvalitu.",
@@ -2336,7 +2336,7 @@
 
     "categoriesTitle": "Panenské, Luxe a Standard vlasy",
     "catVirginTitle": "Panenské vlasy",
-    "catVirginText": "Nikdy chemicky neupravované. Kutikula v původním směru. Životnost 18–36 měsíců při správné péči.",
+    "catVirginText": "Nikdy chemicky neupravované, z jedné hlavy. Životnost 18–36 měsíců při správné péči.",
     "catLuxeTitle": "Luxe vlasy",
     "catLuxeText": "Nebarvené a neupravované vlasy z jedné hlavy. Nejvyšší kvalita zpracování, přirozený lesk a jemnost. Ideální pro dlouhodobé nošení.",
     "catStandardTitle": "Standard vlasy",
@@ -2388,7 +2388,7 @@
     "typeSlavicTitle": "Luxe vlasy",
     "typeSlavicShort": "Nebarvené vlasy z jedné hlavy, přirozený lesk a jemnost",
     "typeVirginTitle": "Panenské vlasy (Virgin)",
-    "typeVirginShort": "Nejvyšší kvalita — neošetřené, neporušená kutikula",
+    "typeVirginShort": "Nikdy chemicky neošetřené, z jedné hlavy",
     "typeUkrainianTitle": "Ukrajinské vlasy",
     "typeUkrainianShort": "Kvalitní evropské vlasy za dostupnou cenu"
   },
@@ -2743,9 +2743,9 @@
       "sectionTitle": "Kategorie vlasů",
       "virgin": {
         "title": "Virgin vlasy — nejčistší kvalita",
-        "description": "Virgin (panenské) vlasy k prodloužení. Nejvyšší kvalita, neošetřené, zachovaná kutikula. Praha zdarma.",
+        "description": "Virgin (panenské) vlasy k prodloužení. Nejvyšší kvalita, neošetřené, z jedné hlavy. Praha zdarma.",
         "h1": "Virgin vlasy — nejčistší kvalita",
-        "intro": "Virgin vlasy jsou nejvyšší kvalita lidských vlasů. Nebyly chemicky ošetřeny, kutikula je zachována v původním směru."
+        "intro": "Virgin vlasy jsou nejvyšší kvalita lidských vlasů. Nikdy nebyly chemicky ošetřeny a pochází z jedné hlavy."
       },
       "luxe": {
         "title": "Luxe vlasy k prodloužení",
@@ -3275,8 +3275,8 @@
     "ctaContact": "Kontaktovat nás"
   },
   "slavicLP": {
-    "metaTitle": "Slovanské vlasy k prodloužení — z přímého dovozu, kutikula zachována",
-    "metaDesc": "Slovanské vlasy z Ukrajiny a východní Evropy, neporušená kutikula, bez agresivní chemické úpravy. Clip-in, tape-in, keratin — zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
+    "metaTitle": "Slovanské vlasy k prodloužení — z přímého dovozu, bez chemické úpravy",
+    "metaDesc": "Slovanské vlasy z Ukrajiny a východní Evropy. Nebarvené, z jedné hlavy, bez agresivní chemické úpravy. Clip-in, tape-in, keratin — zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
     "home": "Domů",
     "breadcrumb": "Slovanské vlasy",
     "h1": "Slovanské vlasy k prodloužení",
@@ -3363,9 +3363,9 @@
 
     "categoriesTitle": "Kategorie vlasů z Ukrajiny",
     "catVirginTitle": "Panenské vlasy (Virgin)",
-    "catVirginText": "Nikdy chemicky neošetřené. Zachovaná kutikula. Životnost 18–36 měsíců.",
+    "catVirginText": "Nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců.",
     "catLuxeTitle": "Luxe vlasy",
-    "catLuxeText": "Může projít šetrnou úpravou kutikuly. Nižší cena než Virgin. Vhodné pro clip-in i tape-in.",
+    "catLuxeText": "Nebarvené, z jedné hlavy. Nižší cena než Virgin. Vhodné pro clip-in i tape-in.",
     "catStandardTitle": "Standard vlasy",
     "catStandardText": "Evropské vlasy s výraznější chemickou úpravou. Nižší cena, kratší životnost (6–12 měsíců).",
 
@@ -3425,8 +3425,8 @@
     "ctaContact": "Domluvit konzultaci"
   },
   "virginLP": {
-    "metaTitle": "Panenské vlasy (Virgin) — nikdy chemicky neošetřené, kutikula zachována",
-    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, s neporušenou kutikulou. Životnost 18–36 měsíců. Zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
+    "metaTitle": "Panenské vlasy (Virgin) — nikdy chemicky neošetřené, z jedné hlavy",
+    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců. Zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
     "home": "Domů",
     "breadcrumb": "Panenské vlasy",
     "h1": "Panenské vlasy k prodloužení",
@@ -3463,7 +3463,7 @@
     "chooseGramsCta": "Kalkulačka gramáže",
 
     "pricingTitle": "Cena panenských vlasů",
-    "pricingText": "Panenské vlasy jsou nejdražší kategorií. Nikdy chemicky neošetřené — neporušená kutikula, životnost 18–36 měsíců.",
+    "pricingText": "Panenské vlasy jsou nejdražší kategorií. Nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců.",
     "pricingValue": "od 95 Kč/g",
     "pricingCta": "Kompletní ceník",
 
@@ -3473,7 +3473,7 @@
 
     "crossLinkTitle": "Další typy vlasů",
     "crossSlavicTitle": "Luxe vlasy",
-    "crossSlavicText": "Slovanské vlasy — šetrně upravená kutikula. Nižší cena než Virgin, životnost 12–24 měsíců.",
+    "crossSlavicText": "Slovanské vlasy — nebarvené, z jedné hlavy. Nižší cena než Virgin, životnost 12–24 měsíců.",
     "crossUkrainianTitle": "Ukrajinské vlasy",
     "crossUkrainianText": "Evropské vlasy z přímého dovozu z Ukrajiny. Kontrola kutikuly, barvy a struktury.",
 
@@ -3481,11 +3481,11 @@
     "faq1q": "Jaký je rozdíl mezi panenskými a slovanskými vlasy?",
     "faq1a": "Panenské (virgin) vlasy nikdy neprošly žádnou chemickou úpravou — žádné barvení, zesvětlování ani silikonování. Luxe vlasy mohou projít šetrnou úpravou. Panenské vlasy mají nejdelší životnost (18–36 měsíců) a jsou nejdražší kategorií.",
     "faq2q": "Proč jsou panenské vlasy nejdražší?",
-    "faq2a": "Panenské vlasy jsou vzácné — pochází pouze od dárkyň, které si vlasy nikdy chemicky neupravovaly. Sběr je omezený, každá dodávka prochází přísnou kontrolou a ručním tříděním. Výsledkem je vlasový materiál s neporušenou kutikulou a maximální životností.",
+    "faq2a": "Panenské vlasy jsou vzácné — pochází pouze od dárkyň, které si vlasy nikdy chemicky neupravovaly. Sběr je omezený, každá dodávka prochází přísnou kontrolou a ručním tříděním. Výsledkem je nejčistší vlasový materiál s maximální životností.",
     "faq3q": "Jak dlouho panenské vlasy vydrží?",
-    "faq3a": "Při správné péči 18–36 měsíců — výrazně déle než slovanské (12–24 měsíců) nebo standardní vlasy (6–12 měsíců). Díky neporušené kutikule si vlasy zachovávají lesk a splývavost po celou dobu nošení.",
+    "faq3a": "Při správné péči 18–36 měsíců — výrazně déle než Luxe (12–24 měsíců) nebo Standard (6–12 měsíců). Díky tomu, že vlasy neprošly žádnou chemickou úpravou, si zachovávají lesk a splývavost po celou dobu nošení.",
     "faq4q": "Mohu panenské vlasy barvit bez poškození?",
-    "faq4a": "Ano, panenské vlasy lze barvit, tónovat i zesvětlovat. Díky neporušené kutikule zvládnou chemické úpravy lépe než předem ošetřené vlasy. Doporučujeme profesionální barvení u kadeřníka a test na malém pramenu. Po barvení už vlasy technicky nejsou 'panenské', ale kvalita zůstává vysoká.",
+    "faq4a": "Ano, panenské vlasy lze barvit, tónovat i zesvětlovat. Protože nikdy neprošly chemickou úpravou, zvládnou barvení lépe než předem ošetřené vlasy. Doporučujeme profesionální barvení u kadeřníka a test na malém pramenu. Po barvení už vlasy technicky nejsou 'panenské', ale kvalita zůstává vysoká.",
     "faq5q": "Kolik gramů panenských vlasů potřebuji?",
     "faq5a": "Záleží na požadovaném efektu a hustotě vlastních vlasů. Pro jemné prodloužení stačí 80–120 g, pro plný efekt doporučujeme 120–200 g. Využijte naši kalkulačku gramáže nebo se poraďte při osobní konzultaci.",
     "faq6q": "Jak poznat pravé panenské vlasy?",
