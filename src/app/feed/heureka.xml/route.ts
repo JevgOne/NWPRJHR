@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { getAllStockNumbers } from "@/lib/stock";
+import { getCachedAllProducts } from "@/lib/cached-products";
 import { generateSku } from "@/lib/sku";
 
 export const dynamic = "force-dynamic";
@@ -10,56 +9,26 @@ function escapeXml(s: string): string {
 }
 
 export async function GET() {
-  const [products, stockMap] = await Promise.all([
-    prisma.product.findMany({
-      where: { archived: false, variants: { some: { active: true } } },
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        category: true,
-        description: true,
-        origin: true,
-        texture: true,
-        photos: true,
-        variants: {
-          where: { active: true },
-          select: {
-            id: true,
-            lengthCm: true,
-            color: true,
-            retailPricePerGram: true,
-            sellingMode: true,
-            retailPricePerPiece: true,
-          },
-        },
-      },
-    }),
-    getAllStockNumbers(),
-  ]);
+  const products = await getCachedAllProducts();
 
   const shopItems: string[] = [];
 
   for (const product of products) {
-    const photos = JSON.parse(product.photos || "[]") as string[];
-    const imageUrl = photos[0] ?? "https://www.hairland.cz/og/og-offer.jpg";
+    const imageUrl = product.photos[0] ?? "https://www.hairland.cz/og/og-offer.jpg";
 
-    for (const variant of product.variants) {
-      const stock = stockMap.get(variant.id);
-      const isByPiece = variant.sellingMode === "BY_PIECE";
-      const inStock = isByPiece
-        ? (stock?.availablePieces ?? 0) > 0
-        : (stock?.availableGrams ?? 0) > 0;
+    for (const v of product.variants) {
+      const isByPiece = v.sellingMode === "BY_PIECE";
+      const inStock = isByPiece ? v.availablePieces > 0 : v.availableGrams > 0;
 
       const price = isByPiece
-        ? (variant.retailPricePerPiece ?? 0) / 100
-        : (variant.retailPricePerGram * 100) / 100;
+        ? (v.retailPricePerPiece ?? 0) / 100
+        : (v.retailPricePerGram * 100) / 100;
 
       if (price <= 0) continue;
 
-      const sku = generateSku(product.category, product.texture, variant.color, variant.lengthCm);
-      const productUrl = `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`;
-      const title = `${product.name} ${variant.lengthCm} cm`;
+      const sku = generateSku(product.category, product.texture, v.color, v.lengthCm);
+      const url = `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`;
+      const title = `${product.name} ${v.lengthCm} cm`;
       const desc = product.description?.slice(0, 5000) ?? title;
 
       shopItems.push(`  <SHOPITEM>
@@ -67,7 +36,7 @@ export async function GET() {
     <PRODUCTNAME><![CDATA[${title}]]></PRODUCTNAME>
     <PRODUCT>Vlasy k prodloužení</PRODUCT>
     <DESCRIPTION><![CDATA[${desc}]]></DESCRIPTION>
-    <URL>${productUrl}</URL>
+    <URL>${url}</URL>
     <IMGURL>${imageUrl}</IMGURL>
     <PRICE_VAT>${price.toFixed(2)}</PRICE_VAT>
     <CATEGORYTEXT>Kosmetika a zdraví | Vlasová kosmetika | Vlasy k prodloužení</CATEGORYTEXT>
