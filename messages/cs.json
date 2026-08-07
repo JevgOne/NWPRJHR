@@ -923,7 +923,7 @@
       "registerSalon": "Nakupujete u nás? Nechte se zde uvést",
       "hairTypesTitle": "Typy vlasů k prodloužení",
       "hairTypesVirgin": "Panenské vlasy (Virgin)",
-      "hairTypesVirginDesc": "Nejvyšší kvalita — nikdy chemicky neošetřené",
+      "hairTypesVirginDesc": "Nikdy chemicky neošetřené, kutikula v původním směru",
       "hairTypesSlavic": "Luxe vlasy",
       "hairTypesSlavicDesc": "Nebarvené vlasy z jedné hlavy. Nejvyšší kvalita zpracování, přirozený lesk a jemnost.",
       "hairTypesUkrainian": "Ukrajinské vlasy",
@@ -2251,10 +2251,10 @@
     "g150desc": "Nejpopulárnější volba. Výrazně přidá objem a přirozeně prodlouží vlasy. Vhodné pro normální vlasy a délky 40–50 cm.",
     "g200": "200 g",
     "g200effect": "Plný objem",
-    "g200desc": "Bohatý, plný efekt. Ideální pro husté vlasy nebo výrazné prodloužení nad 50 cm. Dává luxusní, salonní vzhled.",
+    "g200desc": "200 g vlasů pro husté vlasy nebo prodloužení 50+ cm.",
     "g250": "250+ g",
     "g250effect": "Extrémní délka/objem",
-    "g250desc": "Maximum objemu a délky. Pro velmi dlouhé prodloužení (60+ cm) nebo extra husté vlasy. Hollywoodský efekt.",
+    "g250desc": "250+ g pro prodloužení 60+ cm nebo velmi husté vlasy.",
     "colGrams": "Gramáž",
     "colEffect": "Efekt",
     "colDesc": "Popis",
@@ -2265,7 +2265,7 @@
     "typeFineNote": "Jemné vlasy nepotřebují tolik gramů pro viditelný efekt. Menší množství zabrání přetěžování vlastních vlasů a prodloužení bude vypadat přirozeně.",
     "typeNormal": "Normální vlasy",
     "typeNormalGrams": "150–200 g",
-    "typeNormalNote": "Standardní gramáž pro přirozený a plný výsledek. Nejčastější volba našich zákaznic — skvěle vypadá i po delší době nošení.",
+    "typeNormalNote": "150–200 g pro normální vlasy. Nejčastěji objednávaná gramáž.",
     "typeThick": "Husté vlasy",
     "typeThickGrams": "200–250+ g",
     "typeThickNote": "Husté vlasy potřebují více gramů, aby se prodloužení opticky sladilo s vlastním objemem. Jinak by přechod byl viditelný.",
@@ -2336,7 +2336,7 @@
 
     "categoriesTitle": "Panenské, Luxe a Standard vlasy",
     "catVirginTitle": "Panenské vlasy",
-    "catVirginText": "Nejvyšší kvalita — nikdy chemicky neupravované vlasy. Kutikula zachována v původním směru, extrémní životnost. Ideální pro dlouhodobé nošení a opakované přelepení.",
+    "catVirginText": "Nikdy chemicky neupravované. Kutikula v původním směru. Životnost 18–36 měsíců při správné péči.",
     "catLuxeTitle": "Luxe vlasy",
     "catLuxeText": "Nebarvené a neupravované vlasy z jedné hlavy. Nejvyšší kvalita zpracování, přirozený lesk a jemnost. Ideální pro dlouhodobé nošení.",
     "catStandardTitle": "Standard vlasy",
@@ -2347,7 +2347,7 @@
     "methodTapeIn": "Tape-in pásky aplikuje kadeřník, vydrží 6–8 týdnů. Rovnoměrné rozložení, přirozený výsledek, rychlá přeaplikace.",
     "methodKeratin": "Keratinové bondy = nejtrvalejší metoda. Individuální prameny spojené teplem, vydrží 3–4 měsíce. Neviditelné spoje.",
     "methodMicroRing": "Micro ring kroužky bez tepla a lepidla. Šetrné k vlastním vlasům, snadná údržba. Vydrží 3–4 měsíce.",
-    "methodWeft": "Tresy (weft) se přišívají na copánkový základ. Nejvíce vlasů najednou, ideální pro maximální objem.",
+    "methodWeft": "Tresy se přišívají na copánkový základ. Největší množství vlasů najednou — vhodné pro výrazné přidání objemu.",
 
     "colorTitle": "Jak vybrat správný odstín a gramáž",
     "colorText": "Barvu vlasů doporučujeme vybírat osobně — fotky na monitoru nikdy přesně neodpovídají. Přijedeme s ukázkami a porovnáme odstíny přímo u vás.",
@@ -3275,12 +3275,12 @@
     "ctaContact": "Kontaktovat nás"
   },
   "slavicLP": {
-    "metaTitle": "Slovanské vlasy k prodloužení — jemné, přirozené, z přímého dovozu",
-    "metaDesc": "Prémiové slovanské vlasy z přímého dovozu. Jemná struktura, přirozený lesk, neporušená kutikula. Clip-in, tape-in, keratin — zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
+    "metaTitle": "Slovanské vlasy k prodloužení — z přímého dovozu, kutikula zachována",
+    "metaDesc": "Slovanské vlasy z Ukrajiny a východní Evropy, neporušená kutikula, bez agresivní chemické úpravy. Clip-in, tape-in, keratin — zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
     "home": "Domů",
     "breadcrumb": "Slovanské vlasy",
     "h1": "Slovanské vlasy k prodloužení",
-    "heroText": "Slovanské vlasy patří mezi nejkvalitnější evropské vlasy na trhu. Díky jemné struktuře a přirozenému lesku dokonale splývají s českými vlasy. Dovážíme je přímo od dodavatelů — bez prostředníků, s garantovanou kvalitou.",
+    "heroText": "Slovanské vlasy pochází z východní Evropy — jemnější textura a nižší hustota vlasu než asijské vlasy. Dovážíme přímo od dodavatelů, bez prostředníků.",
 
     "whatTitle": "Co jsou slovanské vlasy",
     "whatText1": "Slovanské vlasy pochází z východní Evropy — převážně z Ukrajiny, Běloruska a Ruska. Vyznačují se jemnou strukturou, přirozeným leskem a zachovanou kutikulou ve správném směru. Díky tomu se nekroutí, nezamotávají a vydrží výrazně déle než vlasy jiného původu.",
@@ -3289,8 +3289,8 @@
     "originTitle": "Původ a kvalita slovanských vlasů",
     "originText": "Naše slovanské vlasy dovážíme přímo od prověřených dodavatelů ve východní Evropě. Každá dodávka prochází kontrolou kvality — ověřujeme strukturu, neporušenost kutikuly a jednotnost barvy. Slovanské vlasy se od asijských liší jemnější texturou a nižší hustotou jednotlivého vlasu, díky čemuž přirozeně splývají s evropskými vlasy.",
 
-    "forWhomTitle": "Pro koho jsou slovanské vlasy ideální",
-    "forWhomText": "Slovanské vlasy jsou první volbou pro ženy s jemnými až středně silnými vlastními vlasy. Pokud hledáte prodloužení, které bude neviditelné a přirozené, slovanské vlasy jsou správná volba. Hodí se pro všechny metody zpracování — clip-in, tape-in, keratin i micro ring.",
+    "forWhomTitle": "Pro koho jsou slovanské vlasy vhodné",
+    "forWhomText": "Slovanské vlasy mají jemnější texturu — vhodné pro jemné až středně silné vlastní vlasy. Hodí se pro clip-in, tape-in, keratin i micro ring.",
 
     "methodsTitle": "Metody zpracování slovanských vlasů",
     "methodsIntro": "Slovanské vlasy zpracováváme na zakázku do 7 pracovních dnů. Vyberte si metodu, která vám nejlépe vyhovuje:",
@@ -3323,13 +3323,13 @@
 
     "crossLinkTitle": "Další typy vlasů",
     "crossVirginTitle": "Panenské vlasy (Virgin)",
-    "crossVirginText": "Nejvyšší kvalita — nikdy chemicky neošetřené vlasy s maximální životností.",
+    "crossVirginText": "Nikdy chemicky neošetřené. Životnost 18–36 měsíců.",
     "crossUkrainianTitle": "Ukrajinské vlasy",
     "crossUkrainianText": "Pravé evropské vlasy z přímého dovozu z Ukrajiny.",
 
     "faqTitle": "Časté dotazy o slovanských vlasech",
     "faq1q": "Jaký je rozdíl mezi slovanskými a standardními vlasy?",
-    "faq1a": "Slovanské vlasy mají jemnější strukturu a zachovanou kutikulu ve správném směru. Neprochází agresivní chemickou úpravou, díky čemuž jsou přirozenější, lépe splývají s vlastními vlasy a vydrží déle. Standardní vlasy jsou cenově dostupnější, ale s kratší životností.",
+    "faq1a": "Slovanské vlasy mají jemnější strukturu a zachovanou kutikulu ve správném směru. Neprochází agresivní chemickou úpravou — vydrží 12–24 měsíců oproti standardním 6–12 měsíců.",
     "faq2q": "Jak dlouho slovanské vlasy vydrží?",
     "faq2a": "Při správné péči vydrží slovanské vlasy 12–24 měsíců v závislosti na metodě zpracování a frekvenci nošení. Clip-in prameny vydrží déle, protože nejsou vystaveny každodennímu namáhání. Tape-in a keratinové prodloužení vyžadují pravidelnou přeaplikaci.",
     "faq3q": "Mohu slovanské vlasy barvit?",
@@ -3337,9 +3337,9 @@
     "faq4q": "Kolik gramů slovanských vlasů potřebuji?",
     "faq4a": "Záleží na požadovaném efektu a hustotě vlastních vlasů. Pro jemné prodloužení stačí 80–120 g, pro plný efekt doporučujeme 120–200 g. Využijte naši kalkulačku gramáže nebo se poraďte při osobní konzultaci.",
     "faq5q": "Odkud pochází vaše slovanské vlasy?",
-    "faq5a": "Naše slovanské vlasy dovážíme přímo od dodavatelů na Ukrajině a v dalších zemích východní Evropy. Každou dodávku kontrolujeme — ověřujeme strukturu, kutikulu a jednotnost barvy. Přímý dovoz bez prostředníků zajišťuje férové ceny a garantovanou kvalitu.",
+    "faq5a": "Naše slovanské vlasy dovážíme přímo od dodavatelů na Ukrajině a v dalších zemích východní Evropy. Každou dodávku kontrolujeme — struktura, kutikula, jednotnost barvy. Přímý dovoz bez prostředníků.",
     "faq6q": "Jsou slovanské vlasy vhodné pro jemné české vlasy?",
-    "faq6a": "Ano, slovanské vlasy jsou ideální právě pro jemné až středně silné vlasy, které jsou u Češek nejčastější. Jemná struktura slovanských vlasů dokonale splývá s vlastními vlasy a vytváří přirozený, neviditelný přechod.",
+    "faq6a": "Ano. Jemnější textura slovanských vlasů je blíže typickým českým vlasům — přechod je méně viditelný než u asijských vlasů.",
 
     "ctaTitle": "Zaujaly vás slovanské vlasy?",
     "ctaText": "Prohlédněte si naši nabídku slovanských vlasů nebo se ozvěte — rádi poradíme s výběrem.",
@@ -3352,22 +3352,22 @@
     "home": "Domů",
     "breadcrumb": "Ukrajinské vlasy",
     "h1": "Ukrajinské vlasy k prodloužení",
-    "heroText": "Ukrajina je jedním z hlavních zdrojů nejkvalitnějších evropských vlasů na světě. Dovážíme přímo od dodavatelů — bez prostředníků, s garantovanou kvalitou a férovými cenami. Všechny vlasy zpracováváme na zakázku do 7 dnů.",
+    "heroText": "Dovážíme přímo z Ukrajiny. Každou dodávku kontrolujeme — kutikula, barva, struktura. Bez velkoobchodních mezičlánků. Všechny vlasy zpracováváme na zakázku do 7 dnů.",
 
     "whyTitle": "Proč ukrajinské vlasy",
-    "whyText1": "Ukrajina má dlouhou tradici ve sběru a zpracování kvalitních lidských vlasů. Místní klima a genetika přispívají k tomu, že ukrajinské vlasy mají přirozeně jemnou strukturu, lesk a pružnost — vlastnosti, které jsou u evropských zákaznic nejžádanější.",
-    "whyText2": "Každá dodávka prochází ruční kontrolou kvality. Ověřujeme neporušenost kutikuly, jednotnost barvy a strukturu vlasu. Díky tomu nabízíme vlasy, které přirozeně splývají s českými vlasy a vydrží měsíce až roky.",
+    "whyText1": "Ukrajina má dlouhou tradici ve sběru a zpracování lidských vlasů. Ukrajinské vlasy mají jemnou strukturu a nižší hustotu jednotlivého vlasu — strukturou blízkou středoevropským vlasům.",
+    "whyText2": "Každá dodávka prochází ruční kontrolou — kutikula, barva, struktura. Vlasy vydrží 12–24 měsíců v závislosti na kategorii a metodě zpracování.",
 
     "importTitle": "Přímý dovoz bez prostředníků",
     "importText": "Hairland dováží vlasy přímo z Ukrajiny — bez velkoobchodních mezičlánků. To znamená férovější ceny pro vás a plnou kontrolu nad kvalitou každé dodávky. Osobně vybíráme dodavatele a pravidelně ověřujeme kvalitu přímo na místě.",
 
     "categoriesTitle": "Kategorie vlasů z Ukrajiny",
     "catVirginTitle": "Panenské vlasy (Virgin)",
-    "catVirginText": "Nikdy chemicky neošetřené vlasy nejvyšší kvality. Zachovaná kutikula, maximální životnost.",
+    "catVirginText": "Nikdy chemicky neošetřené. Zachovaná kutikula. Životnost 18–36 měsíců.",
     "catLuxeTitle": "Luxe vlasy",
-    "catLuxeText": "Nebarvené a neupravované vlasy z jedné hlavy. Nejvyšší kvalita zpracování, přirozený lesk a jemnost.",
+    "catLuxeText": "Může projít šetrnou úpravou kutikuly. Nižší cena než Virgin. Vhodné pro clip-in i tape-in.",
     "catStandardTitle": "Standard vlasy",
-    "catStandardText": "Kvalitní evropské vlasy za dostupnou cenu. Nejlepší volba pro první prodloužení.",
+    "catStandardText": "Evropské vlasy s výraznější chemickou úpravou. Nižší cena, kratší životnost (6–12 měsíců).",
 
     "methodsTitle": "Metody zpracování ukrajinských vlasů",
     "methodsIntro": "Ukrajinské vlasy zpracováváme na zakázku do 7 pracovních dnů. Vyberte si metodu podle svých potřeb:",
@@ -3401,13 +3401,13 @@
 
     "crossLinkTitle": "Další typy vlasů",
     "crossSlavicTitle": "Luxe vlasy",
-    "crossSlavicText": "Nebarvené vlasy z jedné hlavy. Přirozený lesk a jemnost, ideální pro dlouhodobé nošení.",
+    "crossSlavicText": "Slovanské vlasy — jemnější textura, vhodné pro clip-in, tape-in, keratin.",
     "crossVirginTitle": "Panenské vlasy (Virgin)",
-    "crossVirginText": "Nejvyšší kvalita — nikdy chemicky neošetřené vlasy s maximální životností.",
+    "crossVirginText": "Nikdy chemicky neošetřené. Životnost 18–36 měsíců.",
 
     "faqTitle": "Časté dotazy o ukrajinských vlasech",
-    "faq1q": "Proč jsou ukrajinské vlasy považovány za nejkvalitnější?",
-    "faq1a": "Ukrajinské vlasy mají díky genetice a klimatu přirozeně jemnou strukturu, lesk a pružnost. Jsou nejbližší evropským vlasům, takže přirozeně splývají s českými vlasy. Navíc Ukrajina má dlouhou tradici ve sběru a zpracování vlasů, což zajišťuje vysoký standard kvality.",
+    "faq1q": "Proč jsou ukrajinské vlasy oblíbené v Evropě?",
+    "faq1a": "Ukrajinské vlasy mají jemnější texturu a nižší hustotu vlasu než asijské vlasy — neprochází agresivní chemickou úpravou. Strukturou jsou blízké středoevropským vlasům, takže přechod je méně viditelný.",
     "faq2q": "Jaký je rozdíl mezi ukrajinskými a asijskými vlasy?",
     "faq2a": "Ukrajinské vlasy mají jemnější strukturu a nižší hustotu jednotlivého vlasu, díky čemuž lépe splývají s evropskými vlasy. Asijské vlasy jsou silnější, tužší a po chemické úpravě ztrácí přirozený vzhled. Ukrajinské vlasy nevyžadují agresivní zpracování a zachovávají si přirozený lesk.",
     "faq3q": "Jak poznám pravé ukrajinské vlasy?",
@@ -3425,25 +3425,25 @@
     "ctaContact": "Domluvit konzultaci"
   },
   "virginLP": {
-    "metaTitle": "Panenské vlasy (Virgin) — neošetřené vlasy nejvyšší kvality",
-    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, s neporušenou kutikulou. Nejdelší životnost a nejpřirozenější vzhled. Zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
+    "metaTitle": "Panenské vlasy (Virgin) — nikdy chemicky neošetřené, kutikula zachována",
+    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, s neporušenou kutikulou. Životnost 18–36 měsíců. Zpracování na zakázku do 7 dnů. Osobní výběr v Praze zdarma.",
     "home": "Domů",
     "breadcrumb": "Panenské vlasy",
     "h1": "Panenské vlasy k prodloužení",
-    "heroText": "Panenské (virgin) vlasy jsou absolutní špičkou v kvalitě. Nikdy nebyly chemicky ošetřeny — žádné barvení, zesvětlování ani silikonová úprava. Kutikula je zachována v původním směru, což zaručuje maximální životnost a nejpřirozenější vzhled.",
+    "heroText": "Panenské vlasy nikdy nebyly chemicky ošetřeny — žádné barvení, zesvětlování ani silikonová úprava. Kutikula je zachována v původním směru. Životnost 18–36 měsíců.",
 
     "whatTitle": "Co jsou panenské vlasy",
     "whatText1": "Panenské vlasy (virgin hair) jsou vlasy, které nikdy neprošly žádnou chemickou úpravou. Nebyly barveny, zesvětlovány ani chemicky narovnávány. Kutikula — ochranná vrstva vlasu — zůstává neporušená a ve správném směru, což je klíčové pro přirozenou splývavost a dlouhou životnost.",
-    "whatText2": "Na rozdíl od Luxe a Standard vlasů, které mohou projít šetrnou úpravou, panenské vlasy jsou zcela přírodní. To z nich dělá nejdražší, ale zároveň nejkvalitnější volbu s nejdelší životností.",
+    "whatText2": "Na rozdíl od Luxe a Standard vlasů, které mohou projít šetrnou úpravou, panenské vlasy jsou zcela přírodní. To z nich dělá nejdražší kategorii — životnost 18–36 měsíců oproti 12–24 měsíců u Luxe.",
 
     "whyMoreTitle": "Proč panenské vlasy stojí více",
-    "whyMoreText": "Panenské vlasy jsou vzácné — pochází pouze od dárkyň, které si vlasy nikdy nebarvily ani chemicky neupravovaly. Sběr je omezený a každá dodávka prochází přísnou kontrolou kvality. Ruční třídění, ověření neporušené kutikuly a jednotnosti barvy — to vše zvyšuje náklady, ale garantuje výjimečnou kvalitu.",
+    "whyMoreText": "Panenské vlasy jsou vzácné — pochází pouze od dárkyň, které si vlasy nikdy nebarvily ani chemicky neupravovaly. Sběr je omezený a každá dodávka prochází kontrolou. Ruční třídění, ověření neporušené kutikuly a jednotnosti barvy — to vše zvyšuje náklady.",
 
     "lifespanTitle": "Životnost a péče o panenské vlasy",
     "lifespanText": "Panenské vlasy vydrží při správné péči 18–36 měsíců — výrazně déle než jakýkoli jiný typ. Základní péče je jednoduchá: šetrné mytí šamponem bez sulfátů, pravidelné kartáčování od konců, noční copánek a omezení tepelného stylování. S každou zakázkou dodáváme podrobné instrukce k péči.",
 
     "methodsTitle": "Metody zpracování panenských vlasů",
-    "methodsIntro": "Panenské vlasy zpracováváme na zakázku do 7 pracovních dnů. Díky výjimečné kvalitě jsou vhodné pro všechny metody:",
+    "methodsIntro": "Panenské vlasy zpracováváme na zakázku do 7 pracovních dnů. Jsou vhodné pro všechny metody zpracování:",
     "method_clipIn_title": "Clip-in vlasy",
     "method_clipIn_desc": "Připnete si je samy doma za pár minut. Ideální pro příležitostné nošení i každodenní použití.",
     "method_tapeIn_title": "Tape-in vlasy",
@@ -3463,7 +3463,7 @@
     "chooseGramsCta": "Kalkulačka gramáže",
 
     "pricingTitle": "Cena panenských vlasů",
-    "pricingText": "Panenské vlasy jsou naší nejvyšší kategorií. Cena odpovídá výjimečné kvalitě — neošetřená kutikula, maximální životnost a nejpřirozenější vzhled.",
+    "pricingText": "Panenské vlasy jsou nejdražší kategorií. Nikdy chemicky neošetřené — neporušená kutikula, životnost 18–36 měsíců.",
     "pricingValue": "od 95 Kč/g",
     "pricingCta": "Kompletní ceník",
 
@@ -3473,9 +3473,9 @@
 
     "crossLinkTitle": "Další typy vlasů",
     "crossSlavicTitle": "Luxe vlasy",
-    "crossSlavicText": "Nebarvené vlasy z jedné hlavy. Přirozený lesk a jemnost, ideální pro dlouhodobé nošení.",
+    "crossSlavicText": "Slovanské vlasy — šetrně upravená kutikula. Nižší cena než Virgin, životnost 12–24 měsíců.",
     "crossUkrainianTitle": "Ukrajinské vlasy",
-    "crossUkrainianText": "Pravé evropské vlasy z přímého dovozu z Ukrajiny.",
+    "crossUkrainianText": "Evropské vlasy z přímého dovozu z Ukrajiny. Kontrola kutikuly, barvy a struktury.",
 
     "faqTitle": "Časté dotazy o panenských vlasech",
     "faq1q": "Jaký je rozdíl mezi panenskými a slovanskými vlasy?",
