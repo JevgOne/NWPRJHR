@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { getAllStockNumbers } from "@/lib/stock";
 import { generateSku } from "@/lib/sku";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 function escapeXml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
