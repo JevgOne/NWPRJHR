@@ -2273,7 +2273,28 @@
     "ctaContact": "Kontaktovat nás",
     "ctaAdvice": "Více rad v naší poradně",
     "tipTitle": "Tip od nás",
-    "tipText": "Nejste si jistá gramáží? Objednejte si osobní konzultaci — přijedeme s ukázkami a porovnáme vlasy přímo u vás. Služba je zdarma po Praze."
+    "tipText": "Nejste si jistá gramáží? Objednejte si osobní konzultaci — přijedeme s ukázkami a porovnáme vlasy přímo u vás. Služba je zdarma po Praze.",
+    "calc": {
+      "title": "Kalkulačka gramáže",
+      "ownLength": "Délka vašich vlasů",
+      "desiredLength": "Požadovaná délka po prodloužení",
+      "density": "Hustota vlasů",
+      "density_fine": "Jemné",
+      "density_normal": "Normální",
+      "density_thick": "Husté",
+      "method": "Metoda zpracování",
+      "method_clip-in": "Clip-in",
+      "method_tape-in": "Tape-in",
+      "method_keratin": "Keratin",
+      "method_micro-ring": "Micro ring",
+      "method_weft": "Tresy (weft)",
+      "recommended": "Doporučená gramáž",
+      "resultNote": "Orientační hodnota — přesnou gramáž doporučíme při konzultaci",
+      "priceEstimate": "Orientační cena",
+      "priceNote": "Ceny se liší podle délky a textury vlasů. Aktuální ceník najdete na stránce Ceník.",
+      "ctaProducts": "Prohlédnout nabídku vlasů",
+      "ctaConsult": "Bezplatná konzultace"
+    }
   },
   "processingType": {
     "clip-in": {

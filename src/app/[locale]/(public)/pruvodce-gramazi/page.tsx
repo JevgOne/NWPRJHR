@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
+import { GramCalculator } from "@/components/public/GramCalculator";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -150,6 +151,11 @@ export default async function PruvodceGramaziPage() {
           {t("subtitle")}
         </p>
       </div>
+
+      {/* Interactive calculator */}
+      <section className="mb-14">
+        <GramCalculator />
+      </section>
 
       {/* Weight guide — visual cards */}
       <section className="mb-14">
