@@ -39,6 +39,15 @@ const TITLE_KEYS: Record<string, string> = {
   "ofiny": "ofinyTitle",
 };
 
+const H1_KEYS: Record<string, string> = {
+  "clip-in": "clipInH1",
+  "tape-in": "tapeInH1",
+  "keratin": "keratinH1",
+  "micro-ring": "microRingH1",
+  "weft": "weftH1",
+  "ofiny": "ofinyTitle",
+};
+
 const DESC_KEYS: Record<string, string> = {
   "clip-in": "clipInDesc",
   "tape-in": "tapeInDesc",
@@ -181,6 +190,8 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
 
   const titleKey = TITLE_KEYS[slug];
   const title = tPt(titleKey);
+  const h1Key = H1_KEYS[slug];
+  const h1 = h1Key ? tPt(h1Key) : title;
 
   // Other category slugs for internal linking
   const otherCategories = Object.keys(CATEGORY_SLUG_MAP).filter((s) => s !== slug);
@@ -235,7 +246,7 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
       ]} />
 
       {/* Hero */}
-      <h1 className="text-3xl font-bold text-ink mb-3">{title}</h1>
+      <h1 className="text-3xl font-bold text-ink mb-3">{h1}</h1>
       <p className="text-muted mb-8 max-w-3xl text-lg leading-relaxed">{tPt(`${slug}.intro` as any)}</p>
 
       {/* How it works */}
