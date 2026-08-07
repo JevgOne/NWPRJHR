@@ -19,18 +19,24 @@ interface GramageCalculatorProps {
 const OWN_LENGTHS = [10, 15, 20, 25, 30, 35, 40, 45, 50] as const;
 const DESIRED_LENGTHS = [30, 35, 40, 45, 50, 55, 60, 65, 70] as const;
 
-const DENSITY_MULTIPLIER: Record<Density, number> = {
+// Real-world gram data from professional sources (Cliphair, Alpha Hair, airyhair.com)
+// desiredLength → method → recommended grams for NORMAL density
+const GRAM_TABLE: Record<number, Record<Method, number>> = {
+  30: { "clip-in": 110, "tape-in": 70, keratin: 90, "micro-ring": 90, weft: 100 },
+  35: { "clip-in": 120, "tape-in": 80, keratin: 95, "micro-ring": 95, weft: 100 },
+  40: { "clip-in": 135, "tape-in": 90, keratin: 100, "micro-ring": 100, weft: 100 },
+  45: { "clip-in": 150, "tape-in": 105, keratin: 110, "micro-ring": 110, weft: 150 },
+  50: { "clip-in": 165, "tape-in": 115, keratin: 115, "micro-ring": 115, weft: 150 },
+  55: { "clip-in": 175, "tape-in": 130, keratin: 125, "micro-ring": 125, weft: 200 },
+  60: { "clip-in": 180, "tape-in": 135, keratin: 130, "micro-ring": 130, weft: 200 },
+  65: { "clip-in": 195, "tape-in": 155, keratin: 145, "micro-ring": 145, weft: 250 },
+  70: { "clip-in": 200, "tape-in": 165, keratin: 150, "micro-ring": 150, weft: 250 },
+};
+
+const DENSITY_FACTOR: Record<Density, number> = {
   fine: 0.75,
   normal: 1.0,
   thick: 1.3,
-};
-
-const METHOD_MULTIPLIER: Record<Method, number> = {
-  "clip-in": 1.2,
-  "tape-in": 1.0,
-  keratin: 0.95,
-  "micro-ring": 0.95,
-  weft: 1.1,
 };
 
 const CATEGORY_STYLES: Record<string, { pill: string }> = {
@@ -46,23 +52,24 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 function calculateGrams(
-  ownLength: number,
+  _ownLength: number,
   desiredLength: number,
   density: Density,
   method: Method,
 ): { min: number; max: number; recommended: number } {
-  const extensionLength = desiredLength - ownLength;
-  const baseLengthGrams = 80 + (extensionLength / 10) * 40;
+  const base = GRAM_TABLE[desiredLength]?.[method] ?? 150;
+  const adjusted = base * DENSITY_FACTOR[density];
+  const recommended = Math.round(adjusted / 10) * 10;
+  const min = Math.round((adjusted * 0.85) / 10) * 10;
+  const max = Math.round((adjusted * 1.15) / 10) * 10;
 
-  const base = baseLengthGrams * DENSITY_MULTIPLIER[density] * METHOD_MULTIPLIER[method];
-  const recommended = Math.round(base / 10) * 10;
-  const min = Math.round((base * 0.85) / 10) * 10;
-  const max = Math.round((base * 1.15) / 10) * 10;
+  // Fine hair safety cap: never over 150g clip-in (weight damages fine hair)
+  const maxCap = density === "fine" && method === "clip-in" ? 150 : 350;
 
   return {
-    min: Math.max(80, Math.min(min, 300)),
-    max: Math.max(100, Math.min(max, 350)),
-    recommended: Math.max(100, Math.min(recommended, 300)),
+    min: Math.max(50, Math.min(min, maxCap)),
+    max: Math.max(60, Math.min(max, maxCap)),
+    recommended: Math.max(50, Math.min(recommended, maxCap)),
   };
 }
 
