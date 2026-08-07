@@ -629,7 +629,7 @@
   "public": {
     "meta": {
       "catLabel": {
-        "VIRGIN": "100% panenské RAW vlasy",
+        "VIRGIN": "100% panenské pravé vlasy",
         "LUXE": "Prémiové luxe vlasy",
         "STANDARD": "Kvalitní vlasy k prodloužení",
         "SALE": "Vlasy za akční cenu",
@@ -755,7 +755,7 @@
     "register": {
       "title": "B2B Registrace",
       "pageTitle": "Registrace pro kadeřnice a salony",
-      "pageDescription": "Zaregistrujte se pro partnerský nákup prémiových RAW vlasů. Zvýhodněné B2B ceny pro salony a kadeřnice.",
+      "pageDescription": "Zaregistrujte se pro partnerský nákup prémiových vlasů. Zvýhodněné B2B ceny pro salony a kadeřnice.",
       "subtitle": "B2B účet pro zvýhodněný nákup vlasů. Po ověření aktivujeme přístup — obvykle do 24 hodin.",
       "typeSection": "Typ účtu",
       "typeSalon": "Salon / Studio",
@@ -2077,8 +2077,8 @@
     "jak_dlouho_vydrzi_content": "<h2>Životnost podle metody</h2><p><strong>Clip-in:</strong> při správné péči 1–2 roky. Záleží na frekvenci nošení.</p><p><strong>Tape-in:</strong> pásky vydrží 6–8 týdnů, vlasy samotné lze přelepit 2–3×.</p><p><strong>Keratin:</strong> spoj vydrží 3–5 měsíců. Vlasy lze znovu aplikovat.</p><p><strong>Micro ring:</strong> 2–4 měsíce mezi údržbami. Vlasy lze přesadit.</p><h2>Co ovlivňuje životnost</h2><ul><li>Kvalita vlasů — virgin a remy vydrží déle než standard.</li><li>Péče — správné mytí, česání a styling prodlužují životnost.</li><li>Frekvence tepelného stylingu — méně žehlení = delší životnost.</li><li>Typ vlastních vlasů — mastné vlasy mohou zkrátit životnost lepených spojů.</li></ul>"
   },
   "b2b": {
-    "pageTitle": "Vlasy pro kadeřnice — partnerský prodej RAW vlasů",
-    "pageDescription": "Dodáváme prémiové RAW vlasy k prodloužení pro kadeřnické salony. Slovanské a evropské vlasy, B2B spolupráce, partnerské ceny.",
+    "pageTitle": "Vlasy pro kadeřnice — partnerský prodej prémiových vlasů",
+    "pageDescription": "Dodáváme prémiové vlasy k prodloužení pro kadeřnické salony. Slovanské a evropské vlasy, B2B spolupráce, partnerské ceny.",
     "heroTitle": "Spolupracujte s Hairland",
     "heroSubtitle": "Získejte zvýhodněné ceny na prémiové vlasy. Program pro salony a samostatné kadeřnice.",
     "salonCard": {
@@ -2468,15 +2468,15 @@
     },
     "ofiny": {
       "name": "Clip-in ofiny",
-      "intro": "Clip-in ofiny z RAW lidských vlasů jsou ideálním řešením pro přirozené rámování obličeje. V Hairlandu vyrábíme ofiny na zakázku z prémiových surových vlasů — přesně podle požadované délky, hustoty a barvy. Clip-in systém umožňuje snadné připnutí i sejmutí kdykoli potřebujete.",
+      "intro": "Clip-in ofiny z pravých lidských vlasů jsou ideálním řešením pro přirozené rámování obličeje. V Hairlandu vyrábíme ofiny na zakázku z prémiových surových vlasů — přesně podle požadované délky, hustoty a barvy. Clip-in systém umožňuje snadné připnutí i sejmutí kdykoli potřebujete.",
       "howTitle": "Jak funguje výroba clip-in ofin",
-      "howText": "Vyberete si typ ofiny (rovná, na stranu, řídká, hustá) a my ji vyrobíme ze surových RAW vlasů přesně podle vašich požadavků. Každou ofinu opatříme kvalitními clip-in sponkami pro snadné připevnění. Výroba trvá do 7 pracovních dnů, osobní odběr v Praze je zdarma.",
+      "howText": "Vyberete si typ ofiny (rovná, na stranu, řídká, hustá) a my ji vyrobíme ze surových pravých vlasů přesně podle vašich požadavků. Každou ofinu opatříme kvalitními clip-in sponkami pro snadné připevnění. Výroba trvá do 7 pracovních dnů, osobní odběr v Praze je zdarma.",
       "adv1Title": "Okamžitá změna",
       "adv1Text": "Připnete za pár sekund — rámování obličeje bez stříhání vlastních vlasů.",
       "adv2Title": "Bez rizika",
       "adv2Text": "Žádné stříhání, žádné lítosti. Ofinu sundáte kdykoli se vám zachce.",
       "adv3Title": "Přírodní vlasy",
-      "adv3Text": "100% RAW lidské vlasy — můžete kulmovat, žehlit i barvit jako vlastní.",
+      "adv3Text": "100% pravé lidské vlasy — můžete kulmovat, žehlit i barvit jako vlastní.",
       "adv4Title": "Na míru",
       "adv4Text": "Délku, hustotu i barvu přizpůsobíme přesně tvaru vašeho obličeje.",
       "forWhomTitle": "Pro koho jsou clip-in ofiny vhodné",
@@ -2494,7 +2494,7 @@
       "faq3q": "Jak vybrat správnou barvu a délku?",
       "faq3a": "Při objednávce nám pošlete fotku svých vlasů za denního světla. Doporučíme přesný odstín a délku, která bude vypadat přirozeně s vaším účesem. Nabízíme i bezplatnou konzultaci.",
       "faq4q": "Mohu clip-in ofinu barvit nebo žehlit?",
-      "faq4a": "Ano, naše ofiny jsou ze 100% RAW lidských vlasů, takže je lze barvit, tónovat, žehlit i kulmovat. Doporučujeme tepelnou ochranu a maximální teplotu 180 °C."
+      "faq4a": "Ano, naše ofiny jsou ze 100% pravých lidských vlasů, takže je lze barvit, tónovat, žehlit i kulmovat. Doporučujeme tepelnou ochranu a maximální teplotu 180 °C."
     },
     "clipInTitle": "Clip-in vlasy Praha | 100% pravé vlasy",
     "tapeInTitle": "Tape-in vlasy Praha | Pravé vlasové pásky",
@@ -2512,13 +2512,13 @@
     "keratinDesc": "Keratinové bondy — nejtrvanlivější metoda prodloužení. Přirozený vzhled, vydrží 3–5 měsíců.",
     "microRingDesc": "Micro ring prameny uchycené kroužky bez lepidla a tepla. Šetrné k vlasům, vydrží 2–4 měsíce.",
     "weftDesc": "Tresové vlasy našité na pásek — rychlá aplikace, velký objem. Vhodné pro husté vlasy.",
-    "ofinyDesc": "Přírodní clip-in ofiny z RAW lidských vlasů. Snadné připevnění, individuální výroba na objednávku.",
+    "ofinyDesc": "Přírodní clip-in ofiny z pravých lidských vlasů. Snadné připevnění, individuální výroba na objednávku.",
     "clipInMeta": "Clip-in vlasy k prodloužení — prémiová kvalita, snadná aplikace doma. Široký výběr délek a barev. Skladem v Praze.",
     "tapeInMeta": "Tape-in vlasy k prodloužení — plochý spoj, pohodlné nošení. Přelepení každých 6–8 týdnů. Skladem v Praze.",
     "keratinMeta": "Keratinové vlasy k prodloužení — nejtrvanlivější metoda, přirozený vzhled. Vydrží 3–5 měsíců. Skladem v Praze.",
     "microRingMeta": "Micro ring vlasy k prodloužení — bez lepidla a tepla, šetrné k vlasům. Vydrží 2–4 měsíce. Skladem v Praze.",
     "weftMeta": "Tresové vlasy k prodloužení — rychlá aplikace, velký objem. Prémiová kvalita. Skladem v Praze.",
-    "ofinyMeta": "Clip-in ofiny z RAW lidských vlasů — přírodní vzhled, individuální výroba na objednávku. Hairland Praha.",
+    "ofinyMeta": "Clip-in ofiny z pravých lidských vlasů — přírodní vzhled, individuální výroba na objednávku. Hairland Praha.",
     "productsInCategory": "{count, plural, one {1 produkt} few {# produkty} other {# produktů}} v kategorii",
     "noProducts": "V této kategorii zatím nemáme žádné produkty.",
     "noProductsCta": "Prohlédněte si celou nabídku",
