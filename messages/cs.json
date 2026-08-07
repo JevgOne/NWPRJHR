@@ -41,19 +41,19 @@
     "registerSalon": "Zaregistrujte svůj salon"
   },
   "metadata": {
-    "description": "Hairland — 100% pravé RAW vlasy k prodloužení. Přímý import, zpracování na zakázku, osobní konzultace Praha.",
-    "homeTitle": "Vlasy k prodloužení Praha | 100% pravé RAW vlasy",
-    "homeDescription": "100% přírodní RAW vlasy k prodloužení — slovanské a evropské. Zpracování na zakázku do 7 dnů: clip-in, tape-in, keratin, micro ring. Osobní konzultace Praha zdarma.",
+    "description": "Hairland — 100% pravé vlasy k prodloužení. Přímý import, zpracování na zakázku, osobní konzultace Praha.",
+    "homeTitle": "Vlasy k prodloužení Praha | 100% pravé vlasy",
+    "homeDescription": "100% přírodní vlasy k prodloužení — slovanské a evropské. Zpracování na zakázku do 7 dnů: clip-in, tape-in, keratin, micro ring. Osobní konzultace Praha zdarma.",
     "blogTitle": "Poradce prodloužení vlasů — jak vybrat, péče, srovnání",
     "blogDescription": "Jak vybrat správnou metodu prodloužení vlasů? Clip-in, tape-in nebo keratin? Rady od expertů, péče o prodloužené vlasy, srovnání kvality.",
     "contactTitle": "Kontakt — osobní konzultace vlasů Praha",
     "contactDescription": "Kontaktujte Hairland pro osobní konzultaci výběru vlasů k prodloužení. Osobní schůzka Praha zdarma s ukázkami. Tel, email nebo online.",
     "aboutTitle": "O nás — prémiové vlasy z přímého importu",
-    "aboutDescription": "Hairland — prémiové RAW vlasy k prodloužení z přímého importu. Slovanské a evropské vlasy bez zprostředkovatelů. Osobní konzultace Praha.",
+    "aboutDescription": "Hairland — prémiové vlasy k prodloužení z přímého importu. Slovanské a evropské vlasy bez zprostředkovatelů. Osobní konzultace Praha.",
     "kadernicTitle": "Kadeřnice a salony — spolupráce",
     "kadernicDescription": "Ověřené kadeřnice a salony spolupracující s Hairland. Najděte specialistku na prodloužení vlasů ve vašem okolí.",
     "recenzeTitle": "Recenze zákazníků na vlasy Hairland",
-    "recenzeDescription": "Recenze zákazníků Hairland — zkušenosti s kvalitou RAW vlasů k prodloužení, zpracováním clip-in a tape-in na zakázku. Hodnocení 4.8/5.",
+    "recenzeDescription": "Recenze zákazníků Hairland — zkušenosti s kvalitou vlasů k prodloužení, zpracováním clip-in a tape-in na zakázku. Hodnocení 4.8/5.",
     "accessoriesTitle": "Příslušenství pro vlasy",
     "accessoriesDesc": "Příslušenství pro prodloužené vlasy — žehličky, šampony bez sulfátů, speciální hřebeny. Prodlužte životnost vlasových pramenů.",
     "dopravaTitle": "Doprava a doručení",
@@ -69,7 +69,7 @@
     "checkoutTitle": "Objednávka",
     "checkoutDescription": "Dokončete objednávku prémiových vlasů Hairland — rychlé doručení po celé ČR.",
     "cenikTitle": "Ceník vlasů k prodloužení 2026 | Cena za 100 g",
-    "cenikDescription": "Kolik stojí pravé vlasy k prodloužení? Ceník RAW vlasů za 100 g — panenské, Luxe a Standard. Slovanské a ukrajinské vlasy skladem v Praze."
+    "cenikDescription": "Kolik stojí pravé vlasy k prodloužení? Ceník vlasů za 100 g — panenské, Luxe a Standard. Slovanské a ukrajinské vlasy skladem v Praze."
   },
   "roles": {
     "owner": "Majitel",
@@ -846,7 +846,7 @@
     },
     "landing": {
       "heroTitle": "Prémiové vlasy k prodloužení v Praze",
-      "heroSubtitle": "100% pravé RAW vlasy z Ukrajiny a Evropy. Panenské, Luxe i Standard vlasy skladem v Praze s možností přípravy na keratin, tape-in, clip-in, micro ring nebo weft.",
+      "heroSubtitle": "100% pravé vlasy z Ukrajiny a Evropy. Panenské, Luxe i Standard vlasy skladem v Praze s možností přípravy na keratin, tape-in, clip-in, micro ring nebo weft.",
       "whyHairland": "Proč Hairland",
       "badgeNatural": "100% přírodní",
       "badgeNaturalDesc": "Jen lidské vlasy, žádná syntetika",
@@ -922,9 +922,9 @@
       "registerSalon": "Nakupujete u nás? Nechte se zde uvést"
     },
     "offer": {
-      "metaTitle": "Vlasy k prodloužení | Pravé RAW a slovanské vlasy",
-      "metaDescription": "Pravé RAW vlasy k prodloužení skladem v Praze — panenské, Luxe a Standard. Zpracování na zakázku: clip-in, tape-in, keratin, micro ring, weft. Doručení do 7 dnů.",
-      "seoIntro": "Pravé vlasy k prodloužení skladem v Praze. Vybírejte z panenských, Luxe a Standard RAW vlasů z Ukrajiny a dalších evropských zemí. Každý culík prodáváme podle skutečné gramáže, délky, odstínu a struktury. Vlasy vám můžeme připravit na keratin, tape-in, clip-in, micro ring nebo vlasové tresy.",
+      "metaTitle": "Vlasy k prodloužení | Pravé slovanské a evropské vlasy",
+      "metaDescription": "Pravé vlasy k prodloužení skladem v Praze — panenské, Luxe a Standard. Zpracování na zakázku: clip-in, tape-in, keratin, micro ring, weft. Doručení do 7 dnů.",
+      "seoIntro": "Pravé vlasy k prodloužení skladem v Praze. Vybírejte z panenských, Luxe a Standard vlasů z Ukrajiny a dalších evropských zemí. Každý culík prodáváme podle skutečné gramáže, délky, odstínu a struktury. Vlasy vám můžeme připravit na keratin, tape-in, clip-in, micro ring nebo vlasové tresy.",
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
       "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete zpracování na clip-in, tape-in nebo micro ring? Připravíme na zakázku — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
       "bannerCta": "Nejste si jistí? <strong>Přijedeme s ukázkami přímo za vámi</strong> — po Praze zdarma. Žádný závazek.",
@@ -2498,9 +2498,9 @@
     },
     "clipInTitle": "Clip-in vlasy Praha | 100% pravé vlasy",
     "tapeInTitle": "Tape-in vlasy Praha | Pravé vlasové pásky",
-    "keratinTitle": "Vlasy na keratin Praha | Pravé RAW vlasy",
+    "keratinTitle": "Vlasy na keratin Praha | Pravé vlasy",
     "microRingTitle": "Micro ring vlasy Praha | Pravé vlasy",
-    "weftTitle": "Vlasové tresy Praha | Pravé RAW vlasy",
+    "weftTitle": "Vlasové tresy Praha | Pravé vlasy",
     "clipInH1": "Clip-in vlasy v Praze",
     "tapeInH1": "Tape-in vlasy v Praze",
     "keratinH1": "Vlasy na keratin v Praze",
@@ -3122,7 +3122,7 @@
   },
   "pricelist": {
     "title": "Ceník vlasů k prodloužení 2026",
-    "subtitle": "Kolik stojí pravé vlasy k prodloužení? Aktuální ceny RAW vlasů za 100 g — panenské (Virgin), Luxe a Standard. Ceny se automaticky aktualizují podle skladových zásob.",
+    "subtitle": "Kolik stojí pravé vlasy k prodloužení? Aktuální ceny vlasů za 100 g — panenské (Virgin), Luxe a Standard. Ceny se automaticky aktualizují podle skladových zásob.",
     "costQuestion": "Kolik stojí 100 g pravých vlasů?",
     "costAnswer": "Cena 100 g pravých vlasů k prodloužení závisí na kategorii, délce a původu. Panenské (Virgin) vlasy z Ukrajiny stojí přibližně 8 000–15 000 Kč za 100 g, Luxe vlasy 5 000–10 000 Kč a Standard vlasy 3 000–6 000 Kč. V Hairland prodáváme každý culík po gramech, takže platíte jen za skutečnou gramáž.",
     "hairPricesTitle": "Ceny vlasů podle kategorie",
