@@ -272,6 +272,34 @@ export default async function ProdlouzeniVlasuPrahaPage() {
         </div>
       </section>
 
+      {/* 4b. Typy vlasů — cross-links */}
+      <section className="mb-14">
+        <h2 className="text-xl font-semibold text-ink mb-4">{t("typesLinkTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link
+            href="/panenske-vlasy"
+            className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
+          >
+            <div className="text-sm font-semibold text-ink mb-1">{t("typeVirginTitle")}</div>
+            <p className="text-sm text-muted">{t("typeVirginShort")}</p>
+          </Link>
+          <Link
+            href="/slovanske-vlasy"
+            className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
+          >
+            <div className="text-sm font-semibold text-ink mb-1">{t("typeSlavicTitle")}</div>
+            <p className="text-sm text-muted">{t("typeSlavicShort")}</p>
+          </Link>
+          <Link
+            href="/ukrajinske-vlasy"
+            className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
+          >
+            <div className="text-sm font-semibold text-ink mb-1">{t("typeUkrainianTitle")}</div>
+            <p className="text-sm text-muted">{t("typeUkrainianShort")}</p>
+          </Link>
+        </div>
+      </section>
+
       {/* 5. Jak vybrat odstín a gramáž */}
       <section className="mb-14">
         <h2 className="text-xl font-semibold text-ink mb-4">

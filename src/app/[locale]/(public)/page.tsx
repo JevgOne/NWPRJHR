@@ -392,6 +392,42 @@ export default async function LandingPage() {
       </section>
       </ScrollReveal>
 
+      {/* Hair types — landing page links */}
+      <ScrollReveal>
+      <section className="py-10 sm:py-14 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink text-center mb-6 tracking-tight">
+            {t("landing.hairTypesTitle")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link href="/panenske-vlasy" className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="text-sm font-semibold text-ink mb-1">{t("landing.hairTypesVirgin")}</div>
+              <p className="text-sm text-muted">{t("landing.hairTypesVirginDesc")}</p>
+            </Link>
+            <Link href="/slovanske-vlasy" className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="text-sm font-semibold text-ink mb-1">{t("landing.hairTypesSlavic")}</div>
+              <p className="text-sm text-muted">{t("landing.hairTypesSlavicDesc")}</p>
+            </Link>
+            <Link href="/ukrajinske-vlasy" className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="text-sm font-semibold text-ink mb-1">{t("landing.hairTypesUkrainian")}</div>
+              <p className="text-sm text-muted">{t("landing.hairTypesUkrainianDesc")}</p>
+            </Link>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <Link href="/prodlouzeni-vlasu-praha" className="text-sm text-rose font-medium hover:text-rose-deep transition-colors">
+              {t("landing.utilityPraha")}
+            </Link>
+            <Link href="/cenik-vlasy" className="text-sm text-rose font-medium hover:text-rose-deep transition-colors">
+              {t("landing.utilityPricelist")}
+            </Link>
+            <Link href="/pruvodce-gramazi" className="text-sm text-rose font-medium hover:text-rose-deep transition-colors">
+              {t("landing.utilityGrams")}
+            </Link>
+          </div>
+        </div>
+      </section>
+      </ScrollReveal>
+
       {/* Trust section — 4 items, no duplicates */}
       <ScrollReveal>
       <section className="py-10 sm:py-14 bg-white">

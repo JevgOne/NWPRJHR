@@ -73,6 +73,92 @@ export default async function ArticlePage({ params }: Props) {
   const prev = currentIdx > 0 ? articles[currentIdx - 1] : null;
   const next = currentIdx < articles.length - 1 ? articles[currentIdx + 1] : null;
 
+  // Internal interlinking — match article content to product/landing pages
+  const contentLower = (t(contentKey) + " " + t(article.titleKey as "typesTitle") + " " + t(article.descKey as "typesDesc")).toLowerCase();
+  const PRODUCT_LINKS: Array<{
+    href: string;
+    keywords: string[];
+    label: Record<string, string>;
+    desc: Record<string, string>;
+  }> = [
+    {
+      href: "/clip-in",
+      keywords: ["clip-in", "clip in", "klipy", "připn", "sponk", "кліпси", "клипсы"],
+      label: { cs: "Clip-in vlasy", uk: "Clip-in волосся", ru: "Clip-in волосы" },
+      desc: { cs: "Připínací vlasy na sponky", uk: "Волосся на заколках", ru: "Волосы на заколках" },
+    },
+    {
+      href: "/tape-in",
+      keywords: ["tape-in", "tape in", "pásk", "lepidl", "стрічки", "ленты"],
+      label: { cs: "Tape-in vlasy", uk: "Tape-in волосся", ru: "Tape-in волосы" },
+      desc: { cs: "Vlasy na páskách", uk: "Волосся на стрічках", ru: "Волосы на лентах" },
+    },
+    {
+      href: "/keratin",
+      keywords: ["keratin", "keratinov", "кератин"],
+      label: { cs: "Keratinové vlasy", uk: "Кератинове волосся", ru: "Кератиновые волосы" },
+      desc: { cs: "Kvalitní keratinové prodloužení", uk: "Якісне кератинове нарощування", ru: "Качественное кератиновое наращивание" },
+    },
+    {
+      href: "/micro-ring",
+      keywords: ["micro-ring", "micro ring", "mikroring", "kroužk", "мікрокільця", "микрокольца"],
+      label: { cs: "Micro-ring vlasy", uk: "Micro-ring волосся", ru: "Micro-ring волосы" },
+      desc: { cs: "Prodloužení bez lepidla a tepla", uk: "Нарощування без клею і тепла", ru: "Наращивание без клея и тепла" },
+    },
+    {
+      href: "/tresove-vlasy",
+      keywords: ["třes", "tresov", "weft", "tress", "všív", "трес"],
+      label: { cs: "Třesové vlasy", uk: "Тресове волосся", ru: "Трессовые волосы" },
+      desc: { cs: "Vlasy na pásu pro všívání", uk: "Волосся на тресі для вшивання", ru: "Волосы на трессе для вшивания" },
+    },
+    {
+      href: "/vlasy-k-prodlouzeni",
+      keywords: ["prodloužení", "prodlouzeni", "nabídk", "kolekc", "нарощування", "наращивание"],
+      label: { cs: "Kolekce vlasů", uk: "Колекція волосся", ru: "Коллекция волос" },
+      desc: { cs: "Kompletní nabídka prémiových vlasů", uk: "Повна пропозиція преміального волосся", ru: "Полное предложение премиальных волос" },
+    },
+    {
+      href: "/pruvodce-gramazi",
+      keywords: ["gram", "gramáž", "gramáži", "kolik gram", "грам"],
+      label: { cs: "Průvodce gramáží", uk: "Гід по грамажу", ru: "Гид по граммажу" },
+      desc: { cs: "Kolik gramů vlasů potřebujete?", uk: "Скільки грамів волосся потрібно?", ru: "Сколько грамм волос нужно?" },
+    },
+    {
+      href: "/cenik-vlasy",
+      keywords: ["cen", "ceník", "kolik stoj", "ціна", "цена"],
+      label: { cs: "Ceník vlasů", uk: "Прайс-лист", ru: "Прайс-лист" },
+      desc: { cs: "Přehled cen podle kategorie a délky", uk: "Ціни за категорією та довжиною", ru: "Цены по категории и длине" },
+    },
+    {
+      href: "/slovanske-vlasy",
+      keywords: ["slovan", "luxe", "слов'ян", "славянск"],
+      label: { cs: "Slovanské vlasy", uk: "Слов'янське волосся", ru: "Славянские волосы" },
+      desc: { cs: "Prémiové slovanské vlasy z přímého dovozu", uk: "Преміальне слов'янське волосся", ru: "Премиальные славянские волосы" },
+    },
+    {
+      href: "/ukrajinske-vlasy",
+      keywords: ["ukrajin", "українськ", "украинск"],
+      label: { cs: "Ukrajinské vlasy", uk: "Українське волосся", ru: "Украинские волосы" },
+      desc: { cs: "Pravé vlasy z přímého dovozu z Ukrajiny", uk: "Справжнє волосся з прямого імпорту", ru: "Настоящие волосы из прямого импорта" },
+    },
+    {
+      href: "/panenske-vlasy",
+      keywords: ["panensk", "virgin", "незайман", "девственн"],
+      label: { cs: "Panenské vlasy", uk: "Незаймане волосся", ru: "Девственные волосы" },
+      desc: { cs: "Neošetřené vlasy nejvyšší kvality", uk: "Необроблене волосся найвищої якості", ru: "Необработанные волосы высшего качества" },
+    },
+    {
+      href: "/prodlouzeni-vlasu-praha",
+      keywords: ["prah", "osobn", "konzultac", "праг", "праж"],
+      label: { cs: "Prodloužení Praha", uk: "Нарощування Прага", ru: "Наращивание Прага" },
+      desc: { cs: "Osobní výběr vlasů a konzultace v Praze", uk: "Особистий підбір волосся в Празі", ru: "Личный подбор волос в Праге" },
+    },
+  ];
+  const matchedLinks = PRODUCT_LINKS.filter((link) =>
+    link.keywords.some((kw) => contentLower.includes(kw))
+  ).slice(0, 4);
+  const relatedProductsLabel = locale === "uk" ? "Може вас зацікавити" : locale === "ru" ? "Может вас заинтересовать" : "Může vás zajímat";
+
   const homeLabel = tNav("home");
   const prevLabel = locale === "uk" ? "Попередня" : locale === "ru" ? "Предыдущая" : "Předchozí";
   const nextLabel = locale === "uk" ? "Наступна" : locale === "ru" ? "Следующая" : "Další";
@@ -273,6 +359,32 @@ export default async function ArticlePage({ params }: Props) {
             </button>
           </div>
         </div>
+
+        {/* ===== RELATED PRODUCT LINKS ===== */}
+        {matchedLinks.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-lg font-bold text-ink mb-4" style={{ fontFamily: "Georgia, serif" }}>{relatedProductsLabel}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {matchedLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="group flex items-center gap-4 p-4 rounded-xl bg-white border border-line hover:border-rose/20 hover:shadow-md transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose/10 to-blush-100/60 flex items-center justify-center flex-shrink-0 group-hover:from-rose/20 group-hover:to-blush-100 transition-colors">
+                    <svg className="w-5 h-5 text-rose/60 group-hover:text-rose transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="block text-sm font-semibold text-ink group-hover:text-rose transition-colors">{link.label[locale] ?? link.label.cs}</span>
+                    <span className="block text-xs text-muted/60">{link.desc[locale] ?? link.desc.cs}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ===== PREV / NEXT ===== */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">

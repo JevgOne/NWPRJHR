@@ -209,6 +209,36 @@ export default async function BlogPostPage({ params }: Props) {
       label: { cs: "Průvodce gramáží", uk: "Гід по грамажу", ru: "Гид по граммажу" },
       desc: { cs: "Kolik gramů vlasů potřebujete?", uk: "Скільки грамів волосся потрібно?", ru: "Сколько грамм волос нужно?" },
     },
+    {
+      href: "/slovanske-vlasy",
+      keywords: ["slovan", "luxe", "slovanské", "слов'ян", "славянск"],
+      label: { cs: "Slovanské vlasy", uk: "Слов'янське волосся", ru: "Славянские волосы" },
+      desc: { cs: "Prémiové slovanské vlasy z přímého dovozu", uk: "Преміальне слов'янське волосся", ru: "Премиальные славянские волосы" },
+    },
+    {
+      href: "/ukrajinske-vlasy",
+      keywords: ["ukrajin", "ukraine", "українськ", "украинск"],
+      label: { cs: "Ukrajinské vlasy", uk: "Українське волосся", ru: "Украинские волосы" },
+      desc: { cs: "Pravé vlasy z přímého dovozu z Ukrajiny", uk: "Справжнє волосся з прямого імпорту", ru: "Настоящие волосы из прямого импорта" },
+    },
+    {
+      href: "/panenske-vlasy",
+      keywords: ["panensk", "virgin", "незайман", "девственн"],
+      label: { cs: "Panenské vlasy", uk: "Незаймане волосся", ru: "Девственные волосы" },
+      desc: { cs: "Neošetřené vlasy nejvyšší kvality", uk: "Необроблене волосся найвищої якості", ru: "Необработанные волосы высшего качества" },
+    },
+    {
+      href: "/cenik-vlasy",
+      keywords: ["cena", "ceník", "kolik stoj", "ціна", "цена"],
+      label: { cs: "Ceník vlasů", uk: "Прайс-лист", ru: "Прайс-лист" },
+      desc: { cs: "Přehled cen podle kategorie a délky", uk: "Ціни за категорією та довжиною", ru: "Цены по категории и длине" },
+    },
+    {
+      href: "/prodlouzeni-vlasu-praha",
+      keywords: ["prah", "praha", "osobn", "konzultac", "праг", "праж"],
+      label: { cs: "Prodloužení Praha", uk: "Нарощування Прага", ru: "Наращивание Прага" },
+      desc: { cs: "Osobní výběr vlasů a konzultace v Praze", uk: "Особистий підбір волосся в Празі", ru: "Личный подбор волос в Праге" },
+    },
   ];
   const matchedLinks = PRODUCT_LINKS.filter((link) =>
     link.keywords.some((kw) => contentLower.includes(kw))

@@ -54,30 +54,33 @@ export function PublicFooter() {
             </h3>
             <ul className="space-y-2">
               <li><Link href="/vlasy-k-prodlouzeni" className={linkClass}>{t("navbar.hair")}</Link></li>
-              <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
-              <li><Link href="/prodlouzeni-vlasu-praha" className={linkClass}>{t("footer.prahaLanding")}</Link></li>
+              <li><Link href="/clip-in" className={linkClass}>Clip-in</Link></li>
+              <li><Link href="/tape-in" className={linkClass}>Tape-in</Link></li>
+              <li><Link href="/keratin" className={linkClass}>Keratin</Link></li>
+              <li><Link href="/micro-ring" className={linkClass}>Micro ring</Link></li>
+              <li><Link href="/tresove-vlasy" className={linkClass}>{t("footer.weft")}</Link></li>
               <li><Link href="/ofiny" className={linkClass}>{t("navbar.bangs")}</Link></li>
               <li><Link href="/prislusenstvi" className={linkClass}>{t("nav.accessories")}</Link></li>
-              <li><Link href="/poradna" className={linkClass}>{t("navbar.advice")}</Link></li>
-              <li><Link href="/kadernice" className={linkClass}>{t("footer.hairdressers")}</Link></li>
-              <li><Link href="/vykup" className={linkClass}>{t("navbar.buyback")}</Link></li>
               <li><Link href="/recenze" className={linkClass}>{t("footer.reviews")}</Link></li>
-              <li><Link href="/blog" className={linkClass}>Blog</Link></li>
-              <li><Link href="/about" className={linkClass}>{t("nav.about")}</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Informace (Legal/Info) */}
+          {/* Column 3: Průvodce */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-nude-200/40 mb-3">
-              {t("footer.infoTitle")}
+              {t("footer.guideTitle")}
             </h3>
             <ul className="space-y-2">
-              <li><Link href="/obchodni-podminky" className={linkClass}>{t("footer.termsLink")}</Link></li>
-              <li><Link href="/reklamacni-rad" className={linkClass}>{t("footer.complaintsLink")}</Link></li>
-              <li><Link href="/doprava" className={linkClass}>{t("footer.shippingLink")}</Link></li>
-              <li><Link href="/privacy" className={linkClass}>{t("nav.privacy")}</Link></li>
-              <li><Link href="/registrace" className={linkClass}>{t("footer.salonRegLink")}</Link></li>
+              <li><Link href="/slovanske-vlasy" className={linkClass}>{t("footer.slavicHair")}</Link></li>
+              <li><Link href="/ukrajinske-vlasy" className={linkClass}>{t("footer.ukrainianHair")}</Link></li>
+              <li><Link href="/panenske-vlasy" className={linkClass}>{t("footer.virginHair")}</Link></li>
+              <li><Link href="/prodlouzeni-vlasu-praha" className={linkClass}>{t("footer.prahaLanding")}</Link></li>
+              <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
+              <li><Link href="/pruvodce-gramazi" className={linkClass}>{t("footer.gramGuide")}</Link></li>
+              <li><Link href="/poradna" className={linkClass}>{t("navbar.advice")}</Link></li>
+              <li><Link href="/blog" className={linkClass}>Blog</Link></li>
+              <li><Link href="/kadernice" className={linkClass}>{t("footer.hairdressers")}</Link></li>
+              <li><Link href="/about" className={linkClass}>{t("nav.about")}</Link></li>
             </ul>
           </div>
 
@@ -104,8 +107,17 @@ export function PublicFooter() {
           </div>
         </div>
 
+        {/* Legal links */}
+        <div className="mt-8 pt-6 border-t border-nude-200/10 flex flex-wrap gap-x-5 gap-y-1.5 text-[11px] text-nude-200/35">
+          <Link href="/obchodni-podminky" className="hover:text-white transition-colors">{t("footer.termsLink")}</Link>
+          <Link href="/reklamacni-rad" className="hover:text-white transition-colors">{t("footer.complaintsLink")}</Link>
+          <Link href="/doprava" className="hover:text-white transition-colors">{t("footer.shippingLink")}</Link>
+          <Link href="/privacy" className="hover:text-white transition-colors">{t("nav.privacy")}</Link>
+          <Link href="/registrace" className="hover:text-white transition-colors">{t("footer.salonRegLink")}</Link>
+        </div>
+
         {/* Bottom bar: copyright + payments + company info */}
-        <div className="mt-6 pt-6 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
+        <div className="mt-4 pt-4 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
           <span>{t("footer.copyright")}</span>
           <span>Platby zajišťuje Comgate · Visa · Mastercard · Apple Pay · Bankovní převod</span>
           <span>

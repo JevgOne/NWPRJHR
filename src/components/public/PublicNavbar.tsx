@@ -196,13 +196,20 @@ export function PublicNavbar() {
 
   const offerItems = [
     { href: "/vlasy-k-prodlouzeni", label: t("navbar.hair") },
+    { href: "/clip-in", label: "Clip-in" },
+    { href: "/tape-in", label: "Tape-in" },
+    { href: "/keratin", label: "Keratin" },
+    { href: "/micro-ring", label: "Micro ring" },
+    { href: "/tresove-vlasy", label: t("navbar.weft") },
     { href: "/ofiny", label: t("navbar.bangs") },
     { href: "/prislusenstvi", label: t("nav.accessories") },
+    { href: "/cenik-vlasy", label: t("footer.pricelist") },
   ];
 
   const inspiraceItems = [
     { href: "/poradna", label: t("navbar.advice") },
     { href: "/pruvodce-gramazi", label: t("navbar.weightGuide") },
+    { href: "/prodlouzeni-vlasu-praha", label: t("footer.prahaLanding") },
     { href: "/recenze", label: t("navbar.reviews") },
     { href: "/blog", label: "Blog" },
   ];

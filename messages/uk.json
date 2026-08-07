@@ -920,7 +920,17 @@
       "stylistsTitle": "Майстри та салони, які працюють з волоссям Hairland",
       "stylistsSubtitle": "Перелік майстрів та салонів, які купують та використовують волосся Hairland. Це незалежні підприємці.",
       "allStylists": "Показати всіх",
-      "registerSalon": "Купуєте у нас? Додайте себе сюди"
+      "registerSalon": "Купуєте у нас? Додайте себе сюди",
+      "hairTypesTitle": "Типи волосся для нарощування",
+      "hairTypesVirgin": "Незаймане волосся (Virgin)",
+      "hairTypesVirginDesc": "Найвища якість — ніколи хімічно не оброблене",
+      "hairTypesSlavic": "Слов'янське волосся (Luxe)",
+      "hairTypesSlavicDesc": "Ніжна структура, природний блиск, ідеально для чеського волосся",
+      "hairTypesUkrainian": "Українське волосся",
+      "hairTypesUkrainianDesc": "Справжнє європейське волосся з прямого імпорту",
+      "utilityPraha": "Нарощування волосся в Празі →",
+      "utilityPricelist": "Прайс-лист →",
+      "utilityGrams": "Скільки грамів мені потрібно? →"
     },
     "offer": {
       "metaTitle": "Волосся для нарощування | Справжнє слов'янське волосся",
@@ -1231,7 +1241,13 @@
       "weightGuide": "Гід з грамажу",
       "reviews": "Відгуки",
       "pricelist": "Прайс-лист",
-      "prahaLanding": "Нарощування волосся Прага"
+      "prahaLanding": "Нарощування волосся Прага",
+      "guideTitle": "Довідник",
+      "slavicHair": "Слов'янське волосся",
+      "ukrainianHair": "Українське волосся",
+      "virginHair": "Незаймане волосся",
+      "gramGuide": "Гід з грамажу",
+      "weft": "Треси"
     },
     "batchPopup": {
       "title": "Нова партія волосся вже в дорозі!",
@@ -1252,7 +1268,8 @@
       "reviews": "Відгуки",
       "tagline": "ПРЕМІАЛЬНЕ ВОЛОССЯ",
       "wishlist": "Обране",
-      "search": "Шукати"
+      "search": "Шукати",
+      "weft": "Треси"
     },
     "wishlist": {
       "title": "Обране",
@@ -2365,7 +2382,14 @@
     "ctaText": "Готові до змін? Радо допоможемо з вибором.",
     "ctaCenik": "Прайс-лист",
     "ctaNabidka": "Переглянути пропозицію",
-    "ctaKonzultace": "Домовити консультацію"
+    "ctaKonzultace": "Домовити консультацію",
+    "typesLinkTitle": "Оберіть тип волосся",
+    "typeSlavicTitle": "Слов'янське волосся (Luxe)",
+    "typeSlavicShort": "Ніжне, природне, з прямого імпорту",
+    "typeVirginTitle": "Незаймане волосся (Virgin)",
+    "typeVirginShort": "Найвища якість — необроблене, непошкоджена кутикула",
+    "typeUkrainianTitle": "Українське волосся",
+    "typeUkrainianShort": "Якісне європейське волосся за доступною ціною"
   },
   "processingType": {
     "clip-in": {

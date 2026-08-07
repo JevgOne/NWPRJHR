@@ -374,6 +374,33 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
           </Link>
         </div>
       </section>
+
+      {/* Hair types */}
+      <section className="pt-8 border-t border-line mt-8">
+        <h2 className="text-lg font-bold text-ink mb-4">{t("landing.hairTypesTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Link href="/panenske-vlasy" className="px-4 py-3 rounded-lg bg-nude-50 text-sm font-medium text-ink hover:bg-blush-100 hover:text-rose-deep transition-colors">
+            {t("landing.hairTypesVirgin")}
+          </Link>
+          <Link href="/slovanske-vlasy" className="px-4 py-3 rounded-lg bg-nude-50 text-sm font-medium text-ink hover:bg-blush-100 hover:text-rose-deep transition-colors">
+            {t("landing.hairTypesSlavic")}
+          </Link>
+          <Link href="/ukrajinske-vlasy" className="px-4 py-3 rounded-lg bg-nude-50 text-sm font-medium text-ink hover:bg-blush-100 hover:text-rose-deep transition-colors">
+            {t("landing.hairTypesUkrainian")}
+          </Link>
+        </div>
+        <div className="flex flex-wrap gap-3 mt-4">
+          <Link href="/cenik-vlasy" className="text-sm text-rose font-medium hover:text-rose-deep transition-colors">
+            {t("landing.utilityPricelist")}
+          </Link>
+          <Link href="/pruvodce-gramazi" className="text-sm text-rose font-medium hover:text-rose-deep transition-colors">
+            {t("landing.utilityGrams")}
+          </Link>
+          <Link href="/prodlouzeni-vlasu-praha" className="text-sm text-rose font-medium hover:text-rose-deep transition-colors">
+            {t("landing.utilityPraha")}
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

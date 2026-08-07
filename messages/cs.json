@@ -920,7 +920,17 @@
       "stylistsTitle": "Kadeřnice a salony pracující s vlasy Hairland",
       "stylistsSubtitle": "Přehled kadeřnic a salonů, které nakupují a používají vlasy Hairland. Jedná se o nezávislé podnikatele.",
       "allStylists": "Zobrazit všechny",
-      "registerSalon": "Nakupujete u nás? Nechte se zde uvést"
+      "registerSalon": "Nakupujete u nás? Nechte se zde uvést",
+      "hairTypesTitle": "Typy vlasů k prodloužení",
+      "hairTypesVirgin": "Panenské vlasy (Virgin)",
+      "hairTypesVirginDesc": "Nejvyšší kvalita — nikdy chemicky neošetřené",
+      "hairTypesSlavic": "Slovanské vlasy (Luxe)",
+      "hairTypesSlavicDesc": "Jemná struktura, přirozený lesk, ideální pro české vlasy",
+      "hairTypesUkrainian": "Ukrajinské vlasy",
+      "hairTypesUkrainianDesc": "Pravé evropské vlasy z přímého dovozu",
+      "utilityPraha": "Prodloužení vlasů v Praze →",
+      "utilityPricelist": "Ceník vlasů →",
+      "utilityGrams": "Kolik gramů potřebuji? →"
     },
     "offer": {
       "metaTitle": "Vlasy k prodloužení | Pravé slovanské vlasy",
@@ -1231,7 +1241,13 @@
       "weightGuide": "Průvodce gramáží",
       "reviews": "Recenze",
       "pricelist": "Ceník vlasů",
-      "prahaLanding": "Prodloužení vlasů Praha"
+      "prahaLanding": "Prodloužení vlasů Praha",
+      "guideTitle": "Průvodce",
+      "slavicHair": "Slovanské vlasy",
+      "ukrainianHair": "Ukrajinské vlasy",
+      "virginHair": "Panenské vlasy",
+      "gramGuide": "Průvodce gramáží",
+      "weft": "Tresy"
     },
     "batchPopup": {
       "title": "Nová várka vlasů na cestě!",
@@ -1252,7 +1268,8 @@
       "reviews": "Recenze",
       "tagline": "PRÉMIOVÉ VLASY",
       "wishlist": "Oblíbené",
-      "search": "Hledat"
+      "search": "Hledat",
+      "weft": "Tresy"
     },
     "wishlist": {
       "title": "Oblíbené",
@@ -2365,7 +2382,14 @@
     "ctaText": "Připraveni na změnu? Rádi vám pomůžeme s výběrem.",
     "ctaCenik": "Ceník vlasů",
     "ctaNabidka": "Prohlédnout nabídku",
-    "ctaKonzultace": "Domluvit konzultaci"
+    "ctaKonzultace": "Domluvit konzultaci",
+    "typesLinkTitle": "Vyberte si typ vlasů",
+    "typeSlavicTitle": "Slovanské vlasy (Luxe)",
+    "typeSlavicShort": "Jemné, přirozené, z přímého dovozu",
+    "typeVirginTitle": "Panenské vlasy (Virgin)",
+    "typeVirginShort": "Nejvyšší kvalita — neošetřené, neporušená kutikula",
+    "typeUkrainianTitle": "Ukrajinské vlasy",
+    "typeUkrainianShort": "Kvalitní evropské vlasy za dostupnou cenu"
   },
   "processingType": {
     "clip-in": {
