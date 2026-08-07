@@ -56,11 +56,13 @@ export async function generateMetadata({
   if (sp.texture) parts.push(sp.texture);
   if (sp.colorTone) parts.push(sp.colorTone);
 
+  const hasFilters = sp.search || sp.color || sp.category || sp.sort || sp.origin || sp.lengthCm || sp.texture || sp.colorTone;
   const title = `${parts.join(" | ")} — ${t("products.title")}`;
   const description = `${parts.join(", ")} — ${defaultDesc}`;
   return {
     title,
     description,
+    ...(hasFilters && { robots: { index: false } }),
     alternates: getAlternates("/vlasy-k-prodlouzeni"),
     openGraph: {
       type: "website",

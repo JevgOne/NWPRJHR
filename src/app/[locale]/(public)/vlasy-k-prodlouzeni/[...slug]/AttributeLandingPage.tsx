@@ -214,7 +214,7 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
     itemListElement: [
       { "@type": "ListItem", position: 1, name: t("nav.home"), item: "https://www.hairland.cz/" },
       { "@type": "ListItem", position: 2, name: t("nav.products"), item: "https://www.hairland.cz/vlasy-k-prodlouzeni" },
-      { "@type": "ListItem", position: 3, name: sectionTitle, item: `https://www.hairland.cz/vlasy-k-prodlouzeni` },
+      { "@type": "ListItem", position: 3, name: sectionTitle, item: `https://www.hairland.cz/vlasy-k-prodlouzeni/${prefix}` },
       { "@type": "ListItem", position: 4, name: h1, item: `https://www.hairland.cz/vlasy-k-prodlouzeni/${prefix}/${valueSlug}` },
     ],
   };

@@ -53,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/recenze", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.6 }),
     ...withAlternates("/prislusenstvi", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/prodlouzeni-vlasu-praha", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.9 }),
+    ...withAlternates("/cenik-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
   ];
 
   const categoryPages: MetadataRoute.Sitemap = [
