@@ -176,7 +176,7 @@ export default async function LandingPage() {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink mb-2 leading-tight">
               {t("landing.heroTitle")}
             </h1>
-            <p className="text-sm sm:text-base text-muted max-w-lg mx-auto font-light">
+            <p className="text-sm sm:text-base text-muted max-w-2xl mx-auto font-light">
               {t("landing.heroSubtitle")}
             </p>
           </div>
