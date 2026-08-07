@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Allow: /feed/
 Disallow: /dashboard
 Disallow: /login
 Disallow: /salon/
