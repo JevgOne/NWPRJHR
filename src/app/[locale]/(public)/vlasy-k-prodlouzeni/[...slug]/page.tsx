@@ -606,7 +606,7 @@ async function ProductDetailView({
   const description = localizedDesc || autoBio;
 
   // Cached review stats + snippets for JSON-LD (product-specific only, no site-wide fallback)
-  const { productStats: reviewStats, schemaReviews: reviewsForSchema } = await getCachedReviewData(product.id);
+  const { stats: siteWideStats, productStats: reviewStats, schemaReviews: reviewsForSchema } = await getCachedReviewData(product.id);
 
   // FAQ data by category
   const faqByCategory: Record<string, Array<{ q: string; a: string }>> = {
@@ -746,6 +746,7 @@ async function ProductDetailView({
       availability: schemaAvailability,
       itemCondition: "https://schema.org/NewCondition",
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      validFrom: new Date().toISOString().split("T")[0],
       url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`,
       seller: {
         "@type": "Organization",
@@ -791,11 +792,11 @@ async function ProductDetailView({
       },
     },
     }),
-    ...(reviewStats._count > 0 && {
+    ...((reviewStats._count > 0 || siteWideStats._count > 0) && {
       aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: reviewStats._avg.rating?.toFixed(1),
-        reviewCount: reviewStats._count,
+        ratingValue: (reviewStats._count > 0 ? reviewStats._avg.rating : siteWideStats._avg.rating)?.toFixed(1),
+        reviewCount: reviewStats._count > 0 ? reviewStats._count : siteWideStats._count,
         bestRating: "5",
         worstRating: "1",
       },
