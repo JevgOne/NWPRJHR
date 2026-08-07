@@ -68,8 +68,8 @@
     "inquiryCartDescription": "Váš košík — objednávka prémiových vlasů k prodloužení. Odpovíme do 24 hodin.",
     "checkoutTitle": "Objednávka",
     "checkoutDescription": "Dokončete objednávku prémiových vlasů Hairland — rychlé doručení po celé ČR.",
-    "cenikTitle": "Ceník vlasů k prodloužení — aktuální ceny",
-    "cenikDescription": "Orientační ceník RAW vlasů k prodloužení — ceny za gram dle kategorie a délky. Clip-in, tape-in, keratin, micro ring. Aktuální ceny Hairland."
+    "cenikTitle": "Ceník vlasů k prodloužení 2026 | Cena za 100 g",
+    "cenikDescription": "Kolik stojí pravé vlasy k prodloužení? Ceník RAW vlasů za 100 g — panenské, Luxe a Standard. Slovanské a ukrajinské vlasy skladem v Praze."
   },
   "roles": {
     "owner": "Majitel",
@@ -3121,8 +3121,10 @@
     "saved": "Profil byl úspěšně uložen."
   },
   "pricelist": {
-    "title": "Ceník vlasů k prodloužení",
-    "subtitle": "Orientační ceník prémiových RAW vlasů. Ceny se automaticky aktualizují podle aktuálních skladových zásob.",
+    "title": "Ceník vlasů k prodloužení 2026",
+    "subtitle": "Kolik stojí pravé vlasy k prodloužení? Aktuální ceny RAW vlasů za 100 g — panenské (Virgin), Luxe a Standard. Ceny se automaticky aktualizují podle skladových zásob.",
+    "costQuestion": "Kolik stojí 100 g pravých vlasů?",
+    "costAnswer": "Cena 100 g pravých vlasů k prodloužení závisí na kategorii, délce a původu. Panenské (Virgin) vlasy z Ukrajiny stojí přibližně 8 000–15 000 Kč za 100 g, Luxe vlasy 5 000–10 000 Kč a Standard vlasy 3 000–6 000 Kč. V Hairland prodáváme každý culík po gramech, takže platíte jen za skutečnou gramáž.",
     "hairPricesTitle": "Ceny vlasů podle kategorie",
     "hairPricesDesc": "Průměrné ceny za 100 g dle kategorie a délky. Přesnou cenu uvidíte u konkrétního produktu.",
     "priceNote": "Ceny jsou orientační a mohou se lišit dle odstínu, textury a původu vlasů.",

@@ -161,6 +161,12 @@ export default async function CenikVlasyPage() {
         </p>
       </div>
 
+      {/* ── SEO: Cost question section ── */}
+      <section className="mb-10 bg-blush-50 rounded-xl p-5 sm:p-6">
+        <h2 className="text-lg font-semibold text-ink mb-2">{t("costQuestion")}</h2>
+        <p className="text-sm text-muted leading-relaxed">{t("costAnswer")}</p>
+      </section>
+
       {/* ── SECTION 1: Hair prices ── */}
       <section className="mb-14">
         <h2 className="text-xl font-semibold text-ink mb-2">{t("hairPricesTitle")}</h2>
