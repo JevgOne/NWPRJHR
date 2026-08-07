@@ -128,6 +128,9 @@ export default async function ProductsPage() {
       <h1 className="text-3xl font-bold text-ink mb-4">
         {t("products.title")}
       </h1>
+      <p className="text-muted text-sm sm:text-base max-w-3xl mb-8 leading-relaxed">
+        {t("offer.seoIntro")}
+      </p>
 
       <Suspense fallback={<p className="text-muted">{t("offer.loadingProducts")}</p>}>
         <ProductsShowcase userRole={userRole} discountPct={discountPct} initialProducts={allProducts} />
