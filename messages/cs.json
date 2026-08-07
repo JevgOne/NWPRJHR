@@ -1226,7 +1226,7 @@
     "footer": {
       "copyright": "© 2026 Hairland.cz",
       "brandDesc": "Prémiové vlasy z celého světa. Přímý import, osobní přístup.",
-      "navTitle": "Navigace",
+      "navTitle": "Nabídka",
       "infoTitle": "Informace",
       "termsLink": "Obchodní podmínky",
       "complaintsLink": "Reklamační řád",
@@ -1247,7 +1247,8 @@
       "ukrainianHair": "Ukrajinské vlasy",
       "virginHair": "Panenské vlasy",
       "gramGuide": "Průvodce gramáží",
-      "weft": "Tresy"
+      "weft": "Tresy",
+      "buyback": "Výkup vlasů"
     },
     "batchPopup": {
       "title": "Nová várka vlasů na cestě!",

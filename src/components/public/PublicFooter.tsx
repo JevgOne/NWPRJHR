@@ -13,25 +13,23 @@ export function PublicFooter() {
     <footer className="bg-espresso text-nude-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
 
-        {/* Main grid: 1 col mobile, 2 col tablet, 4 col desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-
-          {/* Column 1: Brand */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/">
-              <Image
-                src="/logo-dark.svg"
-                alt="Hairland"
-                width={120}
-                height={140}
-                className="h-28 w-auto"
-                unoptimized
-              />
-            </Link>
-            <p className="mt-3 text-sm text-nude-200/60 leading-relaxed max-w-[280px]">
+        {/* Brand section */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+          <Link href="/">
+            <Image
+              src="/logo-dark.svg"
+              alt="Hairland"
+              width={120}
+              height={140}
+              className="h-28 w-auto"
+              unoptimized
+            />
+          </Link>
+          <div>
+            <p className="text-sm text-nude-200/60 leading-relaxed max-w-[360px]">
               {t("footer.brandDesc")}
             </p>
-            <div className="flex items-center gap-3 mt-4">
+            <div className="flex items-center gap-3 mt-3">
               <a href="https://wa.me/420608553103" target="_blank" rel="noopener noreferrer" className="text-nude-200/50 hover:text-white transition-colors" aria-label="WhatsApp">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               </a>
@@ -46,41 +44,51 @@ export function PublicFooter() {
               </a>
             </div>
           </div>
+        </div>
 
-          {/* Column 2: Nabidka (Navigation) */}
+        {/* Links grid: 2 col mobile, 4 col desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 pt-8 border-t border-nude-200/10">
+
+          {/* Column 1: Nabidka (products) */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-nude-200/40 mb-3">
               {t("footer.navTitle")}
             </h3>
             <ul className="space-y-2">
               <li><Link href="/vlasy-k-prodlouzeni" className={linkClass}>{t("navbar.hair")}</Link></li>
-              <li><Link href="/clip-in" className={linkClass}>Clip-in</Link></li>
-              <li><Link href="/tape-in" className={linkClass}>Tape-in</Link></li>
-              <li><Link href="/keratin" className={linkClass}>Keratin</Link></li>
-              <li><Link href="/micro-ring" className={linkClass}>Micro ring</Link></li>
-              <li><Link href="/tresove-vlasy" className={linkClass}>{t("footer.weft")}</Link></li>
+              <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
               <li><Link href="/ofiny" className={linkClass}>{t("navbar.bangs")}</Link></li>
               <li><Link href="/prislusenstvi" className={linkClass}>{t("nav.accessories")}</Link></li>
-              <li><Link href="/recenze" className={linkClass}>{t("footer.reviews")}</Link></li>
+              <li><Link href="/vykup-vlasu" className={linkClass}>{t("footer.buyback")}</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Průvodce */}
+          {/* Column 2: Pruvodce (content) */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-nude-200/40 mb-3">
               {t("footer.guideTitle")}
             </h3>
             <ul className="space-y-2">
-              <li><Link href="/slovanske-vlasy" className={linkClass}>{t("footer.slavicHair")}</Link></li>
-              <li><Link href="/ukrajinske-vlasy" className={linkClass}>{t("footer.ukrainianHair")}</Link></li>
-              <li><Link href="/panenske-vlasy" className={linkClass}>{t("footer.virginHair")}</Link></li>
               <li><Link href="/prodlouzeni-vlasu-praha" className={linkClass}>{t("footer.prahaLanding")}</Link></li>
-              <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
-              <li><Link href="/pruvodce-gramazi" className={linkClass}>{t("footer.gramGuide")}</Link></li>
               <li><Link href="/poradna" className={linkClass}>{t("navbar.advice")}</Link></li>
               <li><Link href="/blog" className={linkClass}>Blog</Link></li>
               <li><Link href="/kadernice" className={linkClass}>{t("footer.hairdressers")}</Link></li>
+              <li><Link href="/recenze" className={linkClass}>{t("footer.reviews")}</Link></li>
               <li><Link href="/about" className={linkClass}>{t("nav.about")}</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Informace (legal + B2B) */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-nude-200/40 mb-3">
+              {t("footer.infoTitle")}
+            </h3>
+            <ul className="space-y-2">
+              <li><Link href="/obchodni-podminky" className={linkClass}>{t("footer.termsLink")}</Link></li>
+              <li><Link href="/reklamacni-rad" className={linkClass}>{t("footer.complaintsLink")}</Link></li>
+              <li><Link href="/doprava" className={linkClass}>{t("footer.shippingLink")}</Link></li>
+              <li><Link href="/privacy" className={linkClass}>{t("nav.privacy")}</Link></li>
+              <li><Link href="/registrace" className={linkClass}>{t("footer.salonRegLink")}</Link></li>
             </ul>
           </div>
 
@@ -107,17 +115,8 @@ export function PublicFooter() {
           </div>
         </div>
 
-        {/* Legal links */}
-        <div className="mt-8 pt-6 border-t border-nude-200/10 flex flex-wrap gap-x-5 gap-y-1.5 text-[11px] text-nude-200/35">
-          <Link href="/obchodni-podminky" className="hover:text-white transition-colors">{t("footer.termsLink")}</Link>
-          <Link href="/reklamacni-rad" className="hover:text-white transition-colors">{t("footer.complaintsLink")}</Link>
-          <Link href="/doprava" className="hover:text-white transition-colors">{t("footer.shippingLink")}</Link>
-          <Link href="/privacy" className="hover:text-white transition-colors">{t("nav.privacy")}</Link>
-          <Link href="/registrace" className="hover:text-white transition-colors">{t("footer.salonRegLink")}</Link>
-        </div>
-
         {/* Bottom bar: copyright + payments + company info */}
-        <div className="mt-4 pt-4 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
+        <div className="mt-8 pt-4 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
           <span>{t("footer.copyright")}</span>
           <span>Platby zajišťuje Comgate · Visa · Mastercard · Apple Pay · Bankovní převod</span>
           <span>
