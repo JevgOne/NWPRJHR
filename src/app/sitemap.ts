@@ -54,6 +54,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/prislusenstvi", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/prodlouzeni-vlasu-praha", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.9 }),
     ...withAlternates("/cenik-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+    ...withAlternates("/slovanske-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
+    ...withAlternates("/ukrajinske-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
+    ...withAlternates("/panenske-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
   ];
 
   const categoryPages: MetadataRoute.Sitemap = [
