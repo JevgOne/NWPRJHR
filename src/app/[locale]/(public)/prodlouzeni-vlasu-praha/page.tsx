@@ -100,6 +100,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": "https://www.hairland.cz/#local-business",
     name: "Hairland",
     url: "https://www.hairland.cz",
     telephone: "+420608553103",

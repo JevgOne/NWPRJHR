@@ -380,6 +380,14 @@ export default async function LandingPage() {
               </div>
             ))}
           </div>
+          <div className="text-center mt-6">
+            <Link
+              href="/prodlouzeni-vlasu-praha"
+              className="inline-flex items-center text-sm text-rose font-medium hover:text-rose-deep transition-colors"
+            >
+              {t("landing.prahaLink")} →
+            </Link>
+          </div>
         </div>
       </section>
       </ScrollReveal>

@@ -55,6 +55,7 @@ export function PublicFooter() {
             <ul className="space-y-2">
               <li><Link href="/vlasy-k-prodlouzeni" className={linkClass}>{t("navbar.hair")}</Link></li>
               <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
+              <li><Link href="/prodlouzeni-vlasu-praha" className={linkClass}>{t("footer.prahaLanding")}</Link></li>
               <li><Link href="/ofiny" className={linkClass}>{t("navbar.bangs")}</Link></li>
               <li><Link href="/prislusenstvi" className={linkClass}>{t("nav.accessories")}</Link></li>
               <li><Link href="/poradna" className={linkClass}>{t("navbar.advice")}</Link></li>
