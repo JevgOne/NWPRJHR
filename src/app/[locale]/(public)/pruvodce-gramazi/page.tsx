@@ -2,8 +2,30 @@ import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { GramCalculator } from "@/components/public/GramCalculator";
+import { GramageCalculator } from "@/components/public/GramageCalculator";
+import { getCachedAllProducts } from "@/lib/cached-products";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+
+const CALC_CATEGORIES = ["STANDARD", "LUXE", "VIRGIN"] as const;
+
+function buildCalcPriceData(
+  products: Awaited<ReturnType<typeof getCachedAllProducts>>,
+) {
+  return CALC_CATEGORIES.map((cat) => {
+    const catProducts = products.filter(
+      (p) => p.category === cat && p.variants.some((v) => v.sellingMode === "BY_GRAM" && v.retailPricePerGram > 0),
+    );
+    const allPrices = catProducts.flatMap((p) =>
+      p.variants
+        .filter((v) => v.sellingMode === "BY_GRAM" && v.retailPricePerGram > 0)
+        .map((v) => v.retailPricePerGram),
+    );
+    const avgPrice = allPrices.length > 0
+      ? Math.round(allPrices.reduce((a, b) => a + b, 0) / allPrices.length)
+      : 0;
+    return { category: cat as string, avgPricePerGram: avgPrice };
+  }).filter((d) => d.avgPricePerGram > 0);
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("weightGuide"), getLocale()]);
@@ -39,7 +61,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PruvodceGramaziPage() {
-  const t = await getTranslations("weightGuide");
+  const [t, products] = await Promise.all([
+    getTranslations("weightGuide"),
+    getCachedAllProducts(),
+  ]);
+  const calcPriceData = buildCalcPriceData(products);
 
   const howToJsonLd = {
     "@context": "https://schema.org",
@@ -73,7 +99,7 @@ export default async function PruvodceGramaziPage() {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [1, 2, 3, 4, 5, 6].map((i) => ({
+    mainEntity: [1, 2, 3, 4, 5, 6, 7].map((i) => ({
       "@type": "Question",
       name: t(`faq${i}q` as "faq1q"),
       acceptedAnswer: {
@@ -154,7 +180,7 @@ export default async function PruvodceGramaziPage() {
 
       {/* Interactive calculator */}
       <section className="mb-14">
-        <GramCalculator />
+        <GramageCalculator priceData={calcPriceData} />
       </section>
 
       {/* Weight guide — visual cards */}
@@ -304,7 +330,7 @@ export default async function PruvodceGramaziPage() {
           {t("faqTitle")}
         </h2>
         <div className="space-y-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
             <details
               key={i}
               className="group bg-nude-50 rounded-xl border border-line overflow-hidden"
