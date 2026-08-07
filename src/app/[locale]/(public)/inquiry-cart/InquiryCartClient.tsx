@@ -150,7 +150,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
           {t("successText")}
         </p>
         <Link
-          href="/offer"
+          href="/vlasy-k-prodlouzeni"
           className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
         >
           {t("backToOffer")}
@@ -169,7 +169,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
           {t("emptyText")}
         </p>
         <Link
-          href="/offer"
+          href="/vlasy-k-prodlouzeni"
           className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
         >
           {t("viewOffer")}
@@ -302,7 +302,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
           {/* Continue shopping link */}
           <div className="pt-2">
             <Link
-              href="/offer"
+              href="/vlasy-k-prodlouzeni"
               className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

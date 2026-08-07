@@ -37,7 +37,7 @@ function withAlternates(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     ...withAlternates("", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 1.0 }),
-    ...withAlternates("/offer", { lastModified: STATIC_DATE, changeFrequency: "daily", priority: 0.9 }),
+    ...withAlternates("/vlasy-k-prodlouzeni", { lastModified: STATIC_DATE, changeFrequency: "daily", priority: 0.9 }),
     ...withAlternates("/poradna", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/pro", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/contact", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
@@ -94,7 +94,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const productPages: MetadataRoute.Sitemap = products.flatMap((product) =>
-    withAlternates(`/offer/${product.slug}`, { lastModified: product.updatedAt, changeFrequency: "weekly", priority: 0.8 }),
+    withAlternates(`/vlasy-k-prodlouzeni/${product.slug}`, { lastModified: product.updatedAt, changeFrequency: "weekly", priority: 0.8 }),
   );
 
   const stylistPages: MetadataRoute.Sitemap = stylists.flatMap((s) =>
@@ -107,28 +107,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Color tones
   for (const slug of Object.keys(COLOR_TONE_SLUG_MAP)) {
     attributePages.push(
-      ...withAlternates(`/offer/barva/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/barva/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Textures
   for (const slug of Object.keys(TEXTURE_SLUG_MAP)) {
     attributePages.push(
-      ...withAlternates(`/offer/textura/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/textura/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Categories (SEO)
   for (const slug of Object.keys(CATEGORY_SLUG_MAP_SEO)) {
     attributePages.push(
-      ...withAlternates(`/offer/kategorie/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/kategorie/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Origins
   for (const slug of Object.keys(ORIGIN_SLUG_MAP)) {
     attributePages.push(
-      ...withAlternates(`/offer/zeme/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/zeme/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
@@ -140,7 +140,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
   for (const { lengthCm } of lengths) {
     attributePages.push(
-      ...withAlternates(`/offer/delka/${lengthCm}cm`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/delka/${lengthCm}cm`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 

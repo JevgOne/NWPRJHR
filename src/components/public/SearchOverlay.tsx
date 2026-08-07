@@ -167,7 +167,7 @@ export function SearchOverlay({
                   {filtered.map((p) => (
                     <li key={p.id}>
                       <Link
-                        href={`/offer/${p.slug ?? p.id}`}
+                        href={`/vlasy-k-prodlouzeni/${p.slug ?? p.id}`}
                         onClick={onClose}
                         className="flex items-center gap-3 px-4 py-3 hover:bg-nude-50 transition-colors"
                       >
@@ -214,7 +214,7 @@ export function SearchOverlay({
 
               {!loading && showResults && filtered.length > 0 && (
                 <Link
-                  href={`/offer?search=${encodeURIComponent(trimmed)}`}
+                  href={`/vlasy-k-prodlouzeni?search=${encodeURIComponent(trimmed)}`}
                   onClick={onClose}
                   className="block px-4 py-3 text-center text-sm font-medium text-rose hover:bg-nude-50 border-t border-line transition-colors"
                 >

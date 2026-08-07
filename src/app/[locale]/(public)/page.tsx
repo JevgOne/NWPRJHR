@@ -127,7 +127,7 @@ const webSiteJsonLd = {
   url: "https://www.hairland.cz",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://www.hairland.cz/offer?search={search_term_string}",
+    target: "https://www.hairland.cz/vlasy-k-prodlouzeni?search={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 };
@@ -256,7 +256,7 @@ export default async function LandingPage() {
 
           <div className="flex gap-3 justify-center mt-4 sm:mt-6">
             <Link
-              href="/offer"
+              href="/vlasy-k-prodlouzeni"
               className="px-4 sm:px-5 py-2 sm:py-2.5 bg-rose hover:bg-rose-deep text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-md"
             >
               {t("landing.viewFullOffer")}
@@ -289,7 +289,7 @@ export default async function LandingPage() {
               ).map(({ key, img, descKey }) => (
                 <Link
                   key={key}
-                  href={`/offer?category=${key.toUpperCase()}`}
+                  href={`/vlasy-k-prodlouzeni?category=${key.toUpperCase()}`}
                   className="group block overflow-hidden rounded-xl border border-line hover:border-blush-300 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="relative h-32">
@@ -335,7 +335,7 @@ export default async function LandingPage() {
               { code: "9", nameKey: "colors.c9" as const },
               { code: "10", nameKey: "colors.c10" as const },
             ].map(({ code, nameKey }) => (
-              <Link key={code} href={`/offer?color=${code}`} className="flex flex-col items-center gap-1 sm:gap-2 group min-w-0">
+              <Link key={code} href={`/vlasy-k-prodlouzeni?color=${code}`} className="flex flex-col items-center gap-1 sm:gap-2 group min-w-0">
                 <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
                 <span className="text-[9px] sm:text-xs text-muted font-medium text-center leading-tight truncate w-full">{t(nameKey)}</span>
               </Link>
@@ -568,7 +568,7 @@ export default async function LandingPage() {
               {t("landing.ctaContact")}
             </Link>
             <Link
-              href="/offer"
+              href="/vlasy-k-prodlouzeni"
               className="px-6 py-3 bg-white text-ink border border-line hover:bg-nude-50 font-medium rounded-lg transition-colors"
             >
               {t("landing.viewFullOffer")}

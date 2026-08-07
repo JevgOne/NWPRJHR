@@ -5,7 +5,7 @@ import { unstable_cache } from "next/cache";
 import { Link } from "@/i18n/navigation";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { WriteReviewForm } from "../offer/[...slug]/WriteReviewForm";
+import { WriteReviewForm } from "../vlasy-k-prodlouzeni/[...slug]/WriteReviewForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);

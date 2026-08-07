@@ -179,7 +179,7 @@ const getProduct = cache(async function getProduct(slugOrId: string) {
 
   const byId = await getCachedProductById(slugOrId);
   if (byId?.slug) {
-    redirect(`/offer/${byId.slug}`);
+    redirect(`/vlasy-k-prodlouzeni/${byId.slug}`);
   }
   return byId;
 });
@@ -394,12 +394,12 @@ async function generateProductMetadataFromProduct(
   return {
     title,
     description,
-    alternates: getAlternates(`/offer/${productSlug}`),
+    alternates: getAlternates(`/vlasy-k-prodlouzeni/${productSlug}`),
     openGraph: {
       type: "website",
       title,
       description,
-      url: `https://www.hairland.cz/offer/${productSlug}`,
+      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${productSlug}`,
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       ...(ogImg && {
@@ -677,7 +677,7 @@ async function ProductDetailView({
     : schemaFallbackDesc;
   const schemaImage = product.photos.length > 0
     ? product.photos
-    : [`https://www.hairland.cz/offer/${product.slug ?? product.id}/opengraph-image`];
+    : [`https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}/opengraph-image`];
   const ORIGIN_ISO: Record<string, string> = {
     Ukrajina: "UA", Bělorusko: "BY", Moldavsko: "MD", Rusko: "RU",
     Kazachstán: "KZ", Uzbekistán: "UZ", Turecko: "TR", Írán: "IR",
@@ -746,7 +746,7 @@ async function ProductDetailView({
       availability: schemaAvailability,
       itemCondition: "https://schema.org/NewCondition",
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      url: `https://www.hairland.cz/offer/${product.slug ?? product.id}`,
+      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`,
       seller: {
         "@type": "Organization",
         name: "Hairland",
@@ -830,13 +830,13 @@ async function ProductDetailView({
         "@type": "ListItem",
         position: 2,
         name: t("productDetail.offer"),
-        item: "https://www.hairland.cz/offer",
+        item: "https://www.hairland.cz/vlasy-k-prodlouzeni",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: productName,
-        item: `https://www.hairland.cz/offer/${product.slug ?? product.id}`,
+        item: `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`,
       },
     ],
   };
@@ -862,7 +862,7 @@ async function ProductDetailView({
       <nav className="flex items-center gap-1.5 text-xs tracking-wide text-muted/70 mb-6 lg:mb-8 uppercase">
         <Link href="/" className="hover:text-rose transition-colors">{t("productDetail.home")}</Link>
         <span className="text-line">/</span>
-        <Link href="/offer" className="hover:text-rose transition-colors">{t("productDetail.offer")}</Link>
+        <Link href="/vlasy-k-prodlouzeni" className="hover:text-rose transition-colors">{t("productDetail.offer")}</Link>
         <span className="text-line">/</span>
         <span className="text-espresso font-medium truncate max-w-[200px] normal-case">{productName}</span>
       </nav>
@@ -971,7 +971,7 @@ async function ProductDetailView({
           <div className="bg-nude-50 rounded-2xl p-5 grid grid-cols-2 gap-4">
             {product.origin && (
               <Link
-                href={`/offer?origin=${encodeURIComponent(product.origin)}`}
+                href={`/vlasy-k-prodlouzeni?origin=${encodeURIComponent(product.origin)}`}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
                 <span className="text-xl">{originFlag}</span>
@@ -983,7 +983,7 @@ async function ProductDetailView({
             )}
             {product.texture && (
               <Link
-                href={`/offer?texture=${encodeURIComponent(product.texture)}`}
+                href={`/vlasy-k-prodlouzeni?texture=${encodeURIComponent(product.texture)}`}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
                 <TextureSwatch texture={product.texture} size={32} />

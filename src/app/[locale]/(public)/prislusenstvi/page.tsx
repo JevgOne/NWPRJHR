@@ -3,7 +3,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { getCachedAllProducts } from "@/lib/cached-products";
-import { ProductsShowcase } from "../offer/ProductsShowcase";
+import { ProductsShowcase } from "../vlasy-k-prodlouzeni/ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 

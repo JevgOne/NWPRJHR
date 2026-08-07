@@ -198,7 +198,7 @@ export default async function BlogPostPage({ params }: Props) {
       desc: { cs: "Vlasy na pásu pro všívání", uk: "Волосся на тресі для вшивання", ru: "Волосы на трессе для вшивания" },
     },
     {
-      href: "/offer",
+      href: "/vlasy-k-prodlouzeni",
       keywords: ["prodloužení", "prodlouzeni", "нарощування", "наращивание", "přírodní vlasy", "натуральне волосся", "натуральные волосы"],
       label: { cs: "Kolekce vlasů", uk: "Колекція волосся", ru: "Коллекция волос" },
       desc: { cs: "Kompletní nabídka prémiových vlasů", uk: "Повна пропозиція преміального волосся", ru: "Полное предложение премиальных волос" },
@@ -413,7 +413,7 @@ export default async function BlogPostPage({ params }: Props) {
             <p className="text-sm text-muted/60 mb-7 max-w-md mx-auto">{ctaDesc}</p>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
               <Link
-                href="/offer"
+                href="/vlasy-k-prodlouzeni"
                 className="px-7 py-3.5 bg-rose hover:bg-rose-deep text-white font-semibold rounded-full transition-all shadow-lg shadow-rose/20 hover:shadow-xl hover:shadow-rose/30 hover:-translate-y-0.5"
               >
                 {ctaOfferBtn}

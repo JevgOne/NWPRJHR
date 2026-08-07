@@ -195,7 +195,7 @@ export function PublicNavbar() {
   ];
 
   const offerItems = [
-    { href: "/offer", label: t("navbar.hair") },
+    { href: "/vlasy-k-prodlouzeni", label: t("navbar.hair") },
     { href: "/ofiny", label: t("navbar.bangs") },
     { href: "/prislusenstvi", label: t("nav.accessories") },
   ];
@@ -402,10 +402,10 @@ export function PublicNavbar() {
             <div className="space-y-0.5">
               {/* Nabidka — primo link */}
               <Link
-                href="/offer"
+                href="/vlasy-k-prodlouzeni"
                 onClick={() => setMenuOpen(false)}
                 className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                  pathname.startsWith("/offer") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+                  pathname.startsWith("/vlasy-k-prodlouzeni") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
                 }`}
               >
                 {t("navbar.hair")}

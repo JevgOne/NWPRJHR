@@ -87,7 +87,7 @@ export async function generateCategoryMetadata(slug: string) {
   const title = t(titleKey);
   const description = t(metaKey);
 
-  const canonicalPath = CATEGORY_STANDALONE_PATHS[slug] ?? `/offer/${slug}`;
+  const canonicalPath = CATEGORY_STANDALONE_PATHS[slug] ?? `/vlasy-k-prodlouzeni/${slug}`;
 
   return {
     title,
@@ -206,7 +206,7 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
     itemListElement: productsWithStock.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `https://www.hairland.cz/offer/${p.slug ?? p.id}`,
+      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${p.slug ?? p.id}`,
       name: p.name,
       ...(p.photos.length > 0 ? { image: p.photos[0] } : {}),
     })),
@@ -241,7 +241,7 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
         { label: tPt(`${s}.name` as any) },
       ] : [
         { label: t("nav.home"), href: "/" },
-        { label: t("nav.products"), href: "/offer" },
+        { label: t("nav.products"), href: "/vlasy-k-prodlouzeni" },
         { label: tPt(`${s}.name` as any) },
       ]} />
 
@@ -360,14 +360,14 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
           {otherCategories.map((catSlug) => (
             <Link
               key={catSlug}
-              href={CATEGORY_STANDALONE_PATHS[catSlug] ?? `/offer/${catSlug}`}
+              href={CATEGORY_STANDALONE_PATHS[catSlug] ?? `/vlasy-k-prodlouzeni/${catSlug}`}
               className="px-4 py-2 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
             >
               {tPt(`${catSlug}.name` as any)}
             </Link>
           ))}
           <Link
-            href="/offer"
+            href="/vlasy-k-prodlouzeni"
             className="px-4 py-2 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
           >
             {tPt("allProducts")}

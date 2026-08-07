@@ -174,7 +174,7 @@ export default async function AboutPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/offer"
+            href="/vlasy-k-prodlouzeni"
             className="px-6 py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors text-sm"
           >
             {t("about.ctaOffer")}

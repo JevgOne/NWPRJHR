@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateCategoryMetadata, CategoryLandingPage } from "../offer/[...slug]/CategoryPage";
+import { generateCategoryMetadata, CategoryLandingPage } from "../vlasy-k-prodlouzeni/[...slug]/CategoryPage";
 
 const SLUG = "tape-in";
 

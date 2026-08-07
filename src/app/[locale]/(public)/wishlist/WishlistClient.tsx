@@ -59,7 +59,7 @@ export function WishlistClient() {
           </svg>
           <p className="text-muted mb-4">{t("empty")}</p>
           <Link
-            href="/offer"
+            href="/vlasy-k-prodlouzeni"
             className="inline-block px-5 py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
           >
             {t("browseProducts")}

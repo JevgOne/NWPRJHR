@@ -276,7 +276,7 @@ export default async function BuybackPage() {
               {t("ctaContact")}
             </Link>
             <Link
-              href="/offer"
+              href="/vlasy-k-prodlouzeni"
               className="px-6 py-3 bg-white text-rose border border-blush-200 hover:bg-blush-100 font-medium rounded-lg transition-colors"
             >
               {t("ctaBrowse")}

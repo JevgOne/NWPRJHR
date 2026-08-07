@@ -118,12 +118,12 @@ export async function generateAttributeMetadata(
   return {
     title,
     description,
-    alternates: getAlternates(`/offer/${prefix}/${valueSlug}`),
+    alternates: getAlternates(`/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`),
     openGraph: {
       type: "website",
       title: `${title} | Hairland`,
       description,
-      url: `https://www.hairland.cz/offer/${prefix}/${valueSlug}`,
+      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`,
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],
@@ -193,14 +193,14 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
     name: h1,
     description: intro,
     inLanguage: locale,
-    url: `https://www.hairland.cz/offer/${prefix}/${valueSlug}`,
+    url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`,
     mainEntity: products.length > 0 ? {
       "@type": "ItemList",
       numberOfItems: products.length,
       itemListElement: products.slice(0, 50).map((p, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        url: `https://www.hairland.cz/offer/${p.slug ?? p.id}`,
+        url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${p.slug ?? p.id}`,
         name: p.name,
         ...(p.photos.length > 0 ? { image: p.photos[0] } : {}),
       })),
@@ -213,9 +213,9 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: t("nav.home"), item: "https://www.hairland.cz/" },
-      { "@type": "ListItem", position: 2, name: t("nav.products"), item: "https://www.hairland.cz/offer" },
-      { "@type": "ListItem", position: 3, name: sectionTitle, item: `https://www.hairland.cz/offer` },
-      { "@type": "ListItem", position: 4, name: h1, item: `https://www.hairland.cz/offer/${prefix}/${valueSlug}` },
+      { "@type": "ListItem", position: 2, name: t("nav.products"), item: "https://www.hairland.cz/vlasy-k-prodlouzeni" },
+      { "@type": "ListItem", position: 3, name: sectionTitle, item: `https://www.hairland.cz/vlasy-k-prodlouzeni` },
+      { "@type": "ListItem", position: 4, name: h1, item: `https://www.hairland.cz/vlasy-k-prodlouzeni/${prefix}/${valueSlug}` },
     ],
   };
 
@@ -226,7 +226,7 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
 
       <Breadcrumbs items={[
         { label: t("nav.home"), href: "/" },
-        { label: t("nav.products"), href: "/offer" },
+        { label: t("nav.products"), href: "/vlasy-k-prodlouzeni" },
         { label: h1 },
       ]} />
 
@@ -255,7 +255,7 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
       ) : (
         <div className="text-center py-12 mb-10">
           <p className="text-muted mb-3">{tAttr("noProducts")}</p>
-          <Link href="/offer" className="text-sm text-rose hover:underline">
+          <Link href="/vlasy-k-prodlouzeni" className="text-sm text-rose hover:underline">
             {tAttr("browseAll")}
           </Link>
         </div>
@@ -275,7 +275,7 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
                   {Object.entries(slugMap).map(([slug, label]) => (
                     <Link
                       key={slug}
-                      href={`/offer/${rPrefix}/${slug}`}
+                      href={`/vlasy-k-prodlouzeni/${rPrefix}/${slug}`}
                       className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
                     >
                       {label}

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const intlMiddleware = createMiddleware(routing);
 
-/** Old /offer/<category> URLs → standalone pages (308 permanent redirect) */
+/** Old /<category> URLs from product listing → standalone pages (308 permanent redirect) */
 const CATEGORY_REDIRECTS: Record<string, string> = {
   "clip-in": "/clip-in",
   "tape-in": "/tape-in",
@@ -53,13 +53,23 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Strip locale prefix for matching (e.g. /cs/offer/clip-in → /offer/clip-in)
+  // Strip locale prefix for matching (e.g. /cs/vlasy-k-prodlouzeni/clip-in → /vlasy-k-prodlouzeni/clip-in)
   const stripped = pathname.replace(/^\/(cs|uk|ru)/, "");
 
-  // Redirect old /offer/<category> to standalone URLs
-  const offerMatch = stripped.match(/^\/offer\/(clip-in|tape-in|keratin|micro-ring|weft)\/?$/);
-  if (offerMatch) {
-    const newPath = CATEGORY_REDIRECTS[offerMatch[1]];
+  // 301 redirect: old /offer URLs → /vlasy-k-prodlouzeni
+  if (stripped.startsWith("/offer")) {
+    const newPath = stripped.replace("/offer", "/vlasy-k-prodlouzeni");
+    const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
+    return NextResponse.redirect(
+      new URL(`${localePrefix}${newPath}${request.nextUrl.search}`, request.url),
+      301,
+    );
+  }
+
+  // Redirect old /vlasy-k-prodlouzeni/<category> to standalone URLs
+  const categoryMatch = stripped.match(/^\/vlasy-k-prodlouzeni\/(clip-in|tape-in|keratin|micro-ring|weft)\/?$/);
+  if (categoryMatch) {
+    const newPath = CATEGORY_REDIRECTS[categoryMatch[1]];
     if (newPath) {
       const url = request.nextUrl.clone();
       const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
@@ -68,8 +78,8 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // Also handle /offer/kategorie/<category>
-  const katMatch = stripped.match(/^\/offer\/kategorie\/(clip-in|tape-in|keratin|micro-ring|weft)\/?$/);
+  // Also handle /vlasy-k-prodlouzeni/kategorie/<category>
+  const katMatch = stripped.match(/^\/vlasy-k-prodlouzeni\/kategorie\/(clip-in|tape-in|keratin|micro-ring|weft)\/?$/);
   if (katMatch) {
     const newPath = CATEGORY_REDIRECTS[katMatch[1]];
     if (newPath) {

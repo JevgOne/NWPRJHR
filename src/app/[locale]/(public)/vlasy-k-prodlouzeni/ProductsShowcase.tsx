@@ -148,7 +148,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
     } else {
       params.delete(key);
     }
-    router.push(`/offer?${params.toString()}`, { scroll: false });
+    router.push(`/vlasy-k-prodlouzeni?${params.toString()}`, { scroll: false });
   }
 
   function toggleFilter(key: string, value: string) {
@@ -158,7 +158,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
 
   function clearFilters() {
     setSearchInput("");
-    router.push("/offer", { scroll: false });
+    router.push("/vlasy-k-prodlouzeni", { scroll: false });
   }
 
   function handleSearch(e: React.FormEvent) {

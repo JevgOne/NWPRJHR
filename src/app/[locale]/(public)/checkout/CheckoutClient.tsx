@@ -315,7 +315,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
         <h1 className="text-2xl font-bold text-ink mb-2">{t("emptyTitle")}</h1>
         <p className="text-muted mb-6">{t("emptyText")}</p>
         <Link
-          href="/offer"
+          href="/vlasy-k-prodlouzeni"
           className="inline-flex px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
         >
           {t("viewOffer")}
@@ -367,7 +367,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
         </div>
 
         <Link
-          href="/offer"
+          href="/vlasy-k-prodlouzeni"
           className="inline-flex mt-8 px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
         >
           {t("backToOffer")}

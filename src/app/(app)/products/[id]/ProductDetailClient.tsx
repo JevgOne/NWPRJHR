@@ -865,7 +865,7 @@ export function ProductDetailClient({
           <div className="p-3 bg-nude-50 rounded-lg border border-line mb-4">
             <p className="text-xs text-muted mb-1">Google</p>
             <p className="text-blue-700 text-sm font-medium truncate">{previewTitle}</p>
-            <p className="text-green-700 text-xs">hairland.cz/offer/{product.slug ?? product.id}</p>
+            <p className="text-green-700 text-xs">hairland.cz/vlasy-k-prodlouzeni/{product.slug ?? product.id}</p>
             <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">
               {metaDescValue || autoDescription}
             </p>

@@ -233,7 +233,7 @@ export function GramageCalculator({ priceData }: GramageCalculatorProps) {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mt-4 pt-4 border-t border-line">
             <Link
-              href="/offer"
+              href="/vlasy-k-prodlouzeni"
               className="inline-flex items-center justify-center px-5 py-2 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors w-full sm:w-auto"
             >
               {t("calcCta")}

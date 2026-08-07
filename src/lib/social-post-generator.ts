@@ -86,7 +86,7 @@ function getProductStats(variants: PostProductData["variants"]) {
 }
 
 function buildProductUrl(product: { id: string; slug?: string | null }): string {
-  return `https://www.hairland.cz/offer/${product.slug ?? product.id}`;
+  return `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`;
 }
 
 function getProcessingLabel(type: string): string | null {

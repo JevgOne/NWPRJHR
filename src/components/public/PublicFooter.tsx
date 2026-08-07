@@ -53,7 +53,7 @@ export function PublicFooter() {
               {t("footer.navTitle")}
             </h3>
             <ul className="space-y-2">
-              <li><Link href="/offer" className={linkClass}>{t("navbar.hair")}</Link></li>
+              <li><Link href="/vlasy-k-prodlouzeni" className={linkClass}>{t("navbar.hair")}</Link></li>
               <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
               <li><Link href="/ofiny" className={linkClass}>{t("navbar.bangs")}</Link></li>
               <li><Link href="/prislusenstvi" className={linkClass}>{t("nav.accessories")}</Link></li>

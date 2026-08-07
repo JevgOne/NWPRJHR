@@ -49,40 +49,51 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: true,
       },
+      // 301: /offer → /vlasy-k-prodlouzeni (catch-all for old URLs)
+      {
+        source: "/offer",
+        destination: "/vlasy-k-prodlouzeni",
+        permanent: true,
+      },
+      {
+        source: "/offer/:path*",
+        destination: "/vlasy-k-prodlouzeni/:path*",
+        permanent: true,
+      },
       {
         source: "/offer/kategorie/premium",
-        destination: "/offer/kategorie/luxe",
+        destination: "/vlasy-k-prodlouzeni/kategorie/luxe",
         permanent: true,
       },
       {
         source: "/ua/offer/kategorie/premium",
-        destination: "/ua/offer/kategorie/luxe",
+        destination: "/ua/vlasy-k-prodlouzeni/kategorie/luxe",
         permanent: true,
       },
       {
         source: "/rus/offer/kategorie/premium",
-        destination: "/rus/offer/kategorie/luxe",
+        destination: "/rus/vlasy-k-prodlouzeni/kategorie/luxe",
         permanent: true,
       },
       // Legacy URL redirects
       {
         source: "/vlasy/virgin",
-        destination: "/offer?category=VIRGIN",
+        destination: "/vlasy-k-prodlouzeni?category=VIRGIN",
         permanent: true,
       },
       {
         source: "/vlasy/luxe",
-        destination: "/offer?category=LUXE",
+        destination: "/vlasy-k-prodlouzeni?category=LUXE",
         permanent: true,
       },
       {
         source: "/vlasy/:slug",
-        destination: "/offer",
+        destination: "/vlasy-k-prodlouzeni",
         permanent: false,
       },
       {
         source: "/vlasy",
-        destination: "/offer",
+        destination: "/vlasy-k-prodlouzeni",
         permanent: true,
       },
       {

@@ -65,7 +65,7 @@ export async function notifyStockSubscribers(variantId: string): Promise<void> {
 
   const variant = subscribers[0].variant;
   const productSlug = variant.product.slug ?? variant.product.id;
-  const productUrl = `/offer/${productSlug}`;
+  const productUrl = `/vlasy-k-prodlouzeni/${productSlug}`;
   const variantLabel = `${variant.lengthCm} cm, ${variant.color}`;
 
   for (const sub of subscribers) {

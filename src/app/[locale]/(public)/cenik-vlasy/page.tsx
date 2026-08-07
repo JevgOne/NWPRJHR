@@ -182,7 +182,7 @@ export default async function CenikVlasyPage() {
                     {tCat(category.toLowerCase())}
                   </span>
                   <Link
-                    href={`/offer?category=${category}`}
+                    href={`/vlasy-k-prodlouzeni?category=${category}`}
                     className="text-xs text-rose hover:text-rose-deep font-medium transition-colors"
                   >
                     {t("showProducts")} →
@@ -321,7 +321,7 @@ export default async function CenikVlasyPage() {
       <section className="text-center">
         <p className="text-sm text-muted mb-4">{t("ctaText")}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/offer" className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors">
+          <Link href="/vlasy-k-prodlouzeni" className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors">
             {t("ctaOffer")}
           </Link>
           <Link href="/contact" className="px-5 py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-sm font-medium rounded-lg transition-colors">

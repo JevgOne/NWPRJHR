@@ -101,7 +101,7 @@ export function ProductGridCard({
   const inStock = stock > 0 || (!showAsPiece && isByPiece && (v0?.availableGrams ?? 0) > 0);
   const canOrder = !inStock && !!v0?.availableToOrder;
 
-  const href = `/offer/${p.slug ?? p.id}`;
+  const href = `/vlasy-k-prodlouzeni/${p.slug ?? p.id}`;
 
   const categoryLabel = tCategory(p.category.toLowerCase());
   const categoryBadgeColors: Record<string, string> = {

@@ -23,12 +23,12 @@ export async function generateMetadata({
     return {
       title: defaultTitle,
       description: defaultDesc,
-      alternates: getAlternates("/offer"),
+      alternates: getAlternates("/vlasy-k-prodlouzeni"),
       openGraph: {
         type: "website",
         title: `${defaultTitle} | Hairland`,
         description: defaultDesc,
-        url: "https://www.hairland.cz/offer",
+        url: "https://www.hairland.cz/vlasy-k-prodlouzeni",
         siteName: "Hairland",
         locale: OG_LOCALES[locale] ?? "cs_CZ",
         images: [
@@ -61,12 +61,12 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: getAlternates("/offer"),
+    alternates: getAlternates("/vlasy-k-prodlouzeni"),
     openGraph: {
       type: "website",
       title: `${title} | Hairland`,
       description,
-      url: "https://www.hairland.cz/offer",
+      url: "https://www.hairland.cz/vlasy-k-prodlouzeni",
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],
@@ -97,7 +97,7 @@ export default async function ProductsPage() {
     itemListElement: allProducts.slice(0, 50).map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `https://www.hairland.cz/offer/${p.slug ?? p.id}`,
+      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${p.slug ?? p.id}`,
       name: p.name,
       ...(p.photos.length > 0 ? { image: p.photos[0] } : {}),
     })),

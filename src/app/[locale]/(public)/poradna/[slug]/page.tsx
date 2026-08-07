@@ -314,14 +314,14 @@ export default async function ArticlePage({ params }: Props) {
         {/* ===== CTA ===== */}
         {(() => {
           const ctaMap: Record<string, { text: string; button: string; href: string }> = {
-            types: { text: t("articleCtaTypes"), button: t("articleCtaTypesButton"), href: "/offer" },
-            care: { text: t("articleCtaCare"), button: t("articleCtaCareButton"), href: "/offer" },
-            quality: { text: t("articleCtaQuality"), button: t("articleCtaQualityButton"), href: "/offer?category=VIRGIN" },
-            guide: { text: t("articleCtaGuide"), button: t("articleCtaGuideButton"), href: "/offer" },
+            types: { text: t("articleCtaTypes"), button: t("articleCtaTypesButton"), href: "/vlasy-k-prodlouzeni" },
+            care: { text: t("articleCtaCare"), button: t("articleCtaCareButton"), href: "/vlasy-k-prodlouzeni" },
+            quality: { text: t("articleCtaQuality"), button: t("articleCtaQualityButton"), href: "/vlasy-k-prodlouzeni?category=VIRGIN" },
+            guide: { text: t("articleCtaGuide"), button: t("articleCtaGuideButton"), href: "/vlasy-k-prodlouzeni" },
           };
           const cta = slug === "clip-in-vs-tape-in"
-            ? { text: t("articleCtaClip"), button: t("articleCtaClipButton"), href: "/offer?search=clip" }
-            : ctaMap[article.category] ?? { text: t("articleCta"), button: t("articleCtaButton"), href: "/offer" };
+            ? { text: t("articleCtaClip"), button: t("articleCtaClipButton"), href: "/vlasy-k-prodlouzeni?search=clip" }
+            : ctaMap[article.category] ?? { text: t("articleCta"), button: t("articleCtaButton"), href: "/vlasy-k-prodlouzeni" };
 
           return (
             <div className="mt-12 mb-8 relative overflow-hidden rounded-2xl border border-rose/10">

@@ -381,7 +381,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
           </div>
           <p className="text-sm text-muted">{t("wonSub")}</p>
           <a
-            href="/offer"
+            href="/vlasy-k-prodlouzeni"
             className="inline-flex px-6 py-2.5 text-sm font-semibold rounded-xl text-white transition-all"
             style={{
               background: "linear-gradient(135deg, #c98b88 0%, #a96d6c 100%)",
@@ -402,7 +402,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
             <p className="text-sm text-muted">{t("lostAllUsed")}</p>
           )}
           <a
-            href="/offer"
+            href="/vlasy-k-prodlouzeni"
             className="inline-flex px-6 py-2.5 text-sm font-semibold rounded-xl text-white transition-all"
             style={{
               background: "linear-gradient(135deg, #c98b88 0%, #a96d6c 100%)",
