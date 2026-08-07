@@ -205,7 +205,7 @@ export default async function SlovanskVlasyPage() {
         <div className="bg-nude-50 rounded-xl border border-line p-5">
           <div className="text-center mb-4">
             <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-              Luxe (slovanské)
+              Luxe
             </div>
             <div className="text-lg font-bold text-ink">
               {minPriceKc ? `od ${minPriceKc.toLocaleString("cs-CZ")} Kč/g` : t("pricingValue")}
