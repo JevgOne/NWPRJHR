@@ -50,6 +50,7 @@ export async function GET() {
       <DELIVERY_ID>OSOBNI_ODBER</DELIVERY_ID>
       <DELIVERY_PRICE>0</DELIVERY_PRICE>
     </DELIVERY>
+    <DELIVERY_DATE>${inStock ? 0 : 7}</DELIVERY_DATE>
   </SHOPITEM>`);
     }
   }
