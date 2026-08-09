@@ -321,11 +321,15 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       ...(note ? { note } : {}),
     };
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
     const res = await fetch("/api/deliveries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       let msg = "Error";
@@ -380,7 +384,11 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       });
     }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Neočekávaná chyba");
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("Požadavek trval příliš dlouho, zkuste to znovu.");
+      } else {
+        setError(err instanceof Error ? err.message : "Neočekávaná chyba");
+      }
       setSubmitting(false);
     }
   }

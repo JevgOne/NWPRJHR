@@ -120,7 +120,7 @@ export function VariantBatchCreate({
             lengthCm,
             color,
             costPricePerGram: costHalere,
-            wholesalePricePerGram: retailHalere,
+            wholesalePricePerGram: costHalere,
             retailPricePerGram: retailHalere,
             sellingMode: "BY_GRAM" as const,
           }))
