@@ -265,6 +265,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     setSubmitting(true);
     setError("");
 
+    try {
     const isByPiece = sellingMode === "BY_PIECE";
     const parsedPieces = isByPiece ? parseInt(totalPieces) : 0;
     const parsedPieceWeight = isByPiece ? parseInt(pieceWeightGrams) : undefined;
@@ -327,10 +328,14 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     });
 
     if (!res.ok) {
-      const data = await res.json();
-      setError(
-        data.error?.formErrors?.[0] ?? JSON.stringify(data.error) ?? "Error"
-      );
+      let msg = "Error";
+      try {
+        const data = await res.json();
+        msg = data.error?.formErrors?.[0] ?? (typeof data.error === "string" ? data.error : JSON.stringify(data.error)) ?? "Error";
+      } catch {
+        msg = `Server error (${res.status})`;
+      }
+      setError(msg);
       setSubmitting(false);
       return;
     }
@@ -373,6 +378,10 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       }).catch(() => {
         setUploadError("Upload selhal");
       });
+    }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Neočekávaná chyba");
+      setSubmitting(false);
     }
   }
 

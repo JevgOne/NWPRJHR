@@ -9,6 +9,8 @@ import { generateBarcode } from "@/lib/barcode";
 import { calculateRetailPrice } from "@/lib/pricing";
 import { logAudit, getClientIp } from "@/lib/audit";
 
+export const maxDuration = 30;
+
 export async function GET(request: NextRequest) {
   const session = await auth();
   if (!session)
@@ -97,10 +99,11 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    // 1. Find product + pre-fetch price settings in parallel (both use data.category)
+    // 1. Find product + pre-fetch price settings + resolve batch in parallel
     // BY_PIECE products never share with BY_GRAM — always create a new product
     const isByPiece = data.sellingMode === "BY_PIECE";
-    const [existingProduct, priceSetting] = await Promise.all([
+    const needBatchLookup = !body.batchId;
+    const [existingProduct, priceSetting, openBatch] = await Promise.all([
       isByPiece
         ? Promise.resolve(null)
         : prisma.product.findFirst({
@@ -113,6 +116,13 @@ export async function POST(request: NextRequest) {
             },
           }),
       prisma.priceSettings.findUnique({ where: { category: data.category } }),
+      needBatchLookup
+        ? prisma.stockBatch.findFirst({
+            where: { status: "OPEN" },
+            orderBy: { createdAt: "desc" },
+            select: { id: true },
+          })
+        : Promise.resolve(null),
     ]);
 
     let product = existingProduct;
@@ -149,11 +159,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Find or create Variant
-    let variant = await prisma.variant.findUnique({
-      where: { productId_lengthCm_color: { productId: product.id, lengthCm: data.lengthCm, color: data.color } },
-    });
-
     // For BY_PIECE: derive per-gram purchase price from per-piece purchase price
     const effectivePurchasePricePerGramRaw = isByPiece && data.purchasePricePerPiece && data.pieceWeightGrams
       ? Math.round(data.purchasePricePerPiece / data.pieceWeightGrams)
@@ -163,6 +168,14 @@ export async function POST(request: NextRequest) {
     const costPricePerGramCZK = data.currency === "CZK"
       ? effectivePurchasePricePerGramRaw
       : Math.round((effectivePurchasePricePerGramRaw * data.exchangeRate) / 10000);
+
+    // 2. Find or create Variant
+    // BY_PIECE always creates a new product, so variant cannot exist — skip lookup
+    let variant = isByPiece
+      ? null
+      : await prisma.variant.findUnique({
+          where: { productId_lengthCm_color: { productId: product.id, lengthCm: data.lengthCm, color: data.color } },
+        });
 
     if (!variant) {
       const markupPercent = priceSetting?.markupPercent ?? 100;
@@ -192,14 +205,9 @@ export async function POST(request: NextRequest) {
       ? data.totalPieces * data.pieceWeightGrams
       : data.totalGrams;
 
-    // Resolve batchId: use provided, find open, or auto-create
+    // Resolve batchId: use provided, use pre-fetched open batch, or auto-create
     let batchId = body.batchId as string | undefined;
     if (!batchId) {
-      const openBatch = await prisma.stockBatch.findFirst({
-        where: { status: "OPEN" },
-        orderBy: { createdAt: "desc" },
-        select: { id: true },
-      });
       if (openBatch) {
         batchId = openBatch.id;
       } else {
@@ -255,11 +263,13 @@ export async function POST(request: NextRequest) {
       ipAddress: getClientIp(request),
     });
 
-    revalidatePath("/inventory");
-    revalidatePath("/inventory/movements");
-    revalidateTag("stock", { expire: 0 });
-    revalidateTag("dashboard", { expire: 0 });
-    revalidateTag("products", { expire: 0 });
+    try {
+      revalidatePath("/inventory");
+      revalidatePath("/inventory/movements");
+      revalidateTag("stock", { expire: 0 });
+      revalidateTag("dashboard", { expire: 0 });
+      revalidateTag("products", { expire: 0 });
+    } catch { /* revalidation must not break successful stock-in response */ }
 
     return NextResponse.json(
       { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },

@@ -65,16 +65,26 @@ export async function PUT(
 
   const data: Record<string, unknown> = { ...parsed.data };
 
-  // Recalculate retail price when cost price changes (always — resets manual override)
-  if (parsed.data.costPricePerGram !== undefined) {
+  // Recalculate retail prices when cost prices change
+  const needsRecalc = parsed.data.costPricePerGram !== undefined || parsed.data.pricePerPiece !== undefined;
+  if (needsRecalc) {
     const priceSetting = await prisma.priceSettings.findUnique({
       where: { category: existing.product.category },
     });
     const markupPercent = priceSetting?.markupPercent ?? 100;
-    const newRetail = calculateRetailPrice(parsed.data.costPricePerGram, markupPercent);
-    data.retailPricePerGram = newRetail;
-    data.wholesalePricePerGram = newRetail;
-    data.retailManualOverride = false;
+
+    // BY_GRAM: recalculate retailPricePerGram when costPricePerGram changes
+    if (parsed.data.costPricePerGram !== undefined) {
+      const newRetail = calculateRetailPrice(parsed.data.costPricePerGram, markupPercent);
+      data.retailPricePerGram = newRetail;
+      data.wholesalePricePerGram = parsed.data.costPricePerGram;
+      data.retailManualOverride = false;
+    }
+
+    // BY_PIECE: recalculate retailPricePerPiece when pricePerPiece changes
+    if (parsed.data.pricePerPiece !== undefined) {
+      data.retailPricePerPiece = calculateRetailPrice(parsed.data.pricePerPiece, markupPercent);
+    }
   }
 
   // When retail price is manually edited (without cost change), set override flag
