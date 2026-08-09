@@ -99,22 +99,11 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    // 1. Find product + pre-fetch price settings + resolve batch in parallel
-    // BY_PIECE products never share with BY_GRAM — always create a new product
+    // 1. Pre-fetch price settings + resolve batch in parallel
+    // Every delivery creates a new product — no merging
     const isByPiece = data.sellingMode === "BY_PIECE";
     const needBatchLookup = !body.batchId;
-    const [existingProduct, priceSetting, openBatch] = await Promise.all([
-      isByPiece
-        ? Promise.resolve(null)
-        : prisma.product.findFirst({
-            where: {
-              category: data.category,
-              ...(isAccessory
-                ? { archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
-                : { origin: data.origin, texture: data.texture, archived: false, variants: { some: { color: data.color, lengthCm: data.lengthCm } } }
-              ),
-            },
-          }),
+    const [priceSetting, openBatch] = await Promise.all([
       prisma.priceSettings.findUnique({ where: { category: data.category } }),
       needBatchLookup
         ? prisma.stockBatch.findFirst({
@@ -124,12 +113,10 @@ export async function POST(request: NextRequest) {
           })
         : Promise.resolve(null),
     ]);
-
-    let product = existingProduct;
-    if (!product) {
-      const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
-      if (isAccessory) {
-        product = await prisma.product.create({
+    // Always create a new product — no merging
+    const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
+    const product = isAccessory
+      ? await prisma.product.create({
           data: {
             name: catNames.cs,
             nameUk: catNames.uk,
@@ -139,25 +126,21 @@ export async function POST(request: NextRequest) {
             slug: slugify(`${data.category}-${data.color}-${Date.now()}`),
             photos: "[]",
           },
-        });
-      } else {
-        const exSuffix = isByPiece && data.exclusive;
-        product = await prisma.product.create({
+        })
+      : await prisma.product.create({
           data: {
-            name: `${catNames.cs} — ${data.texture}${exSuffix ? " (Exkluziv)" : ""}`,
-            nameUk: `${catNames.uk} — ${data.texture}${exSuffix ? " (Ексклюзив)" : ""}`,
-            nameRu: `${catNames.ru} — ${data.texture}${exSuffix ? " (Эксклюзив)" : ""}`,
+            name: `${catNames.cs} — ${data.texture}${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`,
+            nameUk: `${catNames.uk} — ${data.texture}${isByPiece && data.exclusive ? " (Ексклюзив)" : ""}`,
+            nameRu: `${catNames.ru} — ${data.texture}${isByPiece && data.exclusive ? " (Эксклюзив)" : ""}`,
             category: data.category,
             processingType: "OTHER",
             origin: data.origin,
             texture: data.texture,
             colorTone: autoColorTone(data.color),
-            slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm${isByPiece ? `-${Date.now()}` : ""}`),
+            slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm-${Date.now()}`),
             photos: "[]",
           },
         });
-      }
-    }
 
     // For BY_PIECE: derive per-gram purchase price from per-piece purchase price
     const effectivePurchasePricePerGramRaw = isByPiece && data.purchasePricePerPiece && data.pieceWeightGrams
@@ -169,13 +152,8 @@ export async function POST(request: NextRequest) {
       ? effectivePurchasePricePerGramRaw
       : Math.round((effectivePurchasePricePerGramRaw * data.exchangeRate) / 10000);
 
-    // 2. Find or create Variant
-    // BY_PIECE always creates a new product, so variant cannot exist — skip lookup
-    let variant = isByPiece
-      ? null
-      : await prisma.variant.findUnique({
-          where: { productId_lengthCm_color: { productId: product.id, lengthCm: data.lengthCm, color: data.color } },
-        });
+    // 2. Create Variant — every delivery gets its own product+variant, no merging
+    let variant: Awaited<ReturnType<typeof prisma.variant.findUnique>> = null;
 
     if (!variant) {
       const markupPercent = priceSetting?.markupPercent ?? 100;
