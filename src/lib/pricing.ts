@@ -1,18 +1,14 @@
-import { roundHalereUp } from "./rounding";
-
 /**
  * Calculate retail price from wholesale price + category markup.
  * All amounts in halere (integer).
  *
  * Formula: retailPrice = wholesalePrice * (1 + markupPercent / 100)
- * Then round halere UP to whole CZK.
  */
 export function calculateRetailPrice(
   wholesalePriceHalere: number,
   markupPercent: number
 ): number {
-  const raw = wholesalePriceHalere * (1 + markupPercent / 100);
-  return roundHalereUp(raw);
+  return Math.round(wholesalePriceHalere * (1 + markupPercent / 100));
 }
 
 /**

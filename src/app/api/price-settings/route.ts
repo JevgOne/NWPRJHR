@@ -54,7 +54,7 @@ export async function PUT(request: NextRequest) {
         where: { id: variant.id },
         data: {
           retailPricePerGram: newRetail,
-          wholesalePricePerGram: newRetail,
+          wholesalePricePerGram: variant.costPricePerGram,
         },
       });
     }

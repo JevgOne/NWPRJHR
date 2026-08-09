@@ -110,7 +110,7 @@ export async function PUT(
             const newRetailPerGram = Math.round(
               v.costPricePerGram * (10000 + markupPercent * 100) / 10000
             );
-            const data: Record<string, unknown> = { retailPricePerGram: newRetailPerGram, wholesalePricePerGram: newRetailPerGram };
+            const data: Record<string, unknown> = { retailPricePerGram: newRetailPerGram, wholesalePricePerGram: v.costPricePerGram };
             if (v.sellingMode === "BY_PIECE" && v.pricePerPiece) {
               data.retailPricePerPiece = Math.round(
                 v.pricePerPiece * (10000 + markupPercent * 100) / 10000
