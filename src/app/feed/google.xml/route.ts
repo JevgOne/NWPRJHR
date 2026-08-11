@@ -61,6 +61,16 @@ export async function GET() {
         <g:service>Zásilkovna</g:service>
         <g:price>119.00 CZK</g:price>
       </g:shipping>
+      <g:shipping>
+        <g:country>DE</g:country>
+        <g:service>Zásilkovna</g:service>
+        <g:price>199.00 CZK</g:price>
+      </g:shipping>
+      <g:shipping>
+        <g:country>PL</g:country>
+        <g:service>Zásilkovna</g:service>
+        <g:price>149.00 CZK</g:price>
+      </g:shipping>
     </item>`);
     }
   }
