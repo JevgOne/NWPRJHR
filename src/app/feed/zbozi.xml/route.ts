@@ -19,6 +19,7 @@ export async function GET() {
     for (const v of product.variants) {
       const isByPiece = v.sellingMode === "BY_PIECE";
       const inStock = isByPiece ? v.availablePieces > 0 : v.availableGrams > 0;
+      if (!inStock) continue;
 
       const priceVat = isByPiece
         ? (v.retailPricePerPiece ?? 0) / 100

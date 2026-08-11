@@ -19,6 +19,7 @@ export async function GET() {
     for (const v of product.variants) {
       const isByPiece = v.sellingMode === "BY_PIECE";
       const inStock = isByPiece ? v.availablePieces > 0 : v.availableGrams > 0;
+      if (!inStock) continue;
 
       const price = isByPiece
         ? (v.retailPricePerPiece ?? 0) / 100
@@ -50,7 +51,7 @@ export async function GET() {
       <DELIVERY_ID>OSOBNI_ODBER</DELIVERY_ID>
       <DELIVERY_PRICE>0</DELIVERY_PRICE>
     </DELIVERY>
-    <DELIVERY_DATE>${inStock ? 0 : 7}</DELIVERY_DATE>
+    <DELIVERY_DATE>0</DELIVERY_DATE>
   </SHOPITEM>`);
     }
   }

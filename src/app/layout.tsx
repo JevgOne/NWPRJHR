@@ -94,6 +94,24 @@ export default async function RootLayout({
           <GoogleAnalytics />
         </NextIntlClientProvider>
         <script
+          id="merchantWidgetScript"
+          src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
+          defer
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              document.getElementById('merchantWidgetScript').addEventListener('load', function () {
+                merchantwidget.start({
+                  merchant_id: 5837040724,
+                  position: 'BOTTOM_RIGHT',
+                  region: 'CZ',
+                });
+              });
+            `,
+          }}
+        />
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
