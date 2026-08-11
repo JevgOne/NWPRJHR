@@ -13,8 +13,13 @@ export async function GET() {
 
   const items: string[] = [];
 
+  const FALLBACK_IMG = "https://www.hairland.cz/og/og-offer.jpg";
+
   for (const product of products) {
-    const imageUrl = product.photos[0] ?? "https://www.hairland.cz/og/og-offer.jpg";
+    const validPhoto = product.photos.find((p: string) =>
+      p && p.startsWith("https://") && !/\.(heic|heif)$/i.test(p)
+    );
+    const imageUrl = validPhoto ?? FALLBACK_IMG;
 
     for (const v of product.variants) {
       const isByPiece = v.sellingMode === "BY_PIECE";
@@ -48,7 +53,13 @@ export async function GET() {
       <g:identifier_exists>false</g:identifier_exists>
       <g:shipping>
         <g:country>CZ</g:country>
+        <g:service>Zásilkovna</g:service>
         <g:price>89.00 CZK</g:price>
+      </g:shipping>
+      <g:shipping>
+        <g:country>SK</g:country>
+        <g:service>Zásilkovna</g:service>
+        <g:price>119.00 CZK</g:price>
       </g:shipping>
     </item>`);
     }

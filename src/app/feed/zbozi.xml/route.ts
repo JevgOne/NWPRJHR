@@ -13,8 +13,13 @@ export async function GET() {
 
   const shopItems: string[] = [];
 
+  const FALLBACK_IMG = "https://www.hairland.cz/og/og-offer.jpg";
+
   for (const product of products) {
-    const imageUrl = product.photos[0] ?? "https://www.hairland.cz/og/og-offer.jpg";
+    const validPhoto = product.photos.find((p: string) =>
+      p && p.startsWith("https://") && !/\.(heic|heif)$/i.test(p)
+    );
+    const imageUrl = validPhoto ?? FALLBACK_IMG;
 
     for (const v of product.variants) {
       const isByPiece = v.sellingMode === "BY_PIECE";

@@ -305,6 +305,34 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     }
   }, [orderResult]);
 
+  // Google Customer Reviews opt-in
+  useEffect(() => {
+    if (!orderResult?.success || orderResult.redirect) return;
+    const estimatedDelivery = new Date();
+    estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
+    const deliveryDate = estimatedDelivery.toISOString().slice(0, 10);
+
+    (window as Record<string, unknown>).renderOptIn = function () {
+      (window as Record<string, Record<string, unknown>>).gapi.load("surveyoptin", function () {
+        (window as Record<string, Record<string, (...args: unknown[]) => void>>).gapi.surveyoptin.render({
+          merchant_id: 5837040724,
+          order_id: orderResult.orderNumber ?? orderResult.orderId,
+          email: form.email,
+          delivery_country: "CZ",
+          estimated_delivery_date: deliveryDate,
+        });
+      });
+    };
+
+    if (!document.getElementById("google-survey-script")) {
+      const script = document.createElement("script");
+      script.id = "google-survey-script";
+      script.src = "https://apis.google.com/js/platform.js?onload=renderOptIn";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  }, [orderResult, form.email]);
+
   // Empty cart
   if (itemCount === 0 && !orderResult) {
     return (
