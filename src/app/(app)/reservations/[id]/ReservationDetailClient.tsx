@@ -371,7 +371,6 @@ export function ReservationDetailClient({
                 >
                   <option value="CASH">Hotově</option>
                   <option value="CARD">Kartou</option>
-                  <option value="TRANSFER">Převodem</option>
                 </select>
                 <Button
                   size="sm"
