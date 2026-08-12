@@ -880,7 +880,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                   >
                     <span
                       className="w-10 h-10 rounded-full border border-line flex-shrink-0"
-                      style={{ backgroundColor: hc.hex }}
+                      style={{ background: hc.hex }}
                     />
                     <span className="text-xs font-medium text-ink">
                       {colorName(code)}

@@ -22,10 +22,11 @@ export const HAIR_COLORS: Record<string, HairColor> = {
   "8":  { hex: "#4A2912", nameKey: "c8" },
   "9":  { hex: "#2C1608", nameKey: "c9" },
   "10": { hex: "#1A0E05", nameKey: "c10" },
+  "ombre": { hex: "#C8A87C", nameKey: "combre" },
 };
 
 /** Ordered list of all color codes for display */
-export const COLOR_CODES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+export const COLOR_CODES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "ombre"];
 
 const FALLBACK: HairColor = { hex: "#9CA3AF", nameKey: "other" };
 
