@@ -312,9 +312,11 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
     const deliveryDate = estimatedDelivery.toISOString().slice(0, 10);
 
-    (window as Record<string, unknown>).renderOptIn = function () {
-      (window as Record<string, Record<string, unknown>>).gapi.load("surveyoptin", function () {
-        (window as Record<string, Record<string, (...args: unknown[]) => void>>).gapi.surveyoptin.render({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    w.renderOptIn = function () {
+      w.gapi.load("surveyoptin", function () {
+        w.gapi.surveyoptin.render({
           merchant_id: 5837040724,
           order_id: orderResult.orderNumber ?? orderResult.orderId,
           email: form.email,
