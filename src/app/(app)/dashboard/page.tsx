@@ -250,7 +250,7 @@ export default async function DashboardPage() {
       revenue,
       costOfGoods,
       grossMargin,
-      marginPercent: revenue > 0 ? (grossMargin / revenue) * 100 : 0,
+      marginPercent: costOfGoods > 0 ? (grossMargin / costOfGoods) * 100 : 0,
       gramsSold: Number(grams?.gramsSold ?? 0),
     };
   });
@@ -298,7 +298,7 @@ export default async function DashboardPage() {
           label={t("totalSold")}
           value={fmtCZK(totalSold)}
           sub1={`${fmtGrams(totalGramsSold)} · ${totalSoldCount} ${t("salesCount")}`}
-          sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)} (${totalSold > 0 ? ((totalSold - totalCOGS) / totalSold * 100).toFixed(0) : 0}%)`}
+          sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)} (${totalCOGS > 0 ? ((totalSold - totalCOGS) / totalCOGS * 100).toFixed(0) : 0}%)`}
         />
         <StatCard
           label={t("awaitingPayment")}
@@ -521,9 +521,9 @@ export default async function DashboardPage() {
                     </td>
                     <td className="pt-3 pr-4 text-right text-muted">
                       {(() => {
-                        const totalRev = monthlyData.reduce((s, m) => s + m.revenue, 0);
+                        const totalCost = monthlyData.reduce((s, m) => s + m.costOfGoods, 0);
                         const totalMargin = monthlyData.reduce((s, m) => s + m.grossMargin, 0);
-                        return totalRev > 0 ? (totalMargin / totalRev * 100).toFixed(0) + "%" : "—";
+                        return totalCost > 0 ? (totalMargin / totalCost * 100).toFixed(0) + "%" : "—";
                       })()}
                     </td>
                     <td className="pt-3 text-right text-ink">
