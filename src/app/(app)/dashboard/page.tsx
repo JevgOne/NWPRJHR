@@ -155,13 +155,15 @@ async function getDashboardData(userId: string) {
 
       // Monthly sales breakdown (last 6 months)
       prisma.$queryRawUnsafe<
-        Array<{ month: string; salesCount: bigint; revenue: bigint; costOfGoods: bigint }>
+        Array<{ month: string; salesCount: bigint; revenue: bigint; costOfGoods: bigint; totalDiscount: bigint; discountedSalesCount: bigint }>
       >(
         `SELECT
           strftime('%Y-%m', completedAt) as month,
           COUNT(id) as salesCount,
           COALESCE(SUM(totalAmount), 0) as revenue,
-          COALESCE(SUM(totalCostOfGoods), 0) as costOfGoods
+          COALESCE(SUM(totalCostOfGoods), 0) as costOfGoods,
+          COALESCE(SUM(discountAmount), 0) as totalDiscount,
+          SUM(CASE WHEN discountAmount > 0 THEN 1 ELSE 0 END) as discountedSalesCount
         FROM sales
         WHERE status = 'COMPLETED'
           AND completedAt >= ?
@@ -244,6 +246,8 @@ export default async function DashboardPage() {
     const revenue = Number(ms.revenue);
     const costOfGoods = Number(ms.costOfGoods);
     const grossMargin = revenue - costOfGoods;
+    const totalDiscount = Number(ms.totalDiscount ?? 0);
+    const discountedSalesCount = Number(ms.discountedSalesCount ?? 0);
     return {
       month: ms.month,
       salesCount: Number(ms.salesCount),
@@ -252,6 +256,8 @@ export default async function DashboardPage() {
       grossMargin,
       marginPercent: costOfGoods > 0 ? (grossMargin / costOfGoods) * 100 : 0,
       gramsSold: Number(grams?.gramsSold ?? 0),
+      totalDiscount,
+      discountedSalesCount,
     };
   });
 
@@ -485,6 +491,7 @@ export default async function DashboardPage() {
                   <th className="pb-3 pr-4 text-right">{t("costs")}</th>
                   <th className="pb-3 pr-4 text-right">{t("marginAmount")}</th>
                   <th className="pb-3 pr-4 text-right">%</th>
+                  <th className="pb-3 pr-4 text-right">Slevy</th>
                   <th className="pb-3 text-right">{t("gramsSold")}</th>
                 </tr>
               </thead>
@@ -499,6 +506,11 @@ export default async function DashboardPage() {
                     <td className="py-2.5 pr-4 text-right text-red-600">{fmtCZK(m.costOfGoods)}</td>
                     <td className="py-2.5 pr-4 text-right font-semibold text-ink">{fmtCZK(m.grossMargin)}</td>
                     <td className="py-2.5 pr-4 text-right text-muted">{m.marginPercent.toFixed(0)}%</td>
+                    <td className="py-2.5 pr-4 text-right text-orange-600">
+                      {m.totalDiscount > 0
+                        ? `${m.discountedSalesCount}× (-${fmtCZK(m.totalDiscount)})`
+                        : "—"}
+                    </td>
                     <td className="py-2.5 text-right text-ink">{fmtGrams(m.gramsSold)}</td>
                   </tr>
                 ))}
@@ -524,6 +536,13 @@ export default async function DashboardPage() {
                         const totalCost = monthlyData.reduce((s, m) => s + m.costOfGoods, 0);
                         const totalMargin = monthlyData.reduce((s, m) => s + m.grossMargin, 0);
                         return totalCost > 0 ? (totalMargin / totalCost * 100).toFixed(0) + "%" : "—";
+                      })()}
+                    </td>
+                    <td className="pt-3 pr-4 text-right text-orange-600">
+                      {(() => {
+                        const totalDisc = monthlyData.reduce((s, m) => s + m.totalDiscount, 0);
+                        const totalDiscCount = monthlyData.reduce((s, m) => s + m.discountedSalesCount, 0);
+                        return totalDisc > 0 ? `${totalDiscCount}× (-${fmtCZK(totalDisc)})` : "—";
                       })()}
                     </td>
                     <td className="pt-3 text-right text-ink">
