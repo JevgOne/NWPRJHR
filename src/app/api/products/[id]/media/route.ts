@@ -28,14 +28,30 @@ async function fileToBuffer(file: File): Promise<Buffer> {
   return Buffer.from(new Uint8Array(ab));
 }
 
+const MAX_PHOTO_WIDTH = 2000;
+
 async function processPhoto(
   inputBuffer: Buffer,
   fileName: string,
   fileType: string
 ): Promise<{ buffer: Buffer; contentType: string; ext: string }> {
+  // 0. Resize to max width before any processing (HEIC from iPhone can be 10-15MB)
+  let resized = inputBuffer;
+  try {
+    const sharp = (await import("sharp")).default;
+    const meta = await sharp(inputBuffer).metadata();
+    if (meta.width && meta.width > MAX_PHOTO_WIDTH) {
+      resized = await sharp(inputBuffer)
+        .resize(MAX_PHOTO_WIDTH, undefined, { withoutEnlargement: true })
+        .toBuffer();
+    }
+  } catch (e) {
+    console.error("[media] resize failed, using original:", e);
+  }
+
   // 1. Try watermark (WebP output)
   try {
-    const buffer = await addWatermark(inputBuffer);
+    const buffer = await addWatermark(resized);
     return { buffer, contentType: "image/webp", ext: "webp" };
   } catch (e) {
     console.error("[media] watermark failed:", e);
@@ -44,7 +60,7 @@ async function processPhoto(
   // 2. Try Sharp JPEG conversion (no watermark)
   try {
     const sharp = (await import("sharp")).default;
-    const buffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
+    const buffer = await sharp(resized).jpeg({ quality: 85 }).toBuffer();
     return { buffer, contentType: "image/jpeg", ext: "jpg" };
   } catch (e) {
     console.error("[media] sharp fallback failed:", e);
@@ -52,7 +68,7 @@ async function processPhoto(
 
   // 3. Raw passthrough
   const ext = fileName.split(".").pop()?.toLowerCase() || "bin";
-  return { buffer: inputBuffer, contentType: fileType || "application/octet-stream", ext };
+  return { buffer: resized, contentType: fileType || "application/octet-stream", ext };
 }
 
 export async function POST(
