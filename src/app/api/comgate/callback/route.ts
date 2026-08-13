@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
       return new NextResponse("OK", { status: 200 });
     }
 
-    const expectedMerchant = (process.env.COMGATE_MERCHANT || "").trim();
-    if (expectedMerchant && merchant !== expectedMerchant) {
+    const expectedMerchant = (process.env.COMGATE_MERCHANT || "").replace(/\s+/g, "");
+    if (expectedMerchant && merchant?.replace(/\s+/g, "") !== expectedMerchant) {
       console.error("[comgate/callback] Invalid merchant:", merchant, "expected:", expectedMerchant);
       return new NextResponse("OK", { status: 200 });
     }
