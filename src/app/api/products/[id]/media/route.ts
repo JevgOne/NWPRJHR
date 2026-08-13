@@ -191,18 +191,27 @@ export async function POST(
   }
 
   const allPhotos = [...existingPhotos, ...newPhotoUrls];
-  const updated = await prisma.product.update({
-    where: { id },
-    data: {
-      photos: JSON.stringify(allPhotos),
-      ...(videoUrl !== product.video ? { video: videoUrl } : {}),
-    },
-  });
 
-  revalidateTag("products", { expire: 0 });
+  try {
+    const updated = await prisma.product.update({
+      where: { id },
+      data: {
+        photos: JSON.stringify(allPhotos),
+        ...(videoUrl !== product.video ? { video: videoUrl } : {}),
+      },
+    });
 
-  return NextResponse.json({
-    photos: allPhotos,
-    video: updated.video,
-  });
+    revalidateTag("products", { expire: 0 });
+
+    return NextResponse.json({
+      photos: allPhotos,
+      video: updated.video,
+    });
+  } catch (e) {
+    console.error("[media] DB update failed:", e);
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Failed to save media" },
+      { status: 500 }
+    );
+  }
 }
