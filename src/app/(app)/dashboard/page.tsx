@@ -2,8 +2,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { unstable_cache } from "next/cache";
 import { BatchAnnouncementCard } from "@/components/admin/BatchAnnouncementCard";
+
+export const dynamic = "force-dynamic";
 
 function fmtCZK(halere: number): string {
   const czk = halere / 100;
@@ -36,8 +37,7 @@ const movementTypeStyles: Record<string, { bg: string; text: string }> = {
   SAMPLE: { bg: "bg-purple-100", text: "text-purple-700" },
 };
 
-const getCachedDashboardData = unstable_cache(
-  async (userId: string) => {
+async function getDashboardData(userId: string) {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -167,10 +167,7 @@ const getCachedDashboardData = unstable_cache(
       activeReservations,
       pendingReservationsCount,
     };
-  },
-  ["dashboard-data"],
-  { revalidate: 30, tags: ["dashboard"] }
-);
+}
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -198,7 +195,7 @@ export default async function DashboardPage() {
     pendingRegistrations,
     activeReservations,
     pendingReservationsCount,
-  } = await getCachedDashboardData(session.user.id);
+  } = await getDashboardData(session.user.id);
 
   // Compute stats from pre-aggregated SQL results
   const totalStockGrams = stockByCategory.reduce((a, r) => a + Number(r.totalGrams), 0);
