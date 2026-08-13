@@ -59,7 +59,7 @@ function autoColorTone(colorCode: string): string {
   const map: Record<string, string> = {
     "1": "Blond", "2": "Blond", "3": "Blond", "4": "Blond",
     "5": "Hnědá", "6": "Hnědá", "7": "Hnědá",
-    "8": "Tmavě hnědá", "9": "Tmavě hnědá", "10": "Tmavě hnědá",
+    "8": "Tmavě hnědá", "9": "Tmavě hnědá", "10": "Černá",
     "ombre": "Ombre",
   };
   return map[colorCode] ?? "Hnědá";

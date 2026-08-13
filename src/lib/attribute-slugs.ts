@@ -5,6 +5,7 @@ export const COLOR_TONE_SLUG_MAP: Record<string, string> = {
   "tmave-hneda": "Tmavě hnědá",
   "zrzava": "Zrzavá",
   "ombre": "Ombre",
+  "cerna": "Černá",
 };
 export const COLOR_TONE_REVERSE_MAP = Object.fromEntries(
   Object.entries(COLOR_TONE_SLUG_MAP).map(([k, v]) => [v, k])
