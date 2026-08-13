@@ -167,6 +167,14 @@ export default async function CenikVlasyPage() {
         <p className="text-sm text-muted leading-relaxed">{t("costAnswer")}</p>
       </section>
 
+      {/* ── Single donor notice ── */}
+      <div className="mb-10 bg-amber-50 border border-amber-200/60 rounded-xl p-5 sm:p-6 flex items-start gap-3">
+        <svg className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+        <p className="text-sm text-amber-900 leading-relaxed">{t("singleDonorNote")}</p>
+      </div>
+
       {/* ── SECTION 1: Hair prices ── */}
       <section className="mb-14">
         <h2 className="text-xl font-semibold text-ink mb-2">{t("hairPricesTitle")}</h2>

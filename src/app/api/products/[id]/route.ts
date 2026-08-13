@@ -101,7 +101,7 @@ export async function PUT(
       const priceSetting = await prisma.priceSettings.findUnique({
         where: { category: newCat },
       });
-      const markupPercent = priceSetting?.markupPercent ?? 100;
+      const markupPercent = priceSetting?.markupPercent ?? 110;
 
       const variantsToUpdate = current.variants.filter(v => !v.retailManualOverride);
       if (variantsToUpdate.length > 0) {

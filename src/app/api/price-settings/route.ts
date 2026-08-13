@@ -5,6 +5,8 @@ import { updatePriceSettingsSchema } from "@/lib/validations/product";
 import { calculateRetailPrice } from "@/lib/pricing";
 import { logAudit, getClientIp } from "@/lib/audit";
 
+export const maxDuration = 30;
+
 export async function GET() {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -31,45 +33,61 @@ export async function PUT(request: NextRequest) {
 
   const { category, markupPercent } = parsed.data;
 
-  const result = await prisma.$transaction(async (tx) => {
-    const setting = await tx.priceSettings.upsert({
+  try {
+    const setting = await prisma.priceSettings.upsert({
       where: { category },
       update: { markupPercent },
       create: { category, markupPercent },
     });
 
-    const variants = await tx.variant.findMany({
+    const variants = await prisma.variant.findMany({
       where: {
         product: { category },
         retailManualOverride: false,
       },
     });
 
+    let recalculated = 0;
     for (const variant of variants) {
       const newRetail = calculateRetailPrice(
         variant.costPricePerGram,
         markupPercent
       );
-      await tx.variant.update({
+      const data: Record<string, unknown> = {
+        retailPricePerGram: newRetail,
+        wholesalePricePerGram: variant.costPricePerGram,
+      };
+      if (variant.pricePerPiece) {
+        data.retailPricePerPiece = calculateRetailPrice(
+          variant.pricePerPiece,
+          markupPercent
+        );
+      }
+      await prisma.variant.update({
         where: { id: variant.id },
-        data: {
-          retailPricePerGram: newRetail,
-          wholesalePricePerGram: variant.costPricePerGram,
-        },
+        data,
       });
+      recalculated++;
     }
 
-    return { setting, recalculated: variants.length };
-  });
+    const result = { setting, recalculated };
 
-  logAudit({
-    userId: session.user.id,
-    userEmail: session.user.email ?? undefined,
-    action: "UPDATE",
-    entity: "PriceSettings",
-    detail: { category, markupPercent, recalculated: result.recalculated },
-    ipAddress: getClientIp(request),
-  });
+    logAudit({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      action: "UPDATE",
+      entity: "PriceSettings",
+      detail: { category, markupPercent, recalculated: result.recalculated },
+      ipAddress: getClientIp(request),
+    });
 
-  return NextResponse.json(result);
+    return NextResponse.json(result);
+  } catch (err) {
+    console.error("[price-settings PUT]", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json(
+      { error: `Uložení cenotvorby selhalo: ${message}` },
+      { status: 500 }
+    );
+  }
 }

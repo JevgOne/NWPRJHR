@@ -252,7 +252,13 @@ export function VariantTable({
       {lengths.map((length) => {
         const lengthVariants = variants
           .filter((v) => v.lengthCm === length)
-          .sort((a, b) => parseInt(a.color) - parseInt(b.color));
+          .sort((a, b) => {
+            const na = parseInt(a.color), nb = parseInt(b.color);
+            if (!isNaN(na) && !isNaN(nb)) return na - nb;
+            if (!isNaN(na)) return -1;
+            if (!isNaN(nb)) return 1;
+            return a.color.localeCompare(b.color);
+          });
 
         return (
           <div key={length}>

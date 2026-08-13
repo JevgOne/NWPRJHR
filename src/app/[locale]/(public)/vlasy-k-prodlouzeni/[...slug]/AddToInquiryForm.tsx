@@ -66,7 +66,13 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
   // Unique colors sorted by code
   const uniqueColors = useMemo(() => {
     const codes = [...new Set(variants.map((v) => v.color))];
-    return codes.sort((a, b) => parseInt(a) - parseInt(b));
+    return codes.sort((a, b) => {
+      const na = parseInt(a), nb = parseInt(b);
+      if (!isNaN(na) && !isNaN(nb)) return na - nb;
+      if (!isNaN(na)) return -1;
+      if (!isNaN(nb)) return 1;
+      return a.localeCompare(b);
+    });
   }, [variants]);
 
   // Lengths available for selected color (with price + stock)

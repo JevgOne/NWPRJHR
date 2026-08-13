@@ -27,6 +27,7 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
   const uploadFiles = useCallback(
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files).filter((f) => {
+        if (f.type.startsWith("image/") || f.type.startsWith("video/")) return true;
         if ([...PHOTO_TYPES, ...VIDEO_TYPES].includes(f.type)) return true;
         const ext = f.name.split(".").pop()?.toLowerCase() ?? "";
         return PHOTO_EXTS.includes(ext) || VIDEO_EXTS.includes(ext);
@@ -180,7 +181,7 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime,video/x-quicktime,video/webm"
+        accept="image/*,video/*"
         multiple
         className="hidden"
         onChange={(e) => {

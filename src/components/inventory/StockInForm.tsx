@@ -175,14 +175,14 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
 
     const pricePerGramOrig = pricePer100g / 100;
     const pricePerGramCzk = pricePerGramOrig * rate;
-    const retailPerGram = pricePerGramCzk * 2; // 100% markup
+    const retailPerGram = pricePerGramCzk * 2.1; // 110% markup
     const retailPer100g = retailPerGram * 100;
 
     if (sellingMode === "BY_PIECE") {
       const weight = parseInt(pieceWeightGrams);
       const pricePerPcOrig = weight ? pricePerGramOrig * weight : undefined;
       const pricePerPcCzk = weight ? pricePerGramCzk * weight : undefined;
-      const retailPerPc = pricePerPcCzk ? pricePerPcCzk * 2 : undefined;
+      const retailPerPc = pricePerPcCzk ? pricePerPcCzk * 2.1 : undefined;
 
       return {
         pricePerGramOrig,
@@ -292,7 +292,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     const costPerPieceCzk = isByPiece && purchasePricePerPieceRaw
       ? Math.round((purchasePricePerPieceRaw * exchangeRateInt) / 10000)
       : undefined;
-    const retailPerPieceCzk = costPerPieceCzk ? costPerPieceCzk * 2 : undefined;
+    const retailPerPieceCzk = costPerPieceCzk ? Math.round(costPerPieceCzk * 2.1) : undefined;
 
     const body = {
       category,
@@ -516,7 +516,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           )}
         </p>
         <p className="text-xs text-muted">
-          {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 100%)
+          {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 110%)
         </p>
         <p className="text-sm font-semibold text-espresso">
           {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
@@ -568,15 +568,6 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               ? `${successData.totalPieces} ${t("perPiece")} (${successData.totalGrams} g)`
               : `${successData.totalGrams} g`}
           </p>
-          {qrDataUrl && (
-            <img
-              src={qrDataUrl}
-              alt="QR"
-              width={300}
-              height={300}
-              className="mx-auto border border-line rounded-lg"
-            />
-          )}
           {category && lengthCm && (
             <div className="text-center">
               <p className="text-sm font-medium text-ink">
@@ -589,6 +580,15 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
             <p className="text-xs text-muted font-mono">
               {generateSku(category, texture, color, lengthCm ?? 0)}
             </p>
+          )}
+          {qrDataUrl && (
+            <img
+              src={qrDataUrl}
+              alt="QR"
+              width={300}
+              height={300}
+              className="mx-auto border border-line rounded-lg"
+            />
           )}
           <p className="text-xs text-muted">{t("qrLinkDesc")}</p>
 
@@ -635,7 +635,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 <input
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime,video/x-quicktime,video/webm"
+                  accept="image/*,video/*"
                   className="hidden"
                   onChange={(e) => handleMediaUpload(e.target.files)}
                   disabled={uploading}
@@ -654,28 +654,32 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                   img.onload = () => {
                     const label = category ? `${tCat(category.toLowerCase() as "virgin")}, ${lengthCm} cm` : "";
                     const stockLabel = `${successData.totalGrams} g`;
+                    const sku = category ? generateSku(category, texture, color, lengthCm ?? 0) : "";
                     const canvas = document.createElement("canvas");
                     const pad = 20;
-                    const textH = 70;
+                    const topTextH = sku ? 50 : 30;
+                    const bottomTextH = 30;
                     canvas.width = img.width + pad * 2;
-                    canvas.height = img.height + pad * 2 + textH;
+                    canvas.height = topTextH + img.height + pad * 2 + bottomTextH;
                     const ctx = canvas.getContext("2d")!;
                     ctx.fillStyle = "#fff";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, pad, pad);
-                    ctx.fillStyle = "#1a1a1a";
-                    ctx.font = "bold 16px Arial, sans-serif";
                     ctx.textAlign = "center";
-                    ctx.fillText(label, canvas.width / 2, img.height + pad + 22);
-                    const sku = category ? generateSku(category, texture, color, lengthCm ?? 0) : "";
+                    let yTop = pad;
                     if (sku) {
                       ctx.fillStyle = "#888";
                       ctx.font = "12px monospace";
-                      ctx.fillText(sku, canvas.width / 2, img.height + pad + 40);
+                      ctx.fillText(sku, canvas.width / 2, yTop);
+                      yTop += 18;
                     }
+                    ctx.fillStyle = "#1a1a1a";
+                    ctx.font = "bold 16px Arial, sans-serif";
+                    ctx.fillText(label, canvas.width / 2, yTop);
+                    const qrY = topTextH + pad;
+                    ctx.drawImage(img, pad, qrY);
                     ctx.fillStyle = "#888";
                     ctx.font = "14px Arial, sans-serif";
-                    ctx.fillText(stockLabel, canvas.width / 2, img.height + pad + 60);
+                    ctx.fillText(stockLabel, canvas.width / 2, qrY + img.height + 20);
                     canvas.toBlob((blob) => {
                       if (!blob) return;
                       const url = URL.createObjectURL(blob);
@@ -724,8 +728,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               type="button"
               variant="ghost"
               onClick={() => {
-                router.push("/inventory");
-                router.refresh();
+                window.location.href = "/inventory";
               }}
             >
               {tCommon("done")}
@@ -1140,7 +1143,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 <input
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime,video/x-quicktime,video/webm"
+                  accept="image/*,video/*"
                   className="hidden"
                   onChange={(e) => { handleFilesSelected(e.target.files); e.target.value = ""; }}
                 />

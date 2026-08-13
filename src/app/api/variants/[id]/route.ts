@@ -71,7 +71,7 @@ export async function PUT(
     const priceSetting = await prisma.priceSettings.findUnique({
       where: { category: existing.product.category },
     });
-    const markupPercent = priceSetting?.markupPercent ?? 100;
+    const markupPercent = priceSetting?.markupPercent ?? 110;
 
     // BY_GRAM: recalculate retailPricePerGram when costPricePerGram changes
     if (parsed.data.costPricePerGram !== undefined) {

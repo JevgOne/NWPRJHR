@@ -20,10 +20,10 @@ export function PricingSettingsClient() {
   const tCommon = useTranslations("common");
 
   // Pricing state
-  const [markupPercent, setMarkupPercent] = useState("100");
+  const [markupPercent, setMarkupPercent] = useState("110");
   const [sameForAll, setSameForAll] = useState(true);
   const [categoryMarkups, setCategoryMarkups] = useState<Record<string, string>>({
-    VIRGIN: "100", LUXE: "100", STANDARD: "100", SALE: "100",
+    VIRGIN: "110", LUXE: "110", STANDARD: "110", SALE: "110",
   });
 
   // B2B state (plain %, not basis points)
@@ -37,6 +37,8 @@ export function PricingSettingsClient() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
 
   // Load existing settings
   useEffect(() => {
@@ -56,7 +58,7 @@ export function PricingSettingsClient() {
           markups[s.category] = s.markupPercent.toString();
         }
         for (const cat of CATEGORIES) {
-          if (!markups[cat]) markups[cat] = "100";
+          if (!markups[cat]) markups[cat] = "110";
         }
         setCategoryMarkups(markups);
         if (!allSame) {
@@ -108,35 +110,52 @@ export function PricingSettingsClient() {
 
   async function handleSave() {
     setSaving(true);
+    setSaveError("");
 
-    // 1. Save pricing for each category
-    const markups = sameForAll
-      ? Object.fromEntries(CATEGORIES.map((c) => [c, parseInt(markupPercent) || 100]))
-      : Object.fromEntries(CATEGORIES.map((c) => [c, parseInt(categoryMarkups[c]) || 100]));
+    try {
+      // 1. Save pricing for each category
+      const markups = sameForAll
+        ? Object.fromEntries(CATEGORIES.map((c) => [c, parseInt(markupPercent) || 110]))
+        : Object.fromEntries(CATEGORIES.map((c) => [c, parseInt(categoryMarkups[c]) || 110]));
 
-    await Promise.all(
-      CATEGORIES.map((cat) =>
-        fetch("/api/price-settings", {
+      const results = [];
+      for (const cat of CATEGORIES) {
+        const res = await fetch("/api/price-settings", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ category: cat, markupPercent: markups[cat] }),
-        })
-      )
-    );
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          throw new Error(`${cat}: ${err.error || res.status}`);
+        }
+        results.push(await res.json());
+      }
 
-    // 2. Save B2B (convert plain % to basis points)
-    await fetch("/api/b2b-settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        hairdresserDiscountPct: Math.round(parseFloat(hairdresserDiscount || "0") * 100),
-        salonDiscountPct: Math.round(parseFloat(salonDiscount || "0") * 100),
-      }),
-    });
+      const totalRecalculated = results.reduce((sum: number, r: { recalculated?: number }) => sum + (r.recalculated || 0), 0);
 
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+      // 2. Save B2B (convert plain % to basis points)
+      const b2bRes = await fetch("/api/b2b-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hairdresserDiscountPct: Math.round(parseFloat(hairdresserDiscount || "0") * 100),
+          salonDiscountPct: Math.round(parseFloat(salonDiscount || "0") * 100),
+        }),
+      });
+      if (!b2bRes.ok) {
+        const err = await b2bRes.json().catch(() => ({ error: `HTTP ${b2bRes.status}` }));
+        throw new Error(`B2B: ${err.error || b2bRes.status}`);
+      }
+
+      setSaved(true);
+      setSaveMessage(`Uloženo. Přepočítáno ${totalRecalculated} variant.`);
+      setTimeout(() => { setSaved(false); setSaveMessage(""); }, 4000);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "Ukládání selhalo");
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (loading) return <p>{tCommon("loading")}</p>;
@@ -313,7 +332,12 @@ export function PricingSettingsClient() {
         </Button>
         {saved && (
           <span className="text-sm text-green-600 font-medium">
-            {t("saved")}
+            {saveMessage || t("saved")}
+          </span>
+        )}
+        {saveError && (
+          <span className="text-sm text-red-600 font-medium">
+            {saveError}
           </span>
         )}
       </div>

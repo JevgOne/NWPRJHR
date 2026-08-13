@@ -45,5 +45,6 @@ export function parseSku(sku: string): {
   const texture = SKU_TEXTURE_REVERSE[tex];
   const lengthCm = parseInt(len);
   if (!category || !texture || isNaN(lengthCm)) return null;
-  return { category, texture, color: String(parseInt(col)), lengthCm };
+  const parsed = parseInt(col);
+  return { category, texture, color: isNaN(parsed) ? col : String(parsed), lengthCm };
 }

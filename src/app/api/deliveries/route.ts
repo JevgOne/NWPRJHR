@@ -60,6 +60,7 @@ function autoColorTone(colorCode: string): string {
     "1": "Blond", "2": "Blond", "3": "Blond", "4": "Blond",
     "5": "Hnědá", "6": "Hnědá", "7": "Hnědá",
     "8": "Tmavě hnědá", "9": "Tmavě hnědá", "10": "Tmavě hnědá",
+    "ombre": "Ombre",
   };
   return map[colorCode] ?? "Hnědá";
 }
@@ -156,7 +157,7 @@ export async function POST(request: NextRequest) {
     let variant: Awaited<ReturnType<typeof prisma.variant.findUnique>> = null;
 
     if (!variant) {
-      const markupPercent = priceSetting?.markupPercent ?? 100;
+      const markupPercent = priceSetting?.markupPercent ?? 110;
       const retailPrice = calculateRetailPrice(costPricePerGramCZK, markupPercent);
       const retailPricePerPiece = isByPiece && data.pricePerPiece
         ? calculateRetailPrice(data.pricePerPiece, markupPercent)

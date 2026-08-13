@@ -208,7 +208,7 @@ export function VariantBatchCreate({
                 setCostPricePerPiece(e.target.value);
                 if (!retailPieceManual) {
                   const cost = parseFloat(e.target.value);
-                  setRetailPricePerPiece(cost > 0 ? (cost * 2).toString() : "");
+                  setRetailPricePerPiece(cost > 0 ? (cost * 2.1).toString() : "");
                 }
               }}
             />
@@ -241,7 +241,7 @@ export function VariantBatchCreate({
                 setCostPricePerGram(e.target.value);
                 if (!retailManual) {
                   const cost = parseFloat(e.target.value);
-                  setRetailPricePerGram(cost > 0 ? (cost * 2).toString() : "");
+                  setRetailPricePerGram(cost > 0 ? (cost * 2.1).toString() : "");
                 }
               }}
             />

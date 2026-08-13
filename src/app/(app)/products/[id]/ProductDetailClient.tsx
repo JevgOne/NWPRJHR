@@ -142,6 +142,7 @@ export function ProductDetailClient({
   const [showDeliveries, setShowDeliveries] = useState(false);
   const [editingDeliveryField, setEditingDeliveryField] = useState<string | null>(null);
   const [deliveryEditValue, setDeliveryEditValue] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   // Phase 4: Unsaved changes warning
   useEffect(() => {
@@ -175,6 +176,24 @@ export function ProductDetailClient({
   const cancelEdit = useCallback(() => {
     setEditMode(false);
   }, []);
+
+  const deleteProduct = useCallback(async () => {
+    if (!confirm(t("product.confirmDelete", { name: product.name }))) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/products/${product.id}?hard=true`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Nelze smazat");
+        return;
+      }
+      router.push("/products");
+    } catch {
+      alert("Chyba při mazání");
+    } finally {
+      setDeleting(false);
+    }
+  }, [product.id, product.name, router, t]);
 
   const saveProduct = useCallback(async () => {
     setSavingProduct(true);
@@ -618,9 +637,20 @@ export function ProductDetailClient({
                 )}
               </div>
               {isOwner && (
-                <Button size="sm" variant="secondary" onClick={enterEditMode}>
-                  {t("common.edit")}
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="secondary" onClick={enterEditMode}>
+                    {t("common.edit")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={deleteProduct}
+                    disabled={deleting}
+                    className="!text-red-600 hover:!bg-red-50"
+                  >
+                    {deleting ? "..." : t("common.delete")}
+                  </Button>
+                </div>
               )}
             </div>
 

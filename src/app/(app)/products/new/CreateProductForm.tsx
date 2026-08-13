@@ -469,7 +469,7 @@ export function CreateProductForm() {
               setCostPrice(e.target.value);
               if (!retailManual) {
                 const cost = parseFloat(e.target.value);
-                setRetailPrice(cost > 0 ? (cost * 2).toString() : "");
+                setRetailPrice(cost > 0 ? (cost * 2.1).toString() : "");
               }
             }}
           />

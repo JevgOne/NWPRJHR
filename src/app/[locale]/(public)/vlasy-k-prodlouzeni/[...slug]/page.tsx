@@ -894,6 +894,12 @@ async function ProductDetailView({
               {product.origin && <span>{originFlag} {originName(product.origin)}</span>}
               <span className="text-muted/60">·</span>
               <span className="text-emerald-700 font-medium">✓ {t("productDetail.realHair")}</span>
+              {product.category !== "SALE" && (
+                <>
+                  <span className="text-muted/60">·</span>
+                  <span className="text-amber-700 font-medium">✓ {t("productDetail.singleDonor")}</span>
+                </>
+              )}
             </p>
           </div>
 
@@ -995,7 +1001,13 @@ async function ProductDetailView({
               </Link>
             )}
             {(() => {
-              const variantColors = [...new Set(product.variants.map(v => v.color))].sort((a, b) => parseInt(a) - parseInt(b));
+              const variantColors = [...new Set(product.variants.map(v => v.color))].sort((a, b) => {
+                const na = parseInt(a), nb = parseInt(b);
+                if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                if (!isNaN(na)) return -1;
+                if (!isNaN(nb)) return 1;
+                return a.localeCompare(b);
+              });
               if (variantColors.length === 0) return null;
               const firstColor = variantColors[0];
               const hc = getHairColor(firstColor);

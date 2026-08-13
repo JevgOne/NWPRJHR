@@ -9,6 +9,7 @@ export const COLOR_TONE_OPTIONS: ColorToneOption[] = [
   { name: "Hnědá", hex: "#7A5230", nameKey: "brown" },
   { name: "Tmavě hnědá", hex: "#3E2512", nameKey: "darkBrown" },
   { name: "Zrzavá", hex: "#B5451B", nameKey: "red" },
+  { name: "Ombre", hex: "#C8A87C", nameKey: "ombre" },
 ];
 
 export function getColorToneInfo(name: string | null | undefined): ColorToneOption {

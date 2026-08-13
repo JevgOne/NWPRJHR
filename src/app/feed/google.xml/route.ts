@@ -36,7 +36,8 @@ export async function GET() {
       const sku = generateSku(product.category, product.texture, v.color, v.lengthCm);
       const url = `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`;
       const title = `${product.name} ${v.lengthCm} cm`;
-      const desc = product.description?.slice(0, 5000) ?? title;
+      const singleDonor = product.category !== "SALE" ? " Vlasy z jedné hlavy — žádné fabrikové vlasy." : "";
+      const desc = (product.description?.slice(0, 4900) ?? title) + singleDonor;
 
       items.push(`    <item>
       <g:id>${esc(sku)}</g:id>

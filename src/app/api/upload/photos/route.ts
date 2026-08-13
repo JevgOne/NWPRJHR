@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
     const fileType = file.type || "";
     const fileExt = file.name.split(".").pop()?.toLowerCase() ?? "";
     const isHeic = fileExt === "heic" || fileExt === "heif" || fileType === "image/heic" || fileType === "image/heif";
-    const isVideo = VIDEO_TYPES.includes(fileType) || fileExt === "mov" || fileExt === "mp4" || fileExt === "webm";
-    const isPhoto = PHOTO_TYPES.includes(fileType) || isHeic;
+    const isVideo = VIDEO_TYPES.includes(fileType) || fileType.startsWith("video/") || fileExt === "mov" || fileExt === "mp4" || fileExt === "webm";
+    const isPhoto = PHOTO_TYPES.includes(fileType) || fileType.startsWith("image/") || isHeic;
 
     if (!isPhoto && !isVideo) {
       throw new Error(`Nepodporovaný formát: ${file.name}. Povoleno: JPG, PNG, WebP, HEIC, MP4, MOV, WebM`);

@@ -152,7 +152,15 @@
     "product": "Produkt",
     "quantity": "Množství",
     "note": "Poznámka",
-    "allMovements": "Zobrazit vše"
+    "allMovements": "Zobrazit vše",
+    "monthlyOverview": "Měsíční přehled",
+    "month": "Měsíc",
+    "salesCountShort": "Prodejů",
+    "revenue": "Tržby",
+    "costs": "Náklady",
+    "marginAmount": "Marže",
+    "gramsSold": "Gramy",
+    "total": "Celkem"
   },
   "product": {
     "hairExtensions": "Prémiové vlasy",
@@ -204,7 +212,8 @@
     "reactivate": "Aktivovat",
     "cannotDeleteDelivery": "Nelze smazat — částečně spotřebováno",
     "supplierCode": "Kód dodavatele",
-    "photoCode": "Foto kód"
+    "photoCode": "Foto kód",
+    "confirmDelete": "Opravdu smazat produkt \"{name}\" včetně všech variant a dodávek? Tuto akci nelze vrátit."
   },
   "colorTone": {
     "blond": "Blond",
@@ -856,6 +865,8 @@
       "badgeInvoiceDesc": "Pro salony i soukromé osoby",
       "badgeOrigin": "Ověřený původ",
       "badgeOriginDesc": "Ukrajina, Uzbekistán a Evropa",
+      "badgeSingleDonor": "Vlasy z jedné hlavy",
+      "badgeSingleDonorDesc": "Žádné fabrikové vlasy — garantovaný původ",
       "processingTypes": "Více o technikách prodloužení",
       "heroImageAlt": "Různé odstíny přírodních vlasů k prodloužení",
       "metaOrigin": "původ",
@@ -994,6 +1005,8 @@
       "regularPrice": "běžná cena",
       "relatedProducts": "Podobné produkty",
       "recentlyViewed": "Nedávno prohlédnuté",
+      "singleDonor": "Z jedné hlavy",
+      "singleDonorDesc": "Ne fabrikové — vlasy od jednoho dárce",
       "trustQuality": "Garance kvality a původu",
       "trustQualityDesc": "Každý produkt má ověřený původ a prochází kontrolou kvality.",
       "trustReturn": "Vrácení do 14 dní",
@@ -2341,7 +2354,7 @@
     "catLuxeTitle": "Luxe vlasy",
     "catLuxeText": "Nebarvené a neupravované vlasy z jedné hlavy. Nejvyšší kvalita zpracování, přirozený lesk a jemnost. Ideální pro dlouhodobé nošení.",
     "catStandardTitle": "Standard vlasy",
-    "catStandardText": "Pečlivý výběr kvalitních vlasů, většinou fabrikově zpracovávaných. Nelze garantovat že jsou z jedné hlavy nebo nebarvené, ale kvalita je vysoká. Skvělá volba pro první prodloužení.",
+    "catStandardText": "Pečlivý výběr kvalitních vlasů z jedné hlavy. Šetrně ošetřené, vysoká kvalita za rozumnou cenu. Skvělá volba pro první prodloužení.",
 
     "methodsTitle": "Metody prodloužení vlasů",
     "methodClipIn": "Clip-in vlasy si připnete samy doma za pár minut. Ideální pro příležitostné nošení nebo každodenní použití bez trvalého zásahu.",
@@ -3243,6 +3256,7 @@
     "subtitle": "Kolik stojí pravé vlasy k prodloužení? Aktuální ceny vlasů za 100 g — panenské (Virgin), Luxe a Standard. Ceny se automaticky aktualizují podle skladových zásob.",
     "costQuestion": "Kolik stojí 100 g pravých vlasů?",
     "costAnswer": "Cena 100 g pravých vlasů k prodloužení závisí na kategorii, délce a původu. Panenské (Virgin) vlasy z Ukrajiny stojí přibližně 8 000–15 000 Kč za 100 g, Luxe vlasy 5 000–10 000 Kč a Standard vlasy 3 000–6 000 Kč. V Hairland prodáváme každý culík po gramech, takže platíte jen za skutečnou gramáž.",
+    "singleDonorNote": "Všechny vlasy (kromě výprodeje) jsou výhradně z jedné hlavy — žádné fabrikové vlasy. Garantujeme jednotný původ, strukturu a kvalitu každého culíku.",
     "hairPricesTitle": "Ceny vlasů podle kategorie",
     "hairPricesDesc": "Průměrné ceny za 100 g dle kategorie a délky. Přesnou cenu uvidíte u konkrétního produktu.",
     "priceNote": "Ceny jsou orientační a mohou se lišit dle odstínu, textury a původu vlasů.",
@@ -3368,7 +3382,7 @@
     "catLuxeTitle": "Luxe vlasy",
     "catLuxeText": "Nebarvené, z jedné hlavy. Nižší cena než Virgin. Vhodné pro clip-in i tape-in.",
     "catStandardTitle": "Standard vlasy",
-    "catStandardText": "Evropské vlasy s výraznější chemickou úpravou. Nižší cena, kratší životnost (6–12 měsíců).",
+    "catStandardText": "Vlasy z jedné hlavy, šetrně ošetřené. Nižší cena, životnost 6–12 měsíců.",
 
     "methodsTitle": "Metody zpracování ukrajinských vlasů",
     "methodsIntro": "Ukrajinské vlasy zpracováváme na zakázku do 7 pracovních dnů. Vyberte si metodu podle svých potřeb:",

@@ -29,16 +29,10 @@ async function fileToBuffer(file: File): Promise<Buffer> {
 }
 
 async function processPhoto(
-  file: File
+  inputBuffer: Buffer,
+  fileName: string,
+  fileType: string
 ): Promise<{ buffer: Buffer; contentType: string; ext: string }> {
-  let inputBuffer: Buffer;
-  try {
-    inputBuffer = await fileToBuffer(file);
-  } catch (e) {
-    console.error("[media] fileToBuffer failed:", e);
-    throw e; // Let caller handle raw stream upload fallback
-  }
-
   // 1. Try watermark (WebP output)
   try {
     const buffer = await addWatermark(inputBuffer);
@@ -57,8 +51,8 @@ async function processPhoto(
   }
 
   // 3. Raw passthrough
-  const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-  return { buffer: inputBuffer, contentType: file.type || "application/octet-stream", ext };
+  const ext = fileName.split(".").pop()?.toLowerCase() || "bin";
+  return { buffer: inputBuffer, contentType: fileType || "application/octet-stream", ext };
 }
 
 export async function POST(
@@ -95,10 +89,11 @@ export async function POST(
     const isHeic = fileExt === "heic" || fileExt === "heif" || fileType === "image/heic" || fileType === "image/heif";
     const isVideo =
       VIDEO_TYPES.includes(fileType) ||
+      fileType.startsWith("video/") ||
       fileExt === "mov" ||
       fileExt === "mp4" ||
       fileExt === "webm";
-    const isPhoto = PHOTO_TYPES.includes(fileType) || isHeic;
+    const isPhoto = PHOTO_TYPES.includes(fileType) || fileType.startsWith("image/") || isHeic;
 
     if (!isPhoto && !isVideo) {
       return NextResponse.json(
@@ -131,6 +126,7 @@ export async function POST(
     const fileExt = file.name.split(".").pop()?.toLowerCase() ?? "";
     const isVideo =
       VIDEO_TYPES.includes(fileType) ||
+      fileType.startsWith("video/") ||
       fileExt === "mov" ||
       fileExt === "mp4" ||
       fileExt === "webm";
@@ -138,15 +134,19 @@ export async function POST(
     if (isVideo) {
       const ext = fileExt || "mp4";
       const safeName = `videos/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
-      const blob = await put(safeName, file.stream(), {
+      const videoBuffer = await fileToBuffer(file);
+      const blob = await put(safeName, videoBuffer, {
         access: "public",
         contentType: fileType || "video/mp4",
       });
       return { url: blob.url, isVideo: true };
     } else {
+      // Read file into buffer once upfront (avoids stream re-read issues)
+      const rawBuffer = await fileToBuffer(file);
+
       // Try processing (watermark/convert), fallback to raw upload
       try {
-        const { buffer, contentType, ext } = await processPhoto(file);
+        const { buffer, contentType, ext } = await processPhoto(rawBuffer, file.name, fileType);
         if (buffer.length > 0) {
           const safeName = `products/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
           const blob = await put(safeName, buffer, {
@@ -158,10 +158,10 @@ export async function POST(
       } catch (e) {
         console.error("[media] processPhoto failed completely:", e);
       }
-      // Raw file upload fallback (no processing)
+      // Raw file upload fallback (no processing) — use pre-read buffer
       const ext = fileExt || "jpg";
       const safeName = `products/${id}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
-      const blob = await put(safeName, file.stream(), {
+      const blob = await put(safeName, rawBuffer, {
         access: "public",
         contentType: fileType || "image/jpeg",
       });
@@ -173,6 +173,7 @@ export async function POST(
   try {
     results = await Promise.all(uploads);
   } catch (e) {
+    console.error("[media] Upload failed:", e);
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Upload failed" },
       { status: 500 }

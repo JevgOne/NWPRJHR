@@ -40,6 +40,7 @@ const movementTypeStyles: Record<string, { bg: string; text: string }> = {
 async function getDashboardData(userId: string) {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
     const [
       salesThisMonth,
@@ -56,6 +57,8 @@ async function getDashboardData(userId: string) {
       pendingRegistrations,
       activeReservations,
       pendingReservationsCount,
+      monthlySales,
+      monthlyGrams,
     ] = await Promise.all([
       prisma.sale.aggregate({
         where: { status: "COMPLETED", completedAt: { gte: monthStart } },
@@ -149,6 +152,39 @@ async function getDashboardData(userId: string) {
       prisma.productReservation.count({
         where: { status: { in: ["PENDING", "PAID"] } },
       }),
+
+      // Monthly sales breakdown (last 6 months)
+      prisma.$queryRawUnsafe<
+        Array<{ month: string; salesCount: bigint; revenue: bigint; costOfGoods: bigint }>
+      >(
+        `SELECT
+          strftime('%Y-%m', completedAt) as month,
+          COUNT(id) as salesCount,
+          COALESCE(SUM(totalAmount), 0) as revenue,
+          COALESCE(SUM(totalCostOfGoods), 0) as costOfGoods
+        FROM sales
+        WHERE status = 'COMPLETED'
+          AND completedAt >= ?
+        GROUP BY strftime('%Y-%m', completedAt)
+        ORDER BY month DESC`,
+        sixMonthsAgo.toISOString()
+      ),
+
+      // Monthly grams sold
+      prisma.$queryRawUnsafe<
+        Array<{ month: string; gramsSold: bigint }>
+      >(
+        `SELECT
+          strftime('%Y-%m', s.completedAt) as month,
+          COALESCE(SUM(si.grams), 0) as gramsSold
+        FROM sale_items si
+        JOIN sales s ON si.saleId = s.id
+        WHERE s.status = 'COMPLETED'
+          AND s.completedAt >= ?
+        GROUP BY strftime('%Y-%m', s.completedAt)
+        ORDER BY month DESC`,
+        sixMonthsAgo.toISOString()
+      ),
     ]);
 
     return {
@@ -166,6 +202,8 @@ async function getDashboardData(userId: string) {
       pendingRegistrations,
       activeReservations,
       pendingReservationsCount,
+      monthlySales,
+      monthlyGrams,
     };
 }
 
@@ -195,7 +233,27 @@ export default async function DashboardPage() {
     pendingRegistrations,
     activeReservations,
     pendingReservationsCount,
+    monthlySales,
+    monthlyGrams,
   } = await getDashboardData(session.user.id);
+
+  // Monthly breakdown data
+  const isOwner = session.user.role === "OWNER";
+  const monthlyData = monthlySales.map((ms) => {
+    const grams = monthlyGrams.find((g) => g.month === ms.month);
+    const revenue = Number(ms.revenue);
+    const costOfGoods = Number(ms.costOfGoods);
+    const grossMargin = revenue - costOfGoods;
+    return {
+      month: ms.month,
+      salesCount: Number(ms.salesCount),
+      revenue,
+      costOfGoods,
+      grossMargin,
+      marginPercent: revenue > 0 ? (grossMargin / revenue) * 100 : 0,
+      gramsSold: Number(grams?.gramsSold ?? 0),
+    };
+  });
 
   // Compute stats from pre-aggregated SQL results
   const totalStockGrams = stockByCategory.reduce((a, r) => a + Number(r.totalGrams), 0);
@@ -240,7 +298,7 @@ export default async function DashboardPage() {
           label={t("totalSold")}
           value={fmtCZK(totalSold)}
           sub1={`${fmtGrams(totalGramsSold)} · ${totalSoldCount} ${t("salesCount")}`}
-          sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)}`}
+          sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)} (${totalSold > 0 ? ((totalSold - totalCOGS) / totalSold * 100).toFixed(0) : 0}%)`}
         />
         <StatCard
           label={t("awaitingPayment")}
@@ -413,7 +471,73 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── ROW 3.5: Batch announcement ── */}
+      {/* ── ROW 3.5: Monthly overview (owner only) ── */}
+      {isOwner && monthlyData.length > 0 && (
+        <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+          <h2 className="text-base font-semibold text-ink mb-4">{t("monthlyOverview")}</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs font-medium text-muted uppercase tracking-wider">
+                  <th className="pb-3 pr-4">{t("month")}</th>
+                  <th className="pb-3 pr-4 text-right">{t("salesCountShort")}</th>
+                  <th className="pb-3 pr-4 text-right">{t("revenue")}</th>
+                  <th className="pb-3 pr-4 text-right">{t("costs")}</th>
+                  <th className="pb-3 pr-4 text-right">{t("marginAmount")}</th>
+                  <th className="pb-3 pr-4 text-right">%</th>
+                  <th className="pb-3 text-right">{t("gramsSold")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {monthlyData.map((m) => (
+                  <tr key={m.month} className="hover:bg-nude-50 transition-colors">
+                    <td className="py-2.5 pr-4 font-medium text-ink whitespace-nowrap">
+                      {m.month.split("-").reverse().join("/")}
+                    </td>
+                    <td className="py-2.5 pr-4 text-right text-ink">{m.salesCount}</td>
+                    <td className="py-2.5 pr-4 text-right text-green-600 font-medium">{fmtCZK(m.revenue)}</td>
+                    <td className="py-2.5 pr-4 text-right text-red-600">{fmtCZK(m.costOfGoods)}</td>
+                    <td className="py-2.5 pr-4 text-right font-semibold text-ink">{fmtCZK(m.grossMargin)}</td>
+                    <td className="py-2.5 pr-4 text-right text-muted">{m.marginPercent.toFixed(0)}%</td>
+                    <td className="py-2.5 text-right text-ink">{fmtGrams(m.gramsSold)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              {monthlyData.length > 1 && (
+                <tfoot>
+                  <tr className="border-t-2 border-line font-semibold">
+                    <td className="pt-3 pr-4 text-ink">{t("total")}</td>
+                    <td className="pt-3 pr-4 text-right text-ink">
+                      {monthlyData.reduce((s, m) => s + m.salesCount, 0)}
+                    </td>
+                    <td className="pt-3 pr-4 text-right text-green-600">
+                      {fmtCZK(monthlyData.reduce((s, m) => s + m.revenue, 0))}
+                    </td>
+                    <td className="pt-3 pr-4 text-right text-red-600">
+                      {fmtCZK(monthlyData.reduce((s, m) => s + m.costOfGoods, 0))}
+                    </td>
+                    <td className="pt-3 pr-4 text-right text-ink">
+                      {fmtCZK(monthlyData.reduce((s, m) => s + m.grossMargin, 0))}
+                    </td>
+                    <td className="pt-3 pr-4 text-right text-muted">
+                      {(() => {
+                        const totalRev = monthlyData.reduce((s, m) => s + m.revenue, 0);
+                        const totalMargin = monthlyData.reduce((s, m) => s + m.grossMargin, 0);
+                        return totalRev > 0 ? (totalMargin / totalRev * 100).toFixed(0) + "%" : "—";
+                      })()}
+                    </td>
+                    <td className="pt-3 text-right text-ink">
+                      {fmtGrams(monthlyData.reduce((s, m) => s + m.gramsSold, 0))}
+                    </td>
+                  </tr>
+                </tfoot>
+              )}
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── ROW 4: Batch announcement ── */}
       <BatchAnnouncementCard />
 
       {/* ── ROW 4: Quick info badges ── */}

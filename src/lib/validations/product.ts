@@ -71,6 +71,6 @@ export const updateVariantSchema = z.object({
 });
 
 export const updatePriceSettingsSchema = z.object({
-  category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE"]),
+  category: z.enum(["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"]),
   markupPercent: z.number().int().min(0).max(1000),
 });
