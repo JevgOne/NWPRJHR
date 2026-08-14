@@ -9,78 +9,148 @@ interface BioProductData {
   colorCount?: number;
 }
 
-const CATEGORY_STORY: Record<string, string> = {
-  VIRGIN: "Tyto vlasy vám zaručují absolutní jistotu kvality. Každý culík pochází od jedné ženy — nikdy nesmícháváme vlasy z různých zdrojů. Získáváte tak 100% panenské vlasy, které nikdy nebyly barvené ani chemicky ošetřené.",
-  LUXE: "Luxusní vlasy s jemným šetrným ošetřením, které zachovává přirozenou strukturu a hedvábný vzhled. Ideální volba pro klientky, které chtějí luxusní výsledek za rozumnou cenu. Kvalitou se blíží panenskému vlasu, přitom nabízejí výborný poměr kvality a ceny.",
-  STANDARD: "Kvalitní vlasy ošetřené moderními postupy pro přirozený vzhled a spolehlivou trvanlivost. Perfektní pro klientky, které hledají změnu bez velkých investic — ať už jde o první prodloužení nebo doplnění objemu.",
-  SALE: "Vlasy za výhodnou akční cenu — skvělá příležitost vyzkoušet prodloužení nebo doplnit zásoby. Kvalita odpovídá vyšším kategoriím, cena je snížena díky omezené dostupnosti.",
+const ORIGIN_MAP: Record<string, string> = {
+  UA: "z Ukrajiny",
+  IN: "z Indie",
+  CN: "z Číny",
+  VN: "z Vietnamu",
+  MM: "z Myanmaru",
+  KH: "z Kambodže",
+  BR: "z Brazílie",
+  PE: "z Peru",
+  RU: "z Ruska",
+  UZ: "z Uzbekistánu",
+  MN: "z Mongolska",
 };
 
-const PROCESSING_STORY: Record<string, string> = {
-  CLIP_IN: "Zpracování metodou **clip-in** umožňuje snadné nasazení i sundání během pár minut, bez jakéhokoliv poškození vlastních vlasů. Ráno nasadíte, večer sundáte.",
-  TAPE_IN: "Metoda **tape-in** využívá ultratenké adhezivní pásky pro plochý a neviditelný spoj. Pohodlné celodenní nošení s přeaplikací každých 6–8 týdnů.",
-  KERATIN: "Zakončeno: **keratinový spoj**, italský keratin. Spoj je téměř neviditelný — okolí nepozná, že máte prodloužené vlasy.",
-  WEFT: "**Tresové zpracování** zajišťuje rychlou aplikaci s maximálním objemem a hustotou. Vhodné pro zkušené kadeřnice, které chtějí dosáhnout dramatického efektu.",
-  MICRO_RING: "Metoda **micro ring** využívá mikroskopické kroužky pro šetrnou aplikaci bez tepla a lepidla. Maximálně šetrné k vlastním vlasům.",
+const TEXTURE_ADJECTIVE: Record<string, string> = {
+  "Rovné": "rovné",
+  "Mírně vlnité": "mírně vlnité",
+  "Vlnité": "vlnité",
+  "Kudrnaté": "kudrnaté",
+};
+
+const PROCESSING_NOTE: Record<string, string> = {
+  CLIP_IN: "Zpracování clip-in — nasadíte a sundáte během pár minut, vlastní vlasy zůstávají nepoškozené.",
+  TAPE_IN: "Zpracování tape-in s ultratenkými adhezivními páskami pro plochý, neviditelný spoj.",
+  KERATIN: "Keratinový spoj z italského keratinu — téměř neviditelný, okolí nepozná prodloužení.",
+  WEFT: "Tresové zpracování pro rychlou aplikaci s maximálním objemem.",
+  MICRO_RING: "Metoda micro ring bez tepla a lepidla, maximálně šetrná k vlastním vlasům.",
   OTHER: "",
 };
 
-const ORIGIN_MAP: Record<string, string> = {
-  UA: "Ukrajina",
-  IN: "Indie",
-  CN: "Čína",
-  VN: "Vietnam",
-  MM: "Myanmar",
-  KH: "Kambodža",
-  BR: "Brazílie",
-  PE: "Peru",
-  RU: "Rusko",
-  UZ: "Uzbekistán",
-  MN: "Mongolsko",
-};
-
-const TEXTURE_MAP: Record<string, string> = {
-  STRAIGHT: "rovné",
-  WAVY: "vlnité",
-  CURLY: "kudrnaté",
-};
-
 export function generateProductBio(data: BioProductData): string {
-  const sections: string[] = [];
+  const origin = data.origin ? ORIGIN_MAP[data.origin] ?? `z ${data.origin}` : "";
+  const texture = data.texture ? TEXTURE_ADJECTIVE[data.texture] ?? data.texture.toLowerCase() : "";
+  const color = data.colorTone ?? "";
+  const lengthStr = formatLengths(data.lengths);
 
-  // 1. Category story (why these hair)
-  const story = CATEGORY_STORY[data.category];
-  if (story) sections.push(story);
+  let bio = "";
 
-  // 2. Origin + texture + color details
-  const details: string[] = [];
-  if (data.origin) {
-    const originName = ORIGIN_MAP[data.origin] ?? data.origin;
-    details.push(`Původ vlasů: **${originName}**`);
-  }
-  if (data.texture) {
-    const textureName = TEXTURE_MAP[data.texture] ?? data.texture;
-    details.push(`textura: **${textureName}**`);
-  }
-  if (data.colorTone) {
-    details.push(`odstín: **${data.colorTone}**`);
-  }
-  if (details.length > 0) {
-    sections.push(details.join(", ") + ".");
+  if (data.category === "VIRGIN") {
+    bio = buildVirginBio(origin, texture, color, lengthStr);
+  } else if (data.category === "LUXE") {
+    bio = buildLuxeBio(origin, texture, color, lengthStr);
+  } else if (data.category === "STANDARD") {
+    bio = buildStandardBio(origin, texture, color, lengthStr);
+  } else if (data.category === "SALE") {
+    bio = buildSaleBio(origin, texture, color, lengthStr);
+  } else {
+    bio = buildGenericBio(data.name, origin, texture, color, lengthStr);
   }
 
-  // 3. Available lengths
-  if (data.lengths && data.lengths.length > 0) {
-    if (data.lengths.length === 1) {
-      sections.push(`Dostupná délka: **${data.lengths[0]} cm**.`);
-    } else {
-      sections.push(`Dostupné délky: **${data.lengths[0]}–${data.lengths[data.lengths.length - 1]} cm**.`);
-    }
+  const proc = PROCESSING_NOTE[data.processingType];
+  if (proc) bio += `\n\n${proc}`;
+
+  return bio.trim();
+}
+
+function formatLengths(lengths?: number[]): string {
+  if (!lengths || lengths.length === 0) return "";
+  if (lengths.length === 1) return `${lengths[0]} cm`;
+  return `${lengths[0]}–${lengths[lengths.length - 1]} cm`;
+}
+
+function buildVirginBio(origin: string, texture: string, color: string, lengthStr: string): string {
+  const parts: string[] = [];
+
+  // Opening sentence with origin
+  if (origin) {
+    parts.push(`100% panenské ${texture} vlasy ${origin}, v odstínu ${color || "přirozený"}.`);
+  } else {
+    parts.push(`100% panenské ${texture} vlasy v odstínu ${color || "přirozený"}.`);
   }
 
-  // 4. Processing method story
-  const procStory = PROCESSING_STORY[data.processingType];
-  if (procStory) sections.push(procStory);
+  parts.push("Nikdy nebarvené, nikdy chemicky ošetřené — každý culík pochází od jedné dárkyně, takže struktura je po celé délce rovnoměrná.");
 
-  return sections.join("\n\n");
+  if (lengthStr) {
+    parts.push(`Dostupné v délce ${lengthStr}.`);
+  }
+
+  parts.push("Při správné péči vydrží rok i déle a lze je barvit, kadeřit i žehlit bez omezení.");
+
+  return parts.join(" ");
+}
+
+function buildLuxeBio(origin: string, texture: string, color: string, lengthStr: string): string {
+  const parts: string[] = [];
+
+  if (origin) {
+    parts.push(`Luxusní ${texture} vlasy ${origin} v odstínu ${color || "přirozený"}.`);
+  } else {
+    parts.push(`Luxusní ${texture} vlasy v odstínu ${color || "přirozený"}.`);
+  }
+
+  parts.push("Šetrně ošetřené tak, aby si zachovaly přirozenou strukturu a hedvábný lesk. Kvalitou se blíží panenskému vlasu za výrazně příznivější cenu.");
+
+  if (lengthStr) {
+    parts.push(`Dostupné v délce ${lengthStr}.`);
+  }
+
+  parts.push("Ideální volba pro klientky, které chtějí prémiový výsledek bez kompromisů na vzhledu.");
+
+  return parts.join(" ");
+}
+
+function buildStandardBio(origin: string, texture: string, color: string, lengthStr: string): string {
+  const parts: string[] = [];
+
+  if (origin) {
+    parts.push(`Kvalitní ${texture} vlasy ${origin} v odstínu ${color || "přirozený"}.`);
+  } else {
+    parts.push(`Kvalitní ${texture} vlasy v odstínu ${color || "přirozený"}.`);
+  }
+
+  parts.push("Ošetřené moderními postupy pro přirozený vzhled a spolehlivou trvanlivost. Skvělá volba pro první prodloužení nebo doplnění objemu.");
+
+  if (lengthStr) {
+    parts.push(`Dostupné v délce ${lengthStr}.`);
+  }
+
+  return parts.join(" ");
+}
+
+function buildSaleBio(origin: string, texture: string, color: string, lengthStr: string): string {
+  const parts: string[] = [];
+
+  parts.push(`${texture ? texture.charAt(0).toUpperCase() + texture.slice(1) : "Vlasy"} v odstínu ${color || "přirozený"} za výprodejovou cenu.`);
+
+  parts.push("Může jít o kusy, které nesplnily naše nejvyšší standardy, nebo o vlasy vrácené klientkami — pečlivě zastřižené, vyčesané a umyté.");
+
+  if (lengthStr) {
+    parts.push(`Délka ${lengthStr}.`);
+  }
+
+  parts.push("Na výprodejové vlasy neposkytujeme záruku.");
+
+  return parts.join(" ");
+}
+
+function buildGenericBio(name: string, origin: string, texture: string, color: string, lengthStr: string): string {
+  const parts: string[] = [name + "."];
+  if (origin) parts.push(`Původ ${origin}.`);
+  if (texture) parts.push(`Textura: ${texture}.`);
+  if (color) parts.push(`Odstín: ${color}.`);
+  if (lengthStr) parts.push(`Délka ${lengthStr}.`);
+  return parts.join(" ");
 }
