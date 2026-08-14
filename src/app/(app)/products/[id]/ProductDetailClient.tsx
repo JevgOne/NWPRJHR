@@ -358,7 +358,16 @@ export function ProductDetailClient({
   })();
 
   const handlePhotosChange = useCallback(
+    async () => {
+      // After upload: media route already saved to DB, just refresh UI
+      router.refresh();
+    },
+    [router]
+  );
+
+  const handlePhotosDelete = useCallback(
     async (newPhotos: string[]) => {
+      // After delete: need PUT because no server endpoint was called
       const res = await fetch(`/api/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -827,6 +836,7 @@ export function ProductDetailClient({
           <PhotoUpload
             photos={parsedPhotos}
             onChange={handlePhotosChange}
+            onDelete={handlePhotosDelete}
             video={product.video}
             onVideoChange={handleVideoChange}
             productId={product.id}

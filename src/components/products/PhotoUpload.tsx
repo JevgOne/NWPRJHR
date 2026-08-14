@@ -11,13 +11,14 @@ const VIDEO_EXTS = ["mp4", "mov", "webm"];
 interface PhotoUploadProps {
   photos: string[];
   onChange: (photos: string[]) => void;
+  onDelete?: (photos: string[]) => void;
   video?: string | null;
   onVideoChange?: (videoUrl: string | null) => void;
   disabled?: boolean;
   productId?: string;
 }
 
-export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, productId }: PhotoUploadProps) {
+export function PhotoUpload({ photos, onChange, onDelete, video, onVideoChange, disabled, productId }: PhotoUploadProps) {
   const t = useTranslations("photos");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -91,7 +92,8 @@ export function PhotoUpload({ photos, onChange, video, onVideoChange, disabled, 
   );
 
   function handleRemove(index: number) {
-    onChange(photos.filter((_, i) => i !== index));
+    const updated = photos.filter((_, i) => i !== index);
+    (onDelete ?? onChange)(updated);
   }
 
   function handleDrop(e: React.DragEvent) {

@@ -138,7 +138,7 @@ export async function PUT(
     ipAddress: getClientIp(request),
   });
 
-  revalidateTag("products", { expire: 0 });
+  try { revalidateTag("products", { expire: 0 }); } catch { /* noop */ }
   return NextResponse.json(product);
 }
 
@@ -170,7 +170,7 @@ export async function DELETE(
       ipAddress: getClientIp(request),
     });
 
-    revalidateTag("products", { expire: 0 });
+    try { revalidateTag("products", { expire: 0 }); } catch { /* noop */ }
     return NextResponse.json(product);
   }
 
@@ -256,10 +256,12 @@ export async function DELETE(
     ipAddress: getClientIp(request),
   });
 
-  revalidatePath("/inventory");
-  revalidatePath("/inventory/movements");
-  revalidateTag("dashboard", { expire: 0 });
-  revalidateTag("products", { expire: 0 });
+  try {
+    revalidatePath("/inventory");
+    revalidatePath("/inventory/movements");
+    revalidateTag("dashboard", { expire: 0 });
+    revalidateTag("products", { expire: 0 });
+  } catch { /* noop — revalidation failure must not block response */ }
 
   return NextResponse.json({ deleted: true, productName: product.name });
 }

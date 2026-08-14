@@ -213,7 +213,8 @@
     "cannotDeleteDelivery": "Nelze smazat — částečně spotřebováno",
     "supplierCode": "Kód dodavatele",
     "photoCode": "Foto kód",
-    "confirmDelete": "Opravdu smazat produkt \"{name}\" včetně všech variant a dodávek? Tuto akci nelze vrátit."
+    "confirmDelete": "Opravdu smazat produkt \"{name}\" včetně všech variant a dodávek? Tuto akci nelze vrátit.",
+    "searchPlaceholder": "Hledat podle názvu, původu nebo SKU (např. V-RV-01-45)..."
   },
   "colorTone": {
     "blond": "Blond",

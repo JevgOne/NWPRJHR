@@ -68,9 +68,10 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
         const q = search.toLowerCase();
         const nameMatch = p.name.toLowerCase().includes(q);
         const originMatch = p.origin?.toLowerCase().includes(q);
-        const skuMatch = p.variants?.some((v) =>
-          generateSku(p.category, p.texture, v.color, v.lengthCm).toLowerCase().includes(q)
-        );
+        const skuMatch = p.variants?.some((v) => {
+          const sku = generateSku(p.category, p.texture, v.color, v.lengthCm).toLowerCase();
+          return sku.includes(q) || sku.replace(/-0+/g, "-").includes(q.replace(/-0+/g, "-"));
+        });
         if (!nameMatch && !originMatch && !skuMatch) return false;
       }
       return true;
@@ -85,7 +86,7 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder={t("common.search") + "..."}
+          placeholder={t("product.searchPlaceholder")}
           className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:ring-1 focus:ring-rose focus:border-rose"
         />
 
