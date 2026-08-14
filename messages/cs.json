@@ -880,7 +880,7 @@
       "categoryDescVirgin": "Nejvyšší kvalita, neošetřené",
       "categoryDescLuxe": "Prémiová kvalita",
       "categoryDescStandard": "Skvělý poměr cena/kvalita",
-      "categoryDescSale": "Výhodné ceny",
+      "categoryDescSale": "Prověřené vlasy za zlomek ceny",
       "categoryImageAlt": "vlasy k prodloužení",
       "colorPaletteTitle": "Široká škála odstínů",
       "colorPaletteSubtitle": "Od platinové blond po tmavě černou. Najdeme přesný odstín, který se hodí k vašim vlasům — přijedeme s ukázkami a porovnáme naživo.",
@@ -1013,8 +1013,8 @@
       "trustReturnDesc": "Výměna nebo vrácení zdarma, bez komplikací.",
       "trustQuestion": "Poradíme vám",
       "trustQuestionDesc": "Máte dotaz? Napište nám, rádi pomůžeme s výběrem.",
-      "noRetouchTitle": "Fotografie jsou ilustrační",
-      "noRetouchDesc": "Záměrně nepoužíváme studiové nasvícení ani úpravy fotografií. Skutečný odstín vlasů se může lišit v závislosti na osvětlení — co na obrazovce vypadá jako teplá blond, může naživo být o tón chladnější. Nechceme, abyste byly překvapené.",
+      "noRetouchTitle": "Fotografie focené při umělém světle",
+      "noRetouchDesc": "Každý produkt fotíme ve foto boxu za stálého umělého osvětlení, abychom zajistili co nejpodobnější podmínky pro všechny fotky. I tak se skutečný odstín může mírně lišit — fotka nikdy úplně nepředá, jak vlasy vypadají naživo. Pokud chcete, rádi vám pošleme fotku konkrétního kusu, který vás zajímá.",
       "noRetouchCta1Title": "Vyfotíme váš konkrétní kus",
       "noRetouchCta1Desc": "Pošleme reálnou fotku přesně toho svazku, který byste dostaly.",
       "noRetouchCta2Title": "Přijedeme ukázat zdarma",
@@ -1033,7 +1033,11 @@
       "notifyWhenAvailable": "Hlídat dostupnost",
       "notifyEmailPlaceholder": "Váš e-mail",
       "notifySuccess": "Dáme vám vědět, až bude skladem",
-      "notifyAlreadySubscribed": "Hlídáte dostupnost"
+      "notifyAlreadySubscribed": "Hlídáte dostupnost",
+      "saleExplanationTitle": "Proč je tento produkt ve výprodeji?",
+      "saleExplanationText": "Výprodejové vlasy jsou buď kusy, které nesplnily naše nejvyšší kvalitativní standardy, nebo vlasy vrácené klientkami po sundání. Každý culík jsme pečlivě zastříhli, vyčesali a umyli — jsou v plně použitelném stavu za výhodnou cenu.",
+      "saleNoWarrantyTitle": "Bez záruky",
+      "saleNoWarrantyText": "Na výprodejové vlasy neposkytujeme záruku. Nemůžeme ověřit původ vlasů, způsob předchozího zacházení ani stav před tím, než k nám přišly. Kupujete za zvýhodněnou cenu s vědomím tohoto omezení."
     },
     "accessories": {
       "title": "Příslušenství",
@@ -1206,11 +1210,11 @@
       "standardFeature2": "Přirozený vzhled a snadná údržba",
       "standardFeature3": "Vydrží 6–12 měsíců",
       "standardFeature4": "Dostupné ve více délkách",
-      "saleDesc": "Vlasy za zvýhodněnou cenu. Omezená dostupnost — ideální příležitost nakoupit výhodně.",
+      "saleDesc": "Vlasy za zvýhodněnou cenu — buď se jedná o kusy, které nesplnily naše nejvyšší standardy, nebo o vlasy vrácené klientkami. Každý culík pečlivě zastříháme, vyčešeme a umyjeme. Výsledkem jsou vlasy ve výborném stavu za zlomek běžné ceny. Na výprodejové vlasy neposkytujeme záruku — nemůžeme ověřit jejich předchozí historii.",
       "saleFeature1": "Výrazně zvýhodněná cena",
-      "saleFeature2": "Omezené množství skladem",
-      "saleFeature3": "Ideální na vyzkoušení nových technik",
-      "saleFeature4": "Kvalita odpovídající ceně"
+      "saleFeature2": "Pečlivě vyčesané a umyté",
+      "saleFeature3": "Bez záruky — neznámá historie vlasů",
+      "saleFeature4": "Omezené množství skladem"
     },
     "colors": {
       "c1": "Platinová blond",

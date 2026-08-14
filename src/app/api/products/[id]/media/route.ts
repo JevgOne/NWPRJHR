@@ -208,20 +208,14 @@ export async function POST(
 
   const allPhotos = [...existingPhotos, ...newPhotoUrls];
 
+  let updated;
   try {
-    const updated = await prisma.product.update({
+    updated = await prisma.product.update({
       where: { id },
       data: {
         photos: JSON.stringify(allPhotos),
         ...(videoUrl !== product.video ? { video: videoUrl } : {}),
       },
-    });
-
-    revalidateTag("products", { expire: 0 });
-
-    return NextResponse.json({
-      photos: allPhotos,
-      video: updated.video,
     });
   } catch (e) {
     console.error("[media] DB update failed:", e);
@@ -230,4 +224,13 @@ export async function POST(
       { status: 500 }
     );
   }
+
+  try { revalidateTag("products", { expire: 0 }); } catch (e) {
+    console.error("[media] revalidateTag failed:", e);
+  }
+
+  return NextResponse.json({
+    photos: allPhotos,
+    video: updated.video,
+  });
 }

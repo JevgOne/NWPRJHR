@@ -631,6 +631,13 @@ async function ProductDetailView({
       { q: "Jak dlouho vydrží standardní vlasy?", a: "Standardní vlasy vydrží přibližně 6 až 12 měsíců v závislosti na frekvenci nošení a péči. Při šetrném zacházení a správné údržbě mohou vydržet i déle." },
       { q: "Lze standardní vlasy barvit?", a: "Standardní vlasy lze barvit, ale doporučujeme pouze tónování nebo barvení do tmavších odstínů. Odbarvování může zkrátit životnost. Po barvení vždy aplikujte regenerační kúru." },
     ],
+    SALE: [
+      { q: "Proč jsou tyto vlasy ve výprodeji?", a: "Výprodejové vlasy jsou buď kusy, které nesplnily naše nejvyšší kvalitativní standardy (například nerovnoměrná textura), nebo vlasy vrácené klientkami po sundání. Každý culík jsme pečlivě zastříhli, vyčesali a umyli." },
+      { q: "Mají výprodejové vlasy záruku?", a: "Na výprodejové vlasy neposkytujeme záruku. Nemůžeme ověřit původ vlasů, způsob předchozího zacházení ani jejich stav před tím, než k nám přišly. Proto je prodáváme za výrazně zvýhodněnou cenu — kupujete s vědomím tohoto omezení." },
+      { q: "Jsou výprodejové vlasy poškozené?", a: "Ne, nejsou poškozené. Jde o vlasy v plně použitelném stavu — pouze nesplňují naše nejpřísnější standardy kvality, nebo jde o recyklované vlasy od klientek. Každý kus prochází kontrolou a přípravou (stříhání, česání, mytí)." },
+      { q: "Mohu výprodejové vlasy barvit?", a: "Záleží na konkrétním kusu. Vlasy, které nebyly dříve barveny, lze barvit bez omezení. U vlasů od klientek doporučujeme konzultaci — některé již mohly být barveny. Kontaktujte nás a poradíme." },
+      { q: "Jaká je životnost výprodejových vlasů?", a: "Životnost závisí na původní kvalitě a péči. Vlasy ve výprodeji mohou vydržet 6 měsíců až 2 roky. Doporučujeme stejnou péči jako u běžných vlasů — šampon bez sulfátů, pravidelné masky a šetrné zacházení." },
+    ],
   };
   const generalFaq: Array<{ q: string; a: string }> = [
     // Textura
@@ -973,6 +980,33 @@ async function ProductDetailView({
               return <p key={i}>{renderBold(block)}</p>;
             })}
           </div>
+
+          {/* Sale explanation + warranty banner — only for SALE category */}
+          {product.category === "SALE" && (
+            <div className="space-y-3">
+              {/* Why is it on sale */}
+              <div className="bg-red-50 border border-red-200/60 rounded-2xl p-5 flex items-start gap-3">
+                <svg className="w-5 h-5 text-red-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6Z" />
+                </svg>
+                <div>
+                  <h3 className="text-sm font-bold text-ink mb-1">{t("productDetail.saleExplanationTitle")}</h3>
+                  <p className="text-xs text-muted leading-relaxed">{t("productDetail.saleExplanationText")}</p>
+                </div>
+              </div>
+              {/* No warranty notice */}
+              <div className="bg-amber-50 border border-amber-200/60 rounded-2xl p-5 flex items-start gap-3">
+                <svg className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                <div>
+                  <h3 className="text-sm font-bold text-ink mb-1">{t("productDetail.saleNoWarrantyTitle")}</h3>
+                  <p className="text-xs text-muted leading-relaxed">{t("productDetail.saleNoWarrantyText")}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Specs row — compact, clickable */}
           <div className="bg-nude-50 rounded-2xl p-5 grid grid-cols-2 gap-4">
