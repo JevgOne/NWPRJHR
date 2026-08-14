@@ -31,6 +31,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const noWatermark = request.nextUrl.searchParams.get("noWatermark") === "true";
+
   const formData = await request.formData();
   const files = formData.getAll("files") as File[];
 
@@ -66,26 +68,34 @@ export async function POST(request: NextRequest) {
     let contentType = file.type;
     let outputExt = file.name.split(".").pop() ?? "jpg";
 
-    // Add watermark to photos → always outputs WebP
+    // Process photos: watermark → sharp fallback → raw passthrough
     if (isPhoto) {
       const arrayBuffer = await file.arrayBuffer();
       const inputBuffer = Buffer.from(arrayBuffer);
-      try {
-        uploadBuffer = await addWatermark(inputBuffer);
-        contentType = "image/webp";
-        outputExt = "webp";
-      } catch (e) {
-        console.error("[upload/photos] watermark failed, converting without watermark:", e);
+
+      if (noWatermark) {
+        // Skip all Sharp processing — upload raw file
+        uploadBuffer = inputBuffer;
+        contentType = file.type || "application/octet-stream";
+        outputExt = fileExt || "bin";
+      } else {
         try {
-          const sharp = (await import("sharp")).default;
-          uploadBuffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
-          contentType = "image/jpeg";
-          outputExt = "jpg";
-        } catch (e2) {
-          console.error("[upload/photos] sharp conversion also failed:", e2);
-          uploadBuffer = inputBuffer;
-          contentType = file.type || "application/octet-stream";
-          outputExt = fileExt || "bin";
+          uploadBuffer = await addWatermark(inputBuffer);
+          contentType = "image/webp";
+          outputExt = "webp";
+        } catch (e) {
+          console.error("[upload/photos] watermark failed, converting without watermark:", e);
+          try {
+            const sharp = (await import("sharp")).default;
+            uploadBuffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
+            contentType = "image/jpeg";
+            outputExt = "jpg";
+          } catch (e2) {
+            console.error("[upload/photos] sharp conversion also failed, using raw:", e2);
+            uploadBuffer = inputBuffer;
+            contentType = file.type || "application/octet-stream";
+            outputExt = fileExt || "bin";
+          }
         }
       }
     }

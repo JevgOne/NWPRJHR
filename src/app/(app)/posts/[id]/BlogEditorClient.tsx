@@ -121,7 +121,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
     try {
       const formData = new FormData();
       formData.append("files", file);
-      const res = await fetch("/api/upload/photos", { method: "POST", body: formData });
+      const res = await fetch("/api/upload/photos?noWatermark=true", { method: "POST", body: formData });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `Upload selhal (${res.status})`);
