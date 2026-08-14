@@ -388,7 +388,10 @@ async function generateProductMetadataFromProduct(
   const description = product.metaDescription || autoDescription;
 
   const productSlug = product.slug ?? product.id;
-  const ogImg = product.ogImage || product.photos[0] || "https://www.hairland.cz/og/og-home.jpg";
+  const rawOgImg = product.ogImage || product.photos[0] || "https://www.hairland.cz/og/og-home.jpg";
+  const ogImg = rawOgImg.startsWith("http")
+    ? `https://www.hairland.cz/_next/image?url=${encodeURIComponent(rawOgImg)}&w=1200&q=75`
+    : rawOgImg;
   // Minimum price for OG product tags
   const minPrice = product.variants.length > 0
     ? Math.min(...product.variants
