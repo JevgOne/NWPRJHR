@@ -420,15 +420,21 @@ export function ProductDetailClient({
     try { return tColors(getHairColor(c).nameKey); } catch { return c; }
   });
   const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
-  const baseTitle = [product.name, lengthStr].filter(Boolean).join(" ");
-  const titleWithColor = colorStr ? `${baseTitle} ${colorStr}` : baseTitle;
-  const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
+  const textureStr = product.texture ?? "";
+  const catShort = t(`public.meta.catShort.${product.category}`);
+  const seoBase = [textureStr ? `${textureStr} vlasy` : "Vlasy", lengthStr].filter(Boolean).join(" ");
+  const seoSuffix = [catShort].filter(Boolean).join(" ");
+  const seoFull = seoSuffix ? `${seoBase} — ${seoSuffix}` : seoBase;
+  const seoWithColor = colorStr ? `${seoBase} ${colorStr} — ${seoSuffix}` : seoFull;
+  const autoTitle = (seoWithColor.length + 11 <= 60) ? seoWithColor : seoFull;
   const autoDescParts: string[] = [product.name];
   if (product.origin) autoDescParts.push(`${t("product.originPrefix")} ${product.origin}`);
-  if (product.texture) autoDescParts.push(product.texture.toLowerCase());
+  if (product.texture && !product.name.toLowerCase().includes(product.texture.toLowerCase())) {
+    autoDescParts.push(product.texture.toLowerCase());
+  }
   if (lengthStr) autoDescParts.push(lengthStr);
   autoDescParts.push(t("product.autoSeoDesc"));
-  const autoDescription = autoDescParts.join(". ").slice(0, 155);
+  const autoDescription = autoDescParts.join(", ").slice(0, 155);
   const previewTitle = metaTitleValue || autoTitle;
 
   return (

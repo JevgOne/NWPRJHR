@@ -96,6 +96,20 @@ export function PhotoUpload({ photos, onChange, onDelete, video, onVideoChange, 
     (onDelete ?? onChange)(updated);
   }
 
+  function handleMoveUp(index: number) {
+    if (index === 0) return;
+    const reordered = [...photos];
+    [reordered[index - 1], reordered[index]] = [reordered[index], reordered[index - 1]];
+    (onDelete ?? onChange)(reordered);
+  }
+
+  function handleMoveDown(index: number) {
+    if (index === photos.length - 1) return;
+    const reordered = [...photos];
+    [reordered[index], reordered[index + 1]] = [reordered[index + 1], reordered[index]];
+    (onDelete ?? onChange)(reordered);
+  }
+
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setDragOver(false);
@@ -134,11 +148,40 @@ export function PhotoUpload({ photos, onChange, onDelete, video, onVideoChange, 
         <div className="flex flex-wrap gap-2 mb-3">
           {photos.map((url, i) => (
             <div key={url} className="relative group">
+              {i === 0 && (
+                <span className="absolute top-1 left-1 z-10 bg-rose text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
+                  {t("main")}
+                </span>
+              )}
               <img
                 src={url}
                 alt={`${t("photo")} ${i + 1}`}
                 className="w-32 h-32 object-cover rounded-lg border border-line"
               />
+              {!disabled && (
+                <div className="absolute bottom-1 left-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {i > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleMoveUp(i)}
+                      className="w-5 h-5 bg-black/60 text-white rounded text-xs flex items-center justify-center hover:bg-black/80"
+                      title={t("moveLeft")}
+                    >
+                      &larr;
+                    </button>
+                  )}
+                  {i < photos.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleMoveDown(i)}
+                      className="w-5 h-5 bg-black/60 text-white rounded text-xs flex items-center justify-center hover:bg-black/80"
+                      title={t("moveRight")}
+                    >
+                      &rarr;
+                    </button>
+                  )}
+                </div>
+              )}
               {!disabled && (
                 <button
                   type="button"

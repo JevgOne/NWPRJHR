@@ -654,7 +654,14 @@
       },
       "fromOrigin": "z {origin}",
       "priceFrom": "od {price} Kč",
-      "ctaSuffix": "Doručení do 7 dnů, osobní odběr Praha zdarma"
+      "ctaSuffix": "Doručení do 7 dnů, osobní odběr Praha zdarma",
+      "catShort": {
+        "VIRGIN": "panenské",
+        "LUXE": "luxe",
+        "STANDARD": "standardní",
+        "SALE": "akce",
+        "ACCESSORY": "příslušenství"
+      }
     },
     "nav": {
       "home": "Domů",
@@ -1510,7 +1517,10 @@
     "dragOrClick": "Přetáhněte fotky sem nebo klikněte pro výběr",
     "formats": "JPG, PNG, WebP (max 5 MB) · MP4, MOV, WebM (max 50 MB)",
     "addWatermark": "Přidat vodoznak na fotky",
-    "watermarking": "Přidávám vodoznak..."
+    "watermarking": "Přidávám vodoznak...",
+    "main": "Hlavní",
+    "moveLeft": "Posunout doleva",
+    "moveRight": "Posunout doprava"
   },
   "productForm": {
     "description": "Popis",

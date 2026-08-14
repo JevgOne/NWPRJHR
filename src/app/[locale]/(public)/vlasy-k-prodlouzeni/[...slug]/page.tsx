@@ -316,9 +316,11 @@ function buildAutoDescription(
   const originStr = product.origin ? t("meta.fromOrigin", { origin: product.origin }) : "";
   parts.push([catLabel, procLabel, originStr].filter(Boolean).join(" "));
 
-  // 2. Specs: texture, lengths, colors
+  // 2. Specs: texture (only if not in product name), lengths, colors
   const specs: string[] = [];
-  if (product.texture) specs.push(product.texture.toLowerCase());
+  if (product.texture && !product.name.toLowerCase().includes(product.texture.toLowerCase())) {
+    specs.push(product.texture.toLowerCase());
+  }
   if (lengths.length > 0) {
     specs.push(
       lengths.length <= 3
@@ -364,7 +366,7 @@ async function generateProductMetadataFromProduct(
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
   const colorCodes = [...new Set(product.variants.map((v) => v.color))];
 
-  // Title: "{name} {processing} {cm} {barva}" — layout adds "| Hairland" (11 chars) via template
+  // Title: "{Texture} vlasy {length} {color} — {catShort} {processing} | Hairland"
   const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
   const procLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? "";
   const colorNames = colorCodes.map((c) => {
@@ -372,17 +374,21 @@ async function generateProductMetadataFromProduct(
     try { return t(`colors.${key}`); } catch { return c; }
   });
   const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
-  const baseTitle = [product.name, procLabel, lengthStr].filter(Boolean).join(" ");
+  const textureStr = product.texture ?? "";
+  const catShort = t(`meta.catShort.${product.category}`);
+  const seoBase = [textureStr ? `${textureStr.charAt(0).toUpperCase() + textureStr.slice(1)} vlasy` : "Vlasy", lengthStr].filter(Boolean).join(" ");
+  const seoSuffix = [catShort, procLabel].filter(Boolean).join(" ");
+  const seoFull = seoSuffix ? `${seoBase} — ${seoSuffix}` : seoBase;
+  const seoWithColor = colorStr ? `${seoBase} ${colorStr} — ${seoSuffix}` : seoFull;
   // Add color only if total (incl. " | Hairland" = 11 chars) fits in 60
-  const titleWithColor = colorStr ? `${baseTitle} ${colorStr}` : baseTitle;
-  const autoTitle = (titleWithColor.length + 11 <= 60) ? titleWithColor : baseTitle;
+  const autoTitle = (seoWithColor.length + 11 <= 60) ? seoWithColor : seoFull;
   const title = product.metaTitle || autoTitle;
 
   const autoDescription = buildAutoDescription(product, colorNames, lengths, product.variants, t);
   const description = product.metaDescription || autoDescription;
 
   const productSlug = product.slug ?? product.id;
-  const ogImg = product.ogImage || product.photos[0];
+  const ogImg = product.ogImage || product.photos[0] || "/og/og-home.jpg";
   // Minimum price for OG product tags
   const minPrice = product.variants.length > 0
     ? Math.min(...product.variants
@@ -403,7 +409,7 @@ async function generateProductMetadataFromProduct(
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       ...(ogImg && {
-        images: [{ url: ogImg, alt: product.name, width: 1200, height: 630 }],
+        images: [{ url: ogImg, alt: product.name }],
       }),
     },
     twitter: {

@@ -654,7 +654,14 @@
       },
       "fromOrigin": "з {origin}",
       "priceFrom": "від {price} Kč",
-      "ctaSuffix": "Доставка до 7 днів, самовивіз Прага безкоштовно"
+      "ctaSuffix": "Доставка до 7 днів, самовивіз Прага безкоштовно",
+      "catShort": {
+        "VIRGIN": "натуральне",
+        "LUXE": "люкс",
+        "STANDARD": "стандарт",
+        "SALE": "акція",
+        "ACCESSORY": "аксесуари"
+      }
     },
     "nav": {
       "home": "Головна",
@@ -1510,7 +1517,10 @@
     "dragOrClick": "Перетягніть фото сюди або натисніть для вибору",
     "formats": "JPG, PNG, WebP (макс 5 МБ) · MP4, MOV, WebM (макс 50 МБ)",
     "addWatermark": "Додати водяний знак на фото",
-    "watermarking": "Додаю водяний знак..."
+    "watermarking": "Додаю водяний знак...",
+    "main": "Головна",
+    "moveLeft": "Посунути ліворуч",
+    "moveRight": "Посунути праворуч"
   },
   "productForm": {
     "description": "Опис",
