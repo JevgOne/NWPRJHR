@@ -198,7 +198,10 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") ?? "50", 10)));
 
-  const where: Record<string, unknown> = { status: "COMPLETED" };
+  const where: Record<string, unknown> = {
+    status: "COMPLETED",
+    paymentType: { notIn: ["WRITEOFF", "PROMO"] },
+  };
 
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER") {
     where.salonId = session.user.salonId;

@@ -61,7 +61,7 @@ async function getDashboardData(userId: string) {
       monthlyGrams,
     ] = await Promise.all([
       prisma.sale.aggregate({
-        where: { status: "COMPLETED", completedAt: { gte: monthStart } },
+        where: { status: "COMPLETED", completedAt: { gte: monthStart }, paymentType: { notIn: ["WRITEOFF", "PROMO"] } },
         _count: { id: true },
         _sum: { totalAmount: true },
       }),
@@ -89,13 +89,13 @@ async function getDashboardData(userId: string) {
       prisma.salon.count({ where: { approved: true, archived: false } }),
 
       prisma.sale.aggregate({
-        where: { status: "COMPLETED" },
+        where: { status: "COMPLETED", paymentType: { notIn: ["WRITEOFF", "PROMO"] } },
         _count: { id: true },
         _sum: { totalAmount: true, totalCostOfGoods: true },
       }),
 
       prisma.saleItem.aggregate({
-        where: { sale: { status: "COMPLETED" } },
+        where: { sale: { status: "COMPLETED", paymentType: { notIn: ["WRITEOFF", "PROMO"] } } },
         _sum: { grams: true },
       }),
 
@@ -166,6 +166,7 @@ async function getDashboardData(userId: string) {
           SUM(CASE WHEN discountAmount > 0 THEN 1 ELSE 0 END) as discountedSalesCount
         FROM sales
         WHERE status = 'COMPLETED'
+          AND paymentType NOT IN ('WRITEOFF', 'PROMO')
           AND completedAt >= ?
         GROUP BY strftime('%Y-%m', completedAt)
         ORDER BY month DESC`,
@@ -182,6 +183,7 @@ async function getDashboardData(userId: string) {
         FROM sale_items si
         JOIN sales s ON si.saleId = s.id
         WHERE s.status = 'COMPLETED'
+          AND s.paymentType NOT IN ('WRITEOFF', 'PROMO')
           AND s.completedAt >= ?
         GROUP BY strftime('%Y-%m', s.completedAt)
         ORDER BY month DESC`,
