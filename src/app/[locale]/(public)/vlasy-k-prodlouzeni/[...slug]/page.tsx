@@ -388,7 +388,7 @@ async function generateProductMetadataFromProduct(
   const description = product.metaDescription || autoDescription;
 
   const productSlug = product.slug ?? product.id;
-  const ogImg = product.ogImage || product.photos[0] || "/og/og-home.jpg";
+  const ogImg = product.ogImage || product.photos[0] || "https://www.hairland.cz/og/og-home.jpg";
   // Minimum price for OG product tags
   const minPrice = product.variants.length > 0
     ? Math.min(...product.variants
@@ -409,7 +409,7 @@ async function generateProductMetadataFromProduct(
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       ...(ogImg && {
-        images: [{ url: ogImg, alt: product.name }],
+        images: [{ url: ogImg, width: 1200, height: 630, alt: product.name }],
       }),
     },
     twitter: {
