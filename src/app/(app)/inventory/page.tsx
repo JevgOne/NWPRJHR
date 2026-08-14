@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 async function getInventoryData() {
   const [variants, allStock, latestBarcodes] = await Promise.all([
     prisma.variant.findMany({
-      where: { active: true },
+      where: { active: true, product: { archived: false } },
       include: {
         product: {
           select: { id: true, name: true, category: true, origin: true, texture: true },
@@ -19,7 +19,7 @@ async function getInventoryData() {
     }),
     getAllStockNumbers(),
     prisma.delivery.findMany({
-      where: { variant: { active: true }, barcode: { not: null } },
+      where: { variant: { active: true, product: { archived: false } }, barcode: { not: null } },
       orderBy: { stockedAt: "desc" },
       distinct: ["variantId"],
       select: { variantId: true, barcode: true },
