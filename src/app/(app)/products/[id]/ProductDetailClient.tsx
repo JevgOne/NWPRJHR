@@ -924,6 +924,29 @@ export function ProductDetailClient({
             </p>
           </div>
 
+          {/* Social Media Preview */}
+          <div className="mb-4">
+            <p className="text-xs text-muted mb-1">Facebook / Messenger</p>
+            <div className="border rounded-lg overflow-hidden max-w-md bg-white">
+              <div className="aspect-[1200/630] bg-nude-100 relative overflow-hidden">
+                <img
+                  src={ogImageValue || ((localPhotos ?? parsedPhotos)[0] ? `https://www.hairland.cz/_next/image?url=${encodeURIComponent((localPhotos ?? parsedPhotos)[0])}&w=1200&q=75` : "/og/og-home.jpg")}
+                  alt="OG Preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = "/og/og-home.jpg"; }}
+                />
+              </div>
+              <div className="p-2 border-t">
+                <p className="text-xs text-gray-500 uppercase">hairland.cz</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">{previewTitle}</p>
+                <p className="text-xs text-gray-600 line-clamp-2">{metaDescValue || autoDescription}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted mt-1">
+              {ogImageValue ? "Manuální OG obrázek" : (localPhotos ?? parsedPhotos)[0] ? "Použije se: první fotka produktu" : "Výchozí Hairland obrázek"}
+            </p>
+          </div>
+
           <Button
             size="sm"
             onClick={handleSaveSeo}
