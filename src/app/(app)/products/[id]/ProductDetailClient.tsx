@@ -357,9 +357,16 @@ export function ProductDetailClient({
     }
   })();
 
+  const [localPhotos, setLocalPhotos] = useState<string[] | null>(null);
+
+  // Sync localPhotos with server props after router.refresh() completes
+  useEffect(() => {
+    setLocalPhotos(null);
+  }, [product.photos]);
+
   const handlePhotosChange = useCallback(
-    async () => {
-      // After upload: media route already saved to DB, just refresh UI
+    async (newPhotos: string[]) => {
+      setLocalPhotos(newPhotos);
       router.refresh();
     },
     [router]
@@ -367,7 +374,7 @@ export function ProductDetailClient({
 
   const handlePhotosDelete = useCallback(
     async (newPhotos: string[]) => {
-      // After delete: need PUT because no server endpoint was called
+      setLocalPhotos(newPhotos);
       const res = await fetch(`/api/products/${product.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -840,7 +847,7 @@ export function ProductDetailClient({
       {isOwner && (
         <Card>
           <PhotoUpload
-            photos={parsedPhotos}
+            photos={localPhotos ?? parsedPhotos}
             onChange={handlePhotosChange}
             onDelete={handlePhotosDelete}
             video={product.video}
@@ -927,7 +934,7 @@ export function ProductDetailClient({
         </Card>
       )}
 
-      {!isOwner && (parsedPhotos.length > 0 || product.video) && (
+      {!isOwner && ((localPhotos ?? parsedPhotos).length > 0 || product.video) && (
         <Card>
           <label className="block text-sm font-medium text-espresso mb-2">
             {t("photos.title")}
@@ -942,7 +949,7 @@ export function ProductDetailClient({
             </div>
           )}
           <div className="flex flex-wrap gap-2">
-            {parsedPhotos.map((url, i) => (
+            {(localPhotos ?? parsedPhotos).map((url, i) => (
               <img
                 key={url}
                 src={url}
