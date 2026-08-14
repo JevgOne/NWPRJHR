@@ -6,6 +6,8 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 import { getCachedAllProducts } from "@/lib/cached-products";
 
+export const revalidate = 60;
+
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
   return {
