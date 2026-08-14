@@ -138,7 +138,10 @@ export async function PUT(
     ipAddress: getClientIp(request),
   });
 
-  try { revalidateTag("products", { expire: 0 }); } catch { /* noop */ }
+  try {
+    revalidateTag("products", { expire: 0 });
+    revalidatePath(`/products/${id}`);
+  } catch { /* noop */ }
   return NextResponse.json(product);
 }
 
