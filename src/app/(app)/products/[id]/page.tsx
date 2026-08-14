@@ -4,6 +4,8 @@ import { redirect, notFound } from "next/navigation";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
 import { ProductDetailClient } from "./ProductDetailClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductDetailPage({
   params,
 }: {
