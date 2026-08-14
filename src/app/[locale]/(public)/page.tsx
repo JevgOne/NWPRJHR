@@ -7,6 +7,7 @@ import { unstable_cache } from "next/cache";
 import { getHairColor } from "@/lib/hair-colors";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
+import { selectHeroProducts } from "@/lib/flatten-variants";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
@@ -256,7 +257,7 @@ export default async function LandingPage() {
 
           {/* Product slider */}
           <div className="border-t border-line pt-6 sm:pt-8 mt-6 sm:mt-8 px-4">
-            <HeroProductSlider products={allProducts} />
+            <HeroProductSlider products={selectHeroProducts(allProducts)} />
           </div>
 
           <div className="flex gap-3 justify-center mt-4 sm:mt-6">

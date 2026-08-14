@@ -4,6 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
+import { selectHeroProducts } from "@/lib/flatten-variants";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 
 const NAMESPACE = "ukrainianLP";
@@ -265,7 +266,7 @@ export default async function UkrajinskVlasyPage() {
           <p className="text-sm text-muted leading-relaxed max-w-3xl mb-4">
             {t("productsSubtitle")}
           </p>
-          <HeroProductSlider products={filteredProducts} />
+          <HeroProductSlider products={selectHeroProducts(filteredProducts)} />
           <div className="text-center mt-4">
             <Link
               href="/vlasy-k-prodlouzeni?origin=Ukrajina"
