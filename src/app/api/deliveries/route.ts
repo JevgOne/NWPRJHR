@@ -57,9 +57,9 @@ export async function GET(request: NextRequest) {
 // Color code → colorTone mapping
 function autoColorTone(colorCode: string): string {
   const map: Record<string, string> = {
-    "1": "Blond", "2": "Blond", "3": "Blond", "4": "Blond",
-    "5": "Hnědá", "6": "Hnědá", "7": "Hnědá",
-    "8": "Tmavě hnědá", "9": "Tmavě hnědá", "10": "Černá",
+    "1": "Platinová blond", "2": "Světlá blond", "3": "Zlatá blond", "4": "Medová blond",
+    "5": "Karamelová", "6": "Světle hnědá", "7": "Středně hnědá",
+    "8": "Tmavě hnědá", "9": "Kaštanová", "10": "Černá",
     "ombre": "Ombre",
   };
   return map[colorCode] ?? "Hnědá";
