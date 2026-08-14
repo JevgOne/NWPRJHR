@@ -9,6 +9,7 @@ import { TextureSwatch } from "@/components/TextureSwatch";
 import { getColorToneInfo } from "@/lib/color-tones";
 import { getHairColor } from "@/lib/hair-colors";
 import { getOriginFlag } from "@/lib/origin-flags";
+import { generateSku } from "@/lib/sku";
 
 interface VariantItem {
   id?: string;
@@ -65,7 +66,12 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
       if (textureFilter && p.texture !== textureFilter) return false;
       if (search) {
         const q = search.toLowerCase();
-        if (!p.name.toLowerCase().includes(q) && !(p.origin?.toLowerCase().includes(q))) return false;
+        const nameMatch = p.name.toLowerCase().includes(q);
+        const originMatch = p.origin?.toLowerCase().includes(q);
+        const skuMatch = p.variants?.some((v) =>
+          generateSku(p.category, p.texture, v.color, v.lengthCm).toLowerCase().includes(q)
+        );
+        if (!nameMatch && !originMatch && !skuMatch) return false;
       }
       return true;
     });

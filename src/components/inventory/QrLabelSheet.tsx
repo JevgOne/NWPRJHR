@@ -103,18 +103,18 @@ export function QrLabelSheet({
                   className="bg-white shadow border border-gray-200 flex flex-col items-center justify-between p-[1.5mm]"
                   style={{ width: "40mm", height: "30mm" }}
                 >
-                  <div className="text-[13px] font-bold text-ink leading-none font-mono text-center w-full tracking-tight">
+                  <div className="text-[7px] font-bold text-ink leading-tight text-center truncate w-full">
                     {sku}
-                  </div>
-                  <div className="text-[11px] font-semibold text-ink leading-none text-center">
-                    {label.lengthCm} cm{label.grams ? ` · ${label.grams} g` : ""}
                   </div>
                   <img
                     src={label.qrDataUrl}
                     alt="QR"
                     className="flex-shrink-0"
-                    style={{ width: "17mm", height: "17mm" }}
+                    style={{ width: "16mm", height: "16mm" }}
                   />
+                  <div className="text-[7px] text-ink leading-tight text-center">
+                    {label.category} · {label.lengthCm} cm
+                  </div>
                 </div>
               );
             })}
@@ -128,17 +128,17 @@ export function QrLabelSheet({
           const sku = generateSku(label.category, label.texture, label.color, label.lengthCm);
           return (
             <div key={label.variantId} className="qr-label" style={{ flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "1.5mm" }}>
-              <div style={{ fontSize: "13px", fontWeight: "bold", lineHeight: 1, fontFamily: "monospace", textAlign: "center", width: "100%", letterSpacing: "-0.5px" }}>
+              <div style={{ fontSize: "7px", fontWeight: "bold", lineHeight: 1.2, textAlign: "center", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {sku}
-              </div>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "#000", textAlign: "center", lineHeight: 1 }}>
-                {label.lengthCm} cm{label.grams ? ` · ${label.grams} g` : ""}
               </div>
               <img
                 src={label.qrDataUrl}
                 alt="QR"
-                style={{ width: "17mm", height: "17mm", flexShrink: 0 }}
+                style={{ width: "16mm", height: "16mm", flexShrink: 0 }}
               />
+              <div style={{ fontSize: "7px", color: "#000", textAlign: "center" }}>
+                {label.category} · {label.lengthCm} cm
+              </div>
             </div>
           );
         })}

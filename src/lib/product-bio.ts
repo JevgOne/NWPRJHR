@@ -25,6 +25,26 @@ const PROCESSING_STORY: Record<string, string> = {
   OTHER: "",
 };
 
+const ORIGIN_MAP: Record<string, string> = {
+  UA: "Ukrajina",
+  IN: "Indie",
+  CN: "Čína",
+  VN: "Vietnam",
+  MM: "Myanmar",
+  KH: "Kambodža",
+  BR: "Brazílie",
+  PE: "Peru",
+  RU: "Rusko",
+  UZ: "Uzbekistán",
+  MN: "Mongolsko",
+};
+
+const TEXTURE_MAP: Record<string, string> = {
+  STRAIGHT: "rovné",
+  WAVY: "vlnité",
+  CURLY: "kudrnaté",
+};
+
 export function generateProductBio(data: BioProductData): string {
   const sections: string[] = [];
 
@@ -32,7 +52,33 @@ export function generateProductBio(data: BioProductData): string {
   const story = CATEGORY_STORY[data.category];
   if (story) sections.push(story);
 
-  // 2. Processing method story
+  // 2. Origin + texture + color details
+  const details: string[] = [];
+  if (data.origin) {
+    const originName = ORIGIN_MAP[data.origin] ?? data.origin;
+    details.push(`Původ vlasů: **${originName}**`);
+  }
+  if (data.texture) {
+    const textureName = TEXTURE_MAP[data.texture] ?? data.texture;
+    details.push(`textura: **${textureName}**`);
+  }
+  if (data.colorTone) {
+    details.push(`odstín: **${data.colorTone}**`);
+  }
+  if (details.length > 0) {
+    sections.push(details.join(", ") + ".");
+  }
+
+  // 3. Available lengths
+  if (data.lengths && data.lengths.length > 0) {
+    if (data.lengths.length === 1) {
+      sections.push(`Dostupná délka: **${data.lengths[0]} cm**.`);
+    } else {
+      sections.push(`Dostupné délky: **${data.lengths[0]}–${data.lengths[data.lengths.length - 1]} cm**.`);
+    }
+  }
+
+  // 4. Processing method story
   const procStory = PROCESSING_STORY[data.processingType];
   if (procStory) sections.push(procStory);
 
