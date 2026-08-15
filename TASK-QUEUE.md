@@ -30,32 +30,6 @@ Uživatel: "upravil jsem cenu nákupní na 3300 u S-RV-10-55 a marže je stale 2
 
 ## P1 — DŮLEŽITÉ (opravit co nejdřív)
 
-### TASK-097: Oddělené číslování faktur (karta vs hotovost)
-Stav: IMPLEMENTOVÁNO, ČEKÁ DEPLOY
-- Schema: InvoiceCounter má `prefix` field + `@@unique([year, prefix])`
-- `invoice-number.ts`: prefix "H" = hotovost, "F" = faktura/karta
-- Formát: H2026-0001 (hotovost), F2026-0001 (karta/převod)
-- POTŘEBA: `npx prisma db push` nebo migration na produkci
-
----
-
-### TASK-098: Výběr zákazníků — redesign pro mobil
-Stav: IMPLEMENTOVÁNO, ČEKÁ DEPLOY
-- CustomerSelect.tsx: redesign — avatary, hledání, checkmark, kompaktní layout
-- ZBÝVÁ: smazat testovací zákazníky z DB (viz TASK-103)
-
----
-
-### TASK-100: Blog — nahrávání obrázků nefunguje
-Stav: čeká
-Uživatel: "proč zase nejde nahrat obrazek do blogu?"
-- Blog editor: `src/app/(app)/posts/[id]/BlogEditorClient.tsx` (handleCoverUpload)
-- Upload API: `src/app/api/upload/photos/route.ts` — @vercel/blob + sharp watermark
-- Watermark: `src/lib/watermark.ts` — může selhat na Vercelu (sharp)
-- Ověřit: BLOB token, error handling, sharp kompatibilita
-
----
-
 ### TASK-102: Kalendář — mobilní optimalizace + WOW design
 Stav: čeká
 Uživatel: "kalendář jsi nedořešil furt je to obyčejny, neni optimalizace pro telefon"
@@ -70,37 +44,7 @@ Stav: čeká
 
 ---
 
-### TASK-114: Prodej — přidání více produktů (QR) do jedné faktury
-Stav: plánování
-Uživatel: "když prodavame salonu vlasy a on si chce vzít 2-3 druhy jinych, tak se tam neda přidat nic po tom co načtu QR, že bych mohl jeste přidat QR/produkt a načetlo by se to do jedné faktury"
-- Po naskenování QR nejde přidat další produkt do stejného prodeje
-- Potřeba: tlačítko "Přidat další QR/produkt" → vše na jednu fakturu
-
----
-
-### TASK-027: Dashboard cache — phantom data
-Stav: čeká
-- Dashboard ukazuje neexistující pohyby
-- `src/app/(app)/dashboard/page.tsx:111-119` — recentMovements query
-- Cached s `revalidate: 60, tags: ["dashboard"]`
-
----
-
 ## P2 — STŘEDNÍ PRIORITA
-
-### TASK-101: Blog — SEO meta popisky slabé
-Stav: čeká
-- Blog detail/listing generateMetadata
-- Auto-generace SEO popisků chybí, fallback na excerpt/title slabý
-
----
-
-### TASK-080: Emoji nefunguje v poptávkách (assignedTo)
-Stav: čeká
-- Funguje v sidebaru, ne v seznamu poptávek
-- `UserBadge.tsx`, `InquiriesClient.tsx`
-
----
 
 ### TASK-071: Performance — pomalé načítání admin panelu
 Stav: čeká
@@ -138,6 +82,13 @@ Stav: analýza hotová, uživatel chce udělat jako POSLEDNÍ (~prosinec 2026)
 ---
 
 ## HOTOVÉ
+- TASK-097: Oddělené číslování faktur — prefix H/F (commit 04b5490) — 2026-08-15
+- TASK-098: Výběr zákazníků — redesign pro mobil (commit 04b5490) — 2026-08-15
+- TASK-100: Blog — nahrávání obrázků fix (commit 95920df) — 2026-08-15
+- TASK-114: Prodej — multi QR do jedné faktury (commit a296a6e) — 2026-08-15
+- TASK-027: Dashboard cache — phantom data fix (force-dynamic) — 2026-08-15
+- TASK-080: Emoji v poptávkách fix (commit 9d312db) — 2026-08-15
+- TASK-101: Blog — SEO meta popisky (commit 582983b) — 2026-08-15
 - TASK-106: Mazání variant — cascade delete fix — 2026-08-09
 - TASK-108: Comgate karetní platby — merchant 515911 setup — 2026-08-09
 - TASK-099: Notifikační zvoneček — navigace + storno cleanup — 2026-08-09
