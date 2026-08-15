@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 
 interface PhotoGalleryProps {
   photos: string[];
@@ -121,10 +122,14 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
               onClick={() => { setLightboxIndex(selected); setLightboxOpen(true); }}
               className="block w-full h-full cursor-zoom-in"
             >
-              <img
+              <Image
                 src={photos[selected]}
                 alt={`${alt} – fotka ${selected + 1}`}
-                className="w-full h-full object-cover transition-all duration-500 ease-out group-hover:scale-[1.03]"
+                fill
+                sizes="(max-width: 1023px) 100vw, 50vw"
+                quality={80}
+                priority={selected === 0}
+                className="object-cover transition-all duration-500 ease-out group-hover:scale-[1.03]"
               />
             </button>
 
@@ -185,16 +190,19 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
                 <button
                   key={i}
                   onClick={() => setSelected(i)}
-                  className={`flex-shrink-0 w-[76px] h-[76px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                  className={`relative flex-shrink-0 w-[76px] h-[76px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                     i === selected
                       ? "border-rose ring-2 ring-rose/20 shadow-sm"
                       : "border-line/30 opacity-60 hover:opacity-100 hover:border-line"
                   }`}
                 >
-                  <img
+                  <Image
                     src={photo}
                     alt={`${alt} – náhled ${i + 1}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="76px"
+                    quality={60}
+                    className="object-cover"
                   />
                 </button>
               ))}
