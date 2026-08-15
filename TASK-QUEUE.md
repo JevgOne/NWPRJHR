@@ -1,22 +1,12 @@
 # TASK QUEUE — Hairland
 
-**Aktualizováno:** 2026-07-21
+**Aktualizováno:** 2026-08-15
 **Firma:** Altro servis group s.r.o., IČO 23673389
 **Účet:** 6424423004/5500, IBAN CZ5555000000006424423004 — NEMĚNIT!
 
 ---
 
 ## P0 — KRITICKÉ (blokuje provoz)
-
-### TASK-106: Mazání variant — "Unknown error"
-Stav: čeká
-Uživatel: screenshot "Smazání se nezdařilo: Unknown error" v Skladu
-- Purge endpoint: `src/app/api/variants/[id]/purge/route.ts`
-- Cascade delete v transakci: stockMovement → reservation → productReservation → stockSubscription → saleItem → orderItem → delivery (returns+complaints) → variant → product
-- Možné příčiny: FK constraint, chybějící tabulka, transaction timeout
-- Endpoint vrací generic "Unknown error" z catch bloku — přidat lepší error logging
-
----
 
 ### TASK-107: Naskladnění BY_PIECE visí na "Načítání..."
 Stav: čeká
@@ -26,14 +16,6 @@ Uživatel: "ZASE SE TO NENASKLADNUJE!!!" + screenshot stuck na "Načítání..."
 - BY_PIECE logika řádky 100-103
 - Replica vrácena (`TURSO_EMBEDDED_REPLICA=true` na Vercelu)
 - Prošetřit proč POST /api/deliveries timeoutuje (Vercel function limit? pomalá transakce?)
-
----
-
-### TASK-108: Comgate karetní platby
-Stav: HOTOVO
-- Merchant 515911, heslo opraveno, test=true, "Povolit všechny IP" zapnuto
-- `.trim()` na env vars (fix %0A), CARD email až po zaplacení
-- Zbývá: nastavit callback URLs v portálu, otestovat platbu
 
 ---
 
@@ -64,14 +46,6 @@ Stav: IMPLEMENTOVÁNO, ČEKÁ DEPLOY
 
 ---
 
-### TASK-099: Notifikační zvoneček — kliknutí nefunguje + stornované položky
-Stav: ROZPRACOVÁNO
-- HOTOVO: `getNotificationUrl` opraveno — fallback na section URL
-- ZBÝVÁ: při stornu objednávky/rezervace smazat/označit související notifikace
-- ZBÝVÁ: ověřit navigaci na všech typech notifikací
-
----
-
 ### TASK-100: Blog — nahrávání obrázků nefunguje
 Stav: čeká
 Uživatel: "proč zase nejde nahrat obrazek do blogu?"
@@ -96,30 +70,11 @@ Stav: čeká
 
 ---
 
-### TASK-109: Terminologie "poptávka" → "objednávka"
-Stav: čeká
-- `messages/cs.json:67-68` — inquiryCartTitle/Description
-- `messages/cs.json:1020-1021` — successTitle/Text
-- `messages/cs.json:1032` — submitButton
-- `messages/cs.json:1075` — orSendInquiry
-- Stejné v uk.json a ru.json
-- `notifications.ts`, `email-templates.ts`, `telegram.ts` — "Nová poptávka"
-- /inquiry-cart zůstává pro konzultace (mode=consult) — záměr
-
----
-
 ### TASK-114: Prodej — přidání více produktů (QR) do jedné faktury
 Stav: plánování
 Uživatel: "když prodavame salonu vlasy a on si chce vzít 2-3 druhy jinych, tak se tam neda přidat nic po tom co načtu QR, že bych mohl jeste přidat QR/produkt a načetlo by se to do jedné faktury"
 - Po naskenování QR nejde přidat další produkt do stejného prodeje
 - Potřeba: tlačítko "Přidat další QR/produkt" → vše na jednu fakturu
-
----
-
-### TASK-079: Prodejní karta — chybí info o produktu
-Stav: hotovo
-Uživatel: "nejsou tam puvod vlasu, atd všechny informace + není tam videt kolik je skladem G."
-- `src/components/sales/SaleItemRow.tsx`
 
 ---
 
@@ -144,12 +99,6 @@ Stav: čeká
 Stav: čeká
 - Funguje v sidebaru, ne v seznamu poptávek
 - `UserBadge.tsx`, `InquiriesClient.tsx`
-
----
-
-### TASK-111: Privacy stránka — chybí identifikace firmy
-Stav: HOTOVO (commit 893a06e)
-- Přidáno: Altro servis group s.r.o., IČO 23673389, GDPR rozšíření
 
 ---
 
@@ -189,6 +138,12 @@ Stav: analýza hotová, uživatel chce udělat jako POSLEDNÍ (~prosinec 2026)
 ---
 
 ## HOTOVÉ
+- TASK-106: Mazání variant — cascade delete fix — 2026-08-09
+- TASK-108: Comgate karetní platby — merchant 515911 setup — 2026-08-09
+- TASK-099: Notifikační zvoneček — navigace + storno cleanup — 2026-08-09
+- TASK-109: Terminologie "poptávka" → "objednávka" — SEO overhaul — 2026-08-09
+- TASK-079: Prodejní karta — info o produktu doplněno — 2026-08-09
+- TASK-111: Privacy stránka — identifikace firmy (commit 893a06e) — 2026-08-09
 - TASK-087: Fix fotek na product detail (commit e6f9b55) — 2026-07-19
 - TASK-088: Kategorie → update jmen/slug/cen (commit e6f9b55) — 2026-07-19
 - TASK-089: Premium design produktové stránky (commit cb8a9da) — 2026-07-19
