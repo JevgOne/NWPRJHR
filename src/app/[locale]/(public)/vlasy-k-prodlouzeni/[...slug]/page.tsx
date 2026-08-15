@@ -453,7 +453,7 @@ async function generateProductMetadataFromProduct(
   }
 
   const productSlug = product.slug ?? product.id;
-  const rawOgImg = product.ogImage || product.photos[0] || "https://www.hairland.cz/og/og-home.jpg";
+  const rawOgImg = product.photos[0] || product.ogImage || "https://www.hairland.cz/og/og-home.jpg";
   const ogImg = rawOgImg.startsWith("http")
     ? `https://www.hairland.cz/_next/image?url=${encodeURIComponent(rawOgImg)}&w=1200&q=75`
     : rawOgImg;
@@ -466,7 +466,7 @@ async function generateProductMetadataFromProduct(
     : null;
 
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: getAlternates(`/vlasy-k-prodlouzeni/${productSlug}`),
     openGraph: {
