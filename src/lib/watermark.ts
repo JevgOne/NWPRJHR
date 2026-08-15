@@ -36,6 +36,7 @@ export async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
 
   return image
     .composite([{ input: wmWithOpacity, left: 0, top: 0 }])
+    .resize({ width: 2400, height: 3200, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 82 })
     .toBuffer();
 }
