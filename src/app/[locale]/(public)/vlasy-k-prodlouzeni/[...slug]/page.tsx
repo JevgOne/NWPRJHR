@@ -834,7 +834,7 @@ async function ProductDetailView({
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: productName,
+    name: seoH1,
     description: schemaDesc,
     image: schemaImage,
     brand: { "@type": "Brand", name: "Hairland" },
