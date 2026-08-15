@@ -123,7 +123,7 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
             >
               <img
                 src={photos[selected]}
-                alt={`${alt} — foto ${selected + 1}`}
+                alt={`${alt} – fotka ${selected + 1}`}
                 className="w-full h-full object-cover transition-all duration-500 ease-out group-hover:scale-[1.03]"
               />
             </button>
@@ -193,7 +193,7 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
                 >
                   <img
                     src={photo}
-                    alt={`${alt} — náhled ${i + 1}`}
+                    alt={`${alt} – náhled ${i + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -263,7 +263,7 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
           {/* Image */}
           <img
             src={photos[lightboxIndex]}
-            alt={`${alt} — foto ${lightboxIndex + 1}`}
+            alt={`${alt} – fotka ${lightboxIndex + 1}`}
             className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />

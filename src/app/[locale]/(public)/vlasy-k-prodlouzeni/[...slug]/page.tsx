@@ -271,12 +271,6 @@ async function RelatedProducts({
   );
 }
 
-const PROCESSING_LABELS: Record<string, Record<string, string>> = {
-  cs: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Keratin", WEFT: "Tresový", MICRO_RING: "Micro ring", OTHER: "" },
-  uk: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Кератин", WEFT: "Тресове", MICRO_RING: "Micro ring", OTHER: "" },
-  ru: { CLIP_IN: "Clip-in", TAPE_IN: "Tape-in", KERATIN: "Кератин", WEFT: "Трессовые", MICRO_RING: "Micro ring", OTHER: "" },
-};
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
@@ -301,26 +295,57 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: "Not Found" };
 }
 
+// Origin genitive for correct Czech: "z Ukrajiny" not "z Ukrajina"
+const ORIGIN_GENITIVE: Record<string, string> = {
+  Ukrajina: "Ukrajiny", Bělorusko: "Běloruska", Moldavsko: "Moldavska",
+  Rusko: "Ruska", Kazachstán: "Kazachstánu", Uzbekistán: "Uzbekistánu",
+  Turecko: "Turecka", Írán: "Íránu", Indie: "Indie", Vietnam: "Vietnamu",
+  Sýrie: "Sýrie", Čína: "Číny", Mongolsko: "Mongolska", Gruzie: "Gruzie",
+};
+
+function originGenitive(origin: string): string {
+  return ORIGIN_GENITIVE[origin] ?? origin;
+}
+
+/** Get min price per gram (halere) from variants */
+function getMinPricePerGram(
+  variants: Array<{ retailPricePerGram: number; sellingMode: string }>,
+): number | null {
+  const prices = variants
+    .filter((v) => v.sellingMode !== "BY_PIECE" && v.retailPricePerGram > 0)
+    .map((v) => v.retailPricePerGram);
+  return prices.length > 0 ? Math.min(...prices) : null;
+}
+
+/** Get total grams from variants */
+function getTotalGrams(
+  variants: Array<{ availableGrams: number }>,
+): number {
+  return variants.reduce((sum, v) => sum + v.availableGrams, 0);
+}
+
+/**
+ * Build SEO meta description:
+ * {Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}.
+ * {gramáž} g z jedné hlavy, {cena} Kč/g. Osobní ukázka po Praze zdarma.
+ * Max 155 chars, skip missing fields with separators.
+ */
 function buildAutoDescription(
   product: { name: string; category: string; processingType: string; origin?: string | null; texture?: string | null },
   colorNames: string[],
   lengths: number[],
-  variants: Array<{ retailPricePerGram: number; sellingMode: string; retailPricePerPiece?: number | null; pricePerPiece?: number | null }>,
-  t: Awaited<ReturnType<typeof getTranslations<"public">>>,
+  variants: Array<{ retailPricePerGram: number; sellingMode: string; retailPricePerPiece?: number | null; pricePerPiece?: number | null; availableGrams: number }>,
 ): string {
-  const parts: string[] = [];
+  // Part 1: "{Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}"
+  const opening: string[] = [];
+  if (product.origin) opening.push(originGenitive(product.origin));
+  if (product.texture) opening.push(product.texture.toLowerCase());
+  opening.push("vlasy k prodloužení");
+  let part1 = opening.join(" ");
+  // Capitalize first letter
+  part1 = part1.charAt(0).toUpperCase() + part1.slice(1);
 
-  // 1. Opening: category label + processing + origin
-  const catLabel = t(`meta.catLabel.${product.category}`);
-  const procLabel = product.processingType !== "OTHER" ? t(`meta.procLabel.${product.processingType}`) : "";
-  const originStr = product.origin ? t("meta.fromOrigin", { origin: product.origin }) : "";
-  parts.push([catLabel, procLabel, originStr].filter(Boolean).join(" "));
-
-  // 2. Specs: texture (only if not in product name), lengths, colors
   const specs: string[] = [];
-  if (product.texture && !product.name.toLowerCase().includes(product.texture.toLowerCase())) {
-    specs.push(product.texture.toLowerCase());
-  }
   if (lengths.length > 0) {
     specs.push(
       lengths.length <= 3
@@ -328,33 +353,66 @@ function buildAutoDescription(
         : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`
     );
   }
-  if (colorNames.length > 0) {
-    specs.push(
-      colorNames.length <= 3
-        ? colorNames.join(", ")
-        : `${colorNames.length} ${t("landing.metaColors")}`
-    );
+  if (colorNames.length > 0 && colorNames.length <= 3) {
+    specs.push(colorNames.join(", "));
   }
-  if (specs.length > 0) parts.push(specs.join(", "));
+  if (specs.length > 0) part1 += ", " + specs.join(", ");
 
-  // 3. Price indicator
-  const prices = variants
-    .filter((v) => v.retailPricePerGram > 0 || (v.retailPricePerPiece ?? 0) > 0)
-    .map((v) =>
-      v.sellingMode === "BY_PIECE"
-        ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0)
-        : v.retailPricePerGram * 100
-    )
-    .filter((p) => p > 0);
-  if (prices.length > 0) {
-    const minPrice = Math.min(...prices);
-    parts.push(t("meta.priceFrom", { price: Math.round(minPrice / 100) }));
-  }
+  // Part 2: "{gramáž} g z jedné hlavy, {cena} Kč/g"
+  const part2parts: string[] = [];
+  const totalG = getTotalGrams(variants);
+  if (totalG > 0) part2parts.push(`${totalG} g z jedné hlavy`);
+  const minPpg = getMinPricePerGram(variants);
+  if (minPpg) part2parts.push(`${Math.round(minPpg / 100)} Kč/g`);
 
-  // 4. CTA suffix
-  parts.push(t("meta.ctaSuffix"));
+  // Part 3: CTA
+  const cta = "Osobní ukázka po Praze zdarma";
 
-  return parts.join(". ").slice(0, 155);
+  const result = [part1, part2parts.length > 0 ? part2parts.join(", ") : null, cta]
+    .filter(Boolean)
+    .join(". ") + ".";
+
+  return result.slice(0, 155);
+}
+
+/**
+ * Build SEO title: {Struktura} vlasy k prodloužení {délka} cm – {barva}
+ * Max 60 chars. Shortening: 1. drop texture, 2. shorten color to first word
+ */
+function buildSeoTitle(texture: string | null, lengths: number[], colorNames: string[]): string {
+  const textureStr = texture ? `${texture.charAt(0).toUpperCase() + texture.slice(1)} ` : "";
+  const lengthStr = lengths.length > 0
+    ? " " + (lengths.length <= 3
+      ? lengths.map((l) => `${l} cm`).join(", ")
+      : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`)
+    : "";
+  const colorStr = colorNames.length > 0 && colorNames.length <= 2 ? colorNames.join(", ") : "";
+
+  // Full version: "{Texture} vlasy k prodloužení {length} – {color}"
+  const full = `${textureStr}vlasy k prodloužení${lengthStr}${colorStr ? ` \u2013 ${colorStr}` : ""}`;
+  if (full.length <= 60) return full;
+
+  // Shortening 1: drop texture
+  const noTexture = `Vlasy k prodloužení${lengthStr}${colorStr ? ` \u2013 ${colorStr}` : ""}`;
+  if (noTexture.length <= 60) return noTexture;
+
+  // Shortening 2: shorten color to first word
+  const shortColor = colorNames.length > 0 ? colorNames[0].split(/\s/)[0] : "";
+  const shortened = `Vlasy k prodloužení${lengthStr}${shortColor ? ` \u2013 ${shortColor}` : ""}`;
+  return shortened.slice(0, 60);
+}
+
+/**
+ * Build OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
+ */
+function buildOgTitle(texture: string | null, lengths: number[], colorNames: string[], totalGrams: number): string {
+  const textureStr = texture ? `${texture.charAt(0).toUpperCase() + texture.slice(1)} ` : "";
+  const lengthStr = lengths.length > 0
+    ? " " + (lengths.length <= 3 ? lengths.map((l) => `${l} cm`).join(", ") : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`)
+    : "";
+  const colorStr = colorNames.length > 0 && colorNames.length <= 2 ? `, ${colorNames.join(", ")}` : "";
+  const gramStr = totalGrams > 0 ? ` \u2013 ${totalGrams} g` : "";
+  return `${textureStr}vlasy${lengthStr}${colorStr}${gramStr}`;
 }
 
 async function generateProductMetadataFromProduct(
@@ -365,27 +423,34 @@ async function generateProductMetadataFromProduct(
 
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
   const colorCodes = [...new Set(product.variants.map((v) => v.color))];
-
-  // Title: "{Texture} vlasy {length} {color} — {catShort} {processing} | Hairland"
-  const lengthStr = lengths.map((l) => `${l}cm`).join(", ");
-  const procLabel = PROCESSING_LABELS[locale]?.[product.processingType] ?? "";
   const colorNames = colorCodes.map((c) => {
     const key = getHairColor(c).nameKey;
     try { return t(`colors.${key}`); } catch { return c; }
   });
-  const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
-  const textureStr = product.texture ?? "";
-  const catShort = t(`meta.catShort.${product.category}`);
-  const seoBase = [textureStr ? `${textureStr.charAt(0).toUpperCase() + textureStr.slice(1)} vlasy` : "Vlasy", lengthStr].filter(Boolean).join(" ");
-  const seoSuffix = [catShort, procLabel].filter(Boolean).join(" ");
-  const seoFull = seoSuffix ? `${seoBase} — ${seoSuffix}` : seoBase;
-  const seoWithColor = colorStr ? `${seoBase} ${colorStr} — ${seoSuffix}` : seoFull;
-  // Add color only if total (incl. " | Hairland" = 11 chars) fits in 60
-  const autoTitle = (seoWithColor.length + 11 <= 60) ? seoWithColor : seoFull;
+
+  // Title: {Struktura} vlasy k prodloužení {délka} cm – {barva} (max 60, no "| Hairland")
+  const autoTitle = buildSeoTitle(product.texture, lengths, colorNames);
   const title = product.metaTitle || autoTitle;
 
-  const autoDescription = buildAutoDescription(product, colorNames, lengths, product.variants, t);
+  // Description: {Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}. {gramáž} g z jedné hlavy, {cena} Kč/g. Osobní ukázka po Praze zdarma.
+  const autoDescription = buildAutoDescription(product, colorNames, lengths, product.variants);
   const description = product.metaDescription || autoDescription;
+
+  // OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
+  const totalGrams = getTotalGrams(product.variants);
+  const ogTitle = buildOgTitle(product.texture, lengths, colorNames, totalGrams);
+
+  // OG description: 100% pravé vlasy z jedné hlavy. {cena} Kč/g. Přijedeme ukázat po Praze zdarma.
+  const minPpg = getMinPricePerGram(product.variants);
+  const ogDesc = minPpg
+    ? `100% pravé vlasy z jedné hlavy. ${Math.round(minPpg / 100)} Kč/g. Přijedeme ukázat po Praze zdarma.`
+    : "100% pravé vlasy z jedné hlavy. Přijedeme ukázat po Praze zdarma.";
+
+  // Build check: log products with oversized title/description
+  if (process.env.NODE_ENV !== "production") {
+    if (title.length > 60) console.log(`[SEO] Title > 60 chars (${title.length}): "${title}" [${product.slug}]`);
+    if (description.length > 155) console.log(`[SEO] Desc > 155 chars (${description.length}): "${description}" [${product.slug}]`);
+  }
 
   const productSlug = product.slug ?? product.id;
   const rawOgImg = product.ogImage || product.photos[0] || "https://www.hairland.cz/og/og-home.jpg";
@@ -406,19 +471,19 @@ async function generateProductMetadataFromProduct(
     alternates: getAlternates(`/vlasy-k-prodlouzeni/${productSlug}`),
     openGraph: {
       type: "website",
-      title,
-      description,
+      title: ogTitle,
+      description: ogDesc,
       url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${productSlug}`,
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       ...(ogImg && {
-        images: [{ url: ogImg, width: 1200, height: 630, alt: product.name }],
+        images: [{ url: ogImg, width: 1200, height: 630, alt: title }],
       }),
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: ogTitle,
+      description: ogDesc,
       ...(ogImg && { images: [ogImg] }),
     },
     other: {
@@ -581,6 +646,36 @@ async function ProductDetailView({
     try { return t(`origins.${origin}`); } catch { return origin; }
   };
 
+  // SEO H1: {Struktura} vlasy k prodloužení {délka} cm — {barva}
+  const seoColorCodes = [...new Set(product.variants.map((v) => v.color))];
+  const seoColorNames = seoColorCodes.map((c) => {
+    const key = getHairColor(c).nameKey;
+    try { return t(`colors.${key}`); } catch { return c; }
+  });
+  const seoLengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort((a, b) => a - b);
+  const seoH1 = (() => {
+    const tex = product.texture ? `${product.texture.charAt(0).toUpperCase() + product.texture.slice(1)} ` : "";
+    const len = seoLengths.length > 0
+      ? " " + (seoLengths.length <= 3 ? seoLengths.map((l) => `${l} cm`).join(", ") : `${seoLengths[0]}\u2013${seoLengths[seoLengths.length - 1]} cm`)
+      : "";
+    const col = seoColorNames.length > 0 && seoColorNames.length <= 2 ? ` \u2014 ${seoColorNames.join(", ")}` : "";
+    return `${tex}vlasy k prodloužení${len}${col}`;
+  })();
+
+  // SEO alt: {struktura} vlasy k prodloužení {délka} cm, {barva}, {původ}
+  const seoAlt = (() => {
+    const parts: string[] = [];
+    if (product.texture) parts.push(product.texture.toLowerCase());
+    parts.push("vlasy k prodloužení");
+    if (seoLengths.length > 0) {
+      parts.push(seoLengths.length <= 3 ? seoLengths.map((l) => `${l} cm`).join(", ") : `${seoLengths[0]}\u2013${seoLengths[seoLengths.length - 1]} cm`);
+    }
+    let alt = parts.join(" ");
+    if (seoColorNames.length > 0 && seoColorNames.length <= 2) alt += `, ${seoColorNames.join(", ")}`;
+    if (product.origin) alt += `, ${originName(product.origin)}`;
+    return alt;
+  })();
+
   // Localized description
   const localizedDesc = locale === "ru" && product.descriptionRu
     ? product.descriptionRu
@@ -687,7 +782,7 @@ async function ProductDetailView({
   const schemaColorNames = [...new Set(product.variants.map((v) => v.color))].map((c) => {
     try { return t(`colors.${getHairColor(c).nameKey}`); } catch { return c; }
   });
-  const schemaFallbackDesc = buildAutoDescription(product, schemaColorNames, lengths, product.variants, t).slice(0, 160);
+  const schemaFallbackDesc = buildAutoDescription(product, schemaColorNames, lengths, product.variants).slice(0, 160);
   const schemaDesc = description
     ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "\u2026")
     : schemaFallbackDesc;
@@ -887,7 +982,7 @@ async function ProductDetailView({
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.85fr] gap-6 lg:gap-14 items-start">
         {/* Left: Photo gallery — sticky on desktop */}
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <PhotoGallery photos={product.photos} video={product.video} alt={[productName, product.texture, product.origin && originName(product.origin), lengths.length > 0 && lengths.map(l => `${l}cm`).join("/")].filter(Boolean).join(" — ")} />
+          <PhotoGallery photos={product.photos} video={product.video} alt={seoAlt} />
         </div>
 
         {/* Right: Product info */}
@@ -896,7 +991,7 @@ async function ProductDetailView({
           <div>
             <div className="flex items-start justify-between gap-3">
               <h1 className="text-2xl lg:text-3xl font-bold text-ink tracking-tight">
-                {productName}
+                {seoH1}
               </h1>
               {(product.slug ?? product.id) && (
                 <div className="flex-shrink-0 mt-1">
