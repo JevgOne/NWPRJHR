@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
@@ -429,12 +431,10 @@ async function generateProductMetadataFromProduct(
   });
 
   // Title: {Struktura} vlasy k prodloužení {délka} cm – {barva} (max 60, no "| Hairland")
-  const autoTitle = buildSeoTitle(product.texture, lengths, colorNames);
-  const title = product.metaTitle || autoTitle;
+  const title = buildSeoTitle(product.texture, lengths, colorNames);
 
   // Description: {Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}. {gramáž} g z jedné hlavy, {cena} Kč/g. Osobní ukázka po Praze zdarma.
-  const autoDescription = buildAutoDescription(product, colorNames, lengths, product.variants);
-  const description = product.metaDescription || autoDescription;
+  const description = buildAutoDescription(product, colorNames, lengths, product.variants);
 
   // OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
   const totalGrams = getTotalGrams(product.variants);
