@@ -447,10 +447,8 @@ async function generateProductMetadataFromProduct(
     : "100% pravé vlasy z jedné hlavy. Přijedeme ukázat po Praze zdarma.";
 
   // Build check: log products with oversized title/description
-  if (process.env.NODE_ENV !== "production") {
-    if (title.length > 60) console.log(`[SEO] Title > 60 chars (${title.length}): "${title}" [${product.slug}]`);
-    if (description.length > 155) console.log(`[SEO] Desc > 155 chars (${description.length}): "${description}" [${product.slug}]`);
-  }
+  if (title.length > 60) console.log(`[SEO] Title > 60 chars (${title.length}): "${title}" [${product.slug}]`);
+  if (description.length > 155) console.log(`[SEO] Desc > 155 chars (${description.length}): "${description}" [${product.slug}]`);
 
   const productSlug = product.slug ?? product.id;
   const rawOgImg = product.photos[0] || product.ogImage || "https://www.hairland.cz/og/og-home.jpg";
