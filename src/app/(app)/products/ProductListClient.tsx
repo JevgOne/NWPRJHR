@@ -234,7 +234,7 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
                     )}
                     {minPrice && (
                       <span className="font-medium text-ink">
-                        {(minPrice / 100).toFixed(0)} Kc/g
+                        {(minPrice / 100).toFixed(0)} Kč/g
                       </span>
                     )}
                     <span className={`ml-auto font-medium ${stock > 0 ? "text-emerald-600" : "text-red-400"}`}>

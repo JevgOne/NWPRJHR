@@ -86,7 +86,7 @@ function computeSummary(deliveries: BatchDelivery[]): BatchSummary {
 }
 
 function formatCzk(halere: number): string {
-  return (halere / 100).toLocaleString("cs-CZ", { maximumFractionDigits: 0 }) + " Kc";
+  return (halere / 100).toLocaleString("cs-CZ", { maximumFractionDigits: 0 }) + " Kč";
 }
 
 function formatWeight(grams: number): string {

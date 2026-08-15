@@ -512,11 +512,11 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
         <p className="text-xs text-muted">
           {t("pricePerGramOrig")}: {p.pricePerGramOrig.toFixed(2)} {currSymbol}
           {currency !== "CZK" && (
-            <> = {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kc</>
+            <> = {formatCzk(Math.round(p.pricePerGramCzk * 100))} Kč</>
           )}
         </p>
         <p className="text-xs text-muted">
-          {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kc/g ({t("margin")} 110%)
+          {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kč/g ({t("margin")} 110%)
         </p>
         <p className="text-sm font-semibold text-espresso">
           {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
@@ -527,11 +527,11 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
             <p className="text-xs text-muted">
               {t("purchasePricePerPiece")}: {p.pricePerPcOrig?.toFixed(2)} {currSymbol}
               {currency !== "CZK" && (
-                <> = {formatCzk(Math.round(p.pricePerPcCzk * 100))} Kc</>
+                <> = {formatCzk(Math.round(p.pricePerPcCzk * 100))} Kč</>
               )}
             </p>
             <p className="text-sm font-semibold text-espresso">
-              {t("retailPreview")}: {formatCzk(Math.round(p.retailPerPc * 100))} Kc/{t("perPiece")}
+              {t("retailPreview")}: {formatCzk(Math.round(p.retailPerPc * 100))} Kč/{t("perPiece")}
             </p>
           </>
         )}

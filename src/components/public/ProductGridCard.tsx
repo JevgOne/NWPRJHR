@@ -252,13 +252,13 @@ export function ProductGridCard({
             const b2b = Math.ceil(retailPrice - (retailPrice * discountPct) / 20000);
             return (
               <div className="min-w-0">
-                <span className="text-[10px] text-muted line-through">{fmt(retailPrice)} Kc/{unit}</span>
+                <span className="text-[10px] text-muted line-through">{fmt(retailPrice)} Kč/{unit}</span>
                 <div className="text-sm font-bold text-rose">
-                  {fmt(b2b)} Kc<span className="text-[10px] font-normal">/{unit}</span>
+                  {fmt(b2b)} Kč<span className="text-[10px] font-normal">/{unit}</span>
                   {pieceWeight > 0 && <span className="text-[10px] font-normal ml-0.5">({pieceWeight} g)</span>}
                 </div>
                 {showAsPiece && retailPricePerGramForPiece > 0 && (
-                  <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
+                  <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kč/g)</div>
                 )}
               </div>
             );
@@ -267,11 +267,11 @@ export function ProductGridCard({
           return (
             <div className="min-w-0">
               <div className="text-sm font-bold text-ink">
-                {fmt(retailPrice)} Kc<span className="text-[10px] font-normal text-muted">/{unit}</span>
+                {fmt(retailPrice)} Kč<span className="text-[10px] font-normal text-muted">/{unit}</span>
                 {pieceWeight > 0 && <span className="text-[10px] font-normal text-muted ml-0.5">({pieceWeight} g)</span>}
               </div>
               {showAsPiece && retailPricePerGramForPiece > 0 && (
-                <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kc/g)</div>
+                <div className="text-[10px] text-muted">({fmt(retailPricePerGramForPiece)} Kč/g)</div>
               )}
             </div>
           );

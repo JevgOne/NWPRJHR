@@ -135,8 +135,8 @@ export function DeliveryDetailClient({
   }
 
   const purchasePriceDisplay = isByPiece && delivery.pieceWeightGrams
-    ? `${formatCZK(delivery.purchasePricePerGramCZK * delivery.pieceWeightGrams)} Kc/${t("perPiece")}`
-    : `${formatCZK(delivery.purchasePricePerGramCZK)} Kc/${t("grams")}`;
+    ? `${formatCZK(delivery.purchasePricePerGramCZK * delivery.pieceWeightGrams)} Kč/${t("perPiece")}`
+    : `${formatCZK(delivery.purchasePricePerGramCZK)} Kč/${t("grams")}`;
 
   function typeLabel(type: string): string {
     const map: Record<string, string> = {

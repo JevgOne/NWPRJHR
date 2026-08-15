@@ -215,8 +215,8 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
                   <div className="font-medium text-ink">{v.lengthCm > 0 ? `${v.lengthCm} cm` : v.color}</div>
                   <div className="text-xs text-muted">
                     {vShowAsPiece
-                      ? `${formatPrice(v.pricePerPiece ?? 0)} Kc/ks`
-                      : `${formatPrice(v.pricePerGram)} Kc/g`}
+                      ? `${formatPrice(v.pricePerPiece ?? 0)} Kč/ks`
+                      : `${formatPrice(v.pricePerGram)} Kč/g`}
                   </div>
                   <div className={`text-[11px] ${
                     inStock ? "text-emerald-600"

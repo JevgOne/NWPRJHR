@@ -13,7 +13,7 @@ export function calculateRetailPrice(
 
 /**
  * Format halere to CZK display string.
- * 123500 -> "1 235 Kc"
+ * 123500 -> "1 235 Kč"
  */
 export function formatCZK(halere: number): string {
   const czk = halere / 100;
