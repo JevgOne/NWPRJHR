@@ -41,7 +41,7 @@ const LENGTH_PRESETS = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
 const CURRENCY_OPTIONS: { code: CurrencyCode; symbol: string }[] = [
   { code: "USD", symbol: "$" },
   { code: "EUR", symbol: "\u20AC" },
-  { code: "CZK", symbol: "Kc" },
+  { code: "CZK", symbol: "Kč" },
 ];
 
 export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { suppliers: SupplierOption[]; openBatches?: BatchOption[] }) {
@@ -519,7 +519,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           {t("retailPreview")}: {formatCzk(Math.round(p.retailPerGram * 100))} Kč/g ({t("margin")} 110%)
         </p>
         <p className="text-sm font-semibold text-espresso">
-          {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kc
+          {t("retailPer100g")}: {formatCzk(Math.round(p.retailPer100g * 100))} Kč
         </p>
         {sellingMode === "BY_PIECE" && p.pricePerPcCzk != null && p.retailPerPc != null && (
           <>

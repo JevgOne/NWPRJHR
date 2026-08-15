@@ -1003,7 +1003,13 @@ async function ProductDetailView({
               )}
             </div>
             <p className="text-sm text-muted mt-2 flex items-center gap-1.5 flex-wrap">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-nude-100 text-xs font-medium text-espresso">{categoryLabel}</span>
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${({
+                VIRGIN: "bg-amber-500 text-white",
+                LUXE: "bg-violet-600 text-white",
+                STANDARD: "bg-espresso/80 text-white",
+                SALE: "bg-red-500 text-white",
+                ACCESSORY: "bg-teal-600 text-white",
+              } as Record<string, string>)[product.category] ?? "bg-nude-100 text-espresso"}`}>{categoryLabel}</span>
               {product.origin && <span className="text-muted/60">·</span>}
               {product.origin && <span>{originFlag} {originName(product.origin)}</span>}
               <span className="text-muted/60">·</span>
