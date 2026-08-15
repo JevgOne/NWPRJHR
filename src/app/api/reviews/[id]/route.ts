@@ -15,7 +15,7 @@ const updateSchema = z.object({
   ratingQuality: z.number().int().min(1).max(5).nullable().optional(),
   ratingCommunication: z.number().int().min(1).max(5).nullable().optional(),
   ratingSpeed: z.number().int().min(1).max(5).nullable().optional(),
-  text: z.string().min(1).max(5000).optional(),
+  text: z.string().max(5000).optional(),
   source: z.enum(["MANUAL", "GOOGLE", "INSTAGRAM"]).optional(),
   sourceUrl: z.string().max(500).optional(),
   instagramEmbed: z.string().max(10000).optional(),

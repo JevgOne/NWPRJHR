@@ -296,7 +296,13 @@ export function ReviewsClient() {
               <label className="block text-sm font-medium text-espresso mb-1">{t("sourceType")}</label>
               <select
                 value={form.source}
-                onChange={(e) => setField("source", e.target.value as FormState["source"])}
+                onChange={(e) => {
+                  const src = e.target.value as FormState["source"];
+                  setField("source", src);
+                  if (src === "GOOGLE" && !form.sourceUrl) {
+                    setField("sourceUrl", "https://g.page/r/CdauuX262QcvEAE/review");
+                  }
+                }}
                 className="w-full border border-line rounded-lg px-3 py-2 text-sm"
               >
                 <option value="MANUAL">{t("sourceManualEntry")}</option>
@@ -383,7 +389,7 @@ export function ReviewsClient() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-espresso mb-1">{t("reviewText")} *</label>
+              <label className="block text-sm font-medium text-espresso mb-1">{t("reviewText")}</label>
               <textarea
                 value={form.text}
                 onChange={(e) => setField("text", e.target.value)}
@@ -434,7 +440,7 @@ export function ReviewsClient() {
             </div>
 
             <div className="flex gap-2 pt-1">
-              <Button onClick={handleSave} disabled={saving || !form.authorName || !form.text}>
+              <Button onClick={handleSave} disabled={saving || !form.authorName}>
                 {saving ? tc("saving") : editingId ? tc("save") : tc("add")}
               </Button>
               <Button variant="secondary" onClick={() => { setShowForm(false); setEditingId(null); }}>
