@@ -298,14 +298,9 @@ export default async function ArticlePage({ params }: Props) {
           [&_li]:relative [&_li]:pl-5 [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-[0.65em]
           [&_li]:before:w-1.5 [&_li]:before:h-1.5 [&_li]:before:rounded-full [&_li]:before:bg-rose/40
           [&_strong]:text-ink [&_strong]:font-semibold
+          [&_a]:text-rose [&_a]:font-medium [&_a]:hover:text-rose-deep [&_a]:hover:underline [&_a]:transition-colors
         ">
-          <div dangerouslySetInnerHTML={{ __html: t.markup(contentKey, {
-            h2: (chunks) => `<h2>${chunks}</h2>`,
-            p: (chunks) => `<p>${chunks}</p>`,
-            ul: (chunks) => `<ul>${chunks}</ul>`,
-            li: (chunks) => `<li>${chunks}</li>`,
-            strong: (chunks) => `<strong>${chunks}</strong>`,
-          }) }} />
+          <div dangerouslySetInnerHTML={{ __html: t.raw(contentKey) }} />
         </article>
 
         {/* ===== TIP BOX ===== */}

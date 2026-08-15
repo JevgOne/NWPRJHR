@@ -28,6 +28,7 @@ import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLand
 import { generateSku } from "@/lib/sku";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
 import { TrackProductView } from "@/components/public/TrackProductView";
+import Script from "next/script";
 import { RecentlyViewed } from "@/components/public/RecentlyViewed";
 import { StockNotifyButton } from "./StockNotifyButton";
 import { WishlistToggle } from "@/components/public/WishlistToggle";
@@ -954,6 +955,10 @@ async function ProductDetailView({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
       <TrackProductView slug={product.slug ?? product.id} />
+      <Script
+        src="//www.heureka.cz/ocm/sdk.js?version=2&page=product_detail"
+        strategy="afterInteractive"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
