@@ -40,12 +40,13 @@ export async function GET() {
 
       shopItems.push(`  <SHOPITEM>
     <PRODUCTNO>${escapeXml(sku)}</PRODUCTNO>
-    <PRODUCT><![CDATA[${title}]]></PRODUCT>
+    <PRODUCTNAME><![CDATA[${title}]]></PRODUCTNAME>
     <DESCRIPTION><![CDATA[${desc}]]></DESCRIPTION>
     <URL>${url}</URL>
     <IMGURL>${imageUrl}</IMGURL>
     <PRICE_VAT>${priceVat.toFixed(2)}</PRICE_VAT>
     <CATEGORYTEXT>Kosmetika a zdraví | Vlasová kosmetika | Vlasy k prodloužení</CATEGORYTEXT>
+    <DELIVERY_DATE>0</DELIVERY_DATE>
     <MANUFACTURER>Hairland</MANUFACTURER>
     <DELIVERY>
       <DELIVERY_ID>ZASILKOVNA</DELIVERY_ID>
@@ -60,7 +61,7 @@ export async function GET() {
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<SHOP>
+<SHOP xmlns="http://www.zbozi.cz/ns/offer/1.0">
 ${shopItems.join("\n")}
 </SHOP>`;
 
