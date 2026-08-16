@@ -55,7 +55,7 @@ const getCachedReviewData = unstable_cache(
     // Product-specific reviews for schema; site-wide for display
     const schemaReviews = await prisma.review.findMany({
       where: { productId, active: true },
-      select: { authorName: true, rating: true, text: true },
+      select: { authorName: true, rating: true, text: true, createdAt: true },
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
       take: 5,
     });
@@ -65,7 +65,7 @@ const getCachedReviewData = unstable_cache(
         active: true,
         OR: [{ productId }, { productId: null }],
       },
-      select: { authorName: true, rating: true, text: true },
+      select: { authorName: true, rating: true, text: true, createdAt: true },
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
       take: 5,
     });
@@ -855,8 +855,8 @@ async function ProductDetailView({
       priceCurrency: "CZK",
       availability: schemaAvailability,
       itemCondition: "https://schema.org/NewCondition",
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      validFrom: new Date().toISOString().split("T")[0],
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      validFrom: new Date().toISOString(),
       url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`,
       seller: {
         "@type": "Organization",
@@ -902,11 +902,11 @@ async function ProductDetailView({
       },
     },
     }),
-    ...((reviewStats._count > 0 || siteWideStats._count > 0) && {
+    ...(reviewStats._count > 0 && {
       aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: (reviewStats._count > 0 ? reviewStats._avg.rating : siteWideStats._avg.rating)?.toFixed(1),
-        reviewCount: reviewStats._count > 0 ? reviewStats._count : siteWideStats._count,
+        ratingValue: reviewStats._avg.rating?.toFixed(1),
+        reviewCount: reviewStats._count,
         bestRating: "5",
         worstRating: "1",
       },
@@ -915,6 +915,7 @@ async function ProductDetailView({
       review: reviewsForSchema.map((r) => ({
         "@type": "Review",
         author: { "@type": "Person", name: r.authorName },
+        datePublished: r.createdAt.toISOString().split("T")[0],
         reviewRating: {
           "@type": "Rating",
           ratingValue: String(r.rating),
