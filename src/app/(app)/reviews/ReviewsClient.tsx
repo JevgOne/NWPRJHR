@@ -17,7 +17,7 @@ interface Review {
   ratingCommunication: number | null;
   ratingSpeed: number | null;
   text: string;
-  source: "MANUAL" | "GOOGLE" | "INSTAGRAM";
+  source: "MANUAL" | "GOOGLE" | "INSTAGRAM" | "WEBSITE";
   sourceUrl: string | null;
   instagramEmbed: string | null;
   featured: boolean;
@@ -63,6 +63,7 @@ const SOURCE_COLORS = {
   MANUAL: "bg-nude-100 text-espresso",
   GOOGLE: "bg-nude-100 text-espresso",
   INSTAGRAM: "bg-pink-100 text-pink-700",
+  WEBSITE: "bg-emerald-100 text-emerald-700",
 };
 
 type FilterType = "pending" | "active" | "all";
@@ -83,6 +84,7 @@ export function ReviewsClient() {
     MANUAL: t("sourceManual"),
     GOOGLE: t("sourceGoogle"),
     INSTAGRAM: t("sourceInstagram"),
+    WEBSITE: t("sourceWebsite"),
   };
 
   type FormState = {
@@ -95,7 +97,7 @@ export function ReviewsClient() {
     ratingCommunication: number | null;
     ratingSpeed: number | null;
     text: string;
-    source: "MANUAL" | "GOOGLE" | "INSTAGRAM";
+    source: "MANUAL" | "GOOGLE" | "INSTAGRAM" | "WEBSITE";
     sourceUrl: string;
     instagramEmbed: string;
     featured: boolean;
@@ -527,7 +529,7 @@ export function ReviewsClient() {
                       {r.ratingSpeed && <span>📦 {RATING_EMOJIS[r.ratingSpeed - 1]}</span>}
                     </div>
                   )}
-                  <p className="text-sm text-espresso mt-1 line-clamp-2">{r.text}</p>
+                  {r.text && <p className="text-sm text-espresso mt-1 line-clamp-2">{r.text}</p>}
                   {r.sourceUrl && (
                     <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-espresso hover:underline mt-1 inline-block">
                       {t("sourceLink")}

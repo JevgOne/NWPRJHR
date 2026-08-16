@@ -16,7 +16,7 @@ const reviewSchema = z.object({
   ratingCommunication: z.number().int().min(1).max(5).optional(),
   ratingSpeed: z.number().int().min(1).max(5).optional(),
   text: z.string().max(5000).default(""),
-  source: z.enum(["MANUAL", "GOOGLE", "INSTAGRAM"]).default("MANUAL"),
+  source: z.enum(["MANUAL", "GOOGLE", "INSTAGRAM", "WEBSITE"]).default("MANUAL"),
   sourceUrl: z.string().max(500).optional().default(""),
   instagramEmbed: z.string().max(10000).optional().default(""),
   featured: z.boolean().default(false),

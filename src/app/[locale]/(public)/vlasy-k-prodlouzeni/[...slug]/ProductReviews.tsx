@@ -190,9 +190,11 @@ export async function ProductReviews({ productId }: { productId: string }) {
                   {review.ratingSpeed && <span>{review.ratingSpeed}/5</span>}
                 </div>
               )}
-              <p className="text-sm text-espresso mt-1.5 leading-relaxed line-clamp-3">
-                {review.text}
-              </p>
+              {review.text && (
+                <p className="text-sm text-espresso mt-1.5 leading-relaxed line-clamp-3">
+                  {review.text}
+                </p>
+              )}
             </div>
           ))}
         </div>

@@ -120,9 +120,11 @@ export async function ReviewsSection() {
                   ))}
                 </div>
 
-                <p className="text-sm text-ink/85 leading-relaxed mb-4">
-                  &ldquo;{review.text}&rdquo;
-                </p>
+                {review.text && (
+                  <p className="text-sm text-ink/85 leading-relaxed mb-4">
+                    &ldquo;{review.text}&rdquo;
+                  </p>
+                )}
 
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-espresso/5 flex items-center justify-center text-espresso font-semibold text-xs">

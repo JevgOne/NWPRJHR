@@ -1366,7 +1366,9 @@
       "noReviews": "Пока нет отзывов.",
       "noReviewsDesc": "Будьте первым, кто напишет отзыв. Ваша обратная связь помогает нам улучшать наши услуги.",
       "browseProducts": "Посмотреть предложения волос",
-      "writeOnGoogle": "Оценить в Google"
+      "writeOnGoogle": "Оценить в Google",
+      "googleReviews": "Помогите нам расти — оцените нас в Google",
+      "openLink": "Открыть Google"
     },
     "cookie": {
       "message": "Этот сайт использует cookies для обеспечения корректной работы. Подробнее в",
@@ -3065,6 +3067,7 @@
     "sourceManual": "Вручную",
     "sourceGoogle": "Google",
     "sourceInstagram": "Instagram",
+    "sourceWebsite": "Веб",
     "filterPending": "На утверждении",
     "filterActive": "Активные",
     "filterAll": "Все",

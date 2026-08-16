@@ -50,10 +50,11 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
   const [ratingCommunication, setRatingCommunication] = useState<number | null>(null);
   const [ratingSpeed, setRatingSpeed] = useState<number | null>(null);
   const [text, setText] = useState("");
+  const [website, setWebsite] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !text.trim() || text.length < 5) return;
+    if (!name.trim()) return;
     setSending(true);
     try {
       const res = await fetch("/api/public/reviews", {
@@ -68,6 +69,7 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
           ratingSpeed,
           text: text.trim(),
           productId,
+          website,
         }),
       });
       if (res.ok) {
@@ -117,6 +119,15 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-nude-50 rounded-xl p-4 border border-line space-y-3">
+      <input
+        type="text"
+        name="website"
+        value={website}
+        onChange={(e) => setWebsite(e.target.value)}
+        className="absolute -left-[9999px]"
+        tabIndex={-1}
+        autoComplete="off"
+      />
       <div className="text-sm font-semibold text-ink">{t("formTitle")}</div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -169,15 +180,13 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
           rows={3}
           className="w-full border border-line rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-rose resize-none"
           placeholder={t("experiencePlaceholder")}
-          required
-          minLength={5}
         />
       </div>
 
       <div className="flex gap-2">
         <button
           type="submit"
-          disabled={sending || !name.trim() || text.length < 5}
+          disabled={sending || !name.trim()}
           className="px-4 py-1.5 rounded-lg bg-rose text-white text-sm font-medium hover:bg-rose-deep transition-colors disabled:opacity-50"
         >
           {sending ? t("sending") : t("submit")}

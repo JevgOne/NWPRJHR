@@ -27,8 +27,9 @@ const submitSchema = z.object({
   ratingQuality: z.number().int().min(1).max(5).optional(),
   ratingCommunication: z.number().int().min(1).max(5).optional(),
   ratingSpeed: z.number().int().min(1).max(5).optional(),
-  text: z.string().min(5).max(5000),
+  text: z.string().max(5000).default(""),
   productId: z.string().optional(),
+  website: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -48,6 +49,11 @@ export async function POST(request: NextRequest) {
 
   const data = parsed.data;
 
+  // Honeypot — bots fill hidden fields
+  if (data.website) {
+    return NextResponse.json({ success: true, id: "ok" });
+  }
+
   // Verify product exists if provided
   if (data.productId) {
     const product = await prisma.product.findUnique({ where: { id: data.productId } });
@@ -66,7 +72,7 @@ export async function POST(request: NextRequest) {
       ratingSpeed: data.ratingSpeed ?? null,
       text: data.text,
       productId: data.productId || null,
-      source: "MANUAL",
+      source: "WEBSITE",
       active: false, // Requires admin approval
     },
   });
@@ -84,7 +90,7 @@ export async function POST(request: NextRequest) {
     notifyNegativeReview({
       authorName: data.authorName,
       rating: data.rating,
-      source: "MANUAL",
+      source: "WEBSITE",
       text: data.text,
     }).catch(() => {});
   }

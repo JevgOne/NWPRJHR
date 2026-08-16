@@ -911,8 +911,8 @@ async function ProductDetailView({
         worstRating: "1",
       },
     }),
-    ...(reviewsForSchema.length > 0 && {
-      review: reviewsForSchema.map((r) => ({
+    ...(reviewsForSchema.filter((r) => r.text.length > 0).length > 0 && {
+      review: reviewsForSchema.filter((r) => r.text.length > 0).map((r) => ({
         "@type": "Review",
         author: { "@type": "Person", name: r.authorName },
         datePublished: r.createdAt.toISOString().split("T")[0],

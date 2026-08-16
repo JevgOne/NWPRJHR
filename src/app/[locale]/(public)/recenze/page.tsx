@@ -166,7 +166,7 @@ export default async function RecenzePage({
       bestRating: "5",
       worstRating: "1",
     },
-    review: reviews.slice(0, 10).map((r) => ({
+    review: reviews.filter((r) => r.text && r.text.trim().length > 0).slice(0, 10).map((r) => ({
       "@type": "Review",
       author: { "@type": "Person", name: r.authorName },
       reviewRating: {
@@ -263,10 +263,10 @@ export default async function RecenzePage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
           {filtered.map((review) => (
             <div key={review.id} className="group relative bg-gradient-to-br from-nude-50 to-blush-50/30 rounded-2xl p-7 border border-blush-100/50 shadow-sm hover:shadow-md transition-shadow">
-              <span className="absolute top-5 left-6 text-5xl leading-none text-rose/10 font-serif select-none">&ldquo;</span>
+              {review.text && <span className="absolute top-5 left-6 text-5xl leading-none text-rose/10 font-serif select-none">&ldquo;</span>}
 
-              <div className="pt-5">
-                <p className="text-base text-ink leading-relaxed mb-5 italic">{review.text}</p>
+              <div className={review.text ? "pt-5" : ""}>
+                {review.text && <p className="text-base text-ink leading-relaxed mb-5 italic">{review.text}</p>}
 
                 <div className="flex items-center gap-3 mb-1">
                   <Stars rating={review.rating} />

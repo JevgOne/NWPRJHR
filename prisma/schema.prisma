@@ -1544,6 +1544,7 @@ enum ReviewSource {
   MANUAL
   GOOGLE
   INSTAGRAM
+  WEBSITE
 }
 
 model Review {

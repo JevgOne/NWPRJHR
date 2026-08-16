@@ -1366,7 +1366,9 @@
       "noReviews": "Zatím žádné recenze.",
       "noReviewsDesc": "Buďte první, kdo napíše recenzi. Vaše zpětná vazba nám pomáhá zlepšovat naše služby.",
       "browseProducts": "Prohlédnout nabídku vlasů",
-      "writeOnGoogle": "Ohodnotit na Google"
+      "writeOnGoogle": "Ohodnotit na Google",
+      "googleReviews": "Pomozte nám růst — ohodnoťte nás na Google",
+      "openLink": "Otevřít Google"
     },
     "cookie": {
       "message": "Tento web používá cookies pro zajištění správné funkčnosti. Více informací naleznete v",
@@ -3065,6 +3067,7 @@
     "sourceManual": "Ruční",
     "sourceGoogle": "Google",
     "sourceInstagram": "Instagram",
+    "sourceWebsite": "Web",
     "filterPending": "Ke schválení",
     "filterActive": "Aktivní",
     "filterAll": "Všechny",
