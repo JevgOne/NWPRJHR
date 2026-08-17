@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { updateProductSchema } from "@/lib/validations/product";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { generateProductBio } from "@/lib/product-bio";
 
 const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   VIRGIN: { cs: "Panenské Vlasy", uk: "Натуральне Волосся", ru: "Натуральные Волосы" },
@@ -62,6 +63,8 @@ export async function PUT(
         category: true,
         texture: true,
         origin: true,
+        processingType: true,
+        colorTone: true,
         variants: {
           where: { active: true },
           select: {
@@ -96,6 +99,23 @@ export async function PUT(
       } else {
         parsed.data.slug = slugify(`${newCat}-${current.origin ?? ""}-${texture}`);
       }
+
+      // Regenerate description for new category
+      const bio = generateProductBio({
+        name: parsed.data.name!,
+        category: newCat,
+        processingType: current.processingType ?? "OTHER",
+        origin: current.origin,
+        texture,
+        colorTone: current.colorTone,
+        lengths: current.variants.map(v => v.lengthCm),
+        colorCount: new Set(current.variants.map(v => v.color)).size,
+      });
+      parsed.data.description = bio;
+
+      // Reset stale meta (was generated for old category)
+      parsed.data.metaTitle = null;
+      parsed.data.metaDescription = null;
 
       // Recalculate variant prices (skip manual overrides)
       const priceSetting = await prisma.priceSettings.findUnique({

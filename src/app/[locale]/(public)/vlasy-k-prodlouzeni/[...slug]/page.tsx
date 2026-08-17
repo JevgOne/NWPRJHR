@@ -9,7 +9,7 @@ import { auth } from "@/lib/auth";
 import { roundHalereUp } from "@/lib/rounding";
 import { formatCZK } from "@/lib/pricing";
 import { ProductReviews } from "./ProductReviews";
-import { getOriginFlag } from "@/lib/origin-flags";
+import { getOriginFlag, originGenitive } from "@/lib/origin-flags";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { PhotoGallery } from "./PhotoGallery";
 import { AddToInquiryForm } from "./AddToInquiryForm";
@@ -298,18 +298,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: "Not Found" };
 }
 
-// Origin genitive for correct Czech: "z Ukrajiny" not "z Ukrajina"
-const ORIGIN_GENITIVE: Record<string, string> = {
-  Ukrajina: "Ukrajiny", Bělorusko: "Běloruska", Moldavsko: "Moldavska",
-  Rusko: "Ruska", Kazachstán: "Kazachstánu", Uzbekistán: "Uzbekistánu",
-  Turecko: "Turecka", Írán: "Íránu", Indie: "Indie", Vietnam: "Vietnamu",
-  Sýrie: "Sýrie", Čína: "Číny", Mongolsko: "Mongolska", Gruzie: "Gruzie",
-};
-
-function originGenitive(origin: string): string {
-  return ORIGIN_GENITIVE[origin] ?? origin;
-}
-
 /** Get min price per gram (halere) from variants */
 function getMinPricePerGram(
   variants: Array<{ retailPricePerGram: number; sellingMode: string }>,
@@ -431,11 +419,11 @@ async function generateProductMetadataFromProduct(
     try { return t(`colors.${key}`); } catch { return c; }
   });
 
-  // Title: {Struktura} vlasy k prodloužení {délka} cm – {barva} (max 60, no "| Hairland")
-  const title = buildSeoTitle(product.texture, lengths, colorNames);
+  // Title: use manual metaTitle if set, otherwise auto-generate
+  const title = product.metaTitle || buildSeoTitle(product.texture, lengths, colorNames);
 
-  // Description: {Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}. {gramáž} g z jedné hlavy, {cena} Kč/g. Osobní ukázka po Praze zdarma.
-  const description = buildAutoDescription(product, colorNames, lengths, product.variants);
+  // Description: use manual metaDescription if set, otherwise auto-generate
+  const description = product.metaDescription || buildAutoDescription(product, colorNames, lengths, product.variants);
 
   // OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
   const totalGrams = getTotalGrams(product.variants);

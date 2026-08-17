@@ -1,3 +1,5 @@
+import { originFromGenitive } from "@/lib/origin-flags";
+
 interface BioProductData {
   name: string;
   category: string;
@@ -8,20 +10,6 @@ interface BioProductData {
   lengths?: number[];
   colorCount?: number;
 }
-
-const ORIGIN_MAP: Record<string, string> = {
-  UA: "z Ukrajiny",
-  IN: "z Indie",
-  CN: "z Číny",
-  VN: "z Vietnamu",
-  MM: "z Myanmaru",
-  KH: "z Kambodže",
-  BR: "z Brazílie",
-  PE: "z Peru",
-  RU: "z Ruska",
-  UZ: "z Uzbekistánu",
-  MN: "z Mongolska",
-};
 
 const TEXTURE_ADJECTIVE: Record<string, string> = {
   "Rovné": "rovné",
@@ -40,7 +28,7 @@ const PROCESSING_NOTE: Record<string, string> = {
 };
 
 export function generateProductBio(data: BioProductData): string {
-  const origin = data.origin ? ORIGIN_MAP[data.origin] ?? `z ${data.origin}` : "";
+  const origin = data.origin ? originFromGenitive(data.origin) : "";
   const texture = data.texture ? TEXTURE_ADJECTIVE[data.texture] ?? data.texture.toLowerCase() : "";
   const color = data.colorTone ?? "";
   const lengthStr = formatLengths(data.lengths);
