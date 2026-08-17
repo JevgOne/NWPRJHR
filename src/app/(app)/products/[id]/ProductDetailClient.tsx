@@ -18,7 +18,7 @@ import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
 import { buildSeoTitle, buildAutoDescription } from "@/lib/seo-product";
-import { slugify } from "@/lib/slugify";
+import { buildProductSlug } from "@/lib/slugify";
 import { formatCZK } from "@/lib/pricing";
 
 const PROCESSING_TYPES = ["CLIP_IN", "TAPE_IN", "KERATIN", "WEFT", "MICRO_RING", "OTHER"] as const;
@@ -598,7 +598,17 @@ export function ProductDetailClient({
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => updateEditField("slug", slugify(editValues.name))}
+                  onClick={() => {
+                    const firstVariant = product.variants?.[0];
+                    updateEditField("slug", buildProductSlug({
+                      category: editValues.category,
+                      origin: editValues.origin || product.origin || null,
+                      texture: product.texture || null,
+                      colorTone: product.colorTone || null,
+                      colorCode: firstVariant?.color,
+                      lengthCm: firstVariant?.lengthCm,
+                    }));
+                  }}
                 >
                   Auto
                 </Button>

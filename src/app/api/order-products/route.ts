@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { slugify } from "@/lib/slugify";
+import { slugify, uniqueSlug } from "@/lib/slugify";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Název a cena jsou povinné" }, { status: 400 });
   }
 
-  const slug = slugify(name);
+  const slug = await uniqueSlug(slugify(name), prisma);
 
   const product = await prisma.product.create({
     data: {

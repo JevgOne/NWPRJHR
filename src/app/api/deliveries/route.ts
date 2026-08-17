@@ -8,6 +8,7 @@ import { stockIn } from "@/lib/stock-in";
 import { generateBarcode } from "@/lib/barcode";
 import { calculateRetailPrice } from "@/lib/pricing";
 import { logAudit, getClientIp } from "@/lib/audit";
+import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
 
 export const maxDuration = 30;
 
@@ -73,24 +74,6 @@ const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   ACCESSORY: { cs: "Příslušenství", uk: "Аксесуари", ru: "Аксессуары" },
 };
 
-function slugify(text: string): string {
-  return text.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-async function uniqueSlug(base: string): Promise<string> {
-  const slug = slugify(base);
-  const existing = await prisma.product.findUnique({ where: { slug }, select: { id: true } });
-  if (!existing) return slug;
-  for (let i = 2; i <= 100; i++) {
-    const candidate = `${slug}-${i}`;
-    const found = await prisma.product.findUnique({ where: { slug: candidate }, select: { id: true } });
-    if (!found) return candidate;
-  }
-  return `${slug}-${Date.now()}`;
-}
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -131,7 +114,14 @@ export async function POST(request: NextRequest) {
     const productName = isAccessory
       ? catNames.cs
       : `${catNames.cs} — ${data.texture}${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`;
-    const productSlug = await uniqueSlug(productName);
+    const slugBase = buildProductSlug({
+      category: data.category,
+      origin: isAccessory ? null : data.origin,
+      texture: isAccessory ? null : data.texture,
+      colorCode: isAccessory ? null : data.color,
+      lengthCm: isAccessory ? null : data.lengthCm,
+    });
+    const productSlug = await uniqueSlug(slugBase, prisma);
 
     const product = isAccessory
       ? await prisma.product.create({

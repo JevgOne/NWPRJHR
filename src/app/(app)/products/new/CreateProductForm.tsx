@@ -10,7 +10,7 @@ import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { COLOR_TONE_OPTIONS } from "@/lib/color-tones";
 import { PhotoUpload } from "@/components/products/PhotoUpload";
-import { slugify } from "@/lib/slugify";
+import { buildProductSlug } from "@/lib/slugify";
 import { HAIR_COLORS, COLOR_CODES } from "@/lib/hair-colors";
 
 const CATEGORIES = ["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"] as const;
@@ -193,7 +193,14 @@ export function CreateProductForm() {
       texture: texture || undefined,
       colorTone: colorTone || undefined,
       photos: photos.length > 0 ? JSON.stringify(photos) : undefined,
-      slug: slugify(name) || undefined,
+      slug: buildProductSlug({
+        category,
+        origin: origin || null,
+        texture: texture || null,
+        colorTone: colorTone || null,
+        colorCode: variants[0]?.color || null,
+        lengthCm: variants[0]?.lengthCm ? parseInt(variants[0].lengthCm) : null,
+      }) || undefined,
     };
 
     try {

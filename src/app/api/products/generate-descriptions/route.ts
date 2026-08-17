@@ -2,25 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { generateProductBio } from "@/lib/product-bio";
-
-function slugify(text: string): string {
-  return text.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
-  const slug = slugify(base);
-  const existing = await prisma.product.findUnique({ where: { slug }, select: { id: true } });
-  if (!existing || existing.id === excludeId) return slug;
-  for (let i = 2; i <= 100; i++) {
-    const candidate = `${slug}-${i}`;
-    const found = await prisma.product.findUnique({ where: { slug: candidate }, select: { id: true } });
-    if (!found || found.id === excludeId) return candidate;
-  }
-  return `${slug}-${Date.now()}`;
-}
+import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -72,12 +54,19 @@ export async function POST(request: Request) {
     }
 
     // --- Slug regeneration ---
-    const idealSlug = slugify(product.name);
     const currentSlug = product.slug;
-    // Fix if: no slug, slug contains timestamp (13+ digit number), or slug doesn't match name
     const hasTimestamp = currentSlug && /\d{10,}/.test(currentSlug);
     if (!currentSlug || hasTimestamp) {
-      const newSlug = await uniqueSlug(product.name, product.id);
+      const firstVariant = product.variants[0];
+      const slugBase = buildProductSlug({
+        category: product.category,
+        origin: product.origin,
+        texture: product.texture,
+        colorTone: product.colorTone,
+        colorCode: firstVariant?.color,
+        lengthCm: firstVariant?.lengthCm,
+      });
+      const newSlug = await uniqueSlug(slugBase, prisma, product.id);
       if (newSlug !== currentSlug) {
         updates.slug = newSlug;
         updatedSlugs++;

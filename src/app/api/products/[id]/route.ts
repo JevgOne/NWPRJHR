@@ -6,6 +6,7 @@ import { updateProductSchema } from "@/lib/validations/product";
 import { serializeProductForRole } from "@/lib/api/product-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { generateProductBio } from "@/lib/product-bio";
+import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
 
 const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   VIRGIN: { cs: "Panenské Vlasy", uk: "Натуральне Волосся", ru: "Натуральные Волосы" },
@@ -14,12 +15,6 @@ const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   SALE: { cs: "Výprodej", uk: "Розпродаж", ru: "Распродажа" },
 };
 
-function slugify(text: string): string {
-  return text.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 export async function GET(
   _request: NextRequest,
@@ -92,13 +87,15 @@ export async function PUT(
 
       // Regenerate slug
       const firstVariant = current.variants[0];
-      if (firstVariant) {
-        parsed.data.slug = slugify(
-          `${newCat}-${current.origin ?? ""}-${texture}-${firstVariant.color}-${firstVariant.lengthCm}cm`
-        );
-      } else {
-        parsed.data.slug = slugify(`${newCat}-${current.origin ?? ""}-${texture}`);
-      }
+      const slugBase = buildProductSlug({
+        category: newCat,
+        origin: current.origin,
+        texture,
+        colorTone: current.colorTone,
+        colorCode: firstVariant?.color,
+        lengthCm: firstVariant?.lengthCm,
+      });
+      parsed.data.slug = await uniqueSlug(slugBase, prisma, id);
 
       // Regenerate descriptions for new category (all 3 languages)
       const bioData = {
