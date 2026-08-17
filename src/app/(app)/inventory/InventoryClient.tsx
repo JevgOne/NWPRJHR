@@ -12,6 +12,7 @@ import { generateSku } from "@/lib/sku";
 interface StockItem {
   variantId: string;
   product: { id: string; name: string; category: string; origin?: string | null; texture?: string | null };
+  photoUrl?: string | null;
   lengthCm: number;
   color: string;
   physicalGrams: number;
@@ -406,26 +407,39 @@ export function InventoryClient({
                       />
                     </td>
                     <td className="py-2.5 px-2">
-                      <div className="font-medium text-ink text-sm">
-                        {item.product.name}
-                      </div>
-                      <div className="font-mono text-[10px] text-muted">
-                        {generateSku(item.product.category, item.product.texture, item.color, item.lengthCm)}
-                      </div>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                          item.product.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
-                          item.product.category === "LUXE" ? "bg-violet-100 text-violet-700" :
-                          item.product.category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
-                          "bg-red-100 text-red-700"
-                        }`}>
-                          {tCat(item.product.category.toLowerCase() as "virgin")}
-                        </span>
-                        {item.product.origin && (
-                          <span className="text-[10px] text-muted">
-                            {getOriginFlag(item.product.origin)} {item.product.origin}
-                          </span>
+                      <div className="flex items-center gap-2.5">
+                        {item.photoUrl ? (
+                          <img src={item.photoUrl} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                        ) : (
+                          <div className="w-8 h-8 rounded bg-nude-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21z" />
+                            </svg>
+                          </div>
                         )}
+                        <div className="min-w-0">
+                          <div className="font-medium text-ink text-sm">
+                            {item.product.name}
+                          </div>
+                          <div className="font-mono text-[10px] text-muted">
+                            {generateSku(item.product.category, item.product.texture, item.color, item.lengthCm)}
+                          </div>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                              item.product.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
+                              item.product.category === "LUXE" ? "bg-violet-100 text-violet-700" :
+                              item.product.category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
+                              "bg-red-100 text-red-700"
+                            }`}>
+                              {tCat(item.product.category.toLowerCase() as "virgin")}
+                            </span>
+                            {item.product.origin && (
+                              <span className="text-[10px] text-muted">
+                                {getOriginFlag(item.product.origin)} {item.product.origin}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="py-2.5 px-2">

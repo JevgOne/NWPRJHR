@@ -100,8 +100,8 @@ export async function PUT(
         parsed.data.slug = slugify(`${newCat}-${current.origin ?? ""}-${texture}`);
       }
 
-      // Regenerate description for new category
-      const bio = generateProductBio({
+      // Regenerate descriptions for new category (all 3 languages)
+      const bioData = {
         name: parsed.data.name!,
         category: newCat,
         processingType: current.processingType ?? "OTHER",
@@ -110,8 +110,10 @@ export async function PUT(
         colorTone: current.colorTone,
         lengths: current.variants.map(v => v.lengthCm),
         colorCount: new Set(current.variants.map(v => v.color)).size,
-      });
-      parsed.data.description = bio;
+      };
+      parsed.data.description = generateProductBio(bioData, "cs");
+      parsed.data.descriptionUk = generateProductBio(bioData, "uk");
+      parsed.data.descriptionRu = generateProductBio(bioData, "ru");
 
       // Reset stale meta (was generated for old category)
       parsed.data.metaTitle = null;

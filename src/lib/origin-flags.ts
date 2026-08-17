@@ -77,6 +77,54 @@ export function originFromGenitive(origin: string): string {
   return gen ? `z ${gen}` : `z ${origin}`;
 }
 
+// Ukrainian genitive forms ("з України", "з Білорусі")
+export const ORIGIN_GENITIVE_UK: Record<string, string> = {
+  "Ukrajina": "України",
+  "Bělorusko": "Білорусі",
+  "Moldavsko": "Молдови",
+  "Rusko": "Росії",
+  "Kazachstán": "Казахстану",
+  "Uzbekistán": "Узбекистану",
+  "Turecko": "Туреччини",
+  "Írán": "Ірану",
+  "Indie": "Індії",
+  "Vietnam": "В'єтнаму",
+  "Sýrie": "Сирії",
+  "Čína": "Китаю",
+  "Mongolsko": "Монголії",
+  "Gruzie": "Грузії",
+  "Mix": "суміші походжень",
+};
+
+export function originFromGenitiveUk(origin: string): string {
+  const gen = ORIGIN_GENITIVE_UK[origin];
+  return gen ? `з ${gen}` : `з ${origin}`;
+}
+
+// Russian genitive forms ("из Украины", "из Беларуси")
+export const ORIGIN_GENITIVE_RU: Record<string, string> = {
+  "Ukrajina": "Украины",
+  "Bělorusko": "Беларуси",
+  "Moldavsko": "Молдовы",
+  "Rusko": "России",
+  "Kazachstán": "Казахстана",
+  "Uzbekistán": "Узбекистана",
+  "Turecko": "Турции",
+  "Írán": "Ирана",
+  "Indie": "Индии",
+  "Vietnam": "Вьетнама",
+  "Sýrie": "Сирии",
+  "Čína": "Китая",
+  "Mongolsko": "Монголии",
+  "Gruzie": "Грузии",
+  "Mix": "смеси происхождений",
+};
+
+export function originFromGenitiveRu(origin: string): string {
+  const gen = ORIGIN_GENITIVE_RU[origin];
+  return gen ? `из ${gen}` : `из ${origin}`;
+}
+
 export const ORIGIN_OPTIONS = [
   { name: "Ukrajina", flag: "🇺🇦" },
   { name: "Bělorusko", flag: "🇧🇾" },

@@ -12,7 +12,7 @@ async function getInventoryData() {
       where: { active: true, product: { archived: false } },
       include: {
         product: {
-          select: { id: true, name: true, category: true, origin: true, texture: true },
+          select: { id: true, name: true, category: true, origin: true, texture: true, photos: true },
         },
       },
       orderBy: [{ product: { name: "asc" } }, { lengthCm: "asc" }, { color: "asc" }],
@@ -48,9 +48,15 @@ export default async function InventoryPage() {
 
   const items = variants.map((v) => {
     const stock = allStock.get(v.id);
+    let photoUrl: string | null = null;
+    try {
+      const parsed = v.product.photos ? JSON.parse(v.product.photos) : [];
+      if (Array.isArray(parsed) && parsed.length > 0) photoUrl = parsed[0];
+    } catch { /* noop */ }
     return {
       variantId: v.id,
       product: v.product,
+      photoUrl,
       lengthCm: v.lengthCm,
       color: v.color,
       physicalGrams: stock?.physicalGrams ?? 0,

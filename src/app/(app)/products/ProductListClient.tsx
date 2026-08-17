@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -36,14 +37,38 @@ interface ProductItem {
 
 const CATEGORIES = ["ALL", "VIRGIN", "LUXE", "STANDARD", "SALE"] as const;
 
-export function ProductListClient({ products, stockMap }: { products: ProductItem[]; stockMap: Record<string, number> }) {
+export function ProductListClient({ products, stockMap, role }: { products: ProductItem[]; stockMap: Record<string, number>; role: string }) {
   const t = useTranslations();
   const tCat = useTranslations("category");
+  const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [originFilter, setOriginFilter] = useState<string>("");
   const [textureFilter, setTextureFilter] = useState<string>("");
+
+  const [generatingAll, setGeneratingAll] = useState(false);
+  const [generateResult, setGenerateResult] = useState<string | null>(null);
+
+  const handleGenerateAll = useCallback(async () => {
+    if (!confirm("Vygenerovat popisy CZ/UK/RU pro všechny produkty bez popisu?")) return;
+    setGeneratingAll(true);
+    setGenerateResult(null);
+    try {
+      const res = await fetch("/api/products/generate-descriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force: false }),
+      });
+      const data = await res.json();
+      setGenerateResult(data.message);
+      router.refresh();
+    } catch {
+      setGenerateResult("Chyba při generování popisů");
+    } finally {
+      setGeneratingAll(false);
+    }
+  }, [router]);
 
   // Extract filter options
   const filterOptions = useMemo(() => {
@@ -144,10 +169,26 @@ export function ProductListClient({ products, stockMap }: { products: ProductIte
         </div>
       </div>
 
-      {/* Count */}
-      <p className="text-xs text-muted mb-3">
-        {filtered.length} / {products.length}
-      </p>
+      {/* Count + bulk actions */}
+      <div className="flex items-center gap-3 mb-3">
+        <p className="text-xs text-muted">
+          {filtered.length} / {products.length}
+        </p>
+        {role === "OWNER" && (
+          <>
+            <button
+              onClick={handleGenerateAll}
+              disabled={generatingAll}
+              className="px-3 py-1.5 bg-violet-600 text-white text-xs font-medium rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+            >
+              {generatingAll ? "Generuji..." : "Vygenerovat popisy všem"}
+            </button>
+            {generateResult && (
+              <span className="text-xs text-green-600 font-medium">{generateResult}</span>
+            )}
+          </>
+        )}
+      </div>
 
       {filtered.length === 0 ? (
         <div className="text-center py-8 text-muted text-sm">

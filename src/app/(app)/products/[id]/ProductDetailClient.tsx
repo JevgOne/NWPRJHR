@@ -327,10 +327,11 @@ export function ProductDetailClient({
 
   const [generatingBio, setGeneratingBio] = useState(false);
 
-  const handleGenerateBio = useCallback(() => {
+  const handleGenerateBio = useCallback(async () => {
+    setGeneratingBio(true);
     const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
     const colorCount = new Set((product.variants ?? []).map((v) => v.color)).size;
-    const bio = generateProductBio({
+    const bioData = {
       name: product.name,
       category: product.category,
       processingType: product.processingType,
@@ -339,10 +340,18 @@ export function ProductDetailClient({
       colorTone: product.colorTone,
       lengths,
       colorCount,
+    };
+    const bioCz = generateProductBio(bioData, "cs");
+    const bioUk = generateProductBio(bioData, "uk");
+    const bioRu = generateProductBio(bioData, "ru");
+    await fetch(`/api/products/${product.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description: bioCz, descriptionUk: bioUk, descriptionRu: bioRu }),
     });
-    setEditValues((prev) => ({ ...prev, description: bio }));
-    if (!editMode) setEditMode(true);
-  }, [product, editMode]);
+    setGeneratingBio(false);
+    router.refresh();
+  }, [product, router]);
 
   const parsedPhotos: string[] = (() => {
     try {
@@ -797,16 +806,35 @@ export function ProductDetailClient({
 
             {/* Description */}
             {product.description ? (
-              <div className="mt-4">
-                <div className="text-sm text-gray-600 whitespace-pre-line">{product.description}</div>
-                {isOwner && (
-                  <button
-                    onClick={handleGenerateBio}
-                    disabled={generatingBio}
-                    className="mt-2 text-xs text-muted hover:text-rose transition-colors disabled:opacity-50"
-                  >
-                    {generatingBio ? "..." : t("product.regenerateBio")}
-                  </button>
+              <div className="mt-4 space-y-2">
+                <div className="p-3 bg-nude-50 rounded-lg border border-line">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-muted uppercase tracking-wider">
+                      {t("product.descriptionCz")}
+                    </span>
+                    {isOwner && (
+                      <button
+                        onClick={handleGenerateBio}
+                        disabled={generatingBio}
+                        className="text-xs text-muted hover:text-rose transition-colors disabled:opacity-50"
+                      >
+                        {generatingBio ? "..." : t("product.regenerateBio")}
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-sm text-espresso leading-relaxed whitespace-pre-line">{product.description}</div>
+                </div>
+                {product.descriptionUk && (
+                  <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                    <span className="text-xs font-medium text-blue-400 uppercase tracking-wider">UK</span>
+                    <div className="text-sm text-espresso/80 leading-relaxed whitespace-pre-line mt-1">{product.descriptionUk}</div>
+                  </div>
+                )}
+                {product.descriptionRu && (
+                  <div className="p-3 bg-red-50/50 rounded-lg border border-red-100">
+                    <span className="text-xs font-medium text-red-400 uppercase tracking-wider">RU</span>
+                    <div className="text-sm text-espresso/80 leading-relaxed whitespace-pre-line mt-1">{product.descriptionRu}</div>
+                  </div>
                 )}
               </div>
             ) : isOwner ? (

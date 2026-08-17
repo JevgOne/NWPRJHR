@@ -103,7 +103,7 @@ export default async function ProductsPage() {
           </a>
         )}
       </div>
-      <ProductListClient products={serialized} stockMap={stockMap} />
+      <ProductListClient products={serialized} stockMap={stockMap} role={session.user.role} />
     </div>
   );
 }
