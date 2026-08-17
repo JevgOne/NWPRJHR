@@ -570,10 +570,10 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line text-left">
-                  <th className="py-2 px-2 text-xs text-muted font-medium">{t("product")}</th>
+                  <th className="py-2 px-2 text-xs text-muted font-medium">Produkt</th>
                   <th className="py-2 px-2 text-xs text-muted font-medium">{t("color")}</th>
                   <th className="py-2 px-2 text-xs text-muted font-medium">{t("length")}</th>
-                  <th className="py-2 px-2 text-xs text-muted font-medium text-right">{t("price")}</th>
+                  <th className="py-2 px-2 text-xs text-muted font-medium text-right">Cena</th>
                   <th className="py-2 px-2 text-xs text-muted font-medium text-right">Lhůta</th>
                   <th className="py-2 px-1 w-8"></th>
                 </tr>
