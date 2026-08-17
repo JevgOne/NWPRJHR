@@ -128,21 +128,26 @@ export async function POST(request: NextRequest) {
     ]);
     // Always create a new product — no merging
     const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
+    const productName = isAccessory
+      ? catNames.cs
+      : `${catNames.cs} — ${data.texture}${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`;
+    const productSlug = await uniqueSlug(productName);
+
     const product = isAccessory
       ? await prisma.product.create({
           data: {
-            name: catNames.cs,
+            name: productName,
             nameUk: catNames.uk,
             nameRu: catNames.ru,
             category: data.category,
             processingType: "OTHER",
-            slug: await uniqueSlug(`${data.category}-${data.color}`),
+            slug: productSlug,
             photos: "[]",
           },
         })
       : await prisma.product.create({
           data: {
-            name: `${catNames.cs} — ${data.texture}${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`,
+            name: productName,
             nameUk: `${catNames.uk} — ${data.texture}${isByPiece && data.exclusive ? " (Ексклюзив)" : ""}`,
             nameRu: `${catNames.ru} — ${data.texture}${isByPiece && data.exclusive ? " (Эксклюзив)" : ""}`,
             category: data.category,
@@ -150,7 +155,7 @@ export async function POST(request: NextRequest) {
             origin: data.origin,
             texture: data.texture,
             colorTone: autoColorTone(data.color),
-            slug: await uniqueSlug(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm`),
+            slug: productSlug,
             photos: "[]",
           },
         });
