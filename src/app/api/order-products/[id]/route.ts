@@ -13,6 +13,9 @@ export async function DELETE(
 
   const { id } = await params;
 
+  const product = await prisma.product.findUnique({ where: { id }, select: { id: true, orderOnly: true } });
+  if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
   await prisma.product.update({
     where: { id },
     data: { archived: true },

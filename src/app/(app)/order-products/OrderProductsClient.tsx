@@ -240,9 +240,18 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Opravdu smazat?")) return;
-    await fetch(`/api/order-products/${id}`, { method: "DELETE" });
-    router.refresh();
+    if (!window.confirm("Opravdu smazat tento produkt?")) return;
+    try {
+      const res = await fetch(`/api/order-products/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Chyba při mazání");
+        return;
+      }
+      router.refresh();
+    } catch {
+      alert("Chyba při mazání");
+    }
   };
 
   return (
