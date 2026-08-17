@@ -1,18 +1,23 @@
 import { prisma } from "@/lib/db";
+import { unstable_cache } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
-async function getReviews() {
-  try {
-    return await prisma.review.findMany({
-      where: { active: true },
-      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-      take: 12,
-    });
-  } catch {
-    return [];
-  }
-}
+const getReviews = unstable_cache(
+  async () => {
+    try {
+      return await prisma.review.findMany({
+        where: { active: true },
+        orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+        take: 12,
+      });
+    } catch {
+      return [];
+    }
+  },
+  ["homepage-reviews"],
+  { revalidate: 60, tags: ["reviews"] }
+);
 
 function Stars({ rating }: { rating: number }) {
   return (
