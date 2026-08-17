@@ -42,7 +42,7 @@ const LENGTH_PRESETS = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
 const CURRENCY_OPTIONS: { code: CurrencyCode; symbol: string }[] = [
   { code: "USD", symbol: "$" },
   { code: "EUR", symbol: "\u20AC" },
-  { code: "CZK", symbol: "K\u010D" },
+  { code: "CZK", symbol: "Kč" },
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -225,7 +225,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error ?? "Chyba p\u0159i ukl\u00e1d\u00e1n\u00ed");
+        setError(data.error ?? "Chyba při ukládání");
         return;
       }
 
@@ -233,7 +233,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
       setShowForm(false);
       router.refresh();
     } catch {
-      setError("Chyba p\u0159i ukl\u00e1d\u00e1n\u00ed");
+      setError("Chyba při ukládání");
     } finally {
       setSubmitting(false);
     }
@@ -248,9 +248,9 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-ink">Na objedn\u00e1vku</h1>
+        <h1 className="text-2xl font-bold text-ink">Na objednávku</h1>
         <Button onClick={() => { setShowForm(!showForm); if (!showForm) resetForm(); }}>
-          {showForm ? tCommon("cancel") : "+ P\u0159idat produkt"}
+          {showForm ? tCommon("cancel") : "+ Přidat produkt"}
         </Button>
       </div>
 
@@ -483,36 +483,36 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
                     <p className="text-xs text-muted">
                       {t("pricePerGramOrig")}: {preview.pricePerGramOrig.toFixed(2)} {CURRENCY_OPTIONS.find((o) => o.code === currency)?.symbol ?? currency}
                       {currency !== "CZK" && (
-                        <> = {formatCzk(Math.round(preview.pricePerGramCzk * 100))} K\u010D</>
+                        <> = {formatCzk(Math.round(preview.pricePerGramCzk * 100))} Kč</>
                       )}
                     </p>
                     <p className="text-xs text-muted">
-                      {t("retailPreview")}: {formatCzk(Math.round(preview.retailPerGram * 100))} K\u010D/g ({t("margin")} 110%)
+                      {t("retailPreview")}: {formatCzk(Math.round(preview.retailPerGram * 100))} Kč/g ({t("margin")} 110%)
                     </p>
                     <p className="text-sm font-semibold text-espresso">
-                      {t("retailPer100g")}: {formatCzk(Math.round(preview.retailPer100g * 100))} K\u010D
+                      {t("retailPer100g")}: {formatCzk(Math.round(preview.retailPer100g * 100))} Kč
                     </p>
                   </div>
                 )}
 
                 {/* Supplier code */}
                 <Input
-                  label="K\u00f3d produktu u dodavatele"
+                  label="Kód produktu u dodavatele"
                   value={supplierCode}
                   onChange={(e) => setSupplierCode(e.target.value)}
-                  placeholder="nap\u0159. SRB-60-BL"
+                  placeholder="např. SRB-60-BL"
                 />
 
                 {/* Photo code + lead days */}
                 <div className="grid grid-cols-2 gap-4">
                   <Input
-                    label="K\u00f3d fotky"
+                    label="Kód fotky"
                     value={photoCode}
                     onChange={(e) => setPhotoCode(e.target.value)}
-                    placeholder="nap\u0159. IMG-4521"
+                    placeholder="např. IMG-4521"
                   />
                   <Input
-                    label="Dodac\u00ed lh\u016fta (dn\u00ed)"
+                    label="Dodací lhůta (dnů)"
                     type="number"
                     value={leadDays}
                     onChange={(e) => setLeadDays(e.target.value)}
@@ -532,7 +532,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
 
                 <div className="flex gap-3">
                   <Button type="submit" disabled={submitting}>
-                    {submitting ? tCommon("loading") : "Ulo\u017eit produkt"}
+                    {submitting ? tCommon("loading") : "Uložit produkt"}
                   </Button>
                   <Button type="button" variant="secondary" onClick={() => { setShowForm(false); resetForm(); }}>
                     {tCommon("cancel")}
@@ -546,7 +546,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
 
       {products.length === 0 && !showForm && (
         <Card>
-          <p className="text-muted text-center py-8">Zat\u00edm \u017e\u00e1dn\u00e9 produkty na objedn\u00e1vku</p>
+          <p className="text-muted text-center py-8">Zatím žádné produkty na objednávku</p>
         </Card>
       )}
 
@@ -559,7 +559,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
               ? `${((variant.retailPricePerPiece ?? 0) / 100).toLocaleString("cs-CZ")} CZK/ks`
               : `${(variant.retailPricePerGram / 100).toLocaleString("cs-CZ")} CZK/g`
             : "\u2014";
-          const leadDaysDisplay = variant?.orderLeadDays ? `~${variant.orderLeadDays} dn\u00ed` : "\u2014";
+          const leadDaysDisplay = variant?.orderLeadDays ? `~${variant.orderLeadDays} dní` : "\u2014";
           const catLabel = CATEGORY_LABELS[p.category] ?? p.category;
 
           return (
@@ -593,7 +593,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
                         )}
                       </div>
                       <div className="flex gap-3 text-xs text-muted mt-1">
-                        {p.supplierCode && <span>K\u00f3d: {p.supplierCode}</span>}
+                        {p.supplierCode && <span>Kód: {p.supplierCode}</span>}
                         {p.photoCode && <span>Foto: {p.photoCode}</span>}
                       </div>
                     </div>
