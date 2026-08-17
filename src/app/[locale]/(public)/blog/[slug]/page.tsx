@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${seoTitle} | Blog`,
     description: seoDesc,
-    alternates: getAlternates(`/blog/${slug}`),
+    alternates: getAlternates(`/blog/${slug}`, locale),
     openGraph: {
       type: "article",
       title: seoTitle,

@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("privacyTitle"),
     description: t("privacyDescription"),
-    alternates: getAlternates("/privacy"),
+    alternates: getAlternates("/privacy", locale),
     openGraph: {
       type: "website",
       title: `${t("privacyTitle")} | Hairland`,

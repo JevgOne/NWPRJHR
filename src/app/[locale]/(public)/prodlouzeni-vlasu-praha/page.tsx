@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description: desc,
-    alternates: getAlternates("/prodlouzeni-vlasu-praha"),
+    alternates: getAlternates("/prodlouzeni-vlasu-praha", locale),
     openGraph: {
       type: "website",
       title: `${title} | Hairland`,

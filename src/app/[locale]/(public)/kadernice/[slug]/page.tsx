@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description:
       stylist.bio?.slice(0, 155) ||
       `${stylist.name} — ${t("landing.stylistMetaFallback")}`,
-    alternates: getAlternates(`/kadernice/${slug}`),
+    alternates: getAlternates(`/kadernice/${slug}`, locale),
     openGraph: {
       ...(stylist.photo && { images: [{ url: stylist.photo, alt: stylist.name, width: 400, height: 400 }] }),
       locale: OG_LOCALES[locale] ?? "cs_CZ",

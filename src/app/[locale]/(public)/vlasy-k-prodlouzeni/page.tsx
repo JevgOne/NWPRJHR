@@ -23,7 +23,7 @@ export async function generateMetadata({
     return {
       title: defaultTitle,
       description: defaultDesc,
-      alternates: getAlternates("/vlasy-k-prodlouzeni"),
+      alternates: getAlternates("/vlasy-k-prodlouzeni", locale),
       openGraph: {
         type: "website",
         title: `${defaultTitle} | Hairland`,
@@ -63,7 +63,7 @@ export async function generateMetadata({
     title,
     description,
     ...(hasFilters && { robots: { index: false } }),
-    alternates: getAlternates("/vlasy-k-prodlouzeni"),
+    alternates: getAlternates("/vlasy-k-prodlouzeni", locale),
     openGraph: {
       type: "website",
       title: `${title} | Hairland`,

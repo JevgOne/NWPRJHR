@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { CheckoutClient } from "./CheckoutClient";
 import { getAlternates } from "@/lib/seo";
 import { auth } from "@/lib/auth";
@@ -7,11 +7,11 @@ import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { prisma } from "@/lib/db";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("metadata");
+  const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
   return {
     title: t("checkoutTitle"),
     description: t("checkoutDescription"),
-    alternates: getAlternates("/checkout"),
+    alternates: getAlternates("/checkout", locale),
     robots: { index: false },
   };
 }

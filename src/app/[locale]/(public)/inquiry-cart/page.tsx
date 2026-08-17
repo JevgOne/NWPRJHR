@@ -4,11 +4,11 @@ import { InquiryCartClient } from "./InquiryCartClient";
 import { getAlternates } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("metadata");
+  const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
   return {
     title: t("inquiryCartTitle"),
     description: t("inquiryCartDescription"),
-    alternates: getAlternates("/inquiry-cart"),
+    alternates: getAlternates("/inquiry-cart", locale),
     robots: { index: false },
     openGraph: {
       type: "website",

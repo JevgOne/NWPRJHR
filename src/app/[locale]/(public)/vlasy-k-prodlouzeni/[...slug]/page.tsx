@@ -467,7 +467,7 @@ async function generateProductMetadataFromProduct(
   return {
     title: { absolute: title },
     description,
-    alternates: getAlternates(`/vlasy-k-prodlouzeni/${productSlug}`),
+    alternates: getAlternates(`/vlasy-k-prodlouzeni/${productSlug}`, locale),
     openGraph: {
       type: "website",
       title: ogTitle,

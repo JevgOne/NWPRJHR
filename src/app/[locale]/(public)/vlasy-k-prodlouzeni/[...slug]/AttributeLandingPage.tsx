@@ -118,7 +118,7 @@ export async function generateAttributeMetadata(
   return {
     title,
     description,
-    alternates: getAlternates(`/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`),
+    alternates: getAlternates(`/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`, locale),
     openGraph: {
       type: "website",
       title: `${title} | Hairland`,

@@ -92,7 +92,7 @@ export async function generateCategoryMetadata(slug: string) {
   return {
     title,
     description,
-    alternates: getAlternates(canonicalPath),
+    alternates: getAlternates(canonicalPath, locale),
     openGraph: {
       type: "website" as const,
       title: `${title} | Hairland`,

@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description: desc,
-    alternates: getAlternates("/pro"),
+    alternates: getAlternates("/pro", locale),
     openGraph: {
       type: "website",
       title: `${title} | Hairland`,
