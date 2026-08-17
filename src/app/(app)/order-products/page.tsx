@@ -12,6 +12,10 @@ export default async function OrderProductsPage() {
     select: {
       id: true,
       name: true,
+      category: true,
+      origin: true,
+      texture: true,
+      colorTone: true,
       photos: true,
       supplierCode: true,
       photoCode: true,

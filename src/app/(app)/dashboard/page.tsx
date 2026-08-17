@@ -67,16 +67,23 @@ async function getDashboardData(userId: string) {
       }),
 
       prisma.$queryRawUnsafe<
-        Array<{ category: string; totalGrams: number; purchaseValue: number; retailValue: number }>
+        Array<{ category: string; totalGrams: number; totalPieces: number; purchaseValue: number; retailValue: number }>
       >(
         `SELECT p.category,
                 COALESCE(SUM(d.remainingGrams), 0) as totalGrams,
+                COALESCE(SUM(d.remainingPieces), 0) as totalPieces,
                 COALESCE(SUM(d.remainingGrams * d.purchasePricePerGramCZK), 0) as purchaseValue,
-                COALESCE(SUM(d.remainingGrams * v.retailPricePerGram), 0) as retailValue
+                COALESCE(SUM(
+                  CASE
+                    WHEN v.sellingMode = 'BY_PIECE' AND v.retailPricePerPiece IS NOT NULL
+                      THEN d.remainingPieces * v.retailPricePerPiece
+                    ELSE d.remainingGrams * v.retailPricePerGram
+                  END
+                ), 0) as retailValue
          FROM deliveries d
          JOIN variants v ON d.variantId = v.id
          JOIN products p ON v.productId = p.id
-         WHERE d.remainingGrams > 0
+         WHERE d.remainingGrams > 0 OR d.remainingPieces > 0
          GROUP BY p.category`
       ),
 

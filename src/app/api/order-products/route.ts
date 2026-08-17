@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { slugify, uniqueSlug } from "@/lib/slugify";
+import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
+import { calculateRetailPrice } from "@/lib/pricing";
+import { generateProductBio } from "@/lib/product-bio";
+import { autoColorTone, CATEGORY_NAMES } from "@/lib/product-helpers";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -10,35 +13,59 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();
-  const { name, supplierCode, photoCode, photos, price, leadDays, description } = body;
+  const { category, origin, texture, color, lengthCm, supplierCode, photoCode, photos, purchasePricePer100g, currency, exchangeRate, leadDays } = body;
 
-  if (!name || !price) {
-    return NextResponse.json({ error: "Název a cena jsou povinné" }, { status: 400 });
+  if (!category || !origin || !texture || !color || !lengthCm) {
+    return NextResponse.json({ error: "Chybí povinné atributy" }, { status: 400 });
   }
 
-  const slug = await uniqueSlug(slugify(name), prisma);
+  // Pricing: purchasePricePer100g (in original currency) → per gram CZK → retail via markup
+  const pricePer100gCents = Math.round(purchasePricePer100g * 100);
+  const pricePerGramRaw = Math.round(pricePer100gCents / 100);
+  const costPerGramCzk = currency === "CZK"
+    ? pricePerGramRaw
+    : Math.round((pricePerGramRaw * exchangeRate) / 10000);
+
+  const priceSetting = await prisma.priceSettings.findUnique({ where: { category } });
+  const markupPercent = priceSetting?.markupPercent ?? 110;
+  const retailPrice = calculateRetailPrice(costPerGramCzk, markupPercent);
+
+  // Product name + slug
+  const catNames = CATEGORY_NAMES[category] ?? CATEGORY_NAMES.STANDARD;
+  const productName = `${catNames.cs} — ${texture}`;
+  const colorTone = autoColorTone(color);
+  const slugBase = buildProductSlug({ category, origin, texture, colorCode: color, lengthCm });
+  const slug = await uniqueSlug(slugBase, prisma);
+
+  // Bio descriptions
+  const bioData = { name: productName, category, processingType: "OTHER", origin, texture, colorTone, lengths: [lengthCm] };
 
   const product = await prisma.product.create({
     data: {
-      name,
-      description: description || null,
-      category: "VIRGIN",
+      name: productName,
+      nameUk: `${catNames.uk} — ${texture}`,
+      nameRu: `${catNames.ru} — ${texture}`,
+      description: generateProductBio(bioData, "cs"),
+      descriptionUk: generateProductBio(bioData, "uk"),
+      descriptionRu: generateProductBio(bioData, "ru"),
+      category,
       processingType: "OTHER",
+      origin,
+      texture,
+      colorTone,
       orderOnly: true,
       supplierCode: supplierCode || null,
       photoCode: photoCode || null,
       photos: JSON.stringify(photos ?? []),
-      slug: slug || undefined,
+      slug,
       variants: {
         create: {
-          lengthCm: 0,
-          color: "0",
-          costPricePerGram: 0,
-          wholesalePricePerGram: price,
-          retailPricePerGram: price,
+          lengthCm,
+          color,
+          costPricePerGram: costPerGramCzk,
+          wholesalePricePerGram: costPerGramCzk,
+          retailPricePerGram: retailPrice,
           sellingMode: "BY_PIECE",
-          pricePerPiece: price,
-          retailPricePerPiece: price,
           availableToOrder: true,
           orderLeadDays: leadDays || 14,
         },
@@ -47,6 +74,5 @@ export async function POST(request: NextRequest) {
   });
 
   revalidateTag("products", { expire: 0 });
-
   return NextResponse.json({ id: product.id }, { status: 201 });
 }
