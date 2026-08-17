@@ -80,6 +80,18 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+async function uniqueSlug(base: string): Promise<string> {
+  const slug = slugify(base);
+  const existing = await prisma.product.findUnique({ where: { slug }, select: { id: true } });
+  if (!existing) return slug;
+  for (let i = 2; i <= 100; i++) {
+    const candidate = `${slug}-${i}`;
+    const found = await prisma.product.findUnique({ where: { slug: candidate }, select: { id: true } });
+    if (!found) return candidate;
+  }
+  return `${slug}-${Date.now()}`;
+}
+
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session)
@@ -124,7 +136,7 @@ export async function POST(request: NextRequest) {
             nameRu: catNames.ru,
             category: data.category,
             processingType: "OTHER",
-            slug: slugify(`${data.category}-${data.color}-${Date.now()}`),
+            slug: await uniqueSlug(`${data.category}-${data.color}`),
             photos: "[]",
           },
         })
@@ -138,7 +150,7 @@ export async function POST(request: NextRequest) {
             origin: data.origin,
             texture: data.texture,
             colorTone: autoColorTone(data.color),
-            slug: slugify(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm-${Date.now()}`),
+            slug: await uniqueSlug(`${data.category}-${data.origin}-${data.texture}-${data.color}-${data.lengthCm}cm`),
             photos: "[]",
           },
         });
