@@ -1368,7 +1368,10 @@
       "browseProducts": "Prohlédnout nabídku vlasů",
       "writeOnGoogle": "Ohodnotit na Google",
       "googleReviews": "Pomozte nám růst — ohodnoťte nás na Google",
-      "openLink": "Otevřít Google"
+      "openLink": "Otevřít Google",
+      "subQuality": "Kvalita",
+      "subCommunication": "Komunikace",
+      "subSpeed": "Dodání"
     },
     "cookie": {
       "message": "Tento web používá cookies pro zajištění správné funkčnosti. Více informací naleznete v",

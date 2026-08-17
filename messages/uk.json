@@ -1368,7 +1368,10 @@
       "browseProducts": "Переглянути пропозицію волосся",
       "writeOnGoogle": "Оцінити в Google",
       "googleReviews": "Допоможіть нам рости — оцініть нас у Google",
-      "openLink": "Відкрити Google"
+      "openLink": "Відкрити Google",
+      "subQuality": "Якість",
+      "subCommunication": "Комунікація",
+      "subSpeed": "Доставка"
     },
     "cookie": {
       "message": "Цей сайт використовує cookies для забезпечення коректної роботи. Детальніше в",

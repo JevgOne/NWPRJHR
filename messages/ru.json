@@ -1368,7 +1368,10 @@
       "browseProducts": "Посмотреть предложения волос",
       "writeOnGoogle": "Оценить в Google",
       "googleReviews": "Помогите нам расти — оцените нас в Google",
-      "openLink": "Открыть Google"
+      "openLink": "Открыть Google",
+      "subQuality": "Качество",
+      "subCommunication": "Коммуникация",
+      "subSpeed": "Доставка"
     },
     "cookie": {
       "message": "Этот сайт использует cookies для обеспечения корректной работы. Подробнее в",

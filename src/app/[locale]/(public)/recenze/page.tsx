@@ -260,44 +260,55 @@ export default async function RecenzePage({
 
       {/* Review cards — fully server-rendered */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12 items-start">
           {filtered.map((review) => (
-            <div key={review.id} className="group relative bg-gradient-to-br from-nude-50 to-blush-50/30 rounded-2xl p-7 border border-blush-100/50 shadow-sm hover:shadow-md transition-shadow">
-              {review.text && <span className="absolute top-5 left-6 text-5xl leading-none text-rose/10 font-serif select-none">&ldquo;</span>}
-
-              <div className={review.text ? "pt-5" : ""}>
-                {review.text && <p className="text-base text-ink leading-relaxed mb-5 italic">{review.text}</p>}
-
-                <div className="flex items-center gap-3 mb-1">
+            <div key={review.id} className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-shadow">
+              {/* Author row: avatar + name/city + source badge + stars right */}
+              <div className="flex items-center gap-3">
+                {review.authorPhoto ? (
+                  <img src={review.authorPhoto} alt={review.authorName} className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm flex-shrink-0" />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-espresso/5 flex items-center justify-center text-espresso font-semibold text-sm flex-shrink-0">
+                    {review.authorName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm text-ink truncate">{review.authorName}</span>
+                    <SourceBadge source={review.source} />
+                  </div>
+                  {review.authorCity && <div className="text-xs text-muted mt-0.5">{review.authorCity}</div>}
+                </div>
+                <div className="flex-shrink-0">
                   <Stars rating={review.rating} />
-                  {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
-                    <span className="text-[11px] text-muted">
-                      {[
-                        review.ratingQuality && `${t("qualityLabel")} ${review.ratingQuality}/5`,
-                        review.ratingCommunication && `${t("communicationLabel")} ${review.ratingCommunication}/5`,
-                        review.ratingSpeed && `${t("speedLabel")} ${review.ratingSpeed}/5`,
-                      ].filter(Boolean).join(" · ")}
+                </div>
+              </div>
+
+              {/* Review text (optional) */}
+              {review.text && (
+                <p className="text-sm text-ink/85 leading-relaxed mt-4">{review.text}</p>
+              )}
+
+              {/* Sub-ratings as pill badges */}
+              {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
+                <div className="flex flex-wrap gap-1.5 mt-4">
+                  {review.ratingQuality != null && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-nude-100 text-[11px] text-espresso font-medium">
+                      {t("subQuality")} <span className="text-yellow-400">&#x2605;</span> {review.ratingQuality}
+                    </span>
+                  )}
+                  {review.ratingCommunication != null && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-nude-100 text-[11px] text-espresso font-medium">
+                      {t("subCommunication")} <span className="text-yellow-400">&#x2605;</span> {review.ratingCommunication}
+                    </span>
+                  )}
+                  {review.ratingSpeed != null && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-nude-100 text-[11px] text-espresso font-medium">
+                      {t("subSpeed")} <span className="text-yellow-400">&#x2605;</span> {review.ratingSpeed}
                     </span>
                   )}
                 </div>
-
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-blush-100/60">
-                  {review.authorPhoto ? (
-                    <img src={review.authorPhoto} alt={review.authorName} className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow-sm" />
-                  ) : (
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-rose/80 to-rose-deep/80 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
-                      {review.authorName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-ink truncate">{review.authorName}</span>
-                      <SourceBadge source={review.source} />
-                    </div>
-                    {review.authorCity && <div className="text-xs text-muted mt-0.5">{review.authorCity}</div>}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
