@@ -260,9 +260,9 @@ export default async function RecenzePage({
 
       {/* Review cards — fully server-rendered */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-12 items-start">
           {filtered.map((review) => (
-            <div key={review.id} className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-shadow">
+            <div key={review.id} className="bg-white rounded-xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-shadow">
               {/* Author row: avatar + name/city + source badge + stars right */}
               <div className="flex items-center gap-3">
                 {review.authorPhoto ? (
@@ -286,12 +286,12 @@ export default async function RecenzePage({
 
               {/* Review text (optional) */}
               {review.text && (
-                <p className="text-sm text-ink/85 leading-relaxed mt-4">{review.text}</p>
+                <p className="text-sm text-ink/85 leading-relaxed mt-3">{review.text}</p>
               )}
 
               {/* Sub-ratings as pill badges */}
               {(review.ratingQuality || review.ratingCommunication || review.ratingSpeed) && (
-                <div className="flex flex-wrap gap-1.5 mt-4">
+                <div className="flex flex-wrap gap-1.5 mt-3">
                   {review.ratingQuality != null && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-nude-100 text-[11px] text-espresso font-medium">
                       {t("subQuality")} <span className="text-yellow-400">&#x2605;</span> {review.ratingQuality}
