@@ -27,6 +27,7 @@ import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_S
 import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLandingPage";
 import { generateSku } from "@/lib/sku";
 import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { buildSeoTitle, buildAutoDescription } from "@/lib/seo-product";
 import { TrackProductView } from "@/components/public/TrackProductView";
 import Script from "next/script";
 import { RecentlyViewed } from "@/components/public/RecentlyViewed";
@@ -316,84 +317,6 @@ function getTotalGrams(
 }
 
 /**
- * Build SEO meta description:
- * {Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}.
- * {gramáž} g z jedné hlavy, {cena} Kč/g. Osobní ukázka po Praze zdarma.
- * Max 155 chars, skip missing fields with separators.
- */
-function buildAutoDescription(
-  product: { name: string; category: string; processingType: string; origin?: string | null; texture?: string | null },
-  colorNames: string[],
-  lengths: number[],
-  variants: Array<{ retailPricePerGram: number; sellingMode: string; retailPricePerPiece?: number | null; pricePerPiece?: number | null; availableGrams: number }>,
-): string {
-  // Part 1: "{Původ} {struktura} vlasy k prodloužení, {délka} cm, {barva}"
-  const opening: string[] = [];
-  if (product.origin) opening.push(originGenitive(product.origin));
-  if (product.texture) opening.push(product.texture.toLowerCase());
-  opening.push("vlasy k prodloužení");
-  let part1 = opening.join(" ");
-  // Capitalize first letter
-  part1 = part1.charAt(0).toUpperCase() + part1.slice(1);
-
-  const specs: string[] = [];
-  if (lengths.length > 0) {
-    specs.push(
-      lengths.length <= 3
-        ? lengths.map((l) => `${l} cm`).join(", ")
-        : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`
-    );
-  }
-  if (colorNames.length > 0 && colorNames.length <= 3) {
-    specs.push(colorNames.join(", "));
-  }
-  if (specs.length > 0) part1 += ", " + specs.join(", ");
-
-  // Part 2: "{gramáž} g z jedné hlavy, {cena} Kč/g"
-  const part2parts: string[] = [];
-  const totalG = getTotalGrams(variants);
-  if (totalG > 0) part2parts.push(`${totalG} g z jedné hlavy`);
-  const minPpg = getMinPricePerGram(variants);
-  if (minPpg) part2parts.push(`${Math.round(minPpg / 100)} Kč/g`);
-
-  // Part 3: CTA
-  const cta = "Osobní ukázka po Praze zdarma";
-
-  const result = [part1, part2parts.length > 0 ? part2parts.join(", ") : null, cta]
-    .filter(Boolean)
-    .join(". ") + ".";
-
-  return result.slice(0, 155);
-}
-
-/**
- * Build SEO title: {Struktura} vlasy k prodloužení {délka} cm – {barva}
- * Max 60 chars. Shortening: 1. drop texture, 2. shorten color to first word
- */
-function buildSeoTitle(texture: string | null, lengths: number[], colorNames: string[]): string {
-  const textureStr = texture ? `${texture.charAt(0).toUpperCase() + texture.slice(1)} ` : "";
-  const lengthStr = lengths.length > 0
-    ? " " + (lengths.length <= 3
-      ? lengths.map((l) => `${l} cm`).join(", ")
-      : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`)
-    : "";
-  const colorStr = colorNames.length > 0 && colorNames.length <= 2 ? colorNames.join(", ") : "";
-
-  // Full version: "{Texture} vlasy k prodloužení {length} – {color}"
-  const full = `${textureStr}vlasy k prodloužení${lengthStr}${colorStr ? ` \u2013 ${colorStr}` : ""}`;
-  if (full.length <= 60) return full;
-
-  // Shortening 1: drop texture
-  const noTexture = `Vlasy k prodloužení${lengthStr}${colorStr ? ` \u2013 ${colorStr}` : ""}`;
-  if (noTexture.length <= 60) return noTexture;
-
-  // Shortening 2: shorten color to first word
-  const shortColor = colorNames.length > 0 ? colorNames[0].split(/\s/)[0] : "";
-  const shortened = `Vlasy k prodloužení${lengthStr}${shortColor ? ` \u2013 ${shortColor}` : ""}`;
-  return shortened.slice(0, 60);
-}
-
-/**
  * Build OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
  */
 function buildOgTitle(texture: string | null, lengths: number[], colorNames: string[], totalGrams: number): string {
@@ -420,7 +343,7 @@ async function generateProductMetadataFromProduct(
   });
 
   // Title: use manual metaTitle if set, otherwise auto-generate
-  const title = product.metaTitle || buildSeoTitle(product.texture, lengths, colorNames);
+  const title = product.metaTitle || buildSeoTitle(product.texture, lengths, colorNames, product.category);
 
   // Description: use manual metaDescription if set, otherwise auto-generate
   const description = product.metaDescription || buildAutoDescription(product, colorNames, lengths, product.variants);

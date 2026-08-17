@@ -17,6 +17,7 @@ import { SocialPostModal } from "@/components/products/SocialPostModal";
 import { generateProductBio } from "@/lib/product-bio";
 import { getHairColor } from "@/lib/hair-colors";
 import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
+import { buildSeoTitle, buildAutoDescription } from "@/lib/seo-product";
 import { slugify } from "@/lib/slugify";
 import { formatCZK } from "@/lib/pricing";
 
@@ -326,7 +327,7 @@ export function ProductDetailClient({
 
   const [generatingBio, setGeneratingBio] = useState(false);
 
-  const handleGenerateBio = useCallback(async () => {
+  const handleGenerateBio = useCallback(() => {
     const lengths = [...new Set((product.variants ?? []).map((v) => v.lengthCm))].sort((a, b) => a - b);
     const colorCount = new Set((product.variants ?? []).map((v) => v.color)).size;
     const bio = generateProductBio({
@@ -339,15 +340,9 @@ export function ProductDetailClient({
       lengths,
       colorCount,
     });
-    setGeneratingBio(true);
-    await fetch(`/api/products/${product.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ description: bio }),
-    });
-    setGeneratingBio(false);
-    router.refresh();
-  }, [product, router]);
+    setEditValues((prev) => ({ ...prev, description: bio }));
+    if (!editMode) setEditMode(true);
+  }, [product, editMode]);
 
   const parsedPhotos: string[] = (() => {
     try {
@@ -426,22 +421,17 @@ export function ProductDetailClient({
   const colorNames = colorCodes.map((c) => {
     try { return tColors(getHairColor(c).nameKey); } catch { return c; }
   });
-  const colorStr = colorNames.length <= 2 ? colorNames.join(", ") : "";
-  const textureStr = product.texture ?? "";
-  const catShort = t(`public.meta.catShort.${product.category}`);
-  const seoBase = [textureStr ? `${textureStr} vlasy` : "Vlasy", lengthStr].filter(Boolean).join(" ");
-  const seoSuffix = [catShort].filter(Boolean).join(" ");
-  const seoFull = seoSuffix ? `${seoBase} — ${seoSuffix}` : seoBase;
-  const seoWithColor = colorStr ? `${seoBase} ${colorStr} — ${seoSuffix}` : seoFull;
-  const autoTitle = (seoWithColor.length + 11 <= 60) ? seoWithColor : seoFull;
-  const autoDescParts: string[] = [product.name];
-  if (product.origin) autoDescParts.push(`${t("product.originPrefix")} ${product.origin}`);
-  if (product.texture && !product.name.toLowerCase().includes(product.texture.toLowerCase())) {
-    autoDescParts.push(product.texture.toLowerCase());
-  }
-  if (lengthStr) autoDescParts.push(lengthStr);
-  autoDescParts.push(t("product.autoSeoDesc"));
-  const autoDescription = autoDescParts.join(", ").slice(0, 155);
+  const adminVariants = (product.variants ?? []).map((v) => ({
+    retailPricePerGram: v.retailPricePerGram ?? 0,
+    sellingMode: v.sellingMode ?? "PER_GRAM",
+    retailPricePerPiece: v.retailPricePerPiece,
+    pricePerPiece: v.pricePerPiece,
+  }));
+  const autoTitle = buildSeoTitle(product.texture ?? null, lengths, colorNames, product.category);
+  const autoDescription = buildAutoDescription(
+    { ...product, texture: product.texture ?? null, origin: product.origin ?? null },
+    colorNames, lengths, adminVariants,
+  );
   const previewTitle = metaTitleValue || autoTitle;
 
   return (
