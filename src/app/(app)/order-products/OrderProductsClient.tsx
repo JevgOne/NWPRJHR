@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
-import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
+import { ORIGIN_OPTIONS, getOriginFlag } from "@/lib/origin-flags";
+import { generateSku } from "@/lib/sku";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -45,19 +46,19 @@ const CURRENCY_OPTIONS: { code: CurrencyCode; symbol: string }[] = [
   { code: "CZK", symbol: "Kč" },
 ];
 
-const CATEGORY_LABELS: Record<string, string> = {
-  VIRGIN: "Virgin",
-  LUXE: "Luxe",
-  STANDARD: "Standard",
-  SALE: "Sale",
-};
-
-export function OrderProductsClient({ products }: { products: OrderProduct[] }) {
+export function OrderProductsClient({ products: initialProducts }: { products: OrderProduct[] }) {
   const t = useTranslations("stock");
   const tCommon = useTranslations("common");
   const tCat = useTranslations("category");
   const tColors = useTranslations("public.colors");
   const router = useRouter();
+
+  const [products, setProducts] = useState(initialProducts);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
 
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -241,6 +242,7 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Opravdu smazat tento produkt?")) return;
+    setDeletingId(id);
     try {
       const res = await fetch(`/api/order-products/${id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -248,9 +250,12 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
         alert(data.error || "Chyba při mazání");
         return;
       }
+      setProducts((prev) => prev.filter((p) => p.id !== id));
       router.refresh();
     } catch {
       alert("Chyba při mazání");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -559,70 +564,129 @@ export function OrderProductsClient({ products }: { products: OrderProduct[] }) 
         </Card>
       )}
 
-      <div className="space-y-3">
-        {products.map((p) => {
-          const photoArr: string[] = (() => { try { return JSON.parse(p.photos); } catch { return []; } })();
-          const variant = p.variants[0];
-          const priceDisplay = variant
-            ? variant.sellingMode === "BY_PIECE"
-              ? `${((variant.retailPricePerPiece ?? 0) / 100).toLocaleString("cs-CZ")} CZK/ks`
-              : `${(variant.retailPricePerGram / 100).toLocaleString("cs-CZ")} CZK/g`
-            : "\u2014";
-          const leadDaysDisplay = variant?.orderLeadDays ? `~${variant.orderLeadDays} dní` : "\u2014";
-          const catLabel = CATEGORY_LABELS[p.category] ?? p.category;
+      {products.length > 0 && (
+        <Card>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left">
+                  <th className="py-2 px-2 text-xs text-muted font-medium">{t("product")}</th>
+                  <th className="py-2 px-2 text-xs text-muted font-medium">{t("color")}</th>
+                  <th className="py-2 px-2 text-xs text-muted font-medium">{t("length")}</th>
+                  <th className="py-2 px-2 text-xs text-muted font-medium text-right">{t("price")}</th>
+                  <th className="py-2 px-2 text-xs text-muted font-medium text-right">Lhůta</th>
+                  <th className="py-2 px-1 w-8"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((p) => {
+                  const photoArr: string[] = (() => { try { return JSON.parse(p.photos); } catch { return []; } })();
+                  const variant = p.variants[0];
+                  const catLabel = tCat(p.category.toLowerCase() as "virgin");
 
-          return (
-            <Card key={p.id}>
-              <div className="flex gap-4">
-                {photoArr[0] && (
-                  <img src={photoArr[0]} alt="" className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-ink">{p.name}</h3>
-                      <div className="flex flex-wrap gap-1.5 mt-1">
-                        <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-nude-100 text-espresso">
-                          {catLabel}
-                        </span>
-                        {p.origin && (
-                          <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-nude-50 text-muted">
-                            {p.origin}
-                          </span>
+                  const priceDisplay = variant
+                    ? (variant.sellingMode === "BY_PIECE" && (variant.retailPricePerPiece ?? 0) > 0)
+                      ? `${((variant.retailPricePerPiece!) / 100).toLocaleString("cs-CZ")} Kč/ks`
+                      : variant.retailPricePerGram > 0
+                        ? `${(variant.retailPricePerGram / 100).toLocaleString("cs-CZ")} Kč/g`
+                        : "\u2014"
+                    : "\u2014";
+
+                  const leadDaysDisplay = variant?.orderLeadDays ? `~${variant.orderLeadDays} d` : "\u2014";
+
+                  return (
+                    <tr key={p.id} className="border-b border-gray-100 hover:bg-nude-50">
+                      <td className="py-2.5 px-2">
+                        <div className="flex items-center gap-2.5">
+                          {photoArr[0] ? (
+                            <img src={photoArr[0]} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                          ) : (
+                            <div className="w-8 h-8 rounded bg-nude-100 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21z" />
+                              </svg>
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="font-medium text-ink text-sm">{p.name}</div>
+                            {variant && variant.lengthCm > 0 && (
+                              <div className="font-mono text-[10px] text-muted">
+                                {generateSku(p.category, p.texture, variant.color, variant.lengthCm)}
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                                p.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
+                                p.category === "LUXE" ? "bg-violet-100 text-violet-700" :
+                                p.category === "STANDARD" ? "bg-emerald-100 text-emerald-700" :
+                                "bg-red-100 text-red-700"
+                              }`}>
+                                {catLabel}
+                              </span>
+                              {p.origin && (
+                                <span className="text-[10px] text-muted">
+                                  {getOriginFlag(p.origin)} {p.origin}
+                                </span>
+                              )}
+                              {p.texture && (
+                                <span className="text-[10px] text-muted">{p.texture}</span>
+                              )}
+                            </div>
+                            {(p.supplierCode || p.photoCode) && (
+                              <div className="text-[10px] text-muted mt-0.5">
+                                {p.supplierCode && <span>Kód: {p.supplierCode}</span>}
+                                {p.supplierCode && p.photoCode && <span className="mx-1">&middot;</span>}
+                                {p.photoCode && <span>Foto: {p.photoCode}</span>}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="py-2.5 px-2">
+                        {variant && variant.color !== "0" && (
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className="w-4 h-4 rounded-full border border-line flex-shrink-0"
+                              style={{ backgroundColor: getHairColor(variant.color).hex }}
+                            />
+                            <span className="text-xs text-espresso">{colorName(variant.color)}</span>
+                          </div>
                         )}
-                        {p.texture && (
-                          <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-nude-50 text-muted">
-                            {p.texture}
-                          </span>
-                        )}
-                        {variant && variant.lengthCm > 0 && (
-                          <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-nude-50 text-muted">
-                            {variant.lengthCm} cm
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex gap-3 text-xs text-muted mt-1">
-                        {p.supplierCode && <span>Kód: {p.supplierCode}</span>}
-                        {p.photoCode && <span>Foto: {p.photoCode}</span>}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      className="text-red-400 hover:text-red-600 text-xs"
-                    >
-                      Smazat
-                    </button>
-                  </div>
-                  <div className="flex gap-4 mt-2 text-sm">
-                    <span className="text-emerald-700 font-medium">{priceDisplay}</span>
-                    <span className="text-amber-600">{"\u23F1"} {leadDaysDisplay}</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+                      </td>
+
+                      <td className="py-2.5 px-2 text-xs text-espresso">
+                        {variant && variant.lengthCm > 0 ? `${variant.lengthCm} cm` : "\u2014"}
+                      </td>
+
+                      <td className="py-2.5 px-2 text-right text-emerald-700 font-medium text-xs">
+                        {priceDisplay}
+                      </td>
+
+                      <td className="py-2.5 px-2 text-right text-amber-600 text-xs">
+                        {leadDaysDisplay}
+                      </td>
+
+                      <td className="py-2.5 px-1" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          disabled={deletingId === p.id}
+                          className={`p-1 rounded hover:bg-red-50 text-muted hover:text-red-600 transition-colors ${deletingId === p.id ? "opacity-50" : ""}`}
+                          title="Smazat"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

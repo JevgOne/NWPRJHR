@@ -13,13 +13,18 @@ export async function DELETE(
 
   const { id } = await params;
 
-  const product = await prisma.product.findUnique({ where: { id }, select: { id: true, orderOnly: true } });
-  if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  try {
+    const product = await prisma.product.findUnique({ where: { id }, select: { id: true, orderOnly: true } });
+    if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  await prisma.product.update({
-    where: { id },
-    data: { archived: true },
-  });
+    await prisma.product.update({
+      where: { id },
+      data: { archived: true },
+    });
+  } catch (err) {
+    console.error("[order-products] Delete failed:", err);
+    return NextResponse.json({ error: "Chyba při mazání" }, { status: 500 });
+  }
 
   revalidateTag("products", { expire: 0 });
 

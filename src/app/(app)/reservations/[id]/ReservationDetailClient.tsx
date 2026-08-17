@@ -91,6 +91,7 @@ export function ReservationDetailClient({
 }) {
   const t = useTranslations("reservation");
   const tCommon = useTranslations("common");
+  const tCategory = useTranslations("category");
   const [reservation, setReservation] = useState<ReservationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -241,7 +242,7 @@ export function ReservationDetailClient({
                   ACCESSORY: "bg-sky-100 text-sky-800",
                 } as Record<string, string>)[reservation.variant.product.category] ?? "bg-mauve text-white"
               }`}>
-                {t(`category.${reservation.variant.product.category.toLowerCase()}`)}
+                {tCategory(reservation.variant.product.category.toLowerCase())}
               </span>
             )}
 

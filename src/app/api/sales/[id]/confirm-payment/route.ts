@@ -32,6 +32,49 @@ export async function POST(
     );
   }
 
+  // Action: mark_paid — mark existing invoice as paid (for TRANSFER 2-step flow)
+  if (body.action === "mark_paid") {
+    if (!sale.invoice)
+      return NextResponse.json({ error: "Faktura neexistuje" }, { status: 400 });
+    if (sale.invoice.status === "PAID")
+      return NextResponse.json({ error: "Faktura je už zaplacená" }, { status: 400 });
+
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.create({
+        data: {
+          invoiceId: sale.invoice!.id,
+          amount: sale.invoice!.total,
+          date: new Date(),
+          matchedVS: sale.invoice!.variableSymbol,
+          source: "MANUAL",
+          note: "Platba potvrzena adminem",
+        },
+      });
+      await tx.invoice.update({
+        where: { id: sale.invoice!.id },
+        data: { status: "PAID" },
+      });
+      if (sale.salonId && sale.invoice!.type === "INVOICE") {
+        await addSalonRevenueInTx(sale.salonId, sale.invoice!.subtotal, tx);
+      }
+    });
+
+    after(async () => {
+      await logAudit({
+        userId: session.user.id,
+        userEmail: session.user.email ?? undefined,
+        action: "PAYMENT_CONFIRMED",
+        entity: "Sale",
+        entityId: id,
+        detail: { invoiceId: sale.invoice!.id, invoiceNumber: sale.invoice!.number, amount: sale.invoice!.total },
+        ipAddress: getClientIp(request),
+      });
+    });
+
+    return NextResponse.json({ status: "PAID" });
+  }
+
+  // Default action: create invoice
   if (sale.invoice) {
     return NextResponse.json(
       { error: "Invoice already exists for this sale" },
@@ -39,7 +82,6 @@ export async function POST(
     );
   }
 
-  // 1. Create invoice
   let invoice;
   try {
     invoice = await createInvoiceFromSale(sale.id, body.companyId);
@@ -49,7 +91,29 @@ export async function POST(
     return NextResponse.json({ error: `Faktura se nepodařila vytvořit: ${msg}` }, { status: 500 });
   }
 
-  // 2. Mark invoice as PAID + record payment + add salon revenue
+  // For TRANSFER: just create invoice (AWAITING) + send email, do NOT mark PAID
+  if (sale.paymentType === "TRANSFER") {
+    after(async () => {
+      await sendInvoiceEmail(invoice.id).catch((e) =>
+        console.error("[ConfirmPayment] Invoice email failed:", e)
+      );
+      await logAudit({
+        userId: session.user.id,
+        userEmail: session.user.email ?? undefined,
+        action: "INVOICE_ISSUED",
+        entity: "Sale",
+        entityId: id,
+        detail: { invoiceId: invoice.id, invoiceNumber: invoice.number, amount: invoice.total },
+        ipAddress: getClientIp(request),
+      });
+    });
+
+    return NextResponse.json({
+      invoice: { id: invoice.id, number: invoice.number, status: "AWAITING" },
+    });
+  }
+
+  // For CARD/CASH: create invoice + mark PAID + record payment (original behavior)
   await prisma.$transaction(async (tx) => {
     await tx.payment.create({
       data: {
@@ -72,7 +136,6 @@ export async function POST(
     }
   });
 
-  // 3. Send invoice email + audit log (after response, but guaranteed to run on Vercel)
   after(async () => {
     await sendInvoiceEmail(invoice.id, { skipQr: true }).catch((e) =>
       console.error("[ConfirmPayment] Invoice email failed:", e)

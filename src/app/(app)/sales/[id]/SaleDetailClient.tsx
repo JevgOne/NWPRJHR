@@ -34,6 +34,7 @@ interface SaleDetail {
   packetaPointId?: string;
   packetaPointName?: string;
   packetaPointCity?: string;
+  comgateTransId?: string | null;
   invoice?: { id: string; number: string; status: string } | null;
   items: {
     id: string;
@@ -111,6 +112,7 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
 
   const [confirmingPayment, setConfirmingPayment] = useState(false);
   const [confirmPaymentError, setConfirmPaymentError] = useState("");
+  const [markingPaid, setMarkingPaid] = useState(false);
 
   const handleConfirmPayment = async () => {
     setConfirmingPayment(true);
@@ -133,6 +135,29 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       setConfirmPaymentError(tCommon("error"));
     } finally {
       setConfirmingPayment(false);
+    }
+  };
+
+  const handleMarkPaid = async () => {
+    setMarkingPaid(true);
+    setConfirmPaymentError("");
+    try {
+      const res = await fetch(`/api/sales/${id}/confirm-payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "mark_paid" }),
+      });
+      if (res.ok) {
+        const r = await fetch(`/api/sales/${id}`);
+        setSale(await r.json());
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setConfirmPaymentError(data.error || tCommon("error"));
+      }
+    } catch {
+      setConfirmPaymentError(tCommon("error"));
+    } finally {
+      setMarkingPaid(false);
     }
   };
 
@@ -207,6 +232,44 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
           )}
         </div>
       </Card>
+
+      {/* Payment status banner */}
+      {sale.paymentType && (sale.paymentType === "TRANSFER" || sale.paymentType === "CARD" || sale.paymentType === "CASH") && (
+        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
+          sale.invoice?.status === "PAID"
+            ? "bg-emerald-50 border-emerald-200"
+            : sale.invoice
+              ? "bg-amber-50 border-amber-200"
+              : "bg-gray-50 border-gray-200"
+        }`}>
+          <span className={`inline-flex px-3 py-1 rounded-full text-sm font-bold ${
+            sale.invoice?.status === "PAID"
+              ? "text-emerald-700 bg-emerald-100"
+              : sale.invoice
+                ? "text-amber-700 bg-amber-100"
+                : "text-gray-500 bg-gray-100"
+          }`}>
+            {sale.invoice?.status === "PAID"
+              ? "Zaplaceno"
+              : sale.invoice
+                ? "Čeká na platbu"
+                : "Faktura nevystavena"}
+          </span>
+          <span className="text-xs text-muted ml-auto">
+            {sale.invoice?.status === "PAID" && sale.paymentType === "CARD" && sale.comgateTransId
+              ? `Online kartou (Comgate ${sale.comgateTransId})`
+              : sale.invoice?.status === "PAID" && sale.paymentType === "CASH"
+                ? "Hotově"
+                : sale.invoice?.status === "PAID" && sale.paymentType === "TRANSFER"
+                  ? "Převodem"
+                  : sale.paymentType === "TRANSFER" && !sale.invoice
+                    ? "Čeká na vystavení faktury"
+                    : sale.paymentType === "TRANSFER"
+                      ? "Čeká na převod"
+                      : ""}
+          </span>
+        </div>
+      )}
 
       <Card>
         <h2 className="font-medium mb-3">{t("items")}</h2>
@@ -427,24 +490,54 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
         </Card>
       )}
 
-      {/* Invoice link */}
+      {/* Invoice card with status badge */}
       {sale.invoice && (
         <Card>
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted">{t("invoice")}</span>
-            <Link href={`/invoices/${sale.invoice.id}`} className="text-rose font-medium hover:underline">
-              {sale.invoice.number}
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href={`/invoices/${sale.invoice.id}`} className="text-rose font-medium hover:underline">
+                {sale.invoice.number}
+              </Link>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                sale.invoice.status === "PAID"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "bg-amber-50 text-amber-700"
+              }`}>
+                {sale.invoice.status === "PAID" ? "Zaplaceno" : "Nezaplaceno"}
+              </span>
+            </div>
           </div>
+
+          {/* Mark as paid — for TRANSFER with unpaid invoice */}
+          {isOwner && sale.paymentType === "TRANSFER" && sale.invoice.status !== "PAID" && (
+            <div className="mt-3 pt-3 border-t border-line">
+              {confirmPaymentError && (
+                <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  {confirmPaymentError}
+                </div>
+              )}
+              <Button
+                size="sm"
+                className="w-full bg-green-600 hover:bg-green-700"
+                onClick={handleMarkPaid}
+                disabled={markingPaid}
+              >
+                {markingPaid ? tCommon("loading") : "Platba dorazila — označit jako zaplaceno"}
+              </Button>
+            </div>
+          )}
         </Card>
       )}
 
-      {/* Confirm Payment / Create Invoice for sales without invoice */}
+      {/* Create Invoice for sales without invoice */}
       {isOwner && sale.status === "COMPLETED" && !sale.invoice && (sale.paymentType === "TRANSFER" || sale.paymentType === "CARD" || sale.paymentType === "CASH") && (
         <Card>
           <div className="space-y-3">
             <p className="text-sm text-muted">
-              {sale.paymentType === "TRANSFER" ? t("transferAwaitingPayment") : "Faktura nebyla vytvořena. Klikněte pro vytvoření."}
+              {sale.paymentType === "TRANSFER"
+                ? "Vystavit fakturu a odeslat klientovi k zaplacení"
+                : "Faktura nebyla vytvořena. Klikněte pro vytvoření."}
             </p>
             {confirmPaymentError && (
               <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -457,7 +550,9 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
               onClick={handleConfirmPayment}
               disabled={confirmingPayment}
             >
-              {confirmingPayment ? tCommon("loading") : sale.paymentType === "TRANSFER" ? t("confirmPayment") : "Vytvořit fakturu"}
+              {confirmingPayment ? tCommon("loading")
+                : sale.paymentType === "TRANSFER" ? "Vystavit fakturu"
+                : "Vytvořit fakturu"}
             </Button>
           </div>
         </Card>

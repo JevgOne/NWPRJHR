@@ -78,6 +78,7 @@ export async function GET(
       },
     })),
     note: sale.note,
+    comgateTransId: sale.comgateTransId,
     invoice: sale.invoice ?? undefined,
   };
 
