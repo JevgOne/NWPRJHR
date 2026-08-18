@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
   type VariantWithProduct = (typeof variants)[number];
   const results = variants.map((v: VariantWithProduct) => ({
     id: v.id,
-    sku: generateSku(v.product.category, v.product.texture, v.color, v.lengthCm, {
+    sku: v.sku ?? generateSku(v.product.category, v.product.texture, v.color, v.lengthCm, {
       orderOnly: v.product.orderOnly, origin: v.product.origin,
     }),
     productName: v.product.name,

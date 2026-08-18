@@ -11,6 +11,7 @@ import { logAudit, getClientIp } from "@/lib/audit";
 import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
 import { generateProductBio } from "@/lib/product-bio";
 import { autoColorTone, CATEGORY_NAMES } from "@/lib/product-helpers";
+import { uniqueSku } from "@/lib/sku";
 
 export const maxDuration = 30;
 
@@ -152,9 +153,14 @@ export async function POST(request: NextRequest) {
         ? calculateRetailPrice(data.pricePerPiece, markupPercent)
         : undefined;
 
+      const variantSku = await uniqueSku(
+        data.category, isAccessory ? null : data.texture, data.color, data.lengthCm, prisma,
+        { orderOnly: false, origin: isAccessory ? null : data.origin },
+      );
       variant = await prisma.variant.create({
         data: {
           productId: product.id,
+          sku: variantSku,
           lengthCm: data.lengthCm,
           color: data.color,
           sellingMode: data.sellingMode ?? "BY_GRAM",

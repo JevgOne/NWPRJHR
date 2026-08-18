@@ -6,6 +6,7 @@ import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
 import { calculateRetailPrice } from "@/lib/pricing";
 import { generateProductBio } from "@/lib/product-bio";
 import { autoColorTone, CATEGORY_NAMES } from "@/lib/product-helpers";
+import { uniqueSku } from "@/lib/sku";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -40,6 +41,10 @@ export async function POST(request: NextRequest) {
   // Bio descriptions
   const bioData = { name: productName, category, processingType: "OTHER", origin, texture, colorTone, lengths: [lengthCm] };
 
+  const variantSku = await uniqueSku(category, texture, color, lengthCm, prisma, {
+    orderOnly: true, origin,
+  });
+
   const product = await prisma.product.create({
     data: {
       name: productName,
@@ -60,6 +65,7 @@ export async function POST(request: NextRequest) {
       slug,
       variants: {
         create: {
+          sku: variantSku,
           lengthCm,
           color,
           costPricePerGram: costPerGramCzk,

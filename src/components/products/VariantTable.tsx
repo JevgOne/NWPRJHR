@@ -9,6 +9,7 @@ import { generateSku } from "@/lib/sku";
 
 interface VariantData {
   id: string;
+  sku?: string | null;
   lengthCm: number;
   color: string;
   costPricePerGram?: number;
@@ -57,6 +58,7 @@ export function VariantTable({
   const [copiedSku, setCopiedSku] = useState<string | null>(null);
   const [qrModal, setQrModal] = useState<{
     variantId: string;
+    sku?: string | null;
     dataUrl: string;
     lengthCm: number;
     color: string;
@@ -68,7 +70,7 @@ export function VariantTable({
       const QRCode = await import("qrcode");
       const url = `${window.location.origin}/sales/new?variantId=${variant.id}`;
       const dataUrl = await QRCode.toDataURL(url, { width: 300, errorCorrectionLevel: "M", margin: 2 });
-      setQrModal({ variantId: variant.id, dataUrl, lengthCm: variant.lengthCm, color: variant.color, sellingMode: variant.sellingMode ?? "BY_GRAM" });
+      setQrModal({ variantId: variant.id, sku: variant.sku, dataUrl, lengthCm: variant.lengthCm, color: variant.color, sellingMode: variant.sellingMode ?? "BY_GRAM" });
     } catch (e) {
       console.error("QR generation failed:", e);
     }
@@ -363,16 +365,16 @@ export function VariantTable({
                     <button
                       className="font-mono text-[10px] text-muted hover:text-ink transition-colors mb-1 block"
                       onClick={() => {
-                        const sku = generateSku(category, texture, variant.color, length);
+                        const sku = variant.sku ?? generateSku(category, texture, variant.color, length);
                         navigator.clipboard.writeText(sku);
                         setCopiedSku(sku);
                         setTimeout(() => setCopiedSku(null), 1500);
                       }}
                       title="Copy SKU"
                     >
-                      {copiedSku === generateSku(category, texture, variant.color, length)
+                      {copiedSku === (variant.sku ?? generateSku(category, texture, variant.color, length))
                         ? "Copied!"
-                        : generateSku(category, texture, variant.color, length)}
+                        : variant.sku ?? generateSku(category, texture, variant.color, length)}
                     </button>
 
                     {/* Prodejní cena (main, editable) */}
@@ -690,7 +692,7 @@ export function VariantTable({
             <img src={qrModal.dataUrl} alt="QR" className="w-full max-w-[250px] mx-auto" />
             <div className="mt-3 text-center">
               <p className="font-mono text-sm font-bold text-ink mb-1">
-                {generateSku(category, texture, qrModal.color, qrModal.lengthCm)}
+                {qrModal.sku ?? generateSku(category, texture, qrModal.color, qrModal.lengthCm)}
               </p>
               <p className="text-sm text-muted">
                 {tCat(category.toLowerCase() as "virgin")}, {qrModal.lengthCm} cm

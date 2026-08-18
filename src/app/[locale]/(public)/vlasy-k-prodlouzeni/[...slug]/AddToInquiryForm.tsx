@@ -8,6 +8,7 @@ import { generateSku } from "@/lib/sku";
 import { roundHalereUp } from "@/lib/rounding";
 
 interface PickerVariant {
+  sku?: string | null;
   lengthCm: number;
   color: string;
   pricePerGram: number;
@@ -119,7 +120,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
   }, [selectedVariant]);
 
   const selectedSku = selectedColor && selectedLength
-    ? generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin })
+    ? selectedVariant?.sku ?? generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin })
     : null;
 
   const handleAdd = () => {
@@ -137,7 +138,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
       color: selectedColor,
       quantity,
       unit: showAsPiece ? inquiryUnit : "g",
-      sku: generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin }),
+      sku: selectedVariant?.sku ?? generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin }),
       pricePerUnit,
       imageUrl,
     });

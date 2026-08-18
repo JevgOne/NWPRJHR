@@ -60,6 +60,39 @@ export function generateSku(
   return `${cat}-${tex}-${col}-${len}`;
 }
 
+/**
+ * Generate a unique SKU for a variant.
+ * If base SKU already exists, appends -2, -3, etc.
+ */
+export async function uniqueSku(
+  category: string,
+  texture: string | null | undefined,
+  color: string,
+  lengthCm: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prismaClient: any,
+  options?: { orderOnly?: boolean; origin?: string | null },
+): Promise<string> {
+  const base = generateSku(category, texture, color, lengthCm, options);
+
+  const existing = await prismaClient.variant.findUnique({
+    where: { sku: base },
+    select: { id: true },
+  });
+  if (!existing) return base;
+
+  for (let i = 2; i <= 100; i++) {
+    const candidate = `${base}-${i}`;
+    const exists = await prismaClient.variant.findUnique({
+      where: { sku: candidate },
+      select: { id: true },
+    });
+    if (!exists) return candidate;
+  }
+
+  return `${base}-${Date.now()}`;
+}
+
 export function parseSku(sku: string): {
   category: string;
   texture: string;

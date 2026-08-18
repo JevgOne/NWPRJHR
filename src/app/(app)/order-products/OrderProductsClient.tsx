@@ -25,6 +25,7 @@ interface OrderProduct {
   createdAt: Date;
   variants: {
     id: string;
+    sku: string | null;
     lengthCm: number;
     color: string;
     retailPricePerGram: number;
@@ -695,7 +696,7 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
                             <div className="font-medium text-ink text-sm">{p.name}</div>
                             {variant && variant.lengthCm > 0 && (
                               <div className="font-mono text-[10px] text-muted">
-                                {generateSku(p.category, p.texture, variant.color, variant.lengthCm, {
+                                {variant.sku ?? generateSku(p.category, p.texture, variant.color, variant.lengthCm, {
                                   orderOnly: true, origin: p.origin,
                                 })}
                               </div>

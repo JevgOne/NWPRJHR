@@ -22,6 +22,7 @@ const productSelect = {
     where: { active: true },
     select: {
       id: true,
+      sku: true,
       lengthCm: true,
       color: true,
       retailPricePerGram: true,
@@ -69,6 +70,7 @@ export const getCachedAllProducts = unstable_cache(
       variants: p.variants.map((v) => {
         const stock = stockMap.get(v.id);
         return {
+          sku: v.sku,
           lengthCm: v.lengthCm,
           color: v.color,
           retailPricePerGram: v.retailPricePerGram,

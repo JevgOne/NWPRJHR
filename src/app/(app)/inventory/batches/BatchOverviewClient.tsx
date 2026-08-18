@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { generateSku } from "@/lib/sku";
 
 interface DeliveryVariant {
+  sku?: string | null;
   lengthCm: number;
   color: string;
   retailPricePerGram: number;
@@ -298,7 +299,7 @@ export function BatchOverviewClient({ batches }: { batches: StockBatch[] }) {
                         </thead>
                         <tbody>
                           {batch.deliveries.map((d) => {
-                            const sku = generateSku(
+                            const sku = d.variant.sku ?? generateSku(
                               d.variant.product.category,
                               d.variant.product.texture,
                               d.variant.color,

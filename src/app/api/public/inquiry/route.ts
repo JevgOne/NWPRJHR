@@ -162,16 +162,26 @@ export async function POST(request: NextRequest) {
     let itemsWithSku = items.map((i) => ({ ...i, sku: undefined as string | undefined }));
     if (items.length > 0) {
       const productIds = [...new Set(items.map((i) => i.productId))];
-      const products = await prisma.product.findMany({
-        where: { id: { in: productIds } },
-        select: { id: true, category: true, texture: true, origin: true, orderOnly: true },
-      });
+      const [products, variants] = await Promise.all([
+        prisma.product.findMany({
+          where: { id: { in: productIds } },
+          select: { id: true, category: true, texture: true, origin: true, orderOnly: true },
+        }),
+        prisma.variant.findMany({
+          where: { productId: { in: productIds }, active: true },
+          select: { productId: true, lengthCm: true, color: true, sku: true },
+        }),
+      ]);
       const productMap = new Map(products.map((p) => [p.id, p]));
+      const variantSkuMap = new Map(
+        variants.filter((v) => v.sku).map((v) => [`${v.productId}:${v.lengthCm}:${v.color}`, v.sku!])
+      );
       itemsWithSku = items.map((i) => {
         const p = productMap.get(i.productId);
-        return { ...i, sku: p ? generateSku(p.category, p.texture, i.color, i.lengthCm, {
+        const variantSku = variantSkuMap.get(`${i.productId}:${i.lengthCm}:${i.color}`);
+        return { ...i, sku: variantSku ?? (p ? generateSku(p.category, p.texture, i.color, i.lengthCm, {
           orderOnly: p.orderOnly, origin: p.origin,
-        }) : undefined };
+        }) : undefined) };
       });
     }
 

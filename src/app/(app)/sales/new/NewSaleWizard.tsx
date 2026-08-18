@@ -21,7 +21,7 @@ interface ProductOption {
   origin: string | null;
   texture: string | null;
   orderOnly?: boolean;
-  variants: { id: string; lengthCm: number; color: string }[];
+  variants: { id: string; sku?: string | null; lengthCm: number; color: string }[];
 }
 
 interface SaleItem {
@@ -151,7 +151,7 @@ export function NewSaleWizard({
           texture = p.texture;
           category = p.category;
           processingType = p.processingType;
-          sku = generateSku(p.category, p.texture, v.color, v.lengthCm, {
+          sku = v.sku ?? generateSku(p.category, p.texture, v.color, v.lengthCm, {
             orderOnly: p.orderOnly, origin: p.origin,
           });
           break;
@@ -167,7 +167,7 @@ export function NewSaleWizard({
             origin = data.product?.origin ?? null;
             texture = data.product?.texture ?? null;
             category = data.product?.category;
-            sku = generateSku(category ?? "", texture, data.color, data.lengthCm, {
+            sku = data.sku ?? generateSku(category ?? "", texture, data.color, data.lengthCm, {
               orderOnly: data.product?.orderOnly, origin: data.product?.origin,
             });
           }

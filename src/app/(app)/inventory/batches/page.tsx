@@ -19,6 +19,7 @@ export default async function BatchOverviewPage() {
           include: {
             variant: {
               select: {
+                sku: true,
                 lengthCm: true,
                 color: true,
                 retailPricePerGram: true,

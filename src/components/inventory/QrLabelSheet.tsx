@@ -6,6 +6,7 @@ import { generateSku } from "@/lib/sku";
 
 interface LabelData {
   variantId: string;
+  sku?: string | null;
   productName: string;
   lengthCm: number;
   color: string;
@@ -96,7 +97,7 @@ export function QrLabelSheet({
         <div className="flex-1 overflow-auto p-6 bg-gray-100">
           <div className="flex flex-wrap gap-4 justify-center">
             {labels.map((label) => {
-              const sku = generateSku(label.category, label.texture, label.color, label.lengthCm);
+              const sku = label.sku ?? generateSku(label.category, label.texture, label.color, label.lengthCm);
               return (
                 <div
                   key={label.variantId}

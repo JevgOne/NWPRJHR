@@ -118,6 +118,7 @@ const productSelect = {
     where: { active: true },
     select: {
       id: true,
+      sku: true,
       lengthCm: true,
       color: true,
       retailPricePerGram: true,
@@ -500,6 +501,7 @@ async function ProductDetailView({
       }
       return {
         id: v.id,
+        sku: v.sku,
         lengthCm: v.lengthCm,
         color: v.color,
         pricePerGram: displayPrice,
@@ -732,7 +734,7 @@ async function ProductDetailView({
   // Use focused variant's SKU if available, otherwise first variant
   const skuVariant = focusedVariant ?? (product.variants.length > 0 ? product.variants[0] : null);
   const productSku = skuVariant
-    ? generateSku(product.category, product.texture, skuVariant.color, skuVariant.lengthCm, {
+    ? skuVariant.sku ?? generateSku(product.category, product.texture, skuVariant.color, skuVariant.lengthCm, {
         orderOnly: product.orderOnly, origin: product.origin,
       })
     : product.id;

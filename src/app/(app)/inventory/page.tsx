@@ -55,6 +55,7 @@ export default async function InventoryPage() {
     } catch { /* noop */ }
     return {
       variantId: v.id,
+      sku: v.sku,
       product: v.product,
       photoUrl,
       lengthCm: v.lengthCm,

@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           productId: true,
+          sku: true,
           lengthCm: true,
           color: true,
           costPricePerGram: true,

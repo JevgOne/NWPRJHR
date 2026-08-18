@@ -42,6 +42,7 @@ async function getAdminProducts() {
           select: {
             id: true,
             productId: true,
+            sku: true,
             lengthCm: true,
             color: true,
             costPricePerGram: true,

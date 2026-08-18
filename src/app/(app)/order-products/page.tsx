@@ -24,6 +24,7 @@ export default async function OrderProductsPage() {
         where: { active: true },
         select: {
           id: true,
+          sku: true,
           lengthCm: true,
           color: true,
           retailPricePerGram: true,

@@ -36,6 +36,7 @@ export default async function NewSalePage({
     orderOnly: p.orderOnly,
     variants: p.variants.map((v) => ({
       id: v.id,
+      sku: v.sku,
       lengthCm: v.lengthCm,
       color: v.color,
     })),

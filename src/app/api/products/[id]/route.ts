@@ -7,6 +7,7 @@ import { serializeProductForRole } from "@/lib/api/product-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { generateProductBio } from "@/lib/product-bio";
 import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
+import { uniqueSku } from "@/lib/sku";
 
 const CATEGORY_NAMES: Record<string, { cs: string; uk: string; ru: string }> = {
   VIRGIN: { cs: "Panenské Vlasy", uk: "Натуральне Волосся", ru: "Натуральные Волосы" },
@@ -58,6 +59,7 @@ export async function PUT(
         category: true,
         texture: true,
         origin: true,
+        orderOnly: true,
         processingType: true,
         colorTone: true,
         variants: {
@@ -138,6 +140,14 @@ export async function PUT(
             return prisma.variant.update({ where: { id: v.id }, data });
           })
         );
+      }
+
+      // Regenerate SKUs for all active variants after category change
+      for (const v of current.variants) {
+        const newSku = await uniqueSku(newCat, texture, v.color, v.lengthCm, prisma, {
+          orderOnly: current.orderOnly, origin: current.origin,
+        });
+        await prisma.variant.update({ where: { id: v.id }, data: { sku: newSku } });
       }
     }
   }
