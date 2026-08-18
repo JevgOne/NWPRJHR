@@ -107,6 +107,7 @@ const productSelect = {
   origin: true,
   texture: true,
   colorTone: true,
+  orderOnly: true,
   photos: true,
   video: true,
   archived: true,
@@ -731,7 +732,9 @@ async function ProductDetailView({
   // Use focused variant's SKU if available, otherwise first variant
   const skuVariant = focusedVariant ?? (product.variants.length > 0 ? product.variants[0] : null);
   const productSku = skuVariant
-    ? generateSku(product.category, product.texture, skuVariant.color, skuVariant.lengthCm)
+    ? generateSku(product.category, product.texture, skuVariant.color, skuVariant.lengthCm, {
+        orderOnly: product.orderOnly, origin: product.origin,
+      })
     : product.id;
 
   // Color name for schema
@@ -1197,6 +1200,8 @@ async function ProductDetailView({
             productName={product.name}
             category={product.category}
             texture={product.texture}
+            orderOnly={product.orderOnly}
+            origin={product.origin}
             variants={pickerVariants}
             defaultColor={sp.color}
             defaultLength={sp.length ? parseInt(sp.length, 10) : undefined}

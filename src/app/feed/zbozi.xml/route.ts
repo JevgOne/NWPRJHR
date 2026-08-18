@@ -32,7 +32,9 @@ export async function GET() {
 
       if (priceVat <= 0) continue;
 
-      const sku = generateSku(product.category, product.texture, v.color, v.lengthCm);
+      const sku = generateSku(product.category, product.texture, v.color, v.lengthCm, {
+        orderOnly: product.orderOnly, origin: product.origin,
+      });
       const url = `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`;
       const title = `${product.name} ${v.lengthCm} cm`;
       const singleDonor = product.category !== "SALE" ? " Vlasy z jedné hlavy — žádné fabrikové vlasy." : "";

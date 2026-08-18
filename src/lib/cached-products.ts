@@ -16,6 +16,7 @@ const productSelect = {
   origin: true,
   texture: true,
   colorTone: true,
+  orderOnly: true,
   photos: true,
   variants: {
     where: { active: true },
@@ -63,6 +64,7 @@ export const getCachedAllProducts = unstable_cache(
       origin: p.origin,
       texture: p.texture,
       colorTone: p.colorTone,
+      orderOnly: p.orderOnly,
       photos: JSON.parse(p.photos || "[]"),
       variants: p.variants.map((v) => {
         const stock = stockMap.get(v.id);

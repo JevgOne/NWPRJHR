@@ -33,6 +33,7 @@ export default async function NewSalePage({
     processingType: p.processingType,
     origin: p.origin,
     texture: p.texture,
+    orderOnly: p.orderOnly,
     variants: p.variants.map((v) => ({
       id: v.id,
       lengthCm: v.lengthCm,

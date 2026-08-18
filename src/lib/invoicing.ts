@@ -23,7 +23,9 @@ function formatItemDescription(
       ? product.nameRu || product.name
       : product.name;
 
-  const sku = generateSku(product.category, product.texture, variant.color, variant.lengthCm);
+  const sku = generateSku(product.category, product.texture, variant.color, variant.lengthCm, {
+    orderOnly: product.orderOnly, origin: product.origin,
+  });
   return `${name}, ${variant.lengthCm}cm, ${variant.color} (${sku})`;
 }
 

@@ -164,12 +164,14 @@ export async function POST(request: NextRequest) {
       const productIds = [...new Set(items.map((i) => i.productId))];
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
-        select: { id: true, category: true, texture: true },
+        select: { id: true, category: true, texture: true, origin: true, orderOnly: true },
       });
       const productMap = new Map(products.map((p) => [p.id, p]));
       itemsWithSku = items.map((i) => {
         const p = productMap.get(i.productId);
-        return { ...i, sku: p ? generateSku(p.category, p.texture, i.color, i.lengthCm) : undefined };
+        return { ...i, sku: p ? generateSku(p.category, p.texture, i.color, i.lengthCm, {
+          orderOnly: p.orderOnly, origin: p.origin,
+        }) : undefined };
       });
     }
 

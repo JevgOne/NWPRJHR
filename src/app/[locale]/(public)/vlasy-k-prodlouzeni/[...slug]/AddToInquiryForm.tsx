@@ -27,6 +27,8 @@ interface AddToInquiryFormProps {
   productName: string;
   category: string;
   texture?: string | null;
+  orderOnly?: boolean;
+  origin?: string | null;
   variants: PickerVariant[];
   defaultColor?: string;
   defaultLength?: number;
@@ -41,7 +43,7 @@ function formatPrice(halere: number): string {
   });
 }
 
-export function AddToInquiryForm({ productId, productName, category, texture, variants, defaultColor, defaultLength, discountPct = 0, imageUrl }: AddToInquiryFormProps) {
+export function AddToInquiryForm({ productId, productName, category, texture, orderOnly, origin, variants, defaultColor, defaultLength, discountPct = 0, imageUrl }: AddToInquiryFormProps) {
   const t = useTranslations("public");
   const { addItem } = useInquiryCart();
 
@@ -117,7 +119,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
   }, [selectedVariant]);
 
   const selectedSku = selectedColor && selectedLength
-    ? generateSku(category, texture, selectedColor, selectedLength)
+    ? generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin })
     : null;
 
   const handleAdd = () => {
@@ -135,7 +137,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, va
       color: selectedColor,
       quantity,
       unit: showAsPiece ? inquiryUnit : "g",
-      sku: generateSku(category, texture, selectedColor, selectedLength),
+      sku: generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin }),
       pricePerUnit,
       imageUrl,
     });

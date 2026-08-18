@@ -19,16 +19,44 @@ export const SKU_TEXTURE_REVERSE = Object.fromEntries(
   Object.entries(SKU_TEXTURE_MAP).map(([k, v]) => [v, k])
 );
 
+export const SKU_ORIGIN_MAP: Record<string, string> = {
+  "Ukrajina": "UA",
+  "Bělorusko": "BY",
+  "Moldavsko": "MD",
+  "Rusko": "RU",
+  "Kazachstán": "KZ",
+  "Uzbekistán": "UZ",
+  "Turecko": "TR",
+  "Írán": "IR",
+  "Indie": "IN",
+  "Vietnam": "VN",
+  "Sýrie": "SY",
+  "Čína": "CN",
+  "Mongolsko": "MN",
+  "Gruzie": "GE",
+  "Mix": "MX",
+};
+export const SKU_ORIGIN_REVERSE = Object.fromEntries(
+  Object.entries(SKU_ORIGIN_MAP).map(([k, v]) => [v, k])
+);
+
 export function generateSku(
   category: string,
   texture: string | null | undefined,
   color: string,
   lengthCm: number,
+  options?: { orderOnly?: boolean; origin?: string | null },
 ): string {
   const cat = SKU_CATEGORY_MAP[category] ?? "?";
   const tex = texture ? (SKU_TEXTURE_MAP[texture] ?? "XX") : "XX";
   const col = color.padStart(2, "0");
   const len = String(lengthCm);
+
+  if (options?.orderOnly) {
+    const orig = options.origin ? (SKU_ORIGIN_MAP[options.origin] ?? "XX") : "XX";
+    return `OBJ-${cat}-${orig}-${tex}-${col}-${len}`;
+  }
+
   return `${cat}-${tex}-${col}-${len}`;
 }
 
@@ -37,14 +65,32 @@ export function parseSku(sku: string): {
   texture: string;
   color: string;
   lengthCm: number;
+  orderOnly?: boolean;
+  origin?: string;
 } | null {
   const parts = sku.split("-");
-  if (parts.length !== 4) return null;
-  const [cat, tex, col, len] = parts;
-  const category = SKU_CATEGORY_REVERSE[cat];
-  const texture = SKU_TEXTURE_REVERSE[tex];
-  const lengthCm = parseInt(len);
-  if (!category || !texture || isNaN(lengthCm)) return null;
-  const parsed = parseInt(col);
-  return { category, texture, color: isNaN(parsed) ? col : String(parsed), lengthCm };
+
+  // Order-only format: OBJ-L-UA-RV-09-60
+  if (parts[0] === "OBJ" && parts.length === 6) {
+    const [, cat, orig, tex, col, len] = parts;
+    const category = SKU_CATEGORY_REVERSE[cat];
+    const origin = SKU_ORIGIN_REVERSE[orig];
+    const texture = SKU_TEXTURE_REVERSE[tex];
+    const lengthCm = parseInt(len);
+    if (!category || !texture || isNaN(lengthCm)) return null;
+    return { category, texture, color: col, lengthCm, orderOnly: true, origin };
+  }
+
+  // Standard format: L-RV-09-60
+  if (parts.length === 4) {
+    const [cat, tex, col, len] = parts;
+    const category = SKU_CATEGORY_REVERSE[cat];
+    const texture = SKU_TEXTURE_REVERSE[tex];
+    const lengthCm = parseInt(len);
+    if (!category || !texture || isNaN(lengthCm)) return null;
+    const parsed = parseInt(col);
+    return { category, texture, color: isNaN(parsed) ? col : String(parsed), lengthCm };
+  }
+
+  return null;
 }

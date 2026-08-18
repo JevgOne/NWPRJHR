@@ -30,6 +30,7 @@ export async function GET(
           category: true,
           origin: true,
           texture: true,
+          orderOnly: true,
         },
       },
     },
