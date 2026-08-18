@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
@@ -55,6 +55,17 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
 
   const [products, setProducts] = useState(initialProducts);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    supplierCode: "",
+    photoCode: "",
+    retailPricePerGram: "",
+    retailPricePerPiece: "",
+    orderLeadDays: "",
+    photos: [] as string[],
+  });
+  const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState("");
 
   useEffect(() => {
     setProducts(initialProducts);
@@ -256,6 +267,75 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
       alert("Chyba při mazání");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const startEdit = (p: OrderProduct) => {
+    const variant = p.variants[0];
+    setEditingId(p.id);
+    setEditForm({
+      supplierCode: p.supplierCode ?? "",
+      photoCode: p.photoCode ?? "",
+      retailPricePerGram: variant ? String(variant.retailPricePerGram / 100) : "",
+      retailPricePerPiece: variant?.retailPricePerPiece ? String(variant.retailPricePerPiece / 100) : "",
+      orderLeadDays: variant?.orderLeadDays ? String(variant.orderLeadDays) : "14",
+      photos: (() => { try { return JSON.parse(p.photos); } catch { return []; } })(),
+    });
+    setEditError("");
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingId) return;
+    setSaving(true);
+    setEditError("");
+    try {
+      const res = await fetch(`/api/order-products/${editingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          supplierCode: editForm.supplierCode.trim() || null,
+          photoCode: editForm.photoCode.trim() || null,
+          photos: editForm.photos,
+          retailPricePerGram: Math.round(parseFloat(editForm.retailPricePerGram) * 100) || undefined,
+          retailPricePerPiece: editForm.retailPricePerPiece
+            ? Math.round(parseFloat(editForm.retailPricePerPiece) * 100)
+            : undefined,
+          orderLeadDays: parseInt(editForm.orderLeadDays) || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setEditError(data.error || "Chyba při ukládání");
+        return;
+      }
+      setProducts((prev) =>
+        prev.map((p) => {
+          if (p.id !== editingId) return p;
+          const variant = p.variants[0];
+          return {
+            ...p,
+            supplierCode: editForm.supplierCode.trim() || null,
+            photoCode: editForm.photoCode.trim() || null,
+            photos: JSON.stringify(editForm.photos),
+            variants: variant
+              ? [{
+                  ...variant,
+                  retailPricePerGram: Math.round(parseFloat(editForm.retailPricePerGram) * 100) || variant.retailPricePerGram,
+                  retailPricePerPiece: editForm.retailPricePerPiece
+                    ? Math.round(parseFloat(editForm.retailPricePerPiece) * 100)
+                    : variant.retailPricePerPiece,
+                  orderLeadDays: parseInt(editForm.orderLeadDays) || variant.orderLeadDays,
+                }]
+              : p.variants,
+          };
+        })
+      );
+      setEditingId(null);
+      router.refresh();
+    } catch {
+      setEditError("Chyba při ukládání");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -575,7 +655,7 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
                   <th className="py-2 px-2 text-xs text-muted font-medium">{t("length")}</th>
                   <th className="py-2 px-2 text-xs text-muted font-medium text-right">Cena</th>
                   <th className="py-2 px-2 text-xs text-muted font-medium text-right">Lhůta</th>
-                  <th className="py-2 px-1 w-8"></th>
+                  <th className="py-2 px-1 w-16"></th>
                 </tr>
               </thead>
               <tbody>
@@ -595,7 +675,11 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
                   const leadDaysDisplay = variant?.orderLeadDays ? `~${variant.orderLeadDays} d` : "\u2014";
 
                   return (
-                    <tr key={p.id} className="border-b border-gray-100 hover:bg-nude-50">
+                    <Fragment key={p.id}>
+                    <tr
+                      className="border-b border-gray-100 hover:bg-nude-50 cursor-pointer"
+                      onClick={() => editingId === p.id ? setEditingId(null) : startEdit(p)}
+                    >
                       <td className="py-2.5 px-2">
                         <div className="flex items-center gap-2.5">
                           {photoArr[0] ? (
@@ -668,18 +752,90 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
                       </td>
 
                       <td className="py-2.5 px-1" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          disabled={deletingId === p.id}
-                          className={`p-1 rounded hover:bg-red-50 text-muted hover:text-red-600 transition-colors ${deletingId === p.id ? "opacity-50" : ""}`}
-                          title="Smazat"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                          </svg>
-                        </button>
+                        <div className="flex items-center gap-0.5">
+                          <button
+                            onClick={() => editingId === p.id ? setEditingId(null) : startEdit(p)}
+                            className="p-1 rounded hover:bg-nude-100 text-muted hover:text-ink transition-colors"
+                            title="Upravit"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p.id)}
+                            disabled={deletingId === p.id}
+                            className={`p-1 rounded hover:bg-red-50 text-muted hover:text-red-600 transition-colors ${deletingId === p.id ? "opacity-50" : ""}`}
+                            title="Smazat"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                          </button>
+                        </div>
                       </td>
                     </tr>
+                    {editingId === p.id && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-4 bg-nude-50/50 border-b border-line">
+                          <div className="max-w-lg space-y-4">
+                            <h3 className="text-sm font-semibold text-espresso">Upravit produkt</h3>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <Input
+                                label="Cena (Kč/g)"
+                                type="number"
+                                value={editForm.retailPricePerGram}
+                                onChange={(e) => setEditForm((f) => ({ ...f, retailPricePerGram: e.target.value }))}
+                                min={0}
+                                step="0.01"
+                              />
+                              <Input
+                                label="Dodací lhůta (dnů)"
+                                type="number"
+                                value={editForm.orderLeadDays}
+                                onChange={(e) => setEditForm((f) => ({ ...f, orderLeadDays: e.target.value }))}
+                                min={1}
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <Input
+                                label="Kód dodavatele"
+                                value={editForm.supplierCode}
+                                onChange={(e) => setEditForm((f) => ({ ...f, supplierCode: e.target.value }))}
+                                placeholder="např. SRB-60-BL"
+                              />
+                              <Input
+                                label="Kód fotky"
+                                value={editForm.photoCode}
+                                onChange={(e) => setEditForm((f) => ({ ...f, photoCode: e.target.value }))}
+                                placeholder="např. IMG-4521"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-espresso mb-1">Fotky</label>
+                              <PhotoUpload photos={editForm.photos} onChange={(photos) => setEditForm((f) => ({ ...f, photos }))} />
+                            </div>
+
+                            {editError && (
+                              <div className="text-sm text-red-600 bg-red-50 rounded-lg p-3">{editError}</div>
+                            )}
+
+                            <div className="flex gap-2">
+                              <Button size="sm" onClick={handleSaveEdit} disabled={saving}>
+                                {saving ? tCommon("loading") : tCommon("save")}
+                              </Button>
+                              <Button size="sm" variant="secondary" onClick={() => setEditingId(null)}>
+                                {tCommon("cancel")}
+                              </Button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </Fragment>
                   );
                 })}
               </tbody>
