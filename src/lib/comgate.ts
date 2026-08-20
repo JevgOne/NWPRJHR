@@ -12,6 +12,7 @@ export interface ComgateCreateParams {
   method?: string; // "ALL" = all methods (default)
   country?: string; // "CZ" (default)
   lang?: string; // "cs" (default)
+  returnUrl?: string; // browser redirect after payment
 }
 
 export interface ComgateCreateResult {
@@ -90,6 +91,7 @@ export async function createPayment(
     url_paid: callbackUrl,
     url_cancelled: callbackUrl,
     url_pending: callbackUrl,
+    ...(params.returnUrl ? { url_return: params.returnUrl } : {}),
   });
 
   if (result.code === "0" && result.transId && result.redirect) {

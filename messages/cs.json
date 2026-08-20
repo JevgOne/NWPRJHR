@@ -1161,6 +1161,7 @@
       "viewOffer": "Zobrazit nabídku",
       "successTitle": "Objednávka přijata!",
       "successTransferDesc": "Děkujeme. Uhraďte prosím objednávku převodem na níže uvedený účet.",
+      "successCardDesc": "Děkujeme za vaši objednávku. Platba se zpracovává, potvrzení obdržíte emailem.",
       "orderNumber": "Číslo objednávky",
       "bankAccount": "Číslo účtu",
       "variableSymbol": "Variabilní symbol",

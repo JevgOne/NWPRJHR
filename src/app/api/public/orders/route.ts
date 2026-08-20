@@ -400,6 +400,8 @@ export async function POST(request: NextRequest) {
 
   // 9. Handle payment method
   if (data.paymentMethod === "CARD") {
+    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://www.hairland.cz").replace(/\/$/, "");
+    const returnLocale = data.locale === "cs" ? "cs" : data.locale === "uk" ? "uk" : data.locale === "ru" ? "ru" : "cs";
     const comgateResult = await createPayment({
       price: totalAmount,
       label: `Obj ${order.orderNumber}`,
@@ -407,6 +409,7 @@ export async function POST(request: NextRequest) {
       email: data.email,
       fullName: `${data.firstName} ${data.lastName}`,
       lang: data.locale,
+      returnUrl: `${baseUrl}/${returnLocale}/checkout?orderId=${order.id}&token=${order.accessToken}&status=return`,
     });
 
     if (!comgateResult.success) {

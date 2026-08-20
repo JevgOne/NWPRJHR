@@ -292,13 +292,15 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       }
 
       setOrderResult(orderData);
-      clearCart();
 
-      // Redirect to Comgate for card payment
+      // Redirect to Comgate for card payment — don't clear cart yet
       if (orderData.redirect) {
         window.location.href = orderData.redirect;
         return;
       }
+
+      // Clear cart only for non-redirect payments (TRANSFER/CASH)
+      clearCart();
     } catch {
       setError(t("submitError"));
     } finally {
@@ -358,8 +360,23 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     }
   }, [orderResult, form.email]);
 
+  // Handle return from Comgate payment
+  const [comgateReturn, setComgateReturn] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get("orderId");
+    const status = params.get("status");
+    if (orderId && status === "return") {
+      setComgateReturn(true);
+      clearCart();
+      setOrderResult({ success: true, orderId });
+      // Clean URL without reload
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Empty cart
-  if (itemCount === 0 && !orderResult) {
+  if (itemCount === 0 && !orderResult && !comgateReturn) {
     return (
       <div className="text-center py-16">
         <svg className="w-12 h-12 mx-auto text-muted mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -429,7 +446,28 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     );
   }
 
-  // Success — card payment (redirecting)
+  // Success — returned from Comgate payment
+  if (orderResult?.success && comgateReturn) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h1 className="text-2xl font-bold text-ink mb-2">{t("successTitle")}</h1>
+        <p className="text-muted mb-6">{t("successCardDesc")}</p>
+        <Link
+          href="/vlasy-k-prodlouzeni"
+          className="inline-flex mt-4 px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
+        >
+          {t("backToOffer")}
+        </Link>
+      </div>
+    );
+  }
+
+  // Success — card payment (redirecting to Comgate)
   if (orderResult?.success) {
     return (
       <div className="text-center py-16">
@@ -494,7 +532,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
 
       {/* Step 1: Contact */}
       {step === "contact" && (
-        <div className="bg-nude-50 rounded-2xl p-5 space-y-3">
+        <div className="bg-nude-50 rounded-2xl p-5 space-y-3 overflow-hidden">
           <h2 className="font-semibold text-ink mb-2">{t("step_contact")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -627,7 +665,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
 
       {/* Step 2: Shipping */}
       {step === "shipping" && (
-        <div className="bg-nude-50 rounded-2xl p-5 space-y-4">
+        <div className="bg-nude-50 rounded-2xl p-5 space-y-4 overflow-hidden">
           <h2 className="font-semibold text-ink mb-2">{t("step_shipping")}</h2>
           <div className="space-y-2">
             {([
@@ -863,7 +901,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
 
       {/* Step 4: Summary */}
       {step === "summary" && (
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-hidden">
           {/* Items */}
           <div className="bg-nude-50 rounded-2xl p-5">
             <h2 className="font-semibold text-ink mb-3">{t("orderSummary")}</h2>

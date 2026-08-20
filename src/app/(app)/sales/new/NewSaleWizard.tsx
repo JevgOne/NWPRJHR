@@ -11,6 +11,7 @@ import { DiscountForm } from "@/components/sales/DiscountForm";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
 import type { Role } from "@prisma/client";
 import { getHairColor } from "@/lib/hair-colors";
+import { getOriginFlag } from "@/lib/origin-flags";
 import { generateSku } from "@/lib/sku";
 
 interface ProductOption {
@@ -672,9 +673,15 @@ export function NewSaleWizard({
                 onChange={(e) => setSelectedProductId(e.target.value)}
               >
                 <option value="">{tCommon("search")}...</option>
-                {products.map((p) => (
+                {[...products]
+                  .sort((a, b) => {
+                    const n = a.name.localeCompare(b.name);
+                    if (n !== 0) return n;
+                    return (a.origin ?? "").localeCompare(b.origin ?? "");
+                  })
+                  .map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.name}
+                    {p.origin ? `${getOriginFlag(p.origin)} ` : ""}{p.name}{p.texture ? ` (${p.texture})` : ""}
                   </option>
                 ))}
               </select>
@@ -695,7 +702,12 @@ export function NewSaleWizard({
                         className="inline-block w-4 h-4 rounded-full border border-line flex-shrink-0"
                         style={{ backgroundColor: getHairColor(v.color).hex }}
                       />
-                      {v.lengthCm}cm - {v.color}
+                      <span className="flex-1">
+                        {v.lengthCm}cm — {v.color}
+                      </span>
+                      {v.sku && (
+                        <span className="text-xs text-muted font-mono">{v.sku}</span>
+                      )}
                     </button>
                   ))}
                 </div>

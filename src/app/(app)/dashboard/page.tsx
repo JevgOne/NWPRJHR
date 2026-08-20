@@ -302,23 +302,27 @@ export default async function DashboardPage() {
           value={fmtGrams(totalStockGrams)}
           sub1={`${fmtCZK(stockValuePurchase)}`}
           sub2={`${t("retailValue")}: ${fmtCZK(stockValueRetail)}`}
+          href="/inventory"
         />
         <StatCard
           label={t("salesThisMonth")}
           value={`${salesCount}`}
           sub1={fmtCZK(salesRevenue)}
           sub2={t("thisMonth")}
+          href="/sales"
         />
         <StatCard
           label={t("totalSold")}
           value={fmtCZK(totalSold)}
           sub1={`${fmtGrams(totalGramsSold)} · ${totalSoldCount} ${t("salesCount")}`}
           sub2={`${t("margin")}: ${fmtCZK(totalSold - totalCOGS)} (${totalCOGS > 0 ? ((totalSold - totalCOGS) / totalCOGS * 100).toFixed(0) : 0}%)`}
+          href="/sales"
         />
         <StatCard
           label={t("awaitingPayment")}
           value={fmtCZK(awaitingPaymentTotal)}
           sub1={`${awaitingPaymentCount} ${t("transfersPending")}`}
+          href="/sales"
         />
       </div>
 
@@ -581,13 +585,27 @@ export default async function DashboardPage() {
   );
 }
 
-function StatCard({ label, value, sub1, sub2 }: { label: string; value: string; sub1?: string; sub2?: string }) {
-  return (
-    <div className="bg-white rounded-xl border border-line shadow-sm p-5">
+function StatCard({ label, value, sub1, sub2, href }: { label: string; value: string; sub1?: string; sub2?: string; href?: string }) {
+  const content = (
+    <>
       <p className="text-xs font-semibold text-muted uppercase tracking-wider">{label}</p>
       <p className="mt-2 text-2xl font-bold text-ink">{value}</p>
       {sub1 && <p className="mt-1 text-sm text-gray-600">{sub1}</p>}
       {sub2 && <p className="text-xs text-muted">{sub2}</p>}
+    </>
+  );
+
+  if (href) {
+    return (
+      <a href={href} className="bg-white rounded-xl border border-line shadow-sm p-5 block hover:border-rose/50 hover:shadow-md transition-all cursor-pointer">
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-line shadow-sm p-5">
+      {content}
     </div>
   );
 }

@@ -509,6 +509,125 @@ export async function createSettlementInvoice(
 }
 
 /**
+ * Create a balance invoice (doplatková faktura) for the remaining amount after deposit.
+ * Unlike createSettlementInvoice, this does NOT require a saleId — Sale is created
+ * only after the customer pays via Comgate callback.
+ */
+export async function createBalanceInvoice(
+  reservationId: string,
+  companyId?: string
+): Promise<Invoice> {
+  return prisma.$transaction(
+    async (tx) => {
+      const reservation = await tx.productReservation.findUniqueOrThrow({
+        where: { id: reservationId },
+        include: {
+          variant: { include: { product: true } },
+          salon: true,
+          customer: true,
+        },
+      });
+
+      // Find the deposit invoice
+      const depositInvoice = await tx.invoice.findFirst({
+        where: { reservationId, type: "DEPOSIT", status: { not: "CANCELLED" } },
+      });
+
+      const company = companyId
+        ? await tx.company.findUniqueOrThrow({ where: { id: companyId } })
+        : await tx.company.findFirstOrThrow({ where: { isDefault: true } });
+
+      const { number, variableSymbol } = await getNextInvoiceNumber(tx, "F");
+
+      const buyer =
+        reservation.customerType === "SALON" && reservation.salon
+          ? {
+              buyerName: reservation.salon.name,
+              buyerIco: reservation.salon.ico,
+              buyerDic: reservation.salon.dic,
+              buyerAddress: reservation.salon.city ?? "",
+              buyerEmail: reservation.salon.email,
+              buyerLanguage: reservation.salon.language ?? "cs",
+            }
+          : {
+              buyerName: reservation.customer?.name ?? reservation.contactName ?? "",
+              buyerIco: null as string | null,
+              buyerDic: null as string | null,
+              buyerAddress: reservation.customer?.city ?? "",
+              buyerEmail: reservation.customer?.email ?? reservation.contactEmail ?? null,
+              buyerLanguage: "cs",
+            };
+
+      const lang = buyer.buyerLanguage;
+      const t = getInvoiceTranslations(lang);
+
+      const depositAmount = depositInvoice ? depositInvoice.total : roundHalereUp(reservation.lineTotal / 2);
+      const remainingAmount = reservation.lineTotal - depositAmount;
+      const vatRate = 0;
+      const vatAmount = 0;
+
+      const description = formatItemDescription(
+        reservation.variant.product,
+        reservation.variant,
+        lang
+      );
+
+      const isPiece = reservation.pieces > 0;
+      const qty = isPiece ? reservation.pieces : reservation.grams;
+
+      const items = [
+        {
+          description,
+          quantity: qty,
+          unit: isPiece ? t.piece : t.gram,
+          pricePerUnit: qty > 0 ? Math.round(reservation.lineTotal / qty) : 0,
+          lineTotal: reservation.lineTotal,
+          vatRate,
+        },
+        {
+          description: `${lang === "cs" ? "Odpočet zálohy" : "Deposit deduction"} (${depositInvoice?.number ?? "—"})`,
+          quantity: 1,
+          unit: lang === "cs" ? "ks" : "pc",
+          pricePerUnit: -depositAmount,
+          lineTotal: -depositAmount,
+          vatRate,
+        },
+      ];
+
+      const invoice = await tx.invoice.create({
+        data: {
+          type: "INVOICE",
+          number,
+          companyId: company.id,
+          salonId: reservation.salonId,
+          customerId: reservation.customerId,
+          ...buyer,
+          reservationId,
+          originalInvoiceId: depositInvoice?.id ?? null,
+          issueDate: new Date(),
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          taxDate: new Date(),
+          variableSymbol,
+          subtotal: remainingAmount,
+          vatRate,
+          vatAmount,
+          total: remainingAmount,
+          roundingAmount: 0,
+          status: "AWAITING",
+          note: `Doplatek rezervace ${reservation.reservationNumber}`,
+          items: {
+            create: items,
+          },
+        },
+      });
+
+      return invoice;
+    },
+    { timeout: 15000 }
+  );
+}
+
+/**
  * Create a credit note (dobropis) for a deposit invoice when reservation is cancelled.
  */
 export async function createDepositCreditNote(

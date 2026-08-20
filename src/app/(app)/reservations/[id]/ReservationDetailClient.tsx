@@ -367,9 +367,22 @@ export function ReservationDetailClient({
                 const remaining = reservation.lineTotal - depositTotal;
                 if (remaining > 0) {
                   return (
-                    <div className="mt-2 pt-2 border-t border-line flex items-center justify-between">
-                      <span className="text-sm text-muted">Doplatek</span>
-                      <span className="text-sm font-semibold text-ink">{formatCZK(remaining)} CZK</span>
+                    <div className="mt-2 pt-2 border-t border-line">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted">Doplatek</span>
+                        <span className="text-sm font-semibold text-ink">{formatCZK(remaining)} CZK</span>
+                      </div>
+                      {reservation.status === "PAID" && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="mt-2 w-full"
+                          onClick={() => doAction("send_balance")}
+                          disabled={actionLoading}
+                        >
+                          Odeslat platebn\u00ED odkaz na doplatek
+                        </Button>
+                      )}
                     </div>
                   );
                 }
@@ -451,15 +464,22 @@ export function ReservationDetailClient({
                   onChange={(e) => setCompletePaymentType(e.target.value)}
                   className="text-sm border border-line rounded-lg px-2 py-1.5 bg-white text-ink"
                 >
-                  <option value="CASH">Hotově</option>
-                  <option value="CARD">Kartou</option>
+                  <option value="CASH">Hotov\u011B</option>
+                  <option value="CARD">Kartou (na m\u00EDst\u011B)</option>
+                  <option value="ONLINE">Poslat platebn\u00ED odkaz online</option>
                 </select>
                 <Button
                   size="sm"
-                  onClick={() => doAction("complete", { paymentType: completePaymentType })}
+                  onClick={() => {
+                    if (completePaymentType === "ONLINE") {
+                      doAction("send_balance");
+                    } else {
+                      doAction("complete", { paymentType: completePaymentType });
+                    }
+                  }}
                   disabled={actionLoading}
                 >
-                  {t("complete")}
+                  {completePaymentType === "ONLINE" ? "Odeslat odkaz" : t("complete")}
                 </Button>
               </div>
             )}

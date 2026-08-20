@@ -358,6 +358,102 @@ export async function POST(
         return NextResponse.json({ success: true });
       }
 
+      case "send_balance": {
+        const res = await prisma.productReservation.findUniqueOrThrow({
+          where: { id },
+          include: {
+            salon: true,
+            customer: true,
+            variant: { include: { product: true } },
+          },
+        });
+
+        if (res.status !== "PAID") {
+          return NextResponse.json(
+            { error: "Reservation must be PAID (deposit received)" },
+            { status: 400 }
+          );
+        }
+
+        const email = res.contactEmail || res.customer?.email || res.salon?.email;
+        if (!email) {
+          return NextResponse.json({ error: "No email address" }, { status: 400 });
+        }
+
+        // Calculate remaining balance
+        const depositInvoices = await prisma.invoice.findMany({
+          where: { reservationId: id, type: "DEPOSIT", status: { not: "CANCELLED" } },
+        });
+        const depositTotal = depositInvoices.reduce((sum, inv) => sum + inv.total, 0);
+        const remaining = res.lineTotal - depositTotal;
+
+        if (remaining <= 0) {
+          return NextResponse.json({ error: "Nothing to pay" }, { status: 400 });
+        }
+
+        // Create settlement invoice (AWAITING — waiting for payment)
+        const { createBalanceInvoice } = await import("@/lib/invoicing");
+        const settlementInvoice = await createBalanceInvoice(id, body.companyId);
+
+        // Create Comgate payment
+        const { createPayment } = await import("@/lib/comgate");
+        const comgateResult = await createPayment({
+          price: remaining,
+          label: `Doplatek ${(res.reservationNumber ?? "").slice(-8)}`.slice(0, 16),
+          refId: settlementInvoice.variableSymbol || `BAL-${id.slice(-8)}`,
+          email,
+          fullName: res.contactName || "",
+        });
+
+        let comgateUrl: string | undefined;
+        if (comgateResult.success && comgateResult.transId && comgateResult.redirect) {
+          await prisma.payment.create({
+            data: {
+              invoiceId: settlementInvoice.id,
+              amount: remaining,
+              date: new Date(),
+              matchedVS: settlementInvoice.variableSymbol,
+              source: "COMGATE",
+              comgateTransId: comgateResult.transId,
+              note: "Doplatek - čeká na platbu",
+            },
+          });
+          comgateUrl = comgateResult.redirect;
+        }
+
+        // Send email with payment link
+        if (comgateUrl) {
+          const { sendBalanceEmail } = await import("@/lib/invoice-email");
+          await sendBalanceEmail({
+            recipientEmail: email,
+            recipientName: res.contactName || res.customer?.name || res.salon?.name || "",
+            amount: remaining,
+            comgateUrl,
+            reservationNumber: res.reservationNumber ?? "",
+          });
+        }
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "SEND_BALANCE",
+          entity: "ProductReservation",
+          entityId: id,
+          detail: {
+            reservationNumber: res.reservationNumber,
+            invoiceId: settlementInvoice.id,
+            amount: remaining,
+          },
+          ipAddress: getClientIp(request),
+        });
+
+        return NextResponse.json({
+          success: true,
+          invoice: { id: settlementInvoice.id, number: settlementInvoice.number },
+          emailSent: !!comgateUrl,
+        });
+      }
+
       case "cancel": {
         const reservation = await cancelReservation(id, body.reason);
 

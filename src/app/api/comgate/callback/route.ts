@@ -198,6 +198,74 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // If settlement invoice for a reservation (balance payment), auto-complete reservation
+        if (payment.invoice.type === "INVOICE" && payment.invoice.reservationId) {
+          try {
+            const reservation = await prisma.productReservation.findUnique({
+              where: { id: payment.invoice.reservationId },
+            });
+
+            if (reservation && reservation.status === "PAID") {
+              const systemUser = await prisma.user.findFirst({
+                where: { role: "OWNER" },
+                select: { id: true },
+              });
+
+              if (systemUser) {
+                const { completeSale } = await import("@/lib/sales");
+                const { completeReservation } = await import("@/lib/reservations");
+
+                const sale = await completeSale(
+                  {
+                    customerType: reservation.customerType,
+                    salonId: reservation.salonId ?? undefined,
+                    customerId: reservation.customerId ?? undefined,
+                    items: [{
+                      variantId: reservation.variantId,
+                      grams: reservation.grams,
+                      pieces: reservation.pieces,
+                    }],
+                    note: `Reservation ${reservation.reservationNumber} — online balance payment`,
+                    paymentType: "CARD",
+                    discount: reservation.discountPercent
+                      ? {
+                          percent: reservation.discountPercent,
+                          type: (reservation.discountType ?? "STANDARD") as "STANDARD" | "MARKETING" | "PERSONAL",
+                          counterPerformanceNote: reservation.discountNote ?? undefined,
+                        }
+                      : undefined,
+                  },
+                  systemUser.id
+                );
+
+                // Link sale to reservation and invoice
+                await prisma.productReservation.update({
+                  where: { id: reservation.id },
+                  data: { saleId: sale.id },
+                });
+                await prisma.invoice.update({
+                  where: { id: payment.invoice.id },
+                  data: { saleId: sale.id },
+                });
+
+                // Complete reservation
+                await completeReservation(reservation.id);
+
+                // Send invoice email
+                const { sendInvoiceEmail } = await import("@/lib/invoice-email");
+                sendInvoiceEmail(payment.invoice.id).catch((e) =>
+                  console.error("[comgate/callback] Balance invoice email failed:", e)
+                );
+
+                console.log("[comgate/callback] Balance payment completed for reservation:", reservation.id, "sale:", sale.id);
+                revalidateTag("dashboard", { expire: 0 });
+              }
+            }
+          } catch (e) {
+            console.error("[comgate/callback] Balance completion failed:", e);
+          }
+        }
+
         // Notify owners
         const owners = await prisma.user.findMany({
           where: { role: "OWNER" },

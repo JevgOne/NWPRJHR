@@ -385,6 +385,108 @@ export async function sendDepositEmail(opts: {
   return { sent: true };
 }
 
+/**
+ * Send balance payment email — Comgate link for remaining amount after deposit.
+ */
+export async function sendBalanceEmail(opts: {
+  recipientEmail: string;
+  recipientName: string;
+  amount: number; // halere
+  comgateUrl: string;
+  reservationNumber: string;
+}): Promise<{ sent: boolean; reason?: string }> {
+  if (!process.env.RESEND_API_KEY) {
+    return { sent: false, reason: "no_api_key" };
+  }
+  if (!opts.recipientEmail) {
+    return { sent: false, reason: "no_recipient_email" };
+  }
+
+  const amount = formatCZK(opts.amount);
+  const firstName = opts.recipientName.split(" ")[0] || "";
+  const greeting = firstName ? `Dobrý den, ${firstName}` : "Dobrý den";
+
+  const html = `<!DOCTYPE html>
+<html lang="cs">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#fdfaf7;font-family:Georgia,'Times New Roman',serif;">
+  <div style="max-width:560px;margin:0 auto;background:#ffffff;overflow:hidden;margin-top:32px;margin-bottom:32px;">
+
+    <!-- Header -->
+    <div style="background:#3a2c2a;padding:28px 32px;text-align:center;">
+      <a href="https://hairland.cz" style="text-decoration:none;">
+        <img src="https://hairland.cz/logo-email-dark.png" alt="Hairland" width="140" height="140" style="display:block;margin:0 auto;" />
+      </a>
+    </div>
+
+    <!-- Gold accent line -->
+    <div style="height:2px;background:linear-gradient(90deg,#efe0d6,#c2a36b,#efe0d6);"></div>
+
+    <!-- Body -->
+    <div style="padding:40px 36px 32px;">
+      <p style="color:#3a2c2a;font-size:17px;line-height:1.7;margin:0 0 8px;font-weight:400;">${greeting},</p>
+      <p style="color:#3a2c2a;font-size:15px;line-height:1.7;margin:0 0 32px;">
+        d\u011Bkujeme za zaplacen\u00ED z\u00E1lohy. Pro dokon\u010Den\u00ED objedn\u00E1vky pros\u00EDme o \u00FAhradu doplatku.
+      </p>
+
+      <!-- Amount box -->
+      <div style="background:#fdfaf7;border:1px solid #efe0d6;border-radius:8px;padding:20px;text-align:center;margin:0 0 28px;">
+        <p style="color:#9c8682;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 8px;">Doplatek k \u00FAhrad\u011B</p>
+        <p style="color:#3a2c2a;font-size:28px;font-weight:700;margin:0;letter-spacing:0.5px;">${amount}</p>
+      </div>
+
+      <!-- CTA button -->
+      <div style="text-align:center;margin:0 0 28px;">
+        <a href="${opts.comgateUrl}" style="display:inline-block;background:#c98b88;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:15px 52px;border-radius:6px;letter-spacing:0.3px;font-family:'Segoe UI',Tahoma,sans-serif;">
+          Zaplatit doplatek
+        </a>
+      </div>
+
+      <p style="color:#9c8682;font-size:12px;line-height:1.5;text-align:center;margin:0 0 28px;">
+        Budete p\u0159esm\u011Brov\u00E1ni na zabezpe\u010Denou platebn\u00ED br\u00E1nu Comgate.
+      </p>
+
+      <!-- Divider -->
+      <div style="height:1px;background:#efe0d6;margin:0 0 20px;"></div>
+
+      <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:0;">
+        V p\u0159\u00EDpad\u011B dotaz\u016F n\u00E1s kontaktujte na
+        <a href="mailto:info@hairland.cz" style="color:#c98b88;text-decoration:none;">info@hairland.cz</a>
+        nebo <a href="tel:+420608553103" style="color:#c98b88;text-decoration:none;">+420 608 553 103</a>.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#3a2c2a;padding:20px 32px;text-align:center;">
+      <p style="margin:0;color:#9c8682;font-size:11px;letter-spacing:0.5px;">
+        &copy; ${new Date().getFullYear()} <a href="https://hairland.cz" style="color:#c2a36b;text-decoration:none;">Hairland.cz</a> &mdash; Pr\u00E9miov\u00E9 vlasy k prodlou\u017Een\u00ED
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>`;
+
+  const text = `${greeting},\n\nd\u011Bkujeme za zaplacen\u00ED z\u00E1lohy. Pro dokon\u010Den\u00ED objedn\u00E1vky pros\u00EDme o \u00FAhradu doplatku ve v\u00FD\u0161i ${amount}.\n\nZaplatit: ${opts.comgateUrl}\n\nD\u011Bkujeme, Hairland.cz`;
+
+  const { Resend } = await import("resend");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM ?? "info@hairland.cz",
+    replyTo: "info@hairland.cz",
+    to: opts.recipientEmail,
+    subject: `Hairland \u2014 Doplatek ${amount}`,
+    text,
+    html,
+    headers: {
+      "X-Entity-Ref-ID": `balance-${opts.reservationNumber}`,
+    },
+  });
+
+  return { sent: true };
+}
+
 const paymentEmailT: Record<Lang, {
   subject: () => string;
   greeting: (name: string) => string;
