@@ -28,7 +28,7 @@ export async function GET(
       salon: { select: { id: true, name: true } },
       customer: { select: { id: true, name: true } },
       user: { select: { id: true, name: true, email: true, role: true } },
-      invoice: { select: { id: true, number: true, status: true } },
+      invoice: { select: { id: true, number: true, status: true, type: true } },
     },
   });
 
@@ -38,11 +38,30 @@ export async function GET(
   if ((session.user.role === "SALON" || session.user.role === "HAIRDRESSER") && sale.salonId !== session.user.salonId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
+  // Find reservation invoices (deposit etc.) if this sale came from a reservation
+  let reservationInvoices: { id: string; number: string; status: string; type: string }[] = [];
+  const reservation = await prisma.productReservation.findUnique({
+    where: { saleId: id },
+    select: {
+      id: true,
+      reservationNumber: true,
+      invoices: { select: { id: true, number: true, status: true, type: true } },
+    },
+  });
+  if (reservation) {
+    // Include all reservation invoices except the one already linked via sale.invoice
+    reservationInvoices = reservation.invoices.filter(
+      (inv) => inv.id !== sale.invoice?.id
+    );
+  }
+
   const serialized = serializeSaleForRole(sale, session.user.role);
 
   // Enrich with variant details for detail view
   const result = {
     ...serialized,
+    salonId: sale.salonId,
+    customerId: sale.customerId,
     items: sale.items.map((item) => ({
       ...(session.user.role === "OWNER"
         ? {
@@ -80,6 +99,8 @@ export async function GET(
     note: sale.note,
     comgateTransId: sale.comgateTransId,
     invoice: sale.invoice ?? undefined,
+    reservationInvoices,
+    reservationNumber: reservation?.reservationNumber,
   };
 
   return NextResponse.json(result);

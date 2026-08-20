@@ -12,6 +12,8 @@ interface SaleDetail {
   id: string;
   saleNumber?: string;
   customerType: string;
+  salonId?: string;
+  customerId?: string;
   salonName?: string;
   customerName?: string;
   status: string;
@@ -35,7 +37,9 @@ interface SaleDetail {
   packetaPointName?: string;
   packetaPointCity?: string;
   comgateTransId?: string | null;
-  invoice?: { id: string; number: string; status: string } | null;
+  invoice?: { id: string; number: string; status: string; type?: string } | null;
+  reservationInvoices?: { id: string; number: string; status: string; type: string }[];
+  reservationNumber?: string;
   items: {
     id: string;
     variantId: string;
@@ -192,7 +196,19 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
               : t("retailCustomer")}
           </span>
           <span className="text-muted">{t("customer")}</span>
-          <span>{sale.salonName || sale.customerName || "-"}</span>
+          <span>
+            {sale.salonId ? (
+              <Link href={`/salons/${sale.salonId}`} className="text-rose font-medium hover:underline">
+                {sale.salonName}
+              </Link>
+            ) : sale.customerId ? (
+              <Link href={`/customers/${sale.customerId}`} className="text-rose font-medium hover:underline">
+                {sale.customerName}
+              </Link>
+            ) : (
+              sale.customerName || "-"
+            )}
+          </span>
           <span className="text-muted">{t("date")}</span>
           <span>
             {sale.completedAt
@@ -224,6 +240,12 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
               <span>{sale.saleNumber}</span>
             </>
           )}
+          {sale.reservationNumber && (
+            <>
+              <span className="text-muted">Rezervace</span>
+              <span>{sale.reservationNumber}</span>
+            </>
+          )}
           {isOwner && sale.userName && (
             <>
               <span className="text-muted">{t("soldBy")}</span>
@@ -234,42 +256,51 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       </Card>
 
       {/* Payment status banner */}
-      {sale.paymentType && (sale.paymentType === "TRANSFER" || sale.paymentType === "CARD" || sale.paymentType === "CASH") && (
-        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
-          sale.invoice?.status === "PAID"
-            ? "bg-emerald-50 border-emerald-200"
-            : sale.invoice
-              ? "bg-amber-50 border-amber-200"
-              : "bg-gray-50 border-gray-200"
-        }`}>
-          <span className={`inline-flex px-3 py-1 rounded-full text-sm font-bold ${
-            sale.invoice?.status === "PAID"
-              ? "text-emerald-700 bg-emerald-100"
-              : sale.invoice
-                ? "text-amber-700 bg-amber-100"
-                : "text-gray-500 bg-gray-100"
+      {sale.paymentType && (sale.paymentType === "TRANSFER" || sale.paymentType === "CARD" || sale.paymentType === "CASH") && (() => {
+        const allInvoices = [
+          ...(sale.reservationInvoices || []),
+          ...(sale.invoice ? [sale.invoice] : []),
+        ];
+        const allPaid = allInvoices.length > 0 && allInvoices.every((inv) => inv.status === "PAID");
+        const someUnpaid = allInvoices.some((inv) => inv.status !== "PAID" && inv.status !== "CANCELLED");
+
+        return (
+          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
+            allPaid
+              ? "bg-emerald-50 border-emerald-200"
+              : someUnpaid
+                ? "bg-amber-50 border-amber-200"
+                : "bg-gray-50 border-gray-200"
           }`}>
-            {sale.invoice?.status === "PAID"
-              ? "Zaplaceno"
-              : sale.invoice
-                ? "Čeká na platbu"
-                : "Faktura nevystavena"}
-          </span>
-          <span className="text-xs text-muted ml-auto">
-            {sale.invoice?.status === "PAID" && sale.paymentType === "CARD" && sale.comgateTransId
-              ? `Online kartou (Comgate ${sale.comgateTransId})`
-              : sale.invoice?.status === "PAID" && sale.paymentType === "CASH"
-                ? "Hotově"
-                : sale.invoice?.status === "PAID" && sale.paymentType === "TRANSFER"
-                  ? "Převodem"
-                  : sale.paymentType === "TRANSFER" && !sale.invoice
-                    ? "Čeká na vystavení faktury"
-                    : sale.paymentType === "TRANSFER"
-                      ? "Čeká na převod"
-                      : ""}
-          </span>
-        </div>
-      )}
+            <span className={`inline-flex px-3 py-1 rounded-full text-sm font-bold ${
+              allPaid
+                ? "text-emerald-700 bg-emerald-100"
+                : someUnpaid
+                  ? "text-amber-700 bg-amber-100"
+                  : "text-gray-500 bg-gray-100"
+            }`}>
+              {allPaid
+                ? "Zaplaceno"
+                : someUnpaid
+                  ? "Čeká na platbu"
+                  : "Faktura nevystavena"}
+            </span>
+            <span className="text-xs text-muted ml-auto">
+              {allPaid && sale.paymentType === "CARD" && sale.comgateTransId
+                ? `Online kartou (Comgate ${sale.comgateTransId})`
+                : allPaid && sale.paymentType === "CASH"
+                  ? "Hotově"
+                  : allPaid && sale.paymentType === "TRANSFER"
+                    ? "Převodem"
+                    : sale.paymentType === "TRANSFER" && allInvoices.length === 0
+                      ? "Čeká na vystavení faktury"
+                      : sale.paymentType === "TRANSFER" && someUnpaid
+                        ? "Čeká na převod"
+                        : ""}
+            </span>
+          </div>
+        );
+      })()}
 
       <Card>
         <h2 className="font-medium mb-3">{t("items")}</h2>
@@ -490,27 +521,59 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
         </Card>
       )}
 
-      {/* Invoice card with status badge */}
-      {sale.invoice && (
+      {/* Invoices card — show all related invoices */}
+      {(sale.invoice || (sale.reservationInvoices && sale.reservationInvoices.length > 0)) && (
         <Card>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted">{t("invoice")}</span>
-            <div className="flex items-center gap-2">
-              <Link href={`/invoices/${sale.invoice.id}`} className="text-rose font-medium hover:underline">
-                {sale.invoice.number}
-              </Link>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                sale.invoice.status === "PAID"
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "bg-amber-50 text-amber-700"
-              }`}>
-                {sale.invoice.status === "PAID" ? "Zaplaceno" : "Nezaplaceno"}
-              </span>
-            </div>
+          <h2 className="font-medium mb-3">{t("invoice")}</h2>
+          <div className="space-y-2">
+            {/* Reservation invoices (deposits etc.) */}
+            {sale.reservationInvoices?.map((inv) => (
+              <div key={inv.id} className="flex items-center justify-between text-sm">
+                <span className="text-muted">
+                  {inv.type === "DEPOSIT" ? "Záloha" : inv.type === "CREDIT_NOTE" ? "Dobropis" : "Faktura"}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Link href={`/invoices/${inv.id}`} className="text-rose font-medium hover:underline">
+                    {inv.number}
+                  </Link>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    inv.status === "PAID"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : inv.status === "CANCELLED"
+                        ? "bg-gray-50 text-gray-500"
+                        : "bg-amber-50 text-amber-700"
+                  }`}>
+                    {inv.status === "PAID" ? "Zaplaceno" : inv.status === "CANCELLED" ? "Stornováno" : "Nezaplaceno"}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {/* Sale invoice (settlement/balance) */}
+            {sale.invoice && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted">
+                  {sale.invoice.type === "DEPOSIT" ? "Záloha" : sale.invoice.type === "CREDIT_NOTE" ? "Dobropis" : "Faktura"}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Link href={`/invoices/${sale.invoice.id}`} className="text-rose font-medium hover:underline">
+                    {sale.invoice.number}
+                  </Link>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    sale.invoice.status === "PAID"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : sale.invoice.status === "CANCELLED"
+                        ? "bg-gray-50 text-gray-500"
+                        : "bg-amber-50 text-amber-700"
+                  }`}>
+                    {sale.invoice.status === "PAID" ? "Zaplaceno" : sale.invoice.status === "CANCELLED" ? "Stornováno" : "Nezaplaceno"}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Mark as paid — for TRANSFER with unpaid invoice */}
-          {isOwner && sale.paymentType === "TRANSFER" && sale.invoice.status !== "PAID" && (
+          {isOwner && sale.paymentType === "TRANSFER" && sale.invoice && sale.invoice.status !== "PAID" && (
             <div className="mt-3 pt-3 border-t border-line">
               {confirmPaymentError && (
                 <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
