@@ -22,6 +22,7 @@ interface ProductOption {
   origin: string | null;
   texture: string | null;
   orderOnly?: boolean;
+  thumbnail?: string | null;
   variants: { id: string; sku?: string | null; lengthCm: number; color: string }[];
 }
 
@@ -667,12 +668,7 @@ export function NewSaleWizard({
 
           {showProductPicker && (
             <div className="border rounded-lg p-2">
-              <select
-                className="w-full border rounded-lg p-2 mb-2 text-sm"
-                value={selectedProductId}
-                onChange={(e) => setSelectedProductId(e.target.value)}
-              >
-                <option value="">{tCommon("search")}...</option>
+              <div className="max-h-48 overflow-y-auto space-y-1 mb-2">
                 {[...products]
                   .sort((a, b) => {
                     const n = a.name.localeCompare(b.name);
@@ -680,11 +676,31 @@ export function NewSaleWizard({
                     return (a.origin ?? "").localeCompare(b.origin ?? "");
                   })
                   .map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.origin ? `${getOriginFlag(p.origin)} ` : ""}{p.name}{p.texture ? ` (${p.texture})` : ""}
-                  </option>
+                  <button
+                    key={p.id}
+                    type="button"
+                    className={`w-full text-left p-2 rounded border text-sm flex items-center gap-2 transition-colors ${
+                      selectedProductId === p.id
+                        ? "border-rose bg-rose/10"
+                        : "border-line hover:bg-nude-50"
+                    }`}
+                    onClick={() => setSelectedProductId(selectedProductId === p.id ? "" : p.id)}
+                  >
+                    {p.thumbnail ? (
+                      <img
+                        src={p.thumbnail}
+                        alt=""
+                        className="w-8 h-8 rounded object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <span className="w-8 h-8 rounded bg-nude-100 flex-shrink-0" />
+                    )}
+                    <span className="flex-1 truncate">
+                      {p.origin ? `${getOriginFlag(p.origin)} ` : ""}{p.name}{p.texture ? ` (${p.texture})` : ""}
+                    </span>
+                  </button>
                 ))}
-              </select>
+              </div>
               {selectedProduct && (
                 <div className="space-y-1 max-h-40 overflow-y-auto">
                   {selectedProduct.variants.map((v) => (

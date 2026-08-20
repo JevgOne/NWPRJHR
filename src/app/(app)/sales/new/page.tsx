@@ -26,21 +26,29 @@ export default async function NewSalePage({
     orderBy: { name: "asc" },
   });
 
-  const productOptions = products.map((p) => ({
-    id: p.id,
-    name: p.name,
-    category: p.category,
-    processingType: p.processingType,
-    origin: p.origin,
-    texture: p.texture,
-    orderOnly: p.orderOnly,
-    variants: p.variants.map((v) => ({
-      id: v.id,
-      sku: v.sku,
-      lengthCm: v.lengthCm,
-      color: v.color,
-    })),
-  }));
+  const productOptions = products.map((p) => {
+    let thumbnail: string | null = null;
+    try {
+      const photos = JSON.parse(p.photos || "[]") as string[];
+      if (photos.length > 0) thumbnail = photos[0];
+    } catch {}
+    return {
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      processingType: p.processingType,
+      origin: p.origin,
+      texture: p.texture,
+      orderOnly: p.orderOnly,
+      thumbnail,
+      variants: p.variants.map((v) => ({
+        id: v.id,
+        sku: v.sku,
+        lengthCm: v.lengthCm,
+        color: v.color,
+      })),
+    };
+  });
 
   return (
     <NewSaleWizard
