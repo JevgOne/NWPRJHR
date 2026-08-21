@@ -92,6 +92,7 @@ export async function GET(
           }),
       variant: {
         id: item.variant.id,
+        sku: item.variant.sku,
         lengthCm: item.variant.lengthCm,
         color: item.variant.color,
         product: {

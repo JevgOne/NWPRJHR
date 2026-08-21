@@ -52,10 +52,11 @@ interface SaleDetail {
     itemMargin?: number;
     sellingMode?: string;
     variant?: {
+      sku?: string | null;
       lengthCm: number;
       color: string;
       sellingMode?: string;
-      product: { name: string; category: string };
+      product: { id: string; name: string; category: string };
     };
   }[];
   discounts?: {
@@ -308,10 +309,22 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
           {sale.items.map((item) => (
             <div key={item.id} className="border rounded-lg p-3 text-sm">
               <div className="font-medium">
-                {item.variant
-                  ? `${item.variant.product.name} ${item.variant.lengthCm}cm ${item.variant.color}`
-                  : item.variantId.slice(0, 8)}
+                {item.variant ? (
+                  <Link href={`/products/${item.variant.product.id}`} className="text-rose hover:underline">
+                    {item.variant.product.name}
+                  </Link>
+                ) : (
+                  item.variantId.slice(0, 8)
+                )}
+                {item.variant && (
+                  <span className="text-muted font-normal ml-1">
+                    {item.variant.lengthCm}cm {item.variant.color}
+                  </span>
+                )}
               </div>
+              {item.variant?.sku && (
+                <p className="text-xs text-muted font-mono mt-0.5">{item.variant.sku}</p>
+              )}
               <div className="flex justify-between text-muted mt-1">
                 <span>
                   {(item.variant?.sellingMode === "BY_PIECE" || item.sellingMode === "BY_PIECE" || (item.pieces > 0 && item.grams === 0))
@@ -328,6 +341,11 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
                   {formatCZK(item.lineTotal)} CZK
                 </span>
               </div>
+              {isOwner && item.deliveryId && (
+                <p className="text-xs text-muted mt-1">
+                  Dodávka: <span className="font-mono">{item.deliveryId.slice(0, 12)}</span>
+                </p>
+              )}
               {isOwner && item.itemMargin !== undefined && (
                 <div className="flex justify-between mt-1 text-xs">
                   <span className="text-muted">
