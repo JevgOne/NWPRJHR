@@ -46,6 +46,7 @@ export default async function NewSalePage({
         sku: v.sku,
         lengthCm: v.lengthCm,
         color: v.color,
+        retailPricePerGram: v.retailPricePerGram,
       })),
     };
   });

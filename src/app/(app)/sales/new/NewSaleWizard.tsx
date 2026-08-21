@@ -23,7 +23,7 @@ interface ProductOption {
   texture: string | null;
   orderOnly?: boolean;
   thumbnail?: string | null;
-  variants: { id: string; sku?: string | null; lengthCm: number; color: string }[];
+  variants: { id: string; sku?: string | null; lengthCm: number; color: string; retailPricePerGram?: number }[];
 }
 
 interface SaleItem {
@@ -690,14 +690,55 @@ export function NewSaleWizard({
                       <img
                         src={p.thumbnail}
                         alt=""
-                        className="w-8 h-8 rounded object-cover flex-shrink-0"
+                        className="w-8 h-10 rounded object-cover flex-shrink-0"
                       />
                     ) : (
-                      <span className="w-8 h-8 rounded bg-nude-100 flex-shrink-0" />
+                      <span className="w-8 h-10 rounded bg-nude-100 flex-shrink-0" />
                     )}
-                    <span className="flex-1 truncate">
-                      {p.origin ? `${getOriginFlag(p.origin)} ` : ""}{p.name}{p.texture ? ` (${p.texture})` : ""}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium truncate">
+                          {p.origin ? `${getOriginFlag(p.origin)} ` : ""}{p.name}
+                        </span>
+                        <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          p.category === "VIRGIN" ? "bg-amber-100 text-amber-700" :
+                          p.category === "LUXE" ? "bg-purple-100 text-purple-700" :
+                          "bg-gray-100 text-gray-600"
+                        }`}>
+                          {p.category === "VIRGIN" ? "Virgin" : p.category === "LUXE" ? "Luxe" : "Std"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-muted mt-0.5">
+                        {(() => {
+                          const uniqueColors = [...new Set(p.variants.map(v => v.color))];
+                          const lengths = [...new Set(p.variants.map(v => v.lengthCm))].sort((a, b) => a - b);
+                          const price = p.variants[0]?.retailPricePerGram;
+                          return (
+                            <>
+                              <span className="flex items-center gap-0.5">
+                                {uniqueColors.slice(0, 3).map((c) => (
+                                  <span
+                                    key={c}
+                                    className="inline-block w-3 h-3 rounded-full border border-line"
+                                    style={{ backgroundColor: getHairColor(c).hex }}
+                                    title={c}
+                                  />
+                                ))}
+                                {uniqueColors.length > 3 && <span>+{uniqueColors.length - 3}</span>}
+                              </span>
+                              <span className="text-line">|</span>
+                              <span>{lengths.join(", ")} cm</span>
+                              {price != null && (
+                                <>
+                                  <span className="text-line">|</span>
+                                  <span>{formatCZK(price)}/g</span>
+                                </>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>
