@@ -713,6 +713,7 @@ export function NewSaleWizard({
                           const uniqueColors = [...new Set(p.variants.map(v => v.color))];
                           const lengths = [...new Set(p.variants.map(v => v.lengthCm))].sort((a, b) => a - b);
                           const price = p.variants[0]?.retailPricePerGram;
+                          const firstSku = p.variants.find(v => v.sku)?.sku;
                           return (
                             <>
                               <span className="flex items-center gap-0.5">
@@ -732,6 +733,12 @@ export function NewSaleWizard({
                                 <>
                                   <span className="text-line">|</span>
                                   <span>{formatCZK(price)}/g</span>
+                                </>
+                              )}
+                              {firstSku && (
+                                <>
+                                  <span className="text-line">|</span>
+                                  <span className="font-mono">{firstSku}</span>
                                 </>
                               )}
                             </>
