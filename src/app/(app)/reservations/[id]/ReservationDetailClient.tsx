@@ -62,6 +62,7 @@ interface ReservationDetail {
     number: string;
     total: number;
     status: string;
+    type: string;
     variableSymbol: string;
     payments: { comgateTransId: string | null; matchedAt: string | null }[];
   }[];
@@ -338,98 +339,127 @@ export function ReservationDetailClient({
         )}
       </div>
 
-      {/* Deposit & payment overview */}
-      {isOwner && (
-        <div className="bg-white border border-line rounded-xl px-4 py-3">
-          <p className="text-xs font-medium text-muted uppercase mb-2">{t("deposit")}</p>
-          {reservation.invoices && reservation.invoices.length > 0 ? (
-            <>
-              {reservation.invoices.map((inv) => {
-                const isPaid = inv.status === "PAID" || inv.payments?.some((p) => p.matchedAt);
-                return (
-                  <div key={inv.id} className="flex items-center justify-between mb-1">
-                    <div>
-                      <span className="text-sm font-mono text-ink">{inv.number}</span>
-                      <span className="text-xs text-muted ml-2">
-                        {formatCZK(inv.total)} CZK
-                      </span>
-                    </div>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                      isPaid
-                        ? "bg-emerald-50 text-emerald-700"
-                        : inv.status === "CANCELLED"
-                        ? "bg-gray-50 text-gray-500"
-                        : "bg-amber-50 text-amber-700"
-                    }`}>
-                      {isPaid ? t("depositPaid") : inv.status === "CANCELLED" ? t("depositCancelled") : t("depositPending")}
-                    </span>
-                  </div>
-                );
-              })}
-              {/* Remaining balance */}
-              {(() => {
-                const depositTotal = reservation.invoices
-                  .filter((inv) => inv.status !== "CANCELLED")
-                  .reduce((sum, inv) => sum + inv.total, 0);
-                const remaining = reservation.lineTotal - depositTotal;
-                if (remaining > 0) {
-                  return (
-                    <div className="mt-2 pt-2 border-t border-line">
+      {/* Invoices — mini cards + progress bar (same design as sale detail) */}
+      {isOwner && (() => {
+        const invoices = reservation.invoices ?? [];
+        const invoiceLabel = (type: string) =>
+          type === "DEPOSIT" ? "Záloha" : type === "CREDIT_NOTE" ? "Dobropis" : "Doplatek";
+        const statusLabel = (status: string) =>
+          status === "PAID" ? "Zaplaceno" : status === "CANCELLED" ? "Stornováno" : "Nezaplaceno";
+        const borderColor = (status: string) =>
+          status === "PAID" ? "border-l-emerald-500" : status === "CANCELLED" ? "border-l-gray-300" : "border-l-amber-400";
+        const badgeStyle = (status: string) =>
+          status === "PAID"
+            ? "bg-emerald-50 text-emerald-700"
+            : status === "CANCELLED"
+              ? "bg-gray-50 text-gray-500"
+              : "bg-amber-50 text-amber-700";
+
+        const activeInvs = invoices.filter((inv) => inv.status !== "CANCELLED");
+        const totalSum = activeInvs.reduce((s, inv) => s + inv.total, 0);
+        const paidSum = invoices.reduce((s, inv) => s + (inv.status === "PAID" ? inv.total : 0), 0);
+        const paidPercent = totalSum > 0 ? Math.round((paidSum / totalSum) * 100) : 0;
+        const remaining = reservation.lineTotal - totalSum;
+
+        return (
+          <div className="bg-white border border-line rounded-xl px-4 py-3">
+            <p className="text-xs font-medium text-muted uppercase mb-2">{t("deposit")}</p>
+
+            {invoices.length > 0 ? (
+              <>
+                <div className="space-y-2">
+                  {invoices.map((inv) => (
+                    <div key={inv.id} className={`border-l-4 ${borderColor(inv.status)} rounded-r-lg bg-white border border-line p-3`}>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted">Doplatek</span>
-                        <span className="text-sm font-semibold text-ink">{formatCZK(remaining)} CZK</span>
+                        <span className="text-sm font-medium">{invoiceLabel(inv.type)}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${badgeStyle(inv.status)}`}>
+                          {statusLabel(inv.status)}
+                        </span>
                       </div>
-                      {reservation.status === "PAID" && (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="mt-2 w-full"
-                          onClick={() => doAction("send_balance")}
-                          disabled={actionLoading}
-                        >
-                          Odeslat platebn\u00ED odkaz na doplatek
-                        </Button>
-                      )}
+                      <div className="flex items-center justify-between mt-1">
+                        <Link href={`/invoices/${inv.id}`} className="text-sm text-rose hover:underline">
+                          {inv.number}
+                        </Link>
+                        <span className="text-sm font-medium">{formatCZK(inv.total)} CZK</span>
+                      </div>
                     </div>
-                  );
-                }
-                return null;
-              })()}
-              {reservation.status === "PENDING" && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="mt-2"
-                  onClick={() => doAction("resend_deposit")}
-                  disabled={actionLoading}
-                >
-                  {t("resendDepositLink")}
-                </Button>
-              )}
-            </>
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted">Záloha 50%</span>
-                <span className="text-sm font-semibold text-ink">{formatCZK(Math.ceil(reservation.lineTotal / 2))} CZK</span>
-              </div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-muted">Doplatek 50%</span>
-                <span className="text-sm font-semibold text-ink">{formatCZK(reservation.lineTotal - Math.ceil(reservation.lineTotal / 2))} CZK</span>
-              </div>
-              {reservation.status === "PENDING" && (
-                <Button
-                  size="sm"
-                  onClick={() => doAction("resend_deposit")}
-                  disabled={actionLoading}
-                >
-                  Odeslat zálohu klientovi
-                </Button>
-              )}
-            </>
-          )}
-        </div>
-      )}
+                  ))}
+                </div>
+
+                {/* Payment progress bar */}
+                {totalSum > 0 && (
+                  <div className="mt-3 pt-3 border-t border-line">
+                    <div className="flex items-center justify-between text-xs text-muted mb-1">
+                      <span>Zaplaceno: {formatCZK(paidSum)} CZK z {formatCZK(totalSum)} CZK</span>
+                      <span>{paidPercent}%</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all"
+                        style={{ width: `${paidPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Remaining balance */}
+                {remaining > 0 && (
+                  <div className="mt-3 pt-3 border-t border-line">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted">Zbývá doplatit</span>
+                      <span className="text-sm font-semibold text-ink">{formatCZK(remaining)} CZK</span>
+                    </div>
+                    {reservation.status === "PAID" && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="mt-2 w-full"
+                        onClick={() => doAction("send_balance")}
+                        disabled={actionLoading}
+                      >
+                        Odeslat platební odkaz na doplatek
+                      </Button>
+                    )}
+                  </div>
+                )}
+
+                {/* Resend deposit link */}
+                {reservation.status === "PENDING" && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="mt-3"
+                    onClick={() => doAction("resend_deposit")}
+                    disabled={actionLoading}
+                  >
+                    {t("resendDepositLink")}
+                  </Button>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted">Záloha 50%</span>
+                  <span className="text-sm font-semibold text-ink">{formatCZK(Math.ceil(reservation.lineTotal / 2))} CZK</span>
+                </div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-muted">Doplatek 50%</span>
+                  <span className="text-sm font-semibold text-ink">{formatCZK(reservation.lineTotal - Math.ceil(reservation.lineTotal / 2))} CZK</span>
+                </div>
+                {reservation.status === "PENDING" && (
+                  <Button
+                    size="sm"
+                    onClick={() => doAction("resend_deposit")}
+                    disabled={actionLoading}
+                  >
+                    Odeslat zálohu klientovi
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Notes */}
       {reservation.note && (

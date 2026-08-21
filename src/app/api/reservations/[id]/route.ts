@@ -50,17 +50,18 @@ export async function GET(
       customer: { select: { id: true, name: true } },
       createdByUser: { select: { name: true, email: true } },
       invoices: {
-        where: { type: "DEPOSIT" },
         select: {
           id: true,
           number: true,
           total: true,
           status: true,
+          type: true,
           variableSymbol: true,
           payments: {
             select: { comgateTransId: true, matchedAt: true },
           },
         },
+        orderBy: { issueDate: "asc" },
       },
     },
   });
