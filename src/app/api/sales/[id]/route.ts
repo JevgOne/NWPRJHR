@@ -40,19 +40,25 @@ export async function GET(
 
   // Find reservation invoices (deposit etc.) if this sale came from a reservation
   let reservationInvoices: { id: string; number: string; status: string; type: string; total: number }[] = [];
-  const reservation = await prisma.productReservation.findUnique({
-    where: { saleId: id },
-    select: {
-      id: true,
-      reservationNumber: true,
-      invoices: { select: { id: true, number: true, status: true, type: true, total: true } },
-    },
-  });
-  if (reservation) {
-    // Include all reservation invoices except the one already linked via sale.invoice
-    reservationInvoices = reservation.invoices.filter(
-      (inv) => inv.id !== sale.invoice?.id
-    );
+  let reservationNumber: string | undefined;
+  try {
+    const reservation = await prisma.productReservation.findUnique({
+      where: { saleId: id },
+      select: {
+        id: true,
+        reservationNumber: true,
+        invoices: { select: { id: true, number: true, status: true, type: true, total: true } },
+      },
+    });
+    if (reservation) {
+      reservationNumber = reservation.reservationNumber ?? undefined;
+      // Include all reservation invoices except the one already linked via sale.invoice
+      reservationInvoices = reservation.invoices.filter(
+        (inv) => inv.id !== sale.invoice?.id
+      );
+    }
+  } catch (e) {
+    console.error("[Sale GET] Reservation query failed:", e);
   }
 
   const serialized = serializeSaleForRole(sale, session.user.role);
@@ -100,7 +106,7 @@ export async function GET(
     comgateTransId: sale.comgateTransId,
     invoice: sale.invoice ?? undefined,
     reservationInvoices,
-    reservationNumber: reservation?.reservationNumber,
+    reservationNumber,
   };
 
   return NextResponse.json(result);

@@ -68,8 +68,8 @@ interface SaleDetail {
   }[];
 }
 
-function formatCZK(halere: number): string {
-  return (halere / 100).toLocaleString("cs-CZ", {
+function formatCZK(halere: number | null | undefined): string {
+  return ((halere ?? 0) / 100).toLocaleString("cs-CZ", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
@@ -524,8 +524,8 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       {/* Invoices card — show all related invoices */}
       {(sale.invoice || (sale.reservationInvoices && sale.reservationInvoices.length > 0)) && (() => {
         const allInvs = [
-          ...(sale.reservationInvoices || []),
-          ...(sale.invoice ? [{ ...sale.invoice, total: sale.invoice.total ?? 0 }] : []),
+          ...(sale.reservationInvoices || []).map((inv) => ({ ...inv, total: inv.total ?? 0, type: inv.type ?? "INVOICE" })),
+          ...(sale.invoice ? [{ ...sale.invoice, total: sale.invoice.total ?? 0, type: sale.invoice.type ?? "INVOICE" }] : []),
         ];
         const totalSum = allInvs.reduce((s, inv) => s + (inv.status !== "CANCELLED" ? inv.total : 0), 0);
         const paidSum = allInvs.reduce((s, inv) => s + (inv.status === "PAID" ? inv.total : 0), 0);
