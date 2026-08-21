@@ -191,10 +191,17 @@ export function ReservationDetailClient({
       <div className="bg-white border border-line rounded-xl px-4 py-3">
         <p className="text-xs font-medium text-muted uppercase mb-1">{t("contactInfo")}</p>
         <p className="text-sm text-ink font-medium">
-          {reservation.salon?.name ??
-            reservation.customer?.name ??
-            reservation.contactName ??
-            "—"}
+          {reservation.salon ? (
+            <Link href={`/salons/${reservation.salon.id}`} className="text-rose hover:underline">
+              {reservation.salon.name}
+            </Link>
+          ) : reservation.customer ? (
+            <Link href={`/customers/${reservation.customer.id}`} className="text-rose hover:underline">
+              {reservation.customer.name}
+            </Link>
+          ) : (
+            reservation.contactName ?? "—"
+          )}
         </p>
         {reservation.contactEmail && (
           <p className="text-sm text-muted">{reservation.contactEmail}</p>
