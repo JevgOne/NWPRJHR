@@ -8,6 +8,7 @@ import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 import { PacketaWidget, type PacketaPoint } from "@/components/public/PacketaWidget";
 import { SHIPPING_COSTS, FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
+import { getReferralFromStorage, clearReferralFromStorage, type ReferralData } from "@/components/public/ReferralTracker";
 
 const STEPS = ["contact", "shipping", "payment", "summary"] as const;
 type Step = (typeof STEPS)[number];
@@ -93,6 +94,12 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
   const [stockChecking, setStockChecking] = useState(false);
   const [stockError, setStockError] = useState("");
   const [error, setError] = useState("");
+
+  const [referralData, setReferralData] = useState<ReferralData | null>(null);
+  useEffect(() => {
+    const ref = getReferralFromStorage();
+    if (ref) setReferralData(ref);
+  }, []);
 
   const setField = (key: string, value: string | boolean) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -247,6 +254,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           packetaPointCity: packetaPoint?.city || undefined,
           paymentMethod: form.paymentMethod,
           promoCode: promoResult?.valid ? promoResult.code : form.promoCode || undefined,
+          referralCode: referralData?.code || undefined,
           note: form.note || undefined,
           locale,
           salonId: b2bInfo?.salonId,
@@ -292,6 +300,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       }
 
       setOrderResult(orderData);
+      if (referralData) clearReferralFromStorage();
 
       // Redirect to Comgate for card payment — don't clear cart yet
       if (orderData.redirect) {
@@ -850,6 +859,21 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <p className="text-xs text-red-500 mt-1">{tInquiry("promoInvalid")}</p>
             )}
           </div>
+
+          {/* Referral banner */}
+          {referralData && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-blush-50 border border-blush-200 rounded-lg">
+              <svg className="w-4 h-4 text-rose flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+              </svg>
+              <span className="text-sm text-espresso">
+                {referralData.discountType === "PERCENT"
+                  ? `${referralData.discountValue / 100}% sleva`
+                  : `${(referralData.discountValue / 100).toLocaleString("cs-CZ")} Kč sleva`}
+                {" "}díky doporučení od <span className="font-medium">{referralData.referrerName}</span>
+              </span>
+            </div>
+          )}
 
           {/* Terms checkbox */}
           <label className="flex items-start gap-2 cursor-pointer">

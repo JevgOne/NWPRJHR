@@ -45,6 +45,7 @@ const publicOrderSchema = z
     paymentMethod: z.enum(["TRANSFER", "CARD", "CASH"]),
 
     promoCode: z.string().max(50).optional(),
+    referralCode: z.string().max(50).optional(),
     note: z.string().max(2000).optional(),
     locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
     salonId: z.string().optional(),
@@ -277,6 +278,32 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // 4b. Track referral conversion + apply discount
+  let referralId: string | null = null;
+  if (data.referralCode) {
+    const referral = await prisma.referral.findUnique({
+      where: { code: data.referralCode.toUpperCase() },
+    });
+    if (referral && referral.active) {
+      referralId = referral.id;
+
+      // Apply referral discount only if no promo code already applied
+      if (!appliedPromoCode) {
+        if (referral.refereeDiscountType === "PERCENT") {
+          const referralDisc = Math.round(
+            (estimatedTotal * referral.refereeDiscountValue) / 10000
+          );
+          promoDiscount = referralDisc;
+          estimatedTotal = Math.max(0, estimatedTotal - referralDisc);
+        } else {
+          const referralDisc = Math.min(referral.refereeDiscountValue, estimatedTotal);
+          promoDiscount = referralDisc;
+          estimatedTotal = Math.max(0, estimatedTotal - referralDisc);
+        }
+      }
+    }
+  }
+
   // 5. Shipping cost + cash surcharge
   const shippingCost = getShippingCost(data.shippingMethod, estimatedTotal);
   const cashSurcharge = data.paymentMethod === "CASH" ? 5000 : 0; // +50 Kč
@@ -353,6 +380,27 @@ export async function POST(request: NextRequest) {
   );
 
   invalidateStockCache();
+
+  // 6b. Track referral conversion
+  if (referralId) {
+    try {
+      await prisma.referralConversion.create({
+        data: {
+          referralId,
+          refereeType: "CUSTOMER",
+          refereeCustomerId: customerId || null,
+          refereeOrderId: order.id,
+          status: "PENDING",
+        },
+      });
+      await prisma.referral.update({
+        where: { id: referralId },
+        data: { usedCount: { increment: 1 } },
+      });
+    } catch (e) {
+      console.error("[public/orders] Referral conversion tracking failed:", e);
+    }
+  }
 
   // 7. Notify owners
   createNotificationForRole({

@@ -53,6 +53,46 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => ({}));
 
+  // Admin creating referral for a specific customer
+  if (isOwner && body.referrerCustomerId) {
+    const customer = await prisma.customer.findUnique({
+      where: { id: body.referrerCustomerId },
+      select: { id: true, name: true },
+    });
+    if (!customer) {
+      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    }
+
+    const existing = await prisma.referral.findFirst({
+      where: { referrerCustomerId: customer.id },
+    });
+    if (existing) {
+      return NextResponse.json({
+        code: existing.code,
+        shareUrl: `https://hairland.cz?ref=${existing.code}`,
+        id: existing.id,
+      });
+    }
+
+    const referral = await prisma.referral.create({
+      data: {
+        referrerType: "CUSTOMER",
+        referrerCustomerId: customer.id,
+        code,
+        referrerRewardType: "PERCENT",
+        referrerRewardValue: body.referrerRewardValue ?? 1000,
+        refereeDiscountType: "PERCENT",
+        refereeDiscountValue: body.refereeDiscountValue ?? 500,
+      },
+    });
+
+    return NextResponse.json({
+      code: referral.code,
+      shareUrl: `https://hairland.cz?ref=${referral.code}`,
+      id: referral.id,
+    });
+  }
+
   const referral = await prisma.referral.create({
     data: {
       referrerType: isSalon ? "SALON" : "CUSTOMER",

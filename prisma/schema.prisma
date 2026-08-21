@@ -1823,6 +1823,7 @@ model ReferralConversion {
   refereeSalonId      String?
   refereeCustomerId   String?
   refereeInquiryId    String?
+  refereeOrderId      String?
 
   // Rewards
   referrerPromoCodeId String?   // PromoCode generated for referrer
