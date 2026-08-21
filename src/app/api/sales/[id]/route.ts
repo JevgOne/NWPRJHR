@@ -28,7 +28,7 @@ export async function GET(
       salon: { select: { id: true, name: true } },
       customer: { select: { id: true, name: true } },
       user: { select: { id: true, name: true, email: true, role: true } },
-      invoice: { select: { id: true, number: true, status: true, type: true } },
+      invoice: { select: { id: true, number: true, status: true, type: true, total: true } },
     },
   });
 
@@ -39,13 +39,13 @@ export async function GET(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   // Find reservation invoices (deposit etc.) if this sale came from a reservation
-  let reservationInvoices: { id: string; number: string; status: string; type: string }[] = [];
+  let reservationInvoices: { id: string; number: string; status: string; type: string; total: number }[] = [];
   const reservation = await prisma.productReservation.findUnique({
     where: { saleId: id },
     select: {
       id: true,
       reservationNumber: true,
-      invoices: { select: { id: true, number: true, status: true, type: true } },
+      invoices: { select: { id: true, number: true, status: true, type: true, total: true } },
     },
   });
   if (reservation) {

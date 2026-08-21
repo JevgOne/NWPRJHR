@@ -37,8 +37,8 @@ interface SaleDetail {
   packetaPointName?: string;
   packetaPointCity?: string;
   comgateTransId?: string | null;
-  invoice?: { id: string; number: string; status: string; type?: string } | null;
-  reservationInvoices?: { id: string; number: string; status: string; type: string }[];
+  invoice?: { id: string; number: string; status: string; type?: string; total?: number } | null;
+  reservationInvoices?: { id: string; number: string; status: string; type: string; total: number }[];
   reservationNumber?: string;
   items: {
     id: string;
@@ -522,76 +522,87 @@ export function SaleDetailClient({ id, role }: { id: string; role: Role }) {
       )}
 
       {/* Invoices card — show all related invoices */}
-      {(sale.invoice || (sale.reservationInvoices && sale.reservationInvoices.length > 0)) && (
-        <Card>
-          <h2 className="font-medium mb-3">{t("invoice")}</h2>
-          <div className="space-y-2">
-            {/* Reservation invoices (deposits etc.) */}
-            {sale.reservationInvoices?.map((inv) => (
-              <div key={inv.id} className="flex items-center justify-between text-sm">
-                <span className="text-muted">
-                  {inv.type === "DEPOSIT" ? "Záloha" : inv.type === "CREDIT_NOTE" ? "Dobropis" : "Faktura"}
-                </span>
-                <div className="flex items-center gap-2">
-                  <Link href={`/invoices/${inv.id}`} className="text-rose font-medium hover:underline">
-                    {inv.number}
-                  </Link>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    inv.status === "PAID"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : inv.status === "CANCELLED"
-                        ? "bg-gray-50 text-gray-500"
-                        : "bg-amber-50 text-amber-700"
-                  }`}>
-                    {inv.status === "PAID" ? "Zaplaceno" : inv.status === "CANCELLED" ? "Stornováno" : "Nezaplaceno"}
-                  </span>
+      {(sale.invoice || (sale.reservationInvoices && sale.reservationInvoices.length > 0)) && (() => {
+        const allInvs = [
+          ...(sale.reservationInvoices || []),
+          ...(sale.invoice ? [{ ...sale.invoice, total: sale.invoice.total ?? 0 }] : []),
+        ];
+        const totalSum = allInvs.reduce((s, inv) => s + (inv.status !== "CANCELLED" ? inv.total : 0), 0);
+        const paidSum = allInvs.reduce((s, inv) => s + (inv.status === "PAID" ? inv.total : 0), 0);
+        const paidPercent = totalSum > 0 ? Math.round((paidSum / totalSum) * 100) : 0;
+
+        const invoiceLabel = (type: string) =>
+          type === "DEPOSIT" ? "Záloha" : type === "CREDIT_NOTE" ? "Dobropis" : "Doplatek";
+        const statusLabel = (status: string) =>
+          status === "PAID" ? "Zaplaceno" : status === "CANCELLED" ? "Stornováno" : "Nezaplaceno";
+        const borderColor = (status: string) =>
+          status === "PAID" ? "border-l-emerald-500" : status === "CANCELLED" ? "border-l-gray-300" : "border-l-amber-400";
+        const badgeStyle = (status: string) =>
+          status === "PAID"
+            ? "bg-emerald-50 text-emerald-700"
+            : status === "CANCELLED"
+              ? "bg-gray-50 text-gray-500"
+              : "bg-amber-50 text-amber-700";
+
+        return (
+          <Card>
+            <h2 className="font-medium mb-3">{t("invoice")}</h2>
+            <div className="space-y-2">
+              {allInvs.map((inv) => (
+                <div key={inv.id} className={`border-l-4 ${borderColor(inv.status)} rounded-r-lg bg-white border border-line p-3`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{invoiceLabel(inv.type ?? "INVOICE")}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${badgeStyle(inv.status)}`}>
+                      {statusLabel(inv.status)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <Link href={`/invoices/${inv.id}`} className="text-sm text-rose hover:underline">
+                      {inv.number}
+                    </Link>
+                    <span className="text-sm font-medium">{formatCZK(inv.total)} CZK</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {/* Sale invoice (settlement/balance) */}
-            {sale.invoice && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted">
-                  {sale.invoice.type === "DEPOSIT" ? "Záloha" : sale.invoice.type === "CREDIT_NOTE" ? "Dobropis" : "Faktura"}
-                </span>
-                <div className="flex items-center gap-2">
-                  <Link href={`/invoices/${sale.invoice.id}`} className="text-rose font-medium hover:underline">
-                    {sale.invoice.number}
-                  </Link>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    sale.invoice.status === "PAID"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : sale.invoice.status === "CANCELLED"
-                        ? "bg-gray-50 text-gray-500"
-                        : "bg-amber-50 text-amber-700"
-                  }`}>
-                    {sale.invoice.status === "PAID" ? "Zaplaceno" : sale.invoice.status === "CANCELLED" ? "Stornováno" : "Nezaplaceno"}
-                  </span>
+              ))}
+            </div>
+
+            {/* Payment progress */}
+            {allInvs.length > 1 && totalSum > 0 && (
+              <div className="mt-3 pt-3 border-t border-line">
+                <div className="flex items-center justify-between text-xs text-muted mb-1">
+                  <span>Zaplaceno: {formatCZK(paidSum)} CZK z {formatCZK(totalSum)} CZK</span>
+                  <span>{paidPercent}%</span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    style={{ width: `${paidPercent}%` }}
+                  />
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Mark as paid — for TRANSFER with unpaid invoice */}
-          {isOwner && sale.paymentType === "TRANSFER" && sale.invoice && sale.invoice.status !== "PAID" && (
-            <div className="mt-3 pt-3 border-t border-line">
-              {confirmPaymentError && (
-                <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-                  {confirmPaymentError}
-                </div>
-              )}
-              <Button
-                size="sm"
-                className="w-full bg-green-600 hover:bg-green-700"
-                onClick={handleMarkPaid}
-                disabled={markingPaid}
-              >
-                {markingPaid ? tCommon("loading") : "Platba dorazila — označit jako zaplaceno"}
-              </Button>
-            </div>
-          )}
-        </Card>
-      )}
+            {/* Mark as paid — for TRANSFER with unpaid invoice */}
+            {isOwner && sale.paymentType === "TRANSFER" && sale.invoice && sale.invoice.status !== "PAID" && (
+              <div className="mt-3 pt-3 border-t border-line">
+                {confirmPaymentError && (
+                  <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                    {confirmPaymentError}
+                  </div>
+                )}
+                <Button
+                  size="sm"
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={handleMarkPaid}
+                  disabled={markingPaid}
+                >
+                  {markingPaid ? tCommon("loading") : "Platba dorazila — označit jako zaplaceno"}
+                </Button>
+              </div>
+            )}
+          </Card>
+        );
+      })()}
 
       {/* Create Invoice for sales without invoice */}
       {isOwner && sale.status === "COMPLETED" && !sale.invoice && (sale.paymentType === "TRANSFER" || sale.paymentType === "CARD" || sale.paymentType === "CASH") && (
