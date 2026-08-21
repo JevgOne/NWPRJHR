@@ -34,13 +34,16 @@ export function CustomersClient() {
   const [newInstagram, setNewInstagram] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-    const q = search ? `?search=${encodeURIComponent(search)}` : "";
-    fetch(`/api/customers${q}`)
-      .then((r) => r.json())
-      .then(setCustomers)
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const timer = setTimeout(() => {
+      setLoading(true);
+      const q = search ? `?search=${encodeURIComponent(search)}` : "";
+      fetch(`/api/customers${q}`)
+        .then((r) => r.json())
+        .then(setCustomers)
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }, search ? 300 : 0);
+    return () => clearTimeout(timer);
   }, [search]);
 
   const handleAdd = async () => {

@@ -11,28 +11,26 @@ export async function GET(request: NextRequest) {
   if (session.user.role === "SALON" || session.user.role === "HAIRDRESSER")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const search = request.nextUrl.searchParams.get("search");
-
-  const where = search
-    ? {
-        OR: [
-          { name: { contains: search, mode: "insensitive" as const } },
-          { email: { contains: search, mode: "insensitive" as const } },
-          { phone: { contains: search, mode: "insensitive" as const } },
-        ],
-      }
-    : {};
-
   const customers = await prisma.customer.findMany({
-    where,
     orderBy: { name: "asc" },
-    take: 100,
+    take: 200,
     include: {
       _count: { select: { inquiries: true, sales: true } },
     },
   });
 
-  return NextResponse.json(customers);
+  const search = request.nextUrl.searchParams.get("search")?.toLowerCase();
+  const filtered = search
+    ? customers.filter((c) => {
+        const haystack = [c.name, c.email, c.phone]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(search);
+      })
+    : customers;
+
+  return NextResponse.json(filtered);
 }
 
 export async function POST(request: NextRequest) {
