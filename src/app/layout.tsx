@@ -94,20 +94,33 @@ export default async function RootLayout({
           <GoogleAnalytics />
         </NextIntlClientProvider>
         <script
-          id="merchantWidgetScript"
-          src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
-          defer
-        />
-        <script
           dangerouslySetInnerHTML={{
             __html: `
-              document.getElementById('merchantWidgetScript').addEventListener('load', function () {
-                merchantwidget.start({
-                  merchant_id: 5837040724,
-                  position: 'BOTTOM_RIGHT',
-                  region: 'CZ',
+              (function() {
+                function loadMerchantWidget() {
+                  if (document.getElementById('merchantWidgetScript')) return;
+                  var s = document.createElement('script');
+                  s.id = 'merchantWidgetScript';
+                  s.src = 'https://www.gstatic.com/shopping/merchant/merchantwidget.js';
+                  s.defer = true;
+                  s.onload = function() {
+                    merchantwidget.start({
+                      merchant_id: 5837040724,
+                      position: 'BOTTOM_RIGHT',
+                      region: 'CZ',
+                    });
+                  };
+                  document.body.appendChild(s);
+                }
+                if (localStorage.getItem('hairland_cookie_consent') === 'all') {
+                  loadMerchantWidget();
+                }
+                window.addEventListener('cookie-consent-change', function() {
+                  if (localStorage.getItem('hairland_cookie_consent') === 'all') {
+                    loadMerchantWidget();
+                  }
                 });
-              });
+              })();
             `,
           }}
         />

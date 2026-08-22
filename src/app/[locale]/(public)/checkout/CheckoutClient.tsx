@@ -276,27 +276,51 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
         return;
       }
 
-      // Heureka conversion tracking — fire before clearCart/redirect
-      try {
-        const heurekaScript = document.createElement("script");
-        heurekaScript.src = "//www.heureka.cz/ocm/sdk.js?version=2&page=thank_you";
-        heurekaScript.onload = () => {
-          const w = window as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-          if (typeof w.heureka === "function") {
-            w.heureka("authenticate", process.env.NEXT_PUBLIC_HEUREKA_CONVERSION_KEY);
-            w.heureka("set_order_id", orderData.orderNumber ?? orderData.orderId);
-            items.forEach((item) => {
-              const unitPrice = (item.pricePerUnit ?? 0) / 100;
-              w.heureka("add_product", item.productId, item.productName, unitPrice, item.quantity);
-            });
-            w.heureka("set_total_vat", total / 100);
-            w.heureka("set_currency", "CZK");
-            w.heureka("send", "Order");
-          }
-        };
-        document.head.appendChild(heurekaScript);
-      } catch {
-        // Heureka tracking is non-critical
+      // Conversion tracking — only if user accepted cookies
+      const cookieConsent = localStorage.getItem("hairland_cookie_consent");
+      if (cookieConsent === "all") {
+        // Heureka conversion tracking
+        try {
+          const heurekaScript = document.createElement("script");
+          heurekaScript.src = "//www.heureka.cz/ocm/sdk.js?version=2&page=thank_you";
+          heurekaScript.onload = () => {
+            const w = window as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+            if (typeof w.heureka === "function") {
+              w.heureka("authenticate", process.env.NEXT_PUBLIC_HEUREKA_CONVERSION_KEY);
+              w.heureka("set_order_id", orderData.orderNumber ?? orderData.orderId);
+              items.forEach((item) => {
+                const unitPrice = (item.pricePerUnit ?? 0) / 100;
+                w.heureka("add_product", item.productId, item.productName, unitPrice, item.quantity);
+              });
+              w.heureka("set_total_vat", total / 100);
+              w.heureka("set_currency", "CZK");
+              w.heureka("send", "Order");
+            }
+          };
+          document.head.appendChild(heurekaScript);
+        } catch {
+          // Heureka tracking is non-critical
+        }
+
+        // Zboží.cz conversion tracking
+        try {
+          const rcScript = document.createElement("script");
+          rcScript.src = "https://c.seznam.cz/js/rc.js";
+          rcScript.onload = () => {
+            const w = window as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+            if (w.rc && w.rc.conversionHit) {
+              w.rc.conversionHit({
+                zboziId: 286409,
+                zboziType: "standard",
+                orderId: orderData.orderNumber ?? orderData.orderId,
+                consent: 1,
+              });
+            }
+          };
+          document.head.appendChild(rcScript);
+        } catch {
+          // Zbozi tracking is non-critical
+        }
       }
 
       setOrderResult(orderData);

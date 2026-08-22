@@ -411,7 +411,42 @@ export async function POST(request: NextRequest) {
     data: { orderId: order.id, orderNumber: order.orderNumber },
   }).catch(() => {});
 
-  // 8. Send confirmation email (only for TRANSFER — CARD emails are sent after payment callback)
+  // 8. Zboží.cz backend conversion tracking
+  try {
+    const zboziShopId = 286409;
+    const zboziKey = process.env.ZBOZI_PRIVATE_KEY;
+    if (zboziKey) {
+      const shippingMap: Record<string, string> = {
+        PACKETA: "ZASILKOVNA",
+        PERSONAL_DELIVERY: "VLASTNI_PREPRAVA",
+      };
+      const zboziBody = {
+        orderId: order.orderNumber ?? order.id,
+        email: data.email,
+        deliveryType: shippingMap[data.shippingMethod] ?? "VLASTNI_PREPRAVA",
+        deliveryPrice: shippingCost / 100,
+        paymentType: data.paymentMethod === "CARD" ? "card" : data.paymentMethod === "TRANSFER" ? "bank_transfer" : "cash",
+        cart: orderItems.map((i) => ({
+          itemId: i.sku ?? i.variantId,
+          productName: i.productName,
+          quantity: i.pieces > 0 ? i.pieces : i.grams,
+          unitPrice: i.lineTotal / 100 / (i.pieces > 0 ? i.pieces : i.grams),
+        })),
+      };
+      fetch(`https://www.zbozi.cz/action/${zboziShopId}/conversion/backend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${zboziKey}`,
+        },
+        body: JSON.stringify(zboziBody),
+      }).catch((e) => console.error("[public/orders] Zbozi conversion failed:", e));
+    }
+  } catch (e) {
+    console.error("[public/orders] Zbozi conversion error:", e);
+  }
+
+  // Send confirmation email (only for TRANSFER — CARD emails are sent after payment callback)
   if (data.paymentMethod !== "CARD") {
     try {
       const emailData = getRetailOrderConfirmationEmail(data.locale ?? "cs", {

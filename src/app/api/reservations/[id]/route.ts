@@ -483,6 +483,29 @@ export async function POST(
         const discountAmount = roundHalereUp((lineTotalBeforeDiscount * discountPercent) / 10000);
         const newLineTotal = roundHalereUp(lineTotalBeforeDiscount - discountAmount);
 
+        // Validate: newLineTotal must be >= deposit total (no negative remaining)
+        const depositInvoices = await prisma.invoice.findMany({
+          where: { reservationId: id, type: "DEPOSIT", status: { not: "CANCELLED" } },
+        });
+        const depositTotal = depositInvoices.reduce((sum, inv) => sum + inv.total, 0);
+        if (newLineTotal < depositTotal) {
+          return NextResponse.json(
+            { error: `Sleva je příliš vysoká — nová celková cena (${newLineTotal / 100} Kč) je nižší než zaplacená záloha (${depositTotal / 100} Kč)` },
+            { status: 400 }
+          );
+        }
+
+        // Check for already-paid balance invoice
+        const paidBalanceInvoice = await prisma.invoice.findFirst({
+          where: { reservationId: id, type: "INVOICE", status: "PAID" },
+        });
+        if (paidBalanceInvoice) {
+          return NextResponse.json(
+            { error: "Doplatek již byl zaplacen — slevu nelze uplatnit" },
+            { status: 400 }
+          );
+        }
+
         // Cancel existing balance invoice (AWAITING/ISSUED) if any
         const existingBalanceInvoice = await prisma.invoice.findFirst({
           where: { reservationId: id, type: "INVOICE", status: { in: ["AWAITING", "ISSUED"] } },
