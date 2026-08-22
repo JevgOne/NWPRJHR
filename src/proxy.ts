@@ -56,12 +56,12 @@ export function proxy(request: NextRequest) {
   // Strip locale prefix for matching (e.g. /cs/vlasy-k-prodlouzeni/clip-in → /vlasy-k-prodlouzeni/clip-in)
   const stripped = pathname.replace(/^\/(cs|uk|ru)/, "");
 
-  // 301 redirect: old /offer URLs → /vlasy-k-prodlouzeni
+  // 301 redirect: old /offer URLs → /vlasy-k-prodlouzeni (strip query strings)
   if (stripped.startsWith("/offer")) {
     const newPath = stripped.replace("/offer", "/vlasy-k-prodlouzeni");
     const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
     return NextResponse.redirect(
-      new URL(`${localePrefix}${newPath}${request.nextUrl.search}`, request.url),
+      new URL(`${localePrefix}${newPath}`, request.url),
       301,
     );
   }

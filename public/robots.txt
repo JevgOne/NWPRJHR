@@ -29,5 +29,15 @@ Disallow: /referrals
 Disallow: /posts
 Disallow: /stylists
 Disallow: /inquiries
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /platba/
+Disallow: /*?color=
+Disallow: /*?texture=
+Disallow: /*?category=
+Disallow: /*?origin=
+Disallow: /*?search=
+Disallow: /*?page=
+Disallow: /offer/
 
 Sitemap: https://www.hairland.cz/sitemap.xml
