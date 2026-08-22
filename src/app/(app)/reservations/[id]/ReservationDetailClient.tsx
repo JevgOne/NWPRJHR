@@ -99,6 +99,10 @@ export function ReservationDetailClient({
   const [actionLoading, setActionLoading] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
   const [completePaymentType, setCompletePaymentType] = useState("CASH");
+  const [showDiscountForm, setShowDiscountForm] = useState(false);
+  const [discountInput, setDiscountInput] = useState("");
+  const [discountType, setDiscountType] = useState("STANDARD");
+  const [discountNote, setDiscountNote] = useState("");
 
   const isOwner = role === "OWNER";
 
@@ -127,6 +131,20 @@ export function ReservationDetailClient({
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleApplyDiscount = async () => {
+    const percent = parseFloat(discountInput);
+    if (!percent || percent <= 0 || percent > 100) return;
+    const discountPercent = Math.round(percent * 100);
+    await doAction("apply_discount", {
+      discountPercent,
+      discountType,
+      discountNote: discountNote || undefined,
+    });
+    setShowDiscountForm(false);
+    setDiscountInput("");
+    setDiscountNote("");
   };
 
   if (loading) return <p className="text-muted py-8 text-center">{tCommon("loading")}</p>;
@@ -410,15 +428,94 @@ export function ReservationDetailClient({
                       <span className="text-sm font-semibold text-ink">{formatCZK(remaining)} CZK</span>
                     </div>
                     {reservation.status === "PAID" && (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="mt-2 w-full"
-                        onClick={() => doAction("send_balance")}
-                        disabled={actionLoading}
-                      >
-                        Odeslat platební odkaz na doplatek
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="mt-2 w-full"
+                          onClick={() => doAction("send_balance")}
+                          disabled={actionLoading}
+                        >
+                          Odeslat platební odkaz na doplatek
+                        </Button>
+
+                        {!showDiscountForm && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mt-1 w-full text-rose"
+                            onClick={() => setShowDiscountForm(true)}
+                          >
+                            Uplatnit slevu
+                          </Button>
+                        )}
+
+                        {showDiscountForm && (
+                          <div className="mt-3 p-3 border border-line rounded-lg space-y-2">
+                            <p className="text-xs font-medium text-muted uppercase">Uplatnit slevu</p>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min="1"
+                                max="100"
+                                step="1"
+                                placeholder="Procento slevy"
+                                value={discountInput}
+                                onChange={(e) => setDiscountInput(e.target.value)}
+                                className="flex-1 border border-line rounded-lg px-2 py-1.5 text-sm"
+                              />
+                              <span className="text-sm text-muted">%</span>
+                            </div>
+                            <select
+                              value={discountType}
+                              onChange={(e) => setDiscountType(e.target.value)}
+                              className="w-full border border-line rounded-lg px-2 py-1.5 text-sm"
+                            >
+                              <option value="STANDARD">Standardní sleva</option>
+                              <option value="MARKETING">Marketingová sleva</option>
+                              <option value="PERSONAL">Osobní sleva</option>
+                            </select>
+                            <input
+                              type="text"
+                              placeholder="Poznámka (volitelné)"
+                              value={discountNote}
+                              onChange={(e) => setDiscountNote(e.target.value)}
+                              className="w-full border border-line rounded-lg px-2 py-1.5 text-sm"
+                            />
+                            {discountInput && parseFloat(discountInput) > 0 && (() => {
+                              const pct = parseFloat(discountInput);
+                              const qty = reservation.pieces > 0 ? reservation.pieces : reservation.grams;
+                              const beforeDiscount = reservation.pricePerUnit * qty;
+                              const discAmt = Math.round(beforeDiscount * pct / 100);
+                              const newTotal = beforeDiscount - discAmt;
+                              const depositPaid = (reservation.invoices ?? [])
+                                .filter((i) => i.type === "DEPOSIT" && i.status !== "CANCELLED")
+                                .reduce((s, i) => s + i.total, 0);
+                              const newRemaining = newTotal - depositPaid;
+                              return (
+                                <div className="text-xs text-muted bg-nude-50 rounded p-2 space-y-0.5">
+                                  <div className="flex justify-between">
+                                    <span>Sleva:</span>
+                                    <span className="text-red-600">-{formatCZK(discAmt)} Kč</span>
+                                  </div>
+                                  <div className="flex justify-between font-medium text-ink">
+                                    <span>Nový doplatek:</span>
+                                    <span>{formatCZK(Math.max(0, newRemaining))} Kč</span>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+                            <div className="flex gap-2">
+                              <Button size="sm" onClick={handleApplyDiscount} disabled={actionLoading}>
+                                Potvrdit
+                              </Button>
+                              <Button size="sm" variant="secondary" onClick={() => setShowDiscountForm(false)}>
+                                Zrušit
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}

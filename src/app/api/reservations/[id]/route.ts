@@ -11,6 +11,7 @@ import { createInvoiceFromSale, createSettlementInvoice, createDepositCreditNote
 import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { revalidateTag } from "next/cache";
+import { roundHalereUp } from "@/lib/rounding";
 
 export async function GET(
   _request: NextRequest,
@@ -453,6 +454,76 @@ export async function POST(
           invoice: { id: settlementInvoice.id, number: settlementInvoice.number },
           emailSent: !!comgateUrl,
         });
+      }
+
+      case "apply_discount": {
+        const res = await prisma.productReservation.findUniqueOrThrow({
+          where: { id },
+          include: { variant: true },
+        });
+
+        if (res.status !== "PAID") {
+          return NextResponse.json(
+            { error: "Slevu lze uplatnit pouze u zaplacené zálohy (status PAID)" },
+            { status: 400 }
+          );
+        }
+
+        const discountPercent = Number(body.discountPercent);
+        if (!discountPercent || discountPercent <= 0 || discountPercent > 10000) {
+          return NextResponse.json(
+            { error: "Neplatné procento slevy (1-100%)" },
+            { status: 400 }
+          );
+        }
+
+        const isByPiece = res.pieces > 0;
+        const qty = isByPiece ? res.pieces : res.grams;
+        const lineTotalBeforeDiscount = roundHalereUp(res.pricePerUnit * qty);
+        const discountAmount = roundHalereUp((lineTotalBeforeDiscount * discountPercent) / 10000);
+        const newLineTotal = roundHalereUp(lineTotalBeforeDiscount - discountAmount);
+
+        // Cancel existing balance invoice (AWAITING/ISSUED) if any
+        const existingBalanceInvoice = await prisma.invoice.findFirst({
+          where: { reservationId: id, type: "INVOICE", status: { in: ["AWAITING", "ISSUED"] } },
+        });
+        if (existingBalanceInvoice) {
+          await prisma.invoice.update({
+            where: { id: existingBalanceInvoice.id },
+            data: { status: "CANCELLED" },
+          });
+        }
+
+        const updated = await prisma.productReservation.update({
+          where: { id },
+          data: {
+            discountPercent,
+            discountAmount,
+            discountType: body.discountType ?? "STANDARD",
+            discountNote: body.discountNote ?? null,
+            lineTotal: newLineTotal,
+          },
+        });
+
+        logAudit({
+          userId: session.user.id,
+          userEmail: session.user.email ?? undefined,
+          action: "APPLY_DISCOUNT",
+          entity: "ProductReservation",
+          entityId: id,
+          detail: {
+            reservationNumber: updated.reservationNumber,
+            discountPercent,
+            discountAmount,
+            oldLineTotal: res.lineTotal,
+            newLineTotal,
+            cancelledInvoice: existingBalanceInvoice?.number ?? null,
+          },
+          ipAddress: getClientIp(request),
+        });
+
+        revalidateTag("dashboard", { expire: 0 });
+        return NextResponse.json(updated);
       }
 
       case "cancel": {
