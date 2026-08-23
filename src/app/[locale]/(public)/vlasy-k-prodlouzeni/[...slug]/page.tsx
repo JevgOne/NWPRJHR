@@ -382,7 +382,7 @@ async function generateProductMetadataFromProduct(
     description,
     alternates: getAlternates(`/vlasy-k-prodlouzeni/${productSlug}`, locale),
     openGraph: {
-      type: "website",
+      type: "article",
       title: ogTitle,
       description: ogDesc,
       url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${productSlug}`,

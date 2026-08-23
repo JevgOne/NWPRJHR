@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import confetti from "canvas-confetti";
+// canvas-confetti is dynamically imported on success
 
 function SubStarPicker({ value, onChange }: { value: number | null; onChange: (v: number) => void }) {
   return (
@@ -83,9 +83,12 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
 
   useEffect(() => {
     if (sent) {
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
-      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.7, y: 0.5 } }), 600);
+      import("canvas-confetti").then((mod) => {
+        const confetti = mod.default;
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
+        setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.7, y: 0.5 } }), 600);
+      });
     }
   }, [sent]);
 

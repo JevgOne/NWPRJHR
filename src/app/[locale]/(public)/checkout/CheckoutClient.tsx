@@ -3,7 +3,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import confetti from "canvas-confetti";
+// canvas-confetti is dynamically imported on success
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
 import { PacketaWidget, type PacketaPoint } from "@/components/public/PacketaWidget";
@@ -386,8 +386,11 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
   // Confetti on success
   useEffect(() => {
     if (orderResult?.success && !orderResult.redirect) {
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-      setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
+      import("canvas-confetti").then((mod) => {
+        const confetti = mod.default;
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { x: 0.3, y: 0.5 } }), 300);
+      });
     }
   }, [orderResult]);
 
@@ -601,6 +604,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <input
                 type="text"
                 required
+                autoComplete="given-name"
                 value={form.firstName}
                 onChange={(e) => setField("firstName", e.target.value)}
                 className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
@@ -611,6 +615,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <input
                 type="text"
                 required
+                autoComplete="family-name"
                 value={form.lastName}
                 onChange={(e) => setField("lastName", e.target.value)}
                 className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
@@ -621,6 +626,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <input
                 type="email"
                 required
+                autoComplete="email"
                 value={form.email}
                 onChange={(e) => setField("email", e.target.value)}
                 className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
@@ -630,6 +636,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <label className="block text-xs font-medium text-muted mb-1">{tInquiry("phoneLabel")}</label>
               <input
                 type="tel"
+                autoComplete="tel"
                 value={form.phone}
                 onChange={(e) => setField("phone", e.target.value)}
                 className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
