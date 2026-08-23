@@ -59,6 +59,7 @@ const publicOrderSchema = z
     billingZip: z.string().max(20).optional(),
     noSurvey: z.boolean().optional().default(false),
     noNewsletter: z.boolean().optional().default(false),
+    heurekaSurvey: z.boolean().optional().default(true),
   })
   .refine(
     (data) => {
@@ -427,14 +428,16 @@ export async function POST(request: NextRequest) {
     console.error("[public/orders] Heureka conversion error:", e);
   }
 
-  // 8b. Heureka Ověřeno zákazníky (verified customers survey)
-  try {
-    const heurekaVzKey = "9479e5956ec2c6838c45c6f7af336cff";
-    const produkty = orderItems.map((i) => i.productName).join("|");
-    const vzUrl = `https://www.heureka.cz/direct/dotaznik/objednavka.php?id=${heurekaVzKey}&email=${encodeURIComponent(data.email)}&produkt=${encodeURIComponent(produkty)}`;
-    fetch(vzUrl).catch((e) => console.error("[public/orders] Heureka VZ failed:", e));
-  } catch (e) {
-    console.error("[public/orders] Heureka VZ error:", e);
+  // 8b. Heureka Ověřeno zákazníky (verified customers survey) — only if customer consented
+  if (data.heurekaSurvey) {
+    try {
+      const heurekaVzKey = "9479e5956ec2c6838c45c6f7af336cff";
+      const produkty = orderItems.map((i) => i.productName).join("|");
+      const vzUrl = `https://www.heureka.cz/direct/dotaznik/objednavka.php?id=${heurekaVzKey}&email=${encodeURIComponent(data.email)}&produkt=${encodeURIComponent(produkty)}`;
+      fetch(vzUrl).catch((e) => console.error("[public/orders] Heureka VZ failed:", e));
+    } catch (e) {
+      console.error("[public/orders] Heureka VZ error:", e);
+    }
   }
 
   // 8c. Zboží.cz backend conversion tracking

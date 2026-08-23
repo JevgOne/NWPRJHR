@@ -63,6 +63,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     billingZip: "",
     noSurvey: false,
     noNewsletter: false,
+    heurekaSurvey: true,
   });
   const [packetaPoint, setPacketaPoint] = useState<{
     id: string; name: string; city: string;
@@ -267,6 +268,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           billingZip: form.billingZip || undefined,
           noSurvey: form.noSurvey,
           noNewsletter: form.noNewsletter,
+          heurekaSurvey: form.heurekaSurvey,
         }),
       });
 
@@ -946,6 +948,17 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               className="mt-0.5 accent-rose"
             />
             <span className="text-xs text-muted">{t("noSurvey")}</span>
+          </label>
+
+          {/* Heureka survey consent */}
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.heurekaSurvey}
+              onChange={(e) => setField("heurekaSurvey", e.target.checked)}
+              className="mt-0.5 accent-rose"
+            />
+            <span className="text-xs text-muted">{t("heurekaSurvey")}</span>
           </label>
         </div>
       )}
