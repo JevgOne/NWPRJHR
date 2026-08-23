@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
@@ -266,7 +267,7 @@ export default async function RecenzePage({
               {/* Author row: avatar + name/city + source badge + stars right */}
               <div className="flex items-center gap-3">
                 {review.authorPhoto ? (
-                  <img src={review.authorPhoto} alt={review.authorName} className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm flex-shrink-0" />
+                  <Image src={review.authorPhoto} alt={review.authorName} width={40} height={40} className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm flex-shrink-0" />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-espresso/5 flex items-center justify-center text-espresso font-semibold text-sm flex-shrink-0">
                     {review.authorName.charAt(0).toUpperCase()}

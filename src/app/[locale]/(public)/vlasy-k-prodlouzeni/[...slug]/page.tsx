@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
