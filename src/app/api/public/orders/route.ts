@@ -446,6 +446,52 @@ export async function POST(request: NextRequest) {
     console.error("[public/orders] Zbozi conversion error:", e);
   }
 
+  // 9. Meta Conversions API (server-side Purchase event)
+  try {
+    const metaToken = process.env.META_CAPI_TOKEN;
+    const metaPixelId = "37749292018049183";
+    if (metaToken) {
+      const crypto = await import("crypto");
+      const hashedEmail = crypto.createHash("sha256").update(data.email.trim().toLowerCase()).digest("hex");
+      const hashedPhone = data.phone
+        ? crypto.createHash("sha256").update(data.phone.replace(/\D/g, "")).digest("hex")
+        : undefined;
+
+      const metaBody = {
+        data: [{
+          event_name: "Purchase",
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: "website",
+          event_source_url: "https://www.hairland.cz/checkout",
+          event_id: order.orderNumber ?? order.id,
+          user_data: {
+            em: [hashedEmail],
+            ...(hashedPhone ? { ph: [hashedPhone] } : {}),
+            fn: [crypto.createHash("sha256").update(data.firstName.trim().toLowerCase()).digest("hex")],
+            ln: [crypto.createHash("sha256").update(data.lastName.trim().toLowerCase()).digest("hex")],
+            country: [crypto.createHash("sha256").update("cz").digest("hex")],
+          },
+          custom_data: {
+            currency: "CZK",
+            value: totalAmount / 100,
+            order_id: order.orderNumber ?? order.id,
+            content_ids: orderItems.map((i) => i.sku ?? i.variantId),
+            content_type: "product",
+            num_items: orderItems.length,
+          },
+        }],
+      };
+
+      fetch(`https://graph.facebook.com/v21.0/${metaPixelId}/events?access_token=${metaToken}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(metaBody),
+      }).catch((e) => console.error("[public/orders] Meta CAPI failed:", e));
+    }
+  } catch (e) {
+    console.error("[public/orders] Meta CAPI error:", e);
+  }
+
   // Send confirmation email (only for TRANSFER — CARD emails are sent after payment callback)
   if (data.paymentMethod !== "CARD") {
     try {

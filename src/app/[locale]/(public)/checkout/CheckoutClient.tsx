@@ -321,6 +321,23 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
         } catch {
           // Zbozi tracking is non-critical
         }
+
+        // Meta Pixel Purchase event
+        try {
+          const w = window as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+          if (typeof w.fbq === "function") {
+            w.fbq("track", "Purchase", {
+              value: total / 100,
+              currency: "CZK",
+              content_ids: items.map((i) => i.productId),
+              content_type: "product",
+              order_id: orderData.orderNumber ?? orderData.orderId,
+              num_items: items.length,
+            });
+          }
+        } catch {
+          // Meta Pixel tracking is non-critical
+        }
       }
 
       setOrderResult(orderData);
