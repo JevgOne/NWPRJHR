@@ -302,6 +302,17 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           // Heureka tracking is non-critical
         }
 
+        // Heureka Ověřeno zákazníky (verified customers survey)
+        try {
+          const heurekaVzScript = document.createElement("script");
+          heurekaVzScript.src = "//www.heureka.cz/direct/dotaznik/objednavka.php?"
+            + new URLSearchParams({ id: "9479e5956ec2c6838c45c6f7af336cff", email: form.email, produkt: items.map((i) => i.productName).join("|") }).toString();
+          heurekaVzScript.async = true;
+          document.body.appendChild(heurekaVzScript);
+        } catch {
+          // Heureka verified customers is non-critical
+        }
+
         // Zboží.cz conversion tracking
         try {
           const rcScript = document.createElement("script");
