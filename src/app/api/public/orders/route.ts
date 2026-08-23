@@ -411,7 +411,33 @@ export async function POST(request: NextRequest) {
     data: { orderId: order.id, orderNumber: order.orderNumber },
   }).catch(() => {});
 
-  // 8. Zboží.cz backend conversion tracking
+  // 8a. Heureka server-side conversion tracking
+  try {
+    const heurekaKey = process.env.NEXT_PUBLIC_HEUREKA_CONVERSION_KEY;
+    if (heurekaKey) {
+      const heurekaProducts = orderItems.map((i) => {
+        const qty = i.pieces > 0 ? i.pieces : i.grams;
+        const unitPrice = i.lineTotal / 100 / qty;
+        return `<ITEM_ID>${encodeURIComponent(i.sku ?? i.variantId)}</ITEM_ID><PRODUCTNAME>${encodeURIComponent(i.productName)}</PRODUCTNAME><UNITPRICE>${unitPrice.toFixed(2)}</UNITPRICE><AMOUNT>${qty}</AMOUNT>`;
+      }).join("");
+      const heurekaUrl = `https://www.heureka.cz/ocm/api/v2/order/new?apiKey=${heurekaKey}&orderId=${encodeURIComponent(order.orderNumber ?? order.id)}&email=${encodeURIComponent(data.email)}&totalPrice=${(totalAmount / 100).toFixed(2)}&currency=CZK&products=${heurekaProducts}`;
+      fetch(heurekaUrl).catch((e) => console.error("[public/orders] Heureka conversion failed:", e));
+    }
+  } catch (e) {
+    console.error("[public/orders] Heureka conversion error:", e);
+  }
+
+  // 8b. Heureka Ověřeno zákazníky (verified customers survey)
+  try {
+    const heurekaVzKey = "9479e5956ec2c6838c45c6f7af336cff";
+    const produkty = orderItems.map((i) => i.productName).join("|");
+    const vzUrl = `https://www.heureka.cz/direct/dotaznik/objednavka.php?id=${heurekaVzKey}&email=${encodeURIComponent(data.email)}&produkt=${encodeURIComponent(produkty)}`;
+    fetch(vzUrl).catch((e) => console.error("[public/orders] Heureka VZ failed:", e));
+  } catch (e) {
+    console.error("[public/orders] Heureka VZ error:", e);
+  }
+
+  // 8c. Zboží.cz backend conversion tracking
   try {
     const zboziShopId = 286409;
     const zboziKey = process.env.ZBOZI_PRIVATE_KEY;
