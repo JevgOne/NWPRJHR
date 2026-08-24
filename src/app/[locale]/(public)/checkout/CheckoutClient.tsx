@@ -158,7 +158,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
   const canProceed = () => {
     switch (step) {
       case "contact":
-        return form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.email.includes("@");
+        return form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.email.includes("@") && form.phone.trim().length >= 6;
       case "shipping": {
         if (form.shippingMethod === "PACKETA") return !!packetaPoint;
         if (form.shippingMethod === "PERSONAL_DELIVERY") {
@@ -606,6 +606,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               <label className="block text-xs font-medium text-muted mb-1">{tInquiry("phoneLabel")}</label>
               <input
                 type="tel"
+                required
                 autoComplete="tel"
                 value={form.phone}
                 onChange={(e) => setField("phone", e.target.value)}
