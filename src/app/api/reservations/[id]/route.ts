@@ -357,7 +357,11 @@ export async function POST(
           });
         }
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({
+          success: true,
+          comgateUrl: comgateUrl || null,
+          amount: depositInvoice.total,
+        });
       }
 
       case "send_balance": {
@@ -453,6 +457,8 @@ export async function POST(
           success: true,
           invoice: { id: settlementInvoice.id, number: settlementInvoice.number },
           emailSent: !!comgateUrl,
+          comgateUrl: comgateUrl || null,
+          amount: remaining,
         });
       }
 
