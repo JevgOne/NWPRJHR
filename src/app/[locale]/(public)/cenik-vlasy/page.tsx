@@ -327,6 +327,30 @@ export default async function CenikVlasyPage() {
         </Link>
       </section>
 
+      {/* ── Useful links ── */}
+      <section className="mb-10">
+        <h2 className="text-base font-semibold text-ink mb-3">{t("usefulLinksTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {([
+            { href: "/pruvodce-gramazi", label: t("linkGrams") },
+            { href: "/prodlouzeni-vlasu-praha", label: t("linkPraha") },
+            { href: "/poradna/typy-prodlouzeni", label: t("linkTypes") },
+            { href: "/poradna/jak-dlouho-vydrzi", label: t("linkDurability") },
+          ] as const).map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center gap-2 px-4 py-3 rounded-lg border border-line hover:bg-nude-50 transition-colors text-sm text-espresso font-medium"
+            >
+              <svg className="w-4 h-4 text-muted flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+              {label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="text-center">
         <p className="text-sm text-muted mb-4">{t("ctaText")}</p>

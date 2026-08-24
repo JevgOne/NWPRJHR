@@ -42,7 +42,7 @@
   },
   "metadata": {
     "description": "Hairland — 100% pravé vlasy k prodloužení. Přímý import, zpracování na zakázku, osobní konzultace Praha.",
-    "homeTitle": "Vlasy k prodloužení Praha | 100% pravé vlasy",
+    "homeTitle": "Hairland — prodej pravých vlasů k prodloužení | Praha",
     "homeDescription": "Prodej pravých vlasů k prodloužení — evropské, asijské i blízkovýchodní. Zpracování na zakázku do 7 dnů: clip-in, tape-in, keratin, micro ring. Osobní konzultace Praha zdarma.",
     "blogTitle": "Poradce prodloužení vlasů — jak vybrat, péče, srovnání",
     "blogDescription": "Jak vybrat správnou metodu prodloužení vlasů? Clip-in, tape-in nebo keratin? Rady od expertů, péče o prodloužené vlasy, srovnání kvality.",
@@ -69,7 +69,7 @@
     "checkoutTitle": "Objednávka",
     "checkoutDescription": "Dokončete objednávku prémiových vlasů Hairland — rychlé doručení po celé ČR.",
     "cenikTitle": "Ceník vlasů k prodloužení 2026 | Cena za 100 g",
-    "cenikDescription": "Kolik stojí pravé vlasy k prodloužení? Ceník vlasů za 100 g — panenské, Luxe a Standard. Slovanské a ukrajinské vlasy skladem v Praze."
+    "cenikDescription": "Kolik stojí pravé vlasy k prodloužení? Ceník vlasů za 100 g — panenské, Luxe a Standard. Evropské i asijské vlasy skladem v Praze i na objednávku."
   },
   "roles": {
     "owner": "Majitel",
@@ -2379,8 +2379,8 @@
     "calcCm": "{value} cm"
   },
   "prahaLanding": {
-    "metaTitle": "Prodloužení vlasů Praha — prémiové vlasy k prodloužení",
-    "metaDesc": "Prémiové vlasy k prodloužení v Praze. Clip-in, tape-in, keratinové a micro ring prodloužení z pravých evropských vlasů. Osobní konzultace zdarma, dovoz po Praze.",
+    "metaTitle": "Prodloužení vlasů Praha — prodej vlasů s dovozem zdarma | Hairland",
+    "metaDesc": "Prodej vlasů k prodloužení v Praze — skladem i na objednávku. Clip-in, tape-in, keratin, micro ring. Osobní konzultace a dovoz vzorků po Praze zdarma.",
     "home": "Domů",
     "breadcrumb": "Prodloužení vlasů Praha",
     "h1": "Prodloužení vlasů Praha",
@@ -3329,6 +3329,11 @@
     "b2bTitle": "Velkoobchodní ceny pro salony",
     "b2bDesc": "Spolupracujete s námi jako salon nebo kadeřnice? Nabízíme B2B slevy 15–30 % z maloobchodních cen.",
     "b2bLink": "Více o spolupráci pro salony",
+    "usefulLinksTitle": "Užitečné odkazy",
+    "linkGrams": "Kolik gramů vlasů potřebuji?",
+    "linkPraha": "Prodloužení vlasů v Praze",
+    "linkTypes": "Typy prodloužení vlasů",
+    "linkDurability": "Jak dlouho vydrží prodloužené vlasy?",
     "ctaText": "Nenašli jste, co hledáte? Rádi vám poradíme s výběrem.",
     "ctaOffer": "Prohlédnout nabídku",
     "ctaContact": "Kontaktovat nás"
