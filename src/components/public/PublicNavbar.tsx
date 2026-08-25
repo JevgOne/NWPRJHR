@@ -236,6 +236,8 @@ export function PublicNavbar() {
             <img
               src="/logo-light.svg"
               alt="Hairland"
+              width={131}
+              height={36}
               className="h-9 w-auto"
             />
           </Link>

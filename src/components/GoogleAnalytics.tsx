@@ -35,7 +35,7 @@ export function GoogleAnalytics() {
   return (
     <>
       {/* Consent Mode v2 — default denied, always loaded */}
-      <Script id="gtag-consent" strategy="beforeInteractive">
+      <Script id="gtag-consent" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

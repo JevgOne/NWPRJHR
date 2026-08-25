@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Script from "next/script";
 import { TopInfoBar } from "@/components/public/TopInfoBar";
 import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -28,10 +27,6 @@ export default function PublicLayout({
           <BatchPopup />
           <ScrollToTop />
         </div>
-        <Script
-          src="https://widget.packeta.com/www/js/library.js"
-          strategy="afterInteractive"
-        />
       </WishlistProvider>
     </InquiryCartProvider>
   );

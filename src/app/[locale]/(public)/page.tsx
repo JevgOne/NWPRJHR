@@ -184,7 +184,7 @@ export default async function LandingPage() {
 
           {/* Hero image */}
           <div className="relative aspect-[4/3] sm:aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-8 sm:mb-10 max-w-4xl mx-auto">
-            <Image src="/hero-vzornik.png" alt={t("landing.heroImageAlt")} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
+            <Image src="/hero-vzornik.webp" alt={t("landing.heroImageAlt")} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
           </div>
 
           {/* Trust badges — H2 + H3 */}
