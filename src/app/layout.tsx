@@ -67,6 +67,12 @@ export async function generateMetadata(): Promise<Metadata> {
     verification: {
       google: "O8JDMlKM9MF___Aq8x5gKn4EZ7kKvBSKON524_qSnvU",
     },
+    other: {
+      "geo.region": "CZ-10",
+      "geo.placename": "Praha",
+      "geo.position": "50.0804;14.4261",
+      "ICBM": "50.0804, 14.4261",
+    },
   };
 }
 
