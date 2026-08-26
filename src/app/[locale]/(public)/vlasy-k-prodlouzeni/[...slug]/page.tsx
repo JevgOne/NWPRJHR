@@ -1312,7 +1312,9 @@ async function ProductDetailView({
       </Suspense>
 
       {/* Recently viewed */}
-      <RecentlyViewed excludeSlug={product.slug ?? product.id} />
+      <Suspense fallback={null}>
+        <RecentlyViewed excludeSlug={product.slug ?? product.id} />
+      </Suspense>
 
       {/* FAQ — visual accordion, last section */}
       {allFaq.length > 0 && (

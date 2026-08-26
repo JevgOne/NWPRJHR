@@ -1,35 +1,29 @@
-"use client";
+import { getTranslations } from "next-intl/server";
+import { getRecentlyViewedSlugs } from "@/lib/recently-viewed";
+import { getCachedAllProducts } from "@/lib/cached-products";
+import { ProductGridCard } from "./ProductGridCard";
 
-import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
-import { getRecentlyViewed } from "@/lib/recently-viewed";
-import { ProductGridCard, type ProductGridCardProduct } from "./ProductGridCard";
+export async function RecentlyViewed({ excludeSlug }: { excludeSlug: string }) {
+  const [slugs, allProducts, t] = await Promise.all([
+    getRecentlyViewedSlugs(),
+    getCachedAllProducts(),
+    getTranslations("productDetail"),
+  ]);
 
-export function RecentlyViewed({ excludeSlug }: { excludeSlug: string }) {
-  const t = useTranslations("productDetail");
-  const [products, setProducts] = useState<ProductGridCardProduct[]>([]);
+  const filtered = slugs.filter((s) => s !== excludeSlug).slice(0, 4);
+  if (filtered.length === 0) return null;
 
-  useEffect(() => {
-    const slugs = getRecentlyViewed()
-      .filter((s) => s !== excludeSlug)
-      .slice(0, 4);
-    if (slugs.length === 0) return;
+  const slugSet = new Set(filtered);
+  const bySlug = new Map(
+    allProducts
+      .filter((p) => p.slug && slugSet.has(p.slug))
+      .map((p) => [p.slug, p]),
+  );
 
-    fetch(`/api/public/products?slugs=${slugs.join(",")}`)
-      .then((r) => r.json())
-      .then((res) => {
-        // Preserve the order from recently viewed (most recent first)
-        const bySlug = new Map<string, ProductGridCardProduct>();
-        for (const p of res.data ?? []) {
-          bySlug.set(p.slug, p);
-        }
-        const ordered = slugs
-          .map((s) => bySlug.get(s))
-          .filter((p): p is ProductGridCardProduct => p != null);
-        setProducts(ordered);
-      })
-      .catch(() => {});
-  }, [excludeSlug]);
+  // Preserve recency order
+  const products = filtered
+    .map((s) => bySlug.get(s))
+    .filter((p): p is NonNullable<typeof p> => p != null);
 
   if (products.length === 0) return null;
 

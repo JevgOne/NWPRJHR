@@ -1,21 +1,37 @@
-"use client";
+"use server";
 
-const STORAGE_KEY = "hairland_recently_viewed";
+import { cookies } from "next/headers";
+
+const COOKIE_NAME = "hairland_rv";
 const MAX_ITEMS = 8;
+const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
-export function getRecentlyViewed(): string[] {
-  if (typeof window === "undefined") return [];
+/**
+ * Read recently-viewed product slugs from cookie (server-side).
+ */
+export async function getRecentlyViewedSlugs(): Promise<string[]> {
+  const jar = await cookies();
+  const raw = jar.get(COOKIE_NAME)?.value;
+  if (!raw) return [];
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    return raw.split(",").filter(Boolean).slice(0, MAX_ITEMS);
   } catch {
     return [];
   }
 }
 
-export function addRecentlyViewed(productSlug: string): void {
-  const current = getRecentlyViewed();
-  const filtered = current.filter((s) => s !== productSlug);
-  const updated = [productSlug, ...filtered].slice(0, MAX_ITEMS);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+/**
+ * Server action: add a product slug to the recently-viewed cookie.
+ */
+export async function trackProductView(slug: string): Promise<void> {
+  const jar = await cookies();
+  const current = await getRecentlyViewedSlugs();
+  const updated = [slug, ...current.filter((s) => s !== slug)].slice(0, MAX_ITEMS);
+  jar.set(COOKIE_NAME, updated.join(","), {
+    path: "/",
+    maxAge: MAX_AGE,
+    httpOnly: false,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
 }

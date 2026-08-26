@@ -1001,6 +1001,14 @@
       "contactLink": "Kontaktujte nás →",
       "careGuideLink": "Péče o prodloužené vlasy →"
     },
+    "notFoundPage": {
+      "title": "Stránka nenalezena",
+      "heading": "Tuto stránku jsme nenašli",
+      "description": "Stránka byla přesunuta nebo neexistuje. Podívejte se na naši nabídku pravých vlasů.",
+      "backHome": "Zpět na hlavní stránku",
+      "browseProducts": "Prohlédnout nabídku",
+      "recommended": "Doporučujeme"
+    },
     "productDetail": {
       "realHair": "100% pravé vlasy",
       "home": "Domů",
