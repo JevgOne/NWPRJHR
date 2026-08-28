@@ -14,5 +14,5 @@ export const routing = defineRouting({
     name: "HAIRLAND_LOCALE",
   },
   localeDetection: true,
-  alternateLinks: true,
+  alternateLinks: false,
 });
