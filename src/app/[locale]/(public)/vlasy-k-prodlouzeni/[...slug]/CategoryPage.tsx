@@ -45,7 +45,7 @@ const H1_KEYS: Record<string, string> = {
   "keratin": "keratinH1",
   "micro-ring": "microRingH1",
   "weft": "weftH1",
-  "ofiny": "ofinyTitle",
+  "ofiny": "ofinyH1",
 };
 
 const DESC_KEYS: Record<string, string> = {

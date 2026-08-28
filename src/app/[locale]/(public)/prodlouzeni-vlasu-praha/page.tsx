@@ -140,24 +140,6 @@ export default async function ProdlouzeniVlasuPrahaPage() {
     })),
   };
 
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: t("home"),
-        item: "https://www.hairland.cz",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: t("breadcrumb"),
-        item: "https://www.hairland.cz/prodlouzeni-vlasu-praha",
-      },
-    ],
-  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
@@ -169,11 +151,6 @@ export default async function ProdlouzeniVlasuPrahaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-
       <Breadcrumbs
         items={[
           { label: t("home"), href: "/" },
@@ -257,6 +234,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             { name: "Keratin", href: "/keratin" as const, text: t("methodKeratin") },
             { name: "Micro ring", href: "/micro-ring" as const, text: t("methodMicroRing") },
             { name: "Tresy (weft)", href: "/tresove-vlasy" as const, text: t("methodWeft") },
+            { name: "Clip-in ofiny", href: "/ofiny" as const, text: t("methodOfiny") },
           ].map((method) => (
             <Link
               key={method.href}
