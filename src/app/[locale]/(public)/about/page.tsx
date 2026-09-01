@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-about.jpg",
           width: 1200,
           height: 630,
-          alt: "Hairland — prémiové vlasy k prodloužení",
+          alt: "O nás — přímý import prémiových vlasů",
         },
       ],
     },

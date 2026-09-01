@@ -95,7 +95,7 @@ export async function generateCategoryMetadata(slug: string) {
     alternates: getAlternates(canonicalPath, locale),
     openGraph: {
       type: "website" as const,
-      title: `${title} | Hairland`,
+      title,
       description,
       url: `https://www.hairland.cz${canonicalPath}`,
       siteName: "Hairland",
@@ -104,7 +104,7 @@ export async function generateCategoryMetadata(slug: string) {
     },
     twitter: {
       card: "summary_large_image" as const,
-      title: `${title} | Hairland`,
+      title,
       description,
       images: [CATEGORY_OG_IMAGES[slug] ?? "https://www.hairland.cz/og/og-offer.jpg"],
     },

@@ -59,7 +59,7 @@ export function PublicFooter() {
               <li><Link href="/cenik-vlasy" className={linkClass}>{t("footer.pricelist")}</Link></li>
               <li><Link href="/ofiny" className={linkClass}>{t("navbar.bangs")}</Link></li>
               <li><Link href="/prislusenstvi" className={linkClass}>{t("nav.accessories")}</Link></li>
-              <li><Link href="/vykup-vlasu" className={linkClass}>{t("footer.buyback")}</Link></li>
+              <li><Link href="/vykup" className={linkClass}>{t("footer.buyback")}</Link></li>
             </ul>
           </div>
 

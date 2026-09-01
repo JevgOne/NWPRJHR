@@ -111,7 +111,7 @@ export async function generateAttributeMetadata(
     title = t(`${key}.title`);
     description = t(`${key}.description`);
   } catch {
-    title = `${valueSlug} | Hairland`;
+    title = valueSlug;
     description = "";
   }
 

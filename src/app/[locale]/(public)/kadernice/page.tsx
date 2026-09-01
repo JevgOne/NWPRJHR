@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-kadernice.jpg",
           width: 1200,
           height: 630,
-          alt: "Hairland — prémiové vlasy k prodloužení",
+          alt: "Kadeřnice a salony — spolupráce na prodloužení vlasů",
         },
       ],
     },

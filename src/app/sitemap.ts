@@ -11,7 +11,7 @@ import {
 export const dynamic = "force-dynamic";
 
 const BASE_URL = "https://www.hairland.cz";
-const STATIC_DATE = "2026-06-01";
+const STATIC_DATE = new Date().toISOString().split("T")[0];
 
 const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
 
