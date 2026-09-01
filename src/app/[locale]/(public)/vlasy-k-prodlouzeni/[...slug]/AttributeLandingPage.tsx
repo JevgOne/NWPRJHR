@@ -10,7 +10,7 @@ import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { flattenProductVariants } from "@/lib/flatten-variants";
 import type { AttributeType } from "@/lib/attribute-slugs";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import {
   ATTRIBUTE_PREFIX_MAP,
   COLOR_TONE_SLUG_MAP,
@@ -123,7 +123,7 @@ export async function generateAttributeMetadata(
       type: "website",
       title: `${title} | Hairland`,
       description,
-      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`,
+      url: getOgUrl(`/vlasy-k-prodlouzeni/${prefix}/${valueSlug}`, locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],

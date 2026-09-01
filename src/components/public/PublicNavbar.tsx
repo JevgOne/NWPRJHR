@@ -347,12 +347,12 @@ export function PublicNavbar() {
                 </button>
               </div>
             ) : (
-              <Link
+              <a
                 href="/login"
                 className="ml-2 px-4 py-2 text-sm font-medium text-white bg-rose rounded-lg hover:bg-rose-deep transition-colors"
               >
                 {tAuth("loginButton")}
-              </Link>
+              </a>
             )}
           </div>
 
@@ -490,13 +490,13 @@ export function PublicNavbar() {
                   </button>
                 </div>
               ) : (
-                <Link
+                <a
                   href="/login"
                   className="block mx-3 px-4 py-2 text-sm font-medium text-center text-white bg-rose rounded-lg hover:bg-rose-deep"
                   onClick={() => setMenuOpen(false)}
                 >
                   {tAuth("loginButton")}
-                </Link>
+                </a>
               )}
             </div>
           </div>

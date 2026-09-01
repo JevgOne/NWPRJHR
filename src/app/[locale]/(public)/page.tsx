@@ -10,7 +10,7 @@ import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { selectHeroProducts } from "@/lib/flatten-variants";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 const getCachedStylists = unstable_cache(
   async () => {
@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${t("homeTitle")} | Hairland`,
       description: t("homeDescription"),
-      url: "https://www.hairland.cz",
+      url: getOgUrl("/", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

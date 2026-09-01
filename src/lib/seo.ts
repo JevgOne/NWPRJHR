@@ -12,6 +12,12 @@ export const OG_LOCALES: Record<string, string> = {
   ru: "ru_RU",
 };
 
+export function getOgUrl(path: string, locale: string = "cs"): string {
+  const prefix = LOCALE_PREFIXES[locale] ?? "";
+  const fullPath = path === "/" ? (prefix || "/") : `${prefix}${path}`;
+  return `${BASE_URL}${fullPath}`;
+}
+
 export function getAlternates(path: string, locale: string = "cs") {
   const languages: Record<string, string> = {};
   for (const [loc, prefix] of Object.entries(LOCALE_PREFIXES)) {

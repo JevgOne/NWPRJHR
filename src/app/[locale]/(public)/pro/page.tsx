@@ -167,12 +167,12 @@ export default async function ProPage() {
           >
             {t("ctaRegister")}
           </Link>
-          <Link
+          <a
             href="/login"
             className="px-6 py-2.5 border border-line text-ink font-medium rounded-xl hover:bg-white transition-colors"
           >
             {t("ctaLogin")}
-          </Link>
+          </a>
         </div>
       </div>
     </div>

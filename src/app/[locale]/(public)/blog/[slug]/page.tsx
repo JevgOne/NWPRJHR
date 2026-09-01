@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 const CATEGORY_LABELS: Record<string, Record<string, string>> = {
   cs: { general: "Obecné", care: "Péče o vlasy", guide: "Průvodce", trends: "Trendy", tips: "Tipy", news: "Novinky" },
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       title: seoTitle,
       description: seoDesc,
-      url: `https://www.hairland.cz/blog/${slug}`,
+      url: getOgUrl(`/blog/${slug}`, locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       ...(seoImage && {

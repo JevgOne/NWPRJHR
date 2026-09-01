@@ -9,7 +9,7 @@ import { unstable_cache } from "next/cache";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { flattenProductVariants } from "@/lib/flatten-variants";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export const CATEGORY_SLUG_MAP: Record<string, ProcessingType> = {
   "clip-in": "CLIP_IN",
@@ -97,7 +97,7 @@ export async function generateCategoryMetadata(slug: string) {
       type: "website" as const,
       title,
       description,
-      url: `https://www.hairland.cz${canonicalPath}`,
+      url: getOgUrl(canonicalPath, locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: CATEGORY_OG_IMAGES[slug] ?? "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],

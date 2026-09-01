@@ -7,7 +7,7 @@ import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductsShowcase } from "./ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata({
   searchParams,
@@ -29,7 +29,7 @@ export async function generateMetadata({
         type: "website",
         title: `${defaultTitle} | Hairland`,
         description: defaultDesc,
-        url: "https://www.hairland.cz/vlasy-k-prodlouzeni",
+        url: getOgUrl("/vlasy-k-prodlouzeni", locale),
         siteName: "Hairland",
         locale: OG_LOCALES[locale] ?? "cs_CZ",
         images: [

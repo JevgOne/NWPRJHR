@@ -360,9 +360,9 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-muted">
         {t("alreadyHaveAccount")}{" "}
-        <Link href="/login" className="text-rose font-medium hover:underline">
+        <a href="/login" className="text-rose font-medium hover:underline">
           {t("loginLink")}
-        </Link>
+        </a>
       </p>
     </form>
   );

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { ContactForm } from "./ContactForm";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${t("contactTitle")} | Hairland`,
       description: t("contactDescription"),
-      url: "https://www.hairland.cz/contact",
+      url: getOgUrl("/contact", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

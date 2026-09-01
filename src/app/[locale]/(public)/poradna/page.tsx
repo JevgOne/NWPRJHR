@@ -4,7 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { articles } from "./articles";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("advice"), getLocale()]);
@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${title} | Hairland`,
       description: desc,
-      url: "https://www.hairland.cz/poradna",
+      url: getOgUrl("/poradna", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

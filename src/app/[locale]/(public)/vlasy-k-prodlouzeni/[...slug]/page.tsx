@@ -26,7 +26,7 @@ import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage, CATEGORY
 import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_SLUG_MAP_SEO, ORIGIN_SLUG_MAP } from "@/lib/attribute-slugs";
 import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLandingPage";
 import { generateSku } from "@/lib/sku";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import { buildSeoTitle, buildAutoDescription } from "@/lib/seo-product";
 import { TrackProductView } from "@/components/public/TrackProductView";
 import Script from "next/script";
@@ -381,7 +381,7 @@ async function generateProductMetadataFromProduct(
       type: "article",
       title: ogTitle,
       description: ogDesc,
-      url: `https://www.hairland.cz/vlasy-k-prodlouzeni/${productSlug}`,
+      url: getOgUrl(`/vlasy-k-prodlouzeni/${productSlug}`, locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
