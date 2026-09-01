@@ -32,11 +32,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://www.gstatic.com https://apis.google.com https://c.seznam.cz https://www.heureka.cz https://widget.packeta.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://www.gstatic.com https://apis.google.com https://c.seznam.cz https://www.heureka.cz https://widget.packeta.com https://analytics.ahrefs.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://graph.facebook.com https://www.facebook.com https://connect.facebook.net https://widget.packeta.com https://api.packeta.com https://*.zbozi.cz https://*.heureka.cz https://*.seznam.cz",
+              "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://graph.facebook.com https://www.facebook.com https://connect.facebook.net https://widget.packeta.com https://api.packeta.com https://*.zbozi.cz https://*.heureka.cz https://*.seznam.cz https://analytics.ahrefs.com",
               "frame-src 'self' https://payments.comgate.cz https://widget.packeta.com https://www.google.com https://www.facebook.com",
               "object-src 'none'",
               "base-uri 'self'",

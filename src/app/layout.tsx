@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 import { CookieBanner } from "@/components/CookieBanner";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { OG_LOCALES } from "@/lib/seo";
@@ -94,6 +95,11 @@ export default async function RootLayout({
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head />
       <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)] overflow-x-hidden">
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="dvHojEq9nJCvQqOBTpLlag"
+          strategy="afterInteractive"
+        />
         <NextIntlClientProvider messages={messages}>
           {children}
           <CookieBanner />
