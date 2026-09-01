@@ -3,8 +3,8 @@ import { join } from "node:path";
 import { readFile } from "node:fs/promises";
 import { prisma } from "@/lib/db";
 import { getHairColor } from "@/lib/hair-colors";
+import { NextRequest } from "next/server";
 
-/** Simple Czech color labels for OG images (no i18n context available) */
 const COLOR_LABELS: Record<string, string> = {
   c1: "platinová blond",
   c2: "světlá blond",
@@ -19,11 +19,6 @@ const COLOR_LABELS: Record<string, string> = {
   combre: "ombré",
   other: "jiná",
 };
-
-export const runtime = "nodejs";
-export const revalidate = 3600;
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   VIRGIN: { bg: "#fef3c7", text: "#92400e", label: "VIRGIN" },
@@ -61,61 +56,41 @@ async function getProductData(slugOrId: string) {
   };
 }
 
-export default async function OgImage({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
+const size = { width: 1200, height: 630 };
+
+function fallbackImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#faf8f6",
+          fontFamily: "Inter",
+        }}
+      >
+        <div style={{ fontSize: 48, fontWeight: 700, color: "#3a2c2a" }}>
+          Hairland
+        </div>
+      </div>
+    ),
+    { ...size }
+  );
+}
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> },
+) {
   const { slug } = await params;
 
-  // Only generate for single-segment (product detail), not attribute pages
-  if (slug.length !== 1) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#faf8f6",
-            fontFamily: "Inter",
-          }}
-        >
-          <div style={{ fontSize: 48, fontWeight: 700, color: "#3a2c2a" }}>
-            Hairland
-          </div>
-        </div>
-      ),
-      { ...size }
-    );
-  }
+  const product = await getProductData(slug);
 
-  const product = await getProductData(slug[0]);
-
-  // Fallback if product not found
   if (!product) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#faf8f6",
-            fontFamily: "Inter",
-          }}
-        >
-          <div style={{ fontSize: 48, fontWeight: 700, color: "#3a2c2a" }}>
-            Hairland
-          </div>
-        </div>
-      ),
-      { ...size }
-    );
+    return fallbackImage();
   }
 
   const [interBold, interRegular] = await Promise.all([
@@ -123,7 +98,6 @@ export default async function OgImage({
     readFile(join(process.cwd(), "public/fonts/Inter-Regular.ttf")),
   ]);
 
-  // Derive product info
   const lengths = [...new Set(product.variants.map((v) => v.lengthCm))].sort(
     (a, b) => a - b
   );
@@ -178,7 +152,6 @@ export default async function OgImage({
           fontFamily: "Inter",
         }}
       >
-        {/* Left side — product info */}
         <div
           style={{
             display: "flex",
@@ -188,7 +161,6 @@ export default async function OgImage({
             width: photoUrl ? "55%" : "100%",
           }}
         >
-          {/* Top: brand + category badge */}
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <div
               style={{
@@ -214,7 +186,6 @@ export default async function OgImage({
             </div>
           </div>
 
-          {/* Middle: product name + details */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div
               style={{
@@ -228,7 +199,6 @@ export default async function OgImage({
               {product.name}
             </div>
 
-            {/* Details row */}
             <div
               style={{
                 display: "flex",
@@ -278,7 +248,6 @@ export default async function OgImage({
               )}
             </div>
 
-            {/* Price */}
             {priceStr && (
               <div
                 style={{
@@ -293,13 +262,11 @@ export default async function OgImage({
             )}
           </div>
 
-          {/* Bottom: tagline */}
           <div style={{ fontSize: 16, color: "#8c7b74" }}>
             100% pravé vlasy z jedné hlavy — hairland.cz
           </div>
         </div>
 
-        {/* Right side — product photo */}
         {photoUrl && (
           <div
             style={{
