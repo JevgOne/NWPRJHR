@@ -269,9 +269,12 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
           )}
 
           {/* Image */}
-          <img
+          <Image
             src={photos[lightboxIndex]}
             alt={`${alt} – fotka ${lightboxIndex + 1}`}
+            width={1200}
+            height={1600}
+            quality={80}
             className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />

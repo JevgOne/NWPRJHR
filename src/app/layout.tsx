@@ -98,7 +98,7 @@ export default async function RootLayout({
         <Script
           src="https://analytics.ahrefs.com/analytics.js"
           data-key="dvHojEq9nJCvQqOBTpLlag"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         <NextIntlClientProvider messages={messages}>
           {children}
