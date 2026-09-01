@@ -20,7 +20,7 @@ function hairlandEmailTemplate(
   <div style="max-width:560px;margin:0 auto;padding:24px 16px;">
     <!-- Logo -->
     <div style="text-align:center;padding:24px 20px;background-color:#3a2c2a;border-radius:16px 16px 0 0;">
-      <a href="https://hairland.cz" style="text-decoration:none;">
+      <a href="https://www.hairland.cz" style="text-decoration:none;">
         <img src="https://www.hairland.cz/logo-email-dark.png" alt="Hairland" width="120" height="120" style="display:inline-block;max-width:120px;" />
       </a>
     </div>
@@ -40,7 +40,7 @@ function hairlandEmailTemplate(
         &nbsp;&middot;&nbsp;
         <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
         &nbsp;&middot;&nbsp;
-        <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+        <a href="https://www.hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
       </p>
       ${unsubLine}
     </div>
@@ -288,7 +288,7 @@ export function getApprovalConfirmationEmail(
     t.body1,
     t.body2,
     "",
-    `${t.cta}: https://hairland.cz/login`,
+    `${t.cta}: https://www.hairland.cz/login`,
     "",
     t.footer,
   ].join("\n");
@@ -298,7 +298,7 @@ export function getApprovalConfirmationEmail(
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1)}</p>
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
     <div style="text-align:center;margin:28px 0;">
-      <a href="https://hairland.cz/login"
+      <a href="https://www.hairland.cz/login"
          style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
         ${esc(t.cta)}
       </a>
@@ -406,7 +406,7 @@ export function getSpinWinEmail(
     </div>
     <p style="color:#3a2c2a;font-size:14px;text-align:center;margin:16px 0 4px;"><strong>${esc(t.validUntil)}</strong> ${esc(data.validTo)}</p>
     <p style="color:#9c8682;font-size:13px;text-align:center;line-height:1.5;margin:4px 0 0;">
-      ${esc(t.usage)} <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>.
+      ${esc(t.usage)} <a href="https://www.hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>.
     </p>
   `;
 
@@ -543,7 +543,7 @@ export function getOrderConfirmationEmail(
     </div>
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
     <div style="text-align:center;margin:28px 0;">
-      <a href="https://hairland.cz/app/orders"
+      <a href="https://www.hairland.cz/orders"
          style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
         ${esc(t.cta)}
       </a>
@@ -610,7 +610,7 @@ export function getOrderShippedEmail(
     "",
     `${totalCzk} Kč`,
     "",
-    `${t.cta}: https://hairland.cz/app/orders`,
+    `${t.cta}: https://www.hairland.cz/orders`,
     "",
     t.footer,
   ].join("\n");
@@ -623,7 +623,7 @@ export function getOrderShippedEmail(
       <p style="color:#3a2c2a;font-size:20px;font-weight:700;margin:0;">${totalCzk} Kč</p>
     </div>
     <div style="text-align:center;margin:28px 0;">
-      <a href="https://hairland.cz/app/orders"
+      <a href="https://www.hairland.cz/orders"
          style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
         ${esc(t.cta)}
       </a>
@@ -685,7 +685,7 @@ export function getOrderFollowUpEmail(
     t.body1(data.orderNumber),
     t.body2,
     "",
-    `${t.cta}: https://hairland.cz/recenze`,
+    `${t.cta}: https://www.hairland.cz/recenze`,
     "",
     t.footer,
   ].join("\n");
@@ -695,7 +695,7 @@ export function getOrderFollowUpEmail(
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1(data.orderNumber))}</p>
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
     <div style="text-align:center;margin:28px 0;">
-      <a href="https://hairland.cz/recenze"
+      <a href="https://www.hairland.cz/recenze"
          style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
         ${esc(t.cta)}
       </a>
@@ -760,7 +760,7 @@ export function getInquiryFollowUpEmail(
     "",
     t.body2,
     "",
-    `${t.cta}: https://hairland.cz/kontakt`,
+    `${t.cta}: https://www.hairland.cz/contact`,
     "",
     t.footer,
   ].join("\n");
@@ -774,7 +774,7 @@ export function getInquiryFollowUpEmail(
     </div>` : ""}
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body2)}</p>
     <div style="text-align:center;margin:28px 0;">
-      <a href="https://hairland.cz/kontakt"
+      <a href="https://www.hairland.cz/contact"
          style="display:inline-block;background:linear-gradient(135deg,#c98b88,#a96d6c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:500;letter-spacing:0.5px;">
         ${esc(t.cta)}
       </a>

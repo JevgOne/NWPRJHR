@@ -130,6 +130,11 @@ const nextConfig: NextConfig = {
         destination: "/inventory",
         permanent: true,
       },
+      {
+        source: "/vykup-vlasu",
+        destination: "/vykup",
+        permanent: true,
+      },
     ];
   },
 };

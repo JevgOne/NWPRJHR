@@ -216,7 +216,7 @@ export async function sendPaymentDetailsEmail(opts: {
 <body style="margin:0;padding:0;background-color:#fdfaf7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(58,44,42,0.08);">
     <div style="background:#fdfaf7;padding:24px 24px 16px;text-align:center;">
-      <a href="https://hairland.cz" style="text-decoration:none;">
+      <a href="https://www.hairland.cz" style="text-decoration:none;">
         <span style="font-size:28px;font-weight:700;color:#3a2c2a;letter-spacing:1px;">Hairland</span>
       </a>
     </div>
@@ -249,7 +249,7 @@ export async function sendPaymentDetailsEmail(opts: {
       <p style="margin:8px 0 0;color:#9c8682;font-size:12px;">
         <a href="tel:+420608553103" style="color:#a96d6c;text-decoration:none;">+420 608 553 103</a>
         · <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
-        · <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+        · <a href="https://www.hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
       </p>
     </div>
   </div>
@@ -312,8 +312,8 @@ export async function sendDepositEmail(opts: {
 
     <!-- Header -->
     <div style="background:#3a2c2a;padding:28px 32px;text-align:center;">
-      <a href="https://hairland.cz" style="text-decoration:none;">
-        <img src="https://hairland.cz/logo-email-dark.png" alt="Hairland" width="140" height="140" style="display:block;margin:0 auto;" />
+      <a href="https://www.hairland.cz" style="text-decoration:none;">
+        <img src="https://www.hairland.cz/logo-email-dark.png" alt="Hairland" width="140" height="140" style="display:block;margin:0 auto;" />
       </a>
     </div>
 
@@ -357,7 +357,7 @@ export async function sendDepositEmail(opts: {
     <!-- Footer -->
     <div style="background:#3a2c2a;padding:20px 32px;text-align:center;">
       <p style="margin:0;color:#9c8682;font-size:11px;letter-spacing:0.5px;">
-        &copy; ${new Date().getFullYear()} <a href="https://hairland.cz" style="color:#c2a36b;text-decoration:none;">Hairland.cz</a> &mdash; Prémiové vlasy k prodloužení
+        &copy; ${new Date().getFullYear()} <a href="https://www.hairland.cz" style="color:#c2a36b;text-decoration:none;">Hairland.cz</a> &mdash; Prémiové vlasy k prodloužení
       </p>
     </div>
 
@@ -414,8 +414,8 @@ export async function sendBalanceEmail(opts: {
 
     <!-- Header -->
     <div style="background:#3a2c2a;padding:28px 32px;text-align:center;">
-      <a href="https://hairland.cz" style="text-decoration:none;">
-        <img src="https://hairland.cz/logo-email-dark.png" alt="Hairland" width="140" height="140" style="display:block;margin:0 auto;" />
+      <a href="https://www.hairland.cz" style="text-decoration:none;">
+        <img src="https://www.hairland.cz/logo-email-dark.png" alt="Hairland" width="140" height="140" style="display:block;margin:0 auto;" />
       </a>
     </div>
 
@@ -459,7 +459,7 @@ export async function sendBalanceEmail(opts: {
     <!-- Footer -->
     <div style="background:#3a2c2a;padding:20px 32px;text-align:center;">
       <p style="margin:0;color:#9c8682;font-size:11px;letter-spacing:0.5px;">
-        &copy; ${new Date().getFullYear()} <a href="https://hairland.cz" style="color:#c2a36b;text-decoration:none;">Hairland.cz</a> &mdash; Pr\u00E9miov\u00E9 vlasy k prodlou\u017Een\u00ED
+        &copy; ${new Date().getFullYear()} <a href="https://www.hairland.cz" style="color:#c2a36b;text-decoration:none;">Hairland.cz</a> &mdash; Pr\u00E9miov\u00E9 vlasy k prodlou\u017Een\u00ED
       </p>
     </div>
 
@@ -642,7 +642,7 @@ export function getInvoiceEmailContent(
 <body style="margin:0;padding:0;background-color:#fdfaf7;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(58,44,42,0.08);">
     <div style="background:#fdfaf7;padding:24px 24px 16px;text-align:center;">
-      <a href="https://hairland.cz" style="text-decoration:none;">
+      <a href="https://www.hairland.cz" style="text-decoration:none;">
         <span style="font-size:28px;font-weight:700;color:#3a2c2a;letter-spacing:1px;">Hairland</span>
       </a>
     </div>
@@ -667,7 +667,7 @@ export function getInvoiceEmailContent(
       <p style="margin:8px 0 0;color:#9c8682;font-size:12px;">
         <a href="tel:+420608553103" style="color:#a96d6c;text-decoration:none;">+420 608 553 103</a>
         · <a href="mailto:info@hairland.cz" style="color:#a96d6c;text-decoration:none;">info@hairland.cz</a>
-        · <a href="https://hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
+        · <a href="https://www.hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>
       </p>
     </div>
   </div>
