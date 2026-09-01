@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import { getCachedAllProducts } from "@/lib/cached-products";
 
 export const revalidate = 60;
@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${t("cenikTitle")} | Hairland`,
       description: t("cenikDescription"),
-      url: "https://www.hairland.cz/cenik-vlasy",
+      url: getOgUrl("/cenik-vlasy", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/og/og-home.jpg", width: 1200, height: 630, alt: "Hairland — ceník vlasů" }],

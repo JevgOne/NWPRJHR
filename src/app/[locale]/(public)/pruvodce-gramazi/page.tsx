@@ -4,7 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { GramageCalculator } from "@/components/public/GramageCalculator";
 import { getCachedAllProducts } from "@/lib/cached-products";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 const CALC_CATEGORIES = ["STANDARD", "LUXE", "VIRGIN"] as const;
 
@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${title} | Hairland`,
       description: desc,
-      url: "https://www.hairland.cz/pruvodce-gramazi",
+      url: getOgUrl("/pruvodce-gramazi", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 const getCachedAllStylists = unstable_cache(
   async () => {
@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${t("kadernicTitle")} | Hairland`,
       description: t("kadernicDescription"),
-      url: "https://www.hairland.cz/kadernice",
+      url: getOgUrl("/kadernice", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

@@ -4,7 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import { Link } from "@/i18n/navigation";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { WriteReviewForm } from "../vlasy-k-prodlouzeni/[...slug]/WriteReviewForm";
 
@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${t("recenzeTitle")} | Hairland`,
       description: t("recenzeDescription"),
-      url: "https://www.hairland.cz/recenze",
+      url: getOgUrl("/recenze", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/og/og-recenze.jpg", width: 1200, height: 630, alt: "Hairland" }],

@@ -5,7 +5,7 @@ import { getCachedAllProducts } from "@/lib/cached-products";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { selectHeroProducts } from "@/lib/flatten-variants";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 const NAMESPACE = "slavicLP";
 const PATH = "/slovanske-vlasy";
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${title} | Hairland`,
       description: desc,
-      url: `https://www.hairland.cz${PATH}`,
+      url: getOgUrl(PATH, locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

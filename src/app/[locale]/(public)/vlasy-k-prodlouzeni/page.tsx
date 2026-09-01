@@ -69,7 +69,7 @@ export async function generateMetadata({
       type: "website",
       title: `${title} | Hairland`,
       description,
-      url: "https://www.hairland.cz/vlasy-k-prodlouzeni",
+      url: getOgUrl("/vlasy-k-prodlouzeni", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [{ url: "https://www.hairland.cz/og/og-offer.jpg", width: 1200, height: 630, alt: title }],

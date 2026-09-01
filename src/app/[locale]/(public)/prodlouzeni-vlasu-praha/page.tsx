@@ -7,7 +7,7 @@ import { getCachedAllProducts } from "@/lib/cached-products";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { flattenProductVariants } from "@/lib/flatten-variants";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${title} | Hairland`,
       description: desc,
-      url: "https://www.hairland.cz/prodlouzeni-vlasu-praha",
+      url: getOgUrl("/prodlouzeni-vlasu-praha", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

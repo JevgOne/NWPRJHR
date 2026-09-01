@@ -5,7 +5,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { articles } from "../articles";
 import { ArticleLikeButton } from "@/components/public/ArticleLikeButton";
 import { CommentSection } from "@/components/public/CommentSection";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       title,
       description: desc,
-      url: `https://www.hairland.cz/poradna/${slug}`,
+      url: getOgUrl(`/poradna/${slug}`, locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [

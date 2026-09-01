@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${stylist.name} — ${t("landing.stylistMetaFallback")}`,
     alternates: getAlternates(`/kadernice/${slug}`, locale),
     openGraph: {
+      url: getOgUrl(`/kadernice/${slug}`, locale),
       ...(stylist.photo && { images: [{ url: stylist.photo, alt: stylist.name, width: 400, height: 400 }] }),
       locale: OG_LOCALES[locale] ?? "cs_CZ",
     },

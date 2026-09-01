@@ -5,7 +5,7 @@ import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductsShowcase } from "../vlasy-k-prodlouzeni/ProductsShowcase";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
-import { getAlternates, OG_LOCALES } from "@/lib/seo";
+import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       title: `${t("accessoriesTitle")} | Hairland`,
       description: t("accessoriesDesc"),
+      url: getOgUrl("/prislusenstvi", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
     },
