@@ -20,7 +20,7 @@ export function HeroProductSlider({ products }: HeroProductSliderProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {products.map((p) => (
-        <ProductGridCard key={p._variantKey} product={p} priority />
+        <ProductGridCard key={p._variantKey} product={p} />
       ))}
     </div>
   );

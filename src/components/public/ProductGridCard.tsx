@@ -129,6 +129,7 @@ export function ProductGridCard({
           alt={localizedName}
           fill
           priority={priority}
+          quality={priority ? 80 : 60}
           sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />

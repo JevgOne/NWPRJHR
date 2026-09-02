@@ -291,7 +291,7 @@ export default async function BlogPostPage({ params }: Props) {
       {post.coverImage ? (
         <div className="relative bg-ink">
           <div className="aspect-[3/1] sm:aspect-[3/1] max-h-[420px] overflow-hidden relative">
-            <Image src={post.coverImage} alt={title} fill className="object-cover opacity-75" priority />
+            <Image src={post.coverImage} alt={title} fill sizes="100vw" quality={75} className="object-cover opacity-75" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/5" />
           </div>
           <div className="absolute bottom-0 left-0 right-0">
@@ -475,6 +475,9 @@ export default async function BlogPostPage({ params }: Props) {
                         src={r.coverImage}
                         alt={localized(r, "title", locale)}
                         fill
+                        loading="lazy"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        quality={65}
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

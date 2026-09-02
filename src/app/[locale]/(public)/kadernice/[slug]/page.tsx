@@ -89,7 +89,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
           {/* Avatar */}
           <div className="w-24 h-24 mx-auto rounded-full border-4 border-white/30 bg-white/20 shadow-2xl backdrop-blur-sm overflow-hidden relative">
             {stylist.photo ? (
-              <Image src={stylist.photo} alt={stylist.name} fill className="object-cover" />
+              <Image src={stylist.photo} alt={stylist.name} fill sizes="96px" quality={75} className="object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center"><svg className="w-10 h-10 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
             )}

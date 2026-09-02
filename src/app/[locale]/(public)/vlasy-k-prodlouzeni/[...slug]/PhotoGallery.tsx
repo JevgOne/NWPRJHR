@@ -200,8 +200,9 @@ export function PhotoGallery({ photos, video, alt }: PhotoGalleryProps) {
                     src={photo}
                     alt={`${alt} – náhled ${i + 1}`}
                     fill
+                    loading="lazy"
                     sizes="76px"
-                    quality={60}
+                    quality={50}
                     className="object-cover"
                   />
                 </button>

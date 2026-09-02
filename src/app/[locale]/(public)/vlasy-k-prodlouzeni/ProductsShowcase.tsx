@@ -447,12 +447,13 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {sortedProducts.map((p) => (
+          {sortedProducts.map((p, idx) => (
             <ProductGridCard
               key={p._variantKey}
               product={p}
               userRole={userRole}
               discountPct={discountPct}
+              priority={idx < 4}
               onCategoryClick={(cat) => setFilter("category", cat)}
               onOriginClick={(origin) => toggleFilter("origin", origin)}
               onTextureClick={(texture) => toggleFilter("texture", texture)}
