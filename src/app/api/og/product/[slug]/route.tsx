@@ -113,27 +113,14 @@ export async function GET(
     .slice(0, 3)
     .map((c) => COLOR_LABELS[getHairColor(c).nameKey] ?? c);
 
-  const gramPrices = product.variants
-    .filter((v) => v.sellingMode !== "BY_PIECE" && v.retailPricePerGram > 0)
+  // Price: use retailPricePerGram from all variants (matching product page logic)
+  const allGramPrices = product.variants
+    .filter((v) => v.retailPricePerGram > 0)
     .map((v) => v.retailPricePerGram);
   const minPpg =
-    gramPrices.length > 0 ? Math.round(Math.min(...gramPrices) / 100) : null;
+    allGramPrices.length > 0 ? Math.round(Math.min(...allGramPrices) / 100) : null;
 
-  const piecePrices = product.variants
-    .filter(
-      (v) => v.sellingMode === "BY_PIECE" && (v.retailPricePerPiece ?? 0) > 0
-    )
-    .map((v) => v.retailPricePerPiece!);
-  const minPiecePrice =
-    piecePrices.length > 0
-      ? Math.round(Math.min(...piecePrices) / 100)
-      : null;
-
-  const priceStr = minPpg
-    ? `od ${minPpg} Kč/g`
-    : minPiecePrice
-      ? `od ${minPiecePrice.toLocaleString("cs-CZ")} Kč`
-      : null;
+  const priceStr = minPpg ? `od ${minPpg} Kč/g` : null;
 
   const cat = CATEGORY_COLORS[product.category] ?? CATEGORY_COLORS.STANDARD;
   const photoUrl = product.ogImage || product.photos[0] || null;

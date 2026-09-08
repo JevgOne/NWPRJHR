@@ -303,10 +303,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /** Get min price per gram (halere) from variants */
 function getMinPricePerGram(
-  variants: Array<{ retailPricePerGram: number; sellingMode: string }>,
+  variants: Array<{ retailPricePerGram: number }>,
 ): number | null {
   const prices = variants
-    .filter((v) => v.sellingMode !== "BY_PIECE" && v.retailPricePerGram > 0)
+    .filter((v) => v.retailPricePerGram > 0)
     .map((v) => v.retailPricePerGram);
   return prices.length > 0 ? Math.min(...prices) : null;
 }
@@ -365,13 +365,8 @@ async function generateProductMetadataFromProduct(
   if (description.length > 155) console.log(`[SEO] Desc > 155 chars (${description.length}): "${description}" [${product.slug}]`);
 
   const productSlug = product.slug ?? product.id;
-  // Minimum price for OG product tags
-  const minPrice = product.variants.length > 0
-    ? Math.min(...product.variants
-        .filter(v => v.retailPricePerGram > 0 || (v.retailPricePerPiece ?? 0) > 0)
-        .map(v => v.sellingMode === "BY_PIECE" ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram * 100)
-      )
-    : null;
+  // Minimum price for OG product tags (per 100g, matching displayed per-gram price)
+  const minPrice = minPpg ? minPpg * 100 : null;
 
   return {
     title: { absolute: title },

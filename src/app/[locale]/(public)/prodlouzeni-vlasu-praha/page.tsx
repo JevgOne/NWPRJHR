@@ -55,7 +55,7 @@ function getMinPricePerGram(
     .filter((p) => p.category === category)
     .flatMap((p) =>
       p.variants
-        .filter((v) => v.sellingMode === "BY_GRAM" && v.retailPricePerGram > 0)
+        .filter((v) => v.retailPricePerGram > 0)
         .map((v) => v.retailPricePerGram),
     );
   return prices.length > 0 ? Math.min(...prices) : 0;

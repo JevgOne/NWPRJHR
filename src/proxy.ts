@@ -50,7 +50,9 @@ export function proxy(request: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname + request.nextUrl.search);
       return NextResponse.redirect(loginUrl);
     }
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return response;
   }
 
   // Strip locale prefix for matching (e.g. /cs/vlasy-k-prodlouzeni/clip-in → /vlasy-k-prodlouzeni/clip-in)

@@ -101,10 +101,10 @@ export function buildAutoDescription(
 }
 
 function getMinPricePerGram(
-  variants: Array<{ retailPricePerGram: number; sellingMode: string }>,
+  variants: Array<{ retailPricePerGram: number }>,
 ): number | null {
   const prices = variants
-    .filter((v) => v.sellingMode !== "BY_PIECE" && v.retailPricePerGram > 0)
+    .filter((v) => v.retailPricePerGram > 0)
     .map((v) => v.retailPricePerGram);
   return prices.length > 0 ? Math.min(...prices) : null;
 }
