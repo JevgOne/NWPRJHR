@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     where: {
       active: true,
       OR: [
+        { sku: { contains: q } },
         { color: { contains: q } },
         { product: { name: { contains: q } } },
       ],

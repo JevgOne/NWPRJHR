@@ -351,15 +351,15 @@ export default async function LandingPage() {
 
           <div className="flex flex-wrap justify-center gap-1.5 mt-4 mb-8">
             {[
-              { slug: "blond", label: "Blond vlasy" },
-              { slug: "hneda", label: "Hnědé vlasy" },
-              { slug: "tmave-hneda", label: "Tmavě hnědé vlasy" },
-              { slug: "zrzava", label: "Zrzavé vlasy" },
-              { slug: "cerna", label: "Černé vlasy" },
-              { slug: "ombre", label: "Ombre vlasy" },
-            ].map(({ slug, label }) => (
+              { slug: "blond", labelKey: "landing.colorLinkBlond" as const },
+              { slug: "hneda", labelKey: "landing.colorLinkBrown" as const },
+              { slug: "tmave-hneda", labelKey: "landing.colorLinkDarkBrown" as const },
+              { slug: "zrzava", labelKey: "landing.colorLinkRed" as const },
+              { slug: "cerna", labelKey: "landing.colorLinkBlack" as const },
+              { slug: "ombre", labelKey: "landing.colorLinkOmbre" as const },
+            ].map(({ slug, labelKey }) => (
               <Link key={slug} href={`/vlasy-k-prodlouzeni/barva/${slug}`} className="px-2.5 py-1 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 text-xs font-medium transition-colors">
-                {label}
+                {t(labelKey)}
               </Link>
             ))}
           </div>

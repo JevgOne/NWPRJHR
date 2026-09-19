@@ -14,6 +14,7 @@ import { generateSku } from "@/lib/sku";
 
 interface VariantItem {
   id?: string;
+  sku?: string | null;
   lengthCm: number;
   color: string;
   retailPricePerGram?: number;
@@ -94,7 +95,7 @@ export function ProductListClient({ products, stockMap, role }: { products: Prod
         const nameMatch = p.name.toLowerCase().includes(q);
         const originMatch = p.origin?.toLowerCase().includes(q);
         const skuMatch = p.variants?.some((v) => {
-          const sku = generateSku(p.category, p.texture, v.color, v.lengthCm).toLowerCase();
+          const sku = (v.sku ?? generateSku(p.category, p.texture, v.color, v.lengthCm)).toLowerCase();
           return sku.includes(q) || sku.replace(/-0+/g, "-").includes(q.replace(/-0+/g, "-"));
         });
         if (!nameMatch && !originMatch && !skuMatch) return false;
