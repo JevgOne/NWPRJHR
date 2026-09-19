@@ -8,6 +8,41 @@
 
 ## P0 — KRITICKÉ (blokuje provoz)
 
+### TASK-150: SEO — web se neukazuje v Googlu, jen homepage zaindexovaná
+Stav: čeká
+Uživatel: "mame totalne napíču SEO, neukazujeme se nic, je to blokovany robotama"
+Priorita: P0 — bez SEO žádní noví zákazníci
+
+#### Zjištěný stav (audit 2026-09-19):
+- `site:hairland.cz` v Googlu vrací **POUZE homepage** — žádné produkty, kategorie, blog, nic
+- robots.txt ve skutečnosti NEBLOKUJE veřejné stránky (blokuje jen admin routy)
+- Meta robots: `index, follow` — OK
+- Canonical tagy: přítomné a správné
+- Hreflang: cs, uk, ru, x-default — OK
+- Sitemap: dynamicky generovaná, obsahuje ~400+ URL
+- www → non-www redirect 308 — OK
+- Žádný X-Robots-Tag: noindex v HTTP headerech
+
+#### Co je potřeba:
+1. **Diagnostika** — zjistit PROČ Google neindexuje podstránky:
+   - Zkontrolovat GSC data (crawl errors, indexation status, sitemap submission)
+   - Ověřit zda sitemap.xml reálně vrací všechny URL (otestovat fetch)
+   - Zkontrolovat interní linking strukturu
+   - Ověřit rendering stránek (Googlebot vs. browser)
+   - Prověřit zda Next.js middleware nepřesměrovává Googlebot
+2. **Opravy** — podle diagnostiky implementovat potřebné fixe
+3. **Verifikace** — ověřit že všechny klíčové stránky jsou crawlovatelné a indexovatelné
+
+#### Klíčové soubory:
+- `public/robots.txt`
+- `src/app/sitemap.ts`
+- `src/app/layout.tsx` (robots metadata)
+- `src/proxy.ts` (middleware)
+- `src/i18n/routing.ts`
+- `next.config.ts` (redirecty, headers)
+
+---
+
 ### TASK-107: Naskladnění BY_PIECE visí na "Načítání..."
 Stav: čeká
 Uživatel: "ZASE SE TO NENASKLADNUJE!!!" + screenshot stuck na "Načítání..."

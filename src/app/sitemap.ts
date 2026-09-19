@@ -8,7 +8,7 @@ import {
   ORIGIN_SLUG_MAP,
 } from "@/lib/attribute-slugs";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const BASE_URL = "https://www.hairland.cz";
 const STATIC_DATE = new Date().toISOString().split("T")[0];

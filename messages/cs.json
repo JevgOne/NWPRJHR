@@ -2748,6 +2748,18 @@
         "description": "Zrzavé vlasy k prodloužení v prémiové kvalitě. Unikátní odstíny, přirozený vzhled. Praha zdarma.",
         "h1": "Zrzavé vlasy k prodloužení",
         "intro": "Zrzavé vlasy jsou vzácné a unikátní. Nabízíme je v prověřené kvalitě z pečlivě vybraných zdrojů."
+      },
+      "ombre": {
+        "title": "Ombre vlasy k prodloužení",
+        "description": "Ombre vlasy k prodloužení s přirozeným přechodem barev. Prémiová kvalita. Osobní odběr Praha zdarma.",
+        "h1": "Ombre vlasy k prodloužení",
+        "intro": "Ombre vlasy nabízejí elegantní přechod barev od tmavších kořínků ke světlejším koncům. Přirozený a moderní vzhled."
+      },
+      "cerna": {
+        "title": "Černé vlasy k prodloužení",
+        "description": "Černé vlasy k prodloužení v prémiové kvalitě. Intenzivní barva, přirozený vzhled. Osobní odběr Praha zdarma.",
+        "h1": "Černé vlasy k prodloužení",
+        "intro": "Černé vlasy dodají dramatický objem a délku. Nabízíme je v různých texturách a délkách v prémiové kvalitě."
       }
     },
     "delka": {

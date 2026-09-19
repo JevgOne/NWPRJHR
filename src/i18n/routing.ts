@@ -13,6 +13,6 @@ export const routing = defineRouting({
   localeCookie: {
     name: "HAIRLAND_LOCALE",
   },
-  localeDetection: true,
+  localeDetection: false,
   alternateLinks: false,
 });

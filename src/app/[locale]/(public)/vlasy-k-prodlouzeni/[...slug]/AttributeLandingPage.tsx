@@ -23,16 +23,20 @@ interface AttributeLandingPageProps {
   prefix: string;
   valueSlug: string;
   attrType: AttributeType;
-  dbValue: string | number;
+  dbValue: string | number | string[];
 }
 
 const getCachedAttributeProducts = unstable_cache(
-  async (attrType: AttributeType, dbValue: string | number) => {
+  async (attrType: AttributeType, dbValue: string | number | string[]) => {
     const where: Record<string, unknown> = { archived: false, variants: { some: { active: true } } };
 
     switch (attrType) {
       case "colorTone":
-        where.colorTone = dbValue;
+        if (Array.isArray(dbValue)) {
+          where.colorTone = { in: dbValue };
+        } else {
+          where.colorTone = dbValue;
+        }
         break;
       case "texture":
         where.texture = dbValue;
@@ -100,7 +104,7 @@ const getCachedAttributeProducts = unstable_cache(
 export async function generateAttributeMetadata(
   prefix: string,
   valueSlug: string,
-  _resolved: { type: AttributeType; dbValue: string | number },
+  _resolved: { type: AttributeType; dbValue: string | number | string[] },
 ): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("attributePages"), getLocale()]);
   const key = `${prefix}.${valueSlug}`;

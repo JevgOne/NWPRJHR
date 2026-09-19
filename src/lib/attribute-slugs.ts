@@ -11,6 +11,16 @@ export const COLOR_TONE_REVERSE_MAP = Object.fromEntries(
   Object.entries(COLOR_TONE_SLUG_MAP).map(([k, v]) => [v, k])
 );
 
+// Mapping slug → array of DB colorTone values (from autoColorTone in product-helpers.ts)
+export const COLOR_TONE_DB_VALUES: Record<string, string[]> = {
+  "blond": ["Platinová blond", "Světlá blond", "Zlatá blond", "Medová blond"],
+  "hneda": ["Karamelová", "Světle hnědá", "Středně hnědá", "Hnědá"],
+  "tmave-hneda": ["Tmavě hnědá", "Kaštanová"],
+  "zrzava": ["Zrzavá"],
+  "ombre": ["Ombre"],
+  "cerna": ["Černá"],
+};
+
 // === TEXTURE ===
 export const TEXTURE_SLUG_MAP: Record<string, string> = {
   "rovne": "Rovné",
@@ -79,13 +89,16 @@ export const ATTRIBUTE_PREFIX_MAP: Record<string, AttributeType> = {
 
 export function resolveAttributeSlug(prefix: string, value: string): {
   type: AttributeType;
-  dbValue: string | number;
+  dbValue: string | number | string[];
 } | null {
   const attrType = ATTRIBUTE_PREFIX_MAP[prefix];
   if (!attrType) return null;
 
   switch (attrType) {
     case "colorTone":
+      if (COLOR_TONE_DB_VALUES[value]) {
+        return { type: "colorTone", dbValue: COLOR_TONE_DB_VALUES[value] };
+      }
       return COLOR_TONE_SLUG_MAP[value]
         ? { type: "colorTone", dbValue: COLOR_TONE_SLUG_MAP[value] }
         : null;

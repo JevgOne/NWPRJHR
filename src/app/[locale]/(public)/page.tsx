@@ -287,15 +287,15 @@ export default async function LandingPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {(
                 [
-                  { key: "virgin" as const, img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
-                  { key: "luxe" as const, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescLuxe" as const },
-                  { key: "standard" as const, img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
-                  { key: "sale" as const, img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
+                  { key: "virgin" as const, href: "/vlasy-k-prodlouzeni/kategorie/virgin", img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
+                  { key: "luxe" as const, href: "/vlasy-k-prodlouzeni/kategorie/luxe", img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescLuxe" as const },
+                  { key: "standard" as const, href: "/vlasy-k-prodlouzeni/kategorie/standard", img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
+                  { key: "sale" as const, href: "/vlasy-k-prodlouzeni?category=SALE", img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
                 ]
-              ).map(({ key, img, descKey }) => (
+              ).map(({ key, href, img, descKey }) => (
                 <Link
                   key={key}
-                  href={`/vlasy-k-prodlouzeni?category=${key.toUpperCase()}`}
+                  href={href}
                   className="group block overflow-hidden rounded-xl border border-line hover:border-blush-300 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="relative h-32">
@@ -345,6 +345,21 @@ export default async function LandingPage() {
               <Link key={code} href={`/vlasy-k-prodlouzeni?color=${code}`} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
                 <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
                 <span className="text-[8px] sm:text-[11px] text-muted font-medium text-center leading-tight truncate w-full">{t(nameKey)}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-1.5 mt-4 mb-8">
+            {[
+              { slug: "blond", label: "Blond vlasy" },
+              { slug: "hneda", label: "Hnědé vlasy" },
+              { slug: "tmave-hneda", label: "Tmavě hnědé vlasy" },
+              { slug: "zrzava", label: "Zrzavé vlasy" },
+              { slug: "cerna", label: "Černé vlasy" },
+              { slug: "ombre", label: "Ombre vlasy" },
+            ].map(({ slug, label }) => (
+              <Link key={slug} href={`/vlasy-k-prodlouzeni/barva/${slug}`} className="px-2.5 py-1 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 text-xs font-medium transition-colors">
+                {label}
               </Link>
             ))}
           </div>
