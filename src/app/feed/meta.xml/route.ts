@@ -54,7 +54,7 @@ export async function GET() {
       });
       const url = `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`;
       const title = `${product.name} ${v.lengthCm} cm`;
-      const singleDonor = product.category !== "SALE" ? " Vlasy z jedné hlavy — žádné fabrikové vlasy." : "";
+      const singleDonor = (product.category === "VIRGIN" || product.category === "LUXE") ? " Vlasy z jedné hlavy — žádné fabrikové vlasy." : "";
       const desc = (product.description?.slice(0, 4900) ?? title) + singleDonor;
 
       const colorName = product.colorTone || COLOR_NAMES[v.color] || v.color;

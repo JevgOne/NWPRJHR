@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { articles } from "./[locale]/(public)/poradna/articles";
+import { CITIES } from "@/lib/city-landing-data";
 import {
   COLOR_TONE_SLUG_MAP,
   TEXTURE_SLUG_MAP,
@@ -49,6 +50,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/privacy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.6 }),
     ...withAlternates("/doprava", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/reklamacni-rad", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.5 }),
+    ...withAlternates("/pece-o-vlasy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.7 }),
+    ...withAlternates("/odstoupeni-od-smlouvy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.5 }),
+    ...withAlternates("/faq", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.7 }),
     ...withAlternates("/pruvodce-gramazi", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/recenze", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.6 }),
     ...withAlternates("/prislusenstvi", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
@@ -148,5 +152,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   }
 
-  return [...staticPages, ...categoryPages, ...attributePages, ...articlePages, ...blogPages, ...productPages, ...stylistPages];
+  const cityPages: MetadataRoute.Sitemap = [
+    ...withAlternates("/prodlouzeni-vlasu", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.7 }),
+    ...CITIES.flatMap((city) =>
+      withAlternates(`/prodlouzeni-vlasu/${city.slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
+    ),
+  ];
+
+  return [...staticPages, ...categoryPages, ...cityPages, ...attributePages, ...articlePages, ...blogPages, ...productPages, ...stylistPages];
 }

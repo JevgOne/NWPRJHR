@@ -1,6 +1,6 @@
 # TASK QUEUE — Hairland
 
-**Aktualizováno:** 2026-08-15
+**Aktualizováno:** 2026-09-19
 **Firma:** Altro servis group s.r.o., IČO 23673389
 **Účet:** 6424423004/5500, IBAN CZ5555000000006424423004 — NEMĚNIT!
 
@@ -8,38 +8,38 @@
 
 ## P0 — KRITICKÉ (blokuje provoz)
 
-### TASK-150: SEO — web se neukazuje v Googlu, jen homepage zaindexovaná
+### TASK-151: Reklamační řád, péče o vlasy, e-mailová automatizace, checkout
 Stav: čeká
-Uživatel: "mame totalne napíču SEO, neukazujeme se nic, je to blokovany robotama"
-Priorita: P0 — bez SEO žádní noví zákazníci
+Priorita: P0 — právní povinnost + ochrana firmy
+Zadání: soubor `/Users/zen/Desktop/files-10/0-ZADANI-pro-Claude-Code.md` (KOMPLETNÍ, nezkracovat)
 
-#### Zjištěný stav (audit 2026-09-19):
-- `site:hairland.cz` v Googlu vrací **POUZE homepage** — žádné produkty, kategorie, blog, nic
-- robots.txt ve skutečnosti NEBLOKUJE veřejné stránky (blokuje jen admin routy)
-- Meta robots: `index, follow` — OK
-- Canonical tagy: přítomné a správné
-- Hreflang: cs, uk, ru, x-default — OK
-- Sitemap: dynamicky generovaná, obsahuje ~400+ URL
-- www → non-www redirect 308 — OK
-- Žádný X-Robots-Tag: noindex v HTTP headerech
+#### Pořadí nasazení (ze zadání):
+1. **Opravy textů na webu** (sekce 2.4) — nejnaléhavější
+2. **E-mail č. 1** s poučením a formulářem — právní povinnost
+3. **Checkboxy a pole IČO** v objednávce
+4. **Stránka /pece-o-vlasy** + nový reklamační řád na `/reklamacni-rad`
+5. **Reklamační formulář** — kroky 7 a 8
+6. **Zbytek e-mailové sekvence** (e-maily 2–5)
+7. **Stránka /odstoupeni-od-smlouvy** — ONLINE FORMULÁŘ (ne jen text), odeslání na email/admin panel
 
-#### Co je potřeba:
-1. **Diagnostika** — zjistit PROČ Google neindexuje podstránky:
-   - Zkontrolovat GSC data (crawl errors, indexation status, sitemap submission)
-   - Ověřit zda sitemap.xml reálně vrací všechny URL (otestovat fetch)
-   - Zkontrolovat interní linking strukturu
-   - Ověřit rendering stránek (Googlebot vs. browser)
-   - Prověřit zda Next.js middleware nepřesměrovává Googlebot
-2. **Opravy** — podle diagnostiky implementovat potřebné fixe
-3. **Verifikace** — ověřit že všechny klíčové stránky jsou crawlovatelné a indexovatelné
+#### Zdrojové soubory s hotovými texty:
+- `/Users/zen/Desktop/files-10/1-Reklamacni-rad-Hairland.md`
+- `/Users/zen/Desktop/files-10/2-Navod-na-peci-o-prodlouzene-vlasy.md`
+- `/Users/zen/Desktop/files-10/3-Formulare-k-tisku.md`
+- `/Users/zen/Desktop/files-10/4-Audit-a-doporuceni-INTERNI.md`
+- `/Users/zen/Desktop/files-10/5-Emailove-sablony.md`
 
-#### Klíčové soubory:
-- `public/robots.txt`
-- `src/app/sitemap.ts`
-- `src/app/layout.tsx` (robots metadata)
-- `src/proxy.ts` (middleware)
-- `src/i18n/routing.ts`
-- `next.config.ts` (redirecty, headers)
+#### Otevřené otázky (sekce 6 zadání) — NUTNO DOPLNIT:
+1. Datum účinnosti reklamačního řádu → čl. A11.5
+2. Fyzická adresa pro zasílání reklamací → čl. A7
+3. Jednotná formulace původu vlasů → celý web
+4. B2B lhůta — 6 nebo 3 měsíce? → čl. A6.1
+5. Zpracování — zprostředkování nebo vlastní služba? → čl. A1.2–A1.4, A4.3
+
+#### POZOR:
+- Texty jsou FINÁLNÍ — neupravovat obsah, pouze zasadit do webu
+- Formulář pro odstoupení = ONLINE FORMA (uživatel explicitně řekl)
+- "KAZDA JAZYKOVA VERZE MUSI MIT SVOJE NAZVY" — i18n překlady, ne strojový překlad
 
 ---
 
@@ -117,6 +117,8 @@ Stav: analýza hotová, uživatel chce udělat jako POSLEDNÍ (~prosinec 2026)
 ---
 
 ## HOTOVÉ
+- TASK-150: SEO indexation fix — localeDetection off, sitemap ISR, barva landing pages IN query, i18n color links — 2026-09-19
+- TASK-152: SKU sekvenční číslo — formát V-RV-01-45-00001, hlavní vyhledávač — 2026-09-19
 - TASK-097: Oddělené číslování faktur — prefix H/F (commit 04b5490) — 2026-08-15
 - TASK-098: Výběr zákazníků — redesign pro mobil (commit 04b5490) — 2026-08-15
 - TASK-100: Blog — nahrávání obrázků fix (commit 95920df) — 2026-08-15

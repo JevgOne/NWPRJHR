@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Link } from "@/i18n/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { ComplaintForm } from "./ComplaintForm";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
@@ -35,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const sections = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+const sections = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 export default async function ReklamacniRadPage() {
   const [t, tForm, tNav] = await Promise.all([
@@ -51,7 +52,8 @@ export default async function ReklamacniRadPage() {
         { label: t("title") },
       ]} />
       <h1 className="text-3xl font-bold text-ink mb-2">{t("title")}</h1>
-      <p className="text-sm text-muted mb-8">{t("subtitle")}</p>
+      <p className="text-sm text-muted mb-2">{t("subtitle")}</p>
+      <p className="text-sm text-muted mb-8">{t("effectiveDate")}</p>
 
       <div className="space-y-8">
         {sections.map((num) => (
@@ -66,7 +68,16 @@ export default async function ReklamacniRadPage() {
         ))}
       </div>
 
-      <p className="mt-12 text-sm text-muted">{t("lastUpdated")}</p>
+      <div className="mt-8 p-4 bg-blush-50 border border-blush-200 rounded-xl">
+        <p className="text-sm text-muted">
+          Návod na péči o prodloužené vlasy naleznete na{" "}
+          <Link href="/pece-o-vlasy" className="text-rose underline">
+            /pece-o-vlasy
+          </Link>.
+        </p>
+      </div>
+
+      <p className="mt-8 text-sm text-muted">{t("lastUpdated")}</p>
 
       {/* Complaint submission form */}
       <div id="formular" className="mt-16 border-t border-line pt-12">

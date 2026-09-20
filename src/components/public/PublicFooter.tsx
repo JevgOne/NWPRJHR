@@ -70,6 +70,7 @@ export function PublicFooter() {
             </h3>
             <ul className="space-y-2">
               <li><Link href="/prodlouzeni-vlasu-praha" className={linkClass}>{t("footer.prahaLanding")}</Link></li>
+              <li><Link href="/prodlouzeni-vlasu" className={linkClass}>{t("footer.citiesLink")}</Link></li>
               <li><Link href="/poradna" className={linkClass}>{t("navbar.advice")}</Link></li>
               <li><Link href="/blog" className={linkClass}>Blog</Link></li>
               <li><Link href="/kadernice" className={linkClass}>{t("footer.hairdressers")}</Link></li>
@@ -86,8 +87,11 @@ export function PublicFooter() {
             <ul className="space-y-2">
               <li><Link href="/obchodni-podminky" className={linkClass}>{t("footer.termsLink")}</Link></li>
               <li><Link href="/reklamacni-rad" className={linkClass}>{t("footer.complaintsLink")}</Link></li>
+              <li><Link href="/pece-o-vlasy" className={linkClass}>{t("footer.hairCareLink")}</Link></li>
               <li><Link href="/doprava" className={linkClass}>{t("footer.shippingLink")}</Link></li>
+              <li><Link href="/odstoupeni-od-smlouvy" className={linkClass}>{t("footer.withdrawalLink")}</Link></li>
               <li><Link href="/privacy" className={linkClass}>{t("nav.privacy")}</Link></li>
+              <li><Link href="/faq" className={linkClass}>{t("footer.faqLink")}</Link></li>
               <li><Link href="/registrace" className={linkClass}>{t("footer.salonRegLink")}</Link></li>
             </ul>
           </div>

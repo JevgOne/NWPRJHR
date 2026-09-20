@@ -927,7 +927,7 @@ async function ProductDetailView({
               {product.origin && <span>{originFlag} {originName(product.origin)}</span>}
               <span className="text-muted/60">·</span>
               <span className="text-emerald-700 font-medium">✓ {t("productDetail.realHair")}</span>
-              {product.category !== "SALE" && (
+              {(product.category === "VIRGIN" || product.category === "LUXE") && (
                 <>
                   <span className="text-muted/60">·</span>
                   <span className="text-amber-700 font-medium">✓ {t("productDetail.singleDonor")}</span>

@@ -54,6 +54,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     shippingZip: "",
     paymentMethod: "CARD",
     termsAccepted: false,
+    careGuideAccepted: false,
     wantsBilling: false,
     billingName: b2bInfo?.contactPerson ?? "",
     billingIco: b2bInfo?.ico ?? "",
@@ -167,7 +168,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
         return true;
       }
       case "payment":
-        return !!form.paymentMethod && form.termsAccepted;
+        return !!form.paymentMethod && form.termsAccepted && form.careGuideAccepted;
       case "summary":
         return true;
       default:
@@ -614,6 +615,27 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               />
             </div>
           </div>
+
+          {/* IČO — B2B identification */}
+          <div>
+            <label className="block text-xs font-medium text-muted mb-1">{t("icoLabel")}</label>
+            <input
+              type="text"
+              value={form.billingIco}
+              onChange={(e) => {
+                setField("billingIco", e.target.value);
+                if (e.target.value.trim()) {
+                  setField("wantsBilling", true);
+                }
+              }}
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose"
+              placeholder={t("icoPlaceholder")}
+            />
+            <p className="text-[10px] text-muted/70 mt-1">
+              {t("icoNote")}
+            </p>
+          </div>
+
           <div>
             <label className="block text-xs font-medium text-muted mb-1">{tInquiry("noteLabel")}</label>
             <textarea
@@ -906,6 +928,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           )}
 
           {/* Terms checkbox */}
+          {/* Checkbox 1: OP + reklamační řád */}
           <label className="flex items-start gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -914,9 +937,29 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
               className="mt-0.5 accent-rose"
             />
             <span className="text-xs text-muted">
-              {t("termsPrefix")}{" "}
+              {t("termsCheckbox1")}{" "}
               <Link href="/obchodni-podminky" className="text-rose underline" target="_blank">
                 {t("termsLink")}
+              </Link>
+              {" "}{t("termsAnd")}{" "}
+              <Link href="/reklamacni-rad" className="text-rose underline" target="_blank">
+                {t("complaintsLink")}
+              </Link>
+            </span>
+          </label>
+
+          {/* Checkbox 2: Návod na péči */}
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.careGuideAccepted}
+              onChange={(e) => setField("careGuideAccepted", e.target.checked)}
+              className="mt-0.5 accent-rose"
+            />
+            <span className="text-xs text-muted">
+              {t("careGuideCheckbox")}{" "}
+              <Link href="/pece-o-vlasy" className="text-rose underline" target="_blank">
+                {t("careGuideLink")}
               </Link>
             </span>
           </label>
@@ -1030,7 +1073,13 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 {form.paymentMethod === "CARD" ? t("paymentCardOnline") : t("paymentCash")}
               </span>
             </div>
-            {form.wantsBilling && form.billingName && (
+            {form.billingIco && !form.wantsBilling && (
+              <div className="flex justify-between gap-2">
+                <span className="text-muted flex-shrink-0">{t("icoLabel")}</span>
+                <span className="text-ink">{form.billingIco}</span>
+              </div>
+            )}
+            {form.wantsBilling && (form.billingName || form.billingIco) && (
               <div className="flex justify-between gap-2">
                 <span className="text-muted flex-shrink-0">{t("wantsBilling")}</span>
                 <span className="text-ink text-right break-words min-w-0">
@@ -1052,6 +1101,15 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       {/* Errors */}
       {(error || stockError) && (
         <p className="text-sm text-red-600 mt-4">{error || stockError}</p>
+      )}
+
+      {/* Hygiene warning — legal requirement */}
+      {step === "summary" && (
+        <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+          <p className="text-xs text-amber-800 font-medium">
+            {t("hygienicWarning")}
+          </p>
+        </div>
       )}
 
       {/* Navigation buttons */}

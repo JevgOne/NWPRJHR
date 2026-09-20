@@ -209,9 +209,12 @@ export function PublicNavbar() {
   const inspiraceItems = [
     { href: "/poradna", label: t("navbar.advice") },
     { href: "/pruvodce-gramazi", label: t("navbar.weightGuide") },
+    { href: "/pece-o-vlasy", label: t("navbar.hairCare") },
     { href: "/prodlouzeni-vlasu-praha", label: t("footer.prahaLanding") },
     { href: "/recenze", label: t("navbar.reviews") },
     { href: "/blog", label: "Blog" },
+    { href: "/faq", label: t("navbar.faq") },
+    { href: "/prodlouzeni-vlasu", label: t("navbar.cities") },
   ];
 
   const cooperationItems = [

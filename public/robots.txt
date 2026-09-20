@@ -1,5 +1,10 @@
 User-agent: *
 Allow: /
+Allow: /blog/
+Allow: /vlasy-k-prodlouzeni/
+Allow: /recenze/
+Allow: /kadernice/
+Allow: /poradna/
 Allow: /feed/
 Disallow: /api/
 Disallow: /dashboard/
@@ -43,5 +48,17 @@ Disallow: /*?category=
 Disallow: /*?origin=
 Disallow: /*?search=
 Disallow: /*?page=
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: https://www.hairland.cz/sitemap.xml
