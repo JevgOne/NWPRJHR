@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityName = city.name[locale] ?? city.name.cs;
   const desc = city.description[locale] ?? city.description.cs;
 
-  const title = `Vlasy k prodloužení ${cityName} — prémiové RAW vlasy | Hairland`;
+  const title = `Vlasy k prodloužení ${cityName} | Hairland`;
 
   return {
     title,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: getAlternates(`/prodlouzeni-vlasu/${city.slug}`, locale),
     openGraph: {
       type: "website",
-      title: `${title} | Hairland`,
+      title,
       description: desc,
       url: getOgUrl(`/prodlouzeni-vlasu/${city.slug}`, locale),
       siteName: "Hairland",
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | Hairland`,
+      title,
       description: desc,
       images: ["https://www.hairland.cz/og/og-home.jpg"],
     },
@@ -211,21 +211,21 @@ export default async function CityLandingPage({ params }: Props) {
         <h2 className="text-xl font-semibold text-ink mb-6">{t("categoriesTitle")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
-            href="/vlasy-k-prodlouzeni?category=VIRGIN"
+            href="/vlasy-k-prodlouzeni/kategorie/virgin"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">{t("catVirginTitle")}</div>
             <p className="text-sm text-muted leading-relaxed">{t("catVirginText")}</p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni?category=LUXE"
+            href="/vlasy-k-prodlouzeni/kategorie/luxe"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">{t("catLuxeTitle")}</div>
             <p className="text-sm text-muted leading-relaxed">{t("catLuxeText")}</p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni?category=STANDARD"
+            href="/vlasy-k-prodlouzeni/kategorie/standard"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">{t("catStandardTitle")}</div>

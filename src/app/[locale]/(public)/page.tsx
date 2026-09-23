@@ -58,6 +58,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const BLOB = "/images/hair";
 
+const COLOR_CODE_TO_TONE_SLUG: Record<string, string> = {
+  "1": "blond", "2": "blond", "3": "blond", "4": "blond",
+  "5": "hneda", "6": "hneda", "7": "hneda",
+  "8": "tmave-hneda", "9": "tmave-hneda",
+  "10": "cerna", "ombre": "ombre",
+};
+
 const DEFAULT_IG_PHOTOS = [
   `${BLOB}/volne-vlasy.jpg`,
   `${BLOB}/odstiny-prehled.jpg`,
@@ -290,7 +297,7 @@ export default async function LandingPage() {
                   { key: "virgin" as const, href: "/vlasy-k-prodlouzeni/kategorie/virgin", img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
                   { key: "luxe" as const, href: "/vlasy-k-prodlouzeni/kategorie/luxe", img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescLuxe" as const },
                   { key: "standard" as const, href: "/vlasy-k-prodlouzeni/kategorie/standard", img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
-                  { key: "sale" as const, href: "/vlasy-k-prodlouzeni?category=SALE", img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
+                  { key: "sale" as const, href: "/vlasy-k-prodlouzeni/kategorie/sale", img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
                 ]
               ).map(({ key, href, img, descKey }) => (
                 <Link
@@ -342,7 +349,7 @@ export default async function LandingPage() {
               { code: "10", nameKey: "colors.c10" as const },
               { code: "ombre", nameKey: "colors.combre" as const },
             ].map(({ code, nameKey }) => (
-              <Link key={code} href={`/vlasy-k-prodlouzeni?color=${code}`} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
+              <Link key={code} href={`/vlasy-k-prodlouzeni/barva/${COLOR_CODE_TO_TONE_SLUG[code]}`} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
                 <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
                 <span className="text-[8px] sm:text-[11px] text-muted font-medium text-center leading-tight truncate w-full">{t(nameKey)}</span>
               </Link>

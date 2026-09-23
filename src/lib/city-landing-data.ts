@@ -65,7 +65,7 @@ export const CITIES: CityData[] = [
     name: { cs: "Ostrava", uk: "Острава", ru: "Острава" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Ostravy do 2 pracovních dnů. Clip-in, tape-in, keratin, micro-ring.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Ostravy do 2 pracovních dnů. Clip-in, tape-in, keratin, micro-ring. Prodej na gramy, Praha zdarma.",
       uk: "Преміальне RAW волосся для нарощування з доставкою до Острави протягом 2 робочих днів.",
       ru: "Премиальные RAW волосы для наращивания с доставкой в Остраву в течение 2 рабочих дней.",
     },
@@ -112,9 +112,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Plzeň", uk: "Пльзень", ru: "Пльзень" },
     region: { cs: "Plzeňský kraj", uk: "Пльзенський край", ru: "Пльзенский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Plzně do 1–2 pracovních dnů.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Пльзня протягом 1–2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Пльзень в течение 1–2 рабочих дней.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Plzně. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне RAW волосся для нарощування з доставкою до Пльзня. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные RAW волосы для наращивания с доставкой в Пльзень. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Plzně do 1–2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -159,9 +159,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Liberec", uk: "Ліберець", ru: "Либерец" },
     region: { cs: "Liberecký kraj", uk: "Ліберецький край", ru: "Либерецкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Liberce do 1–2 pracovních dnů.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Лібереця протягом 1–2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Либерец в течение 1–2 рабочих дней.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Liberce. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне RAW волосся для нарощування з доставкою до Лібереця. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные RAW волосы для наращивания с доставкой в Либерец. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Liberce do 1–2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -206,9 +206,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Olomouc", uk: "Оломоуц", ru: "Оломоуц" },
     region: { cs: "Olomoucký kraj", uk: "Оломоуцький край", ru: "Оломоуцкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Olomouce do 2 pracovních dnů.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Оломоуця протягом 2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Оломоуц в течение 2 рабочих дней.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Olomouce. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне RAW волосся для нарощування з доставкою до Оломоуця. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные RAW волосы для наращивания с доставкой в Оломоуц. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Olomouce do 2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -253,9 +253,9 @@ export const CITIES: CityData[] = [
     name: { cs: "České Budějovice", uk: "Чеські Будейовіце", ru: "Ческе-Будеёвице" },
     region: { cs: "Jihočeský kraj", uk: "Південночеський край", ru: "Южночешский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Českých Budějovic do 1–2 pracovních dnů.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Чеських Будейовіц протягом 1–2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Ческе-Будеёвице в течение 1–2 рабочих дней.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Českých Budějovic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy. Zásilkovna 1–2 dny.",
+      uk: "Преміальне RAW волосся для нарощування з доставкою до Чеських Будейовіц. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные RAW волосы для наращивания с доставкой в Ческе-Будеёвице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Českých Budějovic do 1–2 pracovních dnů.",
@@ -300,9 +300,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Hradec Králové", uk: "Градець Кралове", ru: "Градец-Кралове" },
     region: { cs: "Královéhradecký kraj", uk: "Краловоградецький край", ru: "Краловеградецкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Hradce Králové do 1–2 pracovních dnů.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Градця Кралове протягом 1–2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Градец-Кралове в течение 1–2 рабочих дней.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Hradce Králové. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне RAW волосся для нарощування з доставкою до Градця Кралове. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные RAW волосы для наращивания с доставкой в Градец-Кралове. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Hradce Králové do 1–2 pracovních dnů.",
@@ -347,9 +347,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Pardubice", uk: "Пардубіце", ru: "Пардубице" },
     region: { cs: "Pardubický kraj", uk: "Пардубіцький край", ru: "Пардубицкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Pardubic do 1–2 pracovních dnů.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Пардубіц протягом 1–2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Пардубице в течение 1–2 рабочих дней.",
+      cs: "Prémiové RAW vlasy k prodloužení s doručením do Pardubic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне RAW волосся для нарощування з доставкою до Пардубіц. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные RAW волосы для наращивания с доставкой в Пардубице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: { cs: "Doručení do Pardubic do 1–2 pracovních dnů.", uk: "Доставка до Пардубіц протягом 1–2 робочих днів.", ru: "Доставка в Пардубице в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram. Osobní konzultace v Praze.", uk: "Онлайн-консультація через WhatsApp або Telegram. Особиста консультація в Празі.", ru: "Онлайн-консультация через WhatsApp или Telegram. Личная консультация в Праге." },
@@ -367,7 +367,7 @@ export const CITIES: CityData[] = [
     slug: "zlin",
     name: { cs: "Zlín", uk: "Злін", ru: "Злин" },
     region: { cs: "Zlínský kraj", uk: "Злінський край", ru: "Злинский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Zlína do 2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Зліна протягом 2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Злин в течение 2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Zlína. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Зліна. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Злин. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Zlína do 2 pracovních dnů.", uk: "Доставка до Зліна протягом 2 робочих днів.", ru: "Доставка в Злин в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -384,7 +384,7 @@ export const CITIES: CityData[] = [
     slug: "karlovy-vary",
     name: { cs: "Karlovy Vary", uk: "Карлові Вари", ru: "Карловы Вары" },
     region: { cs: "Karlovarský kraj", uk: "Карловарський край", ru: "Карловарский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Karlových Varů do 1–2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Карлових Варів протягом 1–2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Карловы Вары в течение 1–2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Karlových Varů. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Карлових Варів. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Карловы Вары. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Karlových Varů do 1–2 pracovních dnů.", uk: "Доставка до Карлових Варів протягом 1–2 робочих днів.", ru: "Доставка в Карловы Вары в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -401,7 +401,7 @@ export const CITIES: CityData[] = [
     slug: "usti-nad-labem",
     name: { cs: "Ústí nad Labem", uk: "Усті-над-Лабем", ru: "Усти-над-Лабем" },
     region: { cs: "Ústecký kraj", uk: "Устецький край", ru: "Устецкий край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Ústí nad Labem do 1–2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Усті-над-Лабем протягом 1–2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Усти-над-Лабем в течение 1–2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Ústí nad Labem. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Усті-над-Лабем. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Усти-над-Лабем. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Ústí nad Labem do 1–2 pracovních dnů.", uk: "Доставка до Усті-над-Лабем протягом 1–2 робочих днів.", ru: "Доставка в Усти-над-Лабем в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -418,7 +418,7 @@ export const CITIES: CityData[] = [
     slug: "jihlava",
     name: { cs: "Jihlava", uk: "Їглава", ru: "Йиглава" },
     region: { cs: "Kraj Vysočina", uk: "Край Височина", ru: "Край Высочина" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Jihlavy do 1–2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Їглави протягом 1–2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Йиглаву в течение 1–2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Jihlavy. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Їглави. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Йиглаву. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Jihlavy do 1–2 pracovních dnů.", uk: "Доставка до Їглави протягом 1–2 робочих днів.", ru: "Доставка в Йиглаву в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -435,7 +435,7 @@ export const CITIES: CityData[] = [
     slug: "kladno",
     name: { cs: "Kladno", uk: "Кладно", ru: "Кладно" },
     region: { cs: "Středočeský kraj", uk: "Середньочеський край", ru: "Среднечешский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Kladna do 1 pracovního dne.", uk: "Преміальне RAW волосся з доставкою до Кладна протягом 1 робочого дня.", ru: "Премиальные RAW волосы с доставкой в Кладно в течение 1 рабочего дня." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Kladna. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1 den.", uk: "Преміальне RAW волосся для нарощування з доставкою до Кладна. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1 день.", ru: "Премиальные RAW волосы для наращивания с доставкой в Кладно. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1 день." },
     deliveryNote: { cs: "Doručení do Kladna do 1 pracovního dne — blízko Prahy.", uk: "Доставка до Кладна протягом 1 робочого дня — поруч з Прагою.", ru: "Доставка в Кладно в течение 1 рабочего дня — рядом с Прагой." },
     consultNote: { cs: "Online konzultace nebo osobní v Praze — Kladno je kousek.", uk: "Онлайн-консультація або особиста в Празі — Кладно поруч.", ru: "Онлайн-консультация или личная в Праге — Кладно рядом." },
     faq: [
@@ -452,7 +452,7 @@ export const CITIES: CityData[] = [
     slug: "mlada-boleslav",
     name: { cs: "Mladá Boleslav", uk: "Млада Болеслав", ru: "Млада-Болеслав" },
     region: { cs: "Středočeský kraj", uk: "Середньочеський край", ru: "Среднечешский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Mladé Boleslavi do 1 pracovního dne.", uk: "Преміальне RAW волосся з доставкою до Млади Болеслав протягом 1 робочого дня.", ru: "Премиальные RAW волосы с доставкой в Младу-Болеслав в течение 1 рабочего дня." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Mladé Boleslavi. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1 den.", uk: "Преміальне RAW волосся для нарощування з доставкою до Млади Болеслав. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1 день.", ru: "Премиальные RAW волосы для наращивания с доставкой в Младу-Болеслав. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1 день." },
     deliveryNote: { cs: "Doručení do Mladé Boleslavi do 1 pracovního dne.", uk: "Доставка до Млади Болеслав протягом 1 робочого дня.", ru: "Доставка в Младу-Болеслав в течение 1 рабочего дня." },
     consultNote: { cs: "Online konzultace přes WhatsApp. Osobní konzultace v Praze.", uk: "Онлайн-консультація через WhatsApp. Особиста консультація в Празі.", ru: "Онлайн-консультация через WhatsApp. Личная консультация в Праге." },
     faq: [
@@ -469,7 +469,7 @@ export const CITIES: CityData[] = [
     slug: "havirov",
     name: { cs: "Havířov", uk: "Гавіржов", ru: "Гавиржов" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Havířova do 2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Гавіржова протягом 2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Гавиржов в течение 2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Havířova. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Гавіржова. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Гавиржов. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Havířova do 2 pracovních dnů.", uk: "Доставка до Гавіржова протягом 2 робочих днів.", ru: "Доставка в Гавиржов в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -486,7 +486,7 @@ export const CITIES: CityData[] = [
     slug: "opava",
     name: { cs: "Opava", uk: "Опава", ru: "Опава" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Opavy do 2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Опави протягом 2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Опаву в течение 2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Opavy. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Опави. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Опаву. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Opavy do 2 pracovních dnů.", uk: "Доставка до Опави протягом 2 робочих днів.", ru: "Доставка в Опаву в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -503,7 +503,7 @@ export const CITIES: CityData[] = [
     slug: "frydek-mistek",
     name: { cs: "Frýdek-Místek", uk: "Фридек-Містек", ru: "Фридек-Мистек" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Frýdku-Místku do 2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Фридека-Містека протягом 2 робочих днів.", ru: "Премиальные RAW волосы с доставкой во Фридек-Мистек в течение 2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Frýdku-Místku. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Фридека-Містека. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой во Фридек-Мистек. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Frýdku-Místku do 2 pracovních dnů.", uk: "Доставка до Фридека-Містека протягом 2 робочих днів.", ru: "Доставка во Фридек-Мистек в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -520,7 +520,7 @@ export const CITIES: CityData[] = [
     slug: "teplice",
     name: { cs: "Teplice", uk: "Тепліце", ru: "Теплице" },
     region: { cs: "Ústecký kraj", uk: "Устецький край", ru: "Устецкий край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Teplic do 1–2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Тепліце протягом 1–2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Теплице в течение 1–2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Teplic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Тепліце. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Теплице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Teplic do 1–2 pracovních dnů.", uk: "Доставка до Тепліце протягом 1–2 робочих днів.", ru: "Доставка в Теплице в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -537,7 +537,7 @@ export const CITIES: CityData[] = [
     slug: "most",
     name: { cs: "Most", uk: "Мост", ru: "Мост" },
     region: { cs: "Ústecký kraj", uk: "Устецький край", ru: "Устецкий край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Mostu do 1–2 pracovních dnů.", uk: "Преміальне RAW волосся з доставкою до Моста протягом 1–2 робочих днів.", ru: "Премиальные RAW волосы с доставкой в Мост в течение 1–2 рабочих дней." },
+    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Mostu. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Моста. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Мост. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Mostu do 1–2 pracovních dnů.", uk: "Доставка до Моста протягом 1–2 робочих днів.", ru: "Доставка в Мост в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [

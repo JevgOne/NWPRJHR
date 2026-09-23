@@ -210,11 +210,8 @@ export function PublicNavbar() {
     { href: "/poradna", label: t("navbar.advice") },
     { href: "/pruvodce-gramazi", label: t("navbar.weightGuide") },
     { href: "/pece-o-vlasy", label: t("navbar.hairCare") },
-    { href: "/prodlouzeni-vlasu-praha", label: t("footer.prahaLanding") },
-    { href: "/recenze", label: t("navbar.reviews") },
     { href: "/blog", label: "Blog" },
-    { href: "/faq", label: t("navbar.faq") },
-    { href: "/prodlouzeni-vlasu", label: t("navbar.cities") },
+    { href: "/recenze", label: t("navbar.reviews") },
   ];
 
   const cooperationItems = [
@@ -278,7 +275,7 @@ export function PublicNavbar() {
             />
 
             <NavDropdown
-              label={t("navbar.inspiration")}
+              label={t("navbar.advice")}
               items={inspiraceItems}
               pathname={pathname}
             />
@@ -451,9 +448,9 @@ export function PublicNavbar() {
                 onNavigate={() => setMenuOpen(false)}
               />
 
-              {/* Inspirace — accordion */}
+              {/* Poradna — accordion */}
               <MobileAccordion
-                label={t("navbar.inspiration")}
+                label={t("navbar.advice")}
                 items={inspiraceItems}
                 pathname={pathname}
                 onNavigate={() => setMenuOpen(false)}

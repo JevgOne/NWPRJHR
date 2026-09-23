@@ -91,7 +91,7 @@ export function PublicFooter() {
               <li><Link href="/doprava" className={linkClass}>{t("footer.shippingLink")}</Link></li>
               <li><Link href="/odstoupeni-od-smlouvy" className={linkClass}>{t("footer.withdrawalLink")}</Link></li>
               <li><Link href="/privacy" className={linkClass}>{t("nav.privacy")}</Link></li>
-              <li><Link href="/faq" className={linkClass}>{t("footer.faqLink")}</Link></li>
+              <li><Link href="/poradna" className={linkClass}>{t("footer.faqLink")}</Link></li>
               <li><Link href="/registrace" className={linkClass}>{t("footer.salonRegLink")}</Link></li>
             </ul>
           </div>

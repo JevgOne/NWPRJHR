@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/reklamacni-rad", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.5 }),
     ...withAlternates("/pece-o-vlasy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.7 }),
     ...withAlternates("/odstoupeni-od-smlouvy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.5 }),
-    ...withAlternates("/faq", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.7 }),
+    // /faq redirects to /poradna — removed from sitemap
     ...withAlternates("/pruvodce-gramazi", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/recenze", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.6 }),
     ...withAlternates("/prislusenstvi", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),

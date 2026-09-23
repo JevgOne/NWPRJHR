@@ -23,7 +23,7 @@ import { Fragment, Suspense } from "react";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { isCategorySlug, generateCategoryMetadata, CategoryLandingPage, CATEGORY_SLUG_MAP, CATEGORY_STANDALONE_PATHS } from "./CategoryPage";
-import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_SLUG_MAP_SEO, ORIGIN_SLUG_MAP } from "@/lib/attribute-slugs";
+import { resolveAttributeSlug, COLOR_TONE_SLUG_MAP, TEXTURE_SLUG_MAP, CATEGORY_SLUG_MAP_SEO, ORIGIN_SLUG_MAP, ORIGIN_REVERSE_MAP, TEXTURE_REVERSE_MAP } from "@/lib/attribute-slugs";
 import { AttributeLandingPage, generateAttributeMetadata } from "./AttributeLandingPage";
 import { generateSku } from "@/lib/sku";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
@@ -354,11 +354,12 @@ async function generateProductMetadataFromProduct(
   const totalGrams = getTotalGrams(product.variants);
   const ogTitle = buildOgTitle(product.texture, lengths, colorNames, totalGrams);
 
-  // OG description: 100% pravé vlasy z jedné hlavy. {cena} Kč/g. Přijedeme ukázat po Praze zdarma.
+  // OG description: 100% pravé vlasy [z jedné hlavy]. {cena} Kč/g. Přijedeme ukázat po Praze zdarma.
   const minPpg = getMinPricePerGram(product.variants);
+  const singleDonorText = (product.category === "VIRGIN" || product.category === "LUXE") ? "z jedné hlavy. " : "";
   const ogDesc = minPpg
-    ? `100% pravé vlasy z jedné hlavy. ${Math.round(minPpg / 100)} Kč/g. Přijedeme ukázat po Praze zdarma.`
-    : "100% pravé vlasy z jedné hlavy. Přijedeme ukázat po Praze zdarma.";
+    ? `100% pravé vlasy ${singleDonorText}${Math.round(minPpg / 100)} Kč/g. Přijedeme ukázat po Praze zdarma.`
+    : `100% pravé vlasy ${singleDonorText}Přijedeme ukázat po Praze zdarma.`;
 
   // Build check: log products with oversized title/description
   if (title.length > 60) console.log(`[SEO] Title > 60 chars (${title.length}): "${title}" [${product.slug}]`);
@@ -696,7 +697,9 @@ async function ProductDetailView({
     ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "\u2026")
     : schemaFallbackDesc;
   const schemaImage = product.photos.length > 0
-    ? product.photos
+    ? product.photos.map((url: string) =>
+        `https://www.hairland.cz/_next/image?url=${encodeURIComponent(url)}&w=1200&q=75`
+      )
     : [`https://www.hairland.cz/api/og/product/${product.slug ?? product.id}`];
   const ORIGIN_ISO: Record<string, string> = {
     Ukrajina: "UA", Bělorusko: "BY", Moldavsko: "MD", Rusko: "RU",
@@ -1038,7 +1041,7 @@ async function ProductDetailView({
           <div className="bg-nude-50 rounded-2xl p-5 grid grid-cols-2 gap-4">
             {product.origin && (
               <Link
-                href={`/vlasy-k-prodlouzeni?origin=${encodeURIComponent(product.origin)}`}
+                href={ORIGIN_REVERSE_MAP[product.origin] ? `/vlasy-k-prodlouzeni/zeme/${ORIGIN_REVERSE_MAP[product.origin]}` : "/vlasy-k-prodlouzeni"}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
                 <span className="text-xl">{originFlag}</span>
@@ -1050,7 +1053,7 @@ async function ProductDetailView({
             )}
             {product.texture && (
               <Link
-                href={`/vlasy-k-prodlouzeni?texture=${encodeURIComponent(product.texture)}`}
+                href={TEXTURE_REVERSE_MAP[product.texture] ? `/vlasy-k-prodlouzeni/textura/${TEXTURE_REVERSE_MAP[product.texture]}` : "/vlasy-k-prodlouzeni"}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
                 <TextureSwatch texture={product.texture} size={32} />

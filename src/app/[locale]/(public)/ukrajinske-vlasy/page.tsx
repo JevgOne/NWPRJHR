@@ -184,7 +184,7 @@ export default async function UkrajinskVlasyPage() {
             </p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni?category=STANDARD"
+            href="/vlasy-k-prodlouzeni/kategorie/standard"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
@@ -269,7 +269,7 @@ export default async function UkrajinskVlasyPage() {
           <HeroProductSlider products={selectHeroProducts(filteredProducts)} />
           <div className="text-center mt-4">
             <Link
-              href="/vlasy-k-prodlouzeni?origin=Ukrajina"
+              href="/vlasy-k-prodlouzeni/zeme/ukrajina"
               className="inline-flex items-center text-sm text-rose font-medium hover:text-rose-deep transition-colors"
             >
               {t("productsViewAll")} →
@@ -377,7 +377,7 @@ export default async function UkrajinskVlasyPage() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href="/vlasy-k-prodlouzeni?origin=Ukrajina"
+            href="/vlasy-k-prodlouzeni/zeme/ukrajina"
             className="inline-flex items-center justify-center px-6 py-2.5 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
           >
             {t("ctaOffer")}

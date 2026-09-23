@@ -192,7 +192,7 @@ export default async function CenikVlasyPage() {
                     {tCat(category.toLowerCase())}
                   </span>
                   <Link
-                    href={`/vlasy-k-prodlouzeni?category=${category}`}
+                    href={`/vlasy-k-prodlouzeni/kategorie/${category.toLowerCase()}`}
                     className="text-xs text-rose hover:text-rose-deep font-medium transition-colors"
                   >
                     {t("showProducts")} →

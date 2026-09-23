@@ -10,9 +10,7 @@ export const routing = defineRouting({
       ru: "/rus",
     },
   },
-  localeCookie: {
-    name: "HAIRLAND_LOCALE",
-  },
+  localeCookie: false,
   localeDetection: false,
   alternateLinks: false,
 });

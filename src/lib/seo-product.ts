@@ -54,7 +54,7 @@ export function buildSeoTitle(
 
 /**
  * Build SEO meta description.
- * Format: "{Cat} {texture} vlasy z {origin}, {length}, {color}. Od {price} Kč/g, zpracování na zakázku. Osobní odběr Praha zdarma, doručení do 7 dnů."
+ * Format: "{Cat} {texture} vlasy z {origin}, {length}, {color}. Od {price} Kč/g, zprostředkování zpracování. Osobní odběr Praha zdarma, doručení do 7 dnů."
  * Max 155 chars.
  */
 export function buildAutoDescription(
@@ -88,14 +88,18 @@ export function buildAutoDescription(
   const priceParts: string[] = [];
   const minPpg = getMinPricePerGram(variants);
   if (minPpg) priceParts.push(`Od ${Math.round(minPpg / 100)} Kč/g`);
-  priceParts.push("zpracování na zakázku");
+  priceParts.push("zprostředkování zpracování");
 
   // CTA
   const cta = "Osobní odběr Praha zdarma, doručení do 7 dnů";
 
-  const result = [part1, priceParts.join(", "), cta]
+  let result = [part1, priceParts.join(", "), cta]
     .filter(Boolean)
     .join(". ") + ".";
+
+  if (result.length < 120) {
+    result = result.replace(/\.$/, "") + ". Prémiová kvalita z přímého importu, osobní odběr Praha zdarma.";
+  }
 
   return result.slice(0, 155);
 }

@@ -44,6 +44,12 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: "/((?!api|dashboard|login|_next|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon|reservations|calendar|order-products).*)",
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
     ];
   },
   async redirects() {
@@ -92,12 +98,12 @@ const nextConfig: NextConfig = {
       // Legacy URL redirects
       {
         source: "/vlasy/virgin",
-        destination: "/vlasy-k-prodlouzeni?category=VIRGIN",
+        destination: "/vlasy-k-prodlouzeni/kategorie/virgin",
         permanent: true,
       },
       {
         source: "/vlasy/luxe",
-        destination: "/vlasy-k-prodlouzeni?category=LUXE",
+        destination: "/vlasy-k-prodlouzeni/kategorie/luxe",
         permanent: true,
       },
       {
@@ -118,7 +124,7 @@ const nextConfig: NextConfig = {
       {
         source: "/faq",
         destination: "/poradna",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/register",

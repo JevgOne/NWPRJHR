@@ -52,7 +52,7 @@ const jsonLd = {
   },
   priceRange: "500 Kč - 17 000 Kč",
   description:
-    "Prémiové surové vlasy k prodloužení. Zpracování na zakázku — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
+    "Prémiové surové vlasy k prodloužení. Zprostředkujeme zpracování — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],

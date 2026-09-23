@@ -423,11 +423,11 @@ export default async function ArticlePage({ params }: Props) {
           const ctaMap: Record<string, { text: string; button: string; href: string }> = {
             types: { text: t("articleCtaTypes"), button: t("articleCtaTypesButton"), href: "/vlasy-k-prodlouzeni" },
             care: { text: t("articleCtaCare"), button: t("articleCtaCareButton"), href: "/vlasy-k-prodlouzeni" },
-            quality: { text: t("articleCtaQuality"), button: t("articleCtaQualityButton"), href: "/vlasy-k-prodlouzeni?category=VIRGIN" },
+            quality: { text: t("articleCtaQuality"), button: t("articleCtaQualityButton"), href: "/vlasy-k-prodlouzeni/kategorie/virgin" },
             guide: { text: t("articleCtaGuide"), button: t("articleCtaGuideButton"), href: "/vlasy-k-prodlouzeni" },
           };
           const cta = slug === "clip-in-vs-tape-in"
-            ? { text: t("articleCtaClip"), button: t("articleCtaClipButton"), href: "/vlasy-k-prodlouzeni?search=clip" }
+            ? { text: t("articleCtaClip"), button: t("articleCtaClipButton"), href: "/clip-in" }
             : ctaMap[article.category] ?? { text: t("articleCta"), button: t("articleCtaButton"), href: "/vlasy-k-prodlouzeni" };
 
           return (

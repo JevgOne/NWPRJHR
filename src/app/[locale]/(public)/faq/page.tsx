@@ -9,12 +9,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("faqTitle"),
     description: t("faqDescription"),
-    alternates: getAlternates("/faq", locale),
+    alternates: getAlternates("/poradna", locale),
     openGraph: {
       type: "website",
       title: `${t("faqTitle")} | Hairland`,
       description: t("faqDescription"),
-      url: getOgUrl("/faq", locale),
+      url: getOgUrl("/poradna", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
     },

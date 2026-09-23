@@ -235,7 +235,7 @@ export default async function PanenskeVlasyPage() {
           <HeroProductSlider products={selectHeroProducts(filteredProducts)} />
           <div className="text-center mt-4">
             <Link
-              href="/vlasy-k-prodlouzeni?category=VIRGIN"
+              href="/vlasy-k-prodlouzeni/kategorie/virgin"
               className="inline-flex items-center text-sm text-rose font-medium hover:text-rose-deep transition-colors"
             >
               {t("productsViewAll")} →
@@ -343,7 +343,7 @@ export default async function PanenskeVlasyPage() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href="/vlasy-k-prodlouzeni?category=VIRGIN"
+            href="/vlasy-k-prodlouzeni/kategorie/virgin"
             className="inline-flex items-center justify-center px-6 py-2.5 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
           >
             {t("ctaOffer")}

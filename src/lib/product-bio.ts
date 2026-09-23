@@ -92,7 +92,7 @@ const CS_TEMPLATES: CategoryTemplates = {
       const parts = [
         `${o ? `${capitalize(o)} p` : "P"}anenské ${t} vlasy k prodloužení${c ? ` v odstínu ${c}` : ""}.`,
         "Neošetřené, z jedné dárkyně \u2014 rovnoměrná struktura od kořínků ke konečkům.",
-        l ? `Délka ${l}, zpracování na zakázku do 7 pracovních dnů.` : "Zpracování na zakázku do 7 pracovních dnů.",
+        l ? `Délka ${l}, zprostředkujeme zpracování do 7 pracovních dnů.` : "Zprostředkujeme zpracování do 7 pracovních dnů.",
         "Při správné péči vydrží rok i déle.",
       ];
       return parts.join(" ");
@@ -111,7 +111,7 @@ const CS_TEMPLATES: CategoryTemplates = {
         `100% panenské ${t} vlasy${o ? ` ${o}` : ""}${c ? ` (${c})` : ""} pro náročné klientky.`,
         "Nikdy nebarvené, nikdy chemicky ošetřené. Hedvábný lesk a přirozený pohyb.",
         l ? `Délka ${l}.` : "",
-        "Zpracujeme clip-in, tape-in, keratin nebo micro ring \u2014 přesně podle vašeho přání.",
+        "Zprostředkujeme zpracování na clip-in, tape-in, keratin nebo micro ring \u2014 přesně podle vašeho přání.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -122,7 +122,7 @@ const CS_TEMPLATES: CategoryTemplates = {
         `Luxusní ${t} vlasy${o ? ` ${o}` : ""}${c ? ` v odstínu ${c}` : ""}.`,
         "Šetrně ošetřené tak, aby si zachovaly přirozenou strukturu a hedvábný lesk. Kvalitou se blíží panenskému vlasu za příznivější cenu.",
         l ? `Délka ${l}.` : "",
-        "Zpracování na zakázku, osobní odběr v Praze zdarma.",
+        "Zprostředkujeme zpracování, osobní odběr v Praze zdarma.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -131,7 +131,7 @@ const CS_TEMPLATES: CategoryTemplates = {
         `${capitalize(t || "Vlasy")} vlasy luxe kvality${o ? ` ${o}` : ""}${c ? `, ${c}` : ""} \u2014 prémiový výsledek bez kompromisů na vzhledu.`,
         "Pečlivě vybrané a šetrně ošetřené pro maximální přirozenost.",
         l ? `Délka ${l}.` : "",
-        "Připravíme clip-in, tape-in nebo keratin do 7 pracovních dnů.",
+        "Zprostředkujeme zpracování na clip-in, tape-in nebo keratin do 7 pracovních dnů.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -151,7 +151,7 @@ const CS_TEMPLATES: CategoryTemplates = {
         `Kvalitní ${t} vlasy${o ? ` ${o}` : ""}${c ? ` v odstínu ${c}` : ""} \u2014 spolehlivá volba pro první prodloužení nebo doplnění objemu.`,
         "Ošetřené moderními postupy pro přirozený vzhled.",
         l ? `Délka ${l}.` : "",
-        "Zpracujeme na zakázku, doručení do 7 dnů.",
+        "Zprostředkujeme zpracování, doručení do 7 dnů.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -160,7 +160,7 @@ const CS_TEMPLATES: CategoryTemplates = {
         `${capitalize(t || "Vlasy")} vlasy${o ? ` ${o}` : ""}${c ? `, ${c}` : ""} v osvědčené kvalitě za dostupnou cenu.`,
         "Přirozený vzhled a spolehlivá trvanlivost.",
         l ? `Délka ${l}.` : "",
-        "Zpracování clip-in, tape-in nebo keratin. Osobní odběr v Praze zdarma.",
+        "Zprostředkujeme zpracování na clip-in, tape-in nebo keratin. Osobní odběr v Praze zdarma.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -215,7 +215,7 @@ const UK_TEMPLATES: CategoryTemplates = {
       const parts = [
         `${o ? `${capitalize(o)} н` : "Н"}атуральне ${t} волосся для нарощування${c ? ` у відтінку ${c}` : ""}.`,
         "Необроблене, від однієї донорки \u2014 рівномірна структура від коренів до кінчиків.",
-        l ? `Довжина ${l}, виготовлення на замовлення протягом 7 робочих днів.` : "Виготовлення на замовлення протягом 7 робочих днів.",
+        l ? `Довжина ${l}, забезпечимо виготовлення протягом 7 робочих днів.` : "Забезпечимо виготовлення протягом 7 робочих днів.",
         "При правильному догляді тримається рік і довше.",
       ];
       return parts.join(" ");
@@ -234,7 +234,7 @@ const UK_TEMPLATES: CategoryTemplates = {
         `100% натуральне ${t} волосся${o ? ` ${o}` : ""}${c ? ` (${c})` : ""} для вибагливих клієнток.`,
         "Ніколи не фарбоване, ніколи не оброблене хімічно. Шовковий блиск і природний рух.",
         l ? `Довжина ${l}.` : "",
-        "Виготовимо clip-in, tape-in, кератин або micro ring \u2014 точно за вашим бажанням.",
+        "Забезпечимо виготовлення на clip-in, tape-in, кератин або micro ring \u2014 точно за вашим бажанням.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -245,7 +245,7 @@ const UK_TEMPLATES: CategoryTemplates = {
         `Люкс ${t} волосся${o ? ` ${o}` : ""}${c ? ` у відтінку ${c}` : ""}.`,
         "Делікатно оброблене, щоб зберегти природну структуру та шовковий блиск. За якістю наближається до натурального волосся за вигіднішою ціною.",
         l ? `Довжина ${l}.` : "",
-        "Виготовлення на замовлення, особистий забір у Празі безкоштовно.",
+        "Забезпечимо виготовлення, особистий забір у Празі безкоштовно.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -254,7 +254,7 @@ const UK_TEMPLATES: CategoryTemplates = {
         `${capitalize(t || "Волосся")} волосся люкс якості${o ? ` ${o}` : ""}${c ? `, ${c}` : ""} \u2014 преміальний результат без компромісів у зовнішньому вигляді.`,
         "Ретельно відібране та делікатно оброблене для максимальної природності.",
         l ? `Довжина ${l}.` : "",
-        "Підготуємо clip-in, tape-in або кератин протягом 7 робочих днів.",
+        "Забезпечимо виготовлення на clip-in, tape-in або кератин протягом 7 робочих днів.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -274,7 +274,7 @@ const UK_TEMPLATES: CategoryTemplates = {
         `Якісне ${t} волосся${o ? ` ${o}` : ""}${c ? ` у відтінку ${c}` : ""} \u2014 надійний вибір для першого нарощування або додання об'єму.`,
         "Оброблене сучасними методами для природного вигляду.",
         l ? `Довжина ${l}.` : "",
-        "Виготовимо на замовлення, доставка протягом 7 днів.",
+        "Забезпечимо виготовлення, доставка протягом 7 днів.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -283,7 +283,7 @@ const UK_TEMPLATES: CategoryTemplates = {
         `${capitalize(t || "Волосся")} волосся${o ? ` ${o}` : ""}${c ? `, ${c}` : ""} перевіреної якості за доступною ціною.`,
         "Природний вигляд та надійна довговічність.",
         l ? `Довжина ${l}.` : "",
-        "Виготовлення clip-in, tape-in або кератин. Особистий забір у Празі безкоштовно.",
+        "Забезпечимо виготовлення на clip-in, tape-in або кератин. Особистий забір у Празі безкоштовно.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -338,7 +338,7 @@ const RU_TEMPLATES: CategoryTemplates = {
       const parts = [
         `${o ? `${capitalize(o)} н` : "Н"}атуральные ${t} волосы для наращивания${c ? ` в оттенке ${c}` : ""}.`,
         "Необработанные, от одной донорки \u2014 равномерная структура от корней до кончиков.",
-        l ? `Длина ${l}, изготовление на заказ в течение 7 рабочих дней.` : "Изготовление на заказ в течение 7 рабочих дней.",
+        l ? `Длина ${l}, обеспечим изготовление в течение 7 рабочих дней.` : "Обеспечим изготовление в течение 7 рабочих дней.",
         "При правильном уходе держатся год и дольше.",
       ];
       return parts.join(" ");
@@ -357,7 +357,7 @@ const RU_TEMPLATES: CategoryTemplates = {
         `100% натуральные ${t} волосы${o ? ` ${o}` : ""}${c ? ` (${c})` : ""} для взыскательных клиенток.`,
         "Никогда не окрашенные, никогда не обработанные химически. Шёлковый блеск и естественное движение.",
         l ? `Длина ${l}.` : "",
-        "Изготовим clip-in, tape-in, кератин или micro ring \u2014 точно по вашему желанию.",
+        "Обеспечим изготовление на clip-in, tape-in, кератин или micro ring \u2014 точно по вашему желанию.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -368,7 +368,7 @@ const RU_TEMPLATES: CategoryTemplates = {
         `Люкс ${t} волосы${o ? ` ${o}` : ""}${c ? ` в оттенке ${c}` : ""}.`,
         "Бережно обработанные, чтобы сохранить естественную структуру и шёлковый блеск. По качеству приближаются к натуральным волосам по более выгодной цене.",
         l ? `Длина ${l}.` : "",
-        "Изготовление на заказ, самовывоз в Праге бесплатно.",
+        "Обеспечим изготовление, самовывоз в Праге бесплатно.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -377,7 +377,7 @@ const RU_TEMPLATES: CategoryTemplates = {
         `${capitalize(t || "Волосы")} волосы люкс качества${o ? ` ${o}` : ""}${c ? `, ${c}` : ""} \u2014 премиальный результат без компромиссов во внешнем виде.`,
         "Тщательно отобранные и бережно обработанные для максимальной естественности.",
         l ? `Длина ${l}.` : "",
-        "Подготовим clip-in, tape-in или кератин в течение 7 рабочих дней.",
+        "Обеспечим изготовление на clip-in, tape-in или кератин в течение 7 рабочих дней.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -397,7 +397,7 @@ const RU_TEMPLATES: CategoryTemplates = {
         `Качественные ${t} волосы${o ? ` ${o}` : ""}${c ? ` в оттенке ${c}` : ""} \u2014 надёжный выбор для первого наращивания или добавления объёма.`,
         "Обработанные современными методами для естественного вида.",
         l ? `Длина ${l}.` : "",
-        "Изготовим на заказ, доставка в течение 7 дней.",
+        "Обеспечим изготовление, доставка в течение 7 дней.",
       ];
       return parts.filter(Boolean).join(" ");
     },
@@ -406,7 +406,7 @@ const RU_TEMPLATES: CategoryTemplates = {
         `${capitalize(t || "Волосы")} волосы${o ? ` ${o}` : ""}${c ? `, ${c}` : ""} проверенного качества по доступной цене.`,
         "Естественный вид и надёжная долговечность.",
         l ? `Длина ${l}.` : "",
-        "Изготовление clip-in, tape-in или кератин. Самовывоз в Праге бесплатно.",
+        "Обеспечим изготовление на clip-in, tape-in или кератин. Самовывоз в Праге бесплатно.",
       ];
       return parts.filter(Boolean).join(" ");
     },

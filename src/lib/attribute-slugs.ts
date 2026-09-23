@@ -37,6 +37,7 @@ export const CATEGORY_SLUG_MAP_SEO: Record<string, string> = {
   "virgin": "VIRGIN",
   "luxe": "LUXE",
   "standard": "STANDARD",
+  "sale": "SALE",
 };
 
 // === PROCESSING TYPE ===
@@ -65,6 +66,9 @@ export const ORIGIN_SLUG_MAP: Record<string, string> = {
   "mongolsko": "Mongolsko",
   "gruzie": "Gruzie",
 };
+export const ORIGIN_REVERSE_MAP = Object.fromEntries(
+  Object.entries(ORIGIN_SLUG_MAP).map(([k, v]) => [v, k])
+);
 
 // === LENGTH ===
 export function parseLengthSlug(slug: string): number | null {

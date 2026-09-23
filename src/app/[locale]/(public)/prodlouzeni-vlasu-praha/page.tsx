@@ -187,7 +187,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
-            href="/vlasy-k-prodlouzeni?category=VIRGIN"
+            href="/vlasy-k-prodlouzeni/kategorie/virgin"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
@@ -198,7 +198,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             </p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni?category=LUXE"
+            href="/vlasy-k-prodlouzeni/kategorie/luxe"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
@@ -209,7 +209,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             </p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni?category=STANDARD"
+            href="/vlasy-k-prodlouzeni/kategorie/standard"
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
