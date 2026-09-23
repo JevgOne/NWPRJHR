@@ -229,10 +229,10 @@ export default async function ProdlouzeniVlasuPrahaPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
-            { name: "Clip-in", href: "/clip-in" as const, text: t("methodClipIn") },
-            { name: "Tape-in", href: "/tape-in" as const, text: t("methodTapeIn") },
-            { name: "Keratin", href: "/keratin" as const, text: t("methodKeratin") },
-            { name: "Micro ring", href: "/micro-ring" as const, text: t("methodMicroRing") },
+            { name: "Clip-in", href: "/clip-in-vlasy" as const, text: t("methodClipIn") },
+            { name: "Tape-in", href: "/tape-in-vlasy" as const, text: t("methodTapeIn") },
+            { name: "Keratin", href: "/keratinove-vlasy" as const, text: t("methodKeratin") },
+            { name: "Micro ring", href: "/micro-ring-vlasy" as const, text: t("methodMicroRing") },
             { name: "Tresy (weft)", href: "/tresove-vlasy" as const, text: t("methodWeft") },
             { name: "Clip-in ofiny", href: "/ofiny" as const, text: t("methodOfiny") },
           ].map((method) => (

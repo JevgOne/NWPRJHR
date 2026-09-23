@@ -69,6 +69,27 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: true,
       },
+      // 301: category route renames
+      {
+        source: "/tape-in",
+        destination: "/tape-in-vlasy",
+        permanent: true,
+      },
+      {
+        source: "/clip-in",
+        destination: "/clip-in-vlasy",
+        permanent: true,
+      },
+      {
+        source: "/keratin",
+        destination: "/keratinove-vlasy",
+        permanent: true,
+      },
+      {
+        source: "/micro-ring",
+        destination: "/micro-ring-vlasy",
+        permanent: true,
+      },
       // 301: /offer → /vlasy-k-prodlouzeni (catch-all for old URLs)
       {
         source: "/offer",

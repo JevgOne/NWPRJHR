@@ -168,25 +168,25 @@ export default async function BlogPostPage({ params }: Props) {
     desc: Record<string, string>;
   }> = [
     {
-      href: "/clip-in",
+      href: "/clip-in-vlasy",
       keywords: ["clip-in", "clip in", "klipy", "кліпси", "клипсы"],
       label: { cs: "Clip-in vlasy", uk: "Clip-in волосся", ru: "Clip-in волосы" },
       desc: { cs: "Připínací vlasy na sponky", uk: "Волосся на заколках", ru: "Волосы на заколках" },
     },
     {
-      href: "/tape-in",
+      href: "/tape-in-vlasy",
       keywords: ["tape-in", "tape in", "pásky", "стрічки", "ленты"],
       label: { cs: "Tape-in vlasy", uk: "Tape-in волосся", ru: "Tape-in волосы" },
       desc: { cs: "Vlasy na páskách", uk: "Волосся на стрічках", ru: "Волосы на лентах" },
     },
     {
-      href: "/keratin",
+      href: "/keratinove-vlasy",
       keywords: ["keratin", "keratinov", "кератин"],
       label: { cs: "Keratinové vlasy", uk: "Кератинове волосся", ru: "Кератиновые волосы" },
       desc: { cs: "Kvalitní keratinové prodloužení", uk: "Якісне кератинове нарощування", ru: "Качественное кератиновое наращивание" },
     },
     {
-      href: "/micro-ring",
+      href: "/micro-ring-vlasy",
       keywords: ["micro-ring", "micro ring", "mikroring", "мікрокільця", "микрокольца"],
       label: { cs: "Micro-ring vlasy", uk: "Micro-ring волосся", ru: "Micro-ring волосы" },
       desc: { cs: "Prodloužení bez lepidla a tepla", uk: "Нарощування без клею і тепла", ru: "Наращивание без клея и тепла" },

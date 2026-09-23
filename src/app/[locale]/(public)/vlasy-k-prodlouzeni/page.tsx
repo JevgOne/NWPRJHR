@@ -205,6 +205,58 @@ export default async function ProductsPage() {
         <ProductsShowcase userRole={userRole} discountPct={discountPct} initialProducts={allProducts} />
       </Suspense>
 
+      {/* How to choose */}
+      <section className="mt-16 border-t border-line pt-10">
+        <h2 className="text-xl font-bold text-ink mb-4">{t("offer.howToChooseTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-nude-50 rounded-xl border border-line p-4">
+              <h3 className="font-semibold text-ink text-sm mb-1">{t(`offer.choose${i}Title` as any)}</h3>
+              <p className="text-xs text-muted leading-relaxed">{t(`offer.choose${i}Desc` as any)}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-muted">
+          {t("offer.howToChooseLinks")}{" "}
+          <Link href="/pruvodce-gramazi" className="text-espresso hover:underline font-medium">{t("offer.gramsGuideLink")}</Link>
+        </p>
+      </section>
+
+      {/* Why Hairland */}
+      <section className="mt-12">
+        <h2 className="text-xl font-bold text-ink mb-4">{t("offer.whyHairlandTitle")}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex items-start gap-3 bg-nude-50 rounded-xl border border-line p-4">
+              <span className="text-green-500 mt-0.5 text-lg flex-shrink-0">&#10003;</span>
+              <div>
+                <h3 className="font-semibold text-ink text-sm">{t(`offer.why${i}Title` as any)}</h3>
+                <p className="text-xs text-muted mt-0.5">{t(`offer.why${i}Desc` as any)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Processing methods */}
+      <section className="mt-12">
+        <h2 className="text-xl font-bold text-ink mb-4">{t("offer.methodsTitle")}</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {([
+            { href: "/clip-in-vlasy", key: "clipIn" },
+            { href: "/tape-in-vlasy", key: "tapeIn" },
+            { href: "/keratinove-vlasy", key: "keratin" },
+            { href: "/micro-ring-vlasy", key: "microRing" },
+            { href: "/tresove-vlasy", key: "weft" },
+          ] as const).map((m) => (
+            <Link key={m.key} href={m.href} className="bg-white border border-line rounded-xl p-3 text-center hover:border-rose transition-colors">
+              <h3 className="font-semibold text-ink text-sm">{t(`offer.method${m.key}Name` as any)}</h3>
+              <p className="text-xs text-muted mt-1">{t(`offer.method${m.key}Desc` as any)}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* SEO: Internal links to attribute landing pages */}
       <section className="mt-16 border-t border-line pt-10">
         <h2 className="text-xl font-bold text-ink mb-6">{t("offer.seoHeading")}</h2>

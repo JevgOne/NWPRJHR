@@ -64,10 +64,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const categoryPages: MetadataRoute.Sitemap = [
-    { slug: "clip-in", path: "/clip-in" },
-    { slug: "tape-in", path: "/tape-in" },
-    { slug: "keratin", path: "/keratin" },
-    { slug: "micro-ring", path: "/micro-ring" },
+    { slug: "clip-in", path: "/clip-in-vlasy" },
+    { slug: "tape-in", path: "/tape-in-vlasy" },
+    { slug: "keratin", path: "/keratinove-vlasy" },
+    { slug: "micro-ring", path: "/micro-ring-vlasy" },
     { slug: "weft", path: "/tresove-vlasy" },
     { slug: "ofiny", path: "/ofiny" },
   ].flatMap(({ path }) =>

@@ -301,10 +301,10 @@ export default async function CenikVlasyPage() {
         <p className="text-sm text-muted mb-5">{t("processingDesc")}</p>
         <div className="flex flex-wrap gap-2">
           {([
-            { key: "clip-in", href: "/clip-in" },
-            { key: "tape-in", href: "/tape-in" },
-            { key: "keratin", href: "/keratin" },
-            { key: "micro-ring", href: "/micro-ring" },
+            { key: "clip-in", href: "/clip-in-vlasy" },
+            { key: "tape-in", href: "/tape-in-vlasy" },
+            { key: "keratin", href: "/keratinove-vlasy" },
+            { key: "micro-ring", href: "/micro-ring-vlasy" },
             { key: "weft", href: "/tresove-vlasy" },
           ] as const).map(({ key, href }) => (
             <Link

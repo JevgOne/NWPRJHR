@@ -6,10 +6,10 @@ const intlMiddleware = createMiddleware(routing);
 
 /** Old /<category> URLs from product listing → standalone pages (308 permanent redirect) */
 const CATEGORY_REDIRECTS: Record<string, string> = {
-  "clip-in": "/clip-in",
-  "tape-in": "/tape-in",
-  "keratin": "/keratin",
-  "micro-ring": "/micro-ring",
+  "clip-in": "/clip-in-vlasy",
+  "tape-in": "/tape-in-vlasy",
+  "keratin": "/keratinove-vlasy",
+  "micro-ring": "/micro-ring-vlasy",
   "weft": "/tresove-vlasy",
 };
 

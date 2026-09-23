@@ -173,10 +173,10 @@ export default async function SlovanskVlasyPage() {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
-            { key: "clipIn", href: "/clip-in" as const },
-            { key: "tapeIn", href: "/tape-in" as const },
-            { key: "keratin", href: "/keratin" as const },
-            { key: "microRing", href: "/micro-ring" as const },
+            { key: "clipIn", href: "/clip-in-vlasy" as const },
+            { key: "tapeIn", href: "/tape-in-vlasy" as const },
+            { key: "keratin", href: "/keratinove-vlasy" as const },
+            { key: "microRing", href: "/micro-ring-vlasy" as const },
             { key: "weft", href: "/tresove-vlasy" as const },
           ].map((method) => (
             <Link

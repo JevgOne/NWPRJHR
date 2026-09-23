@@ -196,10 +196,10 @@ export function PublicNavbar() {
 
   const offerItems = [
     { href: "/vlasy-k-prodlouzeni", label: t("navbar.hair") },
-    { href: "/clip-in", label: "Clip-in" },
-    { href: "/tape-in", label: "Tape-in" },
-    { href: "/keratin", label: "Keratin" },
-    { href: "/micro-ring", label: "Micro ring" },
+    { href: "/clip-in-vlasy", label: "Clip-in" },
+    { href: "/tape-in-vlasy", label: "Tape-in" },
+    { href: "/keratinove-vlasy", label: "Keratin" },
+    { href: "/micro-ring-vlasy", label: "Micro ring" },
     { href: "/tresove-vlasy", label: t("navbar.weft") },
     { href: "/ofiny", label: t("navbar.bangs") },
     { href: "/prislusenstvi", label: t("nav.accessories") },

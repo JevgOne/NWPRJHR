@@ -251,10 +251,10 @@ export default async function BlogPage() {
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {([
-            { href: "/clip-in", label: { cs: "Clip-in", uk: "Clip-in", ru: "Clip-in" } as Record<string, string> },
-            { href: "/tape-in", label: { cs: "Tape-in", uk: "Tape-in", ru: "Tape-in" } as Record<string, string> },
-            { href: "/keratin", label: { cs: "Keratin", uk: "Кератин", ru: "Кератин" } as Record<string, string> },
-            { href: "/micro-ring", label: { cs: "Micro-ring", uk: "Micro-ring", ru: "Micro-ring" } as Record<string, string> },
+            { href: "/clip-in-vlasy", label: { cs: "Clip-in", uk: "Clip-in", ru: "Clip-in" } as Record<string, string> },
+            { href: "/tape-in-vlasy", label: { cs: "Tape-in", uk: "Tape-in", ru: "Tape-in" } as Record<string, string> },
+            { href: "/keratinove-vlasy", label: { cs: "Keratin", uk: "Кератин", ru: "Кератін" } as Record<string, string> },
+            { href: "/micro-ring-vlasy", label: { cs: "Micro-ring", uk: "Micro-ring", ru: "Micro-ring" } as Record<string, string> },
             { href: "/tresove-vlasy", label: { cs: "Třesové vlasy", uk: "Тресове волосся", ru: "Трессовые волосы" } as Record<string, string> },
           ]).map((item) => (
             <Link

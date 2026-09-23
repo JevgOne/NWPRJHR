@@ -22,10 +22,10 @@ export const CATEGORY_SLUG_MAP: Record<string, ProcessingType> = {
 
 /** Maps old offer slug to standalone URL path */
 export const CATEGORY_STANDALONE_PATHS: Record<string, string> = {
-  "clip-in": "/clip-in",
-  "tape-in": "/tape-in",
-  "keratin": "/keratin",
-  "micro-ring": "/micro-ring",
+  "clip-in": "/clip-in-vlasy",
+  "tape-in": "/tape-in-vlasy",
+  "keratin": "/keratinove-vlasy",
+  "micro-ring": "/micro-ring-vlasy",
   "weft": "/tresove-vlasy",
   "ofiny": "/ofiny",
 };

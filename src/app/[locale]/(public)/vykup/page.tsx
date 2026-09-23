@@ -52,6 +52,33 @@ const jsonLd = {
   areaServed: { "@type": "Country", name: "CZ" },
 };
 
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "Hairland — Výkup vlasů Praha",
+  url: "https://www.hairland.cz/vykup",
+  telephone: "+420608553103",
+  email: "info@hairland.cz",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Školská 660/3",
+    addressLocality: "Praha",
+    addressRegion: "Praha 1",
+    postalCode: "110 00",
+    addressCountry: "CZ",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 50.0804,
+    longitude: 14.4261,
+  },
+  priceRange: "800 Kč - 9 000+ Kč",
+  areaServed: [
+    { "@type": "City", name: "Praha" },
+    { "@type": "Country", name: "Česká republika" },
+  ],
+};
+
 export default async function BuybackPage() {
   const [t, tNav] = await Promise.all([
     getTranslations("buyback"),
@@ -61,7 +88,7 @@ export default async function BuybackPage() {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [1, 2, 3, 4, 5].map((i) => ({
+    mainEntity: [1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({
       "@type": "Question",
       name: t(`faq${i}Q` as "faq1Q"),
       acceptedAnswer: {
@@ -80,6 +107,10 @@ export default async function BuybackPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
 
       {/* Hero */}
@@ -198,6 +229,26 @@ export default async function BuybackPage() {
         </div>
       </section>
 
+      {/* Why sell to us */}
+      <section className="py-12 bg-nude-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ink text-center mb-6">
+            {t("whyUsTitle")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-start gap-3 bg-white rounded-xl border border-line p-4">
+                <span className="text-rose mt-0.5 text-lg">&#10003;</span>
+                <div>
+                  <h3 className="font-semibold text-ink text-sm">{t(`whyUs${i}Title` as any)}</h3>
+                  <p className="text-xs text-muted mt-0.5">{t(`whyUs${i}Desc` as any)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="py-12 bg-nude-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -222,6 +273,23 @@ export default async function BuybackPage() {
         </div>
       </section>
 
+      {/* Where to find us */}
+      <section className="py-12 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ink text-center mb-6">
+            {t("locationTitle")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-start gap-3 bg-nude-50 rounded-xl border border-line p-4">
+                <span className="text-ink font-bold text-sm mt-0.5">{t(`loc${i}Label` as any)}</span>
+                <p className="text-sm text-muted">{t(`loc${i}Value` as any)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="py-12 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -229,7 +297,7 @@ export default async function BuybackPage() {
             {t("faqTitle")}
           </h2>
           <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <details
                 key={i}
                 className="group bg-nude-50 rounded-xl border border-line"
