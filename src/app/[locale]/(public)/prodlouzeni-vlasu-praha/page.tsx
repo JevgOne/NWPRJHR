@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const minPrice = allGramPrices.length > 0 ? Math.round(Math.min(...allGramPrices) / 100) : 0;
 
   const title = `Vlasy k prodloužení Praha — ceník, osobní ukázka zdarma | Hairland`;
-  const desc = `Prémiové RAW vlasy k prodloužení v Praze — skladem i na objednávku. Clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. Osobní konzultace a ukázka vzorků po Praze zdarma.`;
+  const desc = `Prémiové pravé vlasy k prodloužení v Praze — skladem i na objednávku. Clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. Osobní konzultace a ukázka vzorků po Praze zdarma.`;
   return {
     title,
     description: desc,

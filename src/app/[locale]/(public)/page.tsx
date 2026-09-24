@@ -149,8 +149,28 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Hairland",
+  alternateName: ["Hairland.cz"],
+  legalName: "Alvento Solutions s.r.o.",
+  taxID: "24111953",
   url: "https://www.hairland.cz",
   logo: "https://www.hairland.cz/icons/icon-512x512.png",
+  slogan: "Prémiové pravé vlasy k prodloužení",
+  areaServed: {
+    "@type": "Country",
+    name: "Czech Republic",
+  },
+  knowsAbout: [
+    "vlasy k prodloužení",
+    "prodloužení vlasů",
+    "prodlužování vlasů",
+    "clip-in vlasy",
+    "tape-in vlasy",
+    "keratinové vlasy",
+    "micro ring vlasy",
+    "panenské vlasy",
+    "slovanské vlasy",
+    "ukrajinské vlasy",
+  ],
   contactPoint: [
     {
       "@type": "ContactPoint",

@@ -63,4 +63,7 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
+User-agent: GPTBot
+Allow: /
+
 Sitemap: https://www.hairland.cz/sitemap.xml
