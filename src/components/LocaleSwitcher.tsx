@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, useTransition } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/config";
+import { getLocalizedPath } from "@/lib/localized-path";
+
+const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
 
 const localeFlags: Record<Locale, { flag: string; label: string }> = {
   cs: { flag: "🇨🇿", label: "Čeština" },
@@ -13,18 +16,17 @@ const localeFlags: Record<Locale, { flag: string; label: string }> = {
 
 export function LocaleSwitcher() {
   const locale = useLocale() as Locale;
-  const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   function onChange(newLocale: Locale) {
     setOpen(false);
     if (newLocale === locale) return;
-    startTransition(() => {
-      router.replace(pathname as any, { locale: newLocale });
-    });
+    const localizedPath = getLocalizedPath(pathname, newLocale);
+    const prefix = LOCALE_PREFIXES[newLocale] ?? "";
+    const fullPath = localizedPath === "/" ? (prefix || "/") : `${prefix}${localizedPath}`;
+    window.location.href = fullPath;
   }
 
   useEffect(() => {
@@ -40,11 +42,10 @@ export function LocaleSwitcher() {
   const current = localeFlags[locale] || localeFlags.cs;
 
   return (
-    <div ref={ref} className={`relative ${isPending ? "opacity-50" : ""}`}>
+    <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-nude-100 transition-colors text-lg"
-        disabled={isPending}
         title={current.label}
       >
         {current.flag}

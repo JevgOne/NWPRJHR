@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useLocale } from "next-intl";
-import { useTransition } from "react";
 import type { Locale } from "@/i18n/config";
+import { getLocalizedPath } from "@/lib/localized-path";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { useWishlist } from "@/lib/wishlist";
 import { signOut } from "next-auth/react";
@@ -22,21 +22,25 @@ const LOCALES = [
   { code: "ru" as Locale, flag: "🇷🇺", label: "RU" },
 ];
 
+const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
+
 function MobileLocaleSwitcher() {
   const locale = useLocale() as Locale;
-  const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
 
   return (
-    <div className={`flex gap-1 ${isPending ? "opacity-50" : ""}`}>
+    <div className="flex gap-1">
       {LOCALES.map(({ code, flag, label }) => (
         <button
           key={code}
           onClick={() => {
-            if (code !== locale) startTransition(() => router.replace(pathname as any, { locale: code }));
+            if (code !== locale) {
+              const localizedPath = getLocalizedPath(pathname, code);
+              const prefix = LOCALE_PREFIXES[code] ?? "";
+              const fullPath = localizedPath === "/" ? (prefix || "/") : `${prefix}${localizedPath}`;
+              window.location.href = fullPath;
+            }
           }}
-          disabled={isPending}
           className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition-colors ${
             locale === code
               ? "bg-blush-100 text-rose-deep font-medium"
