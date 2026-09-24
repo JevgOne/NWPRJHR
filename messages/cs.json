@@ -78,7 +78,7 @@
     "faqTitle": "Časté dotazy o prodloužení vlasů — kompletní FAQ 2026",
     "faqDescription": "Odpovědi na nejčastější otázky o prodloužení vlasů — metody aplikace, ceny za gram, péče o vlasy, objednávkový proces a doručení po celé ČR.",
     "cityHubTitle": "Prodloužení vlasů v ČR — doručení do všech měst",
-    "cityHubDescription": "Prémiové RAW vlasy k prodloužení s doručením do celé ČR. Praha, Brno, Ostrava, Plzeň a dalších 16 měst. Clip-in, tape-in, keratin."
+    "cityHubDescription": "Prémiové pravé vlasy k prodloužení s doručením do celé ČR. Praha, Brno, Ostrava, Plzeň a dalších 16 měst. Clip-in, tape-in, keratin."
   },
   "roles": {
     "owner": "Majitel",
@@ -770,7 +770,7 @@
       "ctaText": "Prohlédněte si aktuální nabídku nebo nás kontaktujte — rádi poradíme s výběrem.",
       "ctaOffer": "Prohlédnout nabídku",
       "ctaContact": "Kontaktovat nás",
-      "jsonLdDescription": "Prémiové RAW vlasy k prodloužení z přímého importu"
+      "jsonLdDescription": "Prémiové pravé vlasy k prodloužení z přímého importu"
     },
     "products": {
       "title": "Prodej pravých vlasů k prodloužení — Praha",
@@ -1699,11 +1699,11 @@
       "q5": "Posíláte i mimo Prahu / do zahraničí?",
       "a5": "Ano, doručujeme do celé ČR (Zásilkovna, Česká pošta) obvykle do 2 pracovních dnů. Doručení po Praze je osobně zdarma. Podrobnosti na stránce Doprava.",
       "q6": "Jsou vaše vlasy skutečně 100% pravé?",
-      "a6": "Ano, prodáváme výhradně 100% pravé RAW lidské vlasy. Žádné syntetické příměsi, žádné silikonové povlaky. Každý svazek je od jedné dárkyně.",
+      "a6": "Ano, prodáváme výhradně 100% pravé přírodní lidské vlasy. Žádné syntetické příměsi, žádné silikonové povlaky. Každý svazek je od jedné dárkyně.",
       "q7": "Jaký je rozdíl mezi Virgin, Luxe a Standard?",
       "a7": "Virgin = neošetřené panenské vlasy (nejvyšší kvalita), Luxe = prémiové slovanské vlasy, Standard = kvalitní vlasy za výhodnou cenu. Podrobné srovnání najdete v nabídce vlasů.",
-      "q8": "Co znamená RAW vlasy?",
-      "a8": "RAW vlasy jsou vlasy v přírodním stavu — nebarvené, nechemicky ošetřené, s neporušenou kutikuly (vnější vrstvou). Jsou nejodolnější a vydrží nejdéle.",
+      "q8": "Co znamená přírodní nezpracované vlasy?",
+      "a8": "Přírodní nezpracované vlasy jsou vlasy v přírodním stavu — nebarvené, nechemicky ošetřené, s neporušenou kutikuly (vnější vrstvou). Jsou nejodolnější a vydrží nejdéle.",
       "q9": "Odkud pochází vaše vlasy?",
       "a9": "Dovážíme vlasy přímo z Ukrajiny, Běloruska, Moldavska a dalších zemí. Přímý import bez prostředníků zajišťuje kvalitu i férovou cenu.",
       "q10": "Jak poznám správný odstín?",
@@ -1735,7 +1735,7 @@
       "q23": "Jak pečovat o prodloužené vlasy?",
       "a23": "Správná péče zahrnuje šetrné mytí (bezsilikátový šampon), kondicionér pouze na délky, rozčesávání speciálním hřebenem od konečků a chránění spojů před oleji. Kompletní návod najdete na stránce Péče o vlasy.",
       "q24": "Mohu prodloužené vlasy barvit?",
-      "a24": "RAW a virgin vlasy lze barvit, ale doporučujeme svěřit to profesionálovi. Barvení může zkrátit životnost vlasů. Detaily v návodu na péči.",
+      "a24": "Přírodní a virgin vlasy lze barvit, ale doporučujeme svěřit to profesionálovi. Barvení může zkrátit životnost vlasů. Detaily v návodu na péči.",
       "q25": "Jak často musím chodit na údržbu?",
       "a25": "Tape-in: každých 6–8 týdnů. Keratin: každé 3–5 měsíce. Micro-ring: každé 3–4 měsíce. Clip-in: žádná údržba.",
       "q26": "Co zničí prodloužené vlasy?",
@@ -4138,7 +4138,7 @@
     "home": "Domů",
     "hubBreadcrumb": "Prodloužení vlasů",
     "hubTitle": "Prodloužení vlasů — doručení do celé ČR",
-    "hubSubtitle": "Prémiové RAW vlasy s doručením do 1–2 pracovních dnů. Vyberte své město.",
+    "hubSubtitle": "Prémiové pravé vlasy s doručením do 1–2 pracovních dnů. Vyberte své město.",
     "hubPraha": "Hledáte prodloužení vlasů v Praze? Navštivte naši pražskou stránku.",
     "hubPrahaLink": "Prodloužení vlasů Praha",
     "whyTitle": "Proč si vybrat Hairland?",

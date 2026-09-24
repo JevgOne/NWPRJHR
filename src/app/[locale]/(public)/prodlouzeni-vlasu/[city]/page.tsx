@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = minPrice > 0
     ? `Vlasy k prodloužení ${cityName} — ceník od ${minPrice} Kč/g | Hairland`
     : `Vlasy k prodloužení ${cityName} | Hairland`;
-  const desc = `Vlasy k prodloužení ${cityName} — clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. 100% pravé RAW vlasy. Rychlé doručení. Osobní konzultace zdarma.`;
+  const desc = `Vlasy k prodloužení ${cityName} — clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. 100% pravé přírodní vlasy. Rychlé doručení. Osobní konzultace zdarma.`;
 
   return {
     title,

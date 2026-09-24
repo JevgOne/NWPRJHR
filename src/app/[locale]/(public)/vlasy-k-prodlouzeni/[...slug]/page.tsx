@@ -630,7 +630,7 @@ async function ProductDetailView({
       { q: "Mohu panenské vlasy barvit?", a: "Ano, panenské vlasy lze barvit, odbarvovat i jinak chemicky upravovat. Díky tomu, že nebyly dříve ošetřeny, reagují na barvení velmi dobře a výsledek je přirozený." },
       { q: "Jak pečovat o panenské vlasy po barvení?", a: "Po barvení používejte šampony bez sulfátů určené pro barvené vlasy. Aplikujte hluboce hydratační masku minimálně 1× týdně a vlasový olej na konečky. Mezi barvením dodržujte alespoň 6–8 týdnů odstup." },
       { q: "Jak pečovat o panenské vlasy?", a: "Používejte šampony bez sulfátů, pravidelně aplikujte kondicionér a vlasový olej. Před spaním vlasy spleťte do volného copu. Vyhněte se nadměrnému tepelnému stylingu a vždy používejte termoochranný sprej." },
-      { q: "Odkud pochází panenské vlasy Hairland?", a: "Naše RAW panenské vlasy pocházejí z východní Evropy — především z Ukrajiny, Běloruska a Moldavska. Východoevropské vlasy mají jemnou strukturu blízkou středoevropským vlasům, proto vypadají naprosto přirozeně." },
+      { q: "Odkud pochází panenské vlasy Hairland?", a: "Naše panenské vlasy pocházejí z východní Evropy — především z Ukrajiny, Běloruska a Moldavska. Východoevropské vlasy mají jemnou strukturu blízkou středoevropským vlasům, proto vypadají naprosto přirozeně." },
     ],
     LUXE: [
       { q: "Jaký je rozdíl mezi luxe a panenskými vlasy?", a: "Luxe vlasy prošly šetrným zpracováním, které zachovává přirozenou strukturu, zatímco panenské vlasy jsou zcela neošetřené. Luxe vlasy nabízejí prémiovou kvalitu prodloužení za příznivější cenu." },
@@ -655,12 +655,12 @@ async function ProductDetailView({
   };
   const generalFaq: Array<{ q: string; a: string }> = [
     // Textura
-    { q: "Jaký je rozdíl mezi rovnými, vlnitými a kudrnatými vlasy?", a: "Rovné vlasy jsou nejuniverzálnější — snadno se stylují a vypadají přirozeně. Vlnité přírodní vlasy dodávají objem a romantický look. Kudrnaté vlasy jsou ideální pro maximální objem. Všechny textury nabízíme jako RAW nezpracované vlasy, které si zachovávají svou přirozenou strukturu." },
+    { q: "Jaký je rozdíl mezi rovnými, vlnitými a kudrnatými vlasy?", a: "Rovné vlasy jsou nejuniverzálnější — snadno se stylují a vypadají přirozeně. Vlnité přírodní vlasy dodávají objem a romantický look. Kudrnaté vlasy jsou ideální pro maximální objem. Všechny textury nabízíme jako nezpracované vlasy, které si zachovávají svou přirozenou strukturu." },
     { q: "Jak pečovat o rovné prodloužené vlasy?", a: "Rovné vlasy k prodloužení udržíte hladké pravidelným kartáčováním speciálním kartáčem od konečků nahoru. Aplikujte lehký olej nebo sérum na konečky. Při sušení fénem směřujte proud vzduchu od kořínků ke konečkům, aby vlasy zůstaly lesklé." },
     { q: "Jak pečovat o vlnité a kudrnaté vlasy?", a: "Vlnité a kudrnaté vlasy rozčesávejte pouze za mokra hřebenem s širokými zuby. Používejte hydratační masky a bezoplachové kondicionéry. Nechte vlasy uschnout přirozeně nebo použijte difuzér — kartáčování za sucha narušuje přirozený vzor vln." },
     // Objednávka a zpracování
-    { q: "Co jsou RAW vlasy a jak se liší od hotových příčesků?", a: "RAW vlasy jsou přírodní nezpracované lidské vlasy s neporušenou kutikulou — nejvyšší možná kvalita pro prodloužení vlasů. Na rozdíl od hotových příčesků z obchodu se RAW vlasy zpracovávají na zakázku přesně podle vašich požadavků — clip-in, tape-in, keratin nebo micro ring." },
-    { q: "Jak probíhá objednávka vlasů na míru?", a: "Vyberete si RAW vlasy (kategorie, délka, barva, textura) a zvolíte způsob zpracování — clip-in, tape-in, keratin nebo micro ring. Zakázkové zpracování trvá přibližně 7 pracovních dní. Kontaktujte nás přes telefon +420 608 553 103, WhatsApp nebo Instagram pro konzultaci." },
+    { q: "Co jsou přírodní nezpracované vlasy a jak se liší od hotových příčesků?", a: "Přírodní nezpracované vlasy jsou lidské vlasy s neporušenou kutikulou — nejvyšší možná kvalita pro prodloužení vlasů. Na rozdíl od hotových příčesků z obchodu se tyto vlasy zpracovávají na zakázku přesně podle vašich požadavků — clip-in, tape-in, keratin nebo micro ring." },
+    { q: "Jak probíhá objednávka vlasů na míru?", a: "Vyberete si vlasy (kategorie, délka, barva, textura) a zvolíte způsob zpracování — clip-in, tape-in, keratin nebo micro ring. Zakázkové zpracování trvá přibližně 7 pracovních dní. Kontaktujte nás přes telefon +420 608 553 103, WhatsApp nebo Instagram pro konzultaci." },
     { q: "Kolik gramů vlasů potřebuji k prodloužení?", a: "Záleží na požadovaném objemu a délce vlastních vlasů. Pro jemné doplnění hustoty stačí 100 g, pro střední objem 150 g a pro plný objem nebo velmi dlouhé prodloužení 200 g a více. Podrobný průvodce gramáží najdete na naší stránce." },
     // Konzultace a doručení
     { q: "Nabízíte osobní konzultaci před nákupem?", a: "Ano, nabízíme bezplatnou osobní konzultaci v Praze, kde vám pomůžeme vybrat správný odstín, délku a gramáž přírodních vlasů k prodloužení. Můžete si vlasy prohlédnout a osahat naživo. Konzultaci si domluvte na +420 608 553 103 nebo přes WhatsApp." },
@@ -669,7 +669,7 @@ async function ProductDetailView({
     { q: "Jaké platební metody přijímáte?", a: "Přijímáme platbu bankovním převodem a hotovost při osobním převzetí v Praze. Pro B2B zákazníky (kadeřníky a salony) nabízíme fakturaci se splatností." },
     { q: "Mohu vlasy vrátit, pokud mi nesedí?", a: "Nepoužité vlasy v původním obalu lze vrátit do 14 dnů od převzetí. Vlasy nesmí být střižené, barvené ani jinak upravované. Kontaktujte nás a domluvíme se na postupu vrácení nebo výměny." },
     // B2B
-    { q: "Spolupracujete s kadeřníky a salony?", a: "Ano, nabízíme zvýhodněné B2B ceny prémiových RAW vlasů pro kadeřníky a salony. Zajistíme pravidelné dodávky, fakturaci a individuální velkoobchodní podmínky. Kontaktujte nás pro nezávaznou nabídku." },
+    { q: "Spolupracujete s kadeřníky a salony?", a: "Ano, nabízíme zvýhodněné B2B ceny prémiových vlasů pro kadeřníky a salony. Zajistíme pravidelné dodávky, fakturaci a individuální velkoobchodní podmínky. Kontaktujte nás pro nezávaznou nabídku." },
   ];
   const categoryFaq = faqByCategory[product.category] ?? [];
   const allFaq = [...categoryFaq, ...generalFaq];

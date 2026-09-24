@@ -64,7 +64,7 @@ export async function GET() {
 
   let content = `# Hairland.cz — Kompletni obsah
 
-> Premiove 100% prave lidske vlasy k prodlouzeni. E-shop s RAW vlasy — slovanske, ukrajinske, panenske. Praha.
+> Premiove 100% prave lidske vlasy k prodlouzeni. E-shop s pravymi vlasy — slovanske, ukrajinske, panenske. Praha.
 
 ---
 

@@ -1,15 +1,15 @@
 export function GET() {
   const content = `# Hairland.cz
 
-> Prémiový e-shop s 100% pravými lidskými vlasy k prodloužení. Prodej RAW vlasů — slovanské, ukrajinské, panenské. Osobní konzultace a ukázka v Praze zdarma. B2B program pro kadeřnice a salony.
+> Prémiový e-shop s 100% pravými lidskými vlasy k prodloužení. Prodej prémiových pravých vlasů — slovanské, ukrajinské, panenské. Osobní konzultace a ukázka v Praze zdarma. B2B program pro kadeřnice a salony.
 
-Hairland.cz je český e-shop specializovaný na prodej prémiových 100% lidských vlasů k prodloužení. Nabízíme RAW vlasy slovanského, ukrajinského a panenského (virgin) původu. Provozovatelem je Alvento Solutions s.r.o., IČO 24111953, se sídlem Školská 660/3, 110 00 Praha 1. Kontakt: info@hairland.cz, +420 608 553 103.
+Hairland.cz je český e-shop specializovaný na prodej prémiových 100% lidských vlasů k prodloužení. Nabízíme pravé vlasy slovanského, ukrajinského a panenského (virgin) původu. Provozovatelem je Alvento Solutions s.r.o., IČO 24111953, se sídlem Školská 660/3, 110 00 Praha 1. Kontakt: info@hairland.cz, +420 608 553 103.
 
 ## Produkty
 
 Kompletní katalog vlasů k prodloužení ve všech metodách aplikace. Cenové rozpětí: 500–17 000 Kč.
 
-- [Všechny vlasy k prodloužení](https://www.hairland.cz/vlasy-k-prodlouzeni): Kompletní nabídka RAW vlasů
+- [Všechny vlasy k prodloužení](https://www.hairland.cz/vlasy-k-prodlouzeni): Kompletní nabídka pravých vlasů
 - [Keratinové vlasy](https://www.hairland.cz/keratinove-vlasy): Prodloužení keratinovou metodou, jednotlivé prameny
 - [Micro-ring vlasy](https://www.hairland.cz/micro-ring-vlasy): Prodloužení micro-ring kroužky, bez tepla
 - [Tape-in vlasy](https://www.hairland.cz/tape-in-vlasy): Páskové prodloužení, rychlá aplikace

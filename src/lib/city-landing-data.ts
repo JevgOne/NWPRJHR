@@ -18,9 +18,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Brno", uk: "Брно", ru: "Брно" },
     region: { cs: "Jihomoravský kraj", uk: "Південноморавський край", ru: "Южноморавский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Brna do 2 pracovních dnů. Clip-in, tape-in, keratin, micro-ring. Osobní konzultace po domluvě.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Брна протягом 2 робочих днів. Clip-in, tape-in, кератин, micro-ring.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Брно в течение 2 рабочих дней. Clip-in, tape-in, кератин, micro-ring.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Brna do 2 pracovních dnů. Clip-in, tape-in, keratin, micro-ring. Osobní konzultace po domluvě.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Брна протягом 2 робочих днів. Clip-in, tape-in, кератин, micro-ring.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Брно в течение 2 рабочих дней. Clip-in, tape-in, кератин, micro-ring.",
     },
     deliveryNote: {
       cs: "Doručení do Brna do 2 pracovních dnů přes Zásilkovnu nebo Českou poštu. Osobní vyzvednutí vzorků v Praze.",
@@ -51,7 +51,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy skutečně 100% pravé?", uk: "Чи ваше волосся дійсно 100% натуральне?", ru: "Ваши волосы действительно 100% натуральные?" },
-        a: { cs: "Ano, prodáváme výhradně 100% pravé RAW lidské vlasy. Žádné syntetické příměsi, žádné silikonové povlaky. Každý svazek je od jedné dárkyně.", uk: "Так, ми продаємо виключно 100% натуральне RAW людське волосся. Жодних синтетичних домішок, жодних силіконових покриттів.", ru: "Да, мы продаём исключительно 100% натуральные RAW человеческие волосы. Никаких синтетических примесей, никаких силиконовых покрытий." },
+        a: { cs: "Ano, prodáváme výhradně 100% pravé přírodní lidské vlasy. Žádné syntetické příměsi, žádné silikonové povlaky. Každý svazek je od jedné dárkyně.", uk: "Так, ми продаємо виключно 100% натуральне справжнє людське волосся. Жодних синтетичних домішок, жодних силіконових покриттів.", ru: "Да, мы продаём исключительно 100% натуральные настоящие человеческие волосы. Никаких синтетических примесей, никаких силиконовых покрытий." },
       },
       {
         q: { cs: "Jak probíhá objednávka online?", uk: "Як проходить онлайн-замовлення?", ru: "Как проходит онлайн-заказ?" },
@@ -65,9 +65,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Ostrava", uk: "Острава", ru: "Острава" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Ostravy do 2 pracovních dnů. Clip-in, tape-in, keratin, micro-ring. Prodej na gramy, Praha zdarma.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Острави протягом 2 робочих днів.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Остраву в течение 2 рабочих дней.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Ostravy do 2 pracovních dnů. Clip-in, tape-in, keratin, micro-ring. Prodej na gramy, Praha zdarma.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Острави протягом 2 робочих днів.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Остраву в течение 2 рабочих дней.",
     },
     deliveryNote: {
       cs: "Doručení do Ostravy do 2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -98,7 +98,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy skutečně 100% pravé?", uk: "Чи ваше волосся дійсно 100% натуральне?", ru: "Ваши волосы действительно 100% натуральные?" },
-        a: { cs: "Ano, prodáváme výhradně 100% pravé RAW lidské vlasy bez syntetických příměsí.", uk: "Так, ми продаємо виключно 100% натуральне RAW людське волосся без синтетичних домішок.", ru: "Да, мы продаём исключительно 100% натуральные RAW человеческие волосы без синтетических примесей." },
+        a: { cs: "Ano, prodáváme výhradně 100% pravé přírodní lidské vlasy bez syntetických příměsí.", uk: "Так, ми продаємо виключно 100% натуральне справжнє людське волосся без синтетичних домішок.", ru: "Да, мы продаём исключительно 100% натуральные настоящие человеческие волосы без синтетических примесей." },
       },
       {
         q: { cs: "Jak probíhá objednávka online?", uk: "Як проходить онлайн-замовлення?", ru: "Как проходит онлайн-заказ?" },
@@ -112,9 +112,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Plzeň", uk: "Пльзень", ru: "Пльзень" },
     region: { cs: "Plzeňský kraj", uk: "Пльзенський край", ru: "Пльзенский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Plzně. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Пльзня. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Пльзень. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Plzně. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Пльзня. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Пльзень. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Plzně do 1–2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -145,7 +145,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy skutečně 100% pravé?", uk: "Чи ваше волосся дійсно 100% натуральне?", ru: "Ваши волосы действительно 100% натуральные?" },
-        a: { cs: "Ano, prodáváme výhradně 100% pravé RAW lidské vlasy bez syntetických příměsí.", uk: "Так, виключно 100% натуральне RAW людське волосся без синтетичних домішок.", ru: "Да, исключительно 100% натуральные RAW человеческие волосы без синтетических примесей." },
+        a: { cs: "Ano, prodáváme výhradně 100% pravé přírodní lidské vlasy bez syntetických příměsí.", uk: "Так, виключно 100% натуральне справжнє людське волосся без синтетичних домішок.", ru: "Да, исключительно 100% натуральные настоящие человеческие волосы без синтетических примесей." },
       },
       {
         q: { cs: "Jak probíhá objednávka online?", uk: "Як проходить онлайн-замовлення?", ru: "Как проходит онлайн-заказ?" },
@@ -159,9 +159,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Liberec", uk: "Ліберець", ru: "Либерец" },
     region: { cs: "Liberecký kraj", uk: "Ліберецький край", ru: "Либерецкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Liberce. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Лібереця. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Либерец. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Liberce. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Лібереця. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Либерец. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Liberce do 1–2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -192,7 +192,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy skutečně 100% pravé?", uk: "Чи ваше волосся дійсно 100% натуральне?", ru: "Ваши волосы действительно 100% натуральные?" },
-        a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy bez syntetických příměsí.", uk: "Так, виключно 100% натуральне RAW людське волосся.", ru: "Да, исключительно 100% натуральные RAW человеческие волосы." },
+        a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy bez syntetických příměsí.", uk: "Так, виключно 100% натуральне справжнє людське волосся.", ru: "Да, исключительно 100% натуральные настоящие человеческие волосы." },
       },
       {
         q: { cs: "Jak probíhá objednávka online?", uk: "Як проходить онлайн-замовлення?", ru: "Как проходит онлайн-заказ?" },
@@ -206,9 +206,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Olomouc", uk: "Оломоуц", ru: "Оломоуц" },
     region: { cs: "Olomoucký kraj", uk: "Оломоуцький край", ru: "Оломоуцкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Olomouce. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Оломоуця. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Оломоуц. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Olomouce. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Оломоуця. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Оломоуц. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Olomouce do 2 pracovních dnů přes Zásilkovnu nebo Českou poštu.",
@@ -239,7 +239,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy skutečně 100% pravé?", uk: "Чи ваше волосся дійсно 100% натуральне?", ru: "Ваши волосы действительно 100% натуральные?" },
-        a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW людське волосся.", ru: "Да, исключительно 100% натуральные RAW человеческие волосы." },
+        a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє людське волосся.", ru: "Да, исключительно 100% натуральные настоящие человеческие волосы." },
       },
       {
         q: { cs: "Jak probíhá objednávka online?", uk: "Як проходить онлайн-замовлення?", ru: "Как проходит онлайн-заказ?" },
@@ -253,9 +253,9 @@ export const CITIES: CityData[] = [
     name: { cs: "České Budějovice", uk: "Чеські Будейовіце", ru: "Ческе-Будеёвице" },
     region: { cs: "Jihočeský kraj", uk: "Південночеський край", ru: "Южночешский край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Českých Budějovic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy. Zásilkovna 1–2 dny.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Чеських Будейовіц. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Ческе-Будеёвице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Českých Budějovic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy. Zásilkovna 1–2 dny.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Чеських Будейовіц. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Ческе-Будеёвице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Českých Budějovic do 1–2 pracovních dnů.",
@@ -286,7 +286,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" },
-        a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW людське волосся.", ru: "Да, исключительно 100% натуральные RAW человеческие волосы." },
+        a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє людське волосся.", ru: "Да, исключительно 100% натуральные настоящие человеческие волосы." },
       },
       {
         q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" },
@@ -300,9 +300,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Hradec Králové", uk: "Градець Кралове", ru: "Градец-Кралове" },
     region: { cs: "Královéhradecký kraj", uk: "Краловоградецький край", ru: "Краловеградецкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Hradce Králové. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Градця Кралове. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Градец-Кралове. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Hradce Králové. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Градця Кралове. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Градец-Кралове. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: {
       cs: "Doručení do Hradce Králové do 1–2 pracovních dnů.",
@@ -333,7 +333,7 @@ export const CITIES: CityData[] = [
       },
       {
         q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" },
-        a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." },
+        a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." },
       },
       {
         q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" },
@@ -347,9 +347,9 @@ export const CITIES: CityData[] = [
     name: { cs: "Pardubice", uk: "Пардубіце", ru: "Пардубице" },
     region: { cs: "Pardubický kraj", uk: "Пардубіцький край", ru: "Пардубицкий край" },
     description: {
-      cs: "Prémiové RAW vlasy k prodloužení s doručením do Pardubic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
-      uk: "Преміальне RAW волосся для нарощування з доставкою до Пардубіц. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
-      ru: "Премиальные RAW волосы для наращивания с доставкой в Пардубице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
+      cs: "Prémiové pravé vlasy k prodloužení s doručením do Pardubic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.",
+      uk: "Преміальне натуральне волосся для нарощування з доставкою до Пардубіц. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.",
+      ru: "Премиальные натуральные волосы для наращивания с доставкой в Пардубице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня.",
     },
     deliveryNote: { cs: "Doručení do Pardubic do 1–2 pracovních dnů.", uk: "Доставка до Пардубіц протягом 1–2 робочих днів.", ru: "Доставка в Пардубице в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram. Osobní konzultace v Praze.", uk: "Онлайн-консультація через WhatsApp або Telegram. Особиста консультація в Празі.", ru: "Онлайн-консультация через WhatsApp или Telegram. Личная консультация в Праге." },
@@ -358,7 +358,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení do Pardubic?", uk: "Скільки часу займає доставка до Пардубіц?", ru: "Сколько времени занимает доставка в Пардубице?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся особисто?", ru: "Могу ли я лично посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, zvolte délku a gramáž, přidejte do košíku.", uk: "Виберіть волосся, оберіть довжину та грамаж, додайте в кошик.", ru: "Выберите волосы, укажите длину и граммаж, добавьте в корзину." } },
     ],
     geo: { lat: 50.0343, lng: 15.7812 },
@@ -367,7 +367,7 @@ export const CITIES: CityData[] = [
     slug: "zlin",
     name: { cs: "Zlín", uk: "Злін", ru: "Злин" },
     region: { cs: "Zlínský kraj", uk: "Злінський край", ru: "Злинский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Zlína. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Зліна. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Злин. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Zlína. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Зліна. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Злин. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Zlína do 2 pracovních dnů.", uk: "Доставка до Зліна протягом 2 робочих днів.", ru: "Доставка в Злин в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -375,7 +375,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení do Zlína?", uk: "Скільки часу займає доставка до Зліна?", ru: "Сколько времени занимает доставка в Злин?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, zvolte délku a gramáž, přidejte do košíku.", uk: "Виберіть волосся, оберіть довжину та грамаж, додайте в кошик.", ru: "Выберите волосы, укажите длину и граммаж, добавьте в корзину." } },
     ],
     geo: { lat: 49.2267, lng: 17.6669 },
@@ -384,7 +384,7 @@ export const CITIES: CityData[] = [
     slug: "karlovy-vary",
     name: { cs: "Karlovy Vary", uk: "Карлові Вари", ru: "Карловы Вары" },
     region: { cs: "Karlovarský kraj", uk: "Карловарський край", ru: "Карловарский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Karlových Varů. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Карлових Варів. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Карловы Вары. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Karlových Varů. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Карлових Варів. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Карловы Вары. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Karlových Varů do 1–2 pracovních dnů.", uk: "Доставка до Карлових Варів протягом 1–2 робочих днів.", ru: "Доставка в Карловы Вары в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -392,7 +392,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení do Karlových Varů?", uk: "Скільки часу займає доставка до Карлових Варів?", ru: "Сколько времени занимает доставка в Карловы Вары?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, zvolte délku a gramáž, přidejte do košíku.", uk: "Виберіть волосся, оберіть довжину та грамаж, додайте в кошик.", ru: "Выберите волосы, укажите длину и граммаж, добавьте в корзину." } },
     ],
     geo: { lat: 50.2325, lng: 12.8713 },
@@ -401,7 +401,7 @@ export const CITIES: CityData[] = [
     slug: "usti-nad-labem",
     name: { cs: "Ústí nad Labem", uk: "Усті-над-Лабем", ru: "Усти-над-Лабем" },
     region: { cs: "Ústecký kraj", uk: "Устецький край", ru: "Устецкий край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Ústí nad Labem. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Усті-над-Лабем. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Усти-над-Лабем. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Ústí nad Labem. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Усті-над-Лабем. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Усти-над-Лабем. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Ústí nad Labem do 1–2 pracovních dnů.", uk: "Доставка до Усті-над-Лабем протягом 1–2 робочих днів.", ru: "Доставка в Усти-над-Лабем в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -409,7 +409,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, zvolte délku a gramáž, přidejte do košíku.", uk: "Виберіть волосся, оберіть довжину та грамаж, додайте в кошик.", ru: "Выберите волосы, укажите длину и граммаж, добавьте в корзину." } },
     ],
     geo: { lat: 50.6607, lng: 14.0323 },
@@ -418,7 +418,7 @@ export const CITIES: CityData[] = [
     slug: "jihlava",
     name: { cs: "Jihlava", uk: "Їглава", ru: "Йиглава" },
     region: { cs: "Kraj Vysočina", uk: "Край Височина", ru: "Край Высочина" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Jihlavy. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Їглави. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Йиглаву. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Jihlavy. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Їглави. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Йиглаву. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Jihlavy do 1–2 pracovních dnů.", uk: "Доставка до Їглави протягом 1–2 робочих днів.", ru: "Доставка в Йиглаву в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -426,7 +426,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 49.3961, lng: 15.5912 },
@@ -435,7 +435,7 @@ export const CITIES: CityData[] = [
     slug: "kladno",
     name: { cs: "Kladno", uk: "Кладно", ru: "Кладно" },
     region: { cs: "Středočeský kraj", uk: "Середньочеський край", ru: "Среднечешский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Kladna. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1 den.", uk: "Преміальне RAW волосся для нарощування з доставкою до Кладна. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1 день.", ru: "Премиальные RAW волосы для наращивания с доставкой в Кладно. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1 день." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Kladna. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1 den.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Кладна. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1 день.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Кладно. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1 день." },
     deliveryNote: { cs: "Doručení do Kladna do 1 pracovního dne — blízko Prahy.", uk: "Доставка до Кладна протягом 1 робочого дня — поруч з Прагою.", ru: "Доставка в Кладно в течение 1 рабочего дня — рядом с Прагой." },
     consultNote: { cs: "Online konzultace nebo osobní v Praze — Kladno je kousek.", uk: "Онлайн-консультація або особиста в Празі — Кладно поруч.", ru: "Онлайн-консультация или личная в Праге — Кладно рядом." },
     faq: [
@@ -443,7 +443,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení do Kladna?", uk: "Скільки часу займає доставка до Кладна?", ru: "Сколько времени занимает доставка в Кладно?" }, a: { cs: "Doručení do Kladna obvykle trvá 1 pracovní den.", uk: "Доставка до Кладна зазвичай займає 1 робочий день.", ru: "Доставка в Кладно обычно занимает 1 рабочий день." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Ano, Kladno je blízko Prahy — osobní konzultace v Praze.", uk: "Так, Кладно поруч з Прагою — особиста консультація в Празі.", ru: "Да, Кладно рядом с Прагой — личная консультация в Праге." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 50.1433, lng: 14.1053 },
@@ -452,7 +452,7 @@ export const CITIES: CityData[] = [
     slug: "mlada-boleslav",
     name: { cs: "Mladá Boleslav", uk: "Млада Болеслав", ru: "Млада-Болеслав" },
     region: { cs: "Středočeský kraj", uk: "Середньочеський край", ru: "Среднечешский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Mladé Boleslavi. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1 den.", uk: "Преміальне RAW волосся для нарощування з доставкою до Млади Болеслав. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1 день.", ru: "Премиальные RAW волосы для наращивания с доставкой в Младу-Болеслав. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1 день." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Mladé Boleslavi. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1 den.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Млади Болеслав. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1 день.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Младу-Болеслав. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1 день." },
     deliveryNote: { cs: "Doručení do Mladé Boleslavi do 1 pracovního dne.", uk: "Доставка до Млади Болеслав протягом 1 робочого дня.", ru: "Доставка в Младу-Болеслав в течение 1 рабочего дня." },
     consultNote: { cs: "Online konzultace přes WhatsApp. Osobní konzultace v Praze.", uk: "Онлайн-консультація через WhatsApp. Особиста консультація в Празі.", ru: "Онлайн-консультация через WhatsApp. Личная консультация в Праге." },
     faq: [
@@ -460,7 +460,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1 pracovní den.", uk: "Доставка зазвичай займає 1 робочий день.", ru: "Доставка обычно занимает 1 рабочий день." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 50.4111, lng: 14.9069 },
@@ -469,7 +469,7 @@ export const CITIES: CityData[] = [
     slug: "havirov",
     name: { cs: "Havířov", uk: "Гавіржов", ru: "Гавиржов" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Havířova. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Гавіржова. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Гавиржов. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Havířova. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Гавіржова. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Гавиржов. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Havířova do 2 pracovních dnů.", uk: "Доставка до Гавіржова протягом 2 робочих днів.", ru: "Доставка в Гавиржов в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -477,7 +477,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 49.7797, lng: 18.4342 },
@@ -486,7 +486,7 @@ export const CITIES: CityData[] = [
     slug: "opava",
     name: { cs: "Opava", uk: "Опава", ru: "Опава" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Opavy. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Опави. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Опаву. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Opavy. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Опави. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Опаву. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Opavy do 2 pracovních dnů.", uk: "Доставка до Опави протягом 2 робочих днів.", ru: "Доставка в Опаву в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -494,7 +494,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 49.9381, lng: 17.9026 },
@@ -503,7 +503,7 @@ export const CITIES: CityData[] = [
     slug: "frydek-mistek",
     name: { cs: "Frýdek-Místek", uk: "Фридек-Містек", ru: "Фридек-Мистек" },
     region: { cs: "Moravskoslezský kraj", uk: "Моравськосілезький край", ru: "Моравскосилезский край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Frýdku-Místku. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Фридека-Містека. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой во Фридек-Мистек. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Frýdku-Místku. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Фридека-Містека. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой во Фридек-Мистек. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Frýdku-Místku do 2 pracovních dnů.", uk: "Доставка до Фридека-Містека протягом 2 робочих днів.", ru: "Доставка во Фридек-Мистек в течение 2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -511,7 +511,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 49.6880, lng: 18.3509 },
@@ -520,7 +520,7 @@ export const CITIES: CityData[] = [
     slug: "teplice",
     name: { cs: "Teplice", uk: "Тепліце", ru: "Теплице" },
     region: { cs: "Ústecký kraj", uk: "Устецький край", ru: "Устецкий край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Teplic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Тепліце. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Теплице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Teplic. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Тепліце. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Теплице. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Teplic do 1–2 pracovních dnů.", uk: "Доставка до Тепліце протягом 1–2 робочих днів.", ru: "Доставка в Теплице в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -528,7 +528,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 50.6405, lng: 13.8245 },
@@ -537,7 +537,7 @@ export const CITIES: CityData[] = [
     slug: "most",
     name: { cs: "Most", uk: "Мост", ru: "Мост" },
     region: { cs: "Ústecký kraj", uk: "Устецький край", ru: "Устецкий край" },
-    description: { cs: "Prémiové RAW vlasy k prodloužení s doručením do Mostu. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне RAW волосся для нарощування з доставкою до Моста. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные RAW волосы для наращивания с доставкой в Мост. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
+    description: { cs: "Prémiové pravé vlasy k prodloužení s doručením do Mostu. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy od 45 Kč/g. Zásilkovna 1–2 dny.", uk: "Преміальне натуральне волосся для нарощування з доставкою до Моста. Virgin, Luxe та Standard якість, довжини 35–70 см. Продаж на грами від 45 Kč/г. Zásilkovna 1–2 дні.", ru: "Премиальные натуральные волосы для наращивания с доставкой в Мост. Virgin, Luxe и Standard качество, длины 35–70 см. Продажа на граммы от 45 Kč/г. Zásilkovna 1–2 дня." },
     deliveryNote: { cs: "Doručení do Mostu do 1–2 pracovních dnů.", uk: "Доставка до Моста протягом 1–2 робочих днів.", ru: "Доставка в Мост в течение 1–2 рабочих дней." },
     consultNote: { cs: "Online konzultace přes WhatsApp nebo Telegram.", uk: "Онлайн-консультація через WhatsApp або Telegram.", ru: "Онлайн-консультация через WhatsApp или Telegram." },
     faq: [
@@ -545,7 +545,7 @@ export const CITIES: CityData[] = [
       { q: { cs: "Jak dlouho trvá doručení?", uk: "Скільки часу займає доставка?", ru: "Сколько времени занимает доставка?" }, a: { cs: "Doručení obvykle trvá 1–2 pracovní dny.", uk: "Доставка зазвичай займає 1–2 робочі дні.", ru: "Доставка обычно занимает 1–2 рабочих дня." } },
       { q: { cs: "Mohu si vlasy vyzkoušet osobně?", uk: "Чи можу я оглянути волосся?", ru: "Могу ли я посмотреть волосы?" }, a: { cs: "Osobní konzultace v Praze. Online přes WhatsApp.", uk: "Особиста консультація в Празі. Онлайн через WhatsApp.", ru: "Личная консультация в Праге. Онлайн через WhatsApp." } },
       { q: { cs: "Jaké metody prodloužení nabízíte?", uk: "Які методи нарощування ви пропонуєте?", ru: "Какие методы наращивания вы предлагаете?" }, a: { cs: "Clip-in, tape-in, keratin, micro-ring, tresy a ofiny.", uk: "Clip-in, tape-in, кератин, micro-ring, треси та чубчики.", ru: "Clip-in, tape-in, кератин, micro-ring, трессы и чёлки." } },
-      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé RAW lidské vlasy.", uk: "Так, виключно 100% натуральне RAW волосся.", ru: "Да, исключительно 100% натуральные RAW волосы." } },
+      { q: { cs: "Jsou vaše vlasy 100% pravé?", uk: "Чи ваше волосся 100% натуральне?", ru: "Ваши волосы 100% натуральные?" }, a: { cs: "Ano, výhradně 100% pravé přírodní lidské vlasy.", uk: "Так, виключно 100% натуральне справжнє волосся.", ru: "Да, исключительно 100% натуральные настоящие волосы." } },
       { q: { cs: "Jak objednat online?", uk: "Як замовити онлайн?", ru: "Как заказать онлайн?" }, a: { cs: "Vyberte vlasy v e-shopu, přidejte do košíku.", uk: "Виберіть волосся, додайте в кошик.", ru: "Выберите волосы, добавьте в корзину." } },
     ],
     geo: { lat: 50.5031, lng: 13.6364 },
