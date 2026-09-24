@@ -2,7 +2,7 @@ import { routing } from "@/i18n/routing";
 
 /**
  * Resolve a localized path from the pathnames config.
- * Supports exact match and prefix match for sub-paths under catch-all routes.
+ * Supports exact match and prefix match for sub-paths under dynamic routes ([slug], [...slug], [city]).
  */
 export function getLocalizedPath(internalPath: string, locale: string): string {
   const pathnames = (routing as any).pathnames;
@@ -15,15 +15,19 @@ export function getLocalizedPath(internalPath: string, locale: string): string {
     return config[locale] ?? internalPath;
   }
 
-  // Prefix match for sub-paths under catch-all routes (e.g. /vlasy-k-prodlouzeni/barva/blond)
+  // Prefix match for sub-paths under dynamic routes
+  // Matches [slug], [...slug], [city] etc.
+  const dynamicSegmentRe = /^(.+?)\/\[(?:\.\.\.)?(\w+)\]$/;
   for (const [key, value] of Object.entries(pathnames)) {
-    if (key.includes("[...slug]")) {
-      const prefix = key.replace("/[...slug]", "");
-      if (internalPath.startsWith(prefix + "/")) {
-        const suffix = internalPath.slice(prefix.length);
+    const m = dynamicSegmentRe.exec(key);
+    if (m) {
+      const staticPrefix = m[1];
+      if (internalPath.startsWith(staticPrefix + "/")) {
+        const suffix = internalPath.slice(staticPrefix.length);
+        const dynamicPart = key.slice(staticPrefix.length);
         const localizedPrefix = typeof value === "string"
-          ? value.replace("/[...slug]", "")
-          : ((value as Record<string, string>)[locale] ?? key).replace("/[...slug]", "");
+          ? value.replace(dynamicPart, "")
+          : ((value as Record<string, string>)[locale] ?? key).replace(dynamicPart, "");
         return localizedPrefix + suffix;
       }
     }
