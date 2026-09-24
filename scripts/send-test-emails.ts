@@ -8,7 +8,6 @@ import {
   getRegistrationConfirmationEmail,
   getApprovalConfirmationEmail,
   getInquiryConfirmationEmail,
-  getSpinWinEmail,
 } from "../src/lib/email-templates";
 
 const to = process.argv[2];
@@ -42,7 +41,7 @@ async function send(name: string, email: { subject: string; text: string; html: 
 }
 
 async function main() {
-  console.log(`Sending 4 test emails to ${to}...\n`);
+  console.log(`Sending 3 test emails to ${to}...\n`);
 
   // 1. Registration confirmation
   const reg = getRegistrationConfirmationEmail("cs", {
@@ -71,14 +70,6 @@ async function main() {
     inquiryId: "INQ-TEST-001",
   });
   await send("Inquiry Confirmation", inquiry);
-
-  // 4. Spin wheel win
-  const spin = getSpinWinEmail("cs", {
-    discount: 15,
-    code: "LUNA15TEST",
-    validTo: "15. 7. 2026",
-  });
-  await send("Spin Wheel Win", spin);
 
   console.log("\nDone!");
 }
