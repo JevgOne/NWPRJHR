@@ -214,7 +214,7 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
   } : null;
 
   // FAQ schema
-  const faqItems = Array.from({ length: 6 }, (_, i) => ({
+  const faqItems = Array.from({ length: 15 }, (_, i) => ({
     q: tPt(`${slug}.faq${i + 1}q` as any) as string,
     a: tPt(`${slug}.faq${i + 1}a` as any) as string,
   })).filter((f) => !f.q.includes(".faq"));
