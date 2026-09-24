@@ -105,13 +105,14 @@ export default async function ProdlouzeniVlasuPrahaPage() {
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": "HairSalon",
     "@id": "https://www.hairland.cz/#local-business",
-    name: "Hairland",
+    name: "Hairland — Prodloužení vlasů Praha",
     url: "https://www.hairland.cz",
     telephone: "+420608553103",
     email: "info@hairland.cz",
     image: "https://www.hairland.cz/icons/icon-512x512.png",
+    description: "Prodej pravých vlasů k prodloužení v Praze. Osobní konzultace, zpracování na zakázku, osobní odběr zdarma.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Školská 660/3",
@@ -119,8 +120,12 @@ export default async function ProdlouzeniVlasuPrahaPage() {
       postalCode: "110 00",
       addressCountry: "CZ",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 50.0804,
+      longitude: 14.4261,
+    },
     priceRange: "500 Kč - 17 000 Kč",
-    description: t("metaDesc"),
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -130,6 +135,44 @@ export default async function ProdlouzeniVlasuPrahaPage() {
     areaServed: {
       "@type": "City",
       name: "Praha",
+    },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Metody prodloužení vlasů",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Keratinové prodloužení vlasů",
+            description: "Jednotlivé prameny s keratinovým bondem. Trvanlivost 3–6 měsíců.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Tape-in prodloužení vlasů",
+            description: "Páskové prodloužení s rychlou aplikací. Přelepení každých 6–8 týdnů.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Clip-in vlasy",
+            description: "Odnímatelné prodloužení na sponky. Aplikace doma bez kadeřníka.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Micro ring prodloužení vlasů",
+            description: "Prodloužení pomocí kroužků bez tepla a lepidla. Nejšetrnější metoda.",
+          },
+        },
+      ],
     },
   };
 
