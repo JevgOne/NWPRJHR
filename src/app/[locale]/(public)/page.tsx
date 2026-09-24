@@ -159,6 +159,12 @@ const organizationJsonLd = {
       email: "info@hairland.cz",
       availableLanguage: ["Czech", "Ukrainian", "Russian"],
       areaServed: "CZ",
+      hoursAvailable: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
     },
   ],
   sameAs: [
