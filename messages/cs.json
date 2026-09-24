@@ -69,6 +69,7 @@
     "checkoutTitle": "Dokončení objednávky vlasů k prodloužení",
     "checkoutDescription": "Dokončete objednávku vlasů k prodloužení — platba kartou nebo převodem, osobní doručení Praha zdarma, Zásilkovna po celé ČR.",
     "cenikTitle": "Ceník vlasů k prodloužení 2026 — ceny za 100 g",
+    "cenikTitleWithPrice": "Ceník vlasů k prodloužení 2026 — ceny od {price} Kč/g | Hairland",
     "cenikDescription": "Kolik stojí pravé vlasy k prodloužení? Ceník vlasů za 100 g — panenské, Luxe a Standard. Evropské i asijské vlasy skladem v Praze i na objednávku.",
     "peceTitle": "Péče o prodloužené vlasy — jak je správně udržovat",
     "peceDescription": "Jak správně pečovat o prodloužené vlasy? Mytí bez sulfátů, šetrné rozčesávání, noční rutina, tepelná ochrana a údržba spojů. Rady od profesionálů.",
@@ -871,7 +872,24 @@
       "allStylists": "← Všechny kadeřnice",
       "noStylists": "Připravujeme seznam spolupracujících kadeřnic",
       "noStylistsDesc": "Právě budujeme síť ověřených kadeřnic, které znají naše vlasy a umí s nimi pracovat. Jste-li kadeřnice a chcete spolupracovat, zaregistrujte se.",
-      "registerAsStylist": "Registrovat se jako kadeřnice"
+      "registerAsStylist": "Registrovat se jako kadeřnice",
+      "jobTitle": "Kadeřnice"
+    },
+    "blog": {
+      "subtitle": "Trendy, tipy a novinky ze světa prémiových vlasů",
+      "emptyMsg": "Připravujeme pro vás články. Sledujte nás!",
+      "readMore": "Číst více",
+      "readLabel": "min",
+      "poradnaLabel": "Hledáte praktické návody?",
+      "poradnaCta": "Poradna — průvodce prodloužením",
+      "ctaTitle": "Připravená na proměnu?",
+      "ctaDesc": "Prohlédněte si naše prémiové vlasy nebo si objednejte bezplatnou konzultaci.",
+      "ctaOfferBtn": "Prohlédnout kolekci",
+      "ctaContactBtn": "Bezplatná konzultace",
+      "relatedLabel": "Čtěte také",
+      "backLabel": "Zpět na blog",
+      "shareLabel": "Sdílejte s kamarádkou",
+      "relatedProductsLabel": "Může vás zajímat"
     },
     "landing": {
       "heroTitle": "Prémiové vlasy k prodloužení v Praze",
@@ -2451,6 +2469,7 @@
   "buyback": {
     "pageTitle": "Výkup vlasů Praha — férové ceny od 800 Kč, platba ihned",
     "pageDescription": "Výkup vlasů Praha — ceny od 800 do 9 000+ Kč podle délky a barvy. Přírodní vlasy od 40 cm, platba ihned na místě. Školská 660/3, Praha 1.",
+    "jsonLdDescription": "Vykupujeme přírodní vlasy od 40 cm. Férové ceny, okamžitá platba.",
     "heroTitle": "Vykoupíme vaše vlasy",
     "heroSubtitle": "Máte dlouhé přírodní vlasy a chcete je prodat? Nabídneme férovou cenu podle délky, barvy a kvality. Platba ihned.",
     "heroBadge1": "Od 40 cm",

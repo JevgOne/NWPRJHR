@@ -61,7 +61,7 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
     "@context": "https://schema.org",
     "@type": "Person",
     name: stylist.name,
-    jobTitle: "Kadeřnice",
+    jobTitle: t("jobTitle"),
     ...(stylist.photo && { image: stylist.photo }),
     ...(stylist.bio && { description: stylist.bio }),
     ...(stylist.city && {

@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-vykup.jpg",
           width: 1200,
           height: 630,
-          alt: "Výkup vlasů — prodejte své vlasy",
+          alt: title,
         },
       ],
     },
@@ -37,53 +37,52 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Výkup vlasů — Hairland",
-  url: "https://www.hairland.cz/vykup",
-  description:
-    "Vykupujeme přírodní vlasy od 40 cm. Férové ceny, okamžitá platba.",
-  provider: {
-    "@type": "Organization",
-    name: "Hairland",
-    url: "https://www.hairland.cz",
-  },
-  areaServed: { "@type": "Country", name: "CZ" },
-};
-
-const localBusinessJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "Hairland — Výkup vlasů Praha",
-  url: "https://www.hairland.cz/vykup",
-  telephone: "+420608553103",
-  email: "info@hairland.cz",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Školská 660/3",
-    addressLocality: "Praha",
-    addressRegion: "Praha 1",
-    postalCode: "110 00",
-    addressCountry: "CZ",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 50.0804,
-    longitude: 14.4261,
-  },
-  priceRange: "800 Kč - 9 000+ Kč",
-  areaServed: [
-    { "@type": "City", name: "Praha" },
-    { "@type": "Country", name: "Česká republika" },
-  ],
-};
-
 export default async function BuybackPage() {
   const [t, tNav] = await Promise.all([
     getTranslations("buyback"),
     getTranslations("public.nav"),
   ]);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: `${t("heroTitle")} — Hairland`,
+    url: "https://www.hairland.cz/vykup",
+    description: t("jsonLdDescription"),
+    provider: {
+      "@type": "Organization",
+      name: "Hairland",
+      url: "https://www.hairland.cz",
+    },
+    areaServed: { "@type": "Country", name: "CZ" },
+  };
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: `Hairland — ${t("heroTitle")}`,
+    url: "https://www.hairland.cz/vykup",
+    telephone: "+420608553103",
+    email: "info@hairland.cz",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Školská 660/3",
+      addressLocality: "Praha",
+      addressRegion: "Praha 1",
+      postalCode: "110 00",
+      addressCountry: "CZ",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 50.0804,
+      longitude: 14.4261,
+    },
+    priceRange: "800 Kč - 9 000+ Kč",
+    areaServed: [
+      { "@type": "City", name: "Praha" },
+      { "@type": "Country", name: "CZ" },
+    ],
+  };
 
   const faqJsonLd = {
     "@context": "https://schema.org",

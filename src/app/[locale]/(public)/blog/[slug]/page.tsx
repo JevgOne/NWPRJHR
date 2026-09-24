@@ -120,7 +120,7 @@ function renderMarkdown(md: string): string {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const [locale, tNav] = await Promise.all([getLocale(), getTranslations("public.nav")]);
+  const [locale, tNav, tBlog] = await Promise.all([getLocale(), getTranslations("public.nav"), getTranslations("public.blog")]);
   const post = await getCachedBlogPost(slug);
   if (!post || !post.published) notFound();
 
@@ -131,7 +131,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   const wordCount = content.split(/\s+/).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
-  const readLabel = locale === "uk" ? "хв" : locale === "ru" ? "мин" : "min";
+  const readLabel = tBlog("readLabel");
 
   const related = await prisma.blogPost.findMany({
     where: { published: true, id: { not: post.id }, category: post.category },
@@ -149,13 +149,13 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const breadcrumbHome = tNav("home");
-  const ctaTitle = locale === "uk" ? "Готові до змін?" : locale === "ru" ? "Готовы к переменам?" : "Připravená na proměnu?";
-  const ctaDesc = locale === "uk" ? "Перегляньте наші преміальні волосся або замовте безкоштовну консультацію." : locale === "ru" ? "Посмотрите наши премиальные волосы или закажите бесплатную консультацию." : "Prohlédněte si naše prémiové vlasy nebo si objednejte bezplatnou konzultaci.";
-  const ctaOfferBtn = locale === "uk" ? "Переглянути колекцію" : locale === "ru" ? "Смотреть коллекцию" : "Prohlédnout kolekci";
-  const ctaContactBtn = locale === "uk" ? "Безкоштовна консультація" : locale === "ru" ? "Бесплатная консультация" : "Bezplatná konzultace";
-  const relatedLabel = locale === "uk" ? "Читайте також" : locale === "ru" ? "Читайте также" : "Čtěte také";
-  const backLabel = locale === "uk" ? "Усі статті" : locale === "ru" ? "Все статьи" : "Zpět na blog";
-  const shareLabel = locale === "uk" ? "Поділіться з подругою" : locale === "ru" ? "Поделитесь с подругой" : "Sdílejte s kamarádkou";
+  const ctaTitle = tBlog("ctaTitle");
+  const ctaDesc = tBlog("ctaDesc");
+  const ctaOfferBtn = tBlog("ctaOfferBtn");
+  const ctaContactBtn = tBlog("ctaContactBtn");
+  const relatedLabel = tBlog("relatedLabel");
+  const backLabel = tBlog("backLabel");
+  const shareLabel = tBlog("shareLabel");
   const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
   const articleUrl = `https://www.hairland.cz/blog/${slug}`;
 
@@ -243,7 +243,7 @@ export default async function BlogPostPage({ params }: Props) {
   const matchedLinks = PRODUCT_LINKS.filter((link) =>
     link.keywords.some((kw) => contentLower.includes(kw))
   ).slice(0, 4);
-  const relatedProductsLabel = locale === "uk" ? "Може вас зацікавити" : locale === "ru" ? "Может вас заинтересовать" : "Může vás zajímat";
+  const relatedProductsLabel = tBlog("relatedProductsLabel");
 
   const jsonLd = [
     {

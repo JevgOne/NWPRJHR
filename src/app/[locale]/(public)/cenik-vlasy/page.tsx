@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const minPrice = allGramPrices.length > 0 ? Math.round(Math.min(...allGramPrices) / 100) : 0;
 
   const title = minPrice > 0
-    ? `Ceník vlasů k prodloužení 2026 — ceny od ${minPrice} Kč/g | Hairland`
+    ? t("cenikTitleWithPrice", { price: minPrice })
     : t("cenikTitle");
   const description = t("cenikDescription");
   return {
@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: getOgUrl("/cenik-vlasy", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
-      images: [{ url: "https://www.hairland.cz/og/og-home.jpg", width: 1200, height: 630, alt: "Hairland — ceník vlasů" }],
+      images: [{ url: "https://www.hairland.cz/og/og-home.jpg", width: 1200, height: 630, alt: t("cenikTitle") }],
     },
     twitter: {
       card: "summary_large_image",

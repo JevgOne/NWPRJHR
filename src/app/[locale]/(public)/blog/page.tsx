@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-blog.jpg",
           width: 1200,
           height: 630,
-          alt: "Blog — rady a tipy k prodloužení vlasů",
+          alt: t("blogTitle"),
         },
       ],
     },
@@ -75,24 +75,16 @@ const getCachedBlogPosts = unstable_cache(
 );
 
 export default async function BlogPage() {
-  const [locale, tNav] = await Promise.all([getLocale(), getTranslations("public.nav")]);
+  const [locale, tNav, tBlog] = await Promise.all([getLocale(), getTranslations("public.nav"), getTranslations("public.blog")]);
   const posts = await getCachedBlogPosts();
   const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
   const dateLocale = locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs";
 
-  const subtitle = locale === "uk"
-    ? "Тренди, поради та новини зі світу преміального волосся"
-    : locale === "ru"
-      ? "Тренды, советы и новости из мира премиальных волос"
-      : "Trendy, tipy a novinky ze světa prémiových vlasů";
-  const emptyMsg = locale === "uk"
-    ? "Ми готуємо для вас статті. Слідкуйте за нами!"
-    : locale === "ru"
-      ? "Мы готовим для вас статьи. Следите за нами!"
-      : "Připravujeme pro vás články. Sledujte nás!";
-  const readMore = locale === "uk" ? "Читати" : locale === "ru" ? "Читать" : "Číst více";
-  const poradnaLabel = locale === "uk" ? "Шукаєте практичні поради?" : locale === "ru" ? "Ищете практические советы?" : "Hledáte praktické návody?";
-  const poradnaCta = locale === "uk" ? "Poradna — гід з нарощування" : locale === "ru" ? "Poradna — гид по наращиванию" : "Poradna — průvodce prodloužením";
+  const subtitle = tBlog("subtitle");
+  const emptyMsg = tBlog("emptyMsg");
+  const readMore = tBlog("readMore");
+  const poradnaLabel = tBlog("poradnaLabel");
+  const poradnaCta = tBlog("poradnaCta");
 
   const blogJsonLd = {
     "@context": "https://schema.org",
