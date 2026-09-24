@@ -95,7 +95,7 @@ const getCachedIgPhotos = unstable_cache(
 function buildStoreJsonLd(description: string) {
   return {
     "@context": "https://schema.org",
-    "@type": "Store",
+    "@type": ["Store", "HairSalon"],
     name: "Hairland",
     url: "https://www.hairland.cz",
     brand: {
@@ -151,6 +151,16 @@ const organizationJsonLd = {
   name: "Hairland",
   url: "https://www.hairland.cz",
   logo: "https://www.hairland.cz/icons/icon-512x512.png",
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      telephone: "+420608553103",
+      contactType: "customer service",
+      email: "info@hairland.cz",
+      availableLanguage: ["Czech", "Ukrainian", "Russian"],
+      areaServed: "CZ",
+    },
+  ],
   sameAs: [
     "https://www.instagram.com/hairland.cz/",
     "https://www.facebook.com/profile.php?id=61591480246246",
@@ -195,6 +205,21 @@ export default async function LandingPage() {
               text: t(`landing.faq${i}A` as any),
             },
           })),
+        }) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: t("landing.howItWorksTitle"),
+          description: t("landing.howItWorksSubtitle"),
+          step: [
+            { "@type": "HowToStep", position: 1, name: t("landing.step1Title" as any), text: t("landing.step1Desc" as any) },
+            { "@type": "HowToStep", position: 2, name: t("landing.step2Title" as any), text: t("landing.step2Desc" as any) },
+            { "@type": "HowToStep", position: 3, name: t("landing.step3Title" as any), text: t("landing.step3Desc" as any) },
+            { "@type": "HowToStep", position: 4, name: t("landing.step4Title" as any), text: t("landing.step4Desc" as any) },
+          ],
         }) }}
       />
       {/* Hero — compact, clean */}
