@@ -906,6 +906,7 @@
       "badgeSingleDonor": "Волосы от одного донора",
       "badgeSingleDonorDesc": "Для категорий Девственные и Luxe — гарантированное происхождение",
       "processingTypes": "Подробнее о техниках наращивания",
+    "comparisonTitle": "Сравнение методов наращивания волос",
       "heroImageAlt": "Разные оттенки натуральных волос для наращивания",
       "metaOrigin": "происхождение",
       "metaColors": "цветов",
@@ -4076,5 +4077,59 @@
     "ctaNabidka": "Посмотреть предложение",
     "ctaCenik": "Цены на волосы",
     "ctaKonzultace": "Записаться на консультацию"
+  },
+  "methodComparison": {
+    "property": "Свойство",
+    "method": {
+      "clip-in": "Clip-in",
+      "tape-in": "Tape-in",
+      "keratin": "Кератин",
+      "micro-ring": "Micro ring",
+      "weft": "Трессы"
+    },
+    "row": {
+      "application": "Применение",
+      "time": "Время установки",
+      "durability": "Срок носки",
+      "damage": "Повреждение волос",
+      "reapplication": "Повторное применение"
+    },
+    "cell": {
+      "clip-in": {
+        "application": "Самостоятельно дома",
+        "time": "5–15 минут",
+        "durability": "Временное (ежедневное)",
+        "damage": "Отсутствует",
+        "reapplication": "Каждый день"
+      },
+      "tape-in": {
+        "application": "Парикмахер",
+        "time": "30–60 минут",
+        "durability": "6–8 недель",
+        "damage": "Минимальное",
+        "reapplication": "Да (переклейка)"
+      },
+      "keratin": {
+        "application": "Парикмахер",
+        "time": "2–3 часа",
+        "durability": "3–6 месяцев",
+        "damage": "Минимальное",
+        "reapplication": "Да (новое нанесение)"
+      },
+      "micro-ring": {
+        "application": "Парикмахер",
+        "time": "2–3 часа",
+        "durability": "3–6 месяцев",
+        "damage": "Отсутствует",
+        "reapplication": "Да (перемещение)"
+      },
+      "weft": {
+        "application": "Парикмахер",
+        "time": "1–2 часа",
+        "durability": "6–8 недель",
+        "damage": "Минимальное",
+        "reapplication": "Да"
+      }
+    }
   }
 }

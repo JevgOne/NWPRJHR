@@ -9,6 +9,7 @@ import { getCachedAllProducts } from "@/lib/cached-products";
 import { HeroProductSlider } from "@/components/public/HeroProductSlider";
 import { selectHeroProducts } from "@/lib/flatten-variants";
 import { ReviewsSection } from "@/components/public/ReviewsSection";
+import { MethodComparisonTable } from "@/components/public/MethodComparisonTable";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
@@ -331,6 +332,14 @@ export default async function LandingPage() {
                 </Link>
               ))}
             </div>
+          </div>
+
+          {/* Method comparison table */}
+          <div className="border-t border-line pt-6 sm:pt-8 mt-6 sm:mt-8">
+            <h2 className="text-lg sm:text-xl font-bold text-ink text-center mb-4">
+              {t("landing.comparisonTitle")}
+            </h2>
+            <MethodComparisonTable />
           </div>
 
           {/* Product slider */}

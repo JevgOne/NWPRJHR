@@ -906,6 +906,7 @@
       "badgeSingleDonor": "Волосся від одного донора",
       "badgeSingleDonorDesc": "Для категорій Панянські та Luxe — гарантоване походження",
       "processingTypes": "Більше про техніки нарощування",
+    "comparisonTitle": "Порівняння методів нарощування волосся",
       "heroImageAlt": "Різні відтінки натурального волосся для нарощування",
       "metaOrigin": "походження",
       "metaColors": "кольорів",
@@ -4076,5 +4077,59 @@
     "ctaNabidka": "Переглянути пропозицію",
     "ctaCenik": "Ціни на волосся",
     "ctaKonzultace": "Домовити консультацію"
+  },
+  "methodComparison": {
+    "property": "Властивість",
+    "method": {
+      "clip-in": "Clip-in",
+      "tape-in": "Tape-in",
+      "keratin": "Кератин",
+      "micro-ring": "Micro ring",
+      "weft": "Треси"
+    },
+    "row": {
+      "application": "Застосування",
+      "time": "Час встановлення",
+      "durability": "Тривалість",
+      "damage": "Пошкодження волосся",
+      "reapplication": "Повторне застосування"
+    },
+    "cell": {
+      "clip-in": {
+        "application": "Самостійно вдома",
+        "time": "5–15 хвилин",
+        "durability": "Тимчасове (щоденне)",
+        "damage": "Відсутнє",
+        "reapplication": "Щодня"
+      },
+      "tape-in": {
+        "application": "Перукар",
+        "time": "30–60 хвилин",
+        "durability": "6–8 тижнів",
+        "damage": "Мінімальне",
+        "reapplication": "Так (переклеювання)"
+      },
+      "keratin": {
+        "application": "Перукар",
+        "time": "2–3 години",
+        "durability": "3–6 місяців",
+        "damage": "Мінімальне",
+        "reapplication": "Так (нове нанесення)"
+      },
+      "micro-ring": {
+        "application": "Перукар",
+        "time": "2–3 години",
+        "durability": "3–6 місяців",
+        "damage": "Відсутнє",
+        "reapplication": "Так (пересування)"
+      },
+      "weft": {
+        "application": "Перукар",
+        "time": "1–2 години",
+        "durability": "6–8 тижнів",
+        "damage": "Мінімальне",
+        "reapplication": "Так"
+      }
+    }
   }
 }

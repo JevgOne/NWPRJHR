@@ -10,6 +10,7 @@ import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { flattenProductVariants } from "@/lib/flatten-variants";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
+import { MethodComparisonTable } from "@/components/public/MethodComparisonTable";
 
 export const CATEGORY_SLUG_MAP: Record<string, ProcessingType> = {
   "clip-in": "CLIP_IN",
@@ -351,6 +352,11 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
             </details>
           ))}
         </div>
+      </section>
+
+      {/* Method comparison table */}
+      <section className="pt-8 border-t border-line">
+        <MethodComparisonTable highlightMethod={slug as any} />
       </section>
 
       {/* Other categories */}

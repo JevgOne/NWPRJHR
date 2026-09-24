@@ -906,6 +906,7 @@
       "badgeSingleDonor": "Vlasy z jedné hlavy",
       "badgeSingleDonorDesc": "U kategorií Panenské a Luxe — garantovaný původ",
       "processingTypes": "Více o technikách prodloužení",
+    "comparisonTitle": "Srovnání metod prodloužení vlasů",
       "heroImageAlt": "Různé odstíny přírodních vlasů k prodloužení",
       "metaOrigin": "původ",
       "metaColors": "barev",
@@ -4076,5 +4077,59 @@
     "ctaNabidka": "Zobrazit nabídku",
     "ctaCenik": "Ceník vlasů",
     "ctaKonzultace": "Domluvit konzultaci"
+  },
+  "methodComparison": {
+    "property": "Vlastnost",
+    "method": {
+      "clip-in": "Clip-in",
+      "tape-in": "Tape-in",
+      "keratin": "Keratin",
+      "micro-ring": "Micro ring",
+      "weft": "Tresy"
+    },
+    "row": {
+      "application": "Aplikace",
+      "time": "Čas nasazení",
+      "durability": "Výdrž",
+      "damage": "Poškození vlasů",
+      "reapplication": "Opakovaná aplikace"
+    },
+    "cell": {
+      "clip-in": {
+        "application": "Sami doma",
+        "time": "5–15 minut",
+        "durability": "Dočasné (denní)",
+        "damage": "Žádné",
+        "reapplication": "Každý den"
+      },
+      "tape-in": {
+        "application": "Kadeřnice",
+        "time": "30–60 minut",
+        "durability": "6–8 týdnů",
+        "damage": "Minimální",
+        "reapplication": "Ano (přelepení)"
+      },
+      "keratin": {
+        "application": "Kadeřnice",
+        "time": "2–3 hodiny",
+        "durability": "3–6 měsíců",
+        "damage": "Minimální",
+        "reapplication": "Ano (nová aplikace)"
+      },
+      "micro-ring": {
+        "application": "Kadeřnice",
+        "time": "2–3 hodiny",
+        "durability": "3–6 měsíců",
+        "damage": "Žádné",
+        "reapplication": "Ano (posunutí)"
+      },
+      "weft": {
+        "application": "Kadeřnice",
+        "time": "1–2 hodiny",
+        "durability": "6–8 týdnů",
+        "damage": "Minimální",
+        "reapplication": "Ano"
+      }
+    }
   }
 }
