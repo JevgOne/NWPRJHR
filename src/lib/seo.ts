@@ -1,4 +1,4 @@
-import { routing } from "@/i18n/routing";
+import { getLocalizedPath } from "@/lib/localized-path";
 
 const BASE_URL = "https://www.hairland.cz";
 
@@ -13,20 +13,6 @@ export const OG_LOCALES: Record<string, string> = {
   uk: "uk_UA",
   ru: "ru_RU",
 };
-
-/**
- * Resolve a localized path from the pathnames config.
- * Falls back to the original path if not found.
- */
-function getLocalizedPath(internalPath: string, locale: string): string {
-  const pathnames = (routing as any).pathnames;
-  if (!pathnames) return internalPath;
-
-  const config = pathnames[internalPath];
-  if (!config) return internalPath;
-  if (typeof config === "string") return config;
-  return config[locale] ?? internalPath;
-}
 
 export function getOgUrl(path: string, locale: string = "cs"): string {
   const prefix = LOCALE_PREFIXES[locale] ?? "";
