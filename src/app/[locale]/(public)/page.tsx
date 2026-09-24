@@ -295,7 +295,7 @@ export default async function LandingPage() {
               {t("landing.viewFullOffer")}
             </Link>
             <Link
-              href="/contact"
+              href="/kontakt"
               className="px-4 sm:px-5 py-2 sm:py-2.5 bg-white text-espresso border border-line hover:bg-nude-50 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-md"
             >
               {t("landing.contactUs")}
@@ -314,10 +314,10 @@ export default async function LandingPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {(
                 [
-                  { key: "virgin" as const, href: "/vlasy-k-prodlouzeni/kategorie/virgin", img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
-                  { key: "luxe" as const, href: "/vlasy-k-prodlouzeni/kategorie/luxe", img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescLuxe" as const },
-                  { key: "standard" as const, href: "/vlasy-k-prodlouzeni/kategorie/standard", img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
-                  { key: "sale" as const, href: "/vlasy-k-prodlouzeni/kategorie/sale", img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
+                  { key: "virgin" as const, href: { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'virgin'] } }, img: `${BLOB}/volne-vlasy.jpg`, descKey: "landing.categoryDescVirgin" as const },
+                  { key: "luxe" as const, href: { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'luxe'] } }, img: `${BLOB}/odstiny-prehled.jpg`, descKey: "landing.categoryDescLuxe" as const },
+                  { key: "standard" as const, href: { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'standard'] } }, img: `${BLOB}/extensions-techniky.jpg`, descKey: "landing.categoryDescStandard" as const },
+                  { key: "sale" as const, href: { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'sale'] } }, img: `${BLOB}/keratinove-vlasy.jpg`, descKey: "landing.categoryDescSale" as const },
                 ]
               ).map(({ key, href, img, descKey }) => (
                 <Link
@@ -369,7 +369,7 @@ export default async function LandingPage() {
               { code: "10", nameKey: "colors.c10" as const },
               { code: "ombre", nameKey: "colors.combre" as const },
             ].map(({ code, nameKey }) => (
-              <Link key={code} href={`/vlasy-k-prodlouzeni/barva/${COLOR_CODE_TO_TONE_SLUG[code]}`} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
+              <Link key={code} href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['barva', COLOR_CODE_TO_TONE_SLUG[code]] } }} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
                 <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
                 <span className="text-[8px] sm:text-[11px] text-muted font-medium text-center leading-tight truncate w-full">{t(nameKey)}</span>
               </Link>
@@ -385,7 +385,7 @@ export default async function LandingPage() {
               { slug: "cerna", labelKey: "landing.colorLinkBlack" as const },
               { slug: "ombre", labelKey: "landing.colorLinkOmbre" as const },
             ].map(({ slug, labelKey }) => (
-              <Link key={slug} href={`/vlasy-k-prodlouzeni/barva/${slug}`} className="px-2.5 py-1 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 text-xs font-medium transition-colors">
+              <Link key={slug} href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['barva', slug] } }} className="px-2.5 py-1 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 text-xs font-medium transition-colors">
                 {t(labelKey)}
               </Link>
             ))}
@@ -547,7 +547,7 @@ export default async function LandingPage() {
                 return (
                   <Link
                     key={s.id}
-                    href={`/kadernice/${s.slug}`}
+                    href={{ pathname: '/kadernice/[slug]' as any, params: { slug: s.slug } }}
                     className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-lg hover:border-blush-300 hover:-translate-y-1 transition-all duration-300 p-3"
                   >
                     <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2 relative">
@@ -682,7 +682,7 @@ export default async function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
             <Link
-              href="/contact"
+              href="/kontakt"
               className="px-6 py-3 bg-rose hover:bg-rose-deep text-white font-medium rounded-lg transition-colors"
             >
               {t("landing.ctaContact")}

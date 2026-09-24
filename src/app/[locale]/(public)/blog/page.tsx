@@ -138,7 +138,7 @@ export default async function BlogPage() {
           {/* Featured article — large hero card */}
           {featured && (
             <Link
-              href={`/blog/${featured.slug}`}
+              href={{ pathname: '/blog/[slug]' as any, params: { slug: featured.slug } }}
               className="group block mb-10 rounded-2xl overflow-hidden bg-white border border-line hover:border-blush-300 hover:shadow-lg transition-all"
             >
               <div className="grid grid-cols-1 md:grid-cols-2">
@@ -196,7 +196,7 @@ export default async function BlogPage() {
               {rest.map((post) => (
                 <Link
                   key={post.id}
-                  href={`/blog/${post.slug}`}
+                  href={{ pathname: '/blog/[slug]' as any, params: { slug: post.slug } }}
                   className="group flex flex-col bg-white rounded-xl border border-line hover:border-blush-300 hover:shadow-md transition-all overflow-hidden"
                 >
                   {post.coverImage ? (
@@ -259,7 +259,7 @@ export default async function BlogPage() {
           ]).map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               className="group flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white border border-line hover:border-rose/20 hover:shadow-md transition-all text-sm font-medium text-ink hover:text-rose"
             >
               {item.label[locale] ?? item.label.cs}

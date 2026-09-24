@@ -119,7 +119,7 @@ export default async function StylistsPublicPage() {
           return (
             <Link
               key={s.id}
-              href={`/kadernice/${s.slug}`}
+              href={{ pathname: '/kadernice/[slug]' as any, params: { slug: s.slug } }}
               className="group flex flex-col bg-white rounded-xl border border-line hover:shadow-md hover:border-blush-300 transition-all overflow-hidden"
             >
               {/* Photo + badge */}

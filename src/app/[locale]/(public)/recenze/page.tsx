@@ -114,12 +114,13 @@ function SourceBadge({ source }: { source: string }) {
 
 type FilterSource = "all" | "GOOGLE" | "INSTAGRAM" | "MANUAL";
 
-function buildFilterUrl(source: FilterSource, stars: number | null): string {
-  const params = new URLSearchParams();
-  if (source !== "all") params.set("source", source);
-  if (stars) params.set("stars", String(stars));
-  const qs = params.toString();
-  return `/recenze${qs ? `?${qs}` : ""}`;
+function buildFilterHref(source: FilterSource, stars: number | null) {
+  const query: Record<string, string> = {};
+  if (source !== "all") query.source = source;
+  if (stars) query.stars = String(stars);
+  return Object.keys(query).length > 0
+    ? { pathname: '/recenze' as any, query }
+    : ('/recenze' as any);
 }
 
 export default async function RecenzePage({
@@ -230,7 +231,7 @@ export default async function RecenzePage({
         {sourceFilters.map((f) => (
           <Link
             key={f.key}
-            href={buildFilterUrl(f.key, starFilter)}
+            href={buildFilterHref(f.key, starFilter)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               sourceFilter === f.key
                 ? "bg-espresso text-white shadow-sm"
@@ -244,7 +245,7 @@ export default async function RecenzePage({
         {[5, 4, 3].map((stars) => (
           <Link
             key={stars}
-            href={buildFilterUrl(sourceFilter, starFilter === stars ? null : stars)}
+            href={buildFilterHref(sourceFilter, starFilter === stars ? null : stars)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
               starFilter === stars
                 ? "bg-espresso text-white shadow-sm"

@@ -246,7 +246,7 @@ export function GramageCalculator({ priceData }: GramageCalculatorProps) {
               {t("calcCta")}
             </Link>
             <Link
-              href="/contact"
+              href="/kontakt"
               className="inline-flex items-center justify-center px-5 py-2 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors w-full sm:w-auto"
             >
               {t("calcCtaConsult")}

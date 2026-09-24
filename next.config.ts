@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/((?!api|dashboard|login|_next|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon|reservations|calendar|order-products).*)",
+        source: "/((?!api|dashboard|login|_next|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon|reservations|calendar|order-products|messages).*)",
         headers: [
           { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
         ],
@@ -65,8 +65,33 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/kontakt",
-        destination: "/contact",
+        source: "/contact",
+        destination: "/kontakt",
+        permanent: true,
+      },
+      {
+        source: "/about",
+        destination: "/o-nas",
+        permanent: true,
+      },
+      {
+        source: "/privacy",
+        destination: "/ochrana-udaju",
+        permanent: true,
+      },
+      {
+        source: "/checkout",
+        destination: "/pokladna",
+        permanent: true,
+      },
+      {
+        source: "/wishlist",
+        destination: "/oblibene",
+        permanent: true,
+      },
+      {
+        source: "/inquiry-cart",
+        destination: "/poptavka",
         permanent: true,
       },
       // 301: category route renames
@@ -135,11 +160,6 @@ const nextConfig: NextConfig = {
       {
         source: "/vlasy",
         destination: "/vlasy-k-prodlouzeni",
-        permanent: true,
-      },
-      {
-        source: "/o-nas",
-        destination: "/about",
         permanent: true,
       },
       {

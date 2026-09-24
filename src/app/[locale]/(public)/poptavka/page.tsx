@@ -8,8 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("inquiryCartTitle"),
     description: t("inquiryCartDescription"),
-    alternates: getAlternates("/inquiry-cart", locale),
-    robots: { index: false },
+    alternates: getAlternates("/poptavka", locale),
     openGraph: {
       type: "website",
       title: `${t("inquiryCartTitle")} | Hairland`,

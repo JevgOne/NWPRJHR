@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 import { getPaymentStatus } from "@/lib/comgate";
 import { createSaleFromOrder } from "@/lib/order-to-sale";
 import { sendNotificationEmail } from "@/lib/email";
-import { getRetailPaymentReceivedEmail } from "@/lib/email-templates";
+import { getOrderConfirmationEmail } from "@/lib/email-templates";
+import { loadEmailAttachments } from "@/lib/email-attachments";
 
 export async function POST(request: NextRequest) {
   try {
@@ -90,6 +91,85 @@ export async function POST(request: NextRequest) {
             } catch (e) {
               console.error("[comgate/callback] Sale invoice creation failed:", e);
             }
+
+            // Send Email 1 (legal confirmation) for admin CARD sales
+            try {
+              const saleForEmail = await prisma.sale.findUnique({
+                where: { id: sale.id },
+                select: {
+                  saleNumber: true,
+                  totalAmount: true,
+                  subtotal: true,
+                  shippingCost: true,
+                  customerType: true,
+                  salon: { select: { email: true, name: true, language: true } },
+                  customer: { select: { email: true, name: true } },
+                  items: {
+                    select: {
+                      grams: true,
+                      pieces: true,
+                      lineTotal: true,
+                      variant: {
+                        select: {
+                          lengthCm: true,
+                          color: true,
+                          product: { select: { name: true } },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+
+              if (saleForEmail) {
+                const recipientEmail = saleForEmail.customerType === "SALON"
+                  ? saleForEmail.salon?.email
+                  : saleForEmail.customer?.email;
+
+                if (recipientEmail) {
+                  const recipientName = saleForEmail.customerType === "SALON"
+                    ? saleForEmail.salon?.name ?? ""
+                    : saleForEmail.customer?.name ?? "";
+                  const lang = saleForEmail.customerType === "SALON"
+                    ? saleForEmail.salon?.language ?? "cs"
+                    : "cs";
+                  const isB2B = saleForEmail.customerType === "SALON";
+
+                  const emailData = getOrderConfirmationEmail(lang, {
+                    customerName: recipientName,
+                    orderNumber: saleForEmail.saleNumber ?? "",
+                    items: saleForEmail.items.map((i) => ({
+                      productName: i.variant.product.name,
+                      lengthCm: i.variant.lengthCm,
+                      color: i.variant.color,
+                      grams: i.grams,
+                      pieces: i.pieces,
+                      lineTotal: i.lineTotal,
+                    })),
+                    subtotal: saleForEmail.subtotal,
+                    shippingCost: saleForEmail.shippingCost,
+                    totalAmount: saleForEmail.totalAmount,
+                    paymentMethod: "CARD",
+                    isB2B,
+                    isPersonalSale: false,
+                    careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+                  });
+
+                  const attachments = await loadEmailAttachments(isB2B);
+
+                  sendNotificationEmail({
+                    to: recipientEmail,
+                    toName: recipientName,
+                    subject: emailData.subject,
+                    body: emailData.text,
+                    html: emailData.html,
+                    attachments,
+                  }).catch((e) => console.error("[comgate/callback] Sale Email 1 failed:", e));
+                }
+              }
+            } catch (e) {
+              console.error("[comgate/callback] Sale Email 1 error:", e);
+            }
           }
           return new NextResponse("OK", { status: 200 });
         }
@@ -128,26 +208,71 @@ export async function POST(request: NextRequest) {
           console.error("[comgate/callback] createSaleFromOrder failed:", { orderId: order.id, error: e });
         }
 
-        // Send payment received email
+        // Send Email 1 (order confirmation with legal blocks + PDF attachments)
         if (order.contactEmail) {
           try {
             const updatedOrder = await prisma.order.findUnique({
               where: { id: order.id },
-              select: { totalAmount: true, locale: true, contactName: true, orderNumber: true },
+              select: {
+                totalAmount: true,
+                shippingCost: true,
+                locale: true,
+                contactName: true,
+                orderNumber: true,
+                billingIco: true,
+                promoCode: true,
+                promoDiscount: true,
+                items: {
+                  select: {
+                    productName: true,
+                    lengthCm: true,
+                    color: true,
+                    grams: true,
+                    pieces: true,
+                    lineTotal: true,
+                  },
+                },
+              },
             });
-            const emailData = getRetailPaymentReceivedEmail(updatedOrder?.locale ?? "cs", {
-              customerName: updatedOrder?.contactName ?? "",
-              orderNumber: updatedOrder?.orderNumber ?? order.id,
-              totalAmount: updatedOrder?.totalAmount ?? 0,
-            });
-            sendNotificationEmail({
-              to: order.contactEmail,
-              subject: emailData.subject,
-              body: emailData.text,
-              html: emailData.html,
-            }).catch((e) => console.error("[comgate/callback] Payment email failed:", e));
+
+            if (updatedOrder) {
+              const isB2B = Boolean(updatedOrder.billingIco);
+              const locale = updatedOrder.locale ?? "cs";
+
+              const emailData = getOrderConfirmationEmail(locale, {
+                customerName: updatedOrder.contactName ?? "",
+                orderNumber: updatedOrder.orderNumber ?? order.id,
+                items: (updatedOrder.items ?? []).map((i) => ({
+                  productName: i.productName ?? "",
+                  lengthCm: i.lengthCm ?? 0,
+                  color: i.color ?? "",
+                  grams: i.grams,
+                  pieces: i.pieces,
+                  lineTotal: i.lineTotal,
+                })),
+                subtotal: (updatedOrder.totalAmount ?? 0) - (updatedOrder.shippingCost ?? 0) + (updatedOrder.promoDiscount ?? 0),
+                shippingCost: updatedOrder.shippingCost ?? 0,
+                promoCode: updatedOrder.promoCode ?? undefined,
+                promoDiscount: updatedOrder.promoDiscount ?? undefined,
+                totalAmount: updatedOrder.totalAmount ?? 0,
+                paymentMethod: "CARD",
+                isB2B,
+                careGuideUrl: `https://www.hairland.cz/${locale}/pece-o-vlasy`,
+              });
+
+              const attachments = await loadEmailAttachments(isB2B);
+
+              sendNotificationEmail({
+                to: order.contactEmail,
+                toName: updatedOrder.contactName ?? undefined,
+                subject: emailData.subject,
+                body: emailData.text,
+                html: emailData.html,
+                attachments,
+              }).catch((e) => console.error("[comgate/callback] Email 1 failed:", e));
+            }
           } catch (e) {
-            console.error("[comgate/callback] Payment email template error:", e);
+            console.error("[comgate/callback] Email 1 error:", e);
           }
         }
       } else if (verified.status === "CANCELLED") {

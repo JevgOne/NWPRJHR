@@ -9,12 +9,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("contactTitle"),
     description: t("contactDescription"),
-    alternates: getAlternates("/contact", locale),
+    alternates: getAlternates("/kontakt", locale),
     openGraph: {
       type: "website",
       title: `${t("contactTitle")} | Hairland`,
       description: t("contactDescription"),
-      url: getOgUrl("/contact", locale),
+      url: getOgUrl("/kontakt", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-contact.jpg",
           width: 1200,
           height: 630,
-          alt: "Kontakt — osobní konzultace vlasů Praha",
+          alt: t("contactTitle"),
         },
       ],
     },
@@ -35,46 +35,45 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "Hairland",
-  url: "https://www.hairland.cz",
-  telephone: "+420608553103",
-  email: "info@hairland.cz",
-  image: "https://www.hairland.cz/icons/icon-512x512.png",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Školská 660/3",
-    addressLocality: "Praha",
-    postalCode: "110 00",
-    addressCountry: "CZ",
-  },
-  priceRange: "500 Kč - 17 000 Kč",
-  description:
-    "Prémiové surové vlasy k prodloužení. Zprostředkujeme zpracování — clip-in, tape-in, micro ring. Osobní konzultace, dovoz zdarma po Praze.",
-  openingHoursSpecification: {
-    "@type": "OpeningHoursSpecification",
-    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    opens: "09:00",
-    closes: "18:00",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 50.0804,
-    longitude: 14.4261,
-  },
-  hasMap: "https://maps.google.com/?q=Školská+660/3,+Praha",
-  currenciesAccepted: "CZK",
-  paymentAccepted: "Hotově, Kartou, Převodem",
-};
-
 export default async function ContactPage({
   searchParams,
 }: {
   searchParams: Promise<{ reason?: string }>;
 }) {
   const [t, sp] = await Promise.all([getTranslations("public"), searchParams]);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Hairland",
+    url: "https://www.hairland.cz",
+    telephone: "+420608553103",
+    email: "info@hairland.cz",
+    image: "https://www.hairland.cz/icons/icon-512x512.png",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Školská 660/3",
+      addressLocality: "Praha",
+      postalCode: "110 00",
+      addressCountry: "CZ",
+    },
+    priceRange: "500 Kč - 17 000 Kč",
+    description: t("contact.jsonLdDescription"),
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 50.0804,
+      longitude: 14.4261,
+    },
+    hasMap: "https://maps.google.com/?q=Školská+660/3,+Praha",
+    currenciesAccepted: "CZK",
+    paymentAccepted: t("contact.paymentAccepted"),
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

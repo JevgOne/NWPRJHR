@@ -75,7 +75,7 @@ export default async function ObchodniPodminkyPage() {
             )}
             {num === 9 && (
               <Link
-                href="/privacy"
+                href="/ochrana-udaju"
                 className="inline-block mt-2 text-sm text-rose hover:text-rose-deep underline"
               >
                 {t("section9Link")}

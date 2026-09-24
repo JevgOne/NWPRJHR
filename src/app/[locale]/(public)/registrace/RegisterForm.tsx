@@ -339,7 +339,7 @@ export function RegisterForm() {
             {t("termsLink")}
           </Link>{" "}
           {t("termsAnd")}{" "}
-          <Link href="/privacy" className="text-rose underline" target="_blank">
+          <Link href="/ochrana-udaju" className="text-rose underline" target="_blank">
             {t("privacyLink")}
           </Link>{" "}
           *

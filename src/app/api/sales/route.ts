@@ -8,6 +8,9 @@ import { createInvoiceFromSale, createInternalDocument } from "@/lib/invoicing";
 import { serializeSaleForRole } from "@/lib/api/sale-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { sendInvoiceEmail, sendPaymentDetailsEmail } from "@/lib/invoice-email";
+import { sendNotificationEmail } from "@/lib/email";
+import { getOrderConfirmationEmail } from "@/lib/email-templates";
+import { loadEmailAttachments } from "@/lib/email-attachments";
 import { generateSpayd } from "@/lib/spayd";
 import { generateQRCodeDataUrl } from "@/lib/qr-code";
 import { createPayment } from "@/lib/comgate";
@@ -57,6 +60,85 @@ export async function POST(request: NextRequest) {
           console.log("[Sales API] Invoice email result:", JSON.stringify(result));
         } catch (e) {
           console.error("[Sales API] Invoice email EXCEPTION:", e);
+        }
+
+        // Send Email 1 (legal confirmation) for CASH personal sales
+        try {
+          const saleForEmail = await prisma.sale.findUnique({
+            where: { id: sale.id },
+            select: {
+              saleNumber: true,
+              totalAmount: true,
+              subtotal: true,
+              customerType: true,
+              salon: { select: { email: true, name: true, language: true } },
+              customer: { select: { email: true, name: true } },
+              items: {
+                select: {
+                  grams: true,
+                  pieces: true,
+                  lineTotal: true,
+                  variant: {
+                    select: {
+                      lengthCm: true,
+                      color: true,
+                      product: { select: { name: true } },
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          if (saleForEmail) {
+            const recipientEmail = saleForEmail.customerType === "SALON"
+              ? saleForEmail.salon?.email
+              : saleForEmail.customer?.email;
+
+            if (recipientEmail) {
+              const recipientName = saleForEmail.customerType === "SALON"
+                ? saleForEmail.salon?.name ?? ""
+                : saleForEmail.customer?.name ?? "";
+              const lang = saleForEmail.customerType === "SALON"
+                ? saleForEmail.salon?.language ?? "cs"
+                : "cs";
+              const isB2B = saleForEmail.customerType === "SALON";
+
+              const emailData = getOrderConfirmationEmail(lang, {
+                customerName: recipientName,
+                orderNumber: saleForEmail.saleNumber ?? "",
+                items: saleForEmail.items.map((i) => ({
+                  productName: i.variant.product.name,
+                  lengthCm: i.variant.lengthCm,
+                  color: i.variant.color,
+                  grams: i.grams,
+                  pieces: i.pieces,
+                  lineTotal: i.lineTotal,
+                })),
+                subtotal: saleForEmail.subtotal,
+                shippingCost: 0,
+                totalAmount: saleForEmail.totalAmount,
+                paymentMethod: "CASH",
+                isB2B,
+                isPersonalSale: true,
+                careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+              });
+
+              const attachments = await loadEmailAttachments(isB2B);
+
+              await sendNotificationEmail({
+                to: recipientEmail,
+                toName: recipientName,
+                subject: emailData.subject,
+                body: emailData.text,
+                html: emailData.html,
+                attachments,
+              });
+              console.log("[Sales API] Email 1 sent for CASH sale:", sale.id);
+            }
+          }
+        } catch (e) {
+          console.error("[Sales API] Email 1 failed:", e);
         }
       });
     } else if (pt === "TRANSFER" || pt === "CARD") {
@@ -117,7 +199,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Send unified email with both payment options
+      // Send payment details email (QR + bank info + Comgate link)
       if (recipientEmail) {
         after(async () => {
           await sendPaymentDetailsEmail({
@@ -131,6 +213,72 @@ export async function POST(request: NextRequest) {
             saleNumber: sale.saleNumber ?? "",
             comgateUrl: comgateUrl ?? undefined,
           }).catch((e) => console.error("[Sales API] Payment details email failed:", e));
+
+          // For TRANSFER: also send Email 1 (legal confirmation) alongside payment details
+          // For CARD: Email 1 will be sent after Comgate callback
+          if (pt === "TRANSFER") {
+            try {
+              const saleDetail = await prisma.sale.findUnique({
+                where: { id: sale.id },
+                select: {
+                  subtotal: true,
+                  customerType: true,
+                  items: {
+                    select: {
+                      grams: true,
+                      pieces: true,
+                      lineTotal: true,
+                      variant: {
+                        select: {
+                          lengthCm: true,
+                          color: true,
+                          product: { select: { name: true } },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+
+              if (saleDetail) {
+                const isB2B = saleDetail.customerType === "SALON";
+                const emailData = getOrderConfirmationEmail(lang, {
+                  customerName: recipientName,
+                  orderNumber: sale.saleNumber ?? vs,
+                  items: saleDetail.items.map((i) => ({
+                    productName: i.variant.product.name,
+                    lengthCm: i.variant.lengthCm,
+                    color: i.variant.color,
+                    grams: i.grams,
+                    pieces: i.pieces,
+                    lineTotal: i.lineTotal,
+                  })),
+                  subtotal: saleDetail.subtotal,
+                  shippingCost: 0,
+                  totalAmount: sale.totalAmount,
+                  paymentMethod: "TRANSFER",
+                  bankAccount,
+                  variableSymbol: vs,
+                  isB2B,
+                  careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+                });
+
+                const attachments = await loadEmailAttachments(isB2B);
+
+                await sendNotificationEmail({
+                  to: recipientEmail,
+                  toName: recipientName,
+                  subject: emailData.subject,
+                  body: emailData.text,
+                  html: emailData.html,
+                  attachments,
+                });
+                console.log("[Sales API] Email 1 sent for TRANSFER sale:", sale.id);
+              }
+            } catch (e) {
+              console.error("[Sales API] Email 1 for TRANSFER failed:", e);
+            }
+          }
         });
       }
 

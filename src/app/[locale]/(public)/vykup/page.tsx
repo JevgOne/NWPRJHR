@@ -338,7 +338,7 @@ export default async function BuybackPage() {
           </p>
           <div className="flex gap-3 justify-center">
             <Link
-              href="/contact"
+              href="/kontakt"
               className="px-6 py-3 bg-rose hover:bg-rose-deep text-white font-medium rounded-lg transition-colors"
             >
               {t("ctaContact")}

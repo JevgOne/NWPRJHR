@@ -16,11 +16,12 @@ import { notifyOrderCancelled } from "@/lib/telegram";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { sendNotificationEmail } from "@/lib/email";
 import {
-  getOrderConfirmationEmail,
+  getOrderConfirmedEmail,
+  getB2BOrderShippedEmail,
   getOrderShippedEmail,
-  getRetailOrderShippedEmail,
   getRetailPaymentReceivedEmail,
 } from "@/lib/email-templates";
+import { loadEmailAttachments } from "@/lib/email-attachments";
 
 export async function GET(
   _request: NextRequest,
@@ -157,7 +158,7 @@ export async function POST(
         }).then((fullOrder) => {
           if (!fullOrder?.salon?.email) return;
           const lang = fullOrder.salon.language || "cs";
-          const emailData = getOrderConfirmationEmail(lang, {
+          const emailData = getOrderConfirmedEmail(lang, {
             salonName: fullOrder.salon.name,
             orderNumber: fullOrder.orderNumber ?? id.slice(0, 8),
             items: fullOrder.items.map((i) => ({
@@ -250,7 +251,7 @@ export async function POST(
           }).then((salon) => {
             if (!salon?.email) return;
             const lang = salon.language || "cs";
-            const emailData = getOrderShippedEmail(lang, {
+            const emailData = getB2BOrderShippedEmail(lang, {
               salonName: salon.name,
               orderNumber: order.orderNumber ?? id.slice(0, 8),
               estimatedTotal: order.estimatedTotal,
@@ -360,6 +361,7 @@ export async function POST(
             packetaBarcode: packetResult.barcode,
             shippingTrackingId: packetResult.barcode,
             status: "SHIPPED",
+            shippedAt: new Date(),
           },
         });
 
@@ -373,18 +375,28 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
-        // Send shipped email (fire-and-forget)
+        // Send shipped email with care guide (fire-and-forget)
         const shipEmail = orderToShip.contactEmail || orderToShip.customer?.email;
         if (shipEmail) {
           const lang = (orderToShip.locale as "cs" | "uk" | "ru") || "cs";
-          const emailData = getRetailOrderShippedEmail(lang, {
+          const emailData = getOrderShippedEmail(lang, {
             customerName: orderToShip.contactName || orderToShip.customer?.name || "customer",
             orderNumber: orderToShip.orderNumber ?? id.slice(0, 8),
             shippingMethod: "PACKETA",
             trackingId: packetResult.barcode,
             packetaPointName: orderToShip.packetaPointName ?? undefined,
+            careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
           });
-          sendNotificationEmail({ to: shipEmail, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+          loadEmailAttachments(false).then((attachments) => {
+            const careAttachment = attachments.find((a) => a.filename === "navod-na-peci.pdf");
+            sendNotificationEmail({
+              to: shipEmail,
+              subject: emailData.subject,
+              body: emailData.text,
+              html: emailData.html,
+              attachments: careAttachment ? [careAttachment] : [],
+            }).catch(() => {});
+          }).catch(() => {});
         }
 
         return NextResponse.json({
@@ -410,6 +422,7 @@ export async function POST(
           data: {
             status: "SHIPPED",
             shippingTrackingId: body.trackingId || null,
+            shippedAt: new Date(),
           },
         });
 
@@ -423,17 +436,27 @@ export async function POST(
           ipAddress: getClientIp(request),
         });
 
-        // Send shipped email (fire-and-forget)
+        // Send shipped email with care guide (fire-and-forget)
         const manualEmail = orderManual.contactEmail || orderManual.customer?.email;
         if (manualEmail) {
           const lang = (orderManual.locale as "cs" | "uk" | "ru") || "cs";
-          const emailData = getRetailOrderShippedEmail(lang, {
+          const emailData = getOrderShippedEmail(lang, {
             customerName: orderManual.contactName || orderManual.customer?.name || "customer",
             orderNumber: orderManual.orderNumber ?? id.slice(0, 8),
             shippingMethod: orderManual.shippingMethod || "PERSONAL_DELIVERY",
             trackingId: body.trackingId || undefined,
+            careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
           });
-          sendNotificationEmail({ to: manualEmail, subject: emailData.subject, body: emailData.text, html: emailData.html }).catch(() => {});
+          loadEmailAttachments(false).then((attachments) => {
+            const careAttachment = attachments.find((a) => a.filename === "navod-na-peci.pdf");
+            sendNotificationEmail({
+              to: manualEmail,
+              subject: emailData.subject,
+              body: emailData.text,
+              html: emailData.html,
+              attachments: careAttachment ? [careAttachment] : [],
+            }).catch(() => {});
+          }).catch(() => {});
         }
 
         return NextResponse.json({ success: true });

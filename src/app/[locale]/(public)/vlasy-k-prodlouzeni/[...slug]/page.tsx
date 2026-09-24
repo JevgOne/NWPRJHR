@@ -1041,7 +1041,9 @@ async function ProductDetailView({
           <div className="bg-nude-50 rounded-2xl p-5 grid grid-cols-2 gap-4">
             {product.origin && (
               <Link
-                href={ORIGIN_REVERSE_MAP[product.origin] ? `/vlasy-k-prodlouzeni/zeme/${ORIGIN_REVERSE_MAP[product.origin]}` : "/vlasy-k-prodlouzeni"}
+                href={ORIGIN_REVERSE_MAP[product.origin]
+                  ? { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['zeme', ORIGIN_REVERSE_MAP[product.origin]] } }
+                  : ("/vlasy-k-prodlouzeni" as any)}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
                 <span className="text-xl">{originFlag}</span>
@@ -1053,7 +1055,9 @@ async function ProductDetailView({
             )}
             {product.texture && (
               <Link
-                href={TEXTURE_REVERSE_MAP[product.texture] ? `/vlasy-k-prodlouzeni/textura/${TEXTURE_REVERSE_MAP[product.texture]}` : "/vlasy-k-prodlouzeni"}
+                href={TEXTURE_REVERSE_MAP[product.texture]
+                  ? { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['textura', TEXTURE_REVERSE_MAP[product.texture]] } }
+                  : ("/vlasy-k-prodlouzeni" as any)}
                 className="flex items-center gap-2.5 hover:bg-nude-100 rounded-lg p-1 -m-1 transition-colors"
               >
                 <TextureSwatch texture={product.texture} size={32} />
@@ -1256,7 +1260,7 @@ async function ProductDetailView({
             </div>
           </div>
           <div className="space-y-1.5 pt-1">
-            <Link href="/inquiry-cart?mode=consult&reason=real-photo" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
+            <Link href={{ pathname: '/poptavka' as any, query: { mode: 'consult', reason: 'real-photo' } }} className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
               <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21zm5.25-12a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /></svg>
               <div>
                 <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta1Title")}</p>
@@ -1270,7 +1274,7 @@ async function ProductDetailView({
                 <p className="text-[11px] text-muted">{t("productDetail.noRetouchCta2Desc")}</p>
               </div>
             </a>
-            <Link href="/inquiry-cart?mode=consult&reason=photo-match" className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
+            <Link href={{ pathname: '/poptavka' as any, query: { mode: 'consult', reason: 'photo-match' } }} className="flex items-start gap-2.5 rounded-lg p-2 -mx-2 hover:bg-white/60 transition-colors">
               <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
               <div>
                 <p className="text-xs font-semibold text-ink">{t("productDetail.noRetouchCta3Title")}</p>
@@ -1295,7 +1299,7 @@ async function ProductDetailView({
             </div>
           ))}
         </div>
-        <Link href="/blog/pece-o-prodlouzene-vlasy-kompletni-pruvodce" className="inline-flex items-center gap-1.5 text-sm text-rose hover:text-rose-deep transition-colors font-medium">
+        <Link href={{ pathname: '/blog/[slug]' as any, params: { slug: 'pece-o-prodlouzene-vlasy-kompletni-pruvodce' } }} className="inline-flex items-center gap-1.5 text-sm text-rose hover:text-rose-deep transition-colors font-medium">
           {t("productDetail.careReadMore")}
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </Link>

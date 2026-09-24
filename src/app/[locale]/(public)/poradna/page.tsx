@@ -119,7 +119,7 @@ export default async function AdvicePage() {
         {articles.map((a, i) => (
           <Link
             key={a.slug}
-            href={`/poradna/${a.slug}`}
+            href={{ pathname: '/poradna/[slug]' as any, params: { slug: a.slug } }}
             className="group flex gap-4 bg-white rounded-xl border border-line hover:border-amber-200 hover:shadow-md transition-all p-5"
           >
             {/* Numbered icon */}

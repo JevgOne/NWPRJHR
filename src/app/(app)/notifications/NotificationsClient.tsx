@@ -49,7 +49,7 @@ function getNotificationUrl(n: NotificationItem): string | null {
     case "REFERRAL_USED":
       return "/referrals";
     case "NEW_CONTACT":
-      return "/notifications";
+      return d.contactMessageId ? "/messages" : "/messages";
     default:
       return null;
   }

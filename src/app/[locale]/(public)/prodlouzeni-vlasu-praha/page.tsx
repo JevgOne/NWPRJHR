@@ -10,12 +10,18 @@ import { flattenProductVariants } from "@/lib/flatten-variants";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [t, locale] = await Promise.all([
+  const [t, locale, products] = await Promise.all([
     getTranslations("prahaLanding"),
     getLocale(),
+    getCachedAllProducts(),
   ]);
-  const title = t("metaTitle");
-  const desc = t("metaDesc");
+  const allGramPrices = products.flatMap((p) =>
+    p.variants.filter((v) => v.sellingMode === "BY_GRAM" && v.retailPricePerGram > 0).map((v) => v.retailPricePerGram),
+  );
+  const minPrice = allGramPrices.length > 0 ? Math.round(Math.min(...allGramPrices) / 100) : 0;
+
+  const title = `Vlasy k prodloužení Praha — ceník, osobní ukázka zdarma | Hairland`;
+  const desc = `Prémiové RAW vlasy k prodloužení v Praze — skladem i na objednávku. Clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. Osobní konzultace a ukázka vzorků po Praze zdarma.`;
   return {
     title,
     description: desc,
@@ -187,7 +193,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
-            href="/vlasy-k-prodlouzeni/kategorie/virgin"
+            href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'virgin'] } }}
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
@@ -198,7 +204,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             </p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni/kategorie/luxe"
+            href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'luxe'] } }}
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
@@ -209,7 +215,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             </p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni/kategorie/standard"
+            href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'standard'] } }}
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">
@@ -380,7 +386,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             <div>Školská 660/3, Praha 1, 110 00</div>
           </div>
           <Link
-            href="/contact"
+            href="/kontakt"
             className="inline-flex items-center justify-center px-6 py-2.5 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
           >
             {t("consultCta")}
@@ -442,7 +448,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
             {t("ctaCenik")}
           </Link>
           <Link
-            href="/contact"
+            href="/kontakt"
             className="inline-flex items-center justify-center px-6 py-2.5 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors"
           >
             {t("ctaKonzultace")}

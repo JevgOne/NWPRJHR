@@ -8,6 +8,7 @@ import {
   CATEGORY_SLUG_MAP_SEO,
   ORIGIN_SLUG_MAP,
 } from "@/lib/attribute-slugs";
+import { routing } from "@/i18n/routing";
 
 export const revalidate = 3600;
 
@@ -16,23 +17,38 @@ const STATIC_DATE = new Date().toISOString().split("T")[0];
 
 const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
 
+function getLocalizedPath(internalPath: string, locale: string): string {
+  const pathnames = (routing as any).pathnames;
+  if (!pathnames) return internalPath;
+  const config = pathnames[internalPath];
+  if (!config) return internalPath;
+  if (typeof config === "string") return config;
+  return config[locale] ?? internalPath;
+}
+
 function withAlternates(
   path: string,
   opts: { lastModified: string | Date; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number },
 ): MetadataRoute.Sitemap {
   const languages: Record<string, string> = {};
   for (const [locale, prefix] of Object.entries(LOCALE_PREFIXES)) {
-    languages[locale] = `${BASE_URL}${prefix}${path}`;
+    const localizedPath = getLocalizedPath(path, locale);
+    const fullPath = localizedPath === "/" ? (prefix || "/") : `${prefix}${localizedPath}`;
+    languages[locale] = `${BASE_URL}${fullPath}`;
   }
   languages["x-default"] = `${BASE_URL}${path}`;
 
-  return Object.values(LOCALE_PREFIXES).map((prefix) => ({
-    url: `${BASE_URL}${prefix}${path}`,
-    lastModified: opts.lastModified,
-    changeFrequency: opts.changeFrequency,
-    priority: opts.priority,
-    alternates: { languages },
-  }));
+  return Object.entries(LOCALE_PREFIXES).map(([locale, prefix]) => {
+    const localizedPath = getLocalizedPath(path, locale);
+    const fullPath = localizedPath === "/" ? (prefix || "/") : `${prefix}${localizedPath}`;
+    return {
+      url: `${BASE_URL}${fullPath}`,
+      lastModified: opts.lastModified,
+      changeFrequency: opts.changeFrequency,
+      priority: opts.priority,
+      alternates: { languages },
+    };
+  });
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -41,13 +57,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/vlasy-k-prodlouzeni", { lastModified: STATIC_DATE, changeFrequency: "daily", priority: 0.9 }),
     ...withAlternates("/poradna", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/pro", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
-    ...withAlternates("/contact", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
-    ...withAlternates("/about", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.5 }),
+    ...withAlternates("/kontakt", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
+    ...withAlternates("/o-nas", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.5 }),
     ...withAlternates("/vykup", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/kadernice", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.6 }),
     ...withAlternates("/registrace", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/obchodni-podminky", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.6 }),
-    ...withAlternates("/privacy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.6 }),
+    ...withAlternates("/ochrana-udaju", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.6 }),
     ...withAlternates("/doprava", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/reklamacni-rad", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.5 }),
     ...withAlternates("/pece-o-vlasy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.7 }),

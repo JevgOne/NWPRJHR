@@ -106,7 +106,7 @@ export default async function FaqPage() {
       <div className="mt-12 text-center bg-nude-50 rounded-xl border border-line p-8">
         <p className="text-muted text-sm mb-4">{t("ctaText")}</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link href="/contact" className="px-6 py-2.5 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors">
+          <Link href="/kontakt" className="px-6 py-2.5 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors">
             {t("ctaContact")}
           </Link>
           <Link href="/vlasy-k-prodlouzeni" className="px-6 py-2.5 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors">

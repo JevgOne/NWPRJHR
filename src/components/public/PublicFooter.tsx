@@ -75,7 +75,7 @@ export function PublicFooter() {
               <li><Link href="/blog" className={linkClass}>Blog</Link></li>
               <li><Link href="/kadernice" className={linkClass}>{t("footer.hairdressers")}</Link></li>
               <li><Link href="/recenze" className={linkClass}>{t("footer.reviews")}</Link></li>
-              <li><Link href="/about" className={linkClass}>{t("nav.about")}</Link></li>
+              <li><Link href="/o-nas" className={linkClass}>{t("nav.about")}</Link></li>
             </ul>
           </div>
 
@@ -90,7 +90,7 @@ export function PublicFooter() {
               <li><Link href="/pece-o-vlasy" className={linkClass}>{t("footer.hairCareLink")}</Link></li>
               <li><Link href="/doprava" className={linkClass}>{t("footer.shippingLink")}</Link></li>
               <li><Link href="/odstoupeni-od-smlouvy" className={linkClass}>{t("footer.withdrawalLink")}</Link></li>
-              <li><Link href="/privacy" className={linkClass}>{t("nav.privacy")}</Link></li>
+              <li><Link href="/ochrana-udaju" className={linkClass}>{t("nav.privacy")}</Link></li>
               <li><Link href="/poradna" className={linkClass}>{t("footer.faqLink")}</Link></li>
               <li><Link href="/registrace" className={linkClass}>{t("footer.salonRegLink")}</Link></li>
             </ul>

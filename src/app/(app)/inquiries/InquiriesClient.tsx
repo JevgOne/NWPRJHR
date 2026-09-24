@@ -80,6 +80,7 @@ export function InquiriesClient() {
   const [editNote, setEditNote] = useState("");
   const [editAssigned, setEditAssigned] = useState("");
   const [saving, setSaving] = useState(false);
+  const [quickSaving, setQuickSaving] = useState<string | null>(null);
 
   const STATUS_LABELS: Record<string, string> = {
     NEW: t("statusNew"),
@@ -150,6 +151,24 @@ export function InquiriesClient() {
       fetchInquiries();
     }
     setSaving(false);
+  }
+
+  async function handleQuickStatus(id: string, newStatus: string) {
+    setQuickSaving(id);
+    const res = await fetch(`/api/inquiries/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (res.ok) {
+      fetchInquiries();
+    }
+    setQuickSaving(null);
+  }
+
+  async function handleCancel(id: string) {
+    if (!window.confirm(t("confirmCancel"))) return;
+    await handleQuickStatus(id, "CANCELLED");
   }
 
   const tabs = [
@@ -473,25 +492,63 @@ export function InquiriesClient() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex items-start justify-between">
-                          <div>
-                            {inq.internalNote && (
-                              <div>
-                                <p className="text-xs font-medium text-muted uppercase mb-1">
-                                  {t("internalNote")}
-                                </p>
-                                <p className="text-sm text-ink">
-                                  {inq.internalNote}
-                                </p>
-                              </div>
-                            )}
+                        <div className="space-y-3">
+                          {inq.internalNote && (
+                            <div>
+                              <p className="text-xs font-medium text-muted uppercase mb-1">
+                                {t("internalNote")}
+                              </p>
+                              <p className="text-sm text-ink">
+                                {inq.internalNote}
+                              </p>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {inq.status === "NEW" && (
+                                <>
+                                  <button
+                                    onClick={() => handleQuickStatus(inq.id, "CONTACTED")}
+                                    disabled={quickSaving === inq.id}
+                                    className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                  >
+                                    {t("accept")}
+                                  </button>
+                                  <button
+                                    onClick={() => handleCancel(inq.id)}
+                                    disabled={quickSaving === inq.id}
+                                    className="px-3 py-1.5 border border-red-300 text-red-600 text-xs rounded-lg hover:bg-red-50 disabled:opacity-50"
+                                  >
+                                    {t("cancelInquiry")}
+                                  </button>
+                                </>
+                              )}
+                              {inq.status === "CONTACTED" && (
+                                <>
+                                  <button
+                                    onClick={() => handleQuickStatus(inq.id, "COMPLETED")}
+                                    disabled={quickSaving === inq.id}
+                                    className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                  >
+                                    {t("complete")}
+                                  </button>
+                                  <button
+                                    onClick={() => handleCancel(inq.id)}
+                                    disabled={quickSaving === inq.id}
+                                    className="px-3 py-1.5 border border-red-300 text-red-600 text-xs rounded-lg hover:bg-red-50 disabled:opacity-50"
+                                  >
+                                    {t("cancelInquiry")}
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => openEdit(inq)}
+                              className="px-3 py-1.5 bg-rose text-white text-xs rounded-lg hover:bg-rose-deep"
+                            >
+                              {tc("edit")}
+                            </button>
                           </div>
-                          <button
-                            onClick={() => openEdit(inq)}
-                            className="px-3 py-1.5 bg-rose text-white text-xs rounded-lg hover:bg-rose-deep"
-                          >
-                            {tc("edit")}
-                          </button>
                         </div>
                       )}
                     </div>

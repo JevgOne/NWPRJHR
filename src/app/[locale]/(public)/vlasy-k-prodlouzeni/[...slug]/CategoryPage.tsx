@@ -311,7 +311,7 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
             <p className="text-sm text-espresso">
               {tPt("customOrderDesc", { type: (tPt(`${s}.name` as any) as string).toLowerCase() })}
             </p>
-            <Link href="/contact" className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-rose hover:text-rose-deep transition-colors">
+            <Link href="/kontakt" className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-rose hover:text-rose-deep transition-colors">
               {tPt("contactUs")} →
             </Link>
           </div>
@@ -360,7 +360,9 @@ export async function CategoryLandingPage({ slug, standalone }: { slug: string; 
           {otherCategories.map((catSlug) => (
             <Link
               key={catSlug}
-              href={CATEGORY_STANDALONE_PATHS[catSlug] ?? `/vlasy-k-prodlouzeni/${catSlug}`}
+              href={CATEGORY_STANDALONE_PATHS[catSlug]
+                ? (CATEGORY_STANDALONE_PATHS[catSlug] as any)
+                : { pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: [catSlug] } }}
               className="px-4 py-2 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
             >
               {tPt(`${catSlug}.name` as any)}

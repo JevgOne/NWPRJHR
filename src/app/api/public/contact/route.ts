@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
   }).catch(() => {});
 
   // Telegram notification
-  notifyContact(contactMsg.id, {
+  await notifyContact(contactMsg.id, {
     name,
     email,
     phone: phone || undefined,
@@ -92,16 +92,20 @@ export async function POST(request: NextRequest) {
     message,
     locale: locale || undefined,
     customerPhotos: customerPhotos && customerPhotos.length > 0 ? customerPhotos : undefined,
-  }).catch(() => {});
+  }).catch((err) => {
+    console.error("[Contact] Telegram notifyContact failed:", err);
+  });
 
   // In-app notification for owners
-  createNotificationForRole({
+  await createNotificationForRole({
     role: "OWNER",
     type: "NEW_CONTACT",
     title: `Kontaktní formulář: ${name}`,
     message: `${name}${salonName ? ` (${salonName})` : ""} odeslal/a zprávu přes kontaktní formulář.`,
     data: { contactMessageId: contactMsg.id, name, email },
-  }).catch(() => {});
+  }).catch((err) => {
+    console.error("[Contact] createNotificationForRole failed:", err);
+  });
 
   return NextResponse.json({ success: true });
 }

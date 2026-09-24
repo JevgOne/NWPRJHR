@@ -10,6 +10,7 @@ import { ProductGridCard } from "@/components/public/ProductGridCard";
 import { flattenProductVariants } from "@/lib/flatten-variants";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import { CITIES, getCityBySlug } from "@/lib/city-landing-data";
+import { PricingByOrigin, type OriginData } from "@/components/PricingByOrigin";
 
 type Locale = "cs" | "uk" | "ru";
 
@@ -30,9 +31,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const locale = (await getLocale()) as Locale;
   const cityName = city.name[locale] ?? city.name.cs;
-  const desc = city.description[locale] ?? city.description.cs;
 
-  const title = `Vlasy k prodloužení ${cityName} | Hairland`;
+  const products = await getCachedAllProducts();
+  const allGramPrices = products.flatMap((p) =>
+    p.variants.filter((v) => v.sellingMode === "BY_GRAM" && v.retailPricePerGram > 0).map((v) => v.retailPricePerGram),
+  );
+  const minPrice = allGramPrices.length > 0 ? Math.round(Math.min(...allGramPrices) / 100) : 0;
+
+  const title = minPrice > 0
+    ? `Vlasy k prodloužení ${cityName} — ceník od ${minPrice} Kč/g | Hairland`
+    : `Vlasy k prodloužení ${cityName} | Hairland`;
+  const desc = `Vlasy k prodloužení ${cityName} — clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. 100% pravé RAW vlasy. Rychlé doručení. Osobní konzultace zdarma.`;
 
   return {
     title,
@@ -87,8 +96,9 @@ export default async function CityLandingPage({ params }: Props) {
   const locale = (await getLocale()) as Locale;
   const cityName = city.name[locale] ?? city.name.cs;
 
-  const [t, session, products] = await Promise.all([
+  const [t, tPrice, session, products] = await Promise.all([
     getTranslations("cityLanding"),
+    getTranslations("pricelist"),
     auth(),
     getCachedAllProducts(),
   ]);
@@ -107,6 +117,73 @@ export default async function CityLandingPage({ params }: Props) {
   const minPrices = Object.fromEntries(
     CATEGORIES.map((cat) => [cat, Math.round(getMinPricePerGram(products, cat) / 100)]),
   );
+
+  // Origin-based pricing for tabbed price table (two columns: natural vs colored/blond)
+  const BLOND_TONES = new Set(["Platinová blond", "Světlá blond", "Zlatá blond", "Medová blond"]);
+  const isBlond = (tone: string | null) => tone !== null && BLOND_TONES.has(tone);
+
+  type ColPrices = { natural: Map<number, number[]>; colored: Map<number, number[]> };
+  const originMap = new Map<string, { texture: string | null; hasBlond: boolean; cols: ColPrices }>();
+
+  for (const p of products) {
+    if (!p.origin) continue;
+    if (!originMap.has(p.origin)) {
+      originMap.set(p.origin, { texture: p.texture, hasBlond: false, cols: { natural: new Map(), colored: new Map() } });
+    }
+    const entry = originMap.get(p.origin)!;
+    const col = isBlond(p.colorTone) ? "colored" : "natural";
+    if (col === "colored") entry.hasBlond = true;
+    for (const v of p.variants) {
+      if (v.sellingMode !== "BY_GRAM" || v.retailPricePerGram <= 0) continue;
+      const pricePer100g = Math.round(v.retailPricePerGram); // halere/gram = Kč/100g
+      const map = entry.cols[col];
+      const existing = map.get(v.lengthCm);
+      if (existing) existing.push(pricePer100g);
+      else map.set(v.lengthCm, [pricePer100g]);
+    }
+  }
+
+  const ORIGIN_DISPLAY_KEY: Record<string, string> = {
+    "Írán": "originIran", "Vietnam": "originVietnam", "Indie": "originIndia",
+    "Ukrajina": "originUkraine", "Turecko": "originTurkey", "Čína": "originChina",
+    "Mongolsko": "originMongolia", "Gruzie": "originGeorgia", "Sýrie": "originSyria",
+    "Rusko": "originRussia", "Kazachstán": "originKazakhstan", "Uzbekistán": "originUzbekistan",
+    "Bělorusko": "originBelarus", "Moldavsko": "originMoldova",
+  };
+
+  const originData: OriginData[] = [...originMap.entries()]
+    .map(([origin, { texture, hasBlond, cols }]) => {
+      const allLengths = [...new Set([...cols.natural.keys(), ...cols.colored.keys()])].sort((a, b) => a - b);
+      const rows = allLengths.map((lengthCm) => {
+        const natPrices = cols.natural.get(lengthCm);
+        const colPrices = cols.colored.get(lengthCm);
+        return {
+          lengthCm,
+          naturalPrice: natPrices ? Math.min(...natPrices) : null,
+          coloredPrice: colPrices ? Math.min(...colPrices) : null,
+        };
+      });
+      const allPrices = rows.flatMap((r) => [r.naturalPrice, r.coloredPrice].filter((p): p is number => p !== null));
+      const displayKey = ORIGIN_DISPLAY_KEY[origin];
+      return {
+        origin,
+        displayName: displayKey ? tPrice(displayKey as any) : origin,
+        texture,
+        coloredColumnLabel: hasBlond ? tPrice("blondHair") : tPrice("dyedHair"),
+        rows,
+        minPrice: allPrices.length > 0 ? Math.min(...allPrices) : 0,
+      };
+    })
+    .sort((a, b) => a.minPrice - b.minPrice);
+
+  const pricingLabels = {
+    premiumQuality: tPrice("premiumQuality"),
+    length: tPrice("lengthLabel"),
+    naturalHair: tPrice("naturalHair"),
+    pricePer100g: tPrice("pricePer100g"),
+    priceSubtitle: tPrice("priceSubtitle"),
+    footerNote: tPrice("pricingFooterNote"),
+  };
 
   const topProducts = products
     .filter((p) =>
@@ -211,21 +288,21 @@ export default async function CityLandingPage({ params }: Props) {
         <h2 className="text-xl font-semibold text-ink mb-6">{t("categoriesTitle")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
-            href="/vlasy-k-prodlouzeni/kategorie/virgin"
+            href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'virgin'] } }}
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">{t("catVirginTitle")}</div>
             <p className="text-sm text-muted leading-relaxed">{t("catVirginText")}</p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni/kategorie/luxe"
+            href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'luxe'] } }}
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">{t("catLuxeTitle")}</div>
             <p className="text-sm text-muted leading-relaxed">{t("catLuxeText")}</p>
           </Link>
           <Link
-            href="/vlasy-k-prodlouzeni/kategorie/standard"
+            href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', 'standard'] } }}
             className="bg-nude-50 rounded-xl border border-line p-5 hover:border-blush-200 transition-colors"
           >
             <div className="text-sm font-semibold text-ink mb-2">{t("catStandardTitle")}</div>
@@ -292,29 +369,11 @@ export default async function CityLandingPage({ params }: Props) {
         </Link>
       </section>
 
-      {/* 6. Cenový přehled */}
+      {/* 6. Kolik stojí vlasy k prodloužení */}
       <section className="mb-14">
         <h2 className="text-xl font-semibold text-ink mb-2">{t("priceTitle")}</h2>
         <p className="text-sm text-muted leading-relaxed max-w-3xl mb-4">{t("priceText")}</p>
-        <div className="bg-nude-50 rounded-xl border border-line p-5">
-          <div className="grid grid-cols-3 gap-4 text-center mb-4">
-            {(["STANDARD", "LUXE", "VIRGIN"] as const).map((cat) => (
-              <div key={cat}>
-                <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                  {cat === "VIRGIN" ? t("catVirginTitle") : cat === "LUXE" ? t("catLuxeTitle") : t("catStandardTitle")}
-                </div>
-                <div className="text-lg font-bold text-ink">
-                  {minPrices[cat] > 0 ? `od ${minPrices[cat].toLocaleString("cs-CZ")} Kč/g` : "—"}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center">
-            <Link href="/cenik-vlasy" className="inline-flex items-center text-sm text-rose font-medium hover:text-rose-deep transition-colors">
-              {t("priceLink")} →
-            </Link>
-          </div>
-        </div>
+        <PricingByOrigin origins={originData} cenikHref="/cenik-vlasy" cenikLabel={t("priceLink")} labels={pricingLabels} />
       </section>
 
       {/* 7. Produkty z DB */}
@@ -347,7 +406,7 @@ export default async function CityLandingPage({ params }: Props) {
             <div>Školská 660/3, Praha 1, 110 00</div>
           </div>
           <Link
-            href="/contact"
+            href="/kontakt"
             className="inline-flex items-center justify-center px-6 py-2.5 bg-rose text-white text-sm font-medium rounded-lg hover:bg-rose-deep transition-colors"
           >
             {t("consultCta")}
@@ -390,7 +449,7 @@ export default async function CityLandingPage({ params }: Props) {
           <Link href="/cenik-vlasy" className="inline-flex items-center justify-center px-6 py-2.5 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors">
             {t("ctaCenik")}
           </Link>
-          <Link href="/contact" className="inline-flex items-center justify-center px-6 py-2.5 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors">
+          <Link href="/kontakt" className="inline-flex items-center justify-center px-6 py-2.5 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors">
             {t("ctaKonzultace")}
           </Link>
         </div>

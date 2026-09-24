@@ -4,6 +4,41 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const intlMiddleware = createMiddleware(routing);
 
+/**
+ * Build a map of Czech pathname → localized pathname per locale prefix.
+ * Used to issue 308 (permanent) redirects instead of next-intl's default 307.
+ * Example: /ua/poradna → /ua/консультація (308)
+ */
+const LOCALE_PREFIX_TO_CODE: Record<string, "uk" | "ru"> = {
+  "/ua": "uk",
+  "/rus": "ru",
+};
+
+type PathnameEntry = string | Record<string, string>;
+
+function buildLocalizedPaths() {
+  const map = new Map<string, Map<string, string>>(); // localePrefix → (czPath → localizedPath)
+  const pathnames = routing.pathnames as Record<string, PathnameEntry> | undefined;
+  if (!pathnames) return map;
+
+  for (const [localePrefix, localeCode] of Object.entries(LOCALE_PREFIX_TO_CODE)) {
+    const localeMap = new Map<string, string>();
+    for (const [key, value] of Object.entries(pathnames)) {
+      if (typeof value === "string") continue; // same for all locales (e.g. /faq)
+      const csPath = value.cs;
+      const localizedPath = value[localeCode];
+      if (!csPath || !localizedPath || csPath === localizedPath) continue;
+      // Only static segments (no [param] patterns) — dynamic routes are rewritten, not redirected
+      if (csPath.includes("[")) continue;
+      localeMap.set(csPath, localizedPath);
+    }
+    map.set(localePrefix, localeMap);
+  }
+  return map;
+}
+
+const LOCALIZED_PATHS = buildLocalizedPaths();
+
 /** Old /<category> URLs from product listing → standalone pages (308 permanent redirect) */
 const CATEGORY_REDIRECTS: Record<string, string> = {
   "clip-in": "/clip-in-vlasy",
@@ -24,6 +59,7 @@ const PROTECTED_PREFIXES = [
   "/reservations",
   "/calendar",
   "/order-products",
+  "/messages",
 ];
 
 function isProtectedPath(pathname: string): boolean {
@@ -55,13 +91,38 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  // Strip locale prefix for matching (e.g. /cs/vlasy-k-prodlouzeni/clip-in → /vlasy-k-prodlouzeni/clip-in)
-  const stripped = pathname.replace(/^\/(cs|uk|ru)/, "");
+  // Strip locale prefix for matching (e.g. /ua/vlasy-k-prodlouzeni → /vlasy-k-prodlouzeni)
+  // Locale prefixes from routing: cs = none (default), uk = /ua, ru = /rus
+  const stripped = pathname.replace(/^\/(ua|rus)/, "");
+
+  // 301 redirects: old English folder names → new Czech names (for locale-prefixed URLs;
+  // non-prefixed redirects are handled by next.config.ts redirects).
+  // When locale prefix is present, redirect directly to localized (cyrillic) path to avoid chain.
+  const RENAMED_PATHS: Record<string, string> = {
+    "/contact": "/kontakt",
+    "/about": "/o-nas",
+    "/privacy": "/ochrana-udaju",
+    "/checkout": "/pokladna",
+    "/wishlist": "/oblibene",
+    "/inquiry-cart": "/poptavka",
+  };
+  const renamedTarget = RENAMED_PATHS[stripped];
+  if (renamedTarget) {
+    const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
+    if (localePrefix) {
+      const url = request.nextUrl.clone();
+      // Resolve directly to cyrillic path if available (avoid redirect chain)
+      const localeMap = LOCALIZED_PATHS.get(localePrefix);
+      const finalPath = localeMap?.get(renamedTarget) ?? renamedTarget;
+      url.pathname = localePrefix + finalPath;
+      return NextResponse.redirect(url, 301);
+    }
+  }
 
   // 301 redirect: old /offer URLs → /vlasy-k-prodlouzeni (strip query strings)
   if (stripped.startsWith("/offer")) {
     const newPath = stripped.replace("/offer", "/vlasy-k-prodlouzeni");
-    const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
+    const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
     return NextResponse.redirect(
       new URL(`${localePrefix}${newPath}`, request.url),
       301,
@@ -74,7 +135,7 @@ export function proxy(request: NextRequest) {
     const newPath = CATEGORY_REDIRECTS[categoryMatch[1]];
     if (newPath) {
       const url = request.nextUrl.clone();
-      const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
+      const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
       url.pathname = localePrefix + newPath;
       return NextResponse.redirect(url, 308);
     }
@@ -86,9 +147,26 @@ export function proxy(request: NextRequest) {
     const newPath = CATEGORY_REDIRECTS[katMatch[1]];
     if (newPath) {
       const url = request.nextUrl.clone();
-      const localePrefix = pathname.match(/^\/(cs|uk|ru)/)?.[0] ?? "";
+      const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
       url.pathname = localePrefix + newPath;
       return NextResponse.redirect(url, 308);
+    }
+  }
+
+  // 308 permanent redirect: Czech pathname on non-cs locale → localized (cyrillic) pathname
+  // next-intl does this as 307 (temporary); we override with 308 for SEO
+  const localePrefixMatch = pathname.match(/^\/(ua|rus)/);
+  if (localePrefixMatch) {
+    const localePrefix = "/" + localePrefixMatch[1];
+    const pathAfterPrefix = pathname.slice(localePrefix.length) || "/";
+    const localeMap = LOCALIZED_PATHS.get(localePrefix);
+    if (localeMap) {
+      const localizedPath = localeMap.get(pathAfterPrefix);
+      if (localizedPath) {
+        const url = request.nextUrl.clone();
+        url.pathname = localePrefix + localizedPath;
+        return NextResponse.redirect(url, 308);
+      }
     }
   }
 
@@ -98,7 +176,7 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Public paths: intl routing + redirects (excludes static assets, api, login)
-    "/((?!api|feed|_next/static|_next/image|.*\\.(?:png|jpg|jpeg|svg|webp|ico|gif|woff2?|ttf|eot|mp4|webm)$|og/|sitemap\\.xml|robots\\.txt|llms\\.txt|manifest\\.json|sw\\.js|icons/|fonts/|images/|swatches/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon|reservations|calendar/).*)",
+    "/((?!api|feed|_next/static|_next/image|.*\\.(?:png|jpg|jpeg|svg|webp|ico|gif|woff2?|ttf|eot|mp4|webm)$|og/|sitemap\\.xml|robots\\.txt|llms\\.txt|llms-full\\.txt|manifest\\.json|sw\\.js|icons/|fonts/|images/|swatches/|opengraph-image|login|dashboard|inventory|products|orders|salons|invoices|sales|customers|export|complaints|settings|notifications|audit-log|referrals|promo-codes|posts|reviews|returns|payments|registrations|samples|discounts|finance|inquiries|stylists|suppliers|salon|reservations|calendar|messages/).*)",
     // Protected admin/app paths: auth guard
     "/dashboard/:path*",
     "/inventory/:path*",
@@ -129,5 +207,6 @@ export const config = {
     "/salon/:path*",
     "/reservations/:path*",
     "/calendar/:path*",
+    "/messages/:path*",
   ],
 };

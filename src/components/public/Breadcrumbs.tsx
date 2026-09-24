@@ -32,7 +32,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
           <span key={i} className="flex items-center gap-1.5">
             {i > 0 && <span>/</span>}
             {item.href ? (
-              <Link href={item.href} className="hover:text-rose transition-colors">
+              <Link href={item.href as any} className="hover:text-rose transition-colors">
                 {item.label}
               </Link>
             ) : (

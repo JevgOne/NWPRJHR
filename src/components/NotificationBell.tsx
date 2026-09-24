@@ -40,7 +40,7 @@ function getNotificationUrl(n: NotificationItem): string | null {
     case "NEW_INQUIRY":
       return "/inquiries";
     case "NEW_CONTACT":
-      return "/notifications";
+      return "/messages";
     case "NEW_REVIEW":
       return "/reviews";
     case "REGISTRATION":

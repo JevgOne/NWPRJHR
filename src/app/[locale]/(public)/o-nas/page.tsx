@@ -9,12 +9,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("aboutTitle"),
     description: t("aboutDescription"),
-    alternates: getAlternates("/about", locale),
+    alternates: getAlternates("/o-nas", locale),
     openGraph: {
       type: "website",
       title: `${t("aboutTitle")} | Hairland`,
       description: t("aboutDescription"),
-      url: getOgUrl("/about", locale),
+      url: getOgUrl("/o-nas", locale),
       siteName: "Hairland",
       locale: OG_LOCALES[locale] ?? "cs_CZ",
       images: [
@@ -180,7 +180,7 @@ export default async function AboutPage() {
             {t("about.ctaOffer")}
           </Link>
           <Link
-            href="/contact"
+            href="/kontakt"
             className="px-6 py-3 border border-line text-ink font-medium rounded-xl hover:bg-nude-50 transition-colors text-sm"
           >
             {t("about.ctaContact")}

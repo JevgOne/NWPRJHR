@@ -34,7 +34,7 @@ function MobileLocaleSwitcher() {
         <button
           key={code}
           onClick={() => {
-            if (code !== locale) startTransition(() => router.replace(pathname, { locale: code }));
+            if (code !== locale) startTransition(() => router.replace(pathname as any, { locale: code }));
           }}
           disabled={isPending}
           className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition-colors ${
@@ -90,7 +90,7 @@ function NavDropdown({
           {items.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               onClick={() => setOpen(false)}
               className={`block px-4 py-2 text-sm transition-colors ${
                 pathname.startsWith(item.href)
@@ -139,7 +139,7 @@ function MobileAccordion({
           {items.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               onClick={onNavigate}
               className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
                 pathname.startsWith(item.href)
@@ -222,8 +222,8 @@ export function PublicNavbar() {
   ];
 
   const endLinks = [
-    { href: "/contact", label: t("nav.contact") },
-    { href: "/about", label: t("nav.about") },
+    { href: "/kontakt", label: t("nav.contact") },
+    { href: "/o-nas", label: t("nav.about") },
   ];
 
 
@@ -252,7 +252,7 @@ export function PublicNavbar() {
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={link.href as any}
                   className={`text-sm font-medium transition-colors ${
                     isActive ? "text-rose" : "text-muted hover:text-ink"
                   }`}
@@ -285,7 +285,7 @@ export function PublicNavbar() {
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={link.href as any}
                   className={`text-sm font-medium transition-colors ${
                     isActive ? "text-rose" : "text-muted hover:text-ink"
                   }`}
@@ -304,7 +304,7 @@ export function PublicNavbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <Link href="/wishlist" className="relative p-1.5 text-muted hover:text-rose transition-colors">
+            <Link href="/oblibene" className="relative p-1.5 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
@@ -314,7 +314,7 @@ export function PublicNavbar() {
                 </span>
               )}
             </Link>
-            <Link href="/inquiry-cart" className="relative p-1.5 text-muted hover:text-rose transition-colors">
+            <Link href="/poptavka" className="relative p-1.5 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
@@ -328,7 +328,7 @@ export function PublicNavbar() {
             {isLoggedIn ? (
               <div className="ml-2 flex items-center gap-1">
                 <Link
-                  href={portalHref}
+                  href={portalHref as any}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-espresso bg-nude-100 rounded-l-lg hover:bg-nude-200 transition-colors"
                 >
                   <span>{session.user?.name ?? tAuth("loginButton")}</span>
@@ -366,7 +366,7 @@ export function PublicNavbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <Link href="/wishlist" className="relative p-2 text-muted hover:text-rose transition-colors">
+            <Link href="/oblibene" className="relative p-2 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
@@ -374,7 +374,7 @@ export function PublicNavbar() {
                 <span className="absolute top-0.5 right-0.5 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{wishlistCount}</span>
               )}
             </Link>
-            <Link href="/inquiry-cart" className="relative p-2 text-muted hover:text-rose transition-colors">
+            <Link href="/poptavka" className="relative p-2 text-muted hover:text-rose transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
@@ -458,10 +458,10 @@ export function PublicNavbar() {
 
               {/* Kontakt — primo link */}
               <Link
-                href="/contact"
+                href="/kontakt"
                 onClick={() => setMenuOpen(false)}
                 className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                  pathname.startsWith("/contact") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
+                  pathname.startsWith("/kontakt") ? "text-rose bg-blush-100/50" : "text-ink hover:bg-nude-50"
                 }`}
               >
                 {t("nav.contact")}
@@ -476,7 +476,7 @@ export function PublicNavbar() {
               {isLoggedIn ? (
                 <div className="mx-3 flex gap-2">
                   <Link
-                    href={portalHref}
+                    href={portalHref as any}
                     className="flex-1 px-4 py-2 text-sm font-medium text-center text-espresso bg-nude-100 rounded-lg hover:bg-nude-200"
                     onClick={() => setMenuOpen(false)}
                   >

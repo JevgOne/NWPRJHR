@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendNotificationEmail } from "@/lib/email";
-import { getOrderFollowUpEmail, getInquiryFollowUpEmail } from "@/lib/email-templates";
+import {
+  getOrderFollowUpEmail,
+  getInquiryFollowUpEmail,
+  getDay7CareEmail,
+  getDay30CheckEmail,
+  getExtensionReminderEmail,
+} from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -90,11 +96,124 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // 3. Day-7 care emails (shipped 7-8 days ago, retail only)
+  let day7Sent = 0;
+  const day7Start = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);
+  const day7End = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const day7Orders = await prisma.order.findMany({
+    where: {
+      shippedAt: { gte: day7Start, lte: day7End },
+      day7Sent: false,
+      salonId: null,
+      contactEmail: { not: null },
+    },
+    select: { id: true, contactEmail: true, contactName: true, locale: true },
+  });
+
+  for (const order of day7Orders) {
+    if (!order.contactEmail) continue;
+    const emailData = getDay7CareEmail(order.locale ?? "cs", {
+      customerName: order.contactName ?? "",
+    });
+    try {
+      await sendNotificationEmail({
+        to: order.contactEmail,
+        subject: emailData.subject,
+        body: emailData.text,
+        html: emailData.html,
+      });
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { day7Sent: true, day7SentAt: new Date() },
+      });
+      day7Sent++;
+    } catch { /* retry next run */ }
+  }
+
+  // 4. Day-30 check emails (shipped 30-31 days ago, retail only)
+  let day30Sent = 0;
+  const day30Start = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000);
+  const day30End = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  const day30Orders = await prisma.order.findMany({
+    where: {
+      shippedAt: { gte: day30Start, lte: day30End },
+      day30Sent: false,
+      salonId: null,
+      contactEmail: { not: null },
+    },
+    select: { id: true, contactEmail: true, contactName: true, locale: true },
+  });
+
+  for (const order of day30Orders) {
+    if (!order.contactEmail) continue;
+    const emailData = getDay30CheckEmail(order.locale ?? "cs", {
+      customerName: order.contactName ?? "",
+    });
+    try {
+      await sendNotificationEmail({
+        to: order.contactEmail,
+        subject: emailData.subject,
+        body: emailData.text,
+        html: emailData.html,
+      });
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { day30Sent: true, day30SentAt: new Date() },
+      });
+      day30Sent++;
+    } catch { /* retry next run */ }
+  }
+
+  // 5. Extension reminder emails (shipped ~60 days ago, retail only)
+  let extensionSent = 0;
+  const DEFAULT_DAYS = 60;
+  const reminderStart = new Date(Date.now() - (DEFAULT_DAYS + 1) * 24 * 60 * 60 * 1000);
+  const reminderEnd = new Date(Date.now() - (DEFAULT_DAYS - 1) * 24 * 60 * 60 * 1000);
+
+  const reminderOrders = await prisma.order.findMany({
+    where: {
+      shippedAt: { gte: reminderStart, lte: reminderEnd },
+      extensionReminderSent: false,
+      salonId: null,
+      contactEmail: { not: null },
+    },
+    select: { id: true, contactEmail: true, contactName: true, locale: true, extensionMethod: true },
+  });
+
+  for (const order of reminderOrders) {
+    if (!order.contactEmail) continue;
+    const emailData = getExtensionReminderEmail(order.locale ?? "cs", {
+      customerName: order.contactName ?? "",
+      method: (order.extensionMethod as "keratin" | "tape" | "micro" | "tres") ?? undefined,
+    });
+    try {
+      await sendNotificationEmail({
+        to: order.contactEmail,
+        subject: emailData.subject,
+        body: emailData.text,
+        html: emailData.html,
+      });
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { extensionReminderSent: true, extensionReminderSentAt: new Date() },
+      });
+      extensionSent++;
+    } catch { /* retry next run */ }
+  }
+
   return NextResponse.json({
     ok: true,
     ordersSent,
     inquiriesSent,
+    day7Sent,
+    day30Sent,
+    extensionSent,
     ordersChecked: completedOrders.length,
     inquiriesChecked: completedInquiries.length,
+    day7Checked: day7Orders.length,
+    day30Checked: day30Orders.length,
+    extensionChecked: reminderOrders.length,
   });
 }

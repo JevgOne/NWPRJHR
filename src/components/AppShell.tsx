@@ -75,6 +75,8 @@ export function AppShell({ session, children, badgeCounts }: AppShellProps) {
     {
       label: t("groupQuality"),
       items: [
+        { href: "/inquiries", label: t("inquiries"), roles: ["OWNER", "EMPLOYEE"], badge: newInquiryCount, badgeColor: "bg-rose-500" },
+        { href: "/messages", label: t("contactMessages"), roles: ["OWNER", "EMPLOYEE"] },
         { href: "/reviews", label: t("reviews"), roles: ["OWNER", "EMPLOYEE"], badge: pendingReviewCount, badgeColor: "bg-amber-500" },
         { href: "/complaints", label: t("complaints"), roles: ["OWNER"] },
         { href: "/returns", label: t("returns"), roles: ["OWNER"] },

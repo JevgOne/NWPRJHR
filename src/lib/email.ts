@@ -1,3 +1,9 @@
+export interface EmailAttachment {
+  filename: string;
+  content: Buffer | string;
+  contentType?: string;
+}
+
 export interface SendEmailInput {
   to: string;
   toName?: string;
@@ -5,6 +11,7 @@ export interface SendEmailInput {
   body: string;
   html?: string;
   unsubscribeUrl?: string;
+  attachments?: EmailAttachment[];
 }
 
 /**
@@ -26,11 +33,12 @@ export async function sendNotificationEmail(
 
   await resend.emails.send({
     from: process.env.EMAIL_FROM ?? "info@hairland.cz",
-    replyTo: "info@hairland.cz",
+    replyTo: "hairlandcz@gmail.com",
     to: recipients,
     subject: input.subject,
     text: input.body,
     html: input.html,
+    ...(input.attachments?.length ? { attachments: input.attachments } : {}),
     ...(input.unsubscribeUrl
       ? {
           headers: {

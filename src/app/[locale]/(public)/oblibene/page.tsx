@@ -6,7 +6,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("public.wishlist");
   return {
     title: t("title"),
-    robots: { index: false, follow: false },
     openGraph: {
       type: "website",
       title: `${t("title")} | Hairland`,

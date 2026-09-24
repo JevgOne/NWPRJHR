@@ -7,8 +7,6 @@ import { getShippingCost } from "@/lib/shipping";
 import { generateOrderNumber } from "@/lib/order-to-sale";
 import { createPayment } from "@/lib/comgate";
 import { createNotificationForRole } from "@/lib/notifications";
-import { sendNotificationEmail } from "@/lib/email";
-import { getRetailOrderConfirmationEmail } from "@/lib/email-templates";
 import { auth } from "@/lib/auth";
 import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { roundHalereUp } from "@/lib/rounding";
@@ -42,7 +40,7 @@ const publicOrderSchema = z
     packetaPointName: z.string().max(200).optional(),
     packetaPointCity: z.string().max(100).optional(),
 
-    paymentMethod: z.enum(["TRANSFER", "CARD", "CASH"]),
+    paymentMethod: z.enum(["CARD"]),
 
     promoCode: z.string().max(50).optional(),
     referralCode: z.string().max(50).optional(),
@@ -305,14 +303,12 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // 5. Shipping cost + cash surcharge
+  // 5. Shipping cost
   const shippingCost = getShippingCost(data.shippingMethod, estimatedTotal);
-  const cashSurcharge = data.paymentMethod === "CASH" ? 5000 : 0; // +50 Kč
-  const totalAmount = estimatedTotal + shippingCost + cashSurcharge;
+  const totalAmount = estimatedTotal + shippingCost;
 
   // 6. Create Order + Items + Reservations in transaction
-  // Reservation expiry: CARD = 30 min, CASH/TRANSFER = 48 hours
-  const reservationMinutes = data.paymentMethod === "CARD" ? 30 : 48 * 60;
+  const reservationMinutes = 30;
   const expiresAt = new Date(Date.now() + reservationMinutes * 60 * 1000);
 
   const order = await prisma.$transaction(
@@ -491,7 +487,7 @@ export async function POST(request: NextRequest) {
           event_name: "Purchase",
           event_time: Math.floor(Date.now() / 1000),
           action_source: "website",
-          event_source_url: "https://www.hairland.cz/checkout",
+          event_source_url: "https://www.hairland.cz/pokladna",
           event_id: order.orderNumber ?? order.id,
           user_data: {
             em: [hashedEmail],
@@ -521,110 +517,55 @@ export async function POST(request: NextRequest) {
     console.error("[public/orders] Meta CAPI error:", e);
   }
 
-  // Send confirmation email (only for TRANSFER — CARD emails are sent after payment callback)
-  if (data.paymentMethod !== "CARD") {
-    try {
-      const emailData = getRetailOrderConfirmationEmail(data.locale ?? "cs", {
-        customerName: `${data.firstName} ${data.lastName}`,
-        orderNumber: order.orderNumber ?? "",
-        items: orderItems.map((i) => ({
-          productName: i.productName,
-          lengthCm: i.lengthCm,
-          color: i.color,
-          grams: i.grams,
-          pieces: i.pieces,
-          lineTotal: i.lineTotal,
-        })),
-        subtotal: estimatedTotal + promoDiscount,
-        shippingCost,
-        promoCode: appliedPromoCode,
-        promoDiscount: promoDiscount || undefined,
-        totalAmount,
-        paymentMethod: data.paymentMethod,
-        bankAccount: "6424423004/5500",
-        variableSymbol: order.orderNumber ?? undefined,
+  // Email 1 (order confirmation with legal blocks) is sent AFTER Comgate callback
+  // All e-shop payments go through Comgate (both card and bank transfer)
+
+  // 9. Create Comgate payment (all e-shop payments go through Comgate)
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://www.hairland.cz").replace(/\/$/, "");
+  const returnLocale = data.locale === "cs" ? "cs" : data.locale === "uk" ? "uk" : data.locale === "ru" ? "ru" : "cs";
+  const comgateResult = await createPayment({
+    price: totalAmount,
+    label: `Obj ${order.orderNumber}`,
+    refId: order.orderNumber ?? order.id,
+    email: data.email,
+    fullName: `${data.firstName} ${data.lastName}`,
+    lang: data.locale,
+    returnUrl: `${baseUrl}/${returnLocale}/pokladna?orderId=${order.id}&token=${order.accessToken}&status=return`,
+  });
+
+  if (!comgateResult.success) {
+    console.error("[public/orders] Comgate create failed:", comgateResult.error);
+    // Release reservations and cancel the order
+    await prisma.$transaction(async (tx) => {
+      await tx.reservation.updateMany({
+        where: { orderId: order.id, active: true },
+        data: { active: false },
       });
-      sendNotificationEmail({
-        to: data.email,
-        toName: `${data.firstName} ${data.lastName}`,
-        subject: emailData.subject,
-        body: emailData.text,
-        html: emailData.html,
-      }).catch((e) => console.error("[public/orders] Confirmation email failed:", e));
-    } catch (e) {
-      console.error("[public/orders] Email template error:", e);
-    }
-  }
-
-  // 9. Handle payment method
-  if (data.paymentMethod === "CARD") {
-    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://www.hairland.cz").replace(/\/$/, "");
-    const returnLocale = data.locale === "cs" ? "cs" : data.locale === "uk" ? "uk" : data.locale === "ru" ? "ru" : "cs";
-    const comgateResult = await createPayment({
-      price: totalAmount,
-      label: `Obj ${order.orderNumber}`,
-      refId: order.orderNumber ?? order.id,
-      email: data.email,
-      fullName: `${data.firstName} ${data.lastName}`,
-      lang: data.locale,
-      returnUrl: `${baseUrl}/${returnLocale}/checkout?orderId=${order.id}&token=${order.accessToken}&status=return`,
-    });
-
-    if (!comgateResult.success) {
-      console.error("[public/orders] Comgate create failed:", comgateResult.error);
-      // Release reservations and cancel the order
-      await prisma.$transaction(async (tx) => {
-        await tx.reservation.updateMany({
-          where: { orderId: order.id, active: true },
-          data: { active: false },
-        });
-        await tx.order.update({
-          where: { id: order.id },
-          data: { status: "CANCELLED" },
-        });
+      await tx.order.update({
+        where: { id: order.id },
+        data: { status: "CANCELLED" },
       });
-      invalidateStockCache();
-      return NextResponse.json(
-        { error: "Payment creation failed" },
-        { status: 502 }
-      );
-    }
-
-    // Store Comgate transId on order
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { comgateTransId: comgateResult.transId },
     });
-
+    invalidateStockCache();
     return NextResponse.json(
-      {
-        success: true,
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        accessToken: order.accessToken,
-        redirect: comgateResult.redirect,
-      },
-      { status: 201 }
+      { error: "Payment creation failed" },
+      { status: 502 }
     );
   }
 
-  // CASH or TRANSFER payment — no online payment needed
+  // Store Comgate transId on order
+  await prisma.order.update({
+    where: { id: order.id },
+    data: { comgateTransId: comgateResult.transId },
+  });
+
   return NextResponse.json(
     {
       success: true,
       orderId: order.id,
       orderNumber: order.orderNumber,
       accessToken: order.accessToken,
-      ...(data.paymentMethod === "TRANSFER"
-        ? {
-            paymentInfo: {
-              bankAccount: "6424423004/5500",
-              iban: "CZ5555000000006424423004",
-              variableSymbol: order.orderNumber,
-              amount: totalAmount / 100,
-            },
-          }
-        : {}),
+      redirect: comgateResult.redirect,
     },
     { status: 201 }
   );

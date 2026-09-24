@@ -1,0 +1,71 @@
+export function GET() {
+  const content = `# Hairland.cz
+
+> Premiovy e-shop s 100% pravymi lidskymi vlasy k prodlouzeni. Prodej RAW vlasu — slovanske, ukrajinske, panenske. Osobni konzultace a ukazka v Praze zdarma. B2B program pro kadernice a salony.
+
+Hairland.cz je cesky e-shop specializovany na prodej premiovych 100% lidskych vlasu k prodlouzeni. Nabizime RAW vlasy slovanského, ukrajinskeho a panenskeho (virgin) puvodu. Provozovatelem je Alvento Solutions s.r.o., ICO 24111953, se sidlem Skolska 660/3, 110 00 Praha 1. Kontakt: info@hairland.cz, +420 608 553 103.
+
+## Produkty
+
+Kompletni katalog vlasu k prodlouzeni ve vsech metodach aplikace:
+
+- [Vsechny vlasy k prodlouzeni](https://www.hairland.cz/vlasy-k-prodlouzeni): Kompletni nabidka RAW vlasu
+- [Keratinove vlasy](https://www.hairland.cz/keratinove-vlasy): Prodlouzeni keratinovou metodou, jednotlive prameny
+- [Micro-ring vlasy](https://www.hairland.cz/micro-ring-vlasy): Prodlouzeni micro-ring krouzky, bez tepla
+- [Tape-in vlasy](https://www.hairland.cz/tape-in-vlasy): Paskove prodlouzeni, rychla aplikace
+- [Clip-in vlasy](https://www.hairland.cz/clip-in-vlasy): Odnimatelne prodlouzeni na sponky
+- [Tresove vlasy](https://www.hairland.cz/tresove-vlasy): Vlasove tresy na zasiti nebo clip-in
+- [Ofiny](https://www.hairland.cz/vlasy-k-prodlouzeni/ofiny): Prirodni ofiny z lidskych vlasu
+- [Prislusenstvi](https://www.hairland.cz/vlasy-k-prodlouzeni/prislusenstvi): Nastroje a pomucky pro prodlouzeni
+- [Vlasova kosmetika](https://www.hairland.cz/vlasy-k-prodlouzeni/vlasova-kosmetika): Pece o prodlouzene vlasy
+
+## Poradna a navody
+
+Odborne clanky a pruvodci pro vyber a peci o prodlouzene vlasy:
+
+- [Typy prodlouzeni vlasu](https://www.hairland.cz/poradna/typy-prodlouzeni): Porovnani vsech metod prodlouzeni
+- [Clip-in vs Tape-in](https://www.hairland.cz/poradna/clip-in-vs-tape-in): Srovnani dvou nejpopularnejsich metod
+- [Jak vybrat barvu vlasu](https://www.hairland.cz/poradna/jak-vybrat-barvu): Pruvodce vyberem spravneho odstinu
+- [Jak vybrat delku vlasu](https://www.hairland.cz/poradna/jak-vybrat-delku): Doporuceni delek podle typu postavy
+- [Pece o prodlouzene vlasy](https://www.hairland.cz/poradna/pece-o-prodlouzene-vlasy): Jak spravne pecovat o prodlouzeni
+- [Puvod vlasu](https://www.hairland.cz/poradna/puvod-vlasu): Rozdily mezi slovanskymi, ukrajinskymi a pánenskymi vlasy
+- [Virgin vs Remy vlasy](https://www.hairland.cz/poradna/virgin-vs-remy): Vysvetleni rozdilu v kvalite
+- [Jak dlouho vydrzi prodlouzeni](https://www.hairland.cz/poradna/jak-dlouho-vydrzi): Zivotnost jednotlivych metod
+- [Pruvodce gramazi](https://www.hairland.cz/pruvodce-gramazi): Kolik gramu vlasu potrebujete
+
+## Sluzby
+
+- Osobni ukazka a konzultace v Praze zdarma
+- Expresni zpracovani na miru do 7 dni
+- Doprava zdarma po Praze (Zasilkovna, Ceska posta, osobni odber)
+- [B2B program pro kadernice a salony](https://www.hairland.cz/b2b): Velkoobchodni slevy 15-30%
+
+## Dalsi informace
+
+- [O nas](https://www.hairland.cz/about): O firme Hairland a nasem tymu
+- [Cenik vlasu](https://www.hairland.cz/cenik-vlasy): Prehled cen vsech typu vlasu
+- [Recenze zakaznic](https://www.hairland.cz/recenze): Hodnoceni od nasich zakaznic
+- [Blog](https://www.hairland.cz/blog): Novinky, trendy a tipy pro vlasy
+- [Kontakt](https://www.hairland.cz/contact): Kontaktni formular a informace
+- [Obchodni podminky](https://www.hairland.cz/obchodni-podminky): Obchodni podminky e-shopu
+- [Doprava a platba](https://www.hairland.cz/doprava): Moznosti doruceni a platby
+- [RSS feed](https://www.hairland.cz/feed/rss.xml): RSS kanal s novinkami
+
+## Dostupne jazyky
+
+- [Cestina](https://www.hairland.cz): Hlavni verze webu
+- [Ukrajinstina](https://www.hairland.cz/ua/): Ukrajinska verze
+- [Rustina](https://www.hairland.cz/rus/): Ruska verze
+
+## Kompletni obsah
+
+- [llms-full.txt](https://www.hairland.cz/llms-full.txt): Kompletni obsah webu vcetne vsech produktu, blogu a poradny
+`;
+
+  return new Response(content, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=86400, s-maxage=86400",
+    },
+  });
+}

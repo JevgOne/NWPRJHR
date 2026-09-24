@@ -30,7 +30,7 @@ export function CookieBanner() {
         <p className="text-sm text-muted flex-1">
           {t("cookie.message")}{" "}
           <a
-            href="/privacy"
+            href="/ochrana-udaju"
             className="text-rose underline hover:text-rose-deep"
           >
             {t("cookie.privacyLink")}

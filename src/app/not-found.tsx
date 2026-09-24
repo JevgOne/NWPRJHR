@@ -31,9 +31,9 @@ type Locale = keyof typeof translations;
 
 export default function NotFound() {
   const pathname = usePathname();
-  const locale: Locale = pathname?.startsWith("/uk")
+  const locale: Locale = pathname?.startsWith("/ua")
     ? "uk"
-    : pathname?.startsWith("/ru")
+    : pathname?.startsWith("/rus")
       ? "ru"
       : "cs";
   const t = translations[locale];
@@ -50,19 +50,19 @@ export default function NotFound() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href={`/${locale === "cs" ? "" : locale}`}
+            href={locale === "cs" ? "/" : locale === "uk" ? "/ua" : "/rus"}
             className="px-5 py-2.5 bg-rose text-white rounded-lg font-medium hover:bg-rose-deep transition-colors"
           >
             {t.home}
           </Link>
           <Link
-            href={`/${locale === "cs" ? "" : locale + "/"}vlasy-k-prodlouzeni`}
+            href={`${locale === "cs" ? "" : locale === "uk" ? "/ua" : "/rus"}/vlasy-k-prodlouzeni`}
             className="px-5 py-2.5 bg-nude-100 text-espresso rounded-lg font-medium hover:bg-nude-200 transition-colors"
           >
             {t.offer}
           </Link>
           <Link
-            href={`/${locale === "cs" ? "" : locale + "/"}contact`}
+            href={`${locale === "cs" ? "" : locale === "uk" ? "/ua" : "/rus"}/contact`}
             className="px-5 py-2.5 text-muted hover:text-ink transition-colors font-medium"
           >
             {t.contact}

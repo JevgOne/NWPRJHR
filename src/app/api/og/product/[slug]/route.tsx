@@ -250,7 +250,9 @@ export async function GET(
           </div>
 
           <div style={{ fontSize: 16, color: "#8c7b74" }}>
-            100% pravé vlasy z jedné hlavy — hairland.cz
+            {product.category === "VIRGIN" || product.category === "LUXE"
+              ? "100% pravé vlasy z jedné hlavy — hairland.cz"
+              : "100% pravé vlasy — hairland.cz"}
           </div>
         </div>
 

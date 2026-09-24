@@ -6,97 +6,72 @@ datasource db {
   provider = "sqlite"
 }
 
-enum Role {
-  OWNER
-  EMPLOYEE
-  SALON
-  HAIRDRESSER
-}
-
 model User {
-  id             String    @id @default(cuid())
-  name           String?
-  email          String    @unique
-  hashedPassword String
-  role           Role      @default(EMPLOYEE)
-  color          String?
-  salonId        String?
-  salon          Salon?    @relation(fields: [salonId], references: [id])
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  stockMovements StockMovement[]
-  sales          Sale[]
-  discountsGiven Discount[]
-  partner        Partner?
-
-  operatingCostsCreated  OperatingCost[]     @relation("OperatingCostsCreated")
-  withdrawalsCreated     PartnerWithdrawal[] @relation("WithdrawalsCreated")
-
-  returnsCreated         Return[]            @relation("ReturnsCreated")
-  returnsApproved        Return[]            @relation("ReturnsApproved")
-  complaintsCreated      Complaint[]         @relation("ComplaintsCreated")
-  notificationsReceived  Notification[]      @relation("NotificationsReceived")
-
-  reservationsCreated    ProductReservation[] @relation("ReservationsCreated")
-  deliveriesCreated      Delivery[]          @relation("DeliveriesCreated")
-  comments               Comment[]
-  articleLikes           ArticleLike[]
-  commentLikes           CommentLike[]
+  id                    String               @id @default(cuid())
+  name                  String?
+  email                 String               @unique
+  hashedPassword        String
+  role                  Role                 @default(EMPLOYEE)
+  color                 String?
+  salonId               String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  articleLikes          ArticleLike[]
+  commentLikes          CommentLike[]
+  comments              Comment[]
+  complaintsCreated     Complaint[]          @relation("ComplaintsCreated")
+  deliveriesCreated     Delivery[]           @relation("DeliveriesCreated")
+  discountsGiven        Discount[]
+  notificationsReceived Notification[]       @relation("NotificationsReceived")
+  operatingCostsCreated OperatingCost[]      @relation("OperatingCostsCreated")
+  withdrawalsCreated    PartnerWithdrawal[]  @relation("WithdrawalsCreated")
+  partner               Partner?
+  reservationsCreated   ProductReservation[] @relation("ReservationsCreated")
+  returnsCreated        Return[]             @relation("ReturnsCreated")
+  returnsApproved       Return[]             @relation("ReturnsApproved")
+  sales                 Sale[]
+  stockMovements        StockMovement[]
+  salon                 Salon?               @relation(fields: [salonId], references: [id])
 
   @@map("users")
 }
 
-enum SalonType {
-  SALON
-  HAIRDRESSER
-}
-
 model Salon {
-  id              String      @id @default(cuid())
-  name            String
-  type            SalonType   @default(SALON)
-  ico             String?
-  dic             String?
-  contactPerson   String?
-  email           String?
-  phone           String?
-  city            String?
-  address         String?
-  website         String?
-  instagram       String?
-  language        String      @default("cs")
-
-  // Approval
-  approved        Boolean     @default(true)
-
-  // Loyalty
-  tier            LoyaltyTier @default(BRONZE)
-  points          Int         @default(0)
-  totalRevenue    Int         @default(0)
-
-  // Status
-  archived        Boolean     @default(false)
-  archivedAt      DateTime?
-  startDate       DateTime    @default(now())
-  notes           String?
-
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  users           User[]
-  sales           Sale[]
-  invoices        Invoice[]
-  orders          Order[]
-  sampleRequests  SampleRequest[]
-  returns         Return[]
-  complaints      Complaint[]
+  id                  String               @id @default(cuid())
+  name                String
+  type                SalonType            @default(SALON)
+  ico                 String?
+  dic                 String?
+  contactPerson       String?
+  email               String?
+  phone               String?
+  city                String?
+  address             String?
+  website             String?
+  instagram           String?
+  language            String               @default("cs")
+  approved            Boolean              @default(true)
+  tier                LoyaltyTier          @default(BRONZE)
+  points              Int                  @default(0)
+  totalRevenue        Int                  @default(0)
+  archived            Boolean              @default(false)
+  archivedAt          DateTime?
+  startDate           DateTime             @default(now())
+  notes               String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  slug                String?              @unique
+  complaints          Complaint[]
+  invoices            Invoice[]
+  orders              Order[]
+  paymentReminders    PaymentReminder[]
   productReservations ProductReservation[]
-  paymentReminders PaymentReminder[]
-  stylists        Stylist[]
-  referrals       Referral[]  @relation("ReferrerSalon")
-
-  slug            String?     @unique
+  referrals           Referral[]           @relation("ReferrerSalon")
+  returns             Return[]
+  sales               Sale[]
+  sampleRequests      SampleRequest[]
+  stylists            Stylist[]
+  users               User[]
 
   @@index([archived])
   @@index([tier])
@@ -105,9 +80,1157 @@ model Salon {
   @@map("salons")
 }
 
-// ============================================================
-// PRODUCT ENUMS
-// ============================================================
+model Product {
+  id              String          @id @default(cuid())
+  name            String
+  nameUk          String?
+  nameRu          String?
+  description     String?
+  descriptionUk   String?
+  descriptionRu   String?
+  category        ProductCategory
+  processingType  ProcessingType
+  origin          String?
+  texture         String?
+  colorTone       String?
+  photos          String          @default("[]")
+  video           String?
+  archived        Boolean         @default(false)
+  orderOnly       Boolean         @default(false)
+  supplierCode    String?
+  photoCode       String?
+  slug            String?         @unique
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  reviews         Review[]
+  sampleRequests  SampleRequest[]
+  variants        Variant[]
+
+  @@index([category])
+  @@index([processingType])
+  @@index([archived])
+  @@map("products")
+}
+
+model Variant {
+  id                    String               @id @default(cuid())
+  productId             String
+  sku                   String?              @unique
+  lengthCm              Int
+  color                 String
+  costPricePerGram      Int                  @default(0)
+  wholesalePricePerGram Int
+  retailPricePerGram    Int
+  retailManualOverride  Boolean              @default(false)
+  sellingMode           String               @default("BY_GRAM")
+  pricePerPiece         Int?
+  retailPricePerPiece   Int?
+  availableToOrder      Boolean              @default(false)
+  orderLeadDays         Int?
+  active                Boolean              @default(true)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  deliveries            Delivery[]
+  orderItems            OrderItem[]
+  productReservations   ProductReservation[]
+  reservations          Reservation[]
+  saleItems             SaleItem[]
+  stockMovements        StockMovement[]
+  stockSubscriptions    StockSubscription[]
+  product               Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, lengthCm, color])
+  @@index([productId])
+  @@map("variants")
+}
+
+model PriceSettings {
+  id            String          @id @default(cuid())
+  category      ProductCategory @unique
+  markupPercent Int
+  updatedAt     DateTime        @updatedAt
+
+  @@map("price_settings")
+}
+
+model B2BSettings {
+  id                     String   @id @default(cuid())
+  hairdresserDiscountPct Int      @default(2000)
+  salonDiscountPct       Int      @default(3600)
+  updatedAt              DateTime @updatedAt
+
+  @@map("b2b_settings")
+}
+
+model Supplier {
+  id          String     @id @default(cuid())
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  country     String?
+  note        String?
+  archived    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deliveries  Delivery[]
+
+  @@index([archived])
+  @@map("suppliers")
+}
+
+model StockBatch {
+  id         String     @id @default(cuid())
+  name       String
+  status     String     @default("OPEN")
+  note       String?
+  createdAt  DateTime   @default(now())
+  closedAt   DateTime?
+  updatedAt  DateTime   @updatedAt
+  deliveries Delivery[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("stock_batches")
+}
+
+model Delivery {
+  id                      String          @id @default(cuid())
+  variantId               String
+  supplierId              String
+  purchasePricePerGramRaw Int
+  currency                Currency
+  exchangeRate            Int
+  purchasePricePerGramCZK Int
+  initialGrams            Int
+  initialPieces           Int             @default(0)
+  pieceWeightGrams        Int?
+  remainingGrams          Int
+  remainingPieces         Int             @default(0)
+  exclusive               Boolean         @default(false)
+  barcode                 String?         @unique
+  batchCode               String?
+  batchId                 String?
+  receivedInvoiceFile     String?
+  stockedAt               DateTime        @default(now())
+  note                    String?
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  createdByUserId         String?
+  complaints              Complaint[]
+  createdByUser           User?           @relation("DeliveriesCreated", fields: [createdByUserId], references: [id])
+  batch                   StockBatch?     @relation(fields: [batchId], references: [id])
+  supplier                Supplier        @relation(fields: [supplierId], references: [id])
+  variant                 Variant         @relation(fields: [variantId], references: [id])
+  returns                 Return[]
+  saleItems               SaleItem[]
+  stockMovements          StockMovement[]
+
+  @@index([variantId, stockedAt])
+  @@index([supplierId])
+  @@index([barcode])
+  @@index([variantId, remainingGrams, stockedAt])
+  @@index([batchId])
+  @@map("deliveries")
+}
+
+model StockMovement {
+  id          String            @id @default(cuid())
+  deliveryId  String
+  variantId   String
+  type        StockMovementType
+  grams       Int
+  pieces      Int               @default(0)
+  userId      String
+  note        String?
+  saleItemId  String?
+  returnId    String?
+  complaintId String?
+  createdAt   DateTime          @default(now())
+  user        User              @relation(fields: [userId], references: [id])
+  variant     Variant           @relation(fields: [variantId], references: [id])
+  delivery    Delivery          @relation(fields: [deliveryId], references: [id])
+
+  @@index([deliveryId])
+  @@index([variantId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([userId])
+  @@map("stock_movements")
+}
+
+model Reservation {
+  id        String    @id @default(cuid())
+  orderId   String
+  variantId String
+  grams     Int
+  pieces    Int
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+  variant   Variant   @relation(fields: [variantId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id])
+
+  @@index([variantId, active])
+  @@index([orderId])
+  @@map("reservations")
+}
+
+model Partner {
+  id               String              @id @default(cuid())
+  name             String
+  userId           String              @unique
+  share            Int                 @default(3333)
+  active           Boolean             @default(true)
+  createdAt        DateTime            @default(now())
+  discountBearings DiscountBearer[]
+  withdrawals      PartnerWithdrawal[]
+  user             User                @relation(fields: [userId], references: [id])
+
+  @@map("partners")
+}
+
+model Customer {
+  id                  String               @id @default(cuid())
+  firstName           String?
+  lastName            String?
+  name                String
+  email               String?
+  phone               String?
+  city                String?
+  instagram           String?
+  note                String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  passwordHash        String?
+  slug                String?              @unique
+  inquiries           Inquiry[]
+  invoices            Invoice[]
+  orders              Order[]
+  productReservations ProductReservation[]
+  referrals           Referral[]           @relation("ReferrerCustomer")
+  sales               Sale[]
+
+  @@index([email])
+  @@index([name])
+  @@map("customers")
+}
+
+model Sale {
+  id                 String       @id @default(cuid())
+  saleNumber         String?
+  customerType       CustomerType
+  salonId            String?
+  customerId         String?
+  status             SaleStatus   @default(DRAFT)
+  paymentType        PaymentType  @default(TRANSFER)
+  subtotal           Int
+  discountAmount     Int          @default(0)
+  totalBeforeVat     Int
+  vatRate            Int          @default(0)
+  vatAmount          Int
+  totalAmount        Int
+  totalCostOfGoods   Int          @default(0)
+  grossMargin        Int          @default(0)
+  userId             String
+  orderId            String?      @unique
+  receiptNumber      String?
+  note               String?
+  completedAt        DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  comgateTransId     String?
+  shippingMethod     String?
+  shippingStatus     String?
+  shippingTrackingId String?
+  shippingCost       Int          @default(0)
+  packetaPointId     String?
+  packetaPointName   String?
+  packetaPointCity   String?
+  complaints         Complaint[]
+  discounts          Discount[]
+  invoice            Invoice?
+  order              Order?
+  returns            Return[]
+  items              SaleItem[]
+  user               User         @relation(fields: [userId], references: [id])
+  customer           Customer?    @relation(fields: [customerId], references: [id])
+  salon              Salon?       @relation(fields: [salonId], references: [id])
+
+  @@index([customerType])
+  @@index([salonId])
+  @@index([customerId])
+  @@index([userId])
+  @@index([status])
+  @@index([completedAt])
+  @@index([status, completedAt])
+  @@map("sales")
+}
+
+model SaleItem {
+  id                      String   @id @default(cuid())
+  saleId                  String
+  variantId               String
+  grams                   Int
+  pieces                  Int
+  pricePerGramUsed        Int
+  deliveryId              String
+  purchasePricePerGramCZK Int
+  lineTotal               Int
+  createdAt               DateTime @default(now())
+  returns                 Return[]
+  delivery                Delivery @relation(fields: [deliveryId], references: [id])
+  variant                 Variant  @relation(fields: [variantId], references: [id])
+  sale                    Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  @@index([saleId])
+  @@index([variantId])
+  @@index([deliveryId])
+  @@map("sale_items")
+}
+
+model Discount {
+  id                     String           @id @default(cuid())
+  saleId                 String
+  percent                Int
+  type                   DiscountType
+  amountHalere           Int
+  counterPerformanceNote String?
+  givenByUserId          String
+  discountCodeId         String?
+  createdAt              DateTime         @default(now())
+  bearers                DiscountBearer[]
+  givenByUser            User             @relation(fields: [givenByUserId], references: [id])
+  sale                   Sale             @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  @@index([saleId])
+  @@index([type])
+  @@index([givenByUserId])
+  @@index([createdAt])
+  @@map("discounts")
+}
+
+model DiscountBearer {
+  id          String   @id @default(cuid())
+  discountId  String
+  partnerId   String
+  shareAmount Int
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+  discount    Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+
+  @@unique([discountId, partnerId])
+  @@index([partnerId])
+  @@map("discount_bearers")
+}
+
+model Company {
+  id           String    @id @default(cuid())
+  name         String
+  ico          String
+  dic          String?
+  address      String
+  addressCity  String?
+  addressZip   String?
+  bankAccount  String
+  bankIban     String?
+  bankBic      String?
+  bankName     String?
+  contactEmail String?
+  contactPhone String?
+  isDefault    Boolean   @default(false)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  invoices     Invoice[]
+
+  @@index([isDefault])
+  @@map("companies")
+}
+
+model InvoiceCounter {
+  id         String @id @default(cuid())
+  year       Int
+  prefix     String @default("F")
+  lastNumber Int    @default(0)
+
+  @@unique([year, prefix])
+  @@map("invoice_counters")
+}
+
+model Invoice {
+  id                  String              @id @default(cuid())
+  type                InvoiceType         @default(INVOICE)
+  number              String              @unique
+  companyId           String
+  salonId             String?
+  customerId          String?
+  buyerName           String
+  buyerIco            String?
+  buyerDic            String?
+  buyerAddress        String
+  buyerEmail          String?
+  buyerLanguage       String              @default("cs")
+  saleId              String?             @unique
+  reservationId       String?
+  originalInvoiceId   String?
+  issueDate           DateTime            @default(now())
+  dueDate             DateTime
+  taxDate             DateTime?
+  variableSymbol      String
+  subtotal            Int
+  vatRate             Int                 @default(0)
+  vatAmount           Int
+  total               Int
+  roundingAmount      Int                 @default(0)
+  status              InvoiceStatus       @default(ISSUED)
+  pdfPath             String?
+  pdfGeneratedAt      DateTime?
+  note                String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  complaintCreditNote Complaint?          @relation("ComplaintCreditNote")
+  items               InvoiceItem[]
+  originalInvoice     Invoice?            @relation("CreditNoteOf", fields: [originalInvoiceId], references: [id])
+  creditNotes         Invoice[]           @relation("CreditNoteOf")
+  reservation         ProductReservation? @relation(fields: [reservationId], references: [id])
+  sale                Sale?               @relation(fields: [saleId], references: [id])
+  customer            Customer?           @relation(fields: [customerId], references: [id])
+  salon               Salon?              @relation(fields: [salonId], references: [id])
+  company             Company             @relation(fields: [companyId], references: [id])
+  reminders           PaymentReminder[]
+  payments            Payment[]
+  returnCreditNote    Return?             @relation("ReturnCreditNote")
+
+  @@index([status])
+  @@index([salonId])
+  @@index([customerId])
+  @@index([companyId])
+  @@index([issueDate])
+  @@index([dueDate])
+  @@index([variableSymbol])
+  @@index([type])
+  @@index([reservationId])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id           String  @id @default(cuid())
+  invoiceId    String
+  description  String
+  quantity     Decimal
+  unit         String
+  pricePerUnit Int
+  lineTotal    Int
+  vatRate      Int     @default(0)
+  invoice      Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id             String    @id @default(cuid())
+  invoiceId      String
+  amount         Int
+  date           DateTime
+  matchedVS      String?
+  source         String    @default("MANUAL")
+  note           String?
+  comgateTransId String?
+  matchedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  invoice        Invoice   @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@index([matchedVS])
+  @@map("payments")
+}
+
+model LoyaltySettings {
+  id               String      @id @default(cuid())
+  tier             LoyaltyTier
+  salonType        SalonType   @default(SALON)
+  revenueThreshold Int
+  discountPercent  Int
+  pointsThreshold  Int         @default(10000)
+  updatedAt        DateTime    @updatedAt
+
+  @@unique([tier, salonType])
+  @@map("loyalty_settings")
+}
+
+model Order {
+  id                      String        @id @default(cuid())
+  orderNumber             String?       @unique
+  salonId                 String?
+  customerId              String?
+  contactEmail            String?
+  contactPhone            String?
+  contactName             String?
+  status                  OrderStatus   @default(NEW)
+  estimatedTotal          Int
+  shippingCost            Int           @default(0)
+  totalAmount             Int?
+  shippingMethod          String?
+  shippingStreet          String?
+  shippingCity            String?
+  shippingZip             String?
+  packetaPointId          String?
+  packetaPointName        String?
+  packetaPointCity        String?
+  packetaPacketId         String?
+  packetaBarcode          String?
+  shippingTrackingId      String?
+  paymentMethod           String?
+  comgateTransId          String?
+  paidAt                  DateTime?
+  confirmedAt             DateTime?
+  confirmedBy             String?
+  rejectedAt              DateTime?
+  rejectedReason          String?
+  completedAt             DateTime?
+  saleId                  String?       @unique
+  note                    String?
+  internalNote            String?
+  promoCode               String?
+  promoDiscount           Int?
+  wantsBilling            Boolean       @default(false)
+  billingName             String?
+  billingIco              String?
+  billingDic              String?
+  billingStreet           String?
+  billingCity             String?
+  billingZip              String?
+  noSurvey                Boolean       @default(false)
+  noNewsletter            Boolean       @default(false)
+  accessToken             String?       @unique
+  locale                  String        @default("cs")
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  followUpSent            Boolean       @default(false)
+  followUpSentAt          DateTime?
+  shippedAt               DateTime?
+  day7Sent                Boolean       @default(false)
+  day7SentAt              DateTime?
+  day30Sent               Boolean       @default(false)
+  day30SentAt             DateTime?
+  extensionReminderSent   Boolean       @default(false)
+  extensionReminderSentAt DateTime?
+  extensionMethod         String?
+  items                   OrderItem[]
+  sale                    Sale?         @relation(fields: [saleId], references: [id])
+  customer                Customer?     @relation(fields: [customerId], references: [id])
+  salon                   Salon?        @relation(fields: [salonId], references: [id])
+  reservations            Reservation[]
+
+  @@index([salonId])
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([contactEmail])
+  @@index([comgateTransId])
+  @@index([shippedAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  variantId    String
+  grams        Int
+  pieces       Int
+  pricePerGram Int
+  lineTotal    Int
+  productName  String?
+  lengthCm     Int?
+  color        String?
+  sku          String?
+  createdAt    DateTime @default(now())
+  variant      Variant  @relation(fields: [variantId], references: [id])
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+model SampleRequest {
+  id              String       @id @default(cuid())
+  salonId         String?
+  salonName       String?
+  productId       String
+  status          SampleStatus @default(REQUESTED)
+  grams           Int?
+  pieces          Int?
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  resolution      String?
+  stockMovementId String?
+  note            String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  product         Product      @relation(fields: [productId], references: [id])
+  salon           Salon?       @relation(fields: [salonId], references: [id])
+
+  @@index([salonId])
+  @@index([status])
+  @@map("sample_requests")
+}
+
+model OperatingCost {
+  id              String                @id @default(cuid())
+  category        OperatingCostCategory
+  amountHalere    Int
+  date            DateTime
+  description     String?
+  note            String?
+  receiptFile     String?
+  receiptName     String?
+  createdByUserId String
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  createdByUser   User                  @relation("OperatingCostsCreated", fields: [createdByUserId], references: [id])
+
+  @@index([category])
+  @@index([date])
+  @@index([createdByUserId])
+  @@map("operating_costs")
+}
+
+model PartnerWithdrawal {
+  id              String           @id @default(cuid())
+  partnerId       String
+  year            Int
+  month           Int
+  amountHalere    Int
+  status          WithdrawalStatus @default(PLANNED)
+  date            DateTime
+  note            String?
+  createdByUserId String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdByUser   User             @relation("WithdrawalsCreated", fields: [createdByUserId], references: [id])
+  partner         Partner          @relation(fields: [partnerId], references: [id])
+
+  @@unique([partnerId, year, month])
+  @@index([partnerId])
+  @@index([year, month])
+  @@map("partner_withdrawals")
+}
+
+model ProductReservation {
+  id                String                   @id @default(cuid())
+  reservationNumber String?                  @unique
+  customerType      CustomerType
+  salonId           String?
+  customerId        String?
+  contactName       String?
+  contactEmail      String?
+  contactPhone      String?
+  variantId         String
+  grams             Int
+  pieces            Int
+  pricePerUnit      Int
+  lineTotal         Int
+  sellingMode       String                   @default("BY_GRAM")
+  discountPercent   Int?
+  discountAmount    Int?
+  discountType      String?
+  discountNote      String?
+  status            ProductReservationStatus @default(PENDING)
+  paymentDueDate    DateTime
+  paidAt            DateTime?
+  paymentNote       String?
+  saleId            String?                  @unique
+  invoiceId         String?                  @unique
+  note              String?
+  internalNote      String?
+  createdByUserId   String
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  invoices          Invoice[]
+  createdByUser     User                     @relation("ReservationsCreated", fields: [createdByUserId], references: [id])
+  variant           Variant                  @relation(fields: [variantId], references: [id])
+  customer          Customer?                @relation(fields: [customerId], references: [id])
+  salon             Salon?                   @relation(fields: [salonId], references: [id])
+
+  @@index([status])
+  @@index([salonId])
+  @@index([customerId])
+  @@index([variantId])
+  @@index([paymentDueDate])
+  @@index([createdAt])
+  @@map("product_reservations")
+}
+
+model Inquiry {
+  id               String        @id @default(cuid())
+  name             String
+  firstName        String?
+  lastName         String?
+  email            String
+  phone            String?
+  salonName        String?
+  message          String?
+  city             String?
+  locale           String        @default("cs")
+  promoCode        String?
+  status           InquiryStatus @default(NEW)
+  assignedTo       String?
+  assignedAt       DateTime?
+  internalNote     String?
+  contactedAt      DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  referralCode     String?
+  customerPhotos   String?
+  followUpSent     Boolean       @default(false)
+  followUpSentAt   DateTime?
+  shippingMethod   String?
+  paymentMethod    String?
+  packetaPointId   String?
+  packetaPointName String?
+  packetaPointCity String?
+  customerId       String?
+  customer         Customer?     @relation(fields: [customerId], references: [id])
+  items            InquiryItem[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+  @@index([customerId])
+  @@map("inquiries")
+}
+
+model InquiryItem {
+  id          String   @id @default(cuid())
+  inquiryId   String
+  productId   String
+  productName String
+  lengthCm    Int
+  color       String
+  quantity    Int
+  unit        String   @default("g")
+  createdAt   DateTime @default(now())
+  inquiry     Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  @@index([inquiryId])
+  @@map("inquiry_items")
+}
+
+model ContactMessage {
+  id             String    @id @default(cuid())
+  name           String
+  email          String
+  phone          String?
+  salonName      String?
+  message        String
+  customerPhotos String?
+  locale         String    @default("cs")
+  assignedTo     String?
+  assignedAt     DateTime?
+  repliedAt      DateTime?
+  repliedBy      String?
+  createdAt      DateTime  @default(now())
+
+  @@index([createdAt])
+  @@map("contact_messages")
+}
+
+model Return {
+  id               String       @id @default(cuid())
+  saleId           String
+  saleItemId       String
+  salonId          String?
+  deliveryId       String
+  grams            Int
+  pieces           Int
+  reason           String
+  status           ReturnStatus @default(PENDING)
+  approvedByUserId String?
+  approvedAt       DateTime?
+  creditNoteId     String?      @unique
+  pointsDeducted   Int?
+  revenueDeducted  Int?
+  createdByUserId  String
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  createdByUser    User         @relation("ReturnsCreated", fields: [createdByUserId], references: [id])
+  creditNote       Invoice?     @relation("ReturnCreditNote", fields: [creditNoteId], references: [id])
+  approvedByUser   User?        @relation("ReturnsApproved", fields: [approvedByUserId], references: [id])
+  delivery         Delivery     @relation(fields: [deliveryId], references: [id])
+  salon            Salon?       @relation(fields: [salonId], references: [id])
+  saleItem         SaleItem     @relation(fields: [saleItemId], references: [id])
+  sale             Sale         @relation(fields: [saleId], references: [id])
+
+  @@index([saleId])
+  @@index([salonId])
+  @@index([deliveryId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("returns")
+}
+
+model Complaint {
+  id                   String          @id @default(cuid())
+  saleId               String?
+  salonId              String?
+  deliveryId           String
+  grams                Int
+  pieces               Int
+  description          String
+  status               ComplaintStatus @default(OPEN)
+  creditNoteId         String?         @unique
+  supplierRefundHalere Int?
+  supplierRefundDate   DateTime?
+  supplierNote         String?
+  createdByUserId      String
+  resolvedAt           DateTime?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  createdByUser        User            @relation("ComplaintsCreated", fields: [createdByUserId], references: [id])
+  creditNote           Invoice?        @relation("ComplaintCreditNote", fields: [creditNoteId], references: [id])
+  delivery             Delivery        @relation(fields: [deliveryId], references: [id])
+  salon                Salon?          @relation(fields: [salonId], references: [id])
+  sale                 Sale?           @relation(fields: [saleId], references: [id])
+
+  @@index([saleId])
+  @@index([salonId])
+  @@index([deliveryId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("complaints")
+}
+
+model ComplaintTicket {
+  id                String   @id @default(cuid())
+  ticketNumber      String   @unique
+  customerType      String
+  name              String
+  email             String
+  phone             String?
+  salonName         String?
+  complaintType     String
+  orderNumber       String?
+  description       String
+  photos            String   @default("[]")
+  desiredResolution String?
+  status            String   @default("NEW")
+  assignedTo        String?
+  adminNote         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("complaint_tickets")
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  type        NotificationType
+  title       String
+  message     String
+  data        Json?
+  read        Boolean          @default(false)
+  readAt      DateTime?
+  emailSent   Boolean          @default(false)
+  emailSentAt DateTime?
+  createdAt   DateTime         @default(now())
+  recipient   User             @relation("NotificationsReceived", fields: [recipientId], references: [id])
+
+  @@index([recipientId, read])
+  @@index([recipientId, createdAt])
+  @@index([type])
+  @@map("notifications")
+}
+
+model Stylist {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  photo           String?
+  bio             String?
+  bioUk           String?
+  bioRu           String?
+  specializations String   @default("[]")
+  languages       String   @default("[]")
+  phone           String?
+  email           String?
+  instagram       String?
+  telegram        String?
+  whatsapp        String?
+  city            String?
+  experience      Int?
+  certifications  String   @default("[]")
+  portfolio       String   @default("[]")
+  featured        Boolean  @default(false)
+  active          Boolean  @default(true)
+  salonId         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  salon           Salon?   @relation(fields: [salonId], references: [id])
+
+  @@index([active])
+  @@index([featured])
+  @@index([salonId])
+  @@index([city])
+  @@map("stylists")
+}
+
+model Review {
+  id                  String       @id @default(cuid())
+  authorName          String
+  authorPhoto         String?
+  authorCity          String?
+  salonName           String?
+  rating              Int          @default(5)
+  ratingQuality       Int?
+  ratingCommunication Int?
+  ratingSpeed         Int?
+  text                String
+  productId           String?
+  source              ReviewSource @default(MANUAL)
+  sourceUrl           String?
+  instagramEmbed      String?
+  featured            Boolean      @default(false)
+  active              Boolean      @default(true)
+  googlePlaceId       String?
+  googleRating        Float?
+  googleTotal         Int?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  product             Product?     @relation(fields: [productId], references: [id])
+
+  @@index([active, featured])
+  @@index([source])
+  @@index([productId, active])
+  @@map("reviews")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userEmail String?
+  action    String
+  entity    String
+  entityId  String?
+  detail    Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model PaymentReminder {
+  id             String   @id @default(cuid())
+  invoiceId      String
+  salonId        String
+  subject        String
+  body           String
+  sentAt         DateTime @default(now())
+  notificationId String?
+  salon          Salon    @relation(fields: [salonId], references: [id])
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@index([salonId])
+  @@index([sentAt])
+  @@map("payment_reminders")
+}
+
+model BatchAnnouncement {
+  id          String   @id @default(cuid())
+  arrivalDate DateTime
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("batch_announcements")
+}
+
+model BlogPost {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  titleUk         String?
+  titleRu         String?
+  excerpt         String?
+  excerptUk       String?
+  excerptRu       String?
+  content         String    @default("")
+  contentUk       String?
+  contentRu       String?
+  coverImage      String?
+  category        String    @default("general")
+  published       Boolean   @default(false)
+  publishedAt     DateTime?
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  socialPost      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([published, publishedAt])
+  @@index([category])
+  @@map("blog_posts")
+}
+
+model Comment {
+  id          String        @id @default(cuid())
+  articleSlug String
+  userId      String
+  parentId    String?
+  content     String
+  editedAt    DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  likes       CommentLike[]
+  parent      Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[]     @relation("CommentReplies")
+  user        User          @relation(fields: [userId], references: [id])
+
+  @@index([articleSlug, createdAt])
+  @@index([parentId])
+  @@index([userId])
+  @@map("comments")
+}
+
+model ArticleLike {
+  id          String   @id @default(cuid())
+  articleSlug String
+  userId      String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([articleSlug, userId])
+  @@index([articleSlug])
+  @@map("article_likes")
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@map("comment_likes")
+}
+
+model PromoCode {
+  id            String            @id @default(cuid())
+  code          String            @unique
+  description   String?
+  discountType  PromoDiscountType
+  discountValue Int
+  minOrderValue Int?
+  maxUses       Int?
+  usedCount     Int               @default(0)
+  validFrom     DateTime?
+  validTo       DateTime?
+  active        Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([code])
+  @@index([active])
+  @@map("promo_codes")
+}
+
+model Referral {
+  id                   String               @id @default(cuid())
+  referrerType         String
+  referrerSalonId      String?
+  referrerCustomerId   String?
+  code                 String               @unique
+  referrerRewardType   PromoDiscountType    @default(PERCENT)
+  referrerRewardValue  Int                  @default(1000)
+  refereeDiscountType  PromoDiscountType    @default(PERCENT)
+  refereeDiscountValue Int                  @default(500)
+  usedCount            Int                  @default(0)
+  maxUses              Int?
+  active               Boolean              @default(true)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  conversions          ReferralConversion[]
+  referrerCustomer     Customer?            @relation("ReferrerCustomer", fields: [referrerCustomerId], references: [id])
+  referrerSalon        Salon?               @relation("ReferrerSalon", fields: [referrerSalonId], references: [id])
+
+  @@index([code])
+  @@index([referrerSalonId])
+  @@index([referrerCustomerId])
+  @@map("referrals")
+}
+
+model ReferralConversion {
+  id                  String   @id @default(cuid())
+  referralId          String
+  refereeType         String
+  refereeSalonId      String?
+  refereeCustomerId   String?
+  refereeInquiryId    String?
+  refereeOrderId      String?
+  referrerPromoCodeId String?
+  refereePromoCodeId  String?
+  status              String   @default("PENDING")
+  createdAt           DateTime @default(now())
+  referral            Referral @relation(fields: [referralId], references: [id])
+
+  @@index([referralId])
+  @@index([status])
+  @@map("referral_conversions")
+}
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model StockSubscription {
+  id         String    @id @default(cuid())
+  email      String
+  variantId  String
+  locale     String    @default("cs")
+  notified   Boolean   @default(false)
+  notifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+  variant    Variant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([email, variantId])
+  @@index([variantId, notified])
+  @@index([email])
+  @@map("stock_subscriptions")
+}
+
+enum Role {
+  OWNER
+  EMPLOYEE
+  SALON
+  HAIRDRESSER
+}
+
+enum SalonType {
+  SALON
+  HAIRDRESSER
+}
 
 enum ProductCategory {
   VIRGIN
@@ -127,116 +1250,6 @@ enum ProcessingType {
   OTHER
 }
 
-// ============================================================
-// PRODUCT -- template / type of hair. No stock, no purchase price.
-// ============================================================
-
-model Product {
-  id             String          @id @default(cuid())
-  name           String
-  nameUk         String?
-  nameRu         String?
-  description    String?
-  descriptionUk  String?
-  descriptionRu  String?
-  category       ProductCategory
-  processingType ProcessingType
-  origin         String?
-  texture        String?
-  colorTone      String?
-  photos         String          @default("[]")
-  video          String?
-  archived       Boolean         @default(false)
-  orderOnly      Boolean         @default(false)
-  supplierCode   String?
-  photoCode      String?
-  slug           String?         @unique
-  metaTitle       String?
-  metaDescription String?
-  ogImage         String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-
-  variants       Variant[]
-  sampleRequests SampleRequest[]
-  reviews        Review[]
-
-  @@index([category])
-  @@index([processingType])
-  @@index([archived])
-  @@map("products")
-}
-
-// ============================================================
-// VARIANT -- price variant = combination of length + color
-// Prices in HALERE (integer, 1 CZK = 100 halere)
-// ============================================================
-
-model Variant {
-  id                    String   @id @default(cuid())
-  productId             String
-  product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  sku                   String?  @unique
-  lengthCm              Int
-  color                 String
-  costPricePerGram      Int      @default(0)
-  wholesalePricePerGram Int
-  retailPricePerGram    Int
-  retailManualOverride  Boolean  @default(false)
-  sellingMode           String   @default("BY_GRAM")
-  pricePerPiece         Int?
-  retailPricePerPiece   Int?
-  availableToOrder      Boolean  @default(false)
-  orderLeadDays         Int?
-  active                Boolean  @default(true)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  deliveries          Delivery[]
-  stockMovements      StockMovement[]
-  reservations        Reservation[]
-  productReservations ProductReservation[]
-  saleItems           SaleItem[]
-  orderItems          OrderItem[]
-  stockSubscriptions  StockSubscription[]
-
-  @@unique([productId, lengthCm, color])
-  @@index([productId])
-  @@map("variants")
-}
-
-// ============================================================
-// PRICE_SETTINGS -- retail markup percentage per product category
-// markupPercent is whole integer: 50 = 50%
-// ============================================================
-
-model PriceSettings {
-  id            String          @id @default(cuid())
-  category      ProductCategory @unique
-  markupPercent Int
-  updatedAt     DateTime        @updatedAt
-
-  @@map("price_settings")
-}
-
-// ============================================================
-// B2B_SETTINGS -- configurable discount percentages per B2B tier
-// Values in basis points: 2000 = 20.00%
-// ============================================================
-
-model B2BSettings {
-  id                      String   @id @default(cuid())
-  hairdresserDiscountPct  Int      @default(2000)
-  salonDiscountPct        Int      @default(3600)
-  updatedAt               DateTime @updatedAt
-
-  @@map("b2b_settings")
-}
-
-// ============================================================
-// INVENTORY ENUMS
-// ============================================================
-
 enum Currency {
   CZK
   USD
@@ -254,167 +1267,6 @@ enum StockMovementType {
   SAMPLE_RETURN
   ADJUSTMENT
 }
-
-// ============================================================
-// SUPPLIER -- sensitive, OWNER only
-// ============================================================
-
-model Supplier {
-  id          String     @id @default(cuid())
-  name        String
-  contactName String?
-  email       String?
-  phone       String?
-  country     String?
-  note        String?
-  archived    Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  deliveries  Delivery[]
-
-  @@index([archived])
-  @@map("suppliers")
-}
-
-// ============================================================
-// STOCK_BATCH -- a stocking session (varka) that groups deliveries
-// ============================================================
-
-model StockBatch {
-  id          String    @id @default(cuid())
-  name        String
-  status      String    @default("OPEN")
-  note        String?
-  createdAt   DateTime  @default(now())
-  closedAt    DateTime?
-  updatedAt   DateTime  @updatedAt
-
-  deliveries  Delivery[]
-
-  @@index([status])
-  @@index([createdAt])
-  @@map("stock_batches")
-}
-
-// ============================================================
-// DELIVERY -- a physical batch/shipment that arrived at the warehouse
-// Linked to a specific Variant (product + length + color)
-// This is what FIFO operates on.
-// ============================================================
-
-model Delivery {
-  id                      String    @id @default(cuid())
-  variantId               String
-  variant                 Variant   @relation(fields: [variantId], references: [id])
-
-  supplierId              String
-  supplier                Supplier  @relation(fields: [supplierId], references: [id])
-
-  purchasePricePerGramRaw Int
-  currency                Currency
-  exchangeRate            Int
-
-  purchasePricePerGramCZK Int
-
-  initialGrams            Int
-  initialPieces           Int               @default(0)
-  pieceWeightGrams        Int?
-
-  remainingGrams          Int
-  remainingPieces         Int               @default(0)
-
-  exclusive               Boolean   @default(false)
-
-  barcode                 String?   @unique
-  batchCode               String?
-
-  batchId                 String?
-  batch                   StockBatch? @relation(fields: [batchId], references: [id])
-
-  receivedInvoiceFile     String?
-
-  stockedAt               DateTime  @default(now())
-  note                    String?
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-
-  createdByUserId         String?
-  createdByUser           User?     @relation("DeliveriesCreated", fields: [createdByUserId], references: [id])
-
-  stockMovements          StockMovement[]
-  saleItems               SaleItem[]
-  returns                 Return[]
-  complaints              Complaint[]
-
-  @@index([variantId, stockedAt])
-  @@index([supplierId])
-  @@index([barcode])
-  @@index([variantId, remainingGrams, stockedAt])
-  @@index([batchId])
-  @@map("deliveries")
-}
-
-// ============================================================
-// STOCK_MOVEMENT -- every stock change is recorded here (audit trail)
-// ============================================================
-
-model StockMovement {
-  id          String            @id @default(cuid())
-  deliveryId  String
-  delivery    Delivery          @relation(fields: [deliveryId], references: [id])
-  variantId   String
-  variant     Variant           @relation(fields: [variantId], references: [id])
-
-  type        StockMovementType
-
-  grams       Int
-  pieces      Int               @default(0)
-
-  userId      String
-  user        User              @relation(fields: [userId], references: [id])
-  note        String?
-
-  saleItemId  String?
-  returnId    String?
-  complaintId String?
-
-  createdAt   DateTime          @default(now())
-
-  @@index([deliveryId])
-  @@index([variantId])
-  @@index([type])
-  @@index([createdAt])
-  @@index([userId])
-  @@map("stock_movements")
-}
-
-// ============================================================
-// RESERVATION -- holds stock for unconfirmed online orders (Step 6)
-// ============================================================
-
-model Reservation {
-  id          String    @id @default(cuid())
-  orderId     String
-  order       Order     @relation(fields: [orderId], references: [id])
-  variantId   String
-  variant     Variant   @relation(fields: [variantId], references: [id])
-
-  grams       Int
-  pieces      Int
-  active      Boolean   @default(true)
-
-  createdAt   DateTime  @default(now())
-  expiresAt   DateTime?
-
-  @@index([variantId, active])
-  @@index([orderId])
-  @@map("reservations")
-}
-
-// ============================================================
-// SALES ENUMS
-// ============================================================
 
 enum CustomerType {
   SALON
@@ -441,214 +1293,6 @@ enum PaymentType {
   PROMO
   WRITEOFF
 }
-
-// ============================================================
-// PARTNER -- spolecnik (1/3 podil)
-// ============================================================
-
-model Partner {
-  id        String   @id @default(cuid())
-  name      String
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  share     Int      @default(3333)
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-
-  discountBearings DiscountBearer[]
-  withdrawals      PartnerWithdrawal[]
-
-  @@map("partners")
-}
-
-// ============================================================
-// CUSTOMER -- koncovy zakaznik (maloobchod), e-shop ready
-// ============================================================
-
-model Customer {
-  id           String   @id @default(cuid())
-  firstName    String?
-  lastName     String?
-  name         String
-  email        String?
-  phone        String?
-  city         String?
-  instagram    String?
-  note         String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  passwordHash String?
-  slug         String?  @unique
-
-  sales     Sale[]
-  invoices  Invoice[]
-  referrals Referral[] @relation("ReferrerCustomer")
-  inquiries Inquiry[]
-  orders    Order[]
-  productReservations ProductReservation[]
-
-  @@index([email])
-  @@index([name])
-  @@map("customers")
-}
-
-// ============================================================
-// SALE -- completed sale transaction
-// ============================================================
-
-model Sale {
-  id             String       @id @default(cuid())
-  saleNumber     String?
-
-  customerType   CustomerType
-  salonId        String?
-  salon          Salon?       @relation(fields: [salonId], references: [id])
-  customerId     String?
-  customer       Customer?    @relation(fields: [customerId], references: [id])
-
-  status         SaleStatus   @default(DRAFT)
-  paymentType    PaymentType  @default(TRANSFER)
-
-  subtotal       Int
-  discountAmount Int          @default(0)
-  totalBeforeVat Int
-  vatRate        Int          @default(0)
-  vatAmount      Int
-  totalAmount    Int
-
-  totalCostOfGoods Int        @default(0)
-  grossMargin      Int        @default(0)
-
-  userId         String
-  user           User         @relation(fields: [userId], references: [id])
-
-  orderId        String?      @unique
-
-  receiptNumber  String?
-  note           String?
-  completedAt    DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  comgateTransId String?
-
-  // Shipping
-  shippingMethod      String?
-  shippingStatus      String?
-  shippingTrackingId  String?
-  shippingCost        Int       @default(0)
-  packetaPointId      String?
-  packetaPointName    String?
-  packetaPointCity    String?
-
-  items     SaleItem[]
-  discounts Discount[]
-  invoice   Invoice?
-  order     Order?
-  returns   Return[]
-  complaints Complaint[]
-
-  @@index([customerType])
-  @@index([salonId])
-  @@index([customerId])
-  @@index([userId])
-  @@index([status])
-  @@index([completedAt])
-  @@index([status, completedAt])
-  @@map("sales")
-}
-
-// ============================================================
-// SALE_ITEM -- individual line item, links to FIFO delivery
-// ============================================================
-
-model SaleItem {
-  id                      String   @id @default(cuid())
-  saleId                  String
-  sale                    Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
-
-  variantId               String
-  variant                 Variant  @relation(fields: [variantId], references: [id])
-
-  grams                   Int
-  pieces                  Int
-
-  pricePerGramUsed        Int
-
-  deliveryId              String
-  delivery                Delivery @relation(fields: [deliveryId], references: [id])
-
-  purchasePricePerGramCZK Int
-
-  lineTotal               Int
-
-  createdAt               DateTime @default(now())
-
-  returns                 Return[]
-
-  @@index([saleId])
-  @@index([variantId])
-  @@index([deliveryId])
-  @@map("sale_items")
-}
-
-// ============================================================
-// DISCOUNT -- special discount applied to a sale
-// ============================================================
-
-model Discount {
-  id                     String       @id @default(cuid())
-  saleId                 String
-  sale                   Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
-
-  percent                Int
-  type                   DiscountType
-  amountHalere           Int
-
-  counterPerformanceNote String?
-
-  givenByUserId          String
-  givenByUser            User         @relation(fields: [givenByUserId], references: [id])
-
-  bearers                DiscountBearer[]
-
-  discountCodeId         String?
-
-  createdAt              DateTime     @default(now())
-
-  @@index([saleId])
-  @@index([type])
-  @@index([givenByUserId])
-  @@index([createdAt])
-  @@map("discounts")
-}
-
-// ============================================================
-// DISCOUNT_BEARER -- which partners bear a discount
-// ============================================================
-
-model DiscountBearer {
-  id          String   @id @default(cuid())
-  discountId  String
-  discount    Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
-  partnerId   String
-  partner     Partner  @relation(fields: [partnerId], references: [id])
-
-  shareAmount Int
-
-  @@unique([discountId, partnerId])
-  @@index([partnerId])
-  @@map("discount_bearers")
-}
-
-// ============================================================
-// INVOICING ENUMS
-// ============================================================
-
-// ============================================================
-// LOYALTY & ORDER ENUMS
-// ============================================================
 
 enum LoyaltyTier {
   BRONZE
@@ -679,10 +1323,6 @@ enum SampleStatus {
   WRITTEN_OFF
 }
 
-// ============================================================
-// INVOICING ENUMS
-// ============================================================
-
 enum InvoiceStatus {
   ISSUED
   AWAITING
@@ -697,346 +1337,6 @@ enum InvoiceType {
   DEPOSIT
 }
 
-// ============================================================
-// COMPANY -- fakturujici firma (dodavatel na fakture)
-// ============================================================
-
-model Company {
-  id            String    @id @default(cuid())
-  name          String
-  ico           String
-  dic           String?
-  address       String
-  addressCity   String?
-  addressZip    String?
-  bankAccount   String
-  bankIban      String?
-  bankBic       String?
-  bankName      String?
-  contactEmail  String?
-  contactPhone  String?
-  isDefault     Boolean   @default(false)
-  active        Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  invoices      Invoice[]
-
-  @@index([isDefault])
-  @@map("companies")
-}
-
-// ============================================================
-// INVOICE_COUNTER -- atomic sequential numbering per year
-// ============================================================
-
-model InvoiceCounter {
-  id          String  @id @default(cuid())
-  year        Int
-  prefix      String  @default("F")
-  lastNumber  Int     @default(0)
-
-  @@unique([year, prefix])
-  @@map("invoice_counters")
-}
-
-// ============================================================
-// INVOICE -- faktura or dobropis
-// ============================================================
-
-model Invoice {
-  id              String        @id @default(cuid())
-  type            InvoiceType   @default(INVOICE)
-
-  number          String        @unique
-
-  companyId       String
-  company         Company       @relation(fields: [companyId], references: [id])
-
-  salonId         String?
-  salon           Salon?        @relation(fields: [salonId], references: [id])
-  customerId      String?
-  customer        Customer?     @relation(fields: [customerId], references: [id])
-
-  buyerName       String
-  buyerIco        String?
-  buyerDic        String?
-  buyerAddress    String
-  buyerEmail      String?
-  buyerLanguage   String        @default("cs")
-
-  saleId          String?       @unique
-  sale            Sale?         @relation(fields: [saleId], references: [id])
-
-  reservationId   String?
-  reservation     ProductReservation? @relation(fields: [reservationId], references: [id])
-
-  originalInvoiceId String?
-  originalInvoice   Invoice?    @relation("CreditNoteOf", fields: [originalInvoiceId], references: [id])
-  creditNotes       Invoice[]   @relation("CreditNoteOf")
-
-  issueDate       DateTime      @default(now())
-  dueDate         DateTime
-  taxDate         DateTime?
-
-  variableSymbol  String
-
-  subtotal        Int
-  vatRate         Int           @default(0)
-  vatAmount       Int
-  total           Int
-
-  roundingAmount  Int           @default(0)
-
-  status          InvoiceStatus @default(ISSUED)
-
-  pdfPath         String?
-  pdfGeneratedAt  DateTime?
-
-  note            String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  items           InvoiceItem[]
-  payments        Payment[]
-  returnCreditNote  Return?     @relation("ReturnCreditNote")
-  complaintCreditNote Complaint? @relation("ComplaintCreditNote")
-  reminders       PaymentReminder[]
-
-  @@index([status])
-  @@index([salonId])
-  @@index([customerId])
-  @@index([companyId])
-  @@index([issueDate])
-  @@index([dueDate])
-  @@index([variableSymbol])
-  @@index([type])
-  @@index([reservationId])
-  @@map("invoices")
-}
-
-// ============================================================
-// INVOICE_ITEM -- line item on an invoice
-// ============================================================
-
-model InvoiceItem {
-  id            String    @id @default(cuid())
-  invoiceId     String
-  invoice       Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-
-  description   String
-  quantity      Decimal
-  unit          String
-  pricePerUnit  Int
-  lineTotal     Int
-  vatRate       Int       @default(0)
-
-  @@index([invoiceId])
-  @@map("invoice_items")
-}
-
-// ============================================================
-// PAYMENT -- payment record matched to invoice
-// ============================================================
-
-model Payment {
-  id              String    @id @default(cuid())
-  invoiceId       String
-  invoice         Invoice   @relation(fields: [invoiceId], references: [id])
-
-  amount          Int
-  date            DateTime
-  matchedVS       String?
-  source          String    @default("MANUAL")
-  note            String?
-  comgateTransId  String?
-  matchedAt       DateTime?
-
-  createdAt       DateTime  @default(now())
-
-  @@index([invoiceId])
-  @@index([matchedVS])
-  @@map("payments")
-}
-
-// ============================================================
-// LOYALTY_SETTINGS -- configurable tier thresholds and discounts
-// ============================================================
-
-model LoyaltySettings {
-  id                String      @id @default(cuid())
-  tier              LoyaltyTier
-  salonType         SalonType   @default(SALON)
-  revenueThreshold  Int
-  discountPercent   Int
-  pointsThreshold   Int         @default(10000)
-
-  updatedAt         DateTime    @updatedAt
-
-  @@unique([tier, salonType])
-  @@map("loyalty_settings")
-}
-
-// ============================================================
-// ORDER -- online order from salon
-// ============================================================
-
-model Order {
-  id             String      @id @default(cuid())
-  orderNumber    String?     @unique
-
-  // Customer — either salon (B2B) OR customer (retail), never both
-  salonId        String?
-  salon          Salon?      @relation(fields: [salonId], references: [id])
-  customerId     String?
-  customer       Customer?   @relation(fields: [customerId], references: [id])
-
-  // Contact (for retail guest checkout)
-  contactEmail   String?
-  contactPhone   String?
-  contactName    String?
-
-  status         OrderStatus @default(NEW)
-
-  // Pricing
-  estimatedTotal Int
-  shippingCost   Int         @default(0)
-  totalAmount    Int?
-
-  // Shipping
-  shippingMethod    String?
-  shippingStreet    String?
-  shippingCity      String?
-  shippingZip       String?
-  packetaPointId    String?
-  packetaPointName  String?
-  packetaPointCity  String?
-  packetaPacketId   String?
-  packetaBarcode    String?
-  shippingTrackingId String?
-
-  // Payment
-  paymentMethod  String?
-  comgateTransId String?
-  paidAt         DateTime?
-
-  confirmedAt    DateTime?
-  confirmedBy    String?
-  rejectedAt     DateTime?
-  rejectedReason String?
-  completedAt    DateTime?
-
-  saleId         String?     @unique
-  sale           Sale?       @relation(fields: [saleId], references: [id])
-
-  note           String?
-  internalNote   String?
-
-  promoCode      String?
-  promoDiscount  Int?
-
-  // Billing (optional — only when different from shipping)
-  wantsBilling     Boolean  @default(false)
-  billingName      String?
-  billingIco       String?
-  billingDic       String?
-  billingStreet    String?
-  billingCity      String?
-  billingZip       String?
-
-  // Consent opt-outs (negative consent — true = opted OUT)
-  noSurvey         Boolean  @default(false)
-  noNewsletter     Boolean  @default(false)
-
-  // Public order access token (allows viewing order without login)
-  accessToken      String?  @unique
-
-  locale         String      @default("cs")
-
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-
-  followUpSent   Boolean     @default(false)
-  followUpSentAt DateTime?
-
-  items          OrderItem[]
-  reservations   Reservation[]
-
-  @@index([salonId])
-  @@index([customerId])
-  @@index([status])
-  @@index([createdAt])
-  @@index([contactEmail])
-  @@index([comgateTransId])
-  @@map("orders")
-}
-
-// ============================================================
-// ORDER_ITEM -- line item in an order
-// ============================================================
-
-model OrderItem {
-  id           String   @id @default(cuid())
-  orderId      String
-  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  variantId    String
-  variant      Variant  @relation(fields: [variantId], references: [id])
-
-  grams        Int
-  pieces       Int
-  pricePerGram Int
-  lineTotal    Int
-
-  // Snapshot (self-contained even after product changes)
-  productName  String?
-  lengthCm     Int?
-  color        String?
-  sku          String?
-
-  createdAt    DateTime @default(now())
-
-  @@index([orderId])
-  @@index([variantId])
-  @@map("order_items")
-}
-
-// ============================================================
-// SAMPLE_REQUEST -- salon requests a sample of a product
-// ============================================================
-
-model SampleRequest {
-  id              String       @id @default(cuid())
-  salonId         String?
-  salon           Salon?       @relation(fields: [salonId], references: [id])
-  salonName       String?
-
-  productId       String
-  product         Product      @relation(fields: [productId], references: [id])
-
-  status          SampleStatus @default(REQUESTED)
-
-  grams           Int?
-  pieces          Int?
-
-  resolvedAt      DateTime?
-  resolvedBy      String?
-  resolution      String?
-
-  stockMovementId String?
-  note            String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-
-  @@index([salonId])
-  @@index([status])
-  @@map("sample_requests")
-}
-
-// ============================================================
-// FINANCE ENUMS
-// ============================================================
-
 enum OperatingCostCategory {
   ADVERTISING
   MARKETING
@@ -1050,69 +1350,6 @@ enum WithdrawalStatus {
   PLANNED
   COMPLETED
 }
-
-// ============================================================
-// OPERATING_COST -- provozni naklad
-// ============================================================
-
-model OperatingCost {
-  id              String                @id @default(cuid())
-
-  category        OperatingCostCategory
-  amountHalere    Int
-  date            DateTime
-  description     String?
-  note            String?
-
-  receiptFile     String?
-  receiptName     String?
-
-  createdByUserId String
-  createdByUser   User                  @relation("OperatingCostsCreated", fields: [createdByUserId], references: [id])
-
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-
-  @@index([category])
-  @@index([date])
-  @@index([createdByUserId])
-  @@map("operating_costs")
-}
-
-// ============================================================
-// PARTNER_WITHDRAWAL -- mesicni vyber spolecnika
-// ============================================================
-
-model PartnerWithdrawal {
-  id              String           @id @default(cuid())
-
-  partnerId       String
-  partner         Partner          @relation(fields: [partnerId], references: [id])
-
-  year            Int
-  month           Int
-
-  amountHalere    Int
-
-  status          WithdrawalStatus @default(PLANNED)
-  date            DateTime
-  note            String?
-
-  createdByUserId String
-  createdByUser   User             @relation("WithdrawalsCreated", fields: [createdByUserId], references: [id])
-
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-
-  @@unique([partnerId, year, month])
-  @@index([partnerId])
-  @@index([year, month])
-  @@map("partner_withdrawals")
-}
-
-// ============================================================
-// STEP 8 ENUMS
-// ============================================================
 
 enum ReturnStatus {
   PENDING
@@ -1154,10 +1391,6 @@ enum NotificationType {
   RESERVATION_EXPIRED
 }
 
-// ============================================================
-// PRODUCT RESERVATION ENUMS
-// ============================================================
-
 enum ProductReservationStatus {
   PENDING
   PAID
@@ -1166,380 +1399,12 @@ enum ProductReservationStatus {
   CANCELLED
 }
 
-// ============================================================
-// PRODUCT_RESERVATION -- paid reservation for products
-// Separate from order Reservation (stock hold). This is a
-// customer commitment to buy with payment deadline.
-// ============================================================
-
-model ProductReservation {
-  id                String                    @id @default(cuid())
-  reservationNumber String?                   @unique
-
-  customerType      CustomerType
-  salonId           String?
-  salon             Salon?                    @relation(fields: [salonId], references: [id])
-  customerId        String?
-  customer          Customer?                 @relation(fields: [customerId], references: [id])
-
-  contactName       String?
-  contactEmail      String?
-  contactPhone      String?
-
-  variantId         String
-  variant           Variant                   @relation(fields: [variantId], references: [id])
-  grams             Int
-  pieces            Int
-
-  pricePerUnit      Int
-  lineTotal         Int
-  sellingMode       String                    @default("BY_GRAM")
-
-  // Discount
-  discountPercent   Int?
-  discountAmount    Int?
-  discountType      String?
-  discountNote      String?
-
-  status            ProductReservationStatus  @default(PENDING)
-  paymentDueDate    DateTime
-  paidAt            DateTime?
-  paymentNote       String?
-
-  saleId            String?                   @unique
-  invoiceId         String?                   @unique
-
-  invoices          Invoice[]
-
-  note              String?
-  internalNote      String?
-  createdByUserId   String
-  createdByUser     User                      @relation("ReservationsCreated", fields: [createdByUserId], references: [id])
-
-  createdAt         DateTime                  @default(now())
-  updatedAt         DateTime                  @updatedAt
-
-  @@index([status])
-  @@index([salonId])
-  @@index([customerId])
-  @@index([variantId])
-  @@index([paymentDueDate])
-  @@index([createdAt])
-  @@map("product_reservations")
-}
-
-// ============================================================
-// INQUIRY STATUS
-// ============================================================
-
 enum InquiryStatus {
   NEW
   CONTACTED
   COMPLETED
   CANCELLED
 }
-
-// ============================================================
-// INQUIRY -- public inquiry (poptávka) from website visitor
-// ============================================================
-
-model Inquiry {
-  id           String        @id @default(cuid())
-
-  name         String
-  firstName    String?
-  lastName     String?
-  email        String
-  phone        String?
-  salonName    String?
-  message      String?
-  city         String?
-  locale       String        @default("cs")
-  promoCode    String?
-
-  status       InquiryStatus @default(NEW)
-
-  assignedTo   String?
-  assignedAt   DateTime?
-
-  internalNote String?
-  contactedAt  DateTime?
-  completedAt  DateTime?
-
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-
-  referralCode   String?
-
-  customerPhotos String?
-
-  followUpSent   Boolean       @default(false)
-  followUpSentAt DateTime?
-
-  shippingMethod    String?
-  paymentMethod     String?
-  packetaPointId    String?
-  packetaPointName  String?
-  packetaPointCity  String?
-
-  customerId   String?
-  customer     Customer?     @relation(fields: [customerId], references: [id])
-
-  items        InquiryItem[]
-
-  @@index([status])
-  @@index([createdAt])
-  @@index([email])
-  @@index([customerId])
-  @@map("inquiries")
-}
-
-// ============================================================
-// INQUIRY_ITEM -- line item in an inquiry
-// ============================================================
-
-model InquiryItem {
-  id          String   @id @default(cuid())
-  inquiryId   String
-  inquiry     Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
-
-  productId   String
-  productName String
-  lengthCm    Int
-  color       String
-  quantity    Int
-  unit        String   @default("g")
-
-  createdAt   DateTime @default(now())
-
-  @@index([inquiryId])
-  @@map("inquiry_items")
-}
-
-// ============================================================
-// CONTACT MESSAGE -- zpráva z kontaktního formuláře
-// ============================================================
-
-model ContactMessage {
-  id          String   @id @default(cuid())
-
-  name        String
-  email       String
-  phone       String?
-  salonName   String?
-  message         String
-  customerPhotos  String?
-  locale          String   @default("cs")
-
-  assignedTo  String?
-  assignedAt  DateTime?
-
-  createdAt   DateTime @default(now())
-
-  @@index([createdAt])
-  @@map("contact_messages")
-}
-
-// ============================================================
-// RETURN -- vratka nepouzitych/nacatych vlasu
-// Manual only, owner initiates. Salon CANNOT request.
-// On approval: return to original delivery + credit note + deduct points.
-// ============================================================
-
-model Return {
-  id              String        @id @default(cuid())
-
-  saleId          String
-  sale            Sale          @relation(fields: [saleId], references: [id])
-  saleItemId      String
-  saleItem        SaleItem      @relation(fields: [saleItemId], references: [id])
-
-  salonId         String?
-  salon           Salon?        @relation(fields: [salonId], references: [id])
-
-  deliveryId      String
-  delivery        Delivery      @relation(fields: [deliveryId], references: [id])
-
-  grams           Int
-  pieces          Int
-
-  reason          String
-
-  status          ReturnStatus  @default(PENDING)
-
-  approvedByUserId String?
-  approvedByUser   User?        @relation("ReturnsApproved", fields: [approvedByUserId], references: [id])
-  approvedAt       DateTime?
-
-  creditNoteId    String?       @unique
-  creditNote      Invoice?      @relation("ReturnCreditNote", fields: [creditNoteId], references: [id])
-
-  pointsDeducted  Int?
-  revenueDeducted Int?
-
-  createdByUserId String
-  createdByUser   User          @relation("ReturnsCreated", fields: [createdByUserId], references: [id])
-
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([saleId])
-  @@index([salonId])
-  @@index([deliveryId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("returns")
-}
-
-// ============================================================
-// COMPLAINT -- reklamace kvality (vadne vlasy)
-// Defective goods tracked separately, NOT returned to sellable stock.
-// ============================================================
-
-model Complaint {
-  id              String            @id @default(cuid())
-
-  saleId          String?
-  sale            Sale?             @relation(fields: [saleId], references: [id])
-  salonId         String?
-  salon           Salon?            @relation(fields: [salonId], references: [id])
-
-  deliveryId      String
-  delivery        Delivery          @relation(fields: [deliveryId], references: [id])
-
-  grams           Int
-  pieces          Int
-
-  description     String
-
-  status          ComplaintStatus   @default(OPEN)
-
-  creditNoteId    String?           @unique
-  creditNote      Invoice?          @relation("ComplaintCreditNote", fields: [creditNoteId], references: [id])
-
-  supplierRefundHalere Int?
-  supplierRefundDate   DateTime?
-  supplierNote         String?
-
-  createdByUserId String
-  createdByUser   User              @relation("ComplaintsCreated", fields: [createdByUserId], references: [id])
-  resolvedAt      DateTime?
-
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  @@index([saleId])
-  @@index([salonId])
-  @@index([deliveryId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("complaints")
-}
-
-// ============================================================
-// COMPLAINT TICKET -- customer-submitted complaint/return form
-// ============================================================
-
-model ComplaintTicket {
-  id                String   @id @default(cuid())
-  ticketNumber      String   @unique
-
-  customerType      String   // RETAIL, SALON, HAIRDRESSER
-  name              String
-  email             String
-  phone             String?
-  salonName         String?
-
-  complaintType     String   // DEFECT, RETURN, WITHDRAWAL
-  orderNumber       String?
-  description       String
-  photos            String   @default("[]") // JSON array of URLs
-  desiredResolution String?  // REPAIR, REPLACEMENT, DISCOUNT, REFUND
-
-  status            String   @default("NEW") // NEW, IN_PROGRESS, RESOLVED, REJECTED
-  assignedTo        String?
-  adminNote         String?
-
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  @@index([status])
-  @@index([createdAt])
-  @@map("complaint_tickets")
-}
-
-// ============================================================
-// NOTIFICATION -- in-app + email notification
-// ============================================================
-
-model Notification {
-  id              String            @id @default(cuid())
-
-  recipientId     String
-  recipient       User              @relation("NotificationsReceived", fields: [recipientId], references: [id])
-
-  type            NotificationType
-
-  title           String
-  message         String
-  data            Json?
-
-  read            Boolean           @default(false)
-  readAt          DateTime?
-
-  emailSent       Boolean           @default(false)
-  emailSentAt     DateTime?
-
-  createdAt       DateTime          @default(now())
-
-  @@index([recipientId, read])
-  @@index([recipientId, createdAt])
-  @@index([type])
-  @@map("notifications")
-}
-
-// ============================================================
-// STYLIST -- kadernice / vlasova specialistka
-// ============================================================
-
-model Stylist {
-  id              String    @id @default(cuid())
-  name            String
-  slug            String    @unique
-  photo           String?
-  bio             String?
-  bioUk           String?
-  bioRu           String?
-  specializations String    @default("[]")
-  languages       String    @default("[]")
-  phone           String?
-  email           String?
-  instagram       String?
-  telegram        String?
-  whatsapp        String?
-  city            String?
-  experience      Int?
-  certifications  String    @default("[]")
-  portfolio       String    @default("[]")
-  featured        Boolean   @default(false)
-  active          Boolean   @default(true)
-
-  salonId         String?
-  salon           Salon?    @relation(fields: [salonId], references: [id])
-
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@index([active])
-  @@index([featured])
-  @@index([salonId])
-  @@index([city])
-  @@map("stylists")
-}
-
-// ============================================================
-// REVIEW -- recenze / reference od zakaznic a salonu
-// ============================================================
 
 enum ReviewSource {
   MANUAL
@@ -1548,341 +1413,7 @@ enum ReviewSource {
   WEBSITE
 }
 
-model Review {
-  id            String       @id @default(cuid())
-
-  authorName    String
-  authorPhoto   String?
-  authorCity    String?
-  salonName     String?
-
-  rating        Int          @default(5)
-  ratingQuality       Int?
-  ratingCommunication Int?
-  ratingSpeed         Int?
-  text          String
-
-  productId     String?
-  product       Product?     @relation(fields: [productId], references: [id])
-
-  source        ReviewSource @default(MANUAL)
-  sourceUrl     String?
-  instagramEmbed String?
-
-  featured      Boolean      @default(false)
-  active        Boolean      @default(true)
-
-  googlePlaceId String?
-  googleRating  Float?
-  googleTotal   Int?
-
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  @@index([active, featured])
-  @@index([source])
-  @@index([productId, active])
-  @@map("reviews")
-}
-
-// ============================================================
-// AUDIT_LOG -- kdo co zadal / zmenil
-// ============================================================
-
-model AuditLog {
-  id          String   @id @default(cuid())
-
-  userId      String?
-  userEmail   String?
-
-  action      String
-  entity      String
-  entityId    String?
-
-  detail      Json?
-  ipAddress   String?
-
-  createdAt   DateTime @default(now())
-
-  @@index([userId])
-  @@index([entity, entityId])
-  @@index([action])
-  @@index([createdAt])
-  @@map("audit_logs")
-}
-
-// ============================================================
-// PAYMENT_REMINDER -- upominka po splatnosti
-// ============================================================
-
-model PaymentReminder {
-  id              String    @id @default(cuid())
-
-  invoiceId       String
-  invoice         Invoice   @relation(fields: [invoiceId], references: [id])
-
-  salonId         String
-  salon           Salon     @relation(fields: [salonId], references: [id])
-
-  subject         String
-  body            String
-
-  sentAt          DateTime  @default(now())
-  notificationId  String?
-
-  @@index([invoiceId])
-  @@index([salonId])
-  @@index([sentAt])
-  @@map("payment_reminders")
-}
-
-// ============================================================
-// BATCH_ANNOUNCEMENT -- popup o příjezdu nové várky vlasů
-// arrivalDate = datum příjezdu, zobrazí se +24h na naskladnění
-// ============================================================
-
-model BatchAnnouncement {
-  id          String   @id @default(cuid())
-  arrivalDate DateTime
-  description String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("batch_announcements")
-}
-
-// ============================================================
-// BLOG_POST -- SEO články pro blog
-// ============================================================
-
-model BlogPost {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  title       String
-  titleUk     String?
-  titleRu     String?
-  excerpt     String?
-  excerptUk   String?
-  excerptRu   String?
-  content     String    @default("")
-  contentUk   String?
-  contentRu   String?
-  coverImage      String?
-  category        String    @default("general")
-  published       Boolean   @default(false)
-  publishedAt     DateTime?
-  metaTitle       String?
-  metaDescription String?
-  ogImage         String?
-  socialPost      String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@index([published, publishedAt])
-  @@index([category])
-  @@map("blog_posts")
-}
-
-// ============================================================
-// COMMENT -- komentáře pod články v poradně
-// ============================================================
-
-model Comment {
-  id          String    @id @default(cuid())
-  articleSlug String
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  parentId    String?
-  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies     Comment[] @relation("CommentReplies")
-  content     String
-  editedAt    DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  likes       CommentLike[]
-
-  @@index([articleSlug, createdAt])
-  @@index([parentId])
-  @@index([userId])
-  @@map("comments")
-}
-
-// ============================================================
-// ARTICLE_LIKE -- lajky na články v poradně
-// ============================================================
-
-model ArticleLike {
-  id          String   @id @default(cuid())
-  articleSlug String
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-
-  @@unique([articleSlug, userId])
-  @@index([articleSlug])
-  @@map("article_likes")
-}
-
-// ============================================================
-// COMMENT_LIKE -- lajky na komentáře
-// ============================================================
-
-model CommentLike {
-  id        String   @id @default(cuid())
-  commentId String
-  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-
-  @@unique([commentId, userId])
-  @@index([commentId])
-  @@map("comment_likes")
-}
-
-// ============================================================
-// PROMO_CODE -- slevové kódy pro B2B objednávky
-// ============================================================
-
-model PromoCode {
-  id            String    @id @default(cuid())
-  code          String    @unique
-  description   String?
-  discountType  PromoDiscountType
-  discountValue Int       // basis points for PERCENT (3000 = 30%), halere for FIXED
-  minOrderValue Int?      // minimum order amount in halere (null = no minimum)
-  maxUses       Int?      // null = unlimited
-  usedCount     Int       @default(0)
-  validFrom     DateTime?
-  validTo       DateTime?
-  active        Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@index([code])
-  @@index([active])
-  @@map("promo_codes")
-}
-
 enum PromoDiscountType {
   PERCENT
   FIXED
-}
-
-// ============================================================
-// REFERRAL -- referral program
-// ============================================================
-
-model Referral {
-  id                  String            @id @default(cuid())
-
-  // Who is referring
-  referrerType        String            // "SALON" | "CUSTOMER"
-  referrerSalonId     String?
-  referrerSalon       Salon?            @relation("ReferrerSalon", fields: [referrerSalonId], references: [id])
-  referrerCustomerId  String?
-  referrerCustomer    Customer?         @relation("ReferrerCustomer", fields: [referrerCustomerId], references: [id])
-
-  // Unique sharing code
-  code                String            @unique
-
-  // Reward for referrer
-  referrerRewardType  PromoDiscountType @default(PERCENT)
-  referrerRewardValue Int               @default(1000) // 10% in basis points
-
-  // Discount for new customer (referee)
-  refereeDiscountType  PromoDiscountType @default(PERCENT)
-  refereeDiscountValue Int               @default(500) // 5% in basis points
-
-  // Tracking
-  usedCount           Int               @default(0)
-  maxUses             Int?              // null = unlimited
-  active              Boolean           @default(true)
-
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
-
-  conversions         ReferralConversion[]
-
-  @@index([code])
-  @@index([referrerSalonId])
-  @@index([referrerCustomerId])
-  @@map("referrals")
-}
-
-model ReferralConversion {
-  id                  String    @id @default(cuid())
-
-  referralId          String
-  referral            Referral  @relation(fields: [referralId], references: [id])
-
-  // Who came through the referral
-  refereeType         String    // "SALON" | "CUSTOMER" | "INQUIRY"
-  refereeSalonId      String?
-  refereeCustomerId   String?
-  refereeInquiryId    String?
-  refereeOrderId      String?
-
-  // Rewards
-  referrerPromoCodeId String?   // PromoCode generated for referrer
-  refereePromoCodeId  String?   // PromoCode used by referee
-
-  status              String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
-
-  createdAt           DateTime  @default(now())
-
-  @@index([referralId])
-  @@index([status])
-  @@map("referral_conversions")
-}
-
-// ============================================================
-// SPIN_ENTRY -- spin-to-win wheel entries
-// ============================================================
-
-model SpinEntry {
-  id              String    @id @default(cuid())
-  email           String
-  segment         Int
-  won             Boolean   @default(false)
-  discountPercent Int?
-  promoCodeId     String?
-  ipAddress       String?
-  attemptCount    Int       @default(1)
-  lastAttemptAt   DateTime  @default(now())
-  createdAt       DateTime  @default(now())
-
-  @@unique([email])
-  @@index([createdAt])
-  @@map("spin_entries")
-}
-
-model SiteSetting {
-  key       String   @id
-  value     String
-  updatedAt DateTime @updatedAt
-
-  @@map("site_settings")
-}
-
-// ============================================================
-// STOCK_SUBSCRIPTION -- anonymous email subscription for restock notifications
-// ============================================================
-
-model StockSubscription {
-  id          String    @id @default(cuid())
-  email       String
-  variantId   String
-  variant     Variant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  locale      String    @default("cs")
-  notified    Boolean   @default(false)
-  notifiedAt  DateTime?
-  createdAt   DateTime  @default(now())
-
-  @@unique([email, variantId])
-  @@index([variantId, notified])
-  @@index([email])
-  @@map("stock_subscriptions")
 }

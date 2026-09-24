@@ -148,7 +148,7 @@ export function ProductsShowcase({ userRole, discountPct = 0, initialProducts }:
     } else {
       params.delete(key);
     }
-    router.push(`/vlasy-k-prodlouzeni?${params.toString()}`, { scroll: false });
+    router.push(`/vlasy-k-prodlouzeni?${params.toString()}` as any, { scroll: false });
   }
 
   function toggleFilter(key: string, value: string) {

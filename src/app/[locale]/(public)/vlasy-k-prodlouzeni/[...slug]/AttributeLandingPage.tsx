@@ -279,7 +279,7 @@ export async function AttributeLandingPage({ prefix, valueSlug, attrType, dbValu
                   {Object.entries(slugMap).map(([slug, label]) => (
                     <Link
                       key={slug}
-                      href={`/vlasy-k-prodlouzeni/${rPrefix}/${slug}`}
+                      href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: [rPrefix, slug] } }}
                       className="px-3 py-1.5 rounded-lg bg-nude-50 text-espresso hover:bg-blush-100 hover:text-rose-deep transition-colors text-sm font-medium"
                     >
                       {label}

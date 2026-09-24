@@ -76,12 +76,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     orderId?: string;
     orderNumber?: string;
     redirect?: string;
-    paymentInfo?: {
-      bankAccount: string;
-      iban: string;
-      variableSymbol: string;
-      amount: number;
-    };
     error?: string;
   } | null>(null);
 
@@ -127,8 +121,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       ? 0
       : SHIPPING_COSTS[form.shippingMethod as keyof typeof SHIPPING_COSTS] ?? 0;
 
-  const cashSurcharge = form.paymentMethod === "CASH" ? 5000 : 0; // +50 Kč
-  const total = subtotal + shippingCost + cashSurcharge;
+  const total = subtotal + shippingCost;
 
   // Promo code validation
   const validatePromoCode = async () => {
@@ -325,13 +318,13 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
       setOrderResult(orderData);
       if (referralData) clearReferralFromStorage();
 
-      // Redirect to Comgate for card payment — don't clear cart yet
+      // Redirect to Comgate payment gateway
       if (orderData.redirect) {
         window.location.href = orderData.redirect;
         return;
       }
 
-      // Clear cart only for non-redirect payments (TRANSFER/CASH)
+      // Fallback: clear cart if no redirect (should not happen)
       clearCart();
     } catch {
       setError(t("submitError"));
@@ -341,18 +334,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     }
   };
 
-  // Generate SPAYD QR code for transfer payments
-  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  useEffect(() => {
-    if (orderResult?.success && orderResult.paymentInfo) {
-      const spayd = `SPD*1.0*ACC:${orderResult.paymentInfo.iban}*AM:${orderResult.paymentInfo.amount.toFixed(2)}*CC:CZK*X-VS:${orderResult.paymentInfo.variableSymbol}`;
-      import("qrcode").then((QRCode) => {
-        QRCode.toDataURL(spayd, { errorCorrectionLevel: "M", width: 200, margin: 2 })
-          .then(setQrDataUrl)
-          .catch(() => {});
-      }).catch(() => {});
-    }
-  }, [orderResult]);
 
   // Confetti on success
   useEffect(() => {
@@ -429,57 +410,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
     );
   }
 
-  // Success — transfer payment info
-  if (orderResult?.success && orderResult.paymentInfo) {
-    return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
-          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-bold text-ink mb-2">{t("successTitle")}</h1>
-        <p className="text-muted mb-6">{t("successTransferDesc")}</p>
-
-        {qrDataUrl && (
-          <div className="mb-6">
-            <img src={qrDataUrl} alt="QR platba" className="mx-auto w-48 h-48" />
-            <p className="text-xs text-muted mt-2">{t("scanQrToPay")}</p>
-          </div>
-        )}
-
-        <div className="bg-nude-50 rounded-2xl p-5 text-left max-w-sm mx-auto space-y-3">
-          <div>
-            <div className="text-xs text-muted">{t("orderNumber")}</div>
-            <div className="font-mono font-bold text-ink">{orderResult.orderNumber}</div>
-          </div>
-          <div>
-            <div className="text-xs text-muted">{t("bankAccount")}</div>
-            <div className="font-mono text-ink">{orderResult.paymentInfo.bankAccount}</div>
-          </div>
-          <div>
-            <div className="text-xs text-muted">IBAN</div>
-            <div className="font-mono text-ink text-sm break-all">{orderResult.paymentInfo.iban}</div>
-          </div>
-          <div>
-            <div className="text-xs text-muted">{t("variableSymbol")}</div>
-            <div className="font-mono font-bold text-ink">{orderResult.paymentInfo.variableSymbol}</div>
-          </div>
-          <div>
-            <div className="text-xs text-muted">{t("amount")}</div>
-            <div className="font-bold text-ink">{orderResult.paymentInfo.amount.toLocaleString("cs-CZ")} Kč</div>
-          </div>
-        </div>
-
-        <Link
-          href="/vlasy-k-prodlouzeni"
-          className="inline-flex mt-8 px-5 py-2.5 bg-rose text-white text-sm font-medium rounded-xl hover:bg-rose-deep transition-colors"
-        >
-          {t("backToOffer")}
-        </Link>
-      </div>
-    );
-  }
 
   // Success — returned from Comgate payment
   if (orderResult?.success && comgateReturn) {
@@ -843,27 +773,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 <p className="text-[10px] text-muted mt-1">Visa · Mastercard · Apple Pay · Google Pay · QR platba</p>
               </div>
             </label>
-            <label
-              className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg cursor-pointer transition-colors ${
-                form.paymentMethod === "CASH"
-                  ? "border-rose bg-rose/5"
-                  : "border-line hover:border-muted"
-              }`}
-            >
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="CASH"
-                checked={form.paymentMethod === "CASH"}
-                onChange={(e) => setField("paymentMethod", e.target.value)}
-                className="accent-rose"
-              />
-              <div className="flex-1">
-                <span className="text-sm text-ink">{t("paymentCash")}</span>
-                <p className="text-xs text-muted">{t("paymentCashDesc")}</p>
-              </div>
-              <span className="text-xs text-muted">+50 Kč</span>
-            </label>
           </div>
 
           {/* Promo code */}
@@ -967,7 +876,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
           {/* GDPR info text */}
           <p className="text-xs text-muted">
             {t("gdprText")}{" "}
-            <Link href="/privacy" className="text-rose underline" target="_blank">
+            <Link href="/ochrana-udaju" className="text-rose underline" target="_blank">
               {t("gdprLink")}
             </Link>.
           </p>
@@ -1038,12 +947,6 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
                 {shippingCost === 0 ? tInquiry("shippingFree") : `${formatPrice(shippingCost)} Kč`}
               </span>
             </div>
-            {cashSurcharge > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted">{t("paymentCashSurcharge")}</span>
-                <span className="text-ink">+{formatPrice(cashSurcharge)} Kč</span>
-              </div>
-            )}
             <div className="border-t border-line pt-2 flex justify-between font-bold text-ink">
               <span>{t("total")}</span>
               <span>{formatPrice(total)} Kč</span>
@@ -1070,7 +973,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
             <div className="flex justify-between gap-2">
               <span className="text-muted flex-shrink-0">{t("step_payment")}</span>
               <span className="text-ink">
-                {form.paymentMethod === "CARD" ? t("paymentCardOnline") : t("paymentCash")}
+                {t("paymentCardOnline")}
               </span>
             </div>
             {form.billingIco && !form.wantsBilling && (
@@ -1130,7 +1033,7 @@ export function CheckoutClient({ b2bInfo }: { b2bInfo?: B2BInfo | null }) {
             disabled={submitting || stockChecking}
             className="flex-1 py-3 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors disabled:opacity-50"
           >
-            {submitting || stockChecking ? t("processing") : form.paymentMethod === "CARD" ? t("payAndOrder") : t("submitOrder")}
+            {submitting || stockChecking ? t("processing") : t("payAndOrder")}
           </button>
         ) : (
           <button

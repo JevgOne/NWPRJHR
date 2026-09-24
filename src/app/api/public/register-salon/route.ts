@@ -165,14 +165,16 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
 
     // Telegram notification
-    notifySalonRegistration({
+    await notifySalonRegistration({
       type: typeLabel,
       salonName,
       contactName: contactPerson,
       email,
       phone: phone || undefined,
       city: city || undefined,
-    }).catch(() => {});
+    }).catch((err) => {
+      console.error("[RegisterSalon] Telegram notifySalonRegistration failed:", err);
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

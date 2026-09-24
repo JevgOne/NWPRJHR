@@ -68,6 +68,11 @@ export async function generateMetadata(): Promise<Metadata> {
     verification: {
       google: "O8JDMlKM9MF___Aq8x5gKn4EZ7kKvBSKON524_qSnvU",
     },
+    alternates: {
+      types: {
+        "application/rss+xml": "https://www.hairland.cz/feed/rss.xml",
+      },
+    },
     other: {
       "geo.region": "CZ-10",
       "geo.placename": "Praha",

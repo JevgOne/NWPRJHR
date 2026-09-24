@@ -400,7 +400,7 @@ export default async function PeceOVlasyPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/contact"
+              href="/kontakt"
               className="inline-flex items-center justify-center px-7 py-3 bg-rose text-white font-semibold rounded-full hover:bg-rose-deep transition-colors shadow-lg shadow-rose/20 hover:shadow-xl hover:shadow-rose/30 hover:-translate-y-0.5 transition-all"
             >
               {t("ctaContact")}

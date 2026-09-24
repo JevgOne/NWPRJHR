@@ -7,11 +7,21 @@ const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
  * Send a message with a single "Beru" claim button.
  * callback_data format: "claim:<type>:<recordId>"
  */
+const ADMIN_URLS: Record<string, (id: string) => string> = {
+  inquiry: (id) => `https://www.hairland.cz/inquiries/${id}`,
+  contact: () => `https://www.hairland.cz/messages`,
+  complaint: (id) => `https://www.hairland.cz/complaints/${id}`,
+};
+
 async function sendWithClaimButton(text: string, type: string, recordId: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
 
+  const adminUrl = ADMIN_URLS[type]?.(recordId);
   const keyboard = {
-    inline_keyboard: [[{ text: "👉  BERU / БЕРУ  👈", callback_data: `claim:${type}:${recordId}` }]],
+    inline_keyboard: [
+      [{ text: "👉  BERU / БЕРУ  👈", callback_data: `claim:${type}:${recordId}` }],
+      ...(adminUrl ? [[{ text: "📋 Otevřít v adminu", url: adminUrl }]] : []),
+    ],
   };
 
   try {
@@ -25,8 +35,8 @@ async function sendWithClaimButton(text: string, type: string, recordId: string)
         reply_markup: keyboard,
       }),
     });
-  } catch {
-    // Telegram failure should never block the main flow
+  } catch (err) {
+    console.error("[Telegram] sendWithClaimButton error:", err);
   }
 }
 
@@ -255,8 +265,8 @@ async function sendRegistrationNotification(text: string): Promise<void> {
         reply_markup: keyboard,
       }),
     });
-  } catch {
-    // silent
+  } catch (err) {
+    console.error("[Telegram] sendRegistrationNotification error:", err);
   }
 }
 

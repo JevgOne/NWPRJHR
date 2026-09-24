@@ -187,40 +187,6 @@ const inquiryT: Record<Lang, {
   },
 };
 
-const spinT: Record<Lang, {
-  subject: (discount: number) => string;
-  congrats: string;
-  body: (discount: number) => string;
-  codeLabel: string;
-  validUntil: string;
-  usage: string;
-}> = {
-  cs: {
-    subject: (d) => `Vaše výhra z Kolečka štěstí — ${d}% sleva!`,
-    congrats: "Gratulujeme!",
-    body: (d) => `Vyhráli jste ${d}% slevu na nákup vlasů.`,
-    codeLabel: "Váš slevový kód",
-    validUntil: "Platný do:",
-    usage: "Použijte kód při objednávce na",
-  },
-  uk: {
-    subject: (d) => `Ваш виграш у Колесі фортуни — ${d}% знижка!`,
-    congrats: "Вітаємо!",
-    body: (d) => `Ви виграли ${d}% знижку на купівлю волосся.`,
-    codeLabel: "Ваш промокод",
-    validUntil: "Дійсний до:",
-    usage: "Використайте код при замовленні або запиті на",
-  },
-  ru: {
-    subject: (d) => `Ваш выигрыш в Колесе фортуны — ${d}% скидка!`,
-    congrats: "Поздравляем!",
-    body: (d) => `Вы выиграли ${d}% скидку на покупку волос.`,
-    codeLabel: "Ваш промокод",
-    validUntil: "Действителен до:",
-    usage: "Используйте код при заказе или запросе на",
-  },
-};
-
 function resolveLang(lang: string): Lang {
   if (lang === "uk" || lang === "ru") return lang;
   return "cs";
@@ -380,42 +346,9 @@ export function getInquiryConfirmationEmail(
   return { subject: hasItems ? t.subject : t.consultSubject, text, html: hairlandEmailTemplate(content) };
 }
 
-export function getSpinWinEmail(
-  lang: string,
-  data: { discount: number; code: string; validTo: string }
-): { subject: string; text: string; html: string } {
-  const t = spinT[resolveLang(lang)];
+// --- Order Confirmed Email (admin confirms an order) ---
 
-  const text = [
-    t.congrats,
-    "",
-    t.body(data.discount),
-    "",
-    `${t.codeLabel}: ${data.code}`,
-    `${t.validUntil} ${data.validTo}`,
-    "",
-    `${t.usage} hairland.cz.`,
-  ].join("\n");
-
-  const content = `
-    <p style="color:#3a2c2a;font-size:22px;font-weight:600;text-align:center;margin:0 0 16px;">${esc(t.congrats)}</p>
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;text-align:center;margin:0 0 24px;">${esc(t.body(data.discount))}</p>
-    <div style="background:linear-gradient(135deg,#f7efe8,#fdfaf7);border-radius:12px;padding:24px 20px;margin:20px 0;border:2px dashed #c2a36b;text-align:center;">
-      <p style="color:#9c8682;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">${esc(t.codeLabel)}</p>
-      <p style="color:#c2a36b;font-size:28px;font-weight:700;letter-spacing:3px;margin:0;">${esc(data.code)}</p>
-    </div>
-    <p style="color:#3a2c2a;font-size:14px;text-align:center;margin:16px 0 4px;"><strong>${esc(t.validUntil)}</strong> ${esc(data.validTo)}</p>
-    <p style="color:#9c8682;font-size:13px;text-align:center;line-height:1.5;margin:4px 0 0;">
-      ${esc(t.usage)} <a href="https://www.hairland.cz" style="color:#a96d6c;text-decoration:none;">hairland.cz</a>.
-    </p>
-  `;
-
-  return { subject: t.subject(data.discount), text, html: hairlandEmailTemplate(content) };
-}
-
-// --- Order Confirmation Email ---
-
-const orderConfirmT: Record<Lang, {
+const orderConfirmedT: Record<Lang, {
   subject: (orderNumber: string) => string;
   greeting: (name: string) => string;
   body1: (orderNumber: string) => string;
@@ -473,7 +406,7 @@ const orderConfirmT: Record<Lang, {
   },
 };
 
-export function getOrderConfirmationEmail(
+export function getOrderConfirmedEmail(
   lang: string,
   data: {
     salonName: string;
@@ -484,7 +417,7 @@ export function getOrderConfirmationEmail(
     promoDiscount?: number;
   }
 ): { subject: string; text: string; html: string } {
-  const t = orderConfirmT[resolveLang(lang)];
+  const t = orderConfirmedT[resolveLang(lang)];
 
   const itemLines = data.items
     .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`}`)
@@ -556,7 +489,7 @@ export function getOrderConfirmationEmail(
 
 // --- Order Shipped Email ---
 
-const orderShippedT: Record<Lang, {
+const b2bOrderShippedT: Record<Lang, {
   subject: (orderNumber: string) => string;
   greeting: (name: string) => string;
   body1: (orderNumber: string) => string;
@@ -590,7 +523,7 @@ const orderShippedT: Record<Lang, {
   },
 };
 
-export function getOrderShippedEmail(
+export function getB2BOrderShippedEmail(
   lang: string,
   data: {
     salonName: string;
@@ -598,7 +531,7 @@ export function getOrderShippedEmail(
     estimatedTotal: number;
   }
 ): { subject: string; text: string; html: string } {
-  const t = orderShippedT[resolveLang(lang)];
+  const t = b2bOrderShippedT[resolveLang(lang)];
 
   const totalCzk = (data.estimatedTotal / 100).toLocaleString("cs-CZ");
 
@@ -785,83 +718,166 @@ export function getInquiryFollowUpEmail(
   return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
 }
 
-// --- Retail Order Confirmation Email ---
+// --- Order Confirmation Email (Email 1 — legally required) ---
+// Replaces getRetailOrderConfirmationEmail with legal blocks, B2B variant, PDF attachments
+// Source: 5-Emailove-sablony.md
 
-const retailOrderConfirmT: Record<Lang, {
+const orderConfirmT: Record<Lang, {
   subject: (orderNumber: string) => string;
   subjectTransfer: (orderNumber: string) => string;
   greeting: (name: string) => string;
-  body1: (orderNumber: string) => string;
+  intro: string;
   bodyTransfer: string;
   bodyCard: string;
+  bodyCash: string;
   itemsHeader: string;
-  productHeader: string;
-  detailsHeader: string;
   shippingLabel: string;
   discountLabel: string;
   totalLabel: string;
   bankAccountLabel: string;
   vsLabel: string;
   amountLabel: string;
-  footer: string;
+  // Legal blocks
+  importantTitle: string;
+  importantText: string;
+  importantPhotoTip: string;
+  hygieneTitle: string;
+  hygieneTextRetail: string;
+  hygieneTextB2B: string;
+  withdrawalTitle: string;
+  withdrawalText1: string;
+  withdrawalText2: string;
+  withdrawalText3: string;
+  careTitle: string;
+  careText1: string;
+  careLinkLabel: string;
+  careTip1: string;
+  careTip2: string;
+  careTip3: string;
+  attachmentsTitle: string;
+  attachment1: string;
+  attachment2: string;
+  attachment3: string;
+  closing: string;
+  signature: string;
 }> = {
   cs: {
-    subject: (n) => `Objednávka #${n} přijata — Hairland`,
-    subjectTransfer: (n) => `Objednávka #${n} — čeká na platbu — Hairland`,
+    subject: (n) => `Potvrzení objednávky ${n} — Hairland`,
+    subjectTransfer: (n) => `Objednávka ${n} — čeká na platbu — Hairland`,
     greeting: (name) => `Dobrý den, ${name},`,
-    body1: (n) => `děkujeme za Vaši objednávku #${n}.`,
+    intro: "děkujeme za objednávku. Níže najdete její shrnutí a všechny dokumenty, které k ní patří.",
     bodyTransfer: "Čekáme na Vaši platbu",
-    bodyCard: "Vaše platba byla přijata. Objednávku připravíme a budeme Vás informovat o odeslání.",
+    bodyCard: "Vaše platba byla přijata. Připravíme objednávku a dáme Vám vědět.",
+    bodyCash: "Děkujeme za nákup.",
     itemsHeader: "Položky objednávky:",
-    productHeader: "Produkt",
-    detailsHeader: "Detaily",
     shippingLabel: "Doprava",
     discountLabel: "Sleva",
-    totalLabel: "Celkem k úhradě",
+    totalLabel: "Celkem",
     bankAccountLabel: "Bankovní účet",
     vsLabel: "Variabilní symbol",
     amountLabel: "Částka k úhradě",
-    footer: "Máte dotaz? Odpovězte na tento email nebo nás kontaktujte na info@hairland.cz.",
+    importantTitle: "DŮLEŽITÉ PŘED PŘEVZETÍM",
+    importantText: "Vlasy jsou přírodní produkt. Než je necháte nasadit, prohlédněte si je a zkontrolujte odstín, délku, gramáž a strukturu. Cokoli vám nesedí, řešte prosím před aplikací — po nasazení už odstín ani délku reklamovat nelze.",
+    importantPhotoTip: "Doporučujeme si rozbalené vlasy vyfotit na denním světle. Trvá to deset vteřin a v případném sporu je to nejlepší důkaz.",
+    hygieneTitle: "HYGIENICKÉ UZAVŘENÍ OBALU",
+    hygieneTextRetail: "Vlasy dodáváme v uzavřeném obalu s hygienickou pečetí. Jde o zboží, které z hygienických důvodů nelze vrátit po porušení obalu. Porušením pečeti zaniká právo odstoupit od smlouvy do 14 dnů (§ 1837 písm. g občanského zákoníku). Chcete-li si vlasy prohlédnout bez ztráty tohoto práva, prohlížejte je přes neporušený průhledný obal nebo na vzorku.",
+    hygieneTextB2B: "Vlasy dodáváme v uzavřeném obalu s hygienickou pečetí. Zboží prosím zkontrolujte co nejdříve po převzetí — zjevné vady je nutné vytknout do 3 pracovních dnů od převzetí a vždy před aplikací.",
+    withdrawalTitle: "PRÁVO ODSTOUPIT OD SMLOUVY DO 14 DNŮ",
+    withdrawalText1: "Máte právo odstoupit od této smlouvy bez udání důvodu do 14 dnů ode dne převzetí zboží. Pro odstoupení nám napište na info@hairland.cz nebo použijte přiložený vzorový formulář.",
+    withdrawalText2: "Odstoupíte-li, vrátíme vám kupní cenu do 14 dnů od vrácení zboží, stejným způsobem, jakým jste platili. Náklady na vrácení zboží nesete vy.",
+    withdrawalText3: "Vrátit lze pouze vlasy nepoužité, neaplikované a neupravené, s neporušenou hygienickou pečetí.",
+    careTitle: "PÉČE O VLASY",
+    careText1: "Prodloužené vlasy nerostou z vaší hlavy, a proto nedostávají kožní maz, který chrání vaše vlastní vlasy. Bez výživy zvenčí nevyhnutelně vyschnou a začnou se lámat — a to během několika týdnů. Přiložený návod na péči si prosím přečtěte ještě před aplikací.",
+    careLinkLabel: "Je také na",
+    careTip1: "maska nebo olej po celé délce, ne na spoje",
+    careTip2: "žehlička maximálně na 180 °C a vždy s termoochranou",
+    careTip3: "rozčesávat dvakrát denně speciálním kartáčem",
+    attachmentsTitle: "PŘÍLOHY",
+    attachment1: "Reklamační řád",
+    attachment2: "Návod na péči o prodloužené vlasy",
+    attachment3: "Vzorový formulář pro odstoupení od smlouvy",
+    closing: "Kdyby cokoli, ozvěte se.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103\nAltro servis group s.r.o., IČO 23673389",
   },
   uk: {
-    subject: (n) => `Замовлення #${n} прийнято — Hairland`,
-    subjectTransfer: (n) => `Замовлення #${n} — очікуємо оплату — Hairland`,
+    subject: (n) => `Підтвердження замовлення ${n} — Hairland`,
+    subjectTransfer: (n) => `Замовлення ${n} — очікуємо оплату — Hairland`,
     greeting: (name) => `Вітаємо, ${name},`,
-    body1: (n) => `дякуємо за Ваше замовлення #${n}.`,
+    intro: "дякуємо за замовлення. Нижче ви знайдете його підсумок та всі документи, які до нього належать.",
     bodyTransfer: "Очікуємо Вашу оплату",
-    bodyCard: "Ваша оплата прийнята. Ми підготуємо замовлення та повідомимо Вас про відправку.",
+    bodyCard: "Вашу оплату прийнято. Ми підготуємо замовлення та повідомимо Вас.",
+    bodyCash: "Дякуємо за покупку.",
     itemsHeader: "Товари замовлення:",
-    productHeader: "Продукт",
-    detailsHeader: "Деталі",
     shippingLabel: "Доставка",
     discountLabel: "Знижка",
-    totalLabel: "Всього до оплати",
+    totalLabel: "Всього",
     bankAccountLabel: "Банківський рахунок",
     vsLabel: "Варіабельний символ",
     amountLabel: "Сума до оплати",
-    footer: "Маєте запитання? Відповідайте на цей лист або зверніться до нас на info@hairland.cz.",
+    importantTitle: "ВАЖЛИВО ПЕРЕД ОТРИМАННЯМ",
+    importantText: "Волосся — натуральний продукт. Перш ніж його наносити, огляньте його та перевірте відтінок, довжину, вагу та структуру. Якщо щось не підходить, вирішуйте до застосування — після нанесення відтінок і довжину рекламувати не можна.",
+    importantPhotoTip: "Рекомендуємо сфотографувати розпаковане волосся при денному світлі. Це займе десять секунд і є найкращим доказом у разі спору.",
+    hygieneTitle: "ГІГІЄНІЧНЕ ЗАКРИТТЯ УПАКОВКИ",
+    hygieneTextRetail: "Волосся постачається в закритій упаковці з гігієнічною пломбою. Це товар, який з гігієнічних причин не можна повернути після порушення упаковки. Порушення пломби позбавляє права на відмову від договору протягом 14 днів (§ 1837 písm. g občanského zákoníku). Якщо хочете оглянути волосся без втрати цього права, робіть це через непорушену прозору упаковку або на зразку.",
+    hygieneTextB2B: "Волосся постачається в закритій упаковці з гігієнічною пломбою. Будь ласка, перевірте товар якомога швидше після отримання — явні дефекти необхідно повідомити протягом 3 робочих днів від отримання та завжди до застосування.",
+    withdrawalTitle: "ПРАВО ВІДМОВИТИСЯ ВІД ДОГОВОРУ ПРОТЯГОМ 14 ДНІВ",
+    withdrawalText1: "Ви маєте право відмовитися від цього договору без пояснення причин протягом 14 днів від дня отримання товару. Для відмови напишіть нам на info@hairland.cz або скористайтеся доданим зразком формуляра.",
+    withdrawalText2: "Якщо ви відмовитеся, ми повернемо вам ціну покупки протягом 14 днів від повернення товару, тим же способом, яким ви платили. Витрати на повернення товару несете ви.",
+    withdrawalText3: "Повернути можна тільки невикористане, ненанесене та необроблене волосся з непорушеною гігієнічною пломбою.",
+    careTitle: "ДОГЛЯД ЗА ВОЛОССЯМ",
+    careText1: "Подовжене волосся не росте з вашої голови, тому не отримує шкірний жир, який захищає ваше власне волосся. Без зовнішнього живлення воно неминуче висохне і почне ламатися — протягом кількох тижнів. Будь ласка, прочитайте доданий посібник з догляду ще до застосування.",
+    careLinkLabel: "Також на",
+    careTip1: "маска або олія по всій довжині, не на з'єднання",
+    careTip2: "праска максимально 180 °C і завжди з термозахистом",
+    careTip3: "розчісувати двічі на день спеціальною щіткою",
+    attachmentsTitle: "ДОДАТКИ",
+    attachment1: "Правила рекламації",
+    attachment2: "Посібник з догляду за подовженим волоссям",
+    attachment3: "Зразок формуляра для відмови від договору",
+    closing: "Якщо виникнуть питання, напишіть нам.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103\nAltro servis group s.r.o., IČO 23673389",
   },
   ru: {
-    subject: (n) => `Заказ #${n} принят — Hairland`,
-    subjectTransfer: (n) => `Заказ #${n} — ожидаем оплату — Hairland`,
+    subject: (n) => `Подтверждение заказа ${n} — Hairland`,
+    subjectTransfer: (n) => `Заказ ${n} — ожидаем оплату — Hairland`,
     greeting: (name) => `Здравствуйте, ${name},`,
-    body1: (n) => `благодарим за Ваш заказ #${n}.`,
+    intro: "благодарим за заказ. Ниже вы найдёте его резюме и все документы, которые к нему относятся.",
     bodyTransfer: "Ожидаем Вашу оплату",
-    bodyCard: "Ваша оплата принята. Мы подготовим заказ и сообщим Вам об отправке.",
+    bodyCard: "Ваша оплата принята. Мы подготовим заказ и сообщим Вам.",
+    bodyCash: "Благодарим за покупку.",
     itemsHeader: "Товары заказа:",
-    productHeader: "Продукт",
-    detailsHeader: "Детали",
     shippingLabel: "Доставка",
     discountLabel: "Скидка",
-    totalLabel: "Итого к оплате",
+    totalLabel: "Итого",
     bankAccountLabel: "Банковский счёт",
     vsLabel: "Вариабельный символ",
     amountLabel: "Сумма к оплате",
-    footer: "Есть вопрос? Ответьте на это письмо или свяжитесь с нами по адресу info@hairland.cz.",
+    importantTitle: "ВАЖНО ПЕРЕД ПОЛУЧЕНИЕМ",
+    importantText: "Волосы — натуральный продукт. Прежде чем их наносить, осмотрите их и проверьте оттенок, длину, вес и структуру. Если что-то не подходит, решайте до применения — после нанесения оттенок и длину рекламировать нельзя.",
+    importantPhotoTip: "Рекомендуем сфотографировать распакованные волосы при дневном свете. Это займёт десять секунд и станет лучшим доказательством в случае спора.",
+    hygieneTitle: "ГИГИЕНИЧЕСКАЯ ЗАПЕЧАТКА УПАКОВКИ",
+    hygieneTextRetail: "Волосы поставляются в закрытой упаковке с гигиенической пломбой. Это товар, который по гигиеническим причинам нельзя вернуть после вскрытия упаковки. Вскрытие пломбы лишает права на отказ от договора в течение 14 дней (§ 1837 písm. g občanského zákoníku). Если хотите осмотреть волосы без потери этого права, делайте это через ненарушенную прозрачную упаковку или на образце.",
+    hygieneTextB2B: "Волосы поставляются в закрытой упаковке с гигиенической пломбой. Пожалуйста, проверьте товар как можно скорее после получения — явные дефекты необходимо сообщить в течение 3 рабочих дней с момента получения и всегда до применения.",
+    withdrawalTitle: "ПРАВО ОТКАЗАТЬСЯ ОТ ДОГОВОРА В ТЕЧЕНИЕ 14 ДНЕЙ",
+    withdrawalText1: "Вы имеете право отказаться от этого договора без объяснения причин в течение 14 дней со дня получения товара. Для отказа напишите нам на info@hairland.cz или воспользуйтесь приложённым образцом формуляра.",
+    withdrawalText2: "Если вы откажетесь, мы вернём вам покупную цену в течение 14 дней с момента возврата товара, тем же способом, которым вы платили. Расходы по возврату товара несёте вы.",
+    withdrawalText3: "Вернуть можно только неиспользованные, ненанесённые и необработанные волосы с ненарушенной гигиенической пломбой.",
+    careTitle: "УХОД ЗА ВОЛОСАМИ",
+    careText1: "Наращённые волосы не растут из вашей головы, поэтому не получают кожный жир, который защищает ваши собственные волосы. Без внешнего питания они неизбежно высохнут и начнут ломаться — в течение нескольких недель. Пожалуйста, прочитайте приложённую инструкцию по уходу ещё до применения.",
+    careLinkLabel: "Также на",
+    careTip1: "маска или масло по всей длине, не на соединения",
+    careTip2: "утюжок максимум 180 °C и всегда с термозащитой",
+    careTip3: "расчёсывать дважды в день специальной щёткой",
+    attachmentsTitle: "ПРИЛОЖЕНИЯ",
+    attachment1: "Правила рекламации",
+    attachment2: "Инструкция по уходу за наращёнными волосами",
+    attachment3: "Образец формуляра для отказа от договора",
+    closing: "Если возникнут вопросы, напишите нам.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103\nAltro servis group s.r.o., IČO 23673389",
   },
 };
 
-export function getRetailOrderConfirmationEmail(
+export function getOrderConfirmationEmail(
   lang: string,
   data: {
     customerName: string;
@@ -875,34 +891,100 @@ export function getRetailOrderConfirmationEmail(
     paymentMethod: string;
     bankAccount?: string;
     variableSymbol?: string;
+    isB2B: boolean;
+    isPersonalSale?: boolean;
+    careGuideUrl: string;
   }
 ): { subject: string; text: string; html: string } {
-  const t = retailOrderConfirmT[resolveLang(lang)];
+  const t = orderConfirmT[resolveLang(lang)];
   const isTransfer = data.paymentMethod === "TRANSFER";
+  const isCash = data.paymentMethod === "CASH";
+  const showHygiene = !data.isPersonalSale;
   const fmtCzk = (h: number) => (h / 100).toLocaleString("cs-CZ");
+
+  const paymentLine = isTransfer ? t.bodyTransfer : isCash ? t.bodyCash : t.bodyCard;
 
   const itemLines = data.items
     .map((i) => `  - ${i.productName} — ${i.lengthCm} cm, ${i.color}, ${i.grams > 0 ? `${i.grams}g` : `${i.pieces} ks`} — ${fmtCzk(i.lineTotal)} Kč`)
     .join("\n");
 
-  const text = [
+  // Plain text version
+  const textParts: (string | null)[] = [
     t.greeting(data.customerName),
     "",
-    t.body1(data.orderNumber),
-    isTransfer ? t.bodyTransfer : t.bodyCard,
+    t.intro,
     "",
-    t.itemsHeader,
+    `${t.itemsHeader}`,
     itemLines,
-    data.promoCode ? `\n${t.discountLabel}: ${data.promoCode} -${fmtCzk(data.promoDiscount ?? 0)} Kč` : null,
+    data.promoCode ? `${t.discountLabel}: ${data.promoCode} -${fmtCzk(data.promoDiscount ?? 0)} Kč` : null,
     data.shippingCost > 0 ? `${t.shippingLabel}: ${fmtCzk(data.shippingCost)} Kč` : null,
     `${t.totalLabel}: ${fmtCzk(data.totalAmount)} Kč`,
     "",
     isTransfer && data.bankAccount ? `${t.bankAccountLabel}: ${data.bankAccount}` : null,
     isTransfer && data.variableSymbol ? `${t.vsLabel}: ${data.variableSymbol}` : null,
+    isTransfer ? "" : null,
+    !isTransfer ? paymentLine : null,
     "",
-    t.footer,
-  ].filter(Boolean).join("\n");
+    "──────────────────────────────",
+    "",
+    t.importantTitle,
+    "",
+    t.importantText,
+    "",
+    t.importantPhotoTip,
+    "",
+    ...(showHygiene ? [
+    "──────────────────────────────",
+    "",
+    t.hygieneTitle,
+    "",
+    data.isB2B ? t.hygieneTextB2B : t.hygieneTextRetail,
+    ] : []),
+  ];
 
+  if (!data.isB2B) {
+    textParts.push(
+      "",
+      "──────────────────────────────",
+      "",
+      t.withdrawalTitle,
+      "",
+      t.withdrawalText1,
+      "",
+      t.withdrawalText2,
+      "",
+      t.withdrawalText3,
+    );
+  }
+
+  textParts.push(
+    "",
+    "──────────────────────────────",
+    "",
+    t.careTitle,
+    "",
+    t.careText1,
+    `${t.careLinkLabel} ${data.careGuideUrl}`,
+    "",
+    `• ${t.careTip1}`,
+    `• ${t.careTip2}`,
+    `• ${t.careTip3}`,
+    "",
+    "──────────────────────────────",
+    "",
+    t.attachmentsTitle,
+    `• ${t.attachment1}`,
+    `• ${t.attachment2}`,
+    ...(!data.isB2B ? [`• ${t.attachment3}`] : []),
+    "",
+    t.closing,
+    "",
+    t.signature,
+  );
+
+  const text = textParts.filter((s) => s !== null).join("\n");
+
+  // HTML version
   const itemRows = data.items
     .map(
       (i) => `<tr>
@@ -917,9 +999,8 @@ export function getRetailOrderConfirmationEmail(
     : "";
 
   const transferHtml = isTransfer && data.bankAccount
-    ? `<!-- Payment box -->
-      <div style="background:#fff8f0;border:2px solid #e8c97a;border-radius:12px;padding:20px;margin:24px 0 0;text-align:center;">
-        <p style="color:#b8860b;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 16px;">⏳ ${esc(t.bodyTransfer)}</p>
+    ? `<div style="background:#fff8f0;border:2px solid #e8c97a;border-radius:12px;padding:20px;margin:24px 0 0;text-align:center;">
+        <p style="color:#b8860b;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 16px;">${esc(t.bodyTransfer)}</p>
         <table style="width:100%;border-collapse:collapse;">
           <tr><td style="padding:6px 0;color:#9c8682;font-size:13px;text-align:left;">${esc(t.bankAccountLabel)}</td><td style="padding:6px 0;color:#3a2c2a;font-size:15px;text-align:right;font-weight:700;font-family:monospace;">${esc(data.bankAccount)}</td></tr>
           <tr><td style="padding:6px 0;color:#9c8682;font-size:13px;text-align:left;">${esc(t.vsLabel)}</td><td style="padding:6px 0;color:#3a2c2a;font-size:15px;text-align:right;font-weight:700;font-family:monospace;">${esc(data.variableSymbol ?? "")}</td></tr>
@@ -928,13 +1009,28 @@ export function getRetailOrderConfirmationEmail(
       </div>`
     : "";
 
+  const sectionDivider = '<div style="border-top:2px solid #ead9cf;margin:28px 0 24px;"></div>';
+  const sectionTitle = (title: string) => `<p style="color:#3a2c2a;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">${esc(title)}</p>`;
+  const sectionText = (txt: string) => `<p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;">${esc(txt)}</p>`;
+
+  const withdrawalHtml = data.isB2B ? "" : `
+    ${sectionDivider}
+    ${sectionTitle(t.withdrawalTitle)}
+    ${sectionText(t.withdrawalText1)}
+    ${sectionText(t.withdrawalText2)}
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0;font-weight:600;">${esc(t.withdrawalText3)}</p>`;
+
+  const attachWithdrawalHtml = data.isB2B ? "" : `<li style="margin-bottom:2px;">${esc(t.attachment3)}</li>`;
+
   const content = `
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 4px;">${esc(t.greeting(data.customerName))}</p>
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;">${esc(t.body1(data.orderNumber))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;">${esc(t.intro)}</p>
+
     <!-- Items -->
     <table style="width:100%;border-collapse:collapse;">
       ${itemRows}
     </table>
+
     <!-- Totals -->
     <div style="margin-top:12px;padding-top:12px;border-top:2px solid #3a2c2a;">
       <table style="width:100%;">
@@ -943,8 +1039,42 @@ export function getRetailOrderConfirmationEmail(
         <tr><td style="color:#3a2c2a;font-size:16px;font-weight:800;padding:8px 0 0;">${esc(t.totalLabel)}</td><td style="text-align:right;color:#3a2c2a;font-size:16px;font-weight:800;padding:8px 0 0;">${fmtCzk(data.totalAmount)} Kč</td></tr>
       </table>
     </div>
+
     ${transferHtml}
-    <p style="color:#b8a09b;font-size:12px;line-height:1.5;margin:24px 0 0;">${esc(t.footer)}</p>
+    ${!isTransfer ? `<p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:20px 0 0;">${esc(paymentLine)}</p>` : ""}
+
+    <!-- Legal blocks -->
+    ${sectionDivider}
+    ${sectionTitle(t.importantTitle)}
+    ${sectionText(t.importantText)}
+    ${sectionText(t.importantPhotoTip)}
+
+    ${showHygiene ? `${sectionDivider}
+    ${sectionTitle(t.hygieneTitle)}
+    ${sectionText(data.isB2B ? t.hygieneTextB2B : t.hygieneTextRetail)}` : ""}
+
+    ${withdrawalHtml}
+
+    ${sectionDivider}
+    ${sectionTitle(t.careTitle)}
+    ${sectionText(t.careText1)}
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;">${esc(t.careLinkLabel)} <a href="${data.careGuideUrl}" style="color:#a96d6c;text-decoration:underline;">${esc(data.careGuideUrl)}</a></p>
+    <ul style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:8px 0 0;padding-left:20px;">
+      <li style="margin-bottom:4px;">${esc(t.careTip1)}</li>
+      <li style="margin-bottom:4px;">${esc(t.careTip2)}</li>
+      <li style="margin-bottom:4px;">${esc(t.careTip3)}</li>
+    </ul>
+
+    ${sectionDivider}
+    <p style="color:#9c8682;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 8px;">${esc(t.attachmentsTitle)}</p>
+    <ul style="color:#9c8682;font-size:13px;line-height:1.8;margin:0;padding-left:20px;">
+      <li style="margin-bottom:2px;">${esc(t.attachment1)}</li>
+      <li style="margin-bottom:2px;">${esc(t.attachment2)}</li>
+      ${attachWithdrawalHtml}
+    </ul>
+
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.6;margin:24px 0 4px;">${esc(t.closing)}</p>
+    <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:0;white-space:pre-line;">${esc(t.signature)}</p>
   `;
 
   const subject = isTransfer ? t.subjectTransfer(data.orderNumber) : t.subject(data.orderNumber);
@@ -953,7 +1083,9 @@ export function getRetailOrderConfirmationEmail(
 
 // --- Retail Order Shipped Email ---
 
-const retailShippedT: Record<Lang, {
+// --- Email 2: Order Shipped (enhanced with care blocks) ---
+
+const shippedT: Record<Lang, {
   subject: (orderNumber: string) => string;
   greeting: (name: string) => string;
   body1: (orderNumber: string) => string;
@@ -961,41 +1093,101 @@ const retailShippedT: Record<Lang, {
   bodyPersonal: string;
   bodyPost: string;
   trackingLabel: string;
-  footer: string;
+  photoNote: string;
+  receiveTitle: string;
+  receive1: string;
+  receive2: string;
+  receive3: string;
+  mistakesTitle: string;
+  mistakesIntro: string;
+  mistakesLabel: string;
+  mistake1: string;
+  mistake2: string;
+  mistake3: string;
+  mistake4: string;
+  mistake5: string;
+  careLink: string;
+  closing: string;
+  signature: string;
 }> = {
   cs: {
-    subject: (n) => `Objednávka #${n} odeslána — Hairland`,
+    subject: (n) => `Vlasy jsou na cestě — objednávka ${n}`,
     greeting: (name) => `Dobrý den, ${name},`,
-    body1: (n) => `Vaše objednávka #${n} byla odeslána.`,
+    body1: (n) => `vaše vlasy jsou na cestě. ${n}`,
     bodyPacketa: (p) => `Zásilku si vyzvednete na pobočce Zásilkovny: ${p}.`,
     bodyPersonal: "Doručíme Vám objednávku osobně v Praze do 24 hodin.",
     bodyPost: "Zásilka byla odeslána.",
     trackingLabel: "Sledování zásilky",
-    footer: "Máte dotaz? Odpovězte na tento email.",
+    photoNote: "V příloze posíláme fotografii zakázky, jak vypadala před zabalením — uschovejte si ji, je to doklad o stavu zboží při expedici.",
+    receiveTitle: "AŽ ZÁSILKU PŘEVEZMETE",
+    receive1: "Zkontrolujte obal a hygienickou pečeť. Je-li obal poškozený, napište nám do 2 pracovních dnů s fotografií.",
+    receive2: "Prohlédněte si vlasy přes neporušený obal. Odstín, délka, gramáž, struktura. Pokud něco nesedí, ozvěte se PŘED tím, než pečeť porušíte a vlasy necháte nasadit.",
+    receive3: "Před aplikací vlasy umyjte jemným šamponem a nechte uschnout volně na vzduchu.",
+    mistakesTitle: "NEŽ SI JE NECHÁTE NASADIT",
+    mistakesIntro: "Přečtěte si prosím přiložený návod na péči. Tohle je ta část, kterou většina lidí přeskočí — a pak se po dvou měsících diví, proč se vlasy kroutí a lámou.",
+    mistakesLabel: "Nejčastější chyby, které vlasy zničí:",
+    mistake1: "žehlení bez termoochrany nebo nad 180 °C",
+    mistake2: "žádná maska ani olej — vlasy vyschnou během několika týdnů",
+    mistake3: "odbarvování a melírování — nevratné poškození během jediné návštěvy",
+    mistake4: "spaní s rozpuštěnými nebo mokrými vlasy",
+    mistake5: "nanášení masky a oleje přímo na spoje",
+    careLink: "Kompletní návod:",
+    closing: "",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
   uk: {
-    subject: (n) => `Замовлення #${n} відправлено — Hairland`,
+    subject: (n) => `Волосся в дорозі — замовлення ${n}`,
     greeting: (name) => `Вітаємо, ${name},`,
-    body1: (n) => `Ваше замовлення #${n} відправлено.`,
+    body1: (n) => `Ваше волосся вже в дорозі. ${n}`,
     bodyPacketa: (p) => `Забрати посилку можна у відділенні Zásilkovna: ${p}.`,
     bodyPersonal: "Ми доставимо замовлення особисто в Празі протягом 24 годин.",
     bodyPost: "Посилку відправлено.",
     trackingLabel: "Відстеження",
-    footer: "Маєте запитання? Відповідайте на цей лист.",
+    photoNote: "У додатку надсилаємо фотографію замовлення, як воно виглядало перед пакуванням — збережіть її, це підтвердження стану товару при відправленні.",
+    receiveTitle: "КОЛИ ОТРИМАЄТЕ ПОСИЛКУ",
+    receive1: "Перевірте упаковку та гігієнічну пломбу. Якщо упаковка пошкоджена, напишіть нам протягом 2 робочих днів з фотографією.",
+    receive2: "Огляньте волосся через непошкоджену упаковку. Відтінок, довжина, грамаж, структура. Якщо щось не збігається, зверніться ДО того, як порушите пломбу і волосся нанесуть.",
+    receive3: "Перед нанесенням помийте волосся мʼяким шампунем і дайте висохнути вільно на повітрі.",
+    mistakesTitle: "ПЕРШ НІЖ ЇХ НАНЕСУТЬ",
+    mistakesIntro: "Прочитайте, будь ласка, доданий посібник з догляду. Це та частина, яку більшість людей пропускає — а потім через два місяці дивується, чому волосся крутиться і ламається.",
+    mistakesLabel: "Найпоширеніші помилки, які знищують волосся:",
+    mistake1: "прасування без термозахисту або вище 180 °C",
+    mistake2: "жодної маски чи олії — волосся висохне за кілька тижнів",
+    mistake3: "знебарвлення та мелірування — незворотне пошкодження за один візит",
+    mistake4: "сон з розпущеним або мокрим волоссям",
+    mistake5: "нанесення маски та олії безпосередньо на зʼєднання",
+    careLink: "Повний посібник:",
+    closing: "",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
   ru: {
-    subject: (n) => `Заказ #${n} отправлен — Hairland`,
+    subject: (n) => `Волосы в пути — заказ ${n}`,
     greeting: (name) => `Здравствуйте, ${name},`,
-    body1: (n) => `Ваш заказ #${n} отправлен.`,
+    body1: (n) => `Ваши волосы уже в пути. ${n}`,
     bodyPacketa: (p) => `Забрать посылку можно в отделении Zásilkovna: ${p}.`,
     bodyPersonal: "Мы доставим заказ лично в Праге в течение 24 часов.",
     bodyPost: "Посылка отправлена.",
     trackingLabel: "Отслеживание",
-    footer: "Есть вопрос? Ответьте на это письмо.",
+    photoNote: "В приложении отправляем фотографию заказа, как он выглядел перед упаковкой — сохраните её, это подтверждение состояния товара при отправке.",
+    receiveTitle: "КОГДА ПОЛУЧИТЕ ПОСЫЛКУ",
+    receive1: "Проверьте упаковку и гигиеническую пломбу. Если упаковка повреждена, напишите нам в течение 2 рабочих дней с фотографией.",
+    receive2: "Осмотрите волосы через неповреждённую упаковку. Оттенок, длина, граммаж, структура. Если что-то не совпадает, свяжитесь ДО того, как нарушите пломбу и волосы нанесут.",
+    receive3: "Перед нанесением вымойте волосы мягким шампунем и дайте высохнуть свободно на воздухе.",
+    mistakesTitle: "ПРЕЖДЕ ЧЕМ ИХ НАНЕСУТ",
+    mistakesIntro: "Прочитайте, пожалуйста, приложенную инструкцию по уходу. Это та часть, которую большинство людей пропускает — а потом через два месяца удивляется, почему волосы крутятся и ломаются.",
+    mistakesLabel: "Самые частые ошибки, которые уничтожают волосы:",
+    mistake1: "выпрямление без термозащиты или выше 180 °C",
+    mistake2: "никакой маски или масла — волосы высохнут за несколько недель",
+    mistake3: "осветление и мелирование — необратимое повреждение за один визит",
+    mistake4: "сон с распущенными или мокрыми волосами",
+    mistake5: "нанесение маски и масла прямо на соединения",
+    careLink: "Полная инструкция:",
+    closing: "",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
 };
 
-export function getRetailOrderShippedEmail(
+export function getOrderShippedEmail(
   lang: string,
   data: {
     customerName: string;
@@ -1003,9 +1195,10 @@ export function getRetailOrderShippedEmail(
     shippingMethod: string;
     trackingId?: string;
     packetaPointName?: string;
+    careGuideUrl: string;
   }
 ): { subject: string; text: string; html: string } {
-  const t = retailShippedT[resolveLang(lang)];
+  const t = shippedT[resolveLang(lang)];
 
   const shippingDetail =
     data.shippingMethod === "PACKETA" ? t.bodyPacketa(data.packetaPointName || "Zásilkovna") :
@@ -1019,12 +1212,40 @@ export function getRetailOrderShippedEmail(
   const text = [
     t.greeting(data.customerName),
     "",
-    t.body1(data.orderNumber),
+    t.body1(data.trackingId || ""),
     shippingDetail,
-    data.trackingId ? `\n${t.trackingLabel}: ${trackingUrl || data.trackingId}` : null,
     "",
-    t.footer,
-  ].filter(Boolean).join("\n");
+    t.photoNote,
+    "",
+    "──────────────────────────────",
+    "",
+    t.receiveTitle,
+    "",
+    `1. ${t.receive1}`,
+    "",
+    `2. ${t.receive2}`,
+    "",
+    `3. ${t.receive3}`,
+    "",
+    "──────────────────────────────",
+    "",
+    t.mistakesTitle,
+    "",
+    t.mistakesIntro,
+    "",
+    `${t.mistakesLabel}`,
+    `• ${t.mistake1}`,
+    `• ${t.mistake2}`,
+    `• ${t.mistake3}`,
+    `• ${t.mistake4}`,
+    `• ${t.mistake5}`,
+    "",
+    `${t.careLink} ${data.careGuideUrl}`,
+    "",
+    "──────────────────────────────",
+    "",
+    t.signature,
+  ].join("\n");
 
   const trackingHtml = trackingUrl
     ? `<div style="text-align:center;margin:28px 0;">
@@ -1040,15 +1261,385 @@ export function getRetailOrderShippedEmail(
         </div>`
       : "";
 
+  const sectionDivider = '<div style="border-top:2px solid #ead9cf;margin:28px 0 24px;"></div>';
+  const sectionTitle = (title: string) => `<p style="color:#3a2c2a;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">${esc(title)}</p>`;
+
   const content = `
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 16px;">${esc(t.greeting(data.customerName))}</p>
-    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 8px;">${esc(t.body1(data.orderNumber))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 4px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(t.body1(data.trackingId || ""))}</p>
     <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 20px;">${esc(shippingDetail)}</p>
     ${trackingHtml}
-    <p style="color:#9c8682;font-size:13px;line-height:1.5;margin:16px 0 0;">${esc(t.footer)}</p>
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;">${esc(t.photoNote)}</p>
+
+    ${sectionDivider}
+    ${sectionTitle(t.receiveTitle)}
+    <ol style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0;padding-left:20px;">
+      <li style="margin-bottom:12px;">${esc(t.receive1)}</li>
+      <li style="margin-bottom:12px;">${esc(t.receive2)}</li>
+      <li style="margin-bottom:12px;">${esc(t.receive3)}</li>
+    </ol>
+
+    ${sectionDivider}
+    ${sectionTitle(t.mistakesTitle)}
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 12px;">${esc(t.mistakesIntro)}</p>
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;font-weight:600;">${esc(t.mistakesLabel)}</p>
+    <ul style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0;padding-left:20px;">
+      <li style="margin-bottom:6px;">${esc(t.mistake1)}</li>
+      <li style="margin-bottom:6px;">${esc(t.mistake2)}</li>
+      <li style="margin-bottom:6px;">${esc(t.mistake3)}</li>
+      <li style="margin-bottom:6px;">${esc(t.mistake4)}</li>
+      <li style="margin-bottom:6px;">${esc(t.mistake5)}</li>
+    </ul>
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:12px 0 0;">${esc(t.careLink)} <a href="${data.careGuideUrl}" style="color:#a96d6c;text-decoration:underline;">${esc(data.careGuideUrl)}</a></p>
+
+    <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:24px 0 0;white-space:pre-line;">${esc(t.signature)}</p>
   `;
 
   return { subject: t.subject(data.orderNumber), text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Email 3: Day 7 Care Email ---
+
+const day7T: Record<Lang, {
+  subject: string;
+  greeting: (name: string) => string;
+  intro: string;
+  nutritionTitle: string;
+  nutritionBody: string;
+  nutritionVitamins: string;
+  heatTitle: string;
+  heatBody: string;
+  brushTitle: string;
+  brushBody: string;
+  closing: string;
+  signature: string;
+}> = {
+  cs: {
+    subject: "Jak se vlasům daří?",
+    greeting: (name) => `Dobrý den, ${name},`,
+    intro: "je to týden. Jak jste s vlasy spokojená?\n\nPrvních pár týdnů rozhoduje o tom, jak dlouho vám vydrží, tak jen krátce připomeneme tři věci, na kterých to stojí:",
+    nutritionTitle: "VÝŽIVA",
+    nutritionBody: "Maska jednou až dvakrát týdně, olej na konečky denně před spaním. Vždy od poloviny délek dolů, nikdy ne na spoje — mastné složky je rozvolňují a vlasy pak padají.",
+    nutritionVitamins: "Vitaminy v tabletách na prodloužené vlasy nepůsobí. Ty rostou z hlavy, tyhle ne. Funguje jen výživa nanášená přímo na vlasy — maska, olej, vlasová ampule.",
+    heatTitle: "TEPLO",
+    heatBody: "Maximálně 180 °C a vždy s termoochranou. Nad touhle hranicí se vlas nevratně poškodí a nedorůstá, takže to z něj už nikdy nezmizí. Jeden plynulý tah, ne přejíždění stejného místa.",
+    brushTitle: "ČESÁNÍ",
+    brushBody: "Dvakrát denně, speciálním kartáčem, odspodu nahoru. Nikdy na mokré vlasy. Před spaním spleťte do volného copu.",
+    closing: "Něco vás trápí? Napište, rádi poradíme.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  uk: {
+    subject: "Як справи з волоссям?",
+    greeting: (name) => `Вітаємо, ${name},`,
+    intro: "минув тиждень. Як Вам з волоссям?\n\nПерші кілька тижнів визначають, як довго воно Вам прослужить, тож коротко нагадаємо три речі, на яких це тримається:",
+    nutritionTitle: "ЖИВЛЕННЯ",
+    nutritionBody: "Маска раз-два на тиждень, олія на кінчики щодня перед сном. Завжди від середини довжини донизу, ніколи на зʼєднання — жирні компоненти їх розхитують і волосся випадає.",
+    nutritionVitamins: "Вітаміни в таблетках на нарощене волосся не діють. Воно росте з голови, а це ні. Працює тільки живлення, нанесене безпосередньо на волосся — маска, олія, ампула.",
+    heatTitle: "ТЕПЛО",
+    heatBody: "Максимум 180 °C і завжди з термозахистом. Вище цієї межі волос незворотно пошкоджується і не відростає, тож це вже ніколи не зникне. Один плавний рух, не проводити по одному місцю кілька разів.",
+    brushTitle: "РОЗЧІСУВАННЯ",
+    brushBody: "Двічі на день, спеціальною щіткою, знизу вгору. Ніколи мокре волосся. Перед сном заплетіть у вільну косу.",
+    closing: "Щось турбує? Напишіть, залюбки порадимо.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  ru: {
+    subject: "Как дела с волосами?",
+    greeting: (name) => `Здравствуйте, ${name},`,
+    intro: "прошла неделя. Как Вам с волосами?\n\nПервые несколько недель решают, как долго они Вам прослужат, так что коротко напомним три вещи, на которых это держится:",
+    nutritionTitle: "ПИТАНИЕ",
+    nutritionBody: "Маска раз-два в неделю, масло на кончики ежедневно перед сном. Всегда от середины длины вниз, никогда на соединения — жирные компоненты их расшатывают и волосы выпадают.",
+    nutritionVitamins: "Витамины в таблетках на наращённые волосы не действуют. Они растут из головы, а эти нет. Работает только питание, нанесённое непосредственно на волосы — маска, масло, ампула.",
+    heatTitle: "ТЕПЛО",
+    heatBody: "Максимум 180 °C и всегда с термозащитой. Выше этой границы волос необратимо повреждается и не отрастает, так что это уже никогда не исчезнет. Одно плавное движение, не проводить по одному месту несколько раз.",
+    brushTitle: "РАСЧЁСЫВАНИЕ",
+    brushBody: "Дважды в день, специальной щёткой, снизу вверх. Никогда мокрые волосы. Перед сном заплетите в свободную косу.",
+    closing: "Что-то беспокоит? Напишите, с радостью подскажем.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+};
+
+export function getDay7CareEmail(
+  lang: string,
+  data: { customerName: string }
+): { subject: string; text: string; html: string } {
+  const t = day7T[resolveLang(lang)];
+
+  const text = [
+    t.greeting(data.customerName),
+    "",
+    t.intro,
+    "",
+    t.nutritionTitle,
+    t.nutritionBody,
+    "",
+    t.nutritionVitamins,
+    "",
+    t.heatTitle,
+    t.heatBody,
+    "",
+    t.brushTitle,
+    t.brushBody,
+    "",
+    t.closing,
+    "",
+    t.signature,
+  ].join("\n");
+
+  const sectionDivider = '<div style="border-top:2px solid #ead9cf;margin:28px 0 24px;"></div>';
+  const sectionTitle = (title: string) => `<p style="color:#3a2c2a;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">${esc(title)}</p>`;
+  const sectionText = (txt: string) => `<p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;">${esc(txt)}</p>`;
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 4px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;">${esc(t.intro)}</p>
+
+    ${sectionDivider}
+    ${sectionTitle(t.nutritionTitle)}
+    ${sectionText(t.nutritionBody)}
+    ${sectionText(t.nutritionVitamins)}
+
+    ${sectionDivider}
+    ${sectionTitle(t.heatTitle)}
+    ${sectionText(t.heatBody)}
+
+    ${sectionDivider}
+    ${sectionTitle(t.brushTitle)}
+    ${sectionText(t.brushBody)}
+
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.6;margin:24px 0 4px;">${esc(t.closing)}</p>
+    <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:0;white-space:pre-line;">${esc(t.signature)}</p>
+  `;
+
+  return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Email 4: Day 30 Check Email ---
+
+const day30T: Record<Lang, {
+  subject: string;
+  greeting: (name: string) => string;
+  intro: string;
+  hairdresserTitle: string;
+  hairdresserBody: string;
+  hairdresserUrgent: string;
+  conditionTitle: string;
+  conditionBody: string;
+  conditionContact: string;
+  signature: string;
+}> = {
+  cs: {
+    subject: "Měsíc s prodlouženými vlasy — je všechno v pořádku?",
+    greeting: (name) => `Dobrý den, ${name},`,
+    intro: "uplynul měsíc. Ozýváme se s krátkou kontrolou.",
+    hairdresserTitle: "JE ČAS NA PRVNÍ NÁVŠTĚVU KADEŘNICE",
+    hairdresserBody: "Po čtyřech až šesti týdnech se hodí nechat zkontrolovat spoje. Vlastní vlasy rostou a spoje putují od hlavy pryč — čím níž jsou, tím spíš se v nich vlasy zamotají a začnou se trhat.",
+    hairdresserUrgent: "Zajděte na kontrolu dřív, pokud cítíte tahání nebo píchání, nebo se u kořínků začaly tvořit uzlíky.",
+    conditionTitle: "JAK SE VLASŮM DAŘÍ?",
+    conditionBody: "Pokud něco není v pořádku — vlasy se kroutí, matní, zacuchávají — napište nám co nejdřív. Většina těchhle věcí jde ještě zachránit intenzivní regenerací, když se podchytí včas.",
+    conditionContact: "Ozvěte se na info@hairland.cz, klidně i s fotkou.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  uk: {
+    subject: "Місяць з нарощеним волоссям — все гаразд?",
+    greeting: (name) => `Вітаємо, ${name},`,
+    intro: "минув місяць. Пишемо з короткою перевіркою.",
+    hairdresserTitle: "ЧАС НА ПЕРШИЙ ВІЗИТ ДО ПЕРУКАРЯ",
+    hairdresserBody: "Через чотири-шість тижнів варто перевірити зʼєднання. Власне волосся росте і зʼєднання рухаються від голови — чим нижче вони, тим більше волосся в них заплутується і починає рватися.",
+    hairdresserUrgent: "Зверніться на перевірку раніше, якщо відчуваєте натяг або поколювання, або біля коренів почали утворюватися вузлики.",
+    conditionTitle: "ЯК СПРАВИ З ВОЛОССЯМ?",
+    conditionBody: "Якщо щось не так — волосся крутиться, тьмяніє, заплутується — напишіть нам якнайшвидше. Більшість цих речей ще можна врятувати інтенсивною регенерацією, якщо вчасно підхопити.",
+    conditionContact: "Пишіть на info@hairland.cz, можна і з фоткою.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  ru: {
+    subject: "Месяц с наращёнными волосами — всё в порядке?",
+    greeting: (name) => `Здравствуйте, ${name},`,
+    intro: "прошёл месяц. Пишем с короткой проверкой.",
+    hairdresserTitle: "ВРЕМЯ ПЕРВОГО ВИЗИТА К ПАРИКМАХЕРУ",
+    hairdresserBody: "Через четыре-шесть недель стоит проверить соединения. Собственные волосы растут и соединения смещаются от головы — чем ниже они, тем больше волосы в них запутываются и начинают рваться.",
+    hairdresserUrgent: "Обратитесь на проверку раньше, если чувствуете натяжение или покалывание, или у корней начали образовываться узелки.",
+    conditionTitle: "КАК ДЕЛА С ВОЛОСАМИ?",
+    conditionBody: "Если что-то не так — волосы крутятся, тускнеют, запутываются — напишите нам как можно скорее. Большинство этих вещей ещё можно спасти интенсивной регенерацией, если вовремя подхватить.",
+    conditionContact: "Пишите на info@hairland.cz, можно и с фоткой.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+};
+
+export function getDay30CheckEmail(
+  lang: string,
+  data: { customerName: string }
+): { subject: string; text: string; html: string } {
+  const t = day30T[resolveLang(lang)];
+
+  const text = [
+    t.greeting(data.customerName),
+    "",
+    t.intro,
+    "",
+    t.hairdresserTitle,
+    "",
+    t.hairdresserBody,
+    "",
+    t.hairdresserUrgent,
+    "",
+    t.conditionTitle,
+    "",
+    t.conditionBody,
+    "",
+    t.conditionContact,
+    "",
+    t.signature,
+  ].join("\n");
+
+  const sectionDivider = '<div style="border-top:2px solid #ead9cf;margin:28px 0 24px;"></div>';
+  const sectionTitle = (title: string) => `<p style="color:#3a2c2a;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">${esc(title)}</p>`;
+  const sectionText = (txt: string) => `<p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;">${esc(txt)}</p>`;
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 4px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;">${esc(t.intro)}</p>
+
+    ${sectionDivider}
+    ${sectionTitle(t.hairdresserTitle)}
+    ${sectionText(t.hairdresserBody)}
+    ${sectionText(t.hairdresserUrgent)}
+
+    ${sectionDivider}
+    ${sectionTitle(t.conditionTitle)}
+    ${sectionText(t.conditionBody)}
+    <p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0;">${esc(t.conditionContact)}</p>
+
+    <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:24px 0 0;white-space:pre-line;">${esc(t.signature)}</p>
+  `;
+
+  return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
+}
+
+// --- Email 5: Extension Reminder Email ---
+
+const extensionReminderT: Record<Lang, {
+  subject: string;
+  greeting: (name: string) => string;
+  introGeneral: string;
+  keratinTitle: string;
+  tapeTitle: string;
+  microTitle: string;
+  tresTitle: string;
+  warningBody: string;
+  removalTitle: string;
+  removalBody: string;
+  refillTitle: string;
+  refillBody: string;
+  signature: string;
+}> = {
+  cs: {
+    subject: "Blíží se čas na přetažení",
+    greeting: (name) => `Dobrý den, ${name},`,
+    introGeneral: "podle metody, kterou máte, se blíží doba na přetažení.",
+    keratinTitle: "KERATIN — přetažení po 3 až 4 měsících",
+    tapeTitle: "TAPE-IN — přetažení po 6 až 8 týdnech",
+    microTitle: "MICRO RING — přetažení po 2 až 3 měsících",
+    tresTitle: "TRES — přetažení po 6 až 8 týdnech",
+    warningBody: "Odkládání přetažení je jedna z nejčastějších příčin poškození. Spoje sjedou nízko, vlasy se kolem nich zamotají a při česání začnou trhat vlastní vlasy.",
+    removalTitle: "SNÍMÁNÍ VŽDY U KADEŘNICE",
+    removalBody: "Prameny nikdy nevytrhávejte ani neodstraňujte doma. Nesprávné sejmutí poškodí prodloužené i vlastní vlasy.",
+    refillTitle: "POTŘEBUJETE DOPLNIT NEBO NOVOU SADU?",
+    refillBody: "Ozvěte se, rádi pro vás vybereme vlasy, které sednou k těm stávajícím. Můžete si je opět osobně prohlédnout, než se rozhodnete.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  uk: {
+    subject: "Наближається час перетяжки",
+    greeting: (name) => `Вітаємо, ${name},`,
+    introGeneral: "залежно від методу, який у Вас, наближається час перетяжки.",
+    keratinTitle: "КЕРАТИН — перетяжка через 3-4 місяці",
+    tapeTitle: "TAPE-IN — перетяжка через 6-8 тижнів",
+    microTitle: "MICRO RING — перетяжка через 2-3 місяці",
+    tresTitle: "TRES — перетяжка через 6-8 тижнів",
+    warningBody: "Відкладання перетяжки — одна з найчастіших причин пошкодження. Зʼєднання зʼїжджають низько, волосся навколо них заплутується і при розчісуванні починає рвати власне волосся.",
+    removalTitle: "ЗНЯТТЯ ТІЛЬКИ У ПЕРУКАРЯ",
+    removalBody: "Пасма ніколи не виривайте і не знімайте вдома. Неправильне зняття пошкодить нарощене і власне волосся.",
+    refillTitle: "ПОТРІБНО ДОПОВНИТИ АБО НОВУ ПАРТІЮ?",
+    refillBody: "Напишіть, залюбки підберемо волосся, яке пасуватиме до наявного. Можете знову особисто оглянути перед рішенням.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  ru: {
+    subject: "Приближается время перетяжки",
+    greeting: (name) => `Здравствуйте, ${name},`,
+    introGeneral: "в зависимости от метода, который у Вас, приближается время перетяжки.",
+    keratinTitle: "КЕРАТИН — перетяжка через 3-4 месяца",
+    tapeTitle: "TAPE-IN — перетяжка через 6-8 недель",
+    microTitle: "MICRO RING — перетяжка через 2-3 месяца",
+    tresTitle: "TRES — перетяжка через 6-8 недель",
+    warningBody: "Откладывание перетяжки — одна из самых частых причин повреждения. Соединения сползают низко, волосы вокруг них запутываются и при расчёсывании начинают рвать собственные волосы.",
+    removalTitle: "СНЯТИЕ ТОЛЬКО У ПАРИКМАХЕРА",
+    removalBody: "Пряди никогда не вырывайте и не снимайте дома. Неправильное снятие повредит наращённые и собственные волосы.",
+    refillTitle: "НУЖНО ДОПОЛНИТЬ ИЛИ НОВЫЙ КОМПЛЕКТ?",
+    refillBody: "Напишите, с радостью подберём волосы, которые подойдут к имеющимся. Можете снова лично осмотреть перед решением.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+};
+
+export function getExtensionReminderEmail(
+  lang: string,
+  data: {
+    customerName: string;
+    method?: "keratin" | "tape" | "micro" | "tres";
+  }
+): { subject: string; text: string; html: string } {
+  const t = extensionReminderT[resolveLang(lang)];
+
+  const methodTitleMap: Record<string, string> = {
+    keratin: t.keratinTitle,
+    tape: t.tapeTitle,
+    micro: t.microTitle,
+    tres: t.tresTitle,
+  };
+  const methodTitle = data.method ? methodTitleMap[data.method] : undefined;
+
+  const text = [
+    t.greeting(data.customerName),
+    "",
+    t.introGeneral,
+    "",
+    ...(methodTitle ? [methodTitle, ""] : []),
+    t.warningBody,
+    "",
+    t.removalTitle,
+    "",
+    t.removalBody,
+    "",
+    t.refillTitle,
+    "",
+    t.refillBody,
+    "",
+    t.signature,
+  ].join("\n");
+
+  const sectionDivider = '<div style="border-top:2px solid #ead9cf;margin:28px 0 24px;"></div>';
+  const sectionTitle = (title: string) => `<p style="color:#3a2c2a;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">${esc(title)}</p>`;
+  const sectionText = (txt: string) => `<p style="color:#3a2c2a;font-size:14px;line-height:1.7;margin:0 0 8px;">${esc(txt)}</p>`;
+
+  const content = `
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 4px;">${esc(t.greeting(data.customerName))}</p>
+    <p style="color:#3a2c2a;font-size:15px;line-height:1.6;margin:0 0 24px;">${esc(t.introGeneral)}</p>
+
+    ${methodTitle ? `${sectionDivider}${sectionTitle(methodTitle)}` : ""}
+
+    ${sectionDivider}
+    ${sectionText(t.warningBody)}
+
+    ${sectionDivider}
+    ${sectionTitle(t.removalTitle)}
+    ${sectionText(t.removalBody)}
+
+    ${sectionDivider}
+    ${sectionTitle(t.refillTitle)}
+    ${sectionText(t.refillBody)}
+
+    <p style="color:#9c8682;font-size:13px;line-height:1.6;margin:24px 0 0;white-space:pre-line;">${esc(t.signature)}</p>
+  `;
+
+  return { subject: t.subject, text, html: hairlandEmailTemplate(content) };
 }
 
 // --- Retail Payment Received Email ---

@@ -65,7 +65,7 @@ export default async function CityHubPage() {
         {CITIES.map((city) => (
           <Link
             key={city.slug}
-            href={`/prodlouzeni-vlasu/${city.slug}` as any}
+            href={{ pathname: '/prodlouzeni-vlasu/[city]' as any, params: { city: city.slug } }}
             className="bg-nude-50 rounded-xl border border-line p-4 hover:border-blush-200 transition-colors group"
           >
             <div className="text-sm font-semibold text-ink group-hover:text-rose transition-colors">
@@ -89,7 +89,7 @@ export default async function CityHubPage() {
             {t("ctaNabidka")}
           </Link>
           <Link
-            href="/contact"
+            href="/kontakt"
             className="px-6 py-2.5 border border-line text-ink text-sm font-medium rounded-lg hover:bg-nude-100 transition-colors"
           >
             {t("ctaKonzultace")}

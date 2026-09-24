@@ -391,7 +391,7 @@ export function InquiryCartClient({ mode = "cart", reason }: InquiryCartClientPr
 
             {/* Proceed to checkout */}
             <Link
-              href="/checkout"
+              href="/pokladna"
               className="flex items-center justify-center gap-2 w-full py-3.5 bg-rose text-white font-medium rounded-xl hover:bg-rose-deep transition-colors text-center text-sm"
             >
               {t("proceedToCheckout")}

@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = {};
 
 interface Props {
   searchParams: Promise<{ refId?: string; transId?: string; status?: string }>;

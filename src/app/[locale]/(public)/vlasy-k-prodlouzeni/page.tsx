@@ -271,7 +271,7 @@ export default async function ProductsPage() {
             <ul className="space-y-1.5">
               {originLinks.map((link) => (
                 <li key={link.slug}>
-                  <Link href={`/vlasy-k-prodlouzeni/zeme/${link.slug}`} className="text-sm text-espresso hover:underline">
+                  <Link href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['zeme', link.slug] } }} className="text-sm text-espresso hover:underline">
                     {link.label}
                   </Link>
                 </li>
@@ -285,7 +285,7 @@ export default async function ProductsPage() {
             <ul className="space-y-1.5">
               {textureLinks.map((link) => (
                 <li key={link.slug}>
-                  <Link href={`/vlasy-k-prodlouzeni/textura/${link.slug}`} className="text-sm text-espresso hover:underline">
+                  <Link href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['textura', link.slug] } }} className="text-sm text-espresso hover:underline">
                     {link.label}
                   </Link>
                 </li>
@@ -296,7 +296,7 @@ export default async function ProductsPage() {
             <ul className="space-y-1.5">
               {categoryLinks.map((link) => (
                 <li key={link.slug}>
-                  <Link href={`/vlasy-k-prodlouzeni/kategorie/${link.slug}`} className="text-sm text-espresso hover:underline">
+                  <Link href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['kategorie', link.slug] } }} className="text-sm text-espresso hover:underline">
                     {link.label}
                   </Link>
                 </li>
@@ -310,7 +310,7 @@ export default async function ProductsPage() {
             <ul className="space-y-1.5">
               {lengthLinks.map((link) => (
                 <li key={link.slug}>
-                  <Link href={`/vlasy-k-prodlouzeni/delka/${link.slug}`} className="text-sm text-espresso hover:underline">
+                  <Link href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['delka', link.slug] } }} className="text-sm text-espresso hover:underline">
                     {link.label}
                   </Link>
                 </li>
@@ -321,7 +321,7 @@ export default async function ProductsPage() {
             <ul className="space-y-1.5">
               {colorLinks.map((link) => (
                 <li key={link.slug}>
-                  <Link href={`/vlasy-k-prodlouzeni/barva/${link.slug}`} className="text-sm text-espresso hover:underline">
+                  <Link href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['barva', link.slug] } }} className="text-sm text-espresso hover:underline">
                     {link.label}
                   </Link>
                 </li>
@@ -335,10 +335,10 @@ export default async function ProductsPage() {
           <Link href="/pruvodce-gramazi" className="text-sm font-medium text-espresso hover:underline">
             {t("offer.gramsGuideLink")}
           </Link>
-          <Link href="/contact" className="text-sm font-medium text-espresso hover:underline">
+          <Link href="/kontakt" className="text-sm font-medium text-espresso hover:underline">
             {t("offer.contactLink")}
           </Link>
-          <Link href="/poradna/pece-o-prodlouzene-vlasy" className="text-sm font-medium text-espresso hover:underline">
+          <Link href={{ pathname: '/poradna/[slug]' as any, params: { slug: 'pece-o-prodlouzene-vlasy' } }} className="text-sm font-medium text-espresso hover:underline">
             {t("offer.careGuideLink")}
           </Link>
         </div>
