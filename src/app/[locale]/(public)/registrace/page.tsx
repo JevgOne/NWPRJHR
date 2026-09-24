@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-registrace.jpg",
           width: 1200,
           height: 630,
-          alt: "Registrace salonu — B2B spolupráce",
+          alt: title,
         },
       ],
     },

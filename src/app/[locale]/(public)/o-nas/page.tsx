@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "https://www.hairland.cz/og/og-about.jpg",
           width: 1200,
           height: 630,
-          alt: "O nás — přímý import prémiových vlasů",
+          alt: t("aboutTitle"),
         },
       ],
     },
@@ -45,7 +45,7 @@ export default async function AboutPage() {
     legalName: "Alvento Solutions s.r.o.",
     url: "https://www.hairland.cz",
     logo: "https://www.hairland.cz/icons/icon-512x512.png",
-    description: "Prémiové RAW vlasy k prodloužení z přímého importu",
+    description: t("about.jsonLdDescription"),
     address: {
       "@type": "PostalAddress",
       streetAddress: "Školská 660/3",

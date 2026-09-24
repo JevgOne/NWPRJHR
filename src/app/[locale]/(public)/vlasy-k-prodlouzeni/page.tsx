@@ -37,7 +37,7 @@ export async function generateMetadata({
             url: "https://www.hairland.cz/og/og-offer.jpg",
             width: 1200,
             height: 630,
-            alt: "Vlasy k prodloužení — prodej pravých vlasů skladem",
+            alt: t("offer.ogAltOffer"),
           },
         ],
       },
@@ -140,28 +140,28 @@ export default async function ProductsPage() {
   };
 
   const originLinks = [
-    { slug: "ukrajina", label: "Ukrajinské vlasy" },
-    { slug: "rusko", label: "Ruské vlasy" },
-    { slug: "belorusko", label: "Běloruské vlasy" },
-    { slug: "kazachstan", label: "Kazašské vlasy" },
-    { slug: "turecko", label: "Turecké vlasy" },
-    { slug: "iran", label: "Íránské vlasy" },
-    { slug: "indie", label: "Indické vlasy" },
-    { slug: "vietnam", label: "Vietnamské vlasy" },
-    { slug: "moldavsko", label: "Moldavské vlasy" },
+    { slug: "ukrajina", label: t("offer.originUkraine") },
+    { slug: "rusko", label: t("offer.originRussia") },
+    { slug: "belorusko", label: t("offer.originBelarus") },
+    { slug: "kazachstan", label: t("offer.originKazakhstan") },
+    { slug: "turecko", label: t("offer.originTurkey") },
+    { slug: "iran", label: t("offer.originIran") },
+    { slug: "indie", label: t("offer.originIndia") },
+    { slug: "vietnam", label: t("offer.originVietnam") },
+    { slug: "moldavsko", label: t("offer.originMoldova") },
   ];
 
   const textureLinks = [
-    { slug: "rovne", label: "Rovné vlasy" },
-    { slug: "mirne-vlnite", label: "Mírně vlnité vlasy" },
-    { slug: "vlnite", label: "Vlnité vlasy" },
-    { slug: "kudrnate", label: "Kudrnaté vlasy" },
+    { slug: "rovne", label: t("offer.textureStraight") },
+    { slug: "mirne-vlnite", label: t("offer.textureSlightlyWavy") },
+    { slug: "vlnite", label: t("offer.textureWavy") },
+    { slug: "kudrnate", label: t("offer.textureCurly") },
   ];
 
   const categoryLinks = [
-    { slug: "virgin", label: "Virgin (panenské)" },
-    { slug: "luxe", label: "Luxe" },
-    { slug: "standard", label: "Standard" },
+    { slug: "virgin", label: t("offer.categoryVirgin") },
+    { slug: "luxe", label: t("offer.categoryLuxe") },
+    { slug: "standard", label: t("offer.categoryStandard") },
   ];
 
   const lengthLinks = [
@@ -173,11 +173,11 @@ export default async function ProductsPage() {
   ];
 
   const colorLinks = [
-    { slug: "blond", label: "Blond" },
-    { slug: "hneda", label: "Hnědé" },
-    { slug: "tmave-hneda", label: "Tmavě hnědé" },
-    { slug: "zrzava", label: "Zrzavé" },
-    { slug: "cerna", label: "Černé" },
+    { slug: "blond", label: t("offer.colorBlond") },
+    { slug: "hneda", label: t("offer.colorBrown") },
+    { slug: "tmave-hneda", label: t("offer.colorDarkBrown") },
+    { slug: "zrzava", label: t("offer.colorRed") },
+    { slug: "cerna", label: t("offer.colorBlack") },
   ];
 
   return (
