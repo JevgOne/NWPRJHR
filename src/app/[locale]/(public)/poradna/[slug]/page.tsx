@@ -164,7 +164,7 @@ export default async function ArticlePage({ params }: Props) {
   const nextLabel = locale === "uk" ? "Наступна" : locale === "ru" ? "Следующая" : "Další";
   const catLabel = categoryLabels[locale]?.[article.category] ?? categoryLabels.cs[article.category] ?? "";
 
-  const tipTitle = locale === "uk" ? "Rada od nás" : locale === "ru" ? "Совет от нас" : "Rada od nás";
+  const tipTitle = locale === "uk" ? "Порада від нас" : locale === "ru" ? "Совет от нас" : "Rada od nás";
   const tipTexts: Record<string, Record<string, string>> = {
     types: {
       cs: "Nevíte, který typ je pro vás ten pravý? Ozvěte se nám — poradíme vám a společně vybereme to nejlepší řešení pro vaše vlasy.",

@@ -36,8 +36,8 @@ Více: https://www.hairland.cz/micro-ring-vlasy
 Tresy se přišívají na copánkový základ. Největší množství vlasů najednou — vhodné pro výrazné přidání objemu. Pro plný objem celé hlavy doporučujeme 2–4 tresy různých šířek (100–200 g). Lze barvit, tónovat, melírovat i stříhat.
 Více: https://www.hairland.cz/tresove-vlasy
 
-### Ofíny
-Clip-in ofíny z pravých vlasů na míru. Rámování obličeje bez stříhání vlastních vlasů. Výroba do 7 dní. Připínají se jednou sponou, drží celý den. Na noc doporučujeme sundat.
+### Ofiny
+Clip-in ofiny z pravých vlasů na míru. Rámování obličeje bez stříhání vlastních vlasů. Výroba do 7 dní. Připínají se jednou sponou, drží celý den. Na noc doporučujeme sundat.
 Více: https://www.hairland.cz/vlasy-k-prodlouzeni/ofiny
 
 ---
@@ -80,7 +80,7 @@ Více: https://www.hairland.cz/panenske-vlasy
 | Keratin    | Kadeřník    | 3–6 měs.     | Složitá  | od 5000 Kč | Střední  |
 | Micro ring | Kadeřník    | 3–4 měs.     | Složitá  | od 5000 Kč | Nejvyšší |
 | Tresy      | Kadeřník    | 6–12 měs.    | Střední  | od 4000 Kč | Střední  |
-| Ofíny      | Doma        | 12–24 měs.   | Snadná   | od 2000 Kč | Vysoká   |
+| Ofiny      | Doma        | 12–24 měs.   | Snadná   | od 2000 Kč | Vysoká   |
 
 ---
 
@@ -232,7 +232,7 @@ Dostupné jazyky: Čeština, Ukrajinština, Ruština
 - [Tape-in vlasy](https://www.hairland.cz/tape-in-vlasy)
 - [Clip-in vlasy](https://www.hairland.cz/clip-in-vlasy)
 - [Tresové vlasy](https://www.hairland.cz/tresove-vlasy)
-- [Ofíny](https://www.hairland.cz/vlasy-k-prodlouzeni/ofiny)
+- [Ofiny](https://www.hairland.cz/vlasy-k-prodlouzeni/ofiny)
 - [Vlasová kosmetika](https://www.hairland.cz/vlasy-k-prodlouzeni/vlasova-kosmetika)
 - [Panenské vlasy](https://www.hairland.cz/panenske-vlasy)
 - [Slovanské vlasy](https://www.hairland.cz/slovanske-vlasy)

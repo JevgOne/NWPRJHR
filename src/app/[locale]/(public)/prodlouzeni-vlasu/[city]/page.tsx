@@ -216,7 +216,7 @@ export default async function CityLandingPage({ params }: Props) {
       addressCountry: "CZ",
     },
     priceRange: "500 Kč - 17 000 Kč",
-    description: city.description.cs,
+    description: city.description[locale] ?? city.description.cs,
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -225,7 +225,7 @@ export default async function CityLandingPage({ params }: Props) {
     },
     areaServed: {
       "@type": "City",
-      name: city.name.cs,
+      name: city.name[locale] ?? city.name.cs,
       geo: {
         "@type": "GeoCoordinates",
         latitude: city.geo.lat,
