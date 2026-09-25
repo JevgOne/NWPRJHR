@@ -91,6 +91,16 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
+  // 301 redirect: wrong locale prefixes /ru → /rus, /uk → /ua
+  const wrongLocaleMatch = pathname.match(/^\/(ru|uk)(\/.*|$)/);
+  if (wrongLocaleMatch) {
+    const [, wrongPrefix, rest = ""] = wrongLocaleMatch;
+    const correctPrefix = wrongPrefix === "ru" ? "/rus" : "/ua";
+    const url = request.nextUrl.clone();
+    url.pathname = correctPrefix + rest;
+    return NextResponse.redirect(url, 301);
+  }
+
   // Strip locale prefix for matching (e.g. /ua/vlasy-k-prodlouzeni → /vlasy-k-prodlouzeni)
   // Locale prefixes from routing: cs = none (default), uk = /ua, ru = /rus
   const stripped = pathname.replace(/^\/(ua|rus)/, "");
