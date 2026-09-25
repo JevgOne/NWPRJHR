@@ -42,7 +42,7 @@ export default async function AboutPage() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Hairland",
-    legalName: "Alvento Solutions s.r.o.",
+    legalName: "Altro servis group s.r.o.",
     url: "https://www.hairland.cz",
     logo: "https://www.hairland.cz/icons/icon-512x512.png",
     description: t("about.jsonLdDescription"),

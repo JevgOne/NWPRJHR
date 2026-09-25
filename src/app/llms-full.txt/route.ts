@@ -145,8 +145,8 @@ export async function GET() {
 
   // Business info
   content += `---\n\n## O firme\n\n`;
-  content += `- Nazev: Hairland (provozovatel Alvento Solutions s.r.o.)\n`;
-  content += `- ICO: 24111953\n`;
+  content += `- Nazev: Hairland (provozovatel Altro servis group s.r.o.)\n`;
+  content += `- ICO: 23673389\n`;
   content += `- Sidlo: Skolska 660/3, 110 00 Praha 1\n`;
   content += `- E-mail: info@hairland.cz\n`;
   content += `- Telefon: +420 608 553 103\n`;
