@@ -39,9 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const CATEGORY_LABELS: Record<string, Record<string, string>> = {
-  cs: { general: "Obecné", care: "Péče o vlasy", guide: "Průvodce", trends: "Trendy", tips: "Tipy", news: "Novinky" },
-  uk: { general: "Загальне", care: "Догляд", guide: "Гід", trends: "Тренди", tips: "Поради", news: "Новини" },
-  ru: { general: "Общее", care: "Уход", guide: "Гид", trends: "Тренды", tips: "Советы", news: "Новости" },
+  cs: { general: "Obecné", care: "Péče o vlasy", guide: "Průvodce", trends: "Trendy", tips: "Tipy", news: "Novinky", interview: "Rozhovory" },
+  uk: { general: "Загальне", care: "Догляд", guide: "Гід", trends: "Тренди", tips: "Поради", news: "Новини", interview: "Інтерв'ю" },
+  ru: { general: "Общее", care: "Уход", guide: "Гид", trends: "Тренды", tips: "Советы", news: "Новости", interview: "Интервью" },
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -51,6 +51,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   trends: "bg-purple-100 text-purple-700",
   tips: "bg-blue-100 text-blue-700",
   news: "bg-rose-100 text-rose-700",
+  interview: "bg-rose-100 text-rose-700",
 };
 
 function localized<T extends Record<string, unknown>>(

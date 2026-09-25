@@ -24,6 +24,19 @@ const updateBlogSchema = z.object({
   metaDescription: z.string().max(500).nullable().optional(),
   ogImage: z.string().url().nullable().optional(),
   socialPost: z.string().max(2200).nullable().optional(),
+  // Interview profile fields
+  profileName: z.string().max(100).nullable().optional(),
+  profileNameUk: z.string().max(100).nullable().optional(),
+  profileNameRu: z.string().max(100).nullable().optional(),
+  profilePhoto: z.string().max(500).nullable().optional(),
+  profileCity: z.string().max(100).nullable().optional(),
+  profileSalon: z.string().max(200).nullable().optional(),
+  profileInstagram: z.string().max(100).nullable().optional(),
+  profilePhone: z.string().max(30).nullable().optional(),
+  profileWebsite: z.string().max(500).nullable().optional(),
+  profileLanguages: z.string().max(100).nullable().optional(),
+  profileTelegram: z.string().max(100).nullable().optional(),
+  profileWhatsapp: z.string().max(30).nullable().optional(),
 });
 
 export async function GET(
@@ -89,6 +102,16 @@ export async function PUT(
   }
   if (data.publishedAt !== undefined) {
     updateData.publishedAt = data.publishedAt ? new Date(data.publishedAt) : null;
+  }
+
+  // Interview profile fields
+  const profileFields = [
+    "profileName", "profileNameUk", "profileNameRu", "profilePhoto",
+    "profileCity", "profileSalon", "profileInstagram", "profilePhone",
+    "profileWebsite", "profileLanguages", "profileTelegram", "profileWhatsapp",
+  ] as const;
+  for (const f of profileFields) {
+    if (data[f] !== undefined) updateData[f] = data[f];
   }
 
   const post = await prisma.blogPost.update({ where: { id }, data: updateData });

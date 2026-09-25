@@ -1109,6 +1109,20 @@ model BlogPost {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  // Interview profile fields (only used when category = "interview")
+  profileName       String?
+  profileNameUk     String?
+  profileNameRu     String?
+  profilePhoto      String?
+  profileCity       String?
+  profileSalon      String?
+  profileInstagram  String?
+  profilePhone      String?
+  profileWebsite    String?
+  profileLanguages  String?
+  profileTelegram   String?
+  profileWhatsapp   String?
+
   @@index([published, publishedAt])
   @@index([category])
   @@map("blog_posts")

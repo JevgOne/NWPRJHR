@@ -24,6 +24,19 @@ const createBlogSchema = z.object({
   metaDescription: z.string().max(500).optional(),
   ogImage: z.string().url().optional(),
   socialPost: z.string().max(2200).optional(),
+  // Interview profile fields
+  profileName: z.string().max(100).optional(),
+  profileNameUk: z.string().max(100).optional(),
+  profileNameRu: z.string().max(100).optional(),
+  profilePhoto: z.string().max(500).optional(),
+  profileCity: z.string().max(100).optional(),
+  profileSalon: z.string().max(200).optional(),
+  profileInstagram: z.string().max(100).optional(),
+  profilePhone: z.string().max(30).optional(),
+  profileWebsite: z.string().max(500).optional(),
+  profileLanguages: z.string().max(100).optional(),
+  profileTelegram: z.string().max(100).optional(),
+  profileWhatsapp: z.string().max(30).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -93,6 +106,19 @@ export async function POST(request: NextRequest) {
       metaDescription: data.metaDescription,
       ogImage: data.ogImage,
       socialPost: data.socialPost,
+      // Interview profile fields
+      profileName: data.profileName,
+      profileNameUk: data.profileNameUk,
+      profileNameRu: data.profileNameRu,
+      profilePhoto: data.profilePhoto,
+      profileCity: data.profileCity,
+      profileSalon: data.profileSalon,
+      profileInstagram: data.profileInstagram,
+      profilePhone: data.profilePhone,
+      profileWebsite: data.profileWebsite,
+      profileLanguages: data.profileLanguages,
+      profileTelegram: data.profileTelegram,
+      profileWhatsapp: data.profileWhatsapp,
     },
   });
 

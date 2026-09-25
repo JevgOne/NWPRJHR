@@ -44,6 +44,7 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
     { value: "trends", label: t("categoryTrends") },
     { value: "tips", label: t("categoryTips") },
     { value: "news", label: t("categoryNews") },
+    { value: "interview", label: t("categoryInterview") },
   ];
 
   const [title, setTitle] = useState("");
@@ -69,6 +70,21 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [uploading, setUploading] = useState(false);
+
+  // Interview profile fields
+  const [profileName, setProfileName] = useState("");
+  const [profileNameUk, setProfileNameUk] = useState("");
+  const [profileNameRu, setProfileNameRu] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const [profileCity, setProfileCity] = useState("");
+  const [profileSalon, setProfileSalon] = useState("");
+  const [profileInstagram, setProfileInstagram] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileWebsite, setProfileWebsite] = useState("");
+  const [profileLanguages, setProfileLanguages] = useState<string[]>([]);
+  const [profileTelegram, setProfileTelegram] = useState("");
+  const [profileWhatsapp, setProfileWhatsapp] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -100,6 +116,19 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
             ? new Date(post.publishedAt).toISOString().split("T")[0]
             : ""
         );
+        // Interview profile fields
+        setProfileName(post.profileName ?? "");
+        setProfileNameUk(post.profileNameUk ?? "");
+        setProfileNameRu(post.profileNameRu ?? "");
+        setProfilePhoto(post.profilePhoto ?? "");
+        setProfileCity(post.profileCity ?? "");
+        setProfileSalon(post.profileSalon ?? "");
+        setProfileInstagram(post.profileInstagram ?? "");
+        setProfilePhone(post.profilePhone ?? "");
+        setProfileWebsite(post.profileWebsite ?? "");
+        setProfileLanguages(post.profileLanguages ? JSON.parse(post.profileLanguages) : []);
+        setProfileTelegram(post.profileTelegram ?? "");
+        setProfileWhatsapp(post.profileWhatsapp ?? "");
         setLoading(false);
       })
       .catch(() => {
@@ -111,6 +140,30 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
   const handleTitleChange = (val: string) => {
     setTitle(val);
     if (!slugManual) setSlug(slugify(val));
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    setError("");
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+      const res = await fetch("/api/upload/photos?noWatermark=true", { method: "POST", body: formData });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Upload selhal (${res.status})`);
+      }
+      const data = await res.json();
+      const url = data.photoUrls?.[0] ?? data.urls?.[0];
+      if (!url) throw new Error("Server nevrátil URL obrázku");
+      setProfilePhoto(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nahrávání obrázku selhalo");
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,6 +234,21 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
       metaDescription: metaDescription || undefined,
       ogImage: undefined,
       socialPost: socialPost || undefined,
+      // Interview profile fields
+      ...(category === "interview" && {
+        profileName: profileName || undefined,
+        profileNameUk: profileNameUk || undefined,
+        profileNameRu: profileNameRu || undefined,
+        profilePhoto: profilePhoto || undefined,
+        profileCity: profileCity || undefined,
+        profileSalon: profileSalon || undefined,
+        profileInstagram: profileInstagram || undefined,
+        profilePhone: profilePhone || undefined,
+        profileWebsite: profileWebsite || undefined,
+        profileLanguages: profileLanguages.length ? JSON.stringify(profileLanguages) : undefined,
+        profileTelegram: profileTelegram || undefined,
+        profileWhatsapp: profileWhatsapp || undefined,
+      }),
     };
 
     const url = isNew ? "/api/blog" : `/api/blog/${postId}`;
@@ -346,6 +414,75 @@ export function BlogEditorClient({ postId }: BlogEditorProps) {
                       {t("removeCover")}
                     </Button>
                   )}
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {category === "interview" && lang === "cs" && (
+          <Card>
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-espresso">{t("profileSection")}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Input label={t("profileNameCs")} value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Jana Novakova" />
+                <Input label={t("profileNameUk")} value={profileNameUk} onChange={(e) => setProfileNameUk(e.target.value)} placeholder="Яна Новакова" />
+                <Input label={t("profileNameRu")} value={profileNameRu} onChange={(e) => setProfileNameRu(e.target.value)} placeholder="Яна Новакова" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-1">{t("profilePhoto")}</label>
+                <div className="flex items-center gap-4">
+                  {profilePhoto && (
+                    <img src={profilePhoto} alt="Avatar" className="w-16 h-16 object-cover rounded-full border border-line" />
+                  )}
+                  <label className="cursor-pointer px-4 py-2 bg-nude-50 border border-line rounded-lg text-sm font-medium text-espresso hover:bg-nude-100 transition-colors">
+                    {uploadingAvatar ? t("uploading") : profilePhoto ? t("changeAvatar") : t("uploadAvatar")}
+                    <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarUpload} className="hidden" />
+                  </label>
+                  {profilePhoto && (
+                    <Button variant="ghost" size="sm" onClick={() => setProfilePhoto("")}>{t("removeAvatar")}</Button>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input label={t("profileCity")} value={profileCity} onChange={(e) => setProfileCity(e.target.value)} placeholder="Praha" />
+                <Input label={t("profileSalon")} value={profileSalon} onChange={(e) => setProfileSalon(e.target.value)} placeholder="Salon Krasa" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input label="Instagram" value={profileInstagram} onChange={(e) => setProfileInstagram(e.target.value)} placeholder="@username" />
+                <Input label="Telegram" value={profileTelegram} onChange={(e) => setProfileTelegram(e.target.value)} placeholder="@username" />
+                <Input label="WhatsApp" value={profileWhatsapp} onChange={(e) => setProfileWhatsapp(e.target.value)} placeholder="+420..." />
+                <Input label={t("profilePhoneLabel")} value={profilePhone} onChange={(e) => setProfilePhone(e.target.value)} placeholder="+420 777 123 456" />
+                <Input label="Web" value={profileWebsite} onChange={(e) => setProfileWebsite(e.target.value)} placeholder="https://..." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-espresso mb-2">{t("profileLangs")}</label>
+                <div className="flex gap-2">
+                  {LANGS.map((l) => (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => setProfileLanguages((prev) => prev.includes(l.code) ? prev.filter((c) => c !== l.code) : [...prev, l.code])}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                        profileLanguages.includes(l.code)
+                          ? "bg-rose/15 text-espresso ring-2 ring-rose"
+                          : "bg-nude-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      <span>{l.flag}</span> {l.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setProfileLanguages((prev) => prev.includes("en") ? prev.filter((c) => c !== "en") : [...prev, "en"])}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                      profileLanguages.includes("en")
+                        ? "bg-rose/15 text-espresso ring-2 ring-rose"
+                        : "bg-nude-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    EN
+                  </button>
                 </div>
               </div>
             </div>
