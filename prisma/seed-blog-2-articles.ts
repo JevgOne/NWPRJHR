@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { config } from "dotenv";
+config({ path: ".env.production.local" });
 config({ path: ".env.local" });
 
 const adapter = new PrismaLibSql({
