@@ -10,104 +10,104 @@ const adapter = new PrismaLibSql({
 });
 const prisma = new PrismaClient({ adapter });
 
-const article1ContentCs = `## Lze prodlouzit jemne vlasy?
+const article1ContentCs = `## Lze prodloužit jemné vlasy?
 
-Ano, prodlouzeni vlasu je mozne i pro zeny s jemnymi vlasy. Ne kazda metoda je vsak vhodna — spatny vyber metody nebo prilis velka gramaz muze jemne vlasy poskodit. Klicove je zvolit setrnou metodu, spravnou gramaz a sveri se do rukou zkusene kadernice.
+Ano, prodloužení vlasů je možné i pro ženy s jemnými vlasy. Ne každá metoda je však vhodná — špatný výběr metody nebo příliš velká gramáž může jemné vlasy poškodit. Klíčové je zvolit šetrnou metodu, správnou gramáž a svěřit se do rukou zkušené kadeřnice.
 
-Jemne vlasy maji mensi prumer jednotlivych vlasku a casto i nizsi hustotu. To znamena, ze nesnesou takovou zatez jako silne, huste vlasy. Dobra zprava? Existuji metody, ktere byly navrzeny presne pro tento typ vlasu.
+Jemné vlasy mají menší průměr jednotlivých vlásků a často i nižší hustotu. To znamená, že nesnesou takovou zátěž jako silné, husté vlasy. Dobrá zpráva? Existují metody, které byly navrženy přesně pro tento typ vlasů.
 
-## Nejlepsi metody pro jemne vlasy
+## Nejlepší metody pro jemné vlasy
 
-### Tape-in — idealni volba
+### Tape-in — ideální volba
 
-[Tape-in vlasy](/tape-in-vlasy) jsou pro jemne vlasy naprosto idealni. Plochy profil pasek (sirka cca 4 cm, tlouska pod 1 mm) rozlozi vahu rovnomerne a minimalne zatezuje korinkovy system. Sendvicova metoda — kdy se pasky lepi z obou stran pramene — zajistuje stabilni uchyceni bez tahani.
+[Tape-in vlasy](/tape-in-vlasy) jsou pro jemné vlasy naprosto ideální. Plochý profil pásek (šířka cca 4 cm, tloušťka pod 1 mm) rozloží váhu rovnoměrně a minimálně zatěžuje kořínkový systém. Sendvičová metoda — kdy se pásky lepí z obou stran pramene — zajišťuje stabilní uchycení bez tahání.
 
-**Vyhody tape-in pro jemne vlasy:**
-- Minimalni zatez korinku diky plochemu profilu
-- Rovnomerne rozlozeni vahy na velke plose
+**Výhody tape-in pro jemné vlasy:**
+- Minimální zátěž kořínků díky plochému profilu
+- Rovnoměrné rozložení váhy na velké ploše
 - Aplikace trvá jen 30-60 minut
-- Prelepeni kazde 6-8 tydnu
+- Přelepení každé 6-8 týdnů
 
-### Micro ring — skvela alternativa
+### Micro ring — skvělá alternativa
 
-[Micro ring vlasy](/micro-ring-vlasy) jsou dalsi setrnou moznosti. Male kovove krouzky (2-3 mm) se pritesuji k vlastnim vlasum bez lepidla a bez tepla. Diky tomu nedochazi k chemickemu poskozenivlasu.
+[Micro ring vlasy](/micro-ring-vlasy) jsou další šetrnou možností. Malé kovové kroužky (2-3 mm) se přitěsňují k vlastním vlasům bez lepidla a bez tepla. Díky tomu nedochází k chemickému poškození vlasů.
 
-**Pro jemne vlasy volte nejmensi krouzky** (2 mm) a mensiprameny — distribuce vice mensich pramenu je setrnejsi nez malo velkych.
+**Pro jemné vlasy volte nejmenší kroužky** (2 mm) a menší prameny — distribuce více menších pramenů je šetrnější než málo velkých.
 
-### Keratin — podmínene vhodny
+### Keratin — podmíněně vhodný
 
-Keratinove prodlouzeni muze byt vhodne pro stredne jemne vlasy, ale silnejsi bondy mohou na velmi jemne vlasy pusobit prilisnou zatez. Pokud zvazujete keratin, nechte kadernici posoudit silu vasich vlasu.
+Keratinové prodloužení může být vhodné pro středně jemné vlasy, ale silnější bondy mohou na velmi jemné vlasy působit přílišnou zátěž. Pokud zvažujete keratin, nechte kadeřnici posoudit sílu vašich vlasů.
 
-### Clip-in — pro zvlastni prilezitosti
+### Clip-in — pro zvláštní příležitosti
 
-[Clip-in vlasy](/clip-in-vlasy) jsou bezpecne pro prilezitostne noseni — na oslavu, foceni nebo vecer. Pro denni noseni vsak nejsou idealni, protoze klipy mohou pri opakovanem nasazovani jemne vlasy namáhat.
+[Clip-in vlasy](/clip-in-vlasy) jsou bezpečné pro příležitostné nošení — na oslavu, focení nebo večer. Pro denní nošení však nejsou ideální, protože klipy mohou při opakovaném nasazování jemné vlasy namáhat.
 
-### Tresy — nedoporucujeme
+### Tresy — nedoporučujeme
 
-Tresove vlasy jsou pro jemne vlasy prilis tezke. Sesiti na jeden pas pusobí vysoky tah na male plose, coz muze vest k trakcni alopecii (vypadavani vlasu zpusobenemu tahem).
+Tresové vlasy jsou pro jemné vlasy příliš těžké. Sešití na jeden pás působí vysoký tah na malé ploše, což může vést k trakční alopecii (vypadávání vlasů způsobenému tahem).
 
-## Kolik gramu vlasu na jemne vlasy?
+## Kolik gramů vlasů na jemné vlasy?
 
-Spravna gramaz je u jemnych vlasu klicova. Platí pravidlo: **mene je vice**. Prilis tezke prodlouzeni pusobi neprirozenym dojmem a poškozuje vlastni vlasy.
+Správná gramáž je u jemných vlasů klíčová. Platí pravidlo: **méně je více**. Příliš těžké prodloužení působí nepřirozeným dojmem a poškozuje vlastní vlasy.
 
-| Efekt | Silne vlasy | Jemne vlasy |
+| Efekt | Silné vlasy | Jemné vlasy |
 |-------|-------------|-------------|
-| Lehke zhusteni | 100-120 g | 60-80 g |
-| Plne prodlouzeni | 150-200 g | 100-130 g |
+| Lehké zhuštění | 100-120 g | 60-80 g |
+| Plné prodloužení | 150-200 g | 100-130 g |
 | Extra objem | 200+ g | 130-160 g |
 
-**Tip:** Konzultace zdarma vam pomuze urcit presnou gramaz. Poslete nam fotku vasich vlasu a doporucíme optimalni mnozstvi. Vice o gramazi najdete v nasem [pruvodci gramazi](/pruvodce-gramazi).
+**Tip:** Konzultace zdarma vám pomůže určit přesnou gramáž. Pošlete nám fotku vašich vlasů a doporučíme optimální množství. Více o gramáži najdete v našem [průvodci gramáží](/pruvodce-gramazi).
 
-## Na co si dat pozor
+## Na co si dát pozor
 
-Prodlouzeni jemnych vlasu vyzaduje opatrnost. Zde jsou hlavni rizika, kterym je treba predejit:
+Prodloužení jemných vlasů vyžaduje opatrnost. Zde jsou hlavní rizika, kterým je třeba předejít:
 
-### Pretizeni korinku
+### Přetížení kořínků
 
-Prilis velka gramaz muze zpusobit trakcni alopecii — vypadavani vlasu zpusobene dlouhodobym tahem na korinkovy system. U jemnych vlasu je tato hranice nizsi nez u silnych vlasu.
+Příliš velká gramáž může způsobit trakční alopecii — vypadávání vlasů způsobené dlouhodobým tahem na kořínkový systém. U jemných vlasů je tato hranice nižší než u silných vlasů.
 
-### Nevhodna distribuce
+### Nevhodná distribuce
 
-Paskyenbo bondy musi byt rovnomerne rozlozeny po cele hlave. Koncentrace zateze na jednom miste (napr. jen na temeni) vede k nerovnomernemu tahu a viditelnym proridlym mistum.
+Pásky nebo bondy musí být rovnoměrně rozloženy po celé hlavě. Koncentrace zátěže na jednom místě (např. jen na temeni) vede k nerovnoměrnému tahu a viditelným prořídlým místům.
 
-### Spatne casovani prelepeni
+### Špatné časování přelepení
 
-U jemnych vlasu doporucujeme prelepení nebo posunuti kazde **5-6 tydnu** (oproti 6-8 tydnum u silnych vlasu). Jak vlasy dorustaji, zatez se presouva na korinky — zkraceny interval predchazi poskozeni.
+U jemných vlasů doporučujeme přelepení nebo posunutí každé **5-6 týdnů** (oproti 6-8 týdnům u silných vlasů). Jak vlasy dorůstají, zátěž se přesouvá na kořínky — zkrácený interval předchází poškození.
 
-### Nezkuseny aplikator
+### Nezkušený aplikátor
 
-Pro jemne vlasy je zkusenost kadernice naprosto klicova. Nechte si prodlouzeni provest u specialistky, ktera ma zkusenosti s jemnymi vlasy a vi, jak spravne rozlozit zatez.
+Pro jemné vlasy je zkušenost kadeřnice naprosto klíčová. Nechte si prodloužení provést u specialistky, která má zkušenosti s jemnými vlasy a ví, jak správně rozložit zátěž.
 
-## Pece o prodlouzene jemne vlasy
+## Péče o prodloužené jemné vlasy
 
-Specificka pece prodlouzi zivotnost prodlouzeni a ochrání vase vlastni vlasy:
+Specifická péče prodlouží životnost prodloužení a ochrání vaše vlastní vlasy:
 
-### Kartacovani
+### Kartáčování
 
-Pouzivejte specialni kartac s mekkymi stetinami. **Vzdy kartacujte od konecku smerem nahoru** — nikdy od korinku dolu. Tim zabranite tahani a trhani jemnych vlasu.
+Používejte speciální kartáč s měkkými štětinami. **Vždy kartáčujte od konečků směrem nahoru** — nikdy od kořínků dolů. Tím zabráníte tahání a trhání jemných vlasů.
 
-### Myti
+### Mytí
 
-Pouzivejte sampon bez sulfatu a silikonu. Sulfaty vysusují a silikony se hromadi na paskach a bondech, coz oslabuje uchyceni. Kondicioner nanasejte od stredních delek ke koneckum, nikdy na bondy/pasky.
+Používejte šampon bez sulfátů a silikonů. Sulfáty vysušují a silikony se hromadí na páskách a bondech, což oslabuje uchycení. Kondicionér nanášejte od středních délek ke konečkům, nikdy na bondy/pásky.
 
-### Spanek
+### Spánek
 
-Pred spankem si udelejte volny cop nebo culík. **Nikdy nelehat s mokrymi vlasy** — mokre vlasy jsou krehci a lehce se lámou. Zvaztehedvabny polstar, ktery minimalizuje treni.
+Před spaním si udělejte volný cop nebo culík. **Nikdy neléhat s mokrými vlasy** — mokré vlasy jsou křehčí a lehce se lámou. Zvažte hedvábný polštář, který minimalizuje tření.
 
-### Tepelna uprava
+### Tepelná úprava
 
-Omezte pouzivani fehu, kulmy a zehlicky. Pokud je pouzivate, nastavte teplotu maximalne na 160 °C a vzdy pouzijte termoochronny sprej. Na bondy a pasky teplo nesmerujte.
+Omezte používání fénu, kulmy a žehličky. Pokud je používáte, nastavte teplotu maximálně na 160 °C a vždy použijte termoochranný sprej. Na bondy a pásky teplo nesměrujte.
 
-## Konzultace zdarma — poradime vam
+## Konzultace zdarma — poradíme vám
 
-Nejste si jista, ktera metoda je pro vase jemne vlasy nejvhodnejsi? **Napiste nam** fotku vasich vlasu a poradime:
+Nejste si jistá, která metoda je pro vaše jemné vlasy nejvhodnější? **Napište nám** fotku vašich vlasů a poradíme:
 
 - Kterou metodu zvolit
-- Kolik gramu budete potrebovat
-- Jaka delka je realna
-- Jak se o prodlouzení starat
+- Kolik gramů budete potřebovat
+- Jaká délka je reálná
+- Jak se o prodloužení starat
 
-[Kontaktujte nas](/kontakt) nebo si prohlédnete nasi [nabidku vlasu k prodlouzeni](/vlasy-k-prodlouzeni). Konzultace je vzdy zdarma a nezavazna.`;
+[Kontaktujte nás](/kontakt) nebo si prohlédněte naši [nabídku vlasů k prodloužení](/vlasy-k-prodlouzeni). Konzultace je vždy zdarma a nezávazná.`;
 
 const article1ContentUk = `## Чи можна наростити тонке волосся?
 
@@ -237,141 +237,141 @@ const article1ContentRu = `## Можно ли нарастить тонкие в
 
 // ——————— Article 2: Post-chemo ———————
 
-const article2ContentCs = `## Kdy zacit uvazovat o prodlouzeni vlasu po chemoterapii
+const article2ContentCs = `## Kdy začít uvažovat o prodloužení vlasů po chemoterapii
 
-Ztrata vlasu patri mezi nejnárocnejsi vedlejsi ucinky onkologicke lecby. Kazda zena prochazi timto obdobim jinak a neexistuje jedno spravne reseni pro vsechny. Prodlouzeni vlasu je **jednou z moznosti** — ne nutnosti.
+Ztráta vlasů patří mezi nejnáročnější vedlejší účinky onkologické léčby. Každá žena prochází tímto obdobím jinak a neexistuje jedno správné řešení pro všechny. Prodloužení vlasů je **jednou z možností** — ne nutností.
 
-**Dulezite:** Tento clanek neni lekarska rada. Pred jakymkoli zasahem do vlasu po chemoterapii se vzdy poradte se svym onkologem.
+**Důležité:** Tento článek není lékařská rada. Před jakýmkoli zásahem do vlasů po chemoterapii se vždy poraďte se svým onkologem.
 
-### Rust vlasu po chemoterapii
+### Růst vlasů po chemoterapii
 
-Vlasy zacinaji rust obvykle 2-4 tydny po poslednim cyklu chemoterapie. Prvni vlasy mohou mit jinou texturu — casto jsou jemnejsi, kudrnatejsi nebo tmavsi nez pred lecbou. Toto je normalni a textura se casto behem 6-12 mesicu stabilizuje.
+Vlasy začínají růst obvykle 2-4 týdny po posledním cyklu chemoterapie. První vlasy mohou mít jinou texturu — často jsou jemnější, kudrnatější nebo tmavší než před léčbou. Toto je normální a textura se často během 6-12 měsíců stabilizuje.
 
-### Minimalni delka pro prodlouzeni
+### Minimální délka pro prodloužení
 
-- **Clip-in:** mozne uz od 3-5 cm (pritiskaji se na vlastni vlasy)
-- **Tape-in:** minimalne 5-8 cm (pasky potrebuji dostatecny podklad)
-- **Micro ring:** minimalne 8-10 cm (krouzky se upevnuji na prameny)
-- **Keratin:** nedoporucujeme v ranemsitadiu — teplo a chemikalie na novych vlasech
+- **Clip-in:** možné už od 3-5 cm (přitiskají se na vlastní vlasy)
+- **Tape-in:** minimálně 5-8 cm (pásky potřebují dostatečný podklad)
+- **Micro ring:** minimálně 8-10 cm (kroužky se upevňují na prameny)
+- **Keratin:** nedoporučujeme v raném stádiu — teplo a chemikálie na nových vlasech
 
-### Trpelivost je klicova
+### Trpělivost je klíčová
 
-Plna hustota vlasu se vraci obvykle za 6-12 mesicu po ukonceni lecby. Kazda zena je jina — nektere maji huste vlasy uz po 4 mesicich, jine az po roce. Neporovnavejte se s ostatnimia respektujte vlastni tempo.
+Plná hustota vlasů se vrací obvykle za 6-12 měsíců po ukončení léčby. Každá žena je jiná — některé mají husté vlasy už po 4 měsících, jiné až po roce. Neporovnávejte se s ostatními a respektujte vlastní tempo.
 
-## Ktere metody prodlouzeni jsou bezpecne
+## Které metody prodloužení jsou bezpečné
 
-### Clip-in — nejbezpecnejsi start
+### Clip-in — nejbezpečnější start
 
-[Clip-in vlasy](/clip-in-vlasy) jsou idealni jako prvni krok po chemoterapii:
-- Zadne lepidlo, zadne teplo
-- Nasadite a sundáte kdykoli
-- Nulova permanentni zatez korinku
-- Moznost postupne zvykat na delsi vlasy
+[Clip-in vlasy](/clip-in-vlasy) jsou ideální jako první krok po chemoterapii:
+- Žádné lepidlo, žádné teplo
+- Nasadíte a sundáte kdykoli
+- Nulová permanentní zátěž kořínků
+- Možnost postupně zvykat na delší vlasy
 
-Clip-in jsou skvele pro **prechodne obdobi**, kdy vase vlasy teprve dorustavaji k dostatecne delce pro permanentni metody.
+Clip-in jsou skvělé pro **přechodné období**, kdy vaše vlasy teprve dorůstají k dostatečné délce pro permanentní metody.
 
-### Tape-in — setrna permanentní metoda
+### Tape-in — šetrná permanentní metoda
 
-Jakmile vase vlasy dorostou na 5-8 cm a vas onkolog souhlasi, [tape-in vlasy](/tape-in-vlasy) jsou nejsetrnejsi permanentni metodou:
-- Plochy profil minimalizuje zatez
-- Hypoalergenni lepidlo (dobre pro citlivou pokozku po lecbe)
-- Snadne prelepeni bez tahani
+Jakmile vaše vlasy dorostou na 5-8 cm a váš onkolog souhlasí, [tape-in vlasy](/tape-in-vlasy) jsou nejšetrnější permanentní metodou:
+- Plochý profil minimalizuje zátěž
+- Hypoalergenní lepidlo (dobré pro citlivou pokožku po léčbě)
+- Snadné přelepení bez tahání
 
-### Micro ring — podmínene vhodne
+### Micro ring — podmíněně vhodné
 
-Micro ring prodlouzeni je mozne, pokud jsou vase vlasy dostatecne silne (minimalne 8 cm a stredni prumer). Kovove krouzky nevyzaduji lepidlo ani teplo, ale zatez na jednotlive prameny je vyssi nez u tape-in.
+Micro ring prodloužení je možné, pokud jsou vaše vlasy dostatečně silné (minimálně 8 cm a střední průměr). Kovové kroužky nevyžadují lepidlo ani teplo, ale zátěž na jednotlivé prameny je vyšší než u tape-in.
 
-### Keratin — spise nedoporucujeme
+### Keratin — spíše nedoporučujeme
 
-Keratin vyzaduje teplo k pritaveni bondu na vlastni vlasy. Po chemoterapii jsou novych vlasy casto krehke a citlive — tepelne zpracovani muze zpusobit dalsi poskozeni. Doporucujeme pockat minimalne 12 mesicu po ukonceni lecby.
+Keratin vyžaduje teplo k přitavení bondu na vlastní vlasy. Po chemoterapii jsou nové vlasy často křehké a citlivé — tepelné zpracování může způsobit další poškození. Doporučujeme počkat minimálně 12 měsíců po ukončení léčby.
 
-### Paruky a pricesky — alternativa pro mezifázi
+### Paruky a příčesky — alternativa pro mezifázi
 
-Pokud vase vlasy jeste nedosahuji dostatecne delky pro prodlouzeni, kvalitni paruka nebo pricesek mohou byt skvela alternativa. Existuji paruky z pravych vlasu, ktere vypadaji naprosto prirozene.
+Pokud vaše vlasy ještě nedosahují dostatečné délky pro prodloužení, kvalitní paruka nebo příčesek mohou být skvělá alternativa. Existují paruky z pravých vlasů, které vypadají naprosto přirozeně.
 
-## Jak vybrat spravne vlasy po chemoterapii
+## Jak vybrat správné vlasy po chemoterapii
 
 ### Barva
 
-Nove vlasy mohou mit jiny odstin nez pred lecbou. **Pockejte na stabilizaci** (3-6 mesicu), nez si vyberte finalni barvu prodlouzeni. Clip-in muzete zkusit drive — snadno je vymenit, pokud barva nesedi.
+Nové vlasy mohou mít jiný odstín než před léčbou. **Počkejte na stabilizaci** (3-6 měsíců), než si vyberete finální barvu prodloužení. Clip-in můžete zkusit dříve — snadno je vyměnit, pokud barva nesedí.
 
 ### Textura
 
-Pokud jsou vase nove vlasy kudrnatejsi nez drive, rovne prodlouzeni muze pusobit neprirozenym dojmem. Zvaztebudzacinat s clip-in, ktere muzete vyzkouset bez zavazku.
+Pokud jsou vaše nové vlasy kudrnatější než dříve, rovné prodloužení může působit nepřirozeným dojmem. Zvažte začít s clip-in, které můžete vyzkoušet bez závazku.
 
-### Gramaz — mene je vice
+### Gramáž — méně je více
 
-Po chemoterapii doporucujeme **nizsi gramaz nez obvykle**:
-- Zacatek: 60-80 g
-- Po stabilizaci (6+ mesicu): 80-120 g
-- Plne prodlouzeni: 100-150 g
+Po chemoterapii doporučujeme **nižší gramáž než obvykle**:
+- Začátek: 60-80 g
+- Po stabilizaci (6+ měsíců): 80-120 g
+- Plné prodloužení: 100-150 g
 
-Postupne pridavani je setrnejsi nez okamzite velke mnozstvi. Vice o gramazi v nasem [pruvodci](/pruvodce-gramazi).
+Postupné přidávání je šetrnější než okamžité velké množství. Více o gramáži v našem [průvodci](/pruvodce-gramazi).
 
-### Kategorie vlasu
+### Kategorie vlasů
 
-Panenske (virgin) vlasy jsou nejsetrnejsi k citlive pokozce. Nebylyzpracovany chemicky, takze jsou hypoalergennejsi. Prohlédnete si nasi [nabidku vlasu](/vlasy-k-prodlouzeni).
+Panenské (virgin) vlasy jsou nejšetrnější k citlivé pokožce. Nebyly zpracovány chemicky, takže jsou hypoalergennější. Prohlédněte si naši [nabídku vlasů](/vlasy-k-prodlouzeni).
 
-## Na co si dat pozor — specificka rizika
+## Na co si dát pozor — specifická rizika
 
-### Citliva pokozka hlavy
+### Citlivá pokožka hlavy
 
-Po chemoterapii muze byt pokozka hlavy citlivejsi nez obvykle. **Vyhnete se lepidlu primo na kuzi** a pokud pouzivate tape-in, pozadejte kadernici o hypoalergenni pasky.
+Po chemoterapii může být pokožka hlavy citlivější než obvykle. **Vyhněte se lepidlu přímo na kůži** a pokud používáte tape-in, požádejte kadeřnici o hypoalergenní pásky.
 
-### Krehke noverostouci vlasy
+### Křehké nově rostoucí vlasy
 
-Nove vlasy jsou obvykle krehci nez pred lecbou. Nepouzivejte tezke metody (tresy, velke keratinove bondy) a dávejte prednost lehcim alternativam.
+Nové vlasy jsou obvykle křehčí než před léčbou. Nepoužívejte těžké metody (tresy, velké keratinové bondy) a dávejte přednost lehčím alternativám.
 
-### Alergie po lecbe
+### Alergie po léčbě
 
-Chemoterapie muze zmenit citlivost na materialy, ktere vam drive nevadily. **Testujte lepidlo na male plose** (za uchem) 24 hodin pred aplikaci.
+Chemoterapie může změnit citlivost na materiály, které vám dříve nevadily. **Testujte lepidlo na malé ploše** (za uchem) 24 hodin před aplikací.
 
-### Castejsi kontroly
+### Častější kontroly
 
-Doporucujeme navstevu kadernice kazde **4 tydny** (oproti 6-8 u bezneho prodlouzeni). Kratsi interval umozni kontrolovat stav vasich vlastnich vlasu.
+Doporučujeme návštěvu kadeřnice každé **4 týdny** (oproti 6-8 u běžného prodloužení). Kratší interval umožní kontrolovat stav vašich vlastních vlasů.
 
-## Pece o prodlouzene vlasy po chemoterapii
+## Péče o prodloužené vlasy po chemoterapii
 
-### Extra setrne pripravky
+### Extra šetrné přípravky
 
-Pouzivejte sampony a kondicionery **bez sulfatu, parabenu a silikonu**. Citliva pokozka po lecbe vyzaduje maximalne jemne pripravky.
+Používejte šampony a kondicionéry **bez sulfátů, parabenů a silikonů**. Citlivá pokožka po léčbě vyžaduje maximálně jemné přípravky.
 
-### Minimalni tepelna uprava
+### Minimální tepelná úprava
 
-Sniztepoužití fehu a zehlicky na minimum. Pokud je pouzivate, nastavte teplotu maximalne na **150 °C** a vzdy s termoochrannym sprejem.
+Snižte používání fénu a žehličky na minimum. Pokud je používáte, nastavte teplotu maximálně na **150 °C** a vždy s termoochranným sprejem.
 
-### Podpora rustu
+### Podpora růstu
 
-Po konzultaci s lekarem zvaztesuplementy na podporu rustu vlasu:
+Po konzultaci s lékařem zvažte suplementy na podporu růstu vlasů:
 - **Biotin** — podporuje produkci keratinu
-- **Zinek** — dulezity pro zdravy rust vlasu
-- **Zelizo** — casta deficit po lecbe
+- **Zinek** — důležitý pro zdravý růst vlasů
+- **Železo** — častá deficit po léčbě
 
-### Masaz pokozky hlavy
+### Masáž pokožky hlavy
 
-Jemna masaz pokozky hlavy (2-3 minuty denne) zlepsuje prokrveni a podporuje rust novych vlasu. Pouzijte jemne břísky prstu, nikdy nehty.
+Jemná masáž pokožky hlavy (2-3 minuty denně) zlepšuje prokrvení a podporuje růst nových vlasů. Použijte jemné bříšky prstů, nikdy nehty.
 
-## Emocialni stranka — nejste v tom samy
+## Emocionální stránka — nejste v tom samy
 
-Ztrata vlasu je pro mnoho zen jednim z nejnarocnejsich vedlejsich ucinku lecby. Je naprosto normalni citit smutek, frustraci nebo nejistotu.
+Ztráta vlasů je pro mnoho žen jedním z nejnáročnějších vedlejších účinků léčby. Je naprosto normální cítit smutek, frustraci nebo nejistotu.
 
-### Kazda zena je jina
+### Každá žena je jiná
 
-Nektere zeny se rozhodnou pro prodlouzeni hned, jak je to mozne. Jine preferuji kratky strich a uzivaji si novy zacatek. **Oboji je naprosto v poradku.** Dulezite je respektovat vlastni tempo a delat to, co vam dela dobře.
+Některé ženy se rozhodnou pro prodloužení hned, jak je to možné. Jiné preferují krátký střih a užívají si nový začátek. **Obojí je naprosto v pořádku.** Důležité je respektovat vlastní tempo a dělat to, co vám dělá dobře.
 
-### Prodlouzeni jako jeden z nastroju
+### Prodloužení jako jeden z nástrojů
 
-Prodlouzeni vlasu muze pomoci obnovit sebeduveru a pocit normality. Neni to marnivost — je to zpusob, jak se citit vice jako vy sama.
+Prodloužení vlasů může pomoci obnovit sebedůvěru a pocit normality. Není to marnivost — je to způsob, jak se cítit více jako vy sama.
 
-### Jsme tu pro vas
+### Jsme tu pro vás
 
-V Hairlandu pristupujeme k tomuto tematu s maximalni empatii. Pokud zvazujete prodlouzeni vlasu po chemoterapii, [napiste nam](/kontakt). Nabidneme vam:
+V Hairlandu přistupujeme k tomuto tématu s maximální empatií. Pokud zvažujete prodloužení vlasů po chemoterapii, [napište nám](/kontakt). Nabídneme vám:
 
-- **Bezplatnou konzultaci** — poradime metodu, gramaz i barvu
-- **Bez tlaku** — neni nase role vas presvedcovat; chceme vam pomoct najit to, co je spravne pro vas
-- **Diskretnost** — vse probehne v soukromi
+- **Bezplatnou konzultaci** — poradíme metodu, gramáž i barvu
+- **Bez tlaku** — není naše role vás přesvědčovat; chceme vám pomoct najít to, co je správné pro vás
+- **Diskrétnost** — vše proběhne v soukromí
 
-Muzete nam napsat na [WhatsApp](https://wa.me/420608553103) nebo zavolat na +420 608 553 103. Konzultace je vzdy zdarma.`;
+Můžete nám napsat na [WhatsApp](https://wa.me/420608553103) nebo zavolat na +420 608 553 103. Konzultace je vždy zdarma.`;
 
 const article2ContentUk = `## Коли починати нарощування волосся після хіміотерапії
 
@@ -501,49 +501,49 @@ const article2ContentRu = `## Когда начинать наращивание
 
 async function main() {
   // Article 1: Fine hair
+  const article1Data = {
+    title: "Prodloužení vlasů pro jemné vlasy — jak na to bezpečně",
+    titleUk: "Нарощування волосся для тонкого волосся — як зробити безпечно",
+    titleRu: "Наращивание волос для тонких волос — как сделать безопасно",
+    excerpt: "Máte jemné vlasy a chcete je prodloužit? Průvodce nejšetrnějšími metodami, správnou gramáží a péčí pro jemné vlasy.",
+    excerptUk: "Маєте тонке волосся і хочете нарощування? Гід по найдбайливіших методах, правильній грамажі та догляду.",
+    excerptRu: "У вас тонкие волосы и вы хотите наращивание? Гид по самым бережным методам, правильному граммажу и уходу.",
+    content: article1ContentCs,
+    contentUk: article1ContentUk,
+    contentRu: article1ContentRu,
+    category: "guide",
+    metaTitle: "Prodloužení vlasů pro jemné vlasy | Hairland",
+    metaDescription: "Máte jemné vlasy a chcete je prodloužit? Průvodce nejšetrnějšími metodami, správnou gramáží a péčí. Tape-in a micro ring jsou ideální volba.",
+    published: true,
+    publishedAt: new Date(),
+  };
   await prisma.blogPost.upsert({
     where: { slug: "prodlouzeni-vlasu-pro-jemne-vlasy" },
-    update: {},
-    create: {
-      slug: "prodlouzeni-vlasu-pro-jemne-vlasy",
-      title: "Prodlouzeni vlasu pro jemne vlasy — jak na to bezpecne",
-      titleUk: "Нарощування волосся для тонкого волосся — як зробити безпечно",
-      titleRu: "Наращивание волос для тонких волос — как сделать безопасно",
-      excerpt: "Mate jemne vlasy a chcete je prodlouzit? Pruvodce nejsetrnejsimi metodami, spravnou gramazi a peci pro jemne vlasy.",
-      excerptUk: "Маєте тонке волосся і хочете нарощування? Гід по найдбайливіших методах, правильній грамажі та догляду.",
-      excerptRu: "У вас тонкие волосы и вы хотите наращивание? Гид по самым бережным методам, правильному граммажу и уходу.",
-      content: article1ContentCs,
-      contentUk: article1ContentUk,
-      contentRu: article1ContentRu,
-      category: "guide",
-      metaTitle: "Prodloužení vlasů pro jemné vlasy | Hairland",
-      metaDescription: "Mate jemne vlasy a chcete je prodlouzit? Pruvodce nejsetrnejsimi metodami, spravnou gramazi a peci. Tape-in a micro ring jsou idealni volba.",
-      published: true,
-      publishedAt: new Date(),
-    },
+    update: article1Data,
+    create: { slug: "prodlouzeni-vlasu-pro-jemne-vlasy", ...article1Data },
   });
 
   // Article 2: Post-chemo
+  const article2Data = {
+    title: "Prodloužení vlasů po chemoterapii — kdy a jak začít",
+    titleUk: "Нарощування волосся після хіміотерапії — коли і як почати",
+    titleRu: "Наращивание волос после химиотерапии — когда и как начать",
+    excerpt: "Kdy začít s prodloužením vlasů po chemoterapii? Bezpečné metody, minimální délka vlastních vlasů a šetrný přístup k prodloužení.",
+    excerptUk: "Коли починати нарощування волосся після хіміотерапії? Безпечні методи, мінімальна довжина власного волосся та дбайливий підхід.",
+    excerptRu: "Когда начинать наращивание волос после химиотерапии? Безопасные методы, минимальная длина собственных волос и бережный подход.",
+    content: article2ContentCs,
+    contentUk: article2ContentUk,
+    contentRu: article2ContentRu,
+    category: "care",
+    metaTitle: "Vlasy po chemoterapii — kdy začít | Hairland",
+    metaDescription: "Kdy začít s prodloužením vlasů po chemoterapii? Bezpečné metody, minimální délka vlastních vlasů a šetrný přístup. Konzultace zdarma.",
+    published: true,
+    publishedAt: new Date(),
+  };
   await prisma.blogPost.upsert({
     where: { slug: "prodlouzeni-vlasu-po-chemoterapii" },
-    update: {},
-    create: {
-      slug: "prodlouzeni-vlasu-po-chemoterapii",
-      title: "Prodlouzeni vlasu po chemoterapii — kdy a jak zacit",
-      titleUk: "Нарощування волосся після хіміотерапії — коли і як почати",
-      titleRu: "Наращивание волос после химиотерапии — когда и как начать",
-      excerpt: "Kdy zacit s prodlouzenim vlasu po chemoterapii? Bezpecne metody, minimalni delka vlastnich vlasu a setrny pristup k prodlouzeni.",
-      excerptUk: "Коли починати нарощування волосся після хіміотерапії? Безпечні методи, мінімальна довжина власного волосся та дбайливий підхід.",
-      excerptRu: "Когда начинать наращивание волос после химиотерапии? Безопасные методы, минимальная длина собственных волос и бережный подход.",
-      content: article2ContentCs,
-      contentUk: article2ContentUk,
-      contentRu: article2ContentRu,
-      category: "care",
-      metaTitle: "Vlasy po chemoterapii — kdy začít | Hairland",
-      metaDescription: "Kdy zacit s prodlouzenim vlasu po chemoterapii? Bezpecne metody, minimalni delka vlastnich vlasu a setrny pristup. Konzultace zdarma.",
-      published: true,
-      publishedAt: new Date(),
-    },
+    update: article2Data,
+    create: { slug: "prodlouzeni-vlasu-po-chemoterapii", ...article2Data },
   });
 
   console.log("2 blog articles created (published)");
