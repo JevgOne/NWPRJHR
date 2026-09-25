@@ -61,6 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/odstoupeni-od-smlouvy", { lastModified: STATIC_DATE, changeFrequency: "yearly", priority: 0.5 }),
     // /faq redirects to /poradna — removed from sitemap
     ...withAlternates("/pruvodce-gramazi", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
+    ...withAlternates("/promeny", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/recenze", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.6 }),
     ...withAlternates("/prislusenstvi", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/prodlouzeni-vlasu-praha", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.9 }),

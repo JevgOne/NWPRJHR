@@ -201,6 +201,11 @@ export const routing = defineRouting({
       ru: "/конфиденциальность",
       uk: "/конфіденційність",
     },
+    "/promeny": {
+      cs: "/promeny",
+      ru: "/преображения",
+      uk: "/перетворення",
+    },
     "/faq": "/faq",
     "/registrace": {
       cs: "/registrace",

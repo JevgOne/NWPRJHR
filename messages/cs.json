@@ -4471,5 +4471,26 @@
     "ctaText": "Objednejte si bezplatnou konzultaci. Pomůžeme vám vybrat správný počet pásek, délku a barvu.",
     "ctaPhone": "+420 608 553 103",
     "ctaCta": "Zobrazit tape-in vlasy"
+  },
+  "promeny": {
+    "metaTitle": "Promeny — prodlouzeni vlasu pred a po",
+    "metaDesc": "Galerie promen nasich zakaznic. Podivejte se na vysledky prodlouzeni vlasu metodami clip-in, tape-in, keratin a micro ring.",
+    "heroTitle": "Promeny nasich zakaznic",
+    "heroSubtitle": "Podivejte se, jak prodlouzeni vlasu meni vzhled. Galerie realnych vysledku od nasich klientek.",
+    "filterAll": "Vsechny metody",
+    "filterLabel": "Filtrovat dle metody",
+    "lengthLabel": "Delka",
+    "weightLabel": "Gramaz",
+    "methodLabel": "Metoda",
+    "originLabel": "Typ vlasu",
+    "stylistLabel": "Kadernice",
+    "beforeLabel": "Pred",
+    "afterLabel": "Po",
+    "emptyTitle": "Promeny brzy pribudou",
+    "emptyText": "Pracujeme na galerii promen. Sledujte nas na Instagramu pro inspiraci!",
+    "instagramCta": "Sledovat na Instagramu",
+    "ctaTitle": "Chcete i vy takovou promenu?",
+    "ctaText": "Vyberte si vlasy a objednejte si konzultaci zdarma.",
+    "ctaButton": "Vybrat vlasy"
   }
 }

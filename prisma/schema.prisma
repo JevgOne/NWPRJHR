@@ -1013,6 +1013,33 @@ model Review {
   @@map("reviews")
 }
 
+model Transformation {
+  id              String         @id @default(cuid())
+  title           String
+  titleUk         String?
+  titleRu         String?
+  description     String?
+  descriptionUk   String?
+  descriptionRu   String?
+  photoBefore     String
+  photoAfter      String
+  processingType  ProcessingType
+  lengthCm        Int?
+  weightGrams     Int?
+  hairOrigin      String?
+  stylistName     String?
+  clientConsent   Boolean        @default(true)
+  featured        Boolean        @default(false)
+  active          Boolean        @default(true)
+  sortOrder       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([active, featured])
+  @@index([processingType])
+  @@map("transformations")
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String?
