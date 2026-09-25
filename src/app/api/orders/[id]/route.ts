@@ -20,6 +20,7 @@ import {
   getB2BOrderShippedEmail,
   getOrderShippedEmail,
   getRetailPaymentReceivedEmail,
+  getCareGuideUrl,
 } from "@/lib/email-templates";
 import { loadEmailAttachments } from "@/lib/email-attachments";
 
@@ -385,7 +386,7 @@ export async function POST(
             shippingMethod: "PACKETA",
             trackingId: packetResult.barcode,
             packetaPointName: orderToShip.packetaPointName ?? undefined,
-            careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+            careGuideUrl: getCareGuideUrl(lang),
           });
           loadEmailAttachments(false).then((attachments) => {
             const careAttachment = attachments.find((a) => a.filename === "navod-na-peci.pdf");
@@ -445,7 +446,7 @@ export async function POST(
             orderNumber: orderManual.orderNumber ?? id.slice(0, 8),
             shippingMethod: orderManual.shippingMethod || "PERSONAL_DELIVERY",
             trackingId: body.trackingId || undefined,
-            careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+            careGuideUrl: getCareGuideUrl(lang),
           });
           loadEmailAttachments(false).then((attachments) => {
             const careAttachment = attachments.find((a) => a.filename === "navod-na-peci.pdf");

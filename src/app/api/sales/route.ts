@@ -9,7 +9,7 @@ import { serializeSaleForRole } from "@/lib/api/sale-serializer";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { sendInvoiceEmail, sendPaymentDetailsEmail } from "@/lib/invoice-email";
 import { sendNotificationEmail } from "@/lib/email";
-import { getOrderConfirmationEmail } from "@/lib/email-templates";
+import { getOrderConfirmationEmail, getCareGuideUrl } from "@/lib/email-templates";
 import { loadEmailAttachments } from "@/lib/email-attachments";
 import { generateSpayd } from "@/lib/spayd";
 import { generateQRCodeDataUrl } from "@/lib/qr-code";
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
                 paymentMethod: "CASH",
                 isB2B,
                 isPersonalSale: true,
-                careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+                careGuideUrl: getCareGuideUrl(lang),
               });
 
               const attachments = await loadEmailAttachments(isB2B);
@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
                   bankAccount,
                   variableSymbol: vs,
                   isB2B,
-                  careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+                  careGuideUrl: getCareGuideUrl(lang),
                 });
 
                 const attachments = await loadEmailAttachments(isB2B);

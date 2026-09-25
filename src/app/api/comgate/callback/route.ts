@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { getPaymentStatus } from "@/lib/comgate";
 import { createSaleFromOrder } from "@/lib/order-to-sale";
 import { sendNotificationEmail } from "@/lib/email";
-import { getOrderConfirmationEmail } from "@/lib/email-templates";
+import { getOrderConfirmationEmail, getCareGuideUrl } from "@/lib/email-templates";
 import { loadEmailAttachments } from "@/lib/email-attachments";
 
 export async function POST(request: NextRequest) {
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
                     paymentMethod: "CARD",
                     isB2B,
                     isPersonalSale: false,
-                    careGuideUrl: `https://www.hairland.cz/${lang}/pece-o-vlasy`,
+                    careGuideUrl: getCareGuideUrl(lang),
                   });
 
                   const attachments = await loadEmailAttachments(isB2B);
@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
                 totalAmount: updatedOrder.totalAmount ?? 0,
                 paymentMethod: "CARD",
                 isB2B,
-                careGuideUrl: `https://www.hairland.cz/${locale}/pece-o-vlasy`,
+                careGuideUrl: getCareGuideUrl(locale),
               });
 
               const attachments = await loadEmailAttachments(isB2B);

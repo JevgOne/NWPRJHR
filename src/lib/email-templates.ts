@@ -3,6 +3,17 @@
  * All styles inline for email client compatibility.
  */
 
+// --- Care guide URL helper ---
+
+const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
+const CARE_PATHS: Record<string, string> = { cs: "/pece-o-vlasy", uk: "/догляд-за-волоссям", ru: "/уход-за-волосами" };
+
+export function getCareGuideUrl(locale: string): string {
+  const prefix = LOCALE_PREFIXES[locale] ?? "";
+  const path = CARE_PATHS[locale] ?? CARE_PATHS.cs;
+  return `https://www.hairland.cz${prefix}${path}`;
+}
+
 // --- Shared template wrapper ---
 
 function hairlandEmailTemplate(
