@@ -68,7 +68,7 @@ const METHOD_LABELS: Record<string, Record<string, string>> = {
     WEFT: "Tresy",
     MICRO_RING: "Micro ring",
     BANGS: "Ofiny",
-    OTHER: "Ostatni",
+    OTHER: "Ostatní",
   },
   uk: {
     CLIP_IN: "Clip-in",
