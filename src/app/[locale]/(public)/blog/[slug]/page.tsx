@@ -40,7 +40,8 @@ function stripMarkdown(md: string): string {
 }
 
 function generateSeoDescription(post: Record<string, unknown>, locale: string): string {
-  if (post.metaDescription) return post.metaDescription as string;
+  // metaDescription is Czech-only — for other locales skip it
+  if (locale === "cs" && post.metaDescription) return post.metaDescription as string;
 
   const excerpt = localized(post, "excerpt", locale);
   if (excerpt) {
@@ -71,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const [post, locale] = await Promise.all([getCachedBlogPost(slug), getLocale()]);
   if (!post || !post.published) notFound();
   const seoTitle = (locale === "cs" && post.metaTitle) ? post.metaTitle : localized(post, "title", locale);
-  const seoDesc = (locale === "cs" && post.metaDescription) ? post.metaDescription : localized(post, "excerpt", locale) || localized(post, "title", locale);
+  const seoDesc = generateSeoDescription(post, locale);
   const seoImage = post.ogImage || post.coverImage;
   return {
     title: `${seoTitle} | Blog`,
