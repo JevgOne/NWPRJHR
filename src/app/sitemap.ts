@@ -13,7 +13,7 @@ import { getLocalizedPath } from "@/lib/localized-path";
 export const revalidate = 3600;
 
 const BASE_URL = "https://www.hairland.cz";
-const STATIC_DATE = new Date().toISOString().split("T")[0];
+const STATIC_DATE = "2026-09-25";
 
 const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
 
@@ -43,9 +43,32 @@ function withAlternates(
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // DB queries first so we can derive latestProductDate for dependent pages
+  const [products, stylists, blogPosts, lengths] = await Promise.all([
+    prisma.product.findMany({
+      where: { archived: false, slug: { not: null } },
+      select: { slug: true, updatedAt: true },
+    }),
+    prisma.stylist.findMany({
+      where: { active: true },
+      select: { slug: true, updatedAt: true },
+    }),
+    prisma.blogPost.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true },
+    }),
+    prisma.variant.findMany({
+      where: { active: true },
+      select: { lengthCm: true },
+      distinct: ["lengthCm"],
+    }),
+  ]);
+
+  const latestProductDate = products.reduce<Date | string>((max, p) => (p.updatedAt > max ? p.updatedAt : max), STATIC_DATE);
+
   const staticPages: MetadataRoute.Sitemap = [
     ...withAlternates("", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 1.0 }),
-    ...withAlternates("/vlasy-k-prodlouzeni", { lastModified: STATIC_DATE, changeFrequency: "daily", priority: 0.9 }),
+    ...withAlternates("/vlasy-k-prodlouzeni", { lastModified: latestProductDate, changeFrequency: "daily", priority: 0.9 }),
     ...withAlternates("/poradna", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/pro", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/kontakt", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
@@ -65,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...withAlternates("/recenze", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.6 }),
     ...withAlternates("/prislusenstvi", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/prodlouzeni-vlasu-praha", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.9 }),
-    ...withAlternates("/cenik-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+    ...withAlternates("/cenik-vlasy", { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.7 }),
     ...withAlternates("/pricesky", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/vlasove-pasky", { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
     ...withAlternates("/slovanske-vlasy", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
@@ -81,17 +104,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { slug: "weft", path: "/tresove-vlasy" },
     { slug: "ofiny", path: "/ofiny" },
   ].flatMap(({ path }) =>
-    withAlternates(path, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.8 }),
+    withAlternates(path, { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.8 }),
   );
 
   const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) =>
     withAlternates(`/poradna/${article.slug}`, { lastModified: STATIC_DATE, changeFrequency: "monthly", priority: 0.6 }),
   );
-
-  const blogPosts = await prisma.blogPost.findMany({
-    where: { published: true },
-    select: { slug: true, updatedAt: true },
-  });
 
   const blogPages: MetadataRoute.Sitemap = [
     ...withAlternates("/blog", { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
@@ -99,17 +117,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       withAlternates(`/blog/${post.slug}`, { lastModified: post.updatedAt, changeFrequency: "monthly", priority: 0.6 }),
     ),
   ];
-
-  const [products, stylists] = await Promise.all([
-    prisma.product.findMany({
-      where: { archived: false, slug: { not: null } },
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.stylist.findMany({
-      where: { active: true },
-      select: { slug: true, updatedAt: true },
-    }),
-  ]);
 
   const productPages: MetadataRoute.Sitemap = products.flatMap((product) =>
     withAlternates(`/vlasy-k-prodlouzeni/${product.slug}`, { lastModified: product.updatedAt, changeFrequency: "weekly", priority: 0.8 }),
@@ -125,40 +132,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Color tones
   for (const slug of Object.keys(COLOR_TONE_SLUG_MAP)) {
     attributePages.push(
-      ...withAlternates(`/vlasy-k-prodlouzeni/barva/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/barva/${slug}`, { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Textures
   for (const slug of Object.keys(TEXTURE_SLUG_MAP)) {
     attributePages.push(
-      ...withAlternates(`/vlasy-k-prodlouzeni/textura/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/textura/${slug}`, { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Categories (SEO)
   for (const slug of Object.keys(CATEGORY_SLUG_MAP_SEO)) {
     attributePages.push(
-      ...withAlternates(`/vlasy-k-prodlouzeni/kategorie/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/kategorie/${slug}`, { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Origins
   for (const slug of Object.keys(ORIGIN_SLUG_MAP)) {
     attributePages.push(
-      ...withAlternates(`/vlasy-k-prodlouzeni/zeme/${slug}`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/zeme/${slug}`, { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
   // Lengths (dynamic from DB)
-  const lengths = await prisma.variant.findMany({
-    where: { active: true },
-    select: { lengthCm: true },
-    distinct: ["lengthCm"],
-  });
   for (const { lengthCm } of lengths) {
     attributePages.push(
-      ...withAlternates(`/vlasy-k-prodlouzeni/delka/${lengthCm}cm`, { lastModified: STATIC_DATE, changeFrequency: "weekly", priority: 0.7 }),
+      ...withAlternates(`/vlasy-k-prodlouzeni/delka/${lengthCm}cm`, { lastModified: latestProductDate, changeFrequency: "weekly", priority: 0.7 }),
     );
   }
 
