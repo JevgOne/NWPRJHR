@@ -32,8 +32,11 @@ export default function RootNotFound() {
       : "cs";
   const t = translations[locale];
 
+  const titleMap = { cs: "Stránka nenalezena | Hairland", uk: "Сторінку не знайдено | Hairland", ru: "Страница не найдена | Hairland" } as const;
+
   return (
     <div className="flex-1 flex items-center justify-center px-4 py-20 min-h-screen bg-nude-50 font-[family-name:var(--font-geist)]">
+      <title>{titleMap[locale]}</title>
       <div className="text-center max-w-md">
         <p className="text-6xl font-bold text-rose mb-4">404</p>
         <h1 className="text-2xl font-semibold text-ink mb-3">

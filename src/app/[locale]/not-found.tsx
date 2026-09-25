@@ -8,8 +8,11 @@ export default async function NotFound() {
   const locale = await getLocale();
   const t = await getTranslations("errorPages");
 
+  const titleMap: Record<string, string> = { cs: "Stránka nenalezena | Hairland", uk: "Сторінку не знайдено | Hairland", ru: "Страница не найдена | Hairland" };
+
   return (
     <div className="flex flex-col min-h-screen">
+      <title>{titleMap[locale] ?? titleMap.cs}</title>
       <TopInfoBar />
       <PublicNavbar />
       <main className="flex-1 flex items-center justify-center px-4 py-20">
