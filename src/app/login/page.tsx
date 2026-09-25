@@ -2,7 +2,7 @@ import { LoginForm } from "./LoginForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Přihlášení | Hairland",
+  title: "Přihlášení",
   openGraph: {
     type: "website",
     title: "Přihlášení | Hairland",

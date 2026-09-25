@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: getAlternates(`/prodlouzeni-vlasu/${city.slug}`, locale),
     openGraph: {
       type: "website",
-      title,
+      title: `${title} | Hairland`,
       description: desc,
       url: getOgUrl(`/prodlouzeni-vlasu/${city.slug}`, locale),
       siteName: "Hairland",
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${title} | Hairland`,
       description: desc,
       images: ["https://www.hairland.cz/og/og-home.jpg"],
     },
