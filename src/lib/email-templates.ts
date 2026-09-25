@@ -693,7 +693,7 @@ export function getInquiryFollowUpEmail(
     "",
     t.body2,
     "",
-    `${t.cta}: https://www.hairland.cz/contact`,
+    `${t.cta}: https://www.hairland.cz/kontakt`,
     "",
     t.footer,
   ].join("\n");
