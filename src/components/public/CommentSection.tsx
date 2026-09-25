@@ -47,6 +47,7 @@ const t = (locale: string, key: string): string => {
       noComments: "Zatím žádné komentáře. Buďte první!",
       confirmDelete: "Opravdu smazat komentář?",
       admin: "Admin",
+      user: "Uživatel",
     },
     uk: {
       title: "Обговорення",
@@ -63,6 +64,7 @@ const t = (locale: string, key: string): string => {
       noComments: "Ще немає коментарів. Будьте першим!",
       confirmDelete: "Дійсно видалити коментар?",
       admin: "Адмін",
+      user: "Користувач",
     },
     ru: {
       title: "Обсуждение",
@@ -79,6 +81,7 @@ const t = (locale: string, key: string): string => {
       noComments: "Пока нет комментариев. Будьте первым!",
       confirmDelete: "Действительно удалить комментарий?",
       admin: "Админ",
+      user: "Пользователь",
     },
   };
   return translations[locale]?.[key] ?? translations.cs[key] ?? key;
@@ -194,7 +197,7 @@ function CommentItem({
             {(comment.user.name ?? "?")[0].toUpperCase()}
           </div>
           <span className="text-sm font-medium text-ink">
-            {comment.user.name ?? "Uživatel"}
+            {comment.user.name ?? t(locale, "user")}
           </span>
           {isAuthorAdmin && (
             <span className="px-1.5 py-0.5 bg-rose/10 text-rose text-[10px] font-semibold rounded">

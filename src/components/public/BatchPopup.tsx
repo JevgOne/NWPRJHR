@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface AnnouncementData {
   availableDate: string;
   description: string | null;
 }
 
+const DATE_LOCALES: Record<string, string> = { cs: "cs-CZ", uk: "uk-UA", ru: "ru-RU" };
+
 export function BatchPopup() {
   const t = useTranslations("public");
+  const locale = useLocale();
   const [data, setData] = useState<AnnouncementData | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -40,7 +43,7 @@ export function BatchPopup() {
   if (!data || dismissed) return null;
 
   const availDate = new Date(data.availableDate);
-  const formatted = availDate.toLocaleDateString("cs-CZ", {
+  const formatted = availDate.toLocaleDateString(DATE_LOCALES[locale] ?? "cs-CZ", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -79,7 +82,7 @@ export function BatchPopup() {
               type="button"
               onClick={handleDismiss}
               className="text-muted hover:text-ink transition-colors text-lg leading-none flex-shrink-0 -mt-1 -mr-1 p-1"
-              aria-label="Zavřít"
+              aria-label={t("batchPopup.close")}
             >
               &times;
             </button>

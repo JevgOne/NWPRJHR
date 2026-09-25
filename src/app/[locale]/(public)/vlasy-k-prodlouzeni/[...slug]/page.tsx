@@ -443,12 +443,13 @@ async function ProductDetailView({
   const sp = await searchParams;
 
   // Parallel: product + auth + translations
-  const [product, session, t, tCategory, tPt, locale] = await Promise.all([
+  const [product, session, t, tCategory, tPt, tFaq, locale] = await Promise.all([
     getProduct(slugOrId),
     auth(),
     getTranslations("public"),
     getTranslations("category"),
     getTranslations("processingTypes"),
+    getTranslations("productFaq"),
     getLocale(),
   ]);
 
@@ -576,7 +577,7 @@ async function ProductDetailView({
   const seoAlt = (() => {
     const parts: string[] = [];
     if (product.texture) parts.push(product.texture.toLowerCase());
-    parts.push("vlasy k prodloužení");
+    parts.push(tFaq("seoAlt"));
     if (seoLengths.length > 0) {
       parts.push(seoLengths.length <= 3 ? seoLengths.map((l) => `${l} cm`).join(", ") : `${seoLengths[0]}\u2013${seoLengths[seoLengths.length - 1]} cm`);
     }
@@ -622,55 +623,21 @@ async function ProductDetailView({
   // Cached review stats + snippets for JSON-LD (product-specific only, no site-wide fallback)
   const { stats: siteWideStats, productStats: reviewStats, schemaReviews: reviewsForSchema } = await getCachedReviewData(product.id);
 
-  // FAQ data by category
-  const faqByCategory: Record<string, Array<{ q: string; a: string }>> = {
-    VIRGIN: [
-      { q: "Co jsou panenské (virgin) vlasy?", a: "Panenské vlasy jsou nejvyšší kvalita lidských vlasů k prodloužení, které nebyly chemicky ošetřeny ani barveny. Kutikula je zachována v původním směru, což zajišťuje přirozený lesk a minimální zamotávání." },
-      { q: "Jak dlouho vydrží panenské vlasy?", a: "Při správné péči vydrží panenské vlasy 2 a více let. Díky neporušené kutikule si dlouho zachovávají hebkost a lesk — jsou to nejodolnější vlasy na trhu." },
-      { q: "Mohu panenské vlasy barvit?", a: "Ano, panenské vlasy lze barvit, odbarvovat i jinak chemicky upravovat. Díky tomu, že nebyly dříve ošetřeny, reagují na barvení velmi dobře a výsledek je přirozený." },
-      { q: "Jak pečovat o panenské vlasy po barvení?", a: "Po barvení používejte šampony bez sulfátů určené pro barvené vlasy. Aplikujte hluboce hydratační masku minimálně 1× týdně a vlasový olej na konečky. Mezi barvením dodržujte alespoň 6–8 týdnů odstup." },
-      { q: "Jak pečovat o panenské vlasy?", a: "Používejte šampony bez sulfátů, pravidelně aplikujte kondicionér a vlasový olej. Před spaním vlasy spleťte do volného copu. Vyhněte se nadměrnému tepelnému stylingu a vždy používejte termoochranný sprej." },
-      { q: "Odkud pochází panenské vlasy Hairland?", a: "Naše panenské vlasy pocházejí z východní Evropy — především z Ukrajiny, Běloruska a Moldavska. Východoevropské vlasy mají jemnou strukturu blízkou středoevropským vlasům, proto vypadají naprosto přirozeně." },
-    ],
-    LUXE: [
-      { q: "Jaký je rozdíl mezi luxe a panenskými vlasy?", a: "Luxe vlasy prošly šetrným zpracováním, které zachovává přirozenou strukturu, zatímco panenské vlasy jsou zcela neošetřené. Luxe vlasy nabízejí prémiovou kvalitu prodloužení za příznivější cenu." },
-      { q: "Jak dlouho vydrží luxe vlasy?", a: "Luxe vlasy při správné péči vydrží 1 až 2 roky. Životnost závisí na intenzitě nošení a péči — pravidelné použití hydratačních masek výrazně prodlužuje jejich trvanlivost." },
-      { q: "Jaké možnosti stylování mají luxe vlasy?", a: "Luxe vlasy lze kulmovat, žehlit, fénovat i natáčet. Doporučujeme používat termoochranný sprej a nastavit teplotu maximálně na 180 °C pro delší životnost vlasů." },
-      { q: "Mohu luxe vlasy přebarvit?", a: "Ano, luxe vlasy lze barvit. Doporučujeme tmavší odstíny zesvětlovat maximálně o 2–3 tóny. Po barvení ošetřete vlasy regenerační maskou a omezte tepelný styling na minimum po dobu prvního týdne." },
-      { q: "Pro koho jsou luxe vlasy ideální?", a: "Luxe vlasy jsou ideální pro klientky, které chtějí prémiovou kvalitu vlasů k prodloužení za rozumnou cenu. Jsou skvělou volbou pro pravidelné nošení a profesionální kadeřnické aplikace." },
-    ],
-    STANDARD: [
-      { q: "Pro koho jsou standardní vlasy vhodné?", a: "Standardní vlasy jsou ideální volbou pro ty, kteří hledají kvalitní prodloužení vlasů za dostupnou cenu. Hodí se pro příležitostné nošení nebo jako první zkušenost s prodlužováním." },
-      { q: "Jaká je výhoda standardních vlasů oproti dražším variantám?", a: "Hlavní výhodou je příznivá cena při zachování dobré kvality. Standardní vlasy vypadají přirozeně a jsou vhodné pro běžné nošení i jednorázové akce." },
-      { q: "Jak dlouho vydrží standardní vlasy?", a: "Standardní vlasy vydrží přibližně 6 až 12 měsíců v závislosti na frekvenci nošení a péči. Při šetrném zacházení a správné údržbě mohou vydržet i déle." },
-      { q: "Lze standardní vlasy barvit?", a: "Standardní vlasy lze barvit, ale doporučujeme pouze tónování nebo barvení do tmavších odstínů. Odbarvování může zkrátit životnost. Po barvení vždy aplikujte regenerační kúru." },
-    ],
-    SALE: [
-      { q: "Proč jsou tyto vlasy ve výprodeji?", a: "Výprodejové vlasy jsou buď kusy, které nesplnily naše nejvyšší kvalitativní standardy (například nerovnoměrná textura), nebo vlasy vrácené klientkami po sundání. Každý culík jsme pečlivě zastříhli, vyčesali a umyli." },
-      { q: "Mají výprodejové vlasy záruku?", a: "Na výprodejové vlasy neposkytujeme záruku. Nemůžeme ověřit původ vlasů, způsob předchozího zacházení ani jejich stav před tím, než k nám přišly. Proto je prodáváme za výrazně zvýhodněnou cenu — kupujete s vědomím tohoto omezení." },
-      { q: "Jsou výprodejové vlasy poškozené?", a: "Ne, nejsou poškozené. Jde o vlasy v plně použitelném stavu — pouze nesplňují naše nejpřísnější standardy kvality, nebo jde o recyklované vlasy od klientek. Každý kus prochází kontrolou a přípravou (stříhání, česání, mytí)." },
-      { q: "Mohu výprodejové vlasy barvit?", a: "Záleží na konkrétním kusu. Vlasy, které nebyly dříve barveny, lze barvit bez omezení. U vlasů od klientek doporučujeme konzultaci — některé již mohly být barveny. Kontaktujte nás a poradíme." },
-      { q: "Jaká je životnost výprodejových vlasů?", a: "Životnost závisí na původní kvalitě a péči. Vlasy ve výprodeji mohou vydržet 6 měsíců až 2 roky. Doporučujeme stejnou péči jako u běžných vlasů — šampon bez sulfátů, pravidelné masky a šetrné zacházení." },
-    ],
-  };
-  const generalFaq: Array<{ q: string; a: string }> = [
-    // Textura
-    { q: "Jaký je rozdíl mezi rovnými, vlnitými a kudrnatými vlasy?", a: "Rovné vlasy jsou nejuniverzálnější — snadno se stylují a vypadají přirozeně. Vlnité přírodní vlasy dodávají objem a romantický look. Kudrnaté vlasy jsou ideální pro maximální objem. Všechny textury nabízíme jako nezpracované vlasy, které si zachovávají svou přirozenou strukturu." },
-    { q: "Jak pečovat o rovné prodloužené vlasy?", a: "Rovné vlasy k prodloužení udržíte hladké pravidelným kartáčováním speciálním kartáčem od konečků nahoru. Aplikujte lehký olej nebo sérum na konečky. Při sušení fénem směřujte proud vzduchu od kořínků ke konečkům, aby vlasy zůstaly lesklé." },
-    { q: "Jak pečovat o vlnité a kudrnaté vlasy?", a: "Vlnité a kudrnaté vlasy rozčesávejte pouze za mokra hřebenem s širokými zuby. Používejte hydratační masky a bezoplachové kondicionéry. Nechte vlasy uschnout přirozeně nebo použijte difuzér — kartáčování za sucha narušuje přirozený vzor vln." },
-    // Objednávka a zpracování
-    { q: "Co jsou přírodní nezpracované vlasy a jak se liší od hotových příčesků?", a: "Přírodní nezpracované vlasy jsou lidské vlasy s neporušenou kutikulou — nejvyšší možná kvalita pro prodloužení vlasů. Na rozdíl od hotových příčesků z obchodu se tyto vlasy zpracovávají na zakázku přesně podle vašich požadavků — clip-in, tape-in, keratin nebo micro ring." },
-    { q: "Jak probíhá objednávka vlasů na míru?", a: "Vyberete si vlasy (kategorie, délka, barva, textura) a zvolíte způsob zpracování — clip-in, tape-in, keratin nebo micro ring. Zakázkové zpracování trvá přibližně 7 pracovních dní. Kontaktujte nás přes telefon +420 608 553 103, WhatsApp nebo Instagram pro konzultaci." },
-    { q: "Kolik gramů vlasů potřebuji k prodloužení?", a: "Záleží na požadovaném objemu a délce vlastních vlasů. Pro jemné doplnění hustoty stačí 100 g, pro střední objem 150 g a pro plný objem nebo velmi dlouhé prodloužení 200 g a více. Podrobný průvodce gramáží najdete na naší stránce." },
-    // Konzultace a doručení
-    { q: "Nabízíte osobní konzultaci před nákupem?", a: "Ano, nabízíme bezplatnou osobní konzultaci v Praze, kde vám pomůžeme vybrat správný odstín, délku a gramáž přírodních vlasů k prodloužení. Můžete si vlasy prohlédnout a osahat naživo. Konzultaci si domluvte na +420 608 553 103 nebo přes WhatsApp." },
-    { q: "Jak funguje doručení a kolik stojí?", a: "V Praze nabízíme osobní doručení zdarma — přivezeme vlasy přímo k vám nebo do salonu. Pro ostatní lokality v ČR zasíláme přes Zásilkovnu." },
-    // Platba a vrácení
-    { q: "Jaké platební metody přijímáte?", a: "Přijímáme platbu bankovním převodem a hotovost při osobním převzetí v Praze. Pro B2B zákazníky (kadeřníky a salony) nabízíme fakturaci se splatností." },
-    { q: "Mohu vlasy vrátit, pokud mi nesedí?", a: "Nepoužité vlasy v původním obalu lze vrátit do 14 dnů od převzetí. Vlasy nesmí být střižené, barvené ani jinak upravované. Kontaktujte nás a domluvíme se na postupu vrácení nebo výměny." },
-    // B2B
-    { q: "Spolupracujete s kadeřníky a salony?", a: "Ano, nabízíme zvýhodněné B2B ceny prémiových vlasů pro kadeřníky a salony. Zajistíme pravidelné dodávky, fakturaci a individuální velkoobchodní podmínky. Kontaktujte nás pro nezávaznou nabídku." },
-  ];
+  // FAQ data by category (from i18n)
+  const faqCounts: Record<string, number> = { VIRGIN: 6, LUXE: 5, STANDARD: 4, SALE: 5 };
+  const faqCategoryKeys: Record<string, string> = { VIRGIN: "virgin", LUXE: "luxe", STANDARD: "standard", SALE: "sale" };
+  const faqByCategory: Record<string, Array<{ q: string; a: string }>> = {};
+  for (const [cat, count] of Object.entries(faqCounts)) {
+    const key = faqCategoryKeys[cat];
+    faqByCategory[cat] = Array.from({ length: count }, (_, i) => ({
+      q: tFaq(`${key}.faq${i + 1}q`),
+      a: tFaq(`${key}.faq${i + 1}a`),
+    }));
+  }
+  const generalFaq: Array<{ q: string; a: string }> = Array.from({ length: 11 }, (_, i) => ({
+    q: tFaq(`general.faq${i + 1}q`),
+    a: tFaq(`general.faq${i + 1}a`),
+  }));
   const categoryFaq = faqByCategory[product.category] ?? [];
   const allFaq = [...categoryFaq, ...generalFaq];
 
@@ -710,13 +677,13 @@ async function ProductDetailView({
 
   const additionalProperties: Array<{ "@type": string; name: string; value: string }> = [];
   if (product.texture) {
-    additionalProperties.push({ "@type": "PropertyValue", name: "Textura", value: product.texture });
+    additionalProperties.push({ "@type": "PropertyValue", name: tFaq("propertyTexture"), value: product.texture });
   }
   if (product.colorTone) {
-    additionalProperties.push({ "@type": "PropertyValue", name: "Barva", value: product.colorTone });
+    additionalProperties.push({ "@type": "PropertyValue", name: tFaq("propertyColor"), value: product.colorTone });
   }
   if (lengths.length > 0) {
-    additionalProperties.push({ "@type": "PropertyValue", name: "Délka", value: lengths.map((l) => `${l} cm`).join(", ") });
+    additionalProperties.push({ "@type": "PropertyValue", name: tFaq("propertyLength"), value: lengths.map((l) => `${l} cm`).join(", ") });
   }
 
   // Determine real availability from stock

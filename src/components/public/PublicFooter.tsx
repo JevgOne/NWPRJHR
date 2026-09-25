@@ -122,7 +122,7 @@ export function PublicFooter() {
         {/* Bottom bar: copyright + payments + company info */}
         <div className="mt-8 pt-4 border-t border-nude-200/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-nude-200/30">
           <span>{t("footer.copyright")}</span>
-          <span>Platby zajišťuje Comgate · Visa · Mastercard · Apple Pay · Bankovní převod</span>
+          <span>{t("footer.paymentInfo")}</span>
           <span>
             {t("footer.companyName")} · {t("footer.companyId")}
           </span>

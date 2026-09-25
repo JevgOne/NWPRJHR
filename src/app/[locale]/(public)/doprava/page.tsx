@@ -229,11 +229,11 @@ export default async function DopravaPage() {
       {/* Online payments – Comgate */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold text-ink mb-4">
-          Online platby
+          {t("onlinePayments")}
         </h2>
         <div className="bg-nude-50 rounded-xl border border-line p-5 space-y-4">
           <p className="text-sm text-muted">
-            Platby na našem e-shopu jsou realizovány prostřednictvím platební brány{" "}
+            {t("comgateIntro")}{" "}
             <a
               href="https://www.comgate.eu/cs/platebni-brana"
               target="_blank"
@@ -242,11 +242,11 @@ export default async function DopravaPage() {
             >
               Comgate
             </a>
-            , která umožňuje bezpečné online platby.
+            {t("comgateIntroEnd")}
           </p>
 
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-ink">Podporované platební metody:</p>
+            <p className="text-sm font-semibold text-ink">{t("supportedMethods")}</p>
             <ul className="space-y-1 text-sm text-muted">
               <li className="flex items-start gap-2">
                 <span className="text-rose mt-0.5">&#10003;</span>
@@ -256,7 +256,7 @@ export default async function DopravaPage() {
                   rel="noopener noreferrer"
                   className="text-rose hover:text-rose-deep underline"
                 >
-                  Platby kartou
+                  {t("cardPayments")}
                 </a>
                 {" "}(Visa, Mastercard, Apple Pay)
               </li>
@@ -268,17 +268,17 @@ export default async function DopravaPage() {
                   rel="noopener noreferrer"
                   className="text-rose hover:text-rose-deep underline"
                 >
-                  Bankovní převody
+                  {t("bankTransfers")}
                 </a>
               </li>
             </ul>
           </div>
 
           <div className="pt-2 border-t border-line">
-            <p className="text-xs font-semibold text-ink mb-1">Provozovatel platební brány:</p>
+            <p className="text-xs font-semibold text-ink mb-1">{t("gatewayOperator")}</p>
             <div className="text-xs text-muted space-y-0.5">
               <p>Comgate, a.s.</p>
-              <p>Gočárova třída 1754 / 48b, Hradec Králové</p>
+              <p>{t("comgateAddress")}</p>
               <p>
                 E-mail:{" "}
                 <a href="mailto:podpora@comgate.cz" className="text-rose hover:text-rose-deep underline">

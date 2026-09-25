@@ -146,54 +146,45 @@ const webSiteJsonLd = {
   },
 };
 
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Hairland",
-  alternateName: ["Hairland.cz"],
-  legalName: "Alvento Solutions s.r.o.",
-  taxID: "24111953",
-  url: "https://www.hairland.cz",
-  logo: "https://www.hairland.cz/icons/icon-512x512.png",
-  slogan: "Prémiové pravé vlasy k prodloužení",
-  areaServed: {
-    "@type": "Country",
-    name: "Czech Republic",
-  },
-  knowsAbout: [
-    "vlasy k prodloužení",
-    "prodloužení vlasů",
-    "prodlužování vlasů",
-    "clip-in vlasy",
-    "tape-in vlasy",
-    "keratinové vlasy",
-    "micro ring vlasy",
-    "panenské vlasy",
-    "slovanské vlasy",
-    "ukrajinské vlasy",
-  ],
-  contactPoint: [
-    {
-      "@type": "ContactPoint",
-      telephone: "+420608553103",
-      contactType: "customer service",
-      email: "info@hairland.cz",
-      availableLanguage: ["Czech", "Ukrainian", "Russian"],
-      areaServed: "CZ",
-      hoursAvailable: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "09:00",
-        closes: "18:00",
-      },
+function buildOrganizationJsonLd(t: (key: string) => string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Hairland",
+    alternateName: ["Hairland.cz"],
+    legalName: "Alvento Solutions s.r.o.",
+    taxID: "24111953",
+    url: "https://www.hairland.cz",
+    logo: "https://www.hairland.cz/icons/icon-512x512.png",
+    slogan: t("landing.orgSlogan"),
+    areaServed: {
+      "@type": "Country",
+      name: "Czech Republic",
     },
-  ],
-  sameAs: [
-    "https://www.instagram.com/hairland.cz/",
-    "https://www.facebook.com/profile.php?id=61591480246246",
-    "https://wa.me/420608553103",
-  ],
-};
+    knowsAbout: Array.from({ length: 10 }, (_, i) => t(`landing.orgKnows${i + 1}`)),
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: "+420608553103",
+        contactType: "customer service",
+        email: "info@hairland.cz",
+        availableLanguage: ["Czech", "Ukrainian", "Russian"],
+        areaServed: "CZ",
+        hoursAvailable: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          opens: "09:00",
+          closes: "18:00",
+        },
+      },
+    ],
+    sameAs: [
+      "https://www.instagram.com/hairland.cz/",
+      "https://www.facebook.com/profile.php?id=61591480246246",
+      "https://wa.me/420608553103",
+    ],
+  };
+}
 
 export default async function LandingPage() {
   const [t, tCategory, tPt, stylists, allProducts, igPhotos] = await Promise.all([
@@ -217,7 +208,7 @@ export default async function LandingPage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationJsonLd(t)) }}
       />
       <script
         type="application/ld+json"
