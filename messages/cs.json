@@ -4340,5 +4340,15 @@
         "reapplication": "Ano"
       }
     }
+  },
+  "errorPages": {
+    "notFoundTitle": "Stránka nenalezena",
+    "notFoundText": "Omlouváme se, ale tato stránka neexistuje nebo byla přesunuta.",
+    "notFoundCta": "Zpět na úvodní stránku",
+    "notFoundProducts": "Prohlédnout nabídku vlasů",
+    "errorTitle": "Něco se pokazilo",
+    "errorText": "Omlouváme se za technické potíže. Zkuste to prosím znovu.",
+    "errorRetry": "Zkusit znovu",
+    "errorHome": "Zpět na úvodní stránku"
   }
 }
