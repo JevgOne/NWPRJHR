@@ -105,7 +105,7 @@ export default async function ProdlouzeniVlasuPrahaPage() {
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
-    "@type": "HairSalon",
+    "@type": ["LocalBusiness", "HairSalon"],
     "@id": "https://www.hairland.cz/#local-business",
     name: "Hairland — Prodloužení vlasů Praha",
     url: "https://www.hairland.cz",
