@@ -1,13 +1,16 @@
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getCachedAllProducts } from "@/lib/cached-products";
 import { ProductGridCard } from "@/components/public/ProductGridCard";
 
 export default async function NotFound() {
-  const [t, allProducts] = await Promise.all([
+  const [locale, t, allProducts] = await Promise.all([
+    getLocale(),
     getTranslations("public.notFoundPage"),
     getCachedAllProducts(),
   ]);
+
+  const titleMap: Record<string, string> = { cs: "Stránka nenalezena | Hairland", uk: "Сторінку не знайдено | Hairland", ru: "Страница не найдена | Hairland" };
 
   // Pick 4 products with stock, preferring VIRGIN/LUXE categories
   const withStock = allProducts.filter((p) =>
@@ -21,6 +24,7 @@ export default async function NotFound() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <title>{titleMap[locale] ?? titleMap.cs}</title>
       <div className="text-center mb-12">
         <p className="text-7xl font-bold text-nude-300 mb-4">404</p>
         <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-3">
