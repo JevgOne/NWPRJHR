@@ -818,19 +818,19 @@ async function ProductDetailView({
         "@type": "ListItem",
         position: 1,
         name: t("productDetail.home"),
-        item: "https://www.hairland.cz/",
+        item: getOgUrl("/", locale),
       },
       {
         "@type": "ListItem",
         position: 2,
         name: t("productDetail.offer"),
-        item: "https://www.hairland.cz/vlasy-k-prodlouzeni",
+        item: getOgUrl("/vlasy-k-prodlouzeni", locale),
       },
       {
         "@type": "ListItem",
         position: 3,
         name: productName,
-        item: `https://www.hairland.cz/vlasy-k-prodlouzeni/${product.slug ?? product.id}`,
+        item: getOgUrl(`/vlasy-k-prodlouzeni/${product.slug ?? product.id}`, locale),
       },
     ],
   };

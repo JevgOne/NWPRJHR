@@ -213,8 +213,8 @@ export default async function ArticlePage({ params }: Props) {
       },
       datePublished: "2025-06-01",
       dateModified: "2026-06-01",
-      mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.hairland.cz/poradna/${slug}` },
-      url: `https://www.hairland.cz/poradna/${slug}`,
+      mainEntityOfPage: { "@type": "WebPage", "@id": getOgUrl(`/poradna/${slug}`, locale) },
+      url: getOgUrl(`/poradna/${slug}`, locale),
       inLanguage: locale === "uk" ? "uk" : locale === "ru" ? "ru" : "cs",
       articleSection: catLabel,
       isAccessibleForFree: true,
@@ -229,8 +229,8 @@ export default async function ArticlePage({ params }: Props) {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: homeLabel, item: "https://www.hairland.cz" },
-        { "@type": "ListItem", position: 2, name: t("heroTitle"), item: "https://www.hairland.cz/poradna" },
-        { "@type": "ListItem", position: 3, name: t(article.titleKey as "typesTitle"), item: `https://www.hairland.cz/poradna/${slug}` },
+        { "@type": "ListItem", position: 2, name: t("heroTitle"), item: getOgUrl("/poradna", locale) },
+        { "@type": "ListItem", position: 3, name: t(article.titleKey as "typesTitle"), item: getOgUrl(`/poradna/${slug}`, locale) },
       ],
     },
   ];

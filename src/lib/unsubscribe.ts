@@ -18,9 +18,10 @@ export function verifyUnsubscribeToken(
 }
 
 /** Build the full unsubscribe URL for an email. */
-export function getUnsubscribeUrl(email: string): string {
+export function getUnsubscribeUrl(email: string, lang?: string): string {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.hairland.cz";
   const token = generateUnsubscribeToken(email);
-  return `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(email)}&token=${token}`;
+  const langParam = lang && lang !== "cs" ? `&lang=${lang}` : "";
+  return `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(email)}&token=${token}${langParam}`;
 }

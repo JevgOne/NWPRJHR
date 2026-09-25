@@ -157,7 +157,7 @@ export default async function BlogPostPage({ params }: Props) {
   const backLabel = tBlog("backLabel");
   const shareLabel = tBlog("shareLabel");
   const catLabels = CATEGORY_LABELS[locale] ?? CATEGORY_LABELS.cs;
-  const articleUrl = `https://www.hairland.cz/blog/${slug}`;
+  const articleUrl = getOgUrl(`/blog/${slug}`, locale);
 
   // Internal interlinking — match blog content to product type landing pages
   const contentLower = (content + " " + title + " " + excerpt).toLowerCase();
@@ -280,7 +280,7 @@ export default async function BlogPostPage({ params }: Props) {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: breadcrumbHome, item: "https://www.hairland.cz" },
-        { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.hairland.cz/blog" },
+        { "@type": "ListItem", position: 2, name: "Blog", item: getOgUrl("/blog", locale) },
         { "@type": "ListItem", position: 3, name: title, item: articleUrl },
       ],
     },
