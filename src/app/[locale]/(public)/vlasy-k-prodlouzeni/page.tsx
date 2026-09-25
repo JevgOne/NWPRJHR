@@ -20,7 +20,7 @@ export async function generateMetadata({
   const defaultTitle = t("offer.metaTitle");
   const defaultDesc = t("offer.metaDescription");
 
-  if (!sp.category && !sp.origin && !sp.lengthCm && !sp.texture && !sp.colorTone) {
+  if (!sp.category && !sp.origin && !sp.lengthCm && !sp.texture && !sp.colorTone && !sp.search && !sp.color && !sp.sort && !sp.selling) {
     return {
       title: defaultTitle,
       description: defaultDesc,
@@ -57,7 +57,7 @@ export async function generateMetadata({
   if (sp.texture) parts.push(sp.texture);
   if (sp.colorTone) parts.push(sp.colorTone);
 
-  const hasFilters = sp.search || sp.color || sp.category || sp.sort || sp.origin || sp.lengthCm || sp.texture || sp.colorTone;
+  const hasFilters = sp.search || sp.color || sp.category || sp.sort || sp.origin || sp.lengthCm || sp.texture || sp.colorTone || sp.selling;
   const title = `${parts.join(" | ")} — ${t("products.title")}`;
   const description = `${parts.join(", ")} — ${defaultDesc}`;
   return {
