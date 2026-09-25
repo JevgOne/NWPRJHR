@@ -214,7 +214,7 @@ export function PublicNavbar() {
     { href: "/poradna", label: t("navbar.advice") },
     { href: "/pruvodce-gramazi", label: t("navbar.weightGuide") },
     { href: "/pece-o-vlasy", label: t("navbar.hairCare") },
-    { href: "/blog", label: "Blog" },
+    { href: "/blog", label: t("navbar.blog") },
     { href: "/recenze", label: t("navbar.reviews") },
   ];
 
