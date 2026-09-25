@@ -79,6 +79,16 @@ export const routing = defineRouting({
       ru: "/чёлки",
       uk: "/чубчики",
     },
+    "/pricesky": {
+      cs: "/pricesky",
+      ru: "/шиньоны",
+      uk: "/шиньйони",
+    },
+    "/vlasove-pasky": {
+      cs: "/vlasove-pasky",
+      ru: "/волосяные-ленты",
+      uk: "/волосяні-стрічки",
+    },
     "/panenske-vlasy": {
       cs: "/panenske-vlasy",
       ru: "/девственные-волосы",
