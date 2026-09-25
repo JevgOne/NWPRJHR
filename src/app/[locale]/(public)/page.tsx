@@ -151,15 +151,15 @@ function buildOrganizationJsonLd(t: (key: string) => string) {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Hairland",
-    alternateName: ["Hairland.cz"],
+    alternateName: ["Hairland", "Hairland.cz"],
     legalName: "Alvento Solutions s.r.o.",
-    taxID: "24111953",
+    taxID: "CZ24111953",
     url: "https://www.hairland.cz",
     logo: "https://www.hairland.cz/icons/icon-512x512.png",
     slogan: t("landing.orgSlogan"),
     areaServed: {
       "@type": "Country",
-      name: "Czech Republic",
+      name: "CZ",
     },
     knowsAbout: Array.from({ length: 10 }, (_, i) => t(`landing.orgKnows${i + 1}`)),
     contactPoint: [
