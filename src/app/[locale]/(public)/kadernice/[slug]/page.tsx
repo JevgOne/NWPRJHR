@@ -13,12 +13,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const [stylist, locale, t] = await Promise.all([
     prisma.stylist.findUnique({
       where: { slug },
-      select: { name: true, bio: true, photo: true },
+      select: { name: true, bio: true, photo: true, active: true },
     }),
     getLocale(),
     getTranslations("public"),
   ]);
-  if (!stylist) return {};
+  if (!stylist || !stylist.active) notFound();
   return {
     title: `${stylist.name} — ${t("landing.stylistMetaLabel")}`,
     description:

@@ -20,7 +20,7 @@ const categoryLabels: Record<string, Record<string, string>> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const article = articles.find((a) => a.slug === slug);
-  if (!article) return {};
+  if (!article) notFound();
   const [t, locale] = await Promise.all([getTranslations("advice"), getLocale()]);
   const title = t(article.titleKey as "typesTitle");
   const desc = t(article.descKey as "typesDesc");

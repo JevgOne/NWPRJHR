@@ -69,7 +69,7 @@ const getCachedBlogPost = unstable_cache(
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const [post, locale] = await Promise.all([getCachedBlogPost(slug), getLocale()]);
-  if (!post) return {};
+  if (!post || !post.published) notFound();
   const seoTitle = post.metaTitle || localized(post, "title", locale);
   const seoDesc = generateSeoDescription(post, locale);
   const seoImage = post.ogImage || post.coverImage;

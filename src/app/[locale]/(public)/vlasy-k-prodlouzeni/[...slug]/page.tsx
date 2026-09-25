@@ -284,7 +284,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (slug.length === 1) {
     const [product, t, locale] = await Promise.all([getProduct(slug[0]), getTranslations("public"), getLocale()]);
     if (!product) {
-      return { title: t("productDetail.notFound") };
+      notFound();
     }
 
     return generateProductMetadataFromProduct(product, t, locale);
@@ -298,7 +298,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  return { title: "Not Found" };
+  notFound();
 }
 
 /** Get min price per gram (halere) from variants */
