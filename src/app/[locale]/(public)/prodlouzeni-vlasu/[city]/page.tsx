@@ -38,10 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   );
   const minPrice = allGramPrices.length > 0 ? Math.round(Math.min(...allGramPrices) / 100) : 0;
 
+  const t = await getTranslations("cityLanding");
   const title = minPrice > 0
-    ? `Vlasy k prodloužení ${cityName} — ceník od ${minPrice} Kč/g | Hairland`
-    : `Vlasy k prodloužení ${cityName} | Hairland`;
-  const desc = `Vlasy k prodloužení ${cityName} — clip-in, tape-in, keratin${minPrice > 0 ? ` od ${minPrice} Kč/g` : ""}. 100% pravé přírodní vlasy. Rychlé doručení. Osobní konzultace zdarma.`;
+    ? t("metaTitlePrice", { city: cityName, price: minPrice })
+    : t("metaTitle", { city: cityName });
+  const desc = minPrice > 0
+    ? t("metaDescPrice", { city: cityName, price: minPrice })
+    : t("metaDesc", { city: cityName });
 
   return {
     title,
@@ -268,7 +271,7 @@ export default async function CityLandingPage({ params }: Props) {
       {/* 1. Hero + H1 */}
       <div className="mb-12">
         <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-3">
-          Vlasy k prodloužení — {cityName}
+          {t("pageH1", { city: cityName })}
         </h1>
         <p className="text-muted max-w-2xl leading-relaxed">
           {city.description[locale] ?? city.description.cs}
