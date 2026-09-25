@@ -104,7 +104,8 @@ export function proxy(request: NextRequest) {
     "/privacy": "/ochrana-udaju",
     "/checkout": "/pokladna",
     "/wishlist": "/oblibene",
-    "/inquiry-cart": "/poptavka",
+    "/inquiry-cart": "/kosik",
+    "/poptavka": "/kosik",
   };
   const renamedTarget = RENAMED_PATHS[stripped];
   if (renamedTarget) {

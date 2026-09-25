@@ -222,10 +222,10 @@ export const routing = defineRouting({
       ru: "/избранное",
       uk: "/обране",
     },
-    "/poptavka": {
-      cs: "/poptavka",
-      ru: "/запрос",
-      uk: "/запит",
+    "/kosik": {
+      cs: "/kosik",
+      ru: "/корзина",
+      uk: "/кошик",
     },
     "/platba/vysledek": {
       cs: "/platba/vysledek",

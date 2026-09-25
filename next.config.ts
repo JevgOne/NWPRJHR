@@ -92,7 +92,12 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/inquiry-cart",
-        destination: "/poptavka",
+        destination: "/kosik",
+        permanent: true,
+      },
+      {
+        source: "/poptavka",
+        destination: "/kosik",
         permanent: true,
       },
       // 301: category route renames
