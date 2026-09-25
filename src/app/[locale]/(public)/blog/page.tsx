@@ -115,11 +115,11 @@ export default async function BlogPage() {
       />
       <Breadcrumbs items={[
         { label: tNav("home"), href: "/" },
-        { label: "Blog" },
+        { label: tBlog("title") },
       ]} />
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-ink mb-2">Blog</h1>
+        <h1 className="text-4xl font-bold text-ink mb-2">{tBlog("title")}</h1>
         <p className="text-muted text-lg">{subtitle}</p>
       </div>
 
