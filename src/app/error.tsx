@@ -25,15 +25,15 @@ type Locale = keyof typeof translations;
 
 export default function Error({
   error,
-  reset,
+  unstable_retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  unstable_retry: () => void;
 }) {
   const pathname = usePathname();
-  const locale: Locale = pathname?.startsWith("/uk")
+  const locale: Locale = pathname?.startsWith("/ua")
     ? "uk"
-    : pathname?.startsWith("/ru")
+    : pathname?.startsWith("/rus")
       ? "ru"
       : "cs";
   const t = translations[locale];
@@ -53,7 +53,7 @@ export default function Error({
           {t.description}
         </p>
         <button
-          onClick={() => reset()}
+          onClick={() => unstable_retry()}
           className="px-5 py-2.5 bg-rose text-white rounded-lg font-medium hover:bg-rose-deep transition-colors"
         >
           {t.retry}

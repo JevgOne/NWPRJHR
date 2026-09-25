@@ -56,13 +56,13 @@ export default function NotFound() {
             {t.home}
           </Link>
           <Link
-            href={`${locale === "cs" ? "" : locale === "uk" ? "/ua" : "/rus"}/vlasy-k-prodlouzeni`}
+            href={locale === "cs" ? "/vlasy-k-prodlouzeni" : locale === "uk" ? "/ua/волосся-для-нарощування" : "/rus/волосы-для-наращивания"}
             className="px-5 py-2.5 bg-nude-100 text-espresso rounded-lg font-medium hover:bg-nude-200 transition-colors"
           >
             {t.offer}
           </Link>
           <Link
-            href={`${locale === "cs" ? "" : locale === "uk" ? "/ua" : "/rus"}/contact`}
+            href={locale === "cs" ? "/kontakt" : locale === "uk" ? "/ua/контакт" : "/rus/контакт"}
             className="px-5 py-2.5 text-muted hover:text-ink transition-colors font-medium"
           >
             {t.contact}
