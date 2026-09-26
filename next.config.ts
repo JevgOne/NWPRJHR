@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
     "/**": ["./public/fonts/**", "./public/logo-invoice.png"],
   },
   images: {
-    qualities: [60, 75, 85],
+    qualities: [60, 65, 75, 85],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400,
     remotePatterns: [
