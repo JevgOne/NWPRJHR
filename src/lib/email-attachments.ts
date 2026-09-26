@@ -3,15 +3,22 @@ import { join } from "path";
 
 export async function loadEmailAttachments(isB2B: boolean) {
   const docsDir = join(process.cwd(), "public", "docs");
-  const attachments = [
-    { filename: "reklamacni-rad.pdf", content: await readFile(join(docsDir, "reklamacni-rad.pdf")) },
-    { filename: "navod-na-peci.pdf", content: await readFile(join(docsDir, "navod-na-peci.pdf")) },
+  const attachments: { filename: string; content: Buffer }[] = [];
+
+  const files = [
+    "reklamacni-rad.pdf",
+    "navod-na-peci.pdf",
+    ...(!isB2B ? ["formular-odstoupeni.pdf"] : []),
   ];
-  if (!isB2B) {
-    attachments.push({
-      filename: "formular-odstoupeni.pdf",
-      content: await readFile(join(docsDir, "formular-odstoupeni.pdf")),
-    });
+
+  for (const filename of files) {
+    try {
+      const content = await readFile(join(docsDir, filename));
+      attachments.push({ filename, content });
+    } catch {
+      console.warn(`[email-attachments] Missing PDF: ${filename} — skipping`);
+    }
   }
+
   return attachments;
 }
