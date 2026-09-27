@@ -12,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: t("checkoutTitle"),
     description: t("checkoutDescription"),
     alternates: getAlternates("/pokladna", locale),
+    robots: { index: false, follow: false },
   };
 }
 

@@ -1,6 +1,6 @@
 # TASK QUEUE — Hairland
 
-**Aktualizováno:** 2026-09-19
+**Aktualizováno:** 2026-09-25
 **Firma:** Altro servis group s.r.o., IČO 23673389
 **Účet:** 6424423004/5500, IBAN CZ5555000000006424423004 — NEMĚNIT!
 
@@ -43,37 +43,10 @@ Zadání: soubor `/Users/zen/Desktop/files-10/0-ZADANI-pro-Claude-Code.md` (KOMP
 
 ---
 
-### TASK-107: Naskladnění BY_PIECE visí na "Načítání..."
-Stav: čeká
-Uživatel: "ZASE SE TO NENASKLADNUJE!!!" + screenshot stuck na "Načítání..."
-- LUXE exkluzivní culík se neuložil do DB (request timeoutoval)
-- Deliveries POST: `src/app/api/deliveries/route.ts`
-- BY_PIECE logika řádky 100-103
-- Replica vrácena (`TURSO_EMBEDDED_REPLICA=true` na Vercelu)
-- Prošetřit proč POST /api/deliveries timeoutuje (Vercel function limit? pomalá transakce?)
-
----
-
-### TASK-096: Marže 221% místo 100%
-Stav: čeká na debug
-Uživatel: "upravil jsem cenu nákupní na 3300 u S-RV-10-55 a marže je stale 221% má bejt 100%"
-- Variant PUT: `src/app/api/variants/[id]/route.ts`
-- Pricing: `src/lib/pricing.ts`
-- Price settings: `src/app/api/price-settings/route.ts`
-
----
-
 ## P1 — DŮLEŽITÉ (opravit co nejdřív)
 
-### TASK-102: Kalendář — mobilní optimalizace + WOW design
-Stav: čeká
-Uživatel: "kalendář jsi nedořešil furt je to obyčejny, neni optimalizace pro telefon"
-- Responzivní design, swipe gesta, mobilní view, WOW vizuální styl
-
----
-
 ### TASK-103: Smazání testovacích zákazníků z DB
-Stav: čeká
+Stav: čeká — skript existuje, čeká na spuštění na produkci
 - "Test ApiTest" musí pryč z produkční DB
 - Ověřit "Jitka Zkouška" (příjmení = test?)
 
@@ -82,15 +55,7 @@ Stav: čeká
 ## P2 — STŘEDNÍ PRIORITA
 
 ### TASK-071: Performance — pomalé načítání admin panelu
-Stav: čeká
-
----
-
-### TASK-112: Zásilkovna widget — nefunguje výběr pobočky
-Stav: čeká
-- Widget se neotevírá při výběru Zásilkovny v checkoutu
-- `src/app/[locale]/(public)/checkout/CheckoutClient.tsx`
-- Packeta widget: `public/` script v layout, `PacketaWidget.tsx`
+Stav: základ hotový, zbylé nice-to-have
 
 ---
 
@@ -117,6 +82,10 @@ Stav: analýza hotová, uživatel chce udělat jako POSLEDNÍ (~prosinec 2026)
 ---
 
 ## HOTOVÉ
+- TASK-107: Naskladnění BY_PIECE — fixnuto (maxDuration=30) — 2026-09-25
+- TASK-096: Marže 221% — fixnuto (calculateRetailPrice) — 2026-09-25
+- TASK-102: Kalendář mobilní — hotovo (swipe, denní view, WOW design) — 2026-09-25
+- TASK-112: Zásilkovna widget — hotovo (PacketaWidget.tsx) — 2026-09-25
 - TASK-150: SEO indexation fix — localeDetection off, sitemap ISR, barva landing pages IN query, i18n color links — 2026-09-19
 - TASK-152: SKU sekvenční číslo — formát V-RV-01-45-00001, hlavní vyhledávač — 2026-09-19
 - TASK-097: Oddělené číslování faktur — prefix H/F (commit 04b5490) — 2026-08-15
