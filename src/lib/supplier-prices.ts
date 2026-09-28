@@ -80,8 +80,8 @@ export const SUPPLIER_PRICES: Record<string, SupplierPriceTable> = {
       },
       {
         key: "blond",
-        label: "Blond",
-        category: "LUXE",
+        label: "Blond (barvené)",
+        category: "STANDARD",
         prices: [
           { lengthCm: 45, purchasePer100g: 1448, retailPer100g: 4634, b2bPer100g: 3186 },
           { lengthCm: 50, purchasePer100g: 1683, retailPer100g: 5386, b2bPer100g: 3703 },
