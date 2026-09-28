@@ -407,7 +407,7 @@ export default async function LandingPage() {
           </div>
 
           {/* Individual shades — photo swatches */}
-          <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5 sm:gap-2 mb-8 overflow-hidden">
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-3 sm:gap-4 mb-8 overflow-hidden">
             {[
               { code: "1", nameKey: "colors.c1" as const },
               { code: "1B", nameKey: "colors.c1B" as const },
@@ -422,9 +422,9 @@ export default async function LandingPage() {
               { code: "ombre", nameKey: "colors.combre" as const },
               { code: "grey", nameKey: "colors.cgrey" as const },
             ].map(({ code, nameKey }) => (
-              <Link key={code} href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['barva', COLOR_CODE_TO_TONE_SLUG[code]] } }} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
-                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
-                <span className="text-[8px] sm:text-[11px] text-muted font-medium text-center leading-tight truncate w-full">{t(nameKey)}</span>
+              <Link key={code} href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['barva', COLOR_CODE_TO_TONE_SLUG[code]] } }} className="flex flex-col items-center gap-1.5 sm:gap-2 group min-w-0">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />
+                <span className="text-[10px] sm:text-xs text-muted font-medium text-center leading-tight truncate w-full">{t(nameKey)}</span>
               </Link>
             ))}
           </div>
