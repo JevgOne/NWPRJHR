@@ -148,9 +148,14 @@ export async function POST(request: NextRequest) {
 
     if (!variant) {
       const markupPercent = priceSetting?.markupPercent ?? 110;
-      const retailPrice = calculateRetailPrice(costPricePerGramCZK, markupPercent);
+
+      // Use explicit overrides from supplier price table, or calculate from markup
+      const wholesalePrice = body.wholesalePriceOverride ?? costPricePerGramCZK;
+      const retailPrice = body.retailPriceOverride ?? calculateRetailPrice(costPricePerGramCZK, markupPercent);
       const retailPricePerPiece = isByPiece && data.pricePerPiece
-        ? calculateRetailPrice(data.pricePerPiece, markupPercent)
+        ? (body.retailPriceOverride
+            ? Math.round((body.retailPriceOverride * (data.pieceWeightGrams ?? 1)))
+            : calculateRetailPrice(data.pricePerPiece, markupPercent))
         : undefined;
 
       const variantSku = await uniqueSku(
@@ -167,7 +172,7 @@ export async function POST(request: NextRequest) {
           pricePerPiece: isByPiece ? data.pricePerPiece : undefined,
           retailPricePerPiece: isByPiece ? (data.retailPricePerPiece ?? retailPricePerPiece) : undefined,
           costPricePerGram: costPricePerGramCZK,
-          wholesalePricePerGram: costPricePerGramCZK,
+          wholesalePricePerGram: wholesalePrice,
           retailPricePerGram: retailPrice,
           active: true,
         },

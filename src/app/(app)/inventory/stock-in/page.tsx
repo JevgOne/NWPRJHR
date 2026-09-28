@@ -27,6 +27,7 @@ export default async function StockInPage() {
   const supplierOptions = suppliers.map((s) => ({
     id: s.id,
     name: s.name,
+    country: s.country,
   }));
 
   return (

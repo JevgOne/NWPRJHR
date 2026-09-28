@@ -3,9 +3,10 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { getHairColor, COLOR_CODES } from "@/lib/hair-colors";
+import { getHairColor, COLOR_GROUPS } from "@/lib/hair-colors";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
-import { ORIGIN_OPTIONS } from "@/lib/origin-flags";
+import { ORIGIN_OPTIONS, getOriginFlag } from "@/lib/origin-flags";
+import { getSupplierPriceTable, lookupSupplierPrice } from "@/lib/supplier-prices";
 import { generateSku } from "@/lib/sku";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -17,6 +18,7 @@ const qrcodePromise = import("qrcode");
 interface SupplierOption {
   id: string;
   name: string;
+  country?: string | null;
 }
 
 interface BatchOption {
@@ -103,6 +105,32 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
   );
   const [note, setNote] = useState("");
 
+  // Supplier-driven fixed pricing
+  const [colorCategory, setColorCategory] = useState("");
+
+  const selectedSupplier = useMemo(
+    () => suppliers.find((s) => s.id === supplierId),
+    [suppliers, supplierId],
+  );
+  const supplierPriceTable = useMemo(
+    () => (selectedSupplier ? getSupplierPriceTable(selectedSupplier.name) : undefined),
+    [selectedSupplier],
+  );
+  const hasFixedPricing = !!supplierPriceTable;
+
+  // Resolved price entry from table (when supplier + colorCategory + length known)
+  const fixedPriceEntry = useMemo(() => {
+    if (!selectedSupplier || !colorCategory || !lengthCm) return undefined;
+    return lookupSupplierPrice(selectedSupplier.name, colorCategory, lengthCm);
+  }, [selectedSupplier, colorCategory, lengthCm]);
+
+  // Available lengths from price table (filtered by color category)
+  const fixedLengths = useMemo(() => {
+    if (!supplierPriceTable || !colorCategory) return undefined;
+    const cat = supplierPriceTable.colorCategories.find((c) => c.key === colorCategory);
+    return cat?.prices.map((p) => p.lengthCm);
+  }, [supplierPriceTable, colorCategory]);
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
@@ -165,6 +193,24 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     }
   }, [currency, fetchRate]);
 
+  // Auto-fill from supplier price table: set CZK, origin, category
+  useEffect(() => {
+    if (!supplierPriceTable || !colorCategory) return;
+    setCurrency("CZK");
+    setExchangeRateInput("");
+    setRateSource("");
+    setOrigin(supplierPriceTable.origin);
+    const colorCat = supplierPriceTable.colorCategories.find((c) => c.key === colorCategory);
+    if (colorCat) setCategory(colorCat.category);
+  }, [supplierPriceTable, colorCategory]);
+
+  // Auto-fill purchase price when price entry resolves
+  useEffect(() => {
+    if (fixedPriceEntry) {
+      setPurchasePricePer100g(String(fixedPriceEntry.purchasePer100g));
+    }
+  }, [fixedPriceEntry]);
+
   // Price preview calculation — both modes use price per 100g
   const preview = useMemo(() => {
     const rate = currency === "CZK" ? 1 : parseFloat(exchangeRateInput);
@@ -212,6 +258,29 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     }
   };
 
+  function handleSupplierChange(newId: string) {
+    setSupplierId(newId);
+    setColorCategory("");
+    setCategory("");
+    setOrigin("");
+    setTexture("");
+    setColor("");
+    setLengthCm(null);
+    setCustomLength("");
+    setPurchasePricePer100g("");
+  }
+
+  function handleColorCategoryChange(key: string) {
+    setColorCategory(key);
+    // origin + category are set by the useEffect above
+    setTexture("");
+    setColor("");
+    setLengthCm(null);
+    setCustomLength("");
+    setPurchasePricePer100g("");
+    scrollTo("section-texture");
+  }
+
   // Reset from a given level forward
   function resetFrom(level: number) {
     if (level <= 1) { setCategory(""); setOrigin(""); setTexture(""); setColor(""); setLengthCm(null); setCustomLength(""); }
@@ -223,23 +292,29 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
 
   // Badge row showing selected attributes
   function BadgeRow() {
-    const badges: { label: string; level: number }[] = [];
-    if (category)
-      badges.push({ label: tCat(category.toLowerCase() as "virgin"), level: 1 });
-    if (origin) badges.push({ label: origin, level: 2 });
-    if (texture) badges.push({ label: texture, level: 3 });
-    if (color) badges.push({ label: colorName(color), level: 4 });
-    if (lengthCm) badges.push({ label: `${lengthCm} cm`, level: 5 });
+    const badges: { label: string; onClick: () => void }[] = [];
+    if (selectedSupplier)
+      badges.push({ label: selectedSupplier.name, onClick: () => handleSupplierChange("") });
+    if (hasFixedPricing && colorCategory) {
+      const catLabel = supplierPriceTable!.colorCategories.find((c) => c.key === colorCategory)?.label;
+      if (catLabel) badges.push({ label: catLabel, onClick: () => handleColorCategoryChange("") });
+    }
+    if (category && !hasFixedPricing)
+      badges.push({ label: tCat(category.toLowerCase() as "virgin"), onClick: () => resetFrom(1) });
+    if (origin) badges.push({ label: `${getOriginFlag(origin)} ${origin}`, onClick: () => hasFixedPricing ? undefined : resetFrom(2) });
+    if (texture) badges.push({ label: texture, onClick: () => resetFrom(3) });
+    if (color) badges.push({ label: colorName(color), onClick: () => resetFrom(4) });
+    if (lengthCm) badges.push({ label: `${lengthCm} cm`, onClick: () => resetFrom(5) });
 
     if (badges.length === 0) return null;
 
     return (
       <div className="flex flex-wrap gap-1.5 mb-4">
-        {badges.map((b) => (
+        {badges.map((b, i) => (
           <button
-            key={b.level}
+            key={i}
             type="button"
-            onClick={() => resetFrom(b.level)}
+            onClick={b.onClick}
             className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-nude-100 text-espresso hover:bg-nude-200 transition-colors"
           >
             {b.label}
@@ -294,6 +369,10 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       : undefined;
     const retailPerPieceCzk = costPerPieceCzk ? Math.round(costPerPieceCzk * 2.1) : undefined;
 
+    // Fixed pricing overrides (per gram in halere = same number as per 100g in CZK)
+    const wholesaleOverride = fixedPriceEntry ? fixedPriceEntry.b2bPer100g : undefined;
+    const retailOverride = fixedPriceEntry ? fixedPriceEntry.retailPer100g : undefined;
+
     const body = {
       category,
       origin: isAccessory ? undefined : origin,
@@ -307,6 +386,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       totalGrams: computedGrams,
       totalPieces: parsedPieces,
       sellingMode,
+      ...(wholesaleOverride != null ? { wholesalePriceOverride: wholesaleOverride } : {}),
+      ...(retailOverride != null ? { retailPriceOverride: retailOverride } : {}),
       ...(isByPiece ? {
         pieceWeightGrams: parsedPieceWeight,
         purchasePricePerPiece: purchasePricePerPieceRaw,
@@ -706,16 +787,16 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 setUploadError("");
                 setSelectedFiles([]);
                 // Keep batchId — user likely stocking into same batch
+                setColorCategory("");
                 setCategory("");
                 setOrigin("");
                 setTexture("");
                 setColor("");
                 setLengthCm(null);
                 setCustomLength("");
-                // Keep sellingMode and exclusive — user likely stocking same type
+                // Keep sellingMode, exclusive, supplierId — user likely stocking from same supplier
                 setTotalPieces("");
                 setPieceWeightGrams("");
-                setSupplierId("");
                 setPurchasePricePer100g("");
                 setTotalGrams("");
                 setNote("");
@@ -777,40 +858,94 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           </div>
         </div>
 
-        {/* Category — always visible */}
-        <div id="section-category">
+        {/* Supplier — always first */}
+        <div id="section-supplier">
           <h2 className="text-sm font-medium text-espresso mb-3">
-            {t("wizCategory")}
+            {t("supplier")}
           </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {(["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"] as const).map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => {
-                  setCategory(cat);
-                  resetFrom(2);
-                  if (cat === "ACCESSORY") {
-                    setSellingMode("BY_PIECE");
-                    scrollTo("section-details");
-                  } else {
-                    scrollTo("section-origin");
-                  }
-                }}
-                className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
-                  category === cat
-                    ? "border-rose bg-rose/5 text-ink"
-                    : "border-line bg-white text-muted hover:border-espresso/30"
-                }`}
-              >
-                {tCat(cat.toLowerCase() as "virgin")}
-              </button>
+          <select
+            className="block w-full max-w-lg rounded-lg border border-line px-3 py-2 text-sm"
+            value={supplierId}
+            onChange={(e) => handleSupplierChange(e.target.value)}
+          >
+            <option value="">{t("selectSupplier")}</option>
+            {suppliers.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
-        {/* Origin — after category (not for ACCESSORY) */}
-        {category && category !== "ACCESSORY" && (
+        {/* Fixed-pricing flow: color category → auto-sets category + origin */}
+        {hasFixedPricing && supplierId && (
+          <div id="section-color-category">
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              Typ vlasů
+            </h2>
+            <div className="grid grid-cols-2 gap-3 max-w-lg">
+              {supplierPriceTable!.colorCategories.map((cc) => (
+                <button
+                  key={cc.key}
+                  type="button"
+                  onClick={() => handleColorCategoryChange(cc.key)}
+                  className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
+                    colorCategory === cc.key
+                      ? "border-rose bg-rose/5 text-ink"
+                      : "border-line bg-white text-muted hover:border-espresso/30"
+                  }`}
+                >
+                  {cc.label}
+                  <span className="block text-xs font-normal text-muted mt-1">
+                    {tCat(cc.category.toLowerCase() as "virgin")}
+                  </span>
+                </button>
+              ))}
+            </div>
+            {colorCategory && (
+              <p className="mt-2 text-xs text-muted">
+                {getOriginFlag(supplierPriceTable!.origin)} {supplierPriceTable!.origin} &middot; {tCat(category.toLowerCase() as "virgin")}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Standard flow: Category (only when no fixed pricing) */}
+        {!hasFixedPricing && supplierId && (
+          <div id="section-category">
+            <h2 className="text-sm font-medium text-espresso mb-3">
+              {t("wizCategory")}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {(["VIRGIN", "LUXE", "STANDARD", "SALE", "ACCESSORY"] as const).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => {
+                    setCategory(cat);
+                    resetFrom(2);
+                    if (cat === "ACCESSORY") {
+                      setSellingMode("BY_PIECE");
+                      scrollTo("section-details");
+                    } else {
+                      scrollTo("section-origin");
+                    }
+                  }}
+                  className={`p-4 rounded-xl border-2 text-sm font-semibold transition-colors ${
+                    category === cat
+                      ? "border-rose bg-rose/5 text-ink"
+                      : "border-line bg-white text-muted hover:border-espresso/30"
+                  }`}
+                >
+                  {tCat(cat.toLowerCase() as "virgin")}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Origin — standard flow only (not for ACCESSORY or fixed-pricing) */}
+        {!hasFixedPricing && category && category !== "ACCESSORY" && (
           <div id="section-origin">
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("wizOrigin")}
@@ -867,30 +1002,45 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
             <h2 className="text-sm font-medium text-espresso mb-3">
               {t("color")}
             </h2>
-            <div className="grid grid-cols-5 gap-3">
-              {COLOR_CODES.map((code) => {
-                const hc = getHairColor(code);
-                return (
-                  <button
-                    key={code}
-                    type="button"
-                    onClick={() => { setColor(code); resetFrom(5); scrollTo("section-length"); }}
-                    className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-colors ${
-                      color === code
-                        ? "border-rose bg-rose/5"
-                        : "border-line bg-white hover:border-espresso/30"
-                    }`}
-                  >
-                    <span
-                      className="w-10 h-10 rounded-full border border-line flex-shrink-0"
-                      style={{ background: hc.hex }}
-                    />
-                    <span className="text-xs font-medium text-ink">
-                      {colorName(code)}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="space-y-4">
+              {COLOR_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <p className="text-[10px] uppercase tracking-wider text-muted mb-1.5">{group.label}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {group.codes.map((code) => {
+                      const hc = getHairColor(code);
+                      const isOmbreOrGrey = code === "ombre" || code === "grey";
+                      return (
+                        <button
+                          key={code}
+                          type="button"
+                          onClick={() => { setColor(code); resetFrom(5); scrollTo("section-length"); }}
+                          className={`flex flex-col items-center gap-1 rounded-xl border-2 transition-colors overflow-hidden ${
+                            color === code
+                              ? "border-rose ring-2 ring-rose/30"
+                              : "border-line hover:border-espresso/30"
+                          }`}
+                          style={{ width: 56 }}
+                        >
+                          <span
+                            className="w-full h-14 block"
+                            style={{
+                              background: isOmbreOrGrey
+                                ? (code === "ombre"
+                                  ? "linear-gradient(180deg, #3B2314 0%, #C5A870 100%)"
+                                  : hc.hex)
+                                : hc.hex,
+                            }}
+                          />
+                          <span className="text-[10px] font-bold text-ink pb-1">
+                            {code === "ombre" ? "Ombre" : code === "grey" ? "Grey" : code}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -902,7 +1052,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               {t("length")}
             </h2>
             <div className="flex flex-wrap gap-2 mb-4">
-              {LENGTH_PRESETS.map((cm) => (
+              {(fixedLengths ?? LENGTH_PRESETS).map((cm) => (
                 <button
                   key={cm}
                   type="button"
@@ -917,25 +1067,27 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 </button>
               ))}
             </div>
-            <div className="flex items-end gap-2 max-w-xs">
-              <Input
-                label={t("wizCustomLength")}
-                type="number"
-                value={customLength}
-                onChange={(e) => setCustomLength(e.target.value)}
-                min={10}
-                max={150}
-                placeholder="cm"
-              />
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={!customLength || parseInt(customLength) < 10}
-                onClick={() => { setLengthCm(parseInt(customLength)); setCustomLength(""); scrollTo("section-selling"); }}
-              >
-                OK
-              </Button>
-            </div>
+            {!hasFixedPricing && (
+              <div className="flex items-end gap-2 max-w-xs">
+                <Input
+                  label={t("wizCustomLength")}
+                  type="number"
+                  value={customLength}
+                  onChange={(e) => setCustomLength(e.target.value)}
+                  min={10}
+                  max={150}
+                  placeholder="cm"
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={!customLength || parseInt(customLength) < 10}
+                  onClick={() => { setLengthCm(parseInt(customLength)); setCustomLength(""); scrollTo("section-selling"); }}
+                >
+                  OK
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
@@ -984,42 +1136,55 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               {t("wizDetails")}
             </h2>
 
-            {/* Supplier */}
-            <div>
-              <label className="block text-sm font-medium text-espresso mb-1">
-                {t("supplier")}
-              </label>
-              <select
-                className="block w-full rounded-lg border border-line px-3 py-2 text-sm"
-                value={supplierId}
-                onChange={(e) => setSupplierId(e.target.value)}
-                required
-              >
-                <option value="">{t("selectSupplier")}</option>
-                {suppliers.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Fixed pricing: show auto-filled prices as read-only summary */}
+            {hasFixedPricing && fixedPriceEntry && (
+              <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50/50 space-y-2">
+                <p className="text-xs font-medium text-espresso">Ceník: {selectedSupplier!.name}</p>
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wide text-muted">Nákup</p>
+                    <p className="text-sm font-bold text-espresso">
+                      {fixedPriceEntry.purchasePer100g.toLocaleString("cs-CZ")} Kč
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wide text-muted">Retail</p>
+                    <p className="text-sm font-bold text-espresso">
+                      {fixedPriceEntry.retailPer100g.toLocaleString("cs-CZ")} Kč
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wide text-muted">B2B</p>
+                    <p className="text-sm font-bold text-espresso">
+                      {fixedPriceEntry.b2bPer100g.toLocaleString("cs-CZ")} Kč
+                    </p>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted text-center">za 100 g</p>
+              </div>
+            )}
 
-            {/* Currency selector */}
-            <CurrencySelector />
+            {/* Standard flow: currency + rate + purchase price */}
+            {!hasFixedPricing && (
+              <>
+                {/* Currency selector */}
+                <CurrencySelector />
 
-            {/* Exchange rate (hidden for CZK) */}
-            <ExchangeRateField />
+                {/* Exchange rate (hidden for CZK) */}
+                <ExchangeRateField />
 
-            {/* Purchase price per 100g — shared for both modes */}
-            <Input
-              label={`${t("purchasePricePer100g")} (${currency})`}
-              type="number"
-              value={purchasePricePer100g}
-              onChange={(e) => setPurchasePricePer100g(e.target.value)}
-              required
-              min={1}
-              step="0.01"
-            />
+                {/* Purchase price per 100g — shared for both modes */}
+                <Input
+                  label={`${t("purchasePricePer100g")} (${currency})`}
+                  type="number"
+                  value={purchasePricePer100g}
+                  onChange={(e) => setPurchasePricePer100g(e.target.value)}
+                  required
+                  min={1}
+                  step="0.01"
+                />
+              </>
+            )}
 
             {/* BY_PIECE fields */}
             {sellingMode === "BY_PIECE" && (
@@ -1064,8 +1229,8 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               </div>
             )}
 
-            {/* Price preview */}
-            <PricePreview />
+            {/* Price preview — only for manual pricing */}
+            {!hasFixedPricing && <PricePreview />}
 
             {/* Grams (manual) — only for BY_GRAM + Date */}
             <div className="grid grid-cols-2 gap-4">
