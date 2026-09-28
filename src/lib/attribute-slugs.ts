@@ -13,10 +13,10 @@ export const COLOR_TONE_REVERSE_MAP = Object.fromEntries(
 
 // Mapping slug → array of DB colorTone values (from autoColorTone in product-helpers.ts)
 export const COLOR_TONE_DB_VALUES: Record<string, string[]> = {
-  "blond": ["Platinová blond", "Světlá blond", "Zlatá blond", "Medová blond"],
+  "blond": ["Tmavá blond", "Medová blond", "Popelavá blond", "Zlatá blond", "Karamelová blond", "Platinová blond", "Světlá blond"],
   "hneda": ["Karamelová", "Světle hnědá", "Středně hnědá", "Hnědá"],
-  "tmave-hneda": ["Tmavě hnědá", "Kaštanová"],
-  "zrzava": ["Zrzavá"],
+  "tmave-hneda": ["Tmavě hnědá"],
+  "zrzava": ["Měděná", "Mahagonová", "Červená", "Burgundská"],
   "ombre": ["Ombre"],
   "cerna": ["Černá"],
 };

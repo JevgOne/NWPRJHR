@@ -65,26 +65,35 @@ export function generateSku(
 
 /**
  * Find the next global sequence number across all variants.
- * Looks at all SKUs ending with a 5-digit number and returns max + 1.
+ * Uses raw SQL MAX() on SQLite instead of fetching all rows.
  */
 async function nextGlobalSeq(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   prismaClient: any,
 ): Promise<number> {
-  const variants = await prismaClient.variant.findMany({
-    where: { sku: { not: null } },
-    select: { sku: true },
-  });
-
-  let maxSeq = 0;
-  for (const v of variants) {
-    const match = (v.sku as string | null)?.match(/-(\d{5})$/);
-    if (match) {
-      const seq = parseInt(match[1], 10);
-      if (seq > maxSeq) maxSeq = seq;
+  try {
+    const result: Array<{ maxSeq: bigint | number | null }> =
+      await prismaClient.$queryRawUnsafe(
+        `SELECT MAX(CAST(SUBSTR(sku, LENGTH(sku) - 4) AS INTEGER)) as "maxSeq" FROM variants WHERE sku IS NOT NULL AND LENGTH(sku) >= 6 AND SUBSTR(sku, LENGTH(sku) - 5, 1) = '-'`,
+      );
+    const val = result[0]?.maxSeq;
+    return (val != null ? Number(val) : 0) + 1;
+  } catch {
+    // Fallback: scan in JS (e.g. if raw queries unsupported)
+    const variants = await prismaClient.variant.findMany({
+      where: { sku: { not: null } },
+      select: { sku: true },
+    });
+    let maxSeq = 0;
+    for (const v of variants) {
+      const match = (v.sku as string | null)?.match(/-(\d{5})$/);
+      if (match) {
+        const seq = parseInt(match[1], 10);
+        if (seq > maxSeq) maxSeq = seq;
+      }
     }
+    return maxSeq + 1;
   }
-  return maxSeq + 1;
 }
 
 /**

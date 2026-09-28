@@ -60,10 +60,11 @@ export async function generateMetadata(): Promise<Metadata> {
 const BLOB = "/images/hair";
 
 const COLOR_CODE_TO_TONE_SLUG: Record<string, string> = {
-  "1": "blond", "2": "blond", "3": "blond", "4": "blond",
-  "5": "hneda", "6": "hneda", "7": "hneda",
-  "8": "tmave-hneda", "9": "tmave-hneda",
-  "10": "cerna", "ombre": "ombre",
+  "1": "cerna", "1B": "cerna",
+  "3": "tmave-hneda", "5": "hneda", "6": "hneda",
+  "10": "hneda",
+  "14": "blond", "16": "blond", "24": "blond", "613": "blond",
+  "ombre": "ombre", "grey": "ombre",
 };
 
 const DEFAULT_IG_PHOTOS = [
@@ -406,19 +407,20 @@ export default async function LandingPage() {
           </div>
 
           {/* Individual shades — photo swatches */}
-          <div className="grid grid-cols-6 sm:grid-cols-11 gap-1.5 sm:gap-2 mb-8 overflow-hidden">
+          <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5 sm:gap-2 mb-8 overflow-hidden">
             {[
               { code: "1", nameKey: "colors.c1" as const },
-              { code: "2", nameKey: "colors.c2" as const },
+              { code: "1B", nameKey: "colors.c1B" as const },
               { code: "3", nameKey: "colors.c3" as const },
-              { code: "4", nameKey: "colors.c4" as const },
               { code: "5", nameKey: "colors.c5" as const },
               { code: "6", nameKey: "colors.c6" as const },
-              { code: "7", nameKey: "colors.c7" as const },
-              { code: "8", nameKey: "colors.c8" as const },
-              { code: "9", nameKey: "colors.c9" as const },
               { code: "10", nameKey: "colors.c10" as const },
+              { code: "14", nameKey: "colors.c14" as const },
+              { code: "16", nameKey: "colors.c16" as const },
+              { code: "24", nameKey: "colors.c24" as const },
+              { code: "613", nameKey: "colors.c613" as const },
               { code: "ombre", nameKey: "colors.combre" as const },
+              { code: "grey", nameKey: "colors.cgrey" as const },
             ].map(({ code, nameKey }) => (
               <Link key={code} href={{ pathname: '/vlasy-k-prodlouzeni/[...slug]' as any, params: { slug: ['barva', COLOR_CODE_TO_TONE_SLUG[code]] } }} className="flex flex-col items-center gap-1 sm:gap-1.5 group min-w-0">
                 <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-200 border-2 border-white ring-1 ring-line flex-shrink-0" style={{ backgroundColor: getHairColor(code).hex }} />

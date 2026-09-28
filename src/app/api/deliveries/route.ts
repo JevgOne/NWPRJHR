@@ -78,21 +78,9 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    // 1. Pre-fetch price settings + resolve batch in parallel
-    // Every delivery creates a new product — no merging
+    // 1. Pre-compute everything we can before DB calls
     const isByPiece = data.sellingMode === "BY_PIECE";
     const needBatchLookup = !body.batchId;
-    const [priceSetting, openBatch] = await Promise.all([
-      prisma.priceSettings.findUnique({ where: { category: data.category } }),
-      needBatchLookup
-        ? prisma.stockBatch.findFirst({
-            where: { status: "OPEN" },
-            orderBy: { createdAt: "desc" },
-            select: { id: true },
-          })
-        : Promise.resolve(null),
-    ]);
-    // Always create a new product — no merging
     const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
     const clr = colorLabel(data.color);
     const productName = isAccessory
@@ -105,8 +93,52 @@ export async function POST(request: NextRequest) {
       colorCode: isAccessory ? null : data.color,
       lengthCm: isAccessory ? null : data.lengthCm,
     });
-    const productSlug = await uniqueSlug(slugBase, prisma);
 
+    // For BY_PIECE: derive per-gram purchase price from per-piece purchase price
+    const effectivePurchasePricePerGramRaw = isByPiece && data.purchasePricePerPiece && data.pieceWeightGrams
+      ? Math.round(data.purchasePricePerPiece / data.pieceWeightGrams)
+      : data.purchasePricePerGramRaw;
+
+    // Convert raw purchase price to CZK (raw is in original currency halere/cents)
+    const costPricePerGramCZK = data.currency === "CZK"
+      ? effectivePurchasePricePerGramRaw
+      : Math.round((effectivePurchasePricePerGramRaw * data.exchangeRate) / 10000);
+
+    // Pre-generate descriptions (pure computation, no DB needed)
+    let descCs: string | undefined, descUk: string | undefined, descRu: string | undefined;
+    if (!isAccessory) {
+      const bioData = {
+        name: productName,
+        category: data.category,
+        processingType: "OTHER" as const,
+        origin: data.origin,
+        texture: data.texture,
+        colorTone: autoColorTone(data.color),
+        lengths: [data.lengthCm],
+      };
+      descCs = generateProductBio(bioData, "cs");
+      descUk = generateProductBio(bioData, "uk");
+      descRu = generateProductBio(bioData, "ru");
+    }
+
+    // 2. Parallel DB pre-fetch: settings, batch, slug, SKU sequence — all independent
+    const [priceSetting, openBatch, productSlug, variantSku] = await Promise.all([
+      prisma.priceSettings.findUnique({ where: { category: data.category } }),
+      needBatchLookup
+        ? prisma.stockBatch.findFirst({
+            where: { status: "OPEN" },
+            orderBy: { createdAt: "desc" },
+            select: { id: true },
+          })
+        : Promise.resolve(null),
+      uniqueSlug(slugBase, prisma),
+      uniqueSku(
+        data.category, isAccessory ? null : data.texture, data.color, data.lengthCm, prisma,
+        { orderOnly: false, origin: isAccessory ? null : data.origin },
+      ),
+    ]);
+
+    // 3. Create product WITH descriptions (single DB call, no separate update)
     const product = isAccessory
       ? await prisma.product.create({
           data: {
@@ -131,74 +163,37 @@ export async function POST(request: NextRequest) {
             colorTone: autoColorTone(data.color),
             slug: productSlug,
             photos: "[]",
+            description: descCs,
+            descriptionUk: descUk,
+            descriptionRu: descRu,
           },
         });
 
-    // For BY_PIECE: derive per-gram purchase price from per-piece purchase price
-    const effectivePurchasePricePerGramRaw = isByPiece && data.purchasePricePerPiece && data.pieceWeightGrams
-      ? Math.round(data.purchasePricePerPiece / data.pieceWeightGrams)
-      : data.purchasePricePerGramRaw;
+    // 4. Create variant
+    const markupPercent = priceSetting?.markupPercent ?? 110;
+    const wholesalePrice = body.wholesalePriceOverride ?? costPricePerGramCZK;
+    const retailPrice = body.retailPriceOverride ?? calculateRetailPrice(costPricePerGramCZK, markupPercent);
+    const retailPricePerPiece = isByPiece && data.pricePerPiece
+      ? (body.retailPriceOverride
+          ? Math.round((body.retailPriceOverride * (data.pieceWeightGrams ?? 1)))
+          : calculateRetailPrice(data.pricePerPiece, markupPercent))
+      : undefined;
 
-    // Convert raw purchase price to CZK (raw is in original currency halere/cents)
-    const costPricePerGramCZK = data.currency === "CZK"
-      ? effectivePurchasePricePerGramRaw
-      : Math.round((effectivePurchasePricePerGramRaw * data.exchangeRate) / 10000);
-
-    // 2. Create Variant — every delivery gets its own product+variant, no merging
-    let variant: Awaited<ReturnType<typeof prisma.variant.findUnique>> = null;
-
-    if (!variant) {
-      const markupPercent = priceSetting?.markupPercent ?? 110;
-
-      // Use explicit overrides from supplier price table, or calculate from markup
-      const wholesalePrice = body.wholesalePriceOverride ?? costPricePerGramCZK;
-      const retailPrice = body.retailPriceOverride ?? calculateRetailPrice(costPricePerGramCZK, markupPercent);
-      const retailPricePerPiece = isByPiece && data.pricePerPiece
-        ? (body.retailPriceOverride
-            ? Math.round((body.retailPriceOverride * (data.pieceWeightGrams ?? 1)))
-            : calculateRetailPrice(data.pricePerPiece, markupPercent))
-        : undefined;
-
-      const variantSku = await uniqueSku(
-        data.category, isAccessory ? null : data.texture, data.color, data.lengthCm, prisma,
-        { orderOnly: false, origin: isAccessory ? null : data.origin },
-      );
-      variant = await prisma.variant.create({
-        data: {
-          productId: product.id,
-          sku: variantSku,
-          lengthCm: data.lengthCm,
-          color: data.color,
-          sellingMode: data.sellingMode ?? "BY_GRAM",
-          pricePerPiece: isByPiece ? data.pricePerPiece : undefined,
-          retailPricePerPiece: isByPiece ? (data.retailPricePerPiece ?? retailPricePerPiece) : undefined,
-          costPricePerGram: costPricePerGramCZK,
-          wholesalePricePerGram: wholesalePrice,
-          retailPricePerGram: retailPrice,
-          active: true,
-        },
-      });
-    }
-
-    // Auto-generate CZ/UK/RU descriptions for non-accessory products
-    if (!isAccessory) {
-      const bioData = {
-        name: product.name,
-        category: data.category,
-        processingType: "OTHER" as const,
-        origin: data.origin,
-        texture: data.texture,
-        colorTone: autoColorTone(data.color),
-        lengths: [data.lengthCm],
-      };
-      const descCs = generateProductBio(bioData, "cs");
-      const descUk = generateProductBio(bioData, "uk");
-      const descRu = generateProductBio(bioData, "ru");
-      await prisma.product.update({
-        where: { id: product.id },
-        data: { description: descCs, descriptionUk: descUk, descriptionRu: descRu },
-      });
-    }
+    const variant = await prisma.variant.create({
+      data: {
+        productId: product.id,
+        sku: variantSku,
+        lengthCm: data.lengthCm,
+        color: data.color,
+        sellingMode: data.sellingMode ?? "BY_GRAM",
+        pricePerPiece: isByPiece ? data.pricePerPiece : undefined,
+        retailPricePerPiece: isByPiece ? (data.retailPricePerPiece ?? retailPricePerPiece) : undefined,
+        costPricePerGram: costPricePerGramCZK,
+        wholesalePricePerGram: wholesalePrice,
+        retailPricePerGram: retailPrice,
+        active: true,
+      },
+    });
 
     // For BY_PIECE: compute totalGrams from pieces * pieceWeight
     const effectiveTotalGrams = isByPiece && data.pieceWeightGrams
