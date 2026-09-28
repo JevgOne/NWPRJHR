@@ -49,26 +49,23 @@ export const HAIR_COLORS: Record<string, HairColor> = {
   "grey":  { hex: "#B8B5B0", nameKey: "cgrey" },
 };
 
-/** Ordered list of all color codes for display (dark → light, then specials) */
+/** Ordered list of core color codes for the picker (dark → light, then specials) */
 export const COLOR_CODES = [
   // Blacks
   "1", "1B",
   // Browns
-  "2", "3", "4", "5", "6", "7", "8", "10", "12",
+  "3", "5", "6", "10",
   // Blondes
-  "14", "16", "18", "24", "27", "613", "BL22", "BL60",
-  // Reds / Auburn
-  "30", "33", "35", "99J",
+  "14", "16", "24", "613",
   // Special
   "ombre", "grey",
 ];
 
-/** Group structure for visual display */
+/** Group structure for visual display in the stock-in picker */
 export const COLOR_GROUPS = [
   { label: "Black", codes: ["1", "1B"] },
-  { label: "Brown", codes: ["2", "3", "4", "5", "6", "7", "8", "10", "12"] },
-  { label: "Blonde", codes: ["14", "16", "18", "24", "27", "613", "BL22", "BL60"] },
-  { label: "Red / Auburn", codes: ["30", "33", "35", "99J"] },
+  { label: "Brown", codes: ["3", "5", "6", "10"] },
+  { label: "Blonde", codes: ["14", "16", "24", "613"] },
   { label: "Special", codes: ["ombre", "grey"] },
 ];
 

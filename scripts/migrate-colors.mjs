@@ -4,13 +4,23 @@
  * Old system (light→dark): 1=Platinum, 2=Light Blonde, ... 10=Black
  * New system (dark→light): 1=Jet Black, 1B=Off Black, ... 613=Platinum Blonde
  *
- * Run: node scripts/migrate-colors.mjs
- * Or dry-run: DRY_RUN=1 node scripts/migrate-colors.mjs
+ * Two-phase approach to avoid SKU UNIQUE constraint conflicts:
+ *   Phase 1: Update all colors (no SKU changes)
+ *   Phase 2: Rename SKUs via temp suffix to avoid ordering conflicts
+ *
+ * Run: node --env-file=.env.production.local scripts/migrate-colors.mjs
+ * Or dry-run: DRY_RUN=1 node --env-file=.env.production.local scripts/migrate-colors.mjs
  */
 import { PrismaClient } from "@prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-const prisma = new PrismaClient();
 const DRY_RUN = process.env.DRY_RUN === "1";
+
+const remoteUrl = process.env.TURSO_DATABASE_URL?.replace(/\s+/g, "");
+const authToken = process.env.TURSO_AUTH_TOKEN?.replace(/\s+/g, "");
+
+const adapter = new PrismaLibSql({ url: remoteUrl, authToken });
+const prisma = new PrismaClient({ adapter });
 
 const OLD_TO_NEW = {
   "1":  "613",   // Platinová blond → 613 Platinum Blonde
@@ -25,51 +35,74 @@ const OLD_TO_NEW = {
   "10": "1",     // Černá → 1 Jet Black
 };
 
-// Old "9" doesn't exist in new system, needs special handling
-// Old "6", "ombre", "grey" don't change
-
 async function main() {
   console.log(DRY_RUN ? "=== DRY RUN ===" : "=== LIVE MIGRATION ===");
 
-  // 1. Migrate variant colors
+  // ── Phase 1: Migrate variant colors ──
   const variants = await prisma.variant.findMany({
     select: { id: true, color: true, sku: true },
   });
 
+  const skuRenames = []; // { id, oldSku, newSku }
   let variantCount = 0;
+
   for (const v of variants) {
     const newColor = OLD_TO_NEW[v.color];
-    if (!newColor) continue; // no mapping needed (already new code, or "6"/"ombre"/"grey")
+    if (!newColor) continue;
 
-    console.log(`Variant ${v.id}: color "${v.color}" → "${newColor}" (SKU: ${v.sku})`);
-
-    // Update SKU if it contains the old color code
-    let newSku = v.sku;
-    if (v.sku) {
-      // SKU format: CAT-TEX-COLOR-LENGTH-SEQ or OBJ-CAT-ORIG-TEX-COLOR-LENGTH
-      // Color is padded to 2 chars (e.g., "01", "10")
-      const oldPadded = v.color.padStart(2, "0");
-      const newPadded = newColor.padStart(2, "0");
-      // Replace the color segment in SKU (careful: only replace the right part)
-      const parts = v.sku.split("-");
-      const colorIdx = parts.findIndex((p) => p === oldPadded);
-      if (colorIdx >= 0) {
-        parts[colorIdx] = newPadded;
-        newSku = parts.join("-");
-        console.log(`  SKU: "${v.sku}" → "${newSku}"`);
-      }
-    }
+    console.log(`[Color] Variant ${v.id}: "${v.color}" → "${newColor}"`);
 
     if (!DRY_RUN) {
       await prisma.variant.update({
         where: { id: v.id },
-        data: { color: newColor, ...(newSku !== v.sku ? { sku: newSku } : {}) },
+        data: { color: newColor },
       });
     }
+
+    // Compute new SKU for phase 2
+    if (v.sku) {
+      const oldPadded = v.color.padStart(2, "0");
+      const newPadded = newColor.padStart(2, "0");
+      const parts = v.sku.split("-");
+      const colorIdx = parts.findIndex((p) => p === oldPadded);
+      if (colorIdx >= 0) {
+        parts[colorIdx] = newPadded;
+        const newSku = parts.join("-");
+        if (newSku !== v.sku) {
+          skuRenames.push({ id: v.id, oldSku: v.sku, newSku });
+        }
+      }
+    }
+
     variantCount++;
   }
 
-  // 2. Migrate product colorTone (if stored as old code)
+  // ── Phase 2a: Rename all affected SKUs to temp names ──
+  console.log(`\n[SKU] Phase 2a: renaming ${skuRenames.length} SKUs to temp names...`);
+  for (const r of skuRenames) {
+    const tempSku = r.oldSku + "_MIG";
+    console.log(`  "${r.oldSku}" → "${tempSku}"`);
+    if (!DRY_RUN) {
+      await prisma.variant.update({
+        where: { id: r.id },
+        data: { sku: tempSku },
+      });
+    }
+  }
+
+  // ── Phase 2b: Rename temp SKUs to final names ──
+  console.log(`[SKU] Phase 2b: renaming temp SKUs to final names...`);
+  for (const r of skuRenames) {
+    console.log(`  "${r.oldSku}_MIG" → "${r.newSku}"`);
+    if (!DRY_RUN) {
+      await prisma.variant.update({
+        where: { id: r.id },
+        data: { sku: r.newSku },
+      });
+    }
+  }
+
+  // ── Phase 3: Migrate product colorTone ──
   const products = await prisma.product.findMany({
     where: { colorTone: { not: null } },
     select: { id: true, colorTone: true },
@@ -91,7 +124,7 @@ async function main() {
     productCount++;
   }
 
-  console.log(`\n${DRY_RUN ? "Would update" : "Updated"}: ${variantCount} variants, ${productCount} products`);
+  console.log(`\n${DRY_RUN ? "Would update" : "Updated"}: ${variantCount} variants (${skuRenames.length} SKU renames), ${productCount} products`);
 }
 
 main()
