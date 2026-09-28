@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
@@ -68,6 +69,7 @@ async function getAdminProducts() {
 }
 
 export default async function ProductsPage() {
+  await connection(); // prevent any caching — always fresh data
   const session = await auth();
   if (!session) redirect("/login");
 
