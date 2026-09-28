@@ -659,7 +659,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
           )}
           {category && (
             <p className="text-xs text-muted font-mono">
-              {generateSku(category, texture, color, lengthCm ?? 0)}
+              {generateSku(category, texture, color, lengthCm ?? 0, { origin })}
             </p>
           )}
           {qrDataUrl && (

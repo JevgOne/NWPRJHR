@@ -60,7 +60,7 @@ export const SUPPLIER_PRICES: Record<string, SupplierPriceTable> = {
     ],
   },
   "Angel Enterprises": {
-    origin: "Írán",
+    origin: "Indie",
     colorCategories: [
       {
         key: "natural",

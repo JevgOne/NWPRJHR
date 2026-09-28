@@ -52,12 +52,15 @@ export function generateSku(
   const col = color.padStart(2, "0");
   const len = String(lengthCm);
 
+  const orig = options?.origin ? (SKU_ORIGIN_MAP[options.origin] ?? "XX") : null;
+
   if (options?.orderOnly) {
-    const orig = options.origin ? (SKU_ORIGIN_MAP[options.origin] ?? "XX") : "XX";
-    return `OBJ-${cat}-${orig}-${tex}-${col}-${len}`;
+    return `OBJ-${cat}-${orig ?? "XX"}-${tex}-${col}-${len}`;
   }
 
-  return `${cat}-${tex}-${col}-${len}`;
+  return orig
+    ? `${cat}-${orig}-${tex}-${col}-${len}`
+    : `${cat}-${tex}-${col}-${len}`;
 }
 
 /**
@@ -125,7 +128,20 @@ export function parseSku(sku: string): {
     return { category, texture, color: col, lengthCm, orderOnly: true, origin, seq };
   }
 
-  // Standard format: L-RV-09-60-00001 (5 parts) or L-RV-09-60 (4 parts, legacy)
+  // New format with origin: L-IN-RV-24-45-00001 (6 parts) or L-IN-RV-24-45 (5 parts)
+  if ((parts.length === 5 || parts.length === 6) && SKU_ORIGIN_REVERSE[parts[1]]) {
+    const [cat, orig, tex, col, len] = parts;
+    const category = SKU_CATEGORY_REVERSE[cat];
+    const origin = SKU_ORIGIN_REVERSE[orig];
+    const texture = SKU_TEXTURE_REVERSE[tex];
+    const lengthCm = parseInt(len);
+    if (!category || !texture || isNaN(lengthCm)) return null;
+    const parsed = parseInt(col);
+    const seq = parts.length === 6 ? parseInt(parts[5], 10) : undefined;
+    return { category, texture, color: isNaN(parsed) ? col : String(parsed), lengthCm, origin, seq };
+  }
+
+  // Legacy format without origin: L-RV-09-60-00001 (5 parts) or L-RV-09-60 (4 parts)
   if (parts.length === 4 || parts.length === 5) {
     const [cat, tex, col, len] = parts;
     const category = SKU_CATEGORY_REVERSE[cat];
