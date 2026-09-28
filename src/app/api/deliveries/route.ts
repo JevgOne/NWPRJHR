@@ -265,6 +265,7 @@ export async function POST(request: NextRequest) {
     try {
       revalidatePath("/inventory");
       revalidatePath("/inventory/movements");
+      revalidatePath("/products");
       revalidateTag("stock", { expire: 0 });
       revalidateTag("dashboard", { expire: 0 });
       revalidateTag("products", { expire: 0 });
