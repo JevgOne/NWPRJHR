@@ -7,7 +7,7 @@ import { getHairColor, COLOR_GROUPS } from "@/lib/hair-colors";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { ORIGIN_OPTIONS, getOriginFlag } from "@/lib/origin-flags";
 import { getSupplierPriceTable, lookupSupplierPrice } from "@/lib/supplier-prices";
-import { generateSku } from "@/lib/sku";
+
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -33,6 +33,7 @@ interface SuccessData {
   totalGrams: number;
   totalPieces: number;
   sellingMode: "BY_GRAM" | "BY_PIECE";
+  sku: string;
 }
 
 type Category = "VIRGIN" | "LUXE" | "STANDARD" | "SALE" | "ACCESSORY";
@@ -434,6 +435,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
       totalGrams: computedGrams,
       totalPieces: parsedPieces,
       sellingMode,
+      sku: result.variantSku ?? "",
     });
     setSubmitting(false);
 
@@ -657,9 +659,9 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
               <p className="text-xs text-muted">{successData.totalGrams} g</p>
             </div>
           )}
-          {category && (
+          {successData.sku && (
             <p className="text-xs text-muted font-mono">
-              {generateSku(category, texture, color, lengthCm ?? 0, { origin })}
+              {successData.sku}
             </p>
           )}
           {qrDataUrl && (
@@ -735,7 +737,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                   img.onload = () => {
                     const label = category ? `${tCat(category.toLowerCase() as "virgin")}, ${lengthCm} cm` : "";
                     const stockLabel = `${successData.totalGrams} g`;
-                    const sku = category ? generateSku(category, texture, color, lengthCm ?? 0) : "";
+                    const sku = successData.sku || "";
                     const canvas = document.createElement("canvas");
                     const pad = 20;
                     const topTextH = sku ? 50 : 30;

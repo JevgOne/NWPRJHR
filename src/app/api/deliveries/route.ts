@@ -10,7 +10,7 @@ import { calculateRetailPrice } from "@/lib/pricing";
 import { logAudit, getClientIp } from "@/lib/audit";
 import { buildProductSlug, uniqueSlug } from "@/lib/slugify";
 import { generateProductBio } from "@/lib/product-bio";
-import { autoColorTone, CATEGORY_NAMES } from "@/lib/product-helpers";
+import { autoColorTone, colorLabel, CATEGORY_NAMES } from "@/lib/product-helpers";
 import { uniqueSku } from "@/lib/sku";
 
 export const maxDuration = 30;
@@ -94,9 +94,10 @@ export async function POST(request: NextRequest) {
     ]);
     // Always create a new product — no merging
     const catNames = CATEGORY_NAMES[data.category] ?? CATEGORY_NAMES.STANDARD;
+    const clr = colorLabel(data.color);
     const productName = isAccessory
       ? catNames.cs
-      : `${catNames.cs} — ${data.texture}${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`;
+      : `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`;
     const slugBase = buildProductSlug({
       category: data.category,
       origin: isAccessory ? null : data.origin,
@@ -121,8 +122,8 @@ export async function POST(request: NextRequest) {
       : await prisma.product.create({
           data: {
             name: productName,
-            nameUk: `${catNames.uk} — ${data.texture}${isByPiece && data.exclusive ? " (Ексклюзив)" : ""}`,
-            nameRu: `${catNames.ru} — ${data.texture}${isByPiece && data.exclusive ? " (Эксклюзив)" : ""}`,
+            nameUk: `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm${isByPiece && data.exclusive ? " (Ексклюзив)" : ""}`,
+            nameRu: `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm${isByPiece && data.exclusive ? " (Эксклюзив)" : ""}`,
             category: data.category,
             processingType: "OTHER",
             origin: data.origin,
@@ -272,7 +273,7 @@ export async function POST(request: NextRequest) {
     } catch { /* revalidation must not break successful stock-in response */ }
 
     return NextResponse.json(
-      { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug },
+      { ...delivery, productId: product.id, productName: product.name, productSlug: product.slug, variantSku: variant!.sku },
       { status: 201 }
     );
     } catch (err) {
