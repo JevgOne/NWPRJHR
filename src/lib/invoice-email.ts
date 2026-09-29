@@ -535,14 +535,26 @@ const paymentEmailT: Record<Lang, {
     payByCardLabel: "Оплатить картой онлайн",
     footer: "После получения оплаты мы отправим Вам счёт-фактуру по электронной почте. Спасибо!",
   },
+  en: {
+    subject: () => "Payment Details | Hairland",
+    greeting: (name) => `Hello, ${name},`,
+    body: (amount) => `thank you for your order. Please pay the amount of <strong>${amount}</strong> to the following account:`,
+    detailsLabel: "Payment details:",
+    bankAccountLabel: "Bank account",
+    vsLabel: "Variable symbol",
+    amountLabel: "Amount",
+    orLabel: "— or —",
+    payByCardLabel: "Pay by card online",
+    footer: "Once we receive your payment, we will send you an invoice by email. Thank you!",
+  },
 };
 
 // --- Email template ---
 
-type Lang = "cs" | "uk" | "ru";
+type Lang = "cs" | "uk" | "ru" | "en";
 
 function resolveLang(lang: string): Lang {
-  if (lang === "uk" || lang === "ru") return lang;
+  if (lang === "uk" || lang === "ru" || lang === "en") return lang;
   return "cs";
 }
 
@@ -551,7 +563,7 @@ function formatCZK(halere: number): string {
 }
 
 function formatDate(date: Date, lang: string): string {
-  const localeMap: Record<string, string> = { cs: "cs-CZ", uk: "uk-UA", ru: "ru-RU" };
+  const localeMap: Record<string, string> = { cs: "cs-CZ", uk: "uk-UA", ru: "ru-RU", en: "en-US" };
   return date.toLocaleDateString(localeMap[lang] ?? "cs-CZ");
 }
 
@@ -602,6 +614,18 @@ const invoiceEmailT: Record<Lang, {
     dateLabel: "Дата оплаты",
     cta: "Просмотреть счета",
     footer: "Благодарим за покупку! Если есть вопросы, свяжитесь с нами по адресу info@hairland.cz.",
+  },
+  en: {
+    subject: (n) => `Invoice ${n} | Hairland`,
+    greeting: (name) => `Hello, ${name},`,
+    body: (amount) => `we confirm receipt of your payment of <strong>${amount}</strong>.`,
+    attachmentNote: "The invoice is attached to this email in PDF format.",
+    summaryLabel: "Summary:",
+    invoiceLabel: "Invoice",
+    amountLabel: "Amount",
+    dateLabel: "Payment date",
+    cta: "View invoices",
+    footer: "Thank you for your purchase! If you have any questions, contact us at info@hairland.cz.",
   },
 };
 

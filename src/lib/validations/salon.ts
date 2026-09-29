@@ -18,7 +18,7 @@ export const createSalonSchema = z.object({
   address: z.string().max(500).optional(),
   website: z.string().max(500).optional(),
   instagram: z.string().max(200).optional(),
-  language: z.enum(["cs", "uk", "ru"]).optional(),
+  language: z.enum(["cs", "uk", "ru", "en"]).optional(),
   approved: z.boolean().optional(),
 });
 

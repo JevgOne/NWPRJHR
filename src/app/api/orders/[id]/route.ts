@@ -304,7 +304,7 @@ export async function POST(
 
         // Send payment received email (fire-and-forget)
         if (orderToPay.contactEmail) {
-          const lang = (orderToPay.locale as "cs" | "uk" | "ru") || "cs";
+          const lang = (orderToPay.locale as "cs" | "uk" | "ru" | "en") || "cs";
           const emailData = getRetailPaymentReceivedEmail(lang, {
             customerName: orderToPay.contactName || "customer",
             orderNumber: orderToPay.orderNumber ?? id.slice(0, 8),
@@ -379,7 +379,7 @@ export async function POST(
         // Send shipped email with care guide (fire-and-forget)
         const shipEmail = orderToShip.contactEmail || orderToShip.customer?.email;
         if (shipEmail) {
-          const lang = (orderToShip.locale as "cs" | "uk" | "ru") || "cs";
+          const lang = (orderToShip.locale as "cs" | "uk" | "ru" | "en") || "cs";
           const emailData = getOrderShippedEmail(lang, {
             customerName: orderToShip.contactName || orderToShip.customer?.name || "customer",
             orderNumber: orderToShip.orderNumber ?? id.slice(0, 8),
@@ -440,7 +440,7 @@ export async function POST(
         // Send shipped email with care guide (fire-and-forget)
         const manualEmail = orderManual.contactEmail || orderManual.customer?.email;
         if (manualEmail) {
-          const lang = (orderManual.locale as "cs" | "uk" | "ru") || "cs";
+          const lang = (orderManual.locale as "cs" | "uk" | "ru" | "en") || "cs";
           const emailData = getOrderShippedEmail(lang, {
             customerName: orderManual.contactName || orderManual.customer?.name || "customer",
             orderNumber: orderManual.orderNumber ?? id.slice(0, 8),

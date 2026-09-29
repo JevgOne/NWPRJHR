@@ -1,13 +1,15 @@
+type LocaleStrings = { cs: string; uk: string; ru: string; en?: string };
+
 export interface CityData {
   slug: string;
-  name: { cs: string; uk: string; ru: string };
-  region: { cs: string; uk: string; ru: string };
-  description: { cs: string; uk: string; ru: string };
-  deliveryNote: { cs: string; uk: string; ru: string };
-  consultNote: { cs: string; uk: string; ru: string };
+  name: LocaleStrings;
+  region: LocaleStrings;
+  description: LocaleStrings;
+  deliveryNote: LocaleStrings;
+  consultNote: LocaleStrings;
   faq: Array<{
-    q: { cs: string; uk: string; ru: string };
-    a: { cs: string; uk: string; ru: string };
+    q: LocaleStrings;
+    a: LocaleStrings;
   }>;
   geo: { lat: number; lng: number };
 }

@@ -19,7 +19,7 @@ export const contactFormSchema = z.object({
   salonName: z.string().max(200).optional(),
   message: z.string().min(1).max(5000),
   customerPhotos: z.array(z.string().url()).max(3).optional().default([]),
-  locale: z.enum(["cs", "uk", "ru"]).default("cs"),
+  locale: z.enum(["cs", "uk", "ru", "en"]).default("cs"),
 });
 
 export const complaintTicketSchema = z.object({

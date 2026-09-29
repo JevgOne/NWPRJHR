@@ -12,7 +12,9 @@ import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import { CITIES, getCityBySlug } from "@/lib/city-landing-data";
 import { PricingByOrigin, type OriginData } from "@/components/PricingByOrigin";
 
-type Locale = "cs" | "uk" | "ru";
+type Locale = "cs" | "uk" | "ru" | "en";
+type CityLocale = "cs" | "uk" | "ru";
+const toCityLocale = (l: Locale): CityLocale => l === "en" ? "cs" : l;
 
 interface Props {
   params: Promise<{ city: string }>;
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!city) return {};
 
   const locale = (await getLocale()) as Locale;
-  const cityName = city.name[locale] ?? city.name.cs;
+  const cityName = city.name[toCityLocale(locale)] ?? city.name.cs;
 
   const products = await getCachedAllProducts();
   const allGramPrices = products.flatMap((p) =>
@@ -97,7 +99,7 @@ export default async function CityLandingPage({ params }: Props) {
   if (!city) notFound();
 
   const locale = (await getLocale()) as Locale;
-  const cityName = city.name[locale] ?? city.name.cs;
+  const cityName = city.name[toCityLocale(locale)] ?? city.name.cs;
 
   const [t, tPrice, session, products] = await Promise.all([
     getTranslations("cityLanding"),
@@ -199,8 +201,8 @@ export default async function CityLandingPage({ params }: Props) {
     )
     .slice(0, 8);
 
-  const deliveryNote = city.deliveryNote[locale] ?? city.deliveryNote.cs;
-  const consultNote = city.consultNote[locale] ?? city.consultNote.cs;
+  const deliveryNote = city.deliveryNote[toCityLocale(locale)] ?? city.deliveryNote.cs;
+  const consultNote = city.consultNote[toCityLocale(locale)] ?? city.consultNote.cs;
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
@@ -219,7 +221,7 @@ export default async function CityLandingPage({ params }: Props) {
       addressCountry: "CZ",
     },
     priceRange: "500 Kč - 17 000 Kč",
-    description: city.description[locale] ?? city.description.cs,
+    description: city.description[toCityLocale(locale)] ?? city.description.cs,
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -228,7 +230,7 @@ export default async function CityLandingPage({ params }: Props) {
     },
     areaServed: {
       "@type": "City",
-      name: city.name[locale] ?? city.name.cs,
+      name: city.name[toCityLocale(locale)] ?? city.name.cs,
       geo: {
         "@type": "GeoCoordinates",
         latitude: city.geo.lat,
@@ -242,10 +244,10 @@ export default async function CityLandingPage({ params }: Props) {
     "@type": "FAQPage",
     mainEntity: city.faq.map((faqItem) => ({
       "@type": "Question",
-      name: faqItem.q[locale] ?? faqItem.q.cs,
+      name: faqItem.q[toCityLocale(locale)] ?? faqItem.q.cs,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faqItem.a[locale] ?? faqItem.a.cs,
+        text: faqItem.a[toCityLocale(locale)] ?? faqItem.a.cs,
       },
     })),
   };
@@ -274,7 +276,7 @@ export default async function CityLandingPage({ params }: Props) {
           {t("pageH1", { city: cityName })}
         </h1>
         <p className="text-muted max-w-2xl leading-relaxed">
-          {city.description[locale] ?? city.description.cs}
+          {city.description[toCityLocale(locale)] ?? city.description.cs}
         </p>
       </div>
 
@@ -428,14 +430,14 @@ export default async function CityLandingPage({ params }: Props) {
             >
               <summary className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-nude-100 transition-colors">
                 <span className="text-sm font-medium text-ink pr-4">
-                  {faqItem.q[locale] ?? faqItem.q.cs}
+                  {faqItem.q[toCityLocale(locale)] ?? faqItem.q.cs}
                 </span>
                 <svg className="w-4 h-4 text-muted flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
               <div className="px-4 pb-4 text-sm text-muted leading-relaxed border-t border-line pt-3">
-                {faqItem.a[locale] ?? faqItem.a.cs}
+                {faqItem.a[toCityLocale(locale)] ?? faqItem.a.cs}
               </div>
             </details>
           ))}

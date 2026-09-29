@@ -46,7 +46,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { language } = await request.json();
-  if (!["cs", "uk", "ru"].includes(language))
+  if (!["cs", "uk", "ru", "en"].includes(language))
     return NextResponse.json({ error: "Invalid language" }, { status: 400 });
 
   const salon = await prisma.salon.update({

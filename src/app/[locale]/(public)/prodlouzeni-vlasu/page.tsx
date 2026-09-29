@@ -5,7 +5,9 @@ import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { getAlternates, getOgUrl, OG_LOCALES } from "@/lib/seo";
 import { CITIES } from "@/lib/city-landing-data";
 
-type Locale = "cs" | "uk" | "ru";
+type Locale = "cs" | "uk" | "ru" | "en";
+type CityLocale = "cs" | "uk" | "ru";
+const toCityLocale = (l: Locale): CityLocale => l === "en" ? "cs" : l;
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("metadata"), getLocale()]);
@@ -69,10 +71,10 @@ export default async function CityHubPage() {
             className="bg-nude-50 rounded-xl border border-line p-4 hover:border-blush-200 transition-colors group"
           >
             <div className="text-sm font-semibold text-ink group-hover:text-rose transition-colors">
-              {city.name[locale] ?? city.name.cs}
+              {city.name[toCityLocale(locale)] ?? city.name.cs}
             </div>
             <div className="text-xs text-muted mt-1">
-              {city.region[locale] ?? city.region.cs}
+              {city.region[toCityLocale(locale)] ?? city.region.cs}
             </div>
           </Link>
         ))}

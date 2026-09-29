@@ -5,8 +5,8 @@
 
 // --- Care guide URL helper ---
 
-const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
-const CARE_PATHS: Record<string, string> = { cs: "/pece-o-vlasy", uk: "/догляд-за-волоссям", ru: "/уход-за-волосами" };
+const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus", en: "/en" };
+const CARE_PATHS: Record<string, string> = { cs: "/pece-o-vlasy", uk: "/догляд-за-волоссям", ru: "/уход-за-волосами", en: "/hair-care" };
 
 export function getCareGuideUrl(locale: string): string {
   const prefix = LOCALE_PREFIXES[locale] ?? "";
@@ -62,7 +62,7 @@ function hairlandEmailTemplate(
 
 // --- Translations ---
 
-type Lang = "cs" | "uk" | "ru";
+type Lang = "cs" | "uk" | "ru" | "en";
 
 const registrationT: Record<Lang, {
   subject: string;
@@ -108,6 +108,17 @@ const registrationT: Record<Lang, {
     nameLabel: "Название",
     emailLabel: "Email",
   },
+  en: {
+    subject: "Your registration has been received — Hairland",
+    greeting: (name) => `Hello, ${name},`,
+    body1: "Thank you for registering at Hairland.cz.",
+    body2: "Your B2B access request has been received and is pending approval.",
+    body3: "Once your account is approved, we will notify you by email.",
+    detailsLabel: "Registration details:",
+    typeLabel: "Type",
+    nameLabel: "Name",
+    emailLabel: "Email",
+  },
 };
 
 const approvalT: Record<Lang, {
@@ -141,6 +152,14 @@ const approvalT: Record<Lang, {
     body2: "Теперь вы можете войти и начать заказывать премиальные волосы по оптовым ценам.",
     cta: "Войти",
     footer: "Если у вас есть вопросы, свяжитесь с нами по адресу info@hairland.cz.",
+  },
+  en: {
+    subject: "Your B2B account has been approved — Hairland",
+    greeting: "Hello,",
+    body1: "We are pleased to inform you that your B2B account at Hairland.cz has been approved.",
+    body2: "You can now log in and start ordering premium hair at wholesale prices.",
+    cta: "Log in",
+    footer: "If you have any questions, contact us at info@hairland.cz.",
   },
 };
 
@@ -196,10 +215,23 @@ const inquiryT: Record<Lang, {
     productHeader: "Продукт",
     detailsHeader: "Детали",
   },
+  en: {
+    subject: "Your order has been received — Hairland",
+    consultSubject: "Your inquiry has been received — Hairland",
+    greeting: (name) => `Hello, ${name},`,
+    body1: "Thank you for your order at Hairland.cz.",
+    consultBody1: "Thank you for your inquiry at Hairland.cz.",
+    body2: "We have received it and will get back to you shortly.",
+    itemsHeader: "Ordered items:",
+    promoLabel: "Promo code:",
+    responseTime: "We usually respond within 24 hours.",
+    productHeader: "Product",
+    detailsHeader: "Details",
+  },
 };
 
 function resolveLang(lang: string): Lang {
-  if (lang === "uk" || lang === "ru") return lang;
+  if (lang === "uk" || lang === "ru" || lang === "en") return lang;
   return "cs";
 }
 
@@ -415,6 +447,20 @@ const orderConfirmedT: Record<Lang, {
     cta: "Отследить заказ",
     footer: "Есть вопрос? Ответьте на это письмо.",
   },
+  en: {
+    subject: (n) => `Order #${n} confirmed — Hairland`,
+    greeting: (name) => `Hello, ${name},`,
+    body1: (n) => `Your order #${n} has been confirmed.`,
+    body2: "We will prepare the order and notify you once it ships.",
+    itemsHeader: "Order items:",
+    productHeader: "Product",
+    detailsHeader: "Details",
+    totalLabel: "Total",
+    promoLabel: "Promo code:",
+    discountLabel: "Discount:",
+    cta: "Track order",
+    footer: "Have a question? Reply to this email.",
+  },
 };
 
 export function getOrderConfirmedEmail(
@@ -532,6 +578,14 @@ const b2bOrderShippedT: Record<Lang, {
     cta: "Войти в портал",
     footer: "Есть вопрос? Ответьте на это письмо.",
   },
+  en: {
+    subject: (n) => `Order #${n} is on its way — Hairland`,
+    greeting: (name) => `Hello, ${name},`,
+    body1: (n) => `Your order #${n} has been shipped.`,
+    body2: "Personal pickup Prague — delivery within 24 hours.",
+    cta: "Log in to portal",
+    footer: "Have a question? Reply to this email.",
+  },
 };
 
 export function getB2BOrderShippedEmail(
@@ -612,6 +666,14 @@ const orderFollowUpT: Record<Lang, {
     cta: "Написать отзыв",
     footer: "Есть вопрос? Ответьте на это письмо.",
   },
+  en: {
+    subject: (n) => `How are you enjoying order #${n}? — Hairland`,
+    greeting: (name) => `Hello, ${name},`,
+    body1: (n) => `Your order #${n} was completed a few days ago.`,
+    body2: "We would love to hear your feedback.",
+    cta: "Write a review",
+    footer: "Have a question? Reply to this email.",
+  },
 };
 
 export function getOrderFollowUpEmail(
@@ -683,6 +745,14 @@ const inquiryFollowUpT: Record<Lang, {
     body2: "Хотите что-то спросить? Мы здесь для вас.",
     cta: "Связаться с нами",
     footer: "Ответьте на это письмо или посетите hairland.cz.",
+  },
+  en: {
+    subject: "Thank you for your interest — Hairland",
+    greeting: (name) => `Hello, ${name},`,
+    body1: "Thank you for your interest in our premium hair.",
+    body2: "Have any questions? We are here for you.",
+    cta: "Contact us",
+    footer: "Reply to this email or visit hairland.cz.",
   },
 };
 
@@ -884,6 +954,44 @@ const orderConfirmT: Record<Lang, {
     attachment2: "Инструкция по уходу за наращёнными волосами",
     attachment3: "Образец формуляра для отказа от договора",
     closing: "Если возникнут вопросы, напишите нам.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103\nAltro servis group s.r.o., IČO 23673389",
+  },
+  en: {
+    subject: (n) => `Order confirmation ${n} — Hairland`,
+    subjectTransfer: (n) => `Order ${n} — awaiting payment — Hairland`,
+    greeting: (name) => `Hello, ${name},`,
+    intro: "thank you for your order. Below you will find its summary and all related documents.",
+    bodyTransfer: "Awaiting your payment",
+    bodyCard: "Your payment has been received. We will prepare your order and keep you updated.",
+    bodyCash: "Thank you for your purchase.",
+    itemsHeader: "Order items:",
+    shippingLabel: "Shipping",
+    discountLabel: "Discount",
+    totalLabel: "Total",
+    bankAccountLabel: "Bank account",
+    vsLabel: "Variable symbol",
+    amountLabel: "Amount due",
+    importantTitle: "IMPORTANT — BEFORE ACCEPTING DELIVERY",
+    importantText: "Hair is a natural product. Before having it applied, inspect it and check the shade, length, weight, and texture. If anything does not match, please contact us before application — once applied, shade and length cannot be claimed.",
+    importantPhotoTip: "We recommend photographing the unpacked hair in daylight. It takes ten seconds and is the best evidence in case of a dispute.",
+    hygieneTitle: "HYGIENE SEAL",
+    hygieneTextRetail: "Hair is delivered in a sealed package with a hygiene seal. This is a product that cannot be returned after the seal is broken for hygienic reasons. Breaking the seal voids the right to withdraw from the contract within 14 days (Section 1837(g) of the Czech Civil Code). If you wish to inspect the hair without losing this right, do so through the intact transparent packaging or on a sample.",
+    hygieneTextB2B: "Hair is delivered in a sealed package with a hygiene seal. Please inspect the goods as soon as possible after receipt — visible defects must be reported within 3 business days of receipt and always before application.",
+    withdrawalTitle: "RIGHT TO WITHDRAW WITHIN 14 DAYS",
+    withdrawalText1: "You have the right to withdraw from this contract without giving any reason within 14 days from the day of receipt. To withdraw, write to us at info@hairland.cz or use the attached withdrawal form template.",
+    withdrawalText2: "If you withdraw, we will refund the purchase price within 14 days of receiving the returned goods, using the same payment method you used. The cost of returning the goods is borne by you.",
+    withdrawalText3: "Only unused, unapplied, and unmodified hair with an intact hygiene seal can be returned.",
+    careTitle: "HAIR CARE",
+    careText1: "Extended hair does not grow from your scalp and therefore does not receive the natural oils that protect your own hair. Without external nourishment, it will inevitably dry out and start breaking — within a few weeks. Please read the attached care guide before application.",
+    careLinkLabel: "Also available at",
+    careTip1: "mask or oil along the full length, not on bonds",
+    careTip2: "flat iron maximum 180 °C and always with heat protection",
+    careTip3: "brush twice daily with a special brush",
+    attachmentsTitle: "ATTACHMENTS",
+    attachment1: "Complaints policy",
+    attachment2: "Hair extension care guide",
+    attachment3: "Withdrawal form template",
+    closing: "If you have any questions, feel free to contact us.",
     signature: "Hairland\ninfo@hairland.cz | +420 608 553 103\nAltro servis group s.r.o., IČO 23673389",
   },
 };
@@ -1196,6 +1304,31 @@ const shippedT: Record<Lang, {
     closing: "",
     signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
+  en: {
+    subject: (n) => `Your hair is on the way — order ${n}`,
+    greeting: (name) => `Hello, ${name},`,
+    body1: (n) => `your hair is on the way. ${n}`,
+    bodyPacketa: (p) => `Pick up your parcel at the Zásilkovna branch: ${p}.`,
+    bodyPersonal: "We will deliver your order personally in Prague within 24 hours.",
+    bodyPost: "Your parcel has been shipped.",
+    trackingLabel: "Track shipment",
+    photoNote: "We are attaching a photo of the order as it looked before packing — keep it, it serves as proof of the condition at the time of dispatch.",
+    receiveTitle: "WHEN YOU RECEIVE THE PARCEL",
+    receive1: "Check the packaging and hygiene seal. If the packaging is damaged, write to us within 2 business days with a photo.",
+    receive2: "Inspect the hair through the intact packaging. Shade, length, weight, texture. If anything does not match, contact us BEFORE breaking the seal and having the hair applied.",
+    receive3: "Before application, wash the hair with a gentle shampoo and let it air dry.",
+    mistakesTitle: "BEFORE HAVING IT APPLIED",
+    mistakesIntro: "Please read the attached care guide. This is the part most people skip — and then wonder two months later why the hair is curling and breaking.",
+    mistakesLabel: "Most common mistakes that ruin hair:",
+    mistake1: "flat ironing without heat protection or above 180 °C",
+    mistake2: "no mask or oil — hair dries out within a few weeks",
+    mistake3: "bleaching and highlighting — irreversible damage in a single visit",
+    mistake4: "sleeping with hair down or wet",
+    mistake5: "applying mask and oil directly on bonds",
+    careLink: "Full care guide:",
+    closing: "",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
 };
 
 export function getOrderShippedEmail(
@@ -1367,6 +1500,20 @@ const day7T: Record<Lang, {
     closing: "Что-то беспокоит? Напишите, с радостью подскажем.",
     signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
+  en: {
+    subject: "How is your hair doing?",
+    greeting: (name) => `Hello, ${name},`,
+    intro: "it's been a week. How are you enjoying your hair?\n\nThe first few weeks determine how long they will last, so here's a quick reminder of the three things that matter most:",
+    nutritionTitle: "NOURISHMENT",
+    nutritionBody: "A mask once or twice a week, oil on the ends daily before bed. Always from mid-length down, never on the bonds — oily products loosen them and the hair falls out.",
+    nutritionVitamins: "Hair vitamins in tablets do not work on extensions. Those grow from your head — these do not. Only nourishment applied directly to the hair works — mask, oil, hair ampoule.",
+    heatTitle: "HEAT",
+    heatBody: "Maximum 180 °C and always with heat protection. Above this limit, the hair is irreversibly damaged and does not grow back, so the damage is permanent. One smooth pass, do not go over the same spot repeatedly.",
+    brushTitle: "BRUSHING",
+    brushBody: "Twice a day, with a special brush, from the bottom up. Never on wet hair. Before bed, braid into a loose plait.",
+    closing: "Something bothering you? Write to us, we are happy to help.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
 };
 
 export function getDay7CareEmail(
@@ -1472,6 +1619,18 @@ const day30T: Record<Lang, {
     conditionTitle: "КАК ДЕЛА С ВОЛОСАМИ?",
     conditionBody: "Если что-то не так — волосы крутятся, тускнеют, запутываются — напишите нам как можно скорее. Большинство этих вещей ещё можно спасти интенсивной регенерацией, если вовремя подхватить.",
     conditionContact: "Пишите на info@hairland.cz, можно и с фоткой.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
+  en: {
+    subject: "One month with hair extensions — is everything okay?",
+    greeting: (name) => `Hello, ${name},`,
+    intro: "it's been a month. We're checking in with a quick update.",
+    hairdresserTitle: "TIME FOR YOUR FIRST HAIRDRESSER VISIT",
+    hairdresserBody: "After four to six weeks, it's a good idea to have the bonds checked. Your natural hair grows and the bonds move away from the scalp — the lower they get, the more the hair tangles around them and starts to break.",
+    hairdresserUrgent: "Visit sooner if you feel pulling or stinging, or if knots are starting to form near the roots.",
+    conditionTitle: "HOW IS YOUR HAIR DOING?",
+    conditionBody: "If something is off — hair is curling, getting dull, or tangling — write to us as soon as possible. Most of these issues can still be saved with intensive treatment if caught early.",
+    conditionContact: "Reach out at info@hairland.cz, photos welcome.",
     signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
 };
@@ -1588,6 +1747,21 @@ const extensionReminderT: Record<Lang, {
     refillBody: "Напишите, с радостью подберём волосы, которые подойдут к имеющимся. Можете снова лично осмотреть перед решением.",
     signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
   },
+  en: {
+    subject: "Time for a re-application is approaching",
+    greeting: (name) => `Hello, ${name},`,
+    introGeneral: "depending on your application method, it's time for a re-application.",
+    keratinTitle: "KERATIN — re-application after 3 to 4 months",
+    tapeTitle: "TAPE-IN — re-application after 6 to 8 weeks",
+    microTitle: "MICRO RING — re-application after 2 to 3 months",
+    tresTitle: "TRES — re-application after 6 to 8 weeks",
+    warningBody: "Delaying re-application is one of the most common causes of damage. The bonds slide down, hair tangles around them, and brushing starts to tear your natural hair.",
+    removalTitle: "ALWAYS HAVE THEM REMOVED BY A HAIRDRESSER",
+    removalBody: "Never pull out or remove the strands at home. Improper removal damages both the extensions and your natural hair.",
+    refillTitle: "NEED A TOP-UP OR A NEW SET?",
+    refillBody: "Get in touch, we will be happy to select hair that matches your current set. You can inspect it in person again before deciding.",
+    signature: "Hairland\ninfo@hairland.cz | +420 608 553 103",
+  },
 };
 
 export function getExtensionReminderEmail(
@@ -1686,6 +1860,14 @@ const retailPaymentT: Record<Lang, {
     body2: "Мы готовим заказ и сообщим Вам об отправке.",
     totalLabel: "Оплачено",
     footer: "Есть вопрос? Ответьте на это письмо.",
+  },
+  en: {
+    subject: (n) => `Payment received — order #${n} — Hairland`,
+    greeting: (name) => `Hello, ${name},`,
+    body1: (n) => `Your payment for order #${n} has been received.`,
+    body2: "We are now preparing your order and will notify you once it ships.",
+    totalLabel: "Paid",
+    footer: "Have a question? Reply to this email.",
   },
 };
 

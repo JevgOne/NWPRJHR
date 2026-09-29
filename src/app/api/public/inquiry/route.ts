@@ -27,7 +27,7 @@ const inquirySchema = z.object({
   message: z.string().max(5000).optional().default(""),
   promoCode: z.string().max(50).optional().default(""),
   referralCode: z.string().max(50).optional().default(""),
-  locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
+  locale: z.enum(["cs", "uk", "ru", "en"]).optional().default("cs"),
   customerPhotos: z.array(z.string().url().or(z.string().startsWith("/uploads/"))).max(3).optional().default([]),
   items: z.array(inquiryItemSchema).max(50).default([]),
   shippingMethod: z.enum(["PERSONAL_DELIVERY", "PACKETA", "PICKUP"]).optional(),

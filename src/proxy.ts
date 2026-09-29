@@ -9,9 +9,10 @@ const intlMiddleware = createMiddleware(routing);
  * Used to issue 308 (permanent) redirects instead of next-intl's default 307.
  * Example: /ua/poradna → /ua/консультація (308)
  */
-const LOCALE_PREFIX_TO_CODE: Record<string, "uk" | "ru"> = {
+const LOCALE_PREFIX_TO_CODE: Record<string, "uk" | "ru" | "en"> = {
   "/ua": "uk",
   "/rus": "ru",
+  "/en": "en",
 };
 
 type PathnameEntry = string | Record<string, string>;

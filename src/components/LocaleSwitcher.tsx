@@ -6,12 +6,13 @@ import { usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/config";
 import { getLocalizedPath } from "@/lib/localized-path";
 
-const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
+const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus", en: "/en" };
 
 const localeFlags: Record<Locale, { flag: string; label: string }> = {
   cs: { flag: "🇨🇿", label: "Čeština" },
   uk: { flag: "🇺🇦", label: "Українська" },
   ru: { flag: "🇷🇺", label: "Русский" },
+  en: { flag: "🇬🇧", label: "English" },
 };
 
 export function LocaleSwitcher() {
@@ -56,7 +57,7 @@ export function LocaleSwitcher() {
 
       {open && (
         <div className="absolute z-50 top-full mt-1 bg-white rounded-lg shadow-lg border border-line py-1 min-w-[140px] right-0">
-          {(["cs", "uk", "ru"] as const).map((loc) => {
+          {(["cs", "uk", "ru", "en"] as const).map((loc) => {
             const { flag, label } = localeFlags[loc];
             return (
               <button

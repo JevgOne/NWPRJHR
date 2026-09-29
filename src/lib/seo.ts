@@ -6,12 +6,14 @@ const LOCALE_PREFIXES: Record<string, string> = {
   cs: "",
   uk: "/ua",
   ru: "/rus",
+  en: "/en",
 };
 
 export const OG_LOCALES: Record<string, string> = {
   cs: "cs_CZ",
   uk: "uk_UA",
   ru: "ru_RU",
+  en: "en_GB",
 };
 
 export function getOgUrl(path: string, locale: string = "cs"): string {

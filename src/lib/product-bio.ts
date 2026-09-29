@@ -11,7 +11,7 @@ interface BioProductData {
   colorCount?: number;
 }
 
-type Locale = "cs" | "uk" | "ru";
+type Locale = "cs" | "uk" | "ru" | "en";
 
 export function generateProductBio(data: BioProductData, locale: Locale = "cs"): string {
   const originFn = locale === "uk" ? originFromGenitiveUk : locale === "ru" ? originFromGenitiveRu : originFromGenitive;
@@ -70,6 +70,12 @@ const TEXTURE_MAP: Record<Locale, Record<string, string>> = {
     "vlnité": "волнистые",
     "kudrnaté": "кудрявые",
     "afro": "афро",
+  },
+  en: {
+    "rovné": "straight",
+    "vlnité": "wavy",
+    "kudrnaté": "curly",
+    "afro": "afro",
   },
 };
 
@@ -455,6 +461,7 @@ const TEMPLATES: Record<Locale, CategoryTemplates> = {
   cs: CS_TEMPLATES,
   uk: UK_TEMPLATES,
   ru: RU_TEMPLATES,
+  en: CS_TEMPLATES,
 };
 
 function buildGenericBio(name: string, origin: string, texture: string, color: string, lengthStr: string, locale: Locale): string {
@@ -462,6 +469,7 @@ function buildGenericBio(name: string, origin: string, texture: string, color: s
     cs: { origin: "Původ", texture: "Textura", shade: "Odstín", length: "Délka" },
     uk: { origin: "Походження", texture: "Текстура", shade: "Відтінок", length: "Довжина" },
     ru: { origin: "Происхождение", texture: "Текстура", shade: "Оттенок", length: "Длина" },
+    en: { origin: "Origin", texture: "Texture", shade: "Shade", length: "Length" },
   };
   const l = labels[locale];
   const parts: string[] = [name + "."];

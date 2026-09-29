@@ -45,7 +45,7 @@ const publicOrderSchema = z
     promoCode: z.string().max(50).optional(),
     referralCode: z.string().max(50).optional(),
     note: z.string().max(2000).optional(),
-    locale: z.enum(["cs", "uk", "ru"]).optional().default("cs"),
+    locale: z.enum(["cs", "uk", "ru", "en"]).optional().default("cs"),
     salonId: z.string().optional(),
 
     wantsBilling: z.boolean().optional().default(false),
@@ -522,7 +522,7 @@ export async function POST(request: NextRequest) {
 
   // 9. Create Comgate payment (all e-shop payments go through Comgate)
   const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://www.hairland.cz").replace(/\/$/, "");
-  const returnLocale = data.locale === "cs" ? "cs" : data.locale === "uk" ? "uk" : data.locale === "ru" ? "ru" : "cs";
+  const returnLocale = data.locale === "cs" ? "cs" : data.locale === "uk" ? "uk" : data.locale === "ru" ? "ru" : data.locale === "en" ? "en" : "cs";
   const comgateResult = await createPayment({
     price: totalAmount,
     label: `Obj ${order.orderNumber}`,

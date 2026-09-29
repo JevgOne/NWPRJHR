@@ -18,7 +18,7 @@ const registerSchema = z.object({
   website: z.string().max(500).optional().default(""),
   instagram: z.string().max(200).optional().default(""),
   password: z.string().min(6).max(100),
-  language: z.enum(["cs", "uk", "ru"]).default("cs"),
+  language: z.enum(["cs", "uk", "ru", "en"]).default("cs"),
 });
 
 // Rate limit: 3 per hour per IP
