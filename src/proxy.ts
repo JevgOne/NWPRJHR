@@ -116,6 +116,7 @@ export function proxy(request: NextRequest) {
     "/wishlist": "/oblibene",
     "/inquiry-cart": "/kosik",
     "/poptavka": "/kosik",
+    "/faq": "/poradna",
   };
   const renamedTarget = RENAMED_PATHS[stripped];
   if (renamedTarget) {

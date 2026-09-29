@@ -85,11 +85,10 @@ export function PublicFooter() {
               {t("footer.infoTitle")}
             </h3>
             <ul className="space-y-2">
-              <li><Link href="/obchodni-podminky" className={linkClass}>{t("footer.termsLink")}</Link></li>
-              <li><Link href="/reklamacni-rad" className={linkClass}>{t("footer.complaintsLink")}</Link></li>
-              <li><Link href="/pece-o-vlasy" className={linkClass}>{t("footer.hairCareLink")}</Link></li>
               <li><Link href="/doprava" className={linkClass}>{t("footer.shippingLink")}</Link></li>
               <li><Link href="/odstoupeni-od-smlouvy" className={linkClass}>{t("footer.withdrawalLink")}</Link></li>
+              <li><Link href="/reklamacni-rad" className={linkClass}>{t("footer.complaintsLink")}</Link></li>
+              <li><Link href="/obchodni-podminky" className={linkClass}>{t("footer.termsLink")}</Link></li>
               <li><Link href="/ochrana-udaju" className={linkClass}>{t("nav.privacy")}</Link></li>
               <li><Link href="/poradna" className={linkClass}>{t("footer.faqLink")}</Link></li>
               <li><Link href="/registrace" className={linkClass}>{t("footer.salonRegLink")}</Link></li>
@@ -124,7 +123,7 @@ export function PublicFooter() {
           <span>{t("footer.copyright")}</span>
           <span>{t("footer.paymentInfo")}</span>
           <span>
-            {t("footer.companyName")} · {t("footer.companyId")}
+            {t("footer.companyName")} · {t("footer.companyId")} · <a href="https://seokatalog.cz" target="_blank" rel="noopener" className="hover:text-nude-200/50 transition-colors">SEO katalog</a>
           </span>
         </div>
       </div>

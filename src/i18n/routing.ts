@@ -206,7 +206,6 @@ export const routing = defineRouting({
       ru: "/преображения",
       uk: "/перетворення",
     },
-    "/faq": "/faq",
     "/registrace": {
       cs: "/registrace",
       ru: "/регистрация",

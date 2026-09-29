@@ -41,11 +41,11 @@ const articles: Article[] = [
   title: "Kolik stojí prodloužení vlasů v roce 2026? Kompletní cenový přehled",
   titleUk: "Скільки коштує нарощування волосся у 2026 році? Повний огляд цін",
   titleRu: "Сколько стоит наращивание волос в 2026 году? Полный обзор цен",
-  excerpt: "Přehled cen prodloužení vlasů v Česku — clip-in, tape-in, keratin i micro ring. Kolik zaplatíte za vlasy, práci a údržbu.",
-  excerptUk: "Огляд цін на нарощування волосся — clip-in, tape-in, кератин та micro ring. Скільки коштують волосся, робота та догляд.",
-  excerptRu: "Обзор цен на наращивание волос — clip-in, tape-in, кератин и micro ring. Сколько стоят волосы, работа и уход.",
-  metaTitle: "Kolik stojí prodloužení vlasů 2026 — ceny clip-in, tape-in, keratin",
-  metaDescription: "Kompletní cenový přehled prodloužení vlasů v roce 2026. Ceny vlasů, práce kadeřnice i údržby. Clip-in od 3 000 Kč, tape-in od 5 000 Kč, keratin od 7 000 Kč.",
+  excerpt: "Kolik stojí prodloužení vlasů? Ceny od 3 000 Kč (clip-in) do 18 000 Kč (keratin). Konkrétní ceny podle metody včetně příkladů celkové kalkulace.",
+  excerptUk: "Скільки коштує нарощування волосся? Ціни від 3 000 Kč (clip-in) до 18 000 Kč (кератин). Конкретні ціни за методом з прикладами розрахунків.",
+  excerptRu: "Сколько стоит наращивание волос? Цены от 3 000 Kč (clip-in) до 18 000 Kč (кератин). Конкретные цены по методам с примерами расчётов.",
+  metaTitle: "Kolik stojí prodloužení vlasů 2026 — ceny clip-in, tape-in, keratin, micro ring",
+  metaDescription: "Kolik stojí prodloužení vlasů v roce 2026? Ceny od 3 000 Kč (clip-in) do 18 000 Kč (keratin). Kompletní cenový přehled s příklady kalkulací — vlasy, práce i údržba.",
   publishedAt: "2026-07-01T08:00:00Z",
   content: `## Kolik stojí prodloužení vlasů v roce 2026?
 
@@ -119,7 +119,7 @@ Přeaplikace, speciální šampony, kartáče. Často opomíjená složka, kter�
 
 ## Náš ceník
 
-V Hairland nabízíme prémiové panenské vlasy za férové ceny — bez prostředníků. Podívejte se na naši [nabídku](/offer) nebo nás [kontaktujte](/contact) pro individuální kalkulaci.`,
+V Hairland nabízíme prémiové panenské vlasy za férové ceny — bez prostředníků. Podívejte se na naši [nabídku](/vlasy-k-prodlouzeni) nebo nás [kontaktujte](/kontakt) pro individuální kalkulaci.`,
 
   contentUk: `## Скільки коштує нарощування волосся у 2026 році?
 
@@ -183,7 +183,7 @@ V Hairland nabízíme prémiové panenské vlasy za férové ceny — bez prost�
 
 ## Наші ціни
 
-У Hairland ми пропонуємо преміальне незаймане волосся за справедливими цінами. Перегляньте нашу [пропозицію](/offer) або [зв'яжіться з нами](/contact).`,
+У Hairland ми пропонуємо преміальне незаймане волосся за справедливими цінами. Перегляньте нашу [пропозицію](/vlasy-k-prodlouzeni) або [зв'яжіться з нами](/kontakt).`,
 
   contentRu: `## Сколько стоит наращивание волос в 2026 году?
 
@@ -247,7 +247,7 @@ V Hairland nabízíme prémiové panenské vlasy za férové ceny — bez prost�
 
 ## Наши цены
 
-В Hairland мы предлагаем премиальные девственные волосы по справедливым ценам. Посмотрите наше [предложение](/offer) или [свяжитесь с нами](/contact).`,
+В Hairland мы предлагаем премиальные девственные волосы по справедливым ценам. Посмотрите наше [предложение](/vlasy-k-prodlouzeni) или [свяжитесь с нами](/kontakt).`,
 },
 
 // ─────────────────────────────────────────────────────────────

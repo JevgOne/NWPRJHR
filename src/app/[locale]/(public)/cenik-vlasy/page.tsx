@@ -116,6 +116,13 @@ export default async function CenikVlasyPage() {
     footerNote: t("pricingFooterNote"),
   };
 
+  // Compute global min/max for AggregateOffer
+  const allRetailPrices = products.flatMap((p) =>
+    p.variants.filter((v) => v.sellingMode === "BY_GRAM" && v.retailPricePerGram > 0).map((v) => Math.round(v.retailPricePerGram)),
+  );
+  const globalMinPrice = allRetailPrices.length > 0 ? Math.min(...allRetailPrices) : 3000;
+  const globalMaxPrice = allRetailPrices.length > 0 ? Math.max(...allRetailPrices) : 18000;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -131,11 +138,101 @@ export default async function CenikVlasyPage() {
     },
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: t("costQuestion"),
+        acceptedAnswer: { "@type": "Answer", text: t("costAnswer") },
+      },
+      {
+        "@type": "Question",
+        name: "Kolik stojí prodloužení vlasů kompletně?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Celková cena prodloužení vlasů se skládá z ceny vlasů a ceny aplikace. Vlasy: ${globalMinPrice.toLocaleString("cs-CZ")}–${globalMaxPrice.toLocaleString("cs-CZ")} Kč za 100 g podle kvality a délky. Aplikace prodloužení: 3 000–10 000 Kč podle gramáže. Celkem se cena pohybuje od 4 000 do 25 000 Kč.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Kolik stojí clip-in vlasy?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Clip-in vlasy (domácí použití) stojí 3 000–8 000 Kč za sadu podle kvality a délky. Nevyžadují práci kadeřnice — nasadíte si je sami.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Kolik stojí tape-in prodloužení?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Tape-in vlasy stojí 4 000–12 000 Kč za materiál + 4 500–7 000 Kč za aplikaci. Přeaplikace se provádí každých 6–8 týdnů.",
+        },
+      },
+    ],
+  };
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "Vlasy k prodloužení",
+    description: "Prémiové přírodní vlasy k prodloužení — panenské (Virgin), Luxe a Standard. Přímý import z více než 10 zemí.",
+    brand: { "@type": "Brand", name: "Hairland" },
+    url: "https://www.hairland.cz/cenik-vlasy",
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: "CZK",
+      lowPrice: globalMinPrice,
+      highPrice: globalMaxPrice,
+      unitText: "za 100 g",
+      offerCount: allRetailPrices.length,
+      availability: "https://schema.org/InStock",
+      url: "https://www.hairland.cz/vlasy-k-prodlouzeni",
+    },
+  };
+
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Aplikace prodloužení vlasů",
+    description: "Profesionální aplikace prodloužení vlasů metodami clip-in, tape-in, keratin, micro ring a tresy.",
+    provider: {
+      "@type": "Organization",
+      name: "Hairland",
+      url: "https://www.hairland.cz",
+    },
+    areaServed: { "@type": "Country", name: "Česko" },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Ceník aplikace prodloužení",
+      itemListElement: [
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Prodloužení do 50 g" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "CZK", minPrice: 3000, maxPrice: 5000 } },
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Prodloužení do 100 g" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "CZK", minPrice: 4500, maxPrice: 7000 } },
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Prodloužení do 150 g" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "CZK", minPrice: 5500, maxPrice: 8000 } },
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Prodloužení do 200 g" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "CZK", minPrice: 6500, maxPrice: 9000 } },
+      ],
+    },
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
 
       <Breadcrumbs items={[{ label: "Hairland", href: "/" }, { label: t("title") }]} />
