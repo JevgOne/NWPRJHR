@@ -73,6 +73,8 @@ export function PublicFooter() {
               <li><Link href="/prodlouzeni-vlasu" className={linkClass}>{t("footer.citiesLink")}</Link></li>
               <li><Link href="/poradna" className={linkClass}>{t("navbar.advice")}</Link></li>
               <li><Link href="/blog" className={linkClass}>Blog</Link></li>
+              <li><Link href="/pruvodce-gramazi" className={linkClass}>{t("footer.gramGuide")}</Link></li>
+              <li><Link href="/pece-o-vlasy" className={linkClass}>{t("footer.hairCareLink")}</Link></li>
               <li><Link href="/kadernice" className={linkClass}>{t("footer.hairdressers")}</Link></li>
               <li><Link href="/recenze" className={linkClass}>{t("footer.reviews")}</Link></li>
               <li><Link href="/o-nas" className={linkClass}>{t("nav.about")}</Link></li>
