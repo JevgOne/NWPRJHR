@@ -321,14 +321,44 @@ function getTotalGrams(
 /**
  * Build OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
  */
-function buildOgTitle(texture: string | null, lengths: number[], colorNames: string[], totalGrams: number): string {
+const OG_HAIR_LABEL: Record<string, string> = { cs: "vlasy", uk: "волосся", ru: "волосы", en: "hair" };
+const OG_REAL_HAIR: Record<string, string> = {
+  cs: "100% pravé vlasy",
+  uk: "100% натуральне волосся",
+  ru: "100% натуральные волосы",
+  en: "100% real human hair",
+};
+const OG_SINGLE_DONOR: Record<string, string> = {
+  cs: "z jedné hlavy. ",
+  uk: "від одного донора. ",
+  ru: "от одного донора. ",
+  en: "single donor. ",
+};
+const OG_FREE_PRAGUE: Record<string, string> = {
+  cs: "Přijedeme ukázat po Praze zdarma.",
+  uk: "Безкоштовний показ у Празі.",
+  ru: "Бесплатный показ в Праге.",
+  en: "Free viewing across Prague.",
+};
+
+function buildOgTitle(texture: string | null, lengths: number[], colorNames: string[], totalGrams: number, locale: string = "cs"): string {
+  const hairLabel = OG_HAIR_LABEL[locale] ?? OG_HAIR_LABEL.cs;
   const textureStr = texture ? `${texture.charAt(0).toUpperCase() + texture.slice(1)} ` : "";
   const lengthStr = lengths.length > 0
     ? " " + (lengths.length <= 3 ? lengths.map((l) => `${l} cm`).join(", ") : `${lengths[0]}\u2013${lengths[lengths.length - 1]} cm`)
     : "";
   const colorStr = colorNames.length > 0 && colorNames.length <= 2 ? `, ${colorNames.join(", ")}` : "";
   const gramStr = totalGrams > 0 ? ` \u2013 ${totalGrams} g` : "";
-  return `${textureStr}vlasy${lengthStr}${colorStr}${gramStr}`;
+  return `${textureStr}${hairLabel}${lengthStr}${colorStr}${gramStr}`;
+}
+
+function buildOgDesc(category: string, minPpg: number | null, locale: string = "cs"): string {
+  const realHair = OG_REAL_HAIR[locale] ?? OG_REAL_HAIR.cs;
+  const singleDonor = (category === "VIRGIN" || category === "LUXE") ? (OG_SINGLE_DONOR[locale] ?? OG_SINGLE_DONOR.cs) : "";
+  const freePrague = OG_FREE_PRAGUE[locale] ?? OG_FREE_PRAGUE.cs;
+  return minPpg
+    ? `${realHair} ${singleDonor}${Math.round(minPpg / 100)} CZK/g. ${freePrague}`
+    : `${realHair} ${singleDonor}${freePrague}`;
 }
 
 async function generateProductMetadataFromProduct(
@@ -345,21 +375,18 @@ async function generateProductMetadataFromProduct(
   });
 
   // Title: use manual metaTitle if set, otherwise auto-generate
-  const title = product.metaTitle || buildSeoTitle(product.texture, lengths, colorNames, product.category);
+  const title = product.metaTitle || buildSeoTitle(product.texture, lengths, colorNames, product.category, locale);
 
   // Description: use manual metaDescription if set, otherwise auto-generate
-  const description = product.metaDescription || buildAutoDescription(product, colorNames, lengths, product.variants);
+  const description = product.metaDescription || buildAutoDescription(product, colorNames, lengths, product.variants, locale);
 
   // OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
   const totalGrams = getTotalGrams(product.variants);
-  const ogTitle = buildOgTitle(product.texture, lengths, colorNames, totalGrams);
+  const ogTitle = buildOgTitle(product.texture, lengths, colorNames, totalGrams, locale);
 
-  // OG description: 100% pravé vlasy [z jedné hlavy]. {cena} Kč/g. Přijedeme ukázat po Praze zdarma.
+  // OG description — locale-aware
   const minPpg = getMinPricePerGram(product.variants);
-  const singleDonorText = (product.category === "VIRGIN" || product.category === "LUXE") ? "z jedné hlavy. " : "";
-  const ogDesc = minPpg
-    ? `100% pravé vlasy ${singleDonorText}${Math.round(minPpg / 100)} Kč/g. Přijedeme ukázat po Praze zdarma.`
-    : `100% pravé vlasy ${singleDonorText}Přijedeme ukázat po Praze zdarma.`;
+  const ogDesc = buildOgDesc(product.category, minPpg, locale);
 
   // Build check: log products with oversized title/description
   if (title.length > 60) console.log(`[SEO] Title > 60 chars (${title.length}): "${title}" [${product.slug}]`);
@@ -659,7 +686,7 @@ async function ProductDetailView({
   const schemaColorNames = [...new Set(product.variants.map((v) => v.color))].map((c) => {
     try { return t(`colors.${getHairColor(c).nameKey}`); } catch { return c; }
   });
-  const schemaFallbackDesc = buildAutoDescription(product, schemaColorNames, lengths, product.variants).slice(0, 160);
+  const schemaFallbackDesc = buildAutoDescription(product, schemaColorNames, lengths, product.variants, locale).slice(0, 160);
   const schemaDesc = description
     ? description.replace(/\n+/g, " ").slice(0, 160).replace(/\s\S*$/, "\u2026")
     : schemaFallbackDesc;

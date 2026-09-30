@@ -1351,6 +1351,7 @@
       "hygienicWarning": "Vlasy jsou dodávány v hygienicky uzavřeném obalu. Porušením pečeti zaniká právo odstoupit od smlouvy do 14 dnů (§ 1837 písm. g občanského zákoníku)."
     },
     "paymentResult": {
+      "pageTitle": "Výsledek platby | Hairland",
       "paidTitle": "Platba proběhla úspěšně!",
       "paidDesc": "Vaše platba byla přijata. O dalším postupu vás budeme informovat e-mailem.",
       "pendingTitle": "Platba se zpracovává",

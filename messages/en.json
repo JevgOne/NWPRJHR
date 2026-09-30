@@ -1351,6 +1351,7 @@
       "hygienicWarning": "Hair is delivered in a hygienically sealed package. Breaking the seal voids the right to withdraw from the contract within 14 days (§ 1837(g) of the Civil Code)."
     },
     "paymentResult": {
+      "pageTitle": "Payment result | Hairland",
       "paidTitle": "Payment successful!",
       "paidDesc": "Your payment has been received. We will inform you about the next steps by email.",
       "pendingTitle": "Payment is being processed",

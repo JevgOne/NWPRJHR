@@ -15,7 +15,7 @@ export const revalidate = 3600;
 const BASE_URL = "https://www.hairland.cz";
 const STATIC_DATE = "2026-09-25";
 
-const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus" };
+const LOCALE_PREFIXES: Record<string, string> = { cs: "", uk: "/ua", ru: "/rus", en: "/en" };
 
 function withAlternates(
   path: string,

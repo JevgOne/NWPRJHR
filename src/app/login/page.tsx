@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Přihlášení",
+  robots: { index: false, follow: false },
   openGraph: {
     type: "website",
     title: "Přihlášení | Hairland",
