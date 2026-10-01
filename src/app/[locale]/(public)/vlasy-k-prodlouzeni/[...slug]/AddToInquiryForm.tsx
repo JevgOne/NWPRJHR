@@ -94,17 +94,14 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
   const isExclusive = isByPiece && (selectedVariant?.exclusivePieces ?? 0) > 0;
   const showAsPiece = isByPiece && isExclusive;
   const isCustomOrder = selectedVariant?.availableToOrder && (showAsPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
-  const effectiveByGrams = showAsPiece && inquiryUnit === "g";
   const maxQty = isCustomOrder
     ? Infinity
-    : effectiveByGrams
-      ? (selectedVariant?.availableGrams ?? Infinity)
-      : showAsPiece
-        ? (selectedVariant?.availablePieces ?? Infinity)
-        : (selectedVariant?.availableGrams ?? Infinity);
-  const qtyStep = showAsPiece && !effectiveByGrams ? 1 : 50;
-  const minQty = showAsPiece && !effectiveByGrams ? 1 : 50;
-  const unitLabel = showAsPiece ? inquiryUnit : "g";
+    : showAsPiece
+      ? (selectedVariant?.availablePieces ?? Infinity)
+      : (selectedVariant?.availableGrams ?? Infinity);
+  const qtyStep = showAsPiece ? 1 : 50;
+  const minQty = showAsPiece ? 1 : 50;
+  const unitLabel = showAsPiece ? "ks" : "g";
 
   // Reset quantity when variant changes
   const prevVariantRef = useRef(selectedVariant);
@@ -137,7 +134,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
       lengthCm: selectedLength,
       color: selectedColor,
       quantity,
-      unit: showAsPiece ? inquiryUnit : "g",
+      unit: showAsPiece ? "ks" : "g",
       sku: selectedVariant?.sku ?? generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin }),
       pricePerUnit,
       imageUrl,
@@ -243,33 +240,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
         )}
       </div>
 
-      {/* BY_PIECE: ks/g toggle — only for exclusive pieces */}
-      {showAsPiece && selectedLength && selectedColor && (
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => { setInquiryUnit("ks"); setQuantity(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-              inquiryUnit === "ks"
-                ? "border-rose bg-rose/10 text-ink"
-                : "border-line bg-white text-muted hover:border-espresso/30"
-            }`}
-          >
-            {t("inquiry.byPiece")}
-          </button>
-          <button
-            type="button"
-            onClick={() => { setInquiryUnit("g"); setQuantity(50); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-              inquiryUnit === "g"
-                ? "border-rose bg-rose/10 text-ink"
-                : "border-line bg-white text-muted hover:border-espresso/30"
-            }`}
-          >
-            {t("inquiry.byGram")}
-          </button>
-        </div>
-      )}
+      {/* Exclusive pieces are sold only as whole pieces — no gram toggle */}
 
       {/* Step 3: Quantity + add button */}
       <div className="flex flex-col sm:flex-row sm:items-end gap-3">

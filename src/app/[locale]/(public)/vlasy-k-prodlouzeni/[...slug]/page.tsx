@@ -507,7 +507,11 @@ async function ProductDetailView({
       let displayPrice: number;
       let pieceDisplayPrice: number | undefined;
       if (isByPiece && vIsExclusive) {
-        const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+        // Piece price: use retailPricePerPiece if set, otherwise calculate from per-gram retail × grams
+        const retailPiece = v.retailPricePerPiece
+          ?? (v.retailPricePerGram > 0 && v.availableGrams > 0
+              ? v.retailPricePerGram * v.availableGrams
+              : v.pricePerPiece ?? 0);
         displayPrice = discountPct > 0
           ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
           : retailPiece;
@@ -518,7 +522,10 @@ async function ProductDetailView({
           ? roundHalereUp(v.retailPricePerGram - (v.retailPricePerGram * discountPct) / 20000)
           : v.retailPricePerGram;
         if (isByPiece) {
-          const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+          const retailPiece = v.retailPricePerPiece
+            ?? (v.retailPricePerGram > 0 && v.availableGrams > 0
+                ? v.retailPricePerGram * v.availableGrams
+                : v.pricePerPiece ?? 0);
           pieceDisplayPrice = discountPct > 0
             ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
             : retailPiece;
