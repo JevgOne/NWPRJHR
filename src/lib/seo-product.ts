@@ -38,17 +38,17 @@ const PROCESSING_CTA: Record<Locale, string> = {
 };
 
 const PICKUP_CTA: Record<Locale, string> = {
-  cs: "Osobní odběr Praha zdarma, doručení do 7 dnů",
-  uk: "Безкоштовне отримання в Празі, доставка до 7 днів",
-  ru: "Бесплатный самовывоз в Праге, доставка за 7 дней",
-  en: "Free Prague pickup, delivery within 7 days",
+  cs: "Doručení do 7 dnů, Zásilkovna po celé ČR",
+  uk: "Доставка до 7 днів, Zásilkovna по всій Чехії",
+  ru: "Доставка за 7 дней, Zásilkovna по всей Чехии",
+  en: "Delivery within 7 days, Packeta across Czech Republic",
 };
 
 const PREMIUM_SUFFIX: Record<Locale, string> = {
-  cs: "Prémiová kvalita z přímého importu, osobní odběr Praha zdarma.",
-  uk: "Преміальна якість з прямого імпорту, безкоштовне отримання в Празі.",
-  ru: "Премиальное качество прямого импорта, бесплатный самовывоз в Праге.",
-  en: "Premium quality direct import, free Prague pickup.",
+  cs: "Prémiová kvalita z přímého importu, doručení po celé ČR.",
+  uk: "Преміальна якість з прямого імпорту, доставка по всій Чехії.",
+  ru: "Премиальное качество прямого импорта, доставка по всей Чехии.",
+  en: "Premium quality direct import, delivery across Czech Republic.",
 };
 
 const FROM_LABEL: Record<Locale, string> = {

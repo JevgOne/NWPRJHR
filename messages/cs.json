@@ -41,9 +41,9 @@
     "registerSalon": "Zaregistrujte svůj salon"
   },
   "metadata": {
-    "description": "Prodej pravých vlasů k prodloužení — přímý import, zprostředkování zpracování do 7 dnů. Osobní konzultace a výběr v Praze zdarma.",
-    "homeTitle": "Vlasy k prodloužení — prodej pravých vlasů Praha",
-    "homeDescription": "Pravé vlasy k prodloužení z přímého importu. Clip-in, tape-in, keratin, micro ring. Prodej na gramy, osobní konzultace Praha zdarma.",
+    "description": "Prodej pravých vlasů k prodloužení — přímý import, zprostředkování zpracování do 7 dnů. Doručení po celé ČR.",
+    "homeTitle": "Vlasy k prodloužení — prodej pravých vlasů | Hairland",
+    "homeDescription": "Pravé vlasy k prodloužení z přímého importu. Clip-in, tape-in, keratin, micro ring. Prodej na gramy, doručení po celé ČR.",
     "blogTitle": "Blog o prodloužení vlasů — rady a tipy",
     "blogDescription": "Jak vybrat správnou metodu prodloužení vlasů? Clip-in, tape-in nebo keratin? Rady od expertů, péče o prodloužené vlasy, srovnání kvality.",
     "contactTitle": "Kontakt a osobní konzultace vlasů v Praze",
@@ -188,7 +188,7 @@
     "regenerateBio": "Přegenerovat popis",
     "colorTone": "Tón barvy",
     "colorTonePlaceholder": "Vyberte nebo zadejte tón...",
-    "autoSeoDesc": "Osobní odběr Praha zdarma, zprostředkování zpracování na zakázku.",
+    "autoSeoDesc": "Doručení po celé ČR, zprostředkování zpracování na zakázku.",
     "ogImagePlaceholder": "Automaticky: první fotka produktu",
     "ogImageHint": "1200x630px pro sociální sítě",
     "originPrefix": "původ",
@@ -664,7 +664,7 @@
       },
       "fromOrigin": "z {origin}",
       "priceFrom": "od {price} Kč",
-      "ctaSuffix": "Doručení do 7 dnů, osobní odběr Praha zdarma",
+      "ctaSuffix": "Doručení do 7 dnů, Zásilkovna po celé ČR",
       "catShort": {
         "VIRGIN": "panenské",
         "LUXE": "luxe",
@@ -773,7 +773,7 @@
       "jsonLdDescription": "Prémiové pravé vlasy k prodloužení z přímého importu"
     },
     "products": {
-      "title": "Prodej pravých vlasů k prodloužení — Praha",
+      "title": "Prodej pravých vlasů k prodloužení",
       "category": "Kategorie",
       "origin": "Původ",
       "lengths": "Délky",
@@ -926,7 +926,7 @@
       "heroImageAlt": "Různé odstíny přírodních vlasů k prodloužení",
       "metaOrigin": "původ",
       "metaColors": "barev",
-      "metaSuffix": "Osobní odběr Praha zdarma, zprostředkování zpracování na zakázku.",
+      "metaSuffix": "Doručení po celé ČR, zprostředkování zpracování na zakázku.",
       "stylistMetaLabel": "Kadeřnice",
       "stylistMetaFallback": "spolupracující kadeřnice Hairland",
       "viewFullOffer": "Zobrazit celou nabídku",
@@ -1018,8 +1018,8 @@
       "utilityGrams": "Kolik gramů potřebuji? →"
     },
     "offer": {
-      "metaTitle": "Vlasy k prodloužení — pravé vlasy skladem Praha",
-      "metaDescription": "Prodej pravých vlasů k prodloužení — skladem i na objednávku. Panenské, Luxe i Standard. Keratin, tape-in, clip-in, micro ring. Ukázky zdarma po Praze.",
+      "metaTitle": "Vlasy k prodloužení — pravé vlasy skladem | Hairland",
+      "metaDescription": "Prodej pravých vlasů k prodloužení — skladem i na objednávku. Panenské, Luxe i Standard. Keratin, tape-in, clip-in, micro ring. Doručení po celé ČR.",
       "seoIntro": "Prodej pravých vlasů k prodloužení — skladem v Praze i na objednávku. Vybírejte z panenských, Luxe a Standard vlasů z Ukrajiny, Ruska, Turecka, Íránu, Indie, Vietnamu a dalších zemí. Každý culík prodáváme podle skutečné gramáže, délky, odstínu a struktury. Vlasy vám můžeme připravit na keratin, tape-in, clip-in, micro ring nebo vlasové tresy.",
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
       "bannerText": "Vlasy skladem si vezmete rovnou s sebou. Chcete zpracování na clip-in, tape-in nebo micro ring? Zprostředkujeme u prověřeného partnera — <strong>do 7 dnů</strong>. Vše oficiálně fakturováno.",
@@ -2767,7 +2767,7 @@
   "weightGuide": {
     "title": "Kolik gramů vlasů potřebuji?",
     "metaTitle": "Kalkulačka gramáže vlasů — kolik gramů potřebuji",
-    "metaDesc": "Kolik gramů vlasů potřebuji? Kalkulačka gramáže — zadejte délku, hustotu a metodu. Doporučí gramáž a cenu. Konzultace Praha zdarma.",
+    "metaDesc": "Kolik gramů vlasů potřebuji? Kalkulačka gramáže — zadejte délku, hustotu a metodu. Doporučí gramáž a cenu. Konzultace zdarma.",
     "subtitle": "Správná gramáž je klíčová pro přirozený výsledek. Záleží na typu vašich vlasů, požadovaném objemu a způsobu zpracování.",
     "home": "Domů",
     "breadcrumb": "Průvodce gramáží",
@@ -3247,18 +3247,18 @@
       "faq15q": "Lze vyrobit ofinu přesně podle mé fotky?",
       "faq15a": "Ano, vyrábíme ofiny na míru podle vašich požadavků. Pošlete nám fotku požadovaného stylu a vaši aktuální fotku za denního světla — doporučíme přesný odstín, délku a hustotu. Konzultace je zdarma a nezávazná."
     },
-    "clipInTitle": "Clip-in vlasy Praha | 100% pravé vlasy",
-    "tapeInTitle": "Tape-in vlasy Praha | Pravé vlasové pásky",
-    "keratinTitle": "Keratinové vlasy Praha — prodej",
-    "microRingTitle": "Micro ring vlasy Praha — prodej",
-    "weftTitle": "Vlasové tresy Praha | Pravé vlasy",
-    "clipInH1": "Clip-in vlasy v Praze",
-    "tapeInH1": "Tape-in vlasy v Praze",
-    "keratinH1": "Vlasy na keratin v Praze",
-    "microRingH1": "Micro ring vlasy v Praze",
-    "weftH1": "Vlasové tresy v Praze",
-    "ofinyTitle": "Clip-in ofiny Praha — z pravých vlasů",
-    "ofinyH1": "Clip-in ofiny z pravých vlasů — Praha",
+    "clipInTitle": "Clip-in vlasy — 100% pravé vlasy | Hairland",
+    "tapeInTitle": "Tape-in vlasy — pravé vlasové pásky | Hairland",
+    "keratinTitle": "Keratinové vlasy — prodej pravých vlasů | Hairland",
+    "microRingTitle": "Micro ring vlasy — prodej pravých vlasů | Hairland",
+    "weftTitle": "Vlasové tresy — pravé vlasy | Hairland",
+    "clipInH1": "Clip-in vlasy — prodej pravých vlasů",
+    "tapeInH1": "Tape-in vlasy — prodej pravých vlasů",
+    "keratinH1": "Vlasy na keratin — prodej pravých vlasů",
+    "microRingH1": "Micro ring vlasy — prodej pravých vlasů",
+    "weftH1": "Vlasové tresy — prodej pravých vlasů",
+    "ofinyTitle": "Clip-in ofiny z pravých vlasů | Hairland",
+    "ofinyH1": "Clip-in ofiny z pravých vlasů",
     "clipInDesc": "Clip-in prameny se připínají sponkami — snadná aplikace doma za pár minut. Ideální pro příležitostné nošení.",
     "tapeInDesc": "Tape-in pásky se lepí k vlastním vlasům. Plochý spoj, pohodlné celodenní nošení. Vydrží 6–8 týdnů.",
     "keratinDesc": "Keratinové bondy — nejtrvanlivější metoda prodloužení. Přirozený vzhled, vydrží 3–5 měsíců.",
@@ -3291,37 +3291,37 @@
       "sectionTitle": "Barva vlasů",
       "blond": {
         "title": "Blond vlasy k prodloužení",
-        "description": "Blond vlasy k prodloužení v odstínech platinová, zlatá i medová blond. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Blond vlasy k prodloužení v odstínech platinová, zlatá i medová blond. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Blond vlasy k prodloužení",
         "intro": "Nabízíme široký výběr blond vlasů v různých délkách a texturách. Všechny naše blond vlasy jsou z prověřené kvality."
       },
       "hneda": {
         "title": "Hnědé vlasy k prodloužení",
-        "description": "Hnědé vlasy k prodloužení — karamelová, světle i středně hnědá. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Hnědé vlasy k prodloužení — karamelová, světle i středně hnědá. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Hnědé vlasy k prodloužení",
         "intro": "Hnědé vlasy jsou nejpopulárnější volbou pro prodloužení. Nabízíme je v různých odstínech a délkách."
       },
       "tmave-hneda": {
         "title": "Tmavě hnědé vlasy k prodloužení",
-        "description": "Tmavě hnědé vlasy k prodloužení — tmavě hnědá a kaštanová. Přirozený vzhled, prémiová kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Tmavě hnědé vlasy k prodloužení — tmavě hnědá a kaštanová. Přirozený vzhled, prémiová kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Tmavě hnědé vlasy k prodloužení",
         "intro": "Tmavě hnědé vlasy dodají přirozený objem a délku. Dostupné v různých texturách a délkách."
       },
       "zrzava": {
         "title": "Zrzavé vlasy k prodloužení",
-        "description": "Zrzavé vlasy k prodloužení v unikátních přírodních odstínech. Vzácné barvy, prémiová kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Zrzavé vlasy k prodloužení v unikátních přírodních odstínech. Vzácné barvy, prémiová kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Zrzavé vlasy k prodloužení",
         "intro": "Zrzavé vlasy jsou vzácné a unikátní. Nabízíme je v prověřené kvalitě z pečlivě vybraných zdrojů."
       },
       "ombre": {
         "title": "Ombre vlasy k prodloužení",
-        "description": "Ombre vlasy k prodloužení s přirozeným přechodem od tmavých kořínků ke světlým koncům. Délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Ombre vlasy k prodloužení s přirozeným přechodem od tmavých kořínků ke světlým koncům. Délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Ombre vlasy k prodloužení",
         "intro": "Ombre vlasy nabízejí elegantní přechod barev od tmavších kořínků ke světlejším koncům. Přirozený a moderní vzhled."
       },
       "cerna": {
         "title": "Černé vlasy k prodloužení",
-        "description": "Černé vlasy k prodloužení v intenzivním černém odstínu. Prémiová kvalita, přirozený lesk, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Černé vlasy k prodloužení v intenzivním černém odstínu. Prémiová kvalita, přirozený lesk, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Černé vlasy k prodloužení",
         "intro": "Černé vlasy dodají dramatický objem a délku. Nabízíme je v různých texturách a délkách v prémiové kvalitě."
       }
@@ -3330,31 +3330,31 @@
       "sectionTitle": "Délka vlasů",
       "30cm": {
         "title": "Vlasy 30 cm k prodloužení",
-        "description": "Vlasy délky 30 cm k prodloužení — ideální pro doplnění objemu a jemné prodloužení. Virgin, Luxe i Standard kvalita. Prodej na gramy, Praha zdarma.",
+        "description": "Vlasy délky 30 cm k prodloužení — ideální pro doplnění objemu a jemné prodloužení. Virgin, Luxe i Standard kvalita. Prodej na gramy, doručení po celé ČR.",
         "h1": "Vlasy 30 cm k prodloužení",
         "intro": "Vlasy 30 cm jsou ideální volbou pro jemné doplnění objemu a mírné prodloužení."
       },
       "40cm": {
         "title": "Vlasy 40 cm k prodloužení",
-        "description": "Vlasy délky 40 cm k prodloužení — přirozená délka vhodná pro většinu metod. Virgin, Luxe i Standard kvalita. Prodej na gramy, Praha zdarma.",
+        "description": "Vlasy délky 40 cm k prodloužení — přirozená délka vhodná pro většinu metod. Virgin, Luxe i Standard kvalita. Prodej na gramy, doručení po celé ČR.",
         "h1": "Vlasy 40 cm k prodloužení",
         "intro": "Vlasy 40 cm nabízejí přirozenou délku vhodnou pro většinu typů prodloužení."
       },
       "50cm": {
         "title": "Vlasy 50 cm k prodloužení",
-        "description": "Vlasy délky 50 cm k prodloužení — nejpopulárnější délka. Clip-in, tape-in, keratin, micro ring. Virgin, Luxe i Standard. Prodej na gramy, Praha zdarma.",
+        "description": "Vlasy délky 50 cm k prodloužení — nejpopulárnější délka. Clip-in, tape-in, keratin, micro ring. Virgin, Luxe i Standard. Prodej na gramy, doručení po celé ČR.",
         "h1": "Vlasy 50 cm k prodloužení",
         "intro": "Vlasy 50 cm jsou nejoblíbenější délkou pro prodloužení. Nabízíme je v různých barvách a texturách."
       },
       "60cm": {
         "title": "Vlasy 60 cm k prodloužení",
-        "description": "Vlasy délky 60 cm k prodloužení — luxusní délka pro výrazné prodloužení. Virgin, Luxe i Standard kvalita. Prodej na gramy, Praha zdarma.",
+        "description": "Vlasy délky 60 cm k prodloužení — luxusní délka pro výrazné prodloužení. Virgin, Luxe i Standard kvalita. Prodej na gramy, doručení po celé ČR.",
         "h1": "Vlasy 60 cm k prodloužení",
         "intro": "Vlasy 60 cm poskytují luxusní délku pro výrazné prodloužení. Dostupné v prémiové kvalitě."
       },
       "70cm": {
         "title": "Vlasy 70 cm k prodloužení",
-        "description": "Vlasy délky 70 cm k prodloužení — nejdelší nabídka pro dramatické prodloužení. Virgin, Luxe i Standard kvalita. Prodej na gramy, Praha zdarma.",
+        "description": "Vlasy délky 70 cm k prodloužení — nejdelší nabídka pro dramatické prodloužení. Virgin, Luxe i Standard kvalita. Prodej na gramy, doručení po celé ČR.",
         "h1": "Vlasy 70 cm k prodloužení",
         "intro": "Vlasy 70 cm jsou naší nejdelší nabídkou. Ideální pro dramatické prodloužení a maximální objem."
       }
@@ -3363,25 +3363,25 @@
       "sectionTitle": "Textura vlasů",
       "rovne": {
         "title": "Rovné vlasy k prodloužení",
-        "description": "Rovné vlasy k prodloužení — hladké a lesklé, nejuniverzálnější textura. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Rovné vlasy k prodloužení — hladké a lesklé, nejuniverzálnější textura. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Rovné vlasy k prodloužení",
         "intro": "Rovné vlasy jsou nejuniverzálnější volbou pro prodloužení. Snadno se stylují a udržují."
       },
       "mirne-vlnite": {
         "title": "Mírně vlnité vlasy k prodloužení",
-        "description": "Mírně vlnité vlasy k prodloužení — přirozený objem a pohyb. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Mírně vlnité vlasy k prodloužení — přirozený objem a pohyb. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Mírně vlnité vlasy k prodloužení",
         "intro": "Mírně vlnité vlasy dodají přirozený objem a pohyb. Ideální pro každodenní nošení."
       },
       "vlnite": {
         "title": "Vlnité vlasy k prodloužení",
-        "description": "Vlnité vlasy k prodloužení — výrazné vlny pro objem a pohyb. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Vlnité vlasy k prodloužení — výrazné vlny pro objem a pohyb. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Vlnité vlasy k prodloužení",
         "intro": "Vlnité vlasy vytvoří efektní objem a pohyb. Nabízíme je v různých délkách a barvách."
       },
       "kudrnate": {
         "title": "Kudrnaté vlasy k prodloužení",
-        "description": "Kudrnaté vlasy k prodloužení — přirozené kudrliny pro kudrnatý look. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Kudrnaté vlasy k prodloužení — přirozené kudrliny pro kudrnatý look. Virgin, Luxe i Standard kvalita, délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Kudrnaté vlasy k prodloužení",
         "intro": "Kudrnaté vlasy jsou ideální pro přirozený kudrnatý look. Dostupné v prémiové kvalitě."
       }
@@ -3390,55 +3390,55 @@
       "sectionTitle": "Kategorie vlasů",
       "virgin": {
         "title": "Virgin vlasy — nejčistší kvalita",
-        "description": "Virgin (panenské) vlasy k prodloužení — 100% neošetřené vlasy z jedné hlavy. Nejvyšší kvalita, životnost 18–36 měsíců. Prodej na gramy, Praha zdarma.",
+        "description": "Virgin (panenské) vlasy k prodloužení — 100% neošetřené vlasy z jedné hlavy. Nejvyšší kvalita, životnost 18–36 měsíců. Prodej na gramy, doručení po celé ČR.",
         "h1": "Virgin vlasy — nejčistší kvalita",
         "intro": "Virgin vlasy jsou nejvyšší kvalita lidských vlasů. Nikdy nebyly chemicky ošetřeny a pochází z jedné hlavy."
       },
       "luxe": {
         "title": "Luxe vlasy k prodloužení",
-        "description": "Luxe vlasy k prodloužení — luxusní kvalita se zachovanou strukturou. Šetrné ošetření, životnost 12–24 měsíců. Prodej na gramy, Praha zdarma.",
+        "description": "Luxe vlasy k prodloužení — luxusní kvalita se zachovanou strukturou. Šetrné ošetření, životnost 12–24 měsíců. Prodej na gramy, doručení po celé ČR.",
         "h1": "Luxe vlasy k prodloužení",
         "intro": "Luxe vlasy nabízejí luxusní kvalitu s jemným šetrným ošetřením. Zachovaná přirozená struktura a hedvábný vzhled."
       },
       "standard": {
         "title": "Standard vlasy k prodloužení",
-        "description": "Standard vlasy k prodloužení — kvalitní prodloužení za dostupnou cenu. Životnost 6–12 měsíců, různé délky a textury. Prodej na gramy, Praha zdarma.",
+        "description": "Standard vlasy k prodloužení — kvalitní prodloužení za dostupnou cenu. Životnost 6–12 měsíců, různé délky a textury. Prodej na gramy, doručení po celé ČR.",
         "h1": "Standard vlasy k prodloužení",
         "intro": "Standard vlasy jsou ideální volbou pro kvalitní prodloužení za dostupnou cenu. Vhodné pro příležitostné nošení."
       },
       "sale": {
         "title": "Vlasy ve slevě — zvýhodněné prodloužení",
-        "description": "Vlasy k prodloužení ve slevě — zvýhodněné ceny na vybrané skladové položky. Limitované množství, různé délky a barvy. Osobní odběr Praha zdarma.",
+        "description": "Vlasy k prodloužení ve slevě — zvýhodněné ceny na vybrané skladové položky. Limitované množství, různé délky a barvy. Doručení po celé ČR.",
         "h1": "Vlasy ve slevě",
         "intro": "Zvýhodněné vlasy k prodloužení za akční ceny. Limitované množství skladem."
       },
       "clip-in": {
         "title": "Clip-in vlasy k prodloužení",
-        "description": "Clip-in vlasy k prodloužení — snadná aplikace sponkami bez poškození vlastních vlasů. Nasadíte i sundáte sami doma. Prodej na gramy, Praha zdarma.",
+        "description": "Clip-in vlasy k prodloužení — snadná aplikace sponkami bez poškození vlastních vlasů. Nasadíte i sundáte sami doma. Prodej na gramy, doručení po celé ČR.",
         "h1": "Clip-in vlasy k prodloužení",
         "intro": "Clip-in vlasy jsou nejjednodušší způsob prodloužení. Připevňují se sponkami, snadno se nasazují i sundávají bez poškození vlastních vlasů."
       },
       "tape-in": {
         "title": "Tape-in vlasy k prodloužení",
-        "description": "Tape-in vlasy k prodloužení — šetrná metoda s plochými neviditelnými spoji. Aplikace za 45 minut. Délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Tape-in vlasy k prodloužení — šetrná metoda s plochými neviditelnými spoji. Aplikace za 45 minut. Délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Tape-in vlasy k prodloužení",
         "intro": "Tape-in vlasy se lepí pomocí speciálních pásek. Ploché spoje jsou neviditelné a šetrné k vlastním vlasům."
       },
       "keratin": {
         "title": "Keratinové vlasy k prodloužení",
-        "description": "Keratinové vlasy k prodloužení — dlouhotrvající metoda s keratinovou vazbou. Vydrží 3–6 měsíců. Délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Keratinové vlasy k prodloužení — dlouhotrvající metoda s keratinovou vazbou. Vydrží 3–6 měsíců. Délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Keratinové vlasy k prodloužení",
         "intro": "Keratinové prodloužení používá keratinovou vazbu pro pevné a dlouhotrvající spojení. Ideální pro každodenní nošení."
       },
       "micro-ring": {
         "title": "Micro-ring vlasy k prodloužení",
-        "description": "Micro-ring vlasy k prodloužení — bez tepla a lepidla, maximálně šetrné k vlasům. Malé kroužky jsou neviditelné. Prodej na gramy, Praha zdarma.",
+        "description": "Micro-ring vlasy k prodloužení — bez tepla a lepidla, maximálně šetrné k vlasům. Malé kroužky jsou neviditelné. Prodej na gramy, doručení po celé ČR.",
         "h1": "Micro-ring vlasy k prodloužení",
         "intro": "Micro-ring metoda spojuje vlasy pomocí malých kroužků bez tepla a lepidla. Maximálně šetrná k vlastním vlasům."
       },
       "weft": {
         "title": "Weft vlasy k prodloužení",
-        "description": "Weft (tresové) vlasy k prodloužení — pásové prodloužení pro maximální objem. Rychlá aplikace. Délky 35–70 cm. Prodej na gramy, Praha zdarma.",
+        "description": "Weft (tresové) vlasy k prodloužení — pásové prodloužení pro maximální objem. Rychlá aplikace. Délky 35–70 cm. Prodej na gramy, doručení po celé ČR.",
         "h1": "Weft vlasy k prodloužení",
         "intro": "Weft vlasy jsou prošité do pásů pro rychlou aplikaci a maximální objem. Ideální pro husté a objemné účesy."
       }
@@ -3447,85 +3447,85 @@
       "sectionTitle": "Původ vlasů",
       "ukrajina": {
         "title": "Ukrajinské vlasy k prodloužení",
-        "description": "Ukrajinské vlasy k prodloužení z přímého importu. Přirozeně jemná textura, krásný lesk. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Ukrajinské vlasy k prodloužení z přímého importu. Přirozeně jemná textura, krásný lesk. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Ukrajinské vlasy k prodloužení",
         "intro": "Ukrajinské vlasy jsou jedny z nejkvalitnějších na světě. Mají přirozeně jemnou texturu a krásný lesk."
       },
       "belorusko": {
         "title": "Běloruské vlasy k prodloužení",
-        "description": "Běloruské vlasy k prodloužení z přímého importu. Jemná přirozená kvalita, slovanský typ. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Běloruské vlasy k prodloužení z přímého importu. Jemná přirozená kvalita, slovanský typ. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Běloruské vlasy k prodloužení",
         "intro": "Běloruské vlasy se vyznačují přirozenou jemností a kvalitou. Ideální pro prodloužení."
       },
       "moldavsko": {
         "title": "Moldavské vlasy k prodloužení",
-        "description": "Moldavské vlasy k prodloužení z přímého importu. Výborný poměr kvality a ceny. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Moldavské vlasy k prodloužení z přímého importu. Výborný poměr kvality a ceny. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Moldavské vlasy k prodloužení",
         "intro": "Moldavské vlasy nabízejí výborný poměr kvality a ceny."
       },
       "rusko": {
         "title": "Ruské vlasy k prodloužení",
-        "description": "Ruské vlasy k prodloužení z přímého importu. Přirozená jemnost a odolnost, slovanský typ. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Ruské vlasy k prodloužení z přímého importu. Přirozená jemnost a odolnost, slovanský typ. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Ruské vlasy k prodloužení",
         "intro": "Ruské vlasy jsou proslulé svou přirozenou jemností a odolností."
       },
       "kazachstan": {
         "title": "Kazašské vlasy k prodloužení",
-        "description": "Kazašské vlasy k prodloužení z přímého importu. Silné a odolné, ideální pro dlouhodobé nošení. Délky 35–70 cm, prodej na gramy. Praha zdarma.",
+        "description": "Kazašské vlasy k prodloužení z přímého importu. Silné a odolné, ideální pro dlouhodobé nošení. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Kazašské vlasy k prodloužení",
         "intro": "Kazašské vlasy jsou silné a odolné, ideální pro dlouhodobé nošení."
       },
       "uzbekistan": {
         "title": "Uzbecké vlasy k prodloužení",
-        "description": "Uzbecké vlasy k prodloužení z přímého importu. Kvalitní textura, přirozený vzhled. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Uzbecké vlasy k prodloužení z přímého importu. Kvalitní textura, přirozený vzhled. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Uzbecké vlasy k prodloužení",
         "intro": "Uzbecké vlasy nabízejí kvalitní texturu a přirozený vzhled."
       },
       "turecko": {
         "title": "Turecké vlasy k prodloužení",
-        "description": "Turecké vlasy k prodloužení z přímého importu. Silné a přirozeně lesklé, odolné. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Turecké vlasy k prodloužení z přímého importu. Silné a přirozeně lesklé, odolné. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Turecké vlasy k prodloužení",
         "intro": "Turecké vlasy jsou silné a přirozeně lesklé."
       },
       "iran": {
         "title": "Íránské vlasy k prodloužení",
-        "description": "Íránské vlasy k prodloužení z přímého importu. Husté a silné, přirozený lesk. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Íránské vlasy k prodloužení z přímého importu. Husté a silné, přirozený lesk. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Íránské vlasy k prodloužení",
         "intro": "Íránské vlasy se vyznačují přirozenou silou a leskem."
       },
       "indie": {
         "title": "Indické vlasy k prodloužení",
-        "description": "Indické vlasy k prodloužení z přímého importu. Hustá textura, přirozená odolnost. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Indické vlasy k prodloužení z přímého importu. Hustá textura, přirozená odolnost. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Indické vlasy k prodloužení",
         "intro": "Indické vlasy jsou jedny z nejdostupnějších a nejkvalitnějších na trhu."
       },
       "vietnam": {
         "title": "Vietnamské vlasy k prodloužení",
-        "description": "Vietnamské vlasy k prodloužení z přímého importu. Silné, husté, přirozený lesk. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Vietnamské vlasy k prodloužení z přímého importu. Silné, husté, přirozený lesk. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Vietnamské vlasy k prodloužení",
         "intro": "Vietnamské vlasy jsou silné a odolné, vhodné pro různé typy zpracování."
       },
       "syrie": {
         "title": "Syrské vlasy k prodloužení",
-        "description": "Syrské vlasy k prodloužení z přímého importu. Kvalitní blízkovýchodní textura. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Syrské vlasy k prodloužení z přímého importu. Kvalitní blízkovýchodní textura. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Syrské vlasy k prodloužení",
         "intro": "Syrské vlasy nabízejí přirozenou kvalitu a texturu."
       },
       "cina": {
         "title": "Čínské vlasy k prodloužení",
-        "description": "Čínské vlasy k prodloužení z přímého importu. Silné a odolné, cenově dostupné. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Čínské vlasy k prodloužení z přímého importu. Silné a odolné, cenově dostupné. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Čínské vlasy k prodloužení",
         "intro": "Čínské vlasy jsou přirozeně silné a odolné."
       },
       "mongolsko": {
         "title": "Mongolské vlasy k prodloužení",
-        "description": "Mongolské vlasy k prodloužení z přímého importu. Silná přirozená textura. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Mongolské vlasy k prodloužení z přímého importu. Silná přirozená textura. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Mongolské vlasy k prodloužení",
         "intro": "Mongolské vlasy jsou silné a přirozeně husté."
       },
       "gruzie": {
         "title": "Gruzínské vlasy k prodloužení",
-        "description": "Gruzínské vlasy k prodloužení z přímého importu. Kavkazská kvalita, přirozený lesk. Délky 35–70 cm, prodej na gramy. Osobní odběr Praha zdarma.",
+        "description": "Gruzínské vlasy k prodloužení z přímého importu. Kavkazská kvalita, přirozený lesk. Délky 35–70 cm, prodej na gramy. Doručení po celé ČR.",
         "h1": "Gruzínské vlasy k prodloužení",
         "intro": "Gruzínské vlasy se vyznačují přirozenou kvalitou a leskem."
       }
@@ -4207,7 +4207,7 @@
   },
   "virginLP": {
     "metaTitle": "Panenské vlasy (Virgin) — nejvyšší kvalita",
-    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců. Zpracování do 7 dnů, Praha.",
+    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců. Zpracování do 7 dnů, doručení po celé ČR.",
     "home": "Domů",
     "breadcrumb": "Panenské vlasy",
     "h1": "Panenské vlasy k prodloužení",

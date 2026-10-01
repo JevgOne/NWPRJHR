@@ -41,9 +41,9 @@
     "registerSalon": "Register your salon"
   },
   "metadata": {
-    "description": "Premium human hair extensions for sale — direct import, processing arrangement within 7 days. Free personal consultation and selection in Prague.",
-    "homeTitle": "Hair extensions — premium human hair for sale Prague",
-    "homeDescription": "Real human hair extensions from direct import. Clip-in, tape-in, keratin, micro ring. Sold by the gram, free personal consultation in Prague.",
+    "description": "Premium human hair extensions for sale — direct import, processing arrangement within 7 days. Delivery across Czech Republic.",
+    "homeTitle": "Hair extensions — premium human hair for sale | Hairland",
+    "homeDescription": "Real human hair extensions from direct import. Clip-in, tape-in, keratin, micro ring. Sold by the gram, delivery across Czech Republic.",
     "blogTitle": "Hair extensions blog — tips and advice",
     "blogDescription": "How to choose the right hair extension method? Clip-in, tape-in or keratin? Expert advice, hair extension care, quality comparison.",
     "contactTitle": "Contact & free personal hair consultation in Prague",
@@ -188,7 +188,7 @@
     "regenerateBio": "Regenerate description",
     "colorTone": "Colour tone",
     "colorTonePlaceholder": "Select or enter tone...",
-    "autoSeoDesc": "Free pickup in Prague, custom processing arrangement.",
+    "autoSeoDesc": "Delivery across Czech Republic, custom processing arrangement.",
     "ogImagePlaceholder": "Automatic: first product photo",
     "ogImageHint": "1200x630px for social media",
     "originPrefix": "origin",
@@ -664,7 +664,7 @@
       },
       "fromOrigin": "from {origin}",
       "priceFrom": "from {price} CZK",
-      "ctaSuffix": "Delivery within 7 days, free pickup in Prague",
+      "ctaSuffix": "Delivery within 7 days, Packeta across Czech Republic",
       "catShort": {
         "VIRGIN": "virgin",
         "LUXE": "luxe",
@@ -773,7 +773,7 @@
       "jsonLdDescription": "Premium real hair extensions from direct import"
     },
     "products": {
-      "title": "Real hair extensions for sale — Prague",
+      "title": "Real hair extensions for sale",
       "category": "Category",
       "origin": "Origin",
       "lengths": "Lengths",
@@ -926,7 +926,7 @@
       "heroImageAlt": "Various shades of natural hair extensions",
       "metaOrigin": "origin",
       "metaColors": "colours",
-      "metaSuffix": "Free pickup in Prague, custom processing arrangement.",
+      "metaSuffix": "Delivery across Czech Republic, custom processing arrangement.",
       "stylistMetaLabel": "Stylist",
       "stylistMetaFallback": "Hairland partner stylists",
       "viewFullOffer": "View full selection",
@@ -1018,8 +1018,8 @@
       "utilityGrams": "How many grams do I need? →"
     },
     "offer": {
-      "metaTitle": "Hair extensions — real hair in stock Prague",
-      "metaDescription": "Real hair extensions for sale — in stock and to order. Virgin, Luxe and Standard. Keratin, tape-in, clip-in, micro ring. Free samples across Prague.",
+      "metaTitle": "Hair extensions — real hair in stock | Hairland",
+      "metaDescription": "Real hair extensions for sale — in stock and to order. Virgin, Luxe and Standard. Keratin, tape-in, clip-in, micro ring. Delivery across Czech Republic.",
       "seoIntro": "Real hair extensions for sale — in stock in Prague and to order. Choose from Virgin, Luxe and Standard hair from Ukraine, Russia, Turkey, Iran, India, Vietnam and other countries. Every ponytail is sold by actual weight, length, shade and texture. We can prepare the hair for keratin, tape-in, clip-in, micro ring or hair wefts.",
       "bannerTitle": "Hair from around the world — always with exact origin",
       "bannerText": "Hair in stock you take right away. Want processing into clip-in, tape-in or micro ring? We arrange it with a verified partner — <strong>within 7 days</strong>. Everything officially invoiced.",
@@ -2767,7 +2767,7 @@
   "weightGuide": {
     "title": "How many grams of hair do I need?",
     "metaTitle": "Hair weight calculator — how many grams do I need",
-    "metaDesc": "How many grams of hair do I need? Weight calculator — enter length, density and method. Recommends weight and price. Free consultation in Prague.",
+    "metaDesc": "How many grams of hair do I need? Weight calculator — enter length, density and method. Recommends weight and price. Free consultation.",
     "subtitle": "The right weight is key to a natural result. It depends on your hair type, desired volume and processing method.",
     "home": "Home",
     "breadcrumb": "Weight guide",
@@ -3247,30 +3247,30 @@
       "faq15q": "Can bangs be made exactly according to my photo?",
       "faq15a": "Yes, we produce bangs to order according to your requirements. Send us a photo of the desired style and your current photo in daylight — we will recommend the exact shade, length and density. Consultation is free and non-binding."
     },
-    "clipInTitle": "Clip-in hair Prague | 100% real hair",
-    "tapeInTitle": "Tape-in hair Prague | Real hair tapes",
-    "keratinTitle": "Keratin hair Prague — for sale",
-    "microRingTitle": "Micro ring hair Prague — for sale",
-    "weftTitle": "Hair wefts Prague | Real hair",
-    "clipInH1": "Clip-in hair in Prague",
-    "tapeInH1": "Tape-in hair in Prague",
-    "keratinH1": "Keratin hair in Prague",
-    "microRingH1": "Micro ring hair in Prague",
-    "weftH1": "Hair wefts in Prague",
-    "ofinyTitle": "Clip-in bangs Prague — from real hair",
-    "ofinyH1": "Clip-in bangs from real hair — Prague",
+    "clipInTitle": "Clip-in hair — 100% real hair | Hairland",
+    "tapeInTitle": "Tape-in hair — real hair tapes | Hairland",
+    "keratinTitle": "Keratin hair — real hair for sale | Hairland",
+    "microRingTitle": "Micro ring hair — real hair for sale | Hairland",
+    "weftTitle": "Hair wefts — real hair | Hairland",
+    "clipInH1": "Clip-in hair — real hair for sale",
+    "tapeInH1": "Tape-in hair — real hair for sale",
+    "keratinH1": "Keratin hair — real hair for sale",
+    "microRingH1": "Micro ring hair — real hair for sale",
+    "weftH1": "Hair wefts — real hair for sale",
+    "ofinyTitle": "Clip-in bangs from real hair | Hairland",
+    "ofinyH1": "Clip-in bangs from real hair",
     "clipInDesc": "Clip-in strands are attached with clips — easy application at home in just minutes. Ideal for occasional wear.",
     "tapeInDesc": "Tape-in tapes are bonded to your own hair. Flat bond, comfortable all-day wear. Lasts 6–8 weeks.",
     "keratinDesc": "Keratin bonds — the most durable extension method. Natural look, lasts 3–5 months.",
     "microRingDesc": "Micro ring strands attached with rings without adhesive or heat. Gentle on hair, lasts 2–4 months.",
     "weftDesc": "Weft hair sewn onto a strip — quick application, high volume. Suitable for thick hair.",
     "ofinyDesc": "Natural clip-in bangs from real human hair. Easy attachment, custom production made to order.",
-    "clipInMeta": "Clip-in hair extensions — premium quality, easy home application. Wide selection of lengths and colors. In stock in Prague.",
+    "clipInMeta": "Clip-in hair extensions — premium quality, easy home application. Wide selection of lengths and colors. In stock, delivery across Czech Republic.",
     "tapeInMeta": "Tape-in hair extensions — flat bond, comfortable wear. Re-taping every 6–8 weeks. Real hair in stock and made to order.",
-    "keratinMeta": "Keratin hair extensions — the most durable method, natural look. Lasts 3–5 months. In stock and made to order in Prague.",
-    "microRingMeta": "Micro ring hair extensions — no adhesive or heat, gentle on hair. Lasts 2–4 months. Real hair for sale in stock and made to order in Prague.",
-    "weftMeta": "Weft hair extensions — quick application, high volume. Premium quality in stock and made to order. Free sample delivery in Prague.",
-    "ofinyMeta": "Clip-in bangs from real human hair — natural look, custom production made to order. Free delivery in Prague. Color and length consultation.",
+    "keratinMeta": "Keratin hair extensions — the most durable method, natural look. Lasts 3–5 months. In stock and made to order, delivery across Czech Republic.",
+    "microRingMeta": "Micro ring hair extensions — no adhesive or heat, gentle on hair. Lasts 2–4 months. Real hair for sale in stock and made to order, delivery across Czech Republic.",
+    "weftMeta": "Weft hair extensions — quick application, high volume. Premium quality in stock and made to order. Delivery across Czech Republic.",
+    "ofinyMeta": "Clip-in bangs from real human hair — natural look, custom production made to order. Delivery across Czech Republic. Color and length consultation.",
     "productsInCategory": "{count, plural, one {1 product} few {# products} other {# products}} in category",
     "noProducts": "We do not have any products in this category yet.",
     "noProductsCta": "Browse the full selection",
@@ -3291,37 +3291,37 @@
       "sectionTitle": "Hair color",
       "blond": {
         "title": "Blonde hair extensions",
-        "description": "Blonde hair extensions in platinum, golden and honey blonde shades. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Blonde hair extensions in platinum, golden and honey blonde shades. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Blonde hair extensions",
         "intro": "We offer a wide selection of blonde hair in various lengths and textures. All our blonde hair is of verified quality."
       },
       "hneda": {
         "title": "Brown hair extensions",
-        "description": "Brown hair extensions — caramel, light and medium brown. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Brown hair extensions — caramel, light and medium brown. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Brown hair extensions",
         "intro": "Brown hair is the most popular choice for extensions. We offer it in various shades and lengths."
       },
       "tmave-hneda": {
         "title": "Dark brown hair extensions",
-        "description": "Dark brown hair extensions — dark brown and chestnut. Natural look, premium quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Dark brown hair extensions — dark brown and chestnut. Natural look, premium quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Dark brown hair extensions",
         "intro": "Dark brown hair adds natural volume and length. Available in various textures and lengths."
       },
       "zrzava": {
         "title": "Red hair extensions",
-        "description": "Red hair extensions in unique natural shades. Rare colors, premium quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Red hair extensions in unique natural shades. Rare colors, premium quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Red hair extensions",
         "intro": "Red hair is rare and unique. We offer it in verified quality from carefully selected sources."
       },
       "ombre": {
         "title": "Ombre hair extensions",
-        "description": "Ombre hair extensions with a natural transition from dark roots to light ends. Lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Ombre hair extensions with a natural transition from dark roots to light ends. Lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Ombre hair extensions",
         "intro": "Ombre hair offers an elegant color transition from darker roots to lighter ends. A natural and modern look."
       },
       "cerna": {
         "title": "Black hair extensions",
-        "description": "Black hair extensions in intense black shade. Premium quality, natural shine, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Black hair extensions in intense black shade. Premium quality, natural shine, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Black hair extensions",
         "intro": "Black hair adds dramatic volume and length. We offer it in various textures and lengths in premium quality."
       }
@@ -3330,31 +3330,31 @@
       "sectionTitle": "Hair length",
       "30cm": {
         "title": "30 cm hair extensions",
-        "description": "30 cm hair extensions — ideal for volume enhancement and subtle lengthening. Virgin, Luxe and Standard quality. Sold by the gram, free delivery in Prague.",
+        "description": "30 cm hair extensions — ideal for volume enhancement and subtle lengthening. Virgin, Luxe and Standard quality. Sold by the gram, delivery across Czech Republic.",
         "h1": "30 cm hair extensions",
         "intro": "30 cm hair is an ideal choice for subtle volume enhancement and slight lengthening."
       },
       "40cm": {
         "title": "40 cm hair extensions",
-        "description": "40 cm hair extensions — natural length suitable for most methods. Virgin, Luxe and Standard quality. Sold by the gram, free delivery in Prague.",
+        "description": "40 cm hair extensions — natural length suitable for most methods. Virgin, Luxe and Standard quality. Sold by the gram, delivery across Czech Republic.",
         "h1": "40 cm hair extensions",
         "intro": "40 cm hair offers a natural length suitable for most extension types."
       },
       "50cm": {
         "title": "50 cm hair extensions",
-        "description": "50 cm hair extensions — the most popular length. Clip-in, tape-in, keratin, micro ring. Virgin, Luxe and Standard. Sold by the gram, free delivery in Prague.",
+        "description": "50 cm hair extensions — the most popular length. Clip-in, tape-in, keratin, micro ring. Virgin, Luxe and Standard. Sold by the gram, delivery across Czech Republic.",
         "h1": "50 cm hair extensions",
         "intro": "50 cm hair is the most popular length for extensions. We offer it in various colors and textures."
       },
       "60cm": {
         "title": "60 cm hair extensions",
-        "description": "60 cm hair extensions — luxury length for significant lengthening. Virgin, Luxe and Standard quality. Sold by the gram, free delivery in Prague.",
+        "description": "60 cm hair extensions — luxury length for significant lengthening. Virgin, Luxe and Standard quality. Sold by the gram, delivery across Czech Republic.",
         "h1": "60 cm hair extensions",
         "intro": "60 cm hair provides a luxury length for significant lengthening. Available in premium quality."
       },
       "70cm": {
         "title": "70 cm hair extensions",
-        "description": "70 cm hair extensions — the longest option for dramatic lengthening. Virgin, Luxe and Standard quality. Sold by the gram, free delivery in Prague.",
+        "description": "70 cm hair extensions — the longest option for dramatic lengthening. Virgin, Luxe and Standard quality. Sold by the gram, delivery across Czech Republic.",
         "h1": "70 cm hair extensions",
         "intro": "70 cm hair is our longest option. Ideal for dramatic lengthening and maximum volume."
       }
@@ -3363,25 +3363,25 @@
       "sectionTitle": "Hair texture",
       "rovne": {
         "title": "Straight hair extensions",
-        "description": "Straight hair extensions — smooth and shiny, the most versatile texture. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Straight hair extensions — smooth and shiny, the most versatile texture. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Straight hair extensions",
         "intro": "Straight hair is the most versatile choice for extensions. Easy to style and maintain."
       },
       "mirne-vlnite": {
         "title": "Slightly wavy hair extensions",
-        "description": "Slightly wavy hair extensions — natural volume and movement. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Slightly wavy hair extensions — natural volume and movement. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Slightly wavy hair extensions",
         "intro": "Slightly wavy hair adds natural volume and movement. Ideal for everyday wear."
       },
       "vlnite": {
         "title": "Wavy hair extensions",
-        "description": "Wavy hair extensions — pronounced waves for volume and movement. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Wavy hair extensions — pronounced waves for volume and movement. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Wavy hair extensions",
         "intro": "Wavy hair creates an impressive volume and movement. We offer it in various lengths and colors."
       },
       "kudrnate": {
         "title": "Curly hair extensions",
-        "description": "Curly hair extensions — natural curls for a curly look. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, free delivery in Prague.",
+        "description": "Curly hair extensions — natural curls for a curly look. Virgin, Luxe and Standard quality, lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Curly hair extensions",
         "intro": "Curly hair is ideal for a natural curly look. Available in premium quality."
       }
@@ -3390,55 +3390,55 @@
       "sectionTitle": "Hair categories",
       "virgin": {
         "title": "Virgin hair — the purest quality",
-        "description": "Virgin hair extensions — 100% untreated hair from a single donor. Highest quality, lifespan 18–36 months. Sold by the gram, free delivery in Prague.",
+        "description": "Virgin hair extensions — 100% untreated hair from a single donor. Highest quality, lifespan 18–36 months. Sold by the gram, delivery across Czech Republic.",
         "h1": "Virgin hair — the purest quality",
         "intro": "Virgin hair is the highest quality of human hair. It has never been chemically treated and comes from a single donor."
       },
       "luxe": {
         "title": "Luxe hair extensions",
-        "description": "Luxe hair extensions — luxury quality with preserved structure. Gentle treatment, lifespan 12–24 months. Sold by the gram, free delivery in Prague.",
+        "description": "Luxe hair extensions — luxury quality with preserved structure. Gentle treatment, lifespan 12–24 months. Sold by the gram, delivery across Czech Republic.",
         "h1": "Luxe hair extensions",
         "intro": "Luxe hair offers luxury quality with gentle treatment. Preserved natural structure and silky appearance."
       },
       "standard": {
         "title": "Standard hair extensions",
-        "description": "Standard hair extensions — quality extensions at an affordable price. Lifespan 6–12 months, various lengths and textures. Sold by the gram, free Prague delivery.",
+        "description": "Standard hair extensions — quality extensions at an affordable price. Lifespan 6–12 months, various lengths and textures. Sold by the gram, delivery across Czech Republic.",
         "h1": "Standard hair extensions",
         "intro": "Standard hair is the ideal choice for quality extensions at an affordable price. Suitable for occasional wear."
       },
       "sale": {
         "title": "Hair on sale — discounted extensions",
-        "description": "Hair extensions on sale — discounted prices on selected stock items. Limited quantity, various lengths and colours. Free pickup in Prague.",
+        "description": "Hair extensions on sale — discounted prices on selected stock items. Limited quantity, various lengths and colours. Delivery across Czech Republic.",
         "h1": "Hair on sale",
         "intro": "Discounted hair extensions at sale prices. Limited stock available."
       },
       "clip-in": {
         "title": "Clip-in hair extensions",
-        "description": "Clip-in hair extensions — easy clip application without damaging your natural hair. Apply and remove at home. Sold by the gram, free Prague delivery.",
+        "description": "Clip-in hair extensions — easy clip application without damaging your natural hair. Apply and remove at home. Sold by the gram, delivery across Czech Republic.",
         "h1": "Clip-in hair extensions",
         "intro": "Clip-in hair extensions are the easiest way to add length. They attach with clips and can be applied or removed effortlessly without damaging your natural hair."
       },
       "tape-in": {
         "title": "Tape-in hair extensions",
-        "description": "Tape-in hair extensions — a gentle method with flat, invisible bonds. Application in 45 minutes. Lengths 35–70 cm. Sold by the gram, free Prague delivery.",
+        "description": "Tape-in hair extensions — a gentle method with flat, invisible bonds. Application in 45 minutes. Lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Tape-in hair extensions",
         "intro": "Tape-in hair extensions are bonded using specialised adhesive strips. The flat bonds are invisible and gentle on your natural hair."
       },
       "keratin": {
         "title": "Keratin hair extensions",
-        "description": "Keratin hair extensions — a long-lasting method with keratin bonds. Lasts 3–6 months. Lengths 35–70 cm. Sold by the gram, free Prague delivery.",
+        "description": "Keratin hair extensions — a long-lasting method with keratin bonds. Lasts 3–6 months. Lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Keratin hair extensions",
         "intro": "Keratin extensions use a keratin bond for a secure, long-lasting attachment. Ideal for everyday wear."
       },
       "micro-ring": {
         "title": "Micro-ring hair extensions",
-        "description": "Micro-ring hair extensions — no heat, no glue, the gentlest method for your hair. Tiny rings are virtually invisible. Sold by the gram, free Prague delivery.",
+        "description": "Micro-ring hair extensions — no heat, no glue, the gentlest method for your hair. Tiny rings are virtually invisible. Sold by the gram, delivery across Czech Republic.",
         "h1": "Micro-ring hair extensions",
         "intro": "The micro-ring method attaches extensions using tiny rings — no heat and no adhesive required. The gentlest option for your natural hair."
       },
       "weft": {
         "title": "Weft hair extensions",
-        "description": "Weft hair extensions — sewn-in strips for maximum volume. Quick application. Lengths 35–70 cm. Sold by the gram, free Prague delivery.",
+        "description": "Weft hair extensions — sewn-in strips for maximum volume. Quick application. Lengths 35–70 cm. Sold by the gram, delivery across Czech Republic.",
         "h1": "Weft hair extensions",
         "intro": "Weft extensions are sewn into strips for quick application and maximum volume. Ideal for thick, voluminous hairstyles."
       }
@@ -3447,85 +3447,85 @@
       "sectionTitle": "Hair origin",
       "ukrajina": {
         "title": "Ukrainian hair extensions",
-        "description": "Ukrainian hair extensions, direct import. Naturally fine texture with beautiful shine. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Ukrainian hair extensions, direct import. Naturally fine texture with beautiful shine. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Ukrainian hair extensions",
         "intro": "Ukrainian hair is among the finest in the world, prized for its naturally soft texture and beautiful shine."
       },
       "belorusko": {
         "title": "Belarusian hair extensions",
-        "description": "Belarusian hair extensions, direct import. Fine natural quality, Slavic hair type. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Belarusian hair extensions, direct import. Fine natural quality, Slavic hair type. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Belarusian hair extensions",
         "intro": "Belarusian hair is renowned for its natural softness and quality. An excellent choice for extensions."
       },
       "moldavsko": {
         "title": "Moldovan hair extensions",
-        "description": "Moldovan hair extensions, direct import. Outstanding quality-to-price ratio. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Moldovan hair extensions, direct import. Outstanding quality-to-price ratio. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Moldovan hair extensions",
         "intro": "Moldovan hair offers an outstanding balance of quality and value."
       },
       "rusko": {
         "title": "Russian hair extensions",
-        "description": "Russian hair extensions, direct import. Natural softness and durability, Slavic hair type. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Russian hair extensions, direct import. Natural softness and durability, Slavic hair type. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Russian hair extensions",
         "intro": "Russian hair is celebrated for its natural softness and exceptional durability."
       },
       "kazachstan": {
         "title": "Kazakh hair extensions",
-        "description": "Kazakh hair extensions, direct import. Strong and resilient, ideal for long-term wear. Lengths 35–70 cm, sold by the gram. Free pickup in Prague.",
+        "description": "Kazakh hair extensions, direct import. Strong and resilient, ideal for long-term wear. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Kazakh hair extensions",
         "intro": "Kazakh hair is strong and resilient, ideal for long-term wear."
       },
       "uzbekistan": {
         "title": "Uzbek hair extensions",
-        "description": "Uzbek hair extensions, direct import. Quality texture with a natural look. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Uzbek hair extensions, direct import. Quality texture with a natural look. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Uzbek hair extensions",
         "intro": "Uzbek hair offers a quality texture and a naturally authentic look."
       },
       "turecko": {
         "title": "Turkish hair extensions",
-        "description": "Turkish hair extensions, direct import. Strong, naturally glossy and durable. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Turkish hair extensions, direct import. Strong, naturally glossy and durable. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Turkish hair extensions",
         "intro": "Turkish hair is strong and naturally glossy."
       },
       "iran": {
         "title": "Iranian hair extensions",
-        "description": "Iranian hair extensions, direct import. Thick and strong with a natural shine. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Iranian hair extensions, direct import. Thick and strong with a natural shine. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Iranian hair extensions",
         "intro": "Iranian hair stands out for its natural strength and lustrous shine."
       },
       "indie": {
         "title": "Indian hair extensions",
-        "description": "Indian hair extensions, direct import. Thick texture, natural resilience. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Indian hair extensions, direct import. Thick texture, natural resilience. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Indian hair extensions",
         "intro": "Indian hair is one of the most accessible and high-quality options on the market."
       },
       "vietnam": {
         "title": "Vietnamese hair extensions",
-        "description": "Vietnamese hair extensions, direct import. Strong, thick, naturally shiny. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Vietnamese hair extensions, direct import. Strong, thick, naturally shiny. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Vietnamese hair extensions",
         "intro": "Vietnamese hair is strong and durable, well-suited for various processing methods."
       },
       "syrie": {
         "title": "Syrian hair extensions",
-        "description": "Syrian hair extensions, direct import. Premium Middle-Eastern texture. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Syrian hair extensions, direct import. Premium Middle-Eastern texture. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Syrian hair extensions",
         "intro": "Syrian hair offers natural quality and a distinctive texture."
       },
       "cina": {
         "title": "Chinese hair extensions",
-        "description": "Chinese hair extensions, direct import. Strong, durable and affordably priced. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Chinese hair extensions, direct import. Strong, durable and affordably priced. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Chinese hair extensions",
         "intro": "Chinese hair is naturally strong and durable."
       },
       "mongolsko": {
         "title": "Mongolian hair extensions",
-        "description": "Mongolian hair extensions, direct import. Strong natural texture. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Mongolian hair extensions, direct import. Strong natural texture. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Mongolian hair extensions",
         "intro": "Mongolian hair is strong and naturally thick."
       },
       "gruzie": {
         "title": "Georgian hair extensions",
-        "description": "Georgian hair extensions, direct import. Caucasian quality with a natural shine. Lengths 35–70 cm, sold by the gram. Free in-store pickup in Prague.",
+        "description": "Georgian hair extensions, direct import. Caucasian quality with a natural shine. Lengths 35–70 cm, sold by the gram. Delivery across Czech Republic.",
         "h1": "Georgian hair extensions",
         "intro": "Georgian hair is distinguished by its natural quality and beautiful shine."
       }
@@ -4207,7 +4207,7 @@
   },
   "virginLP": {
     "metaTitle": "Virgin Hair — The Highest Quality",
-    "metaDesc": "Virgin hair — never chemically treated, single-donor. Lifespan 18–36 months. Processing within 7 days, Prague.",
+    "metaDesc": "Virgin hair — never chemically treated, single-donor. Lifespan 18–36 months. Processing within 7 days, delivery across Czech Republic.",
     "home": "Home",
     "breadcrumb": "Virgin hair",
     "h1": "Virgin Hair Extensions",
@@ -4416,7 +4416,7 @@
     "step2Title": "Production",
     "step2Text": "We produce your hairpiece from real human hair. Processing takes up to 7 business days.",
     "step3Title": "Delivery",
-    "step3Text": "Free pickup in Prague, or we ship via Packeta across the Czech Republic.",
+    "step3Text": "Delivery across Czech Republic, or we ship via Packeta across the Czech Republic.",
     "faqTitle": "Frequently Asked Questions About Hairpieces",
     "faq1q": "What hair are your hairpieces made from?",
     "faq1a": "All our hairpieces are made from real human hair — virgin, luxe, or standard quality. No synthetics, no silicone coatings.",
