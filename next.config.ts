@@ -189,6 +189,11 @@ const nextConfig: NextConfig = {
         destination: "/vykup",
         permanent: true,
       },
+      {
+        source: "/vlasova-pece",
+        destination: "/pece-o-vlasy",
+        permanent: true,
+      },
     ];
   },
 };
