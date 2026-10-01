@@ -30,6 +30,23 @@ function generateTicketNumber(): string {
   return `RK-${y}${m}-${seq}`;
 }
 
+function formatProducts(p: Record<string, { brand: string; frequency: string } | undefined>): string {
+  return Object.entries(p)
+    .filter(([, v]) => v?.brand)
+    .map(([k, v]) => `  ${k}: ${v!.brand} (${v!.frequency})`)
+    .join("\n");
+}
+
+function formatHeatChemical(h: Record<string, string | undefined>): string {
+  const lines: string[] = [];
+  if (h.usesFlatiron) lines.push(`  Žehlička: ${h.usesFlatiron}${h.flatironTemp ? ` (${h.flatironTemp})` : ""}`);
+  if (h.thermoprotectionFreq) lines.push(`  Termoochrana: ${h.thermoprotectionFreq}`);
+  if (h.usesDye) lines.push(`  Barvení: ${h.usesDye}${h.dyeDetails ? ` — ${h.dyeDetails}` : ""}`);
+  if (h.poolSea) lines.push(`  Bazén/moře: ${h.poolSea}`);
+  if (h.sleepsLoose) lines.push(`  Spaní rozpuštěné: ${h.sleepsLoose}`);
+  return lines.join("\n");
+}
+
 export async function POST(request: NextRequest) {
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
@@ -64,6 +81,10 @@ export async function POST(request: NextRequest) {
     description,
     photos,
     desiredResolution,
+    appliedBy,
+    processedBy,
+    products,
+    heatChemical,
   } = parsed.data;
 
   const ticketNumber = generateTicketNumber();
@@ -83,6 +104,10 @@ export async function POST(request: NextRequest) {
         description,
         photos: JSON.stringify(photos),
         desiredResolution: desiredResolution || null,
+        appliedBy: appliedBy || null,
+        processedBy: processedBy || null,
+        products: products ? JSON.stringify(products) : null,
+        heatChemical: heatChemical ? JSON.stringify(heatChemical) : null,
       },
     });
   } catch (err) {
@@ -114,8 +139,12 @@ export async function POST(request: NextRequest) {
       desiredResolution
         ? `Požadované řešení: ${resolutionLabels[desiredResolution] ?? desiredResolution}`
         : null,
+      appliedBy ? `Aplikoval/a: ${appliedBy}` : null,
+      processedBy ? `Zpracoval/a: ${processedBy}` : null,
       "",
       description,
+      products ? `\nPoužité přípravky:\n${formatProducts(products)}` : null,
+      heatChemical ? `\nTepelná/chemická úprava:\n${formatHeatChemical(heatChemical)}` : null,
       photos.length > 0 ? `\nFotografie (${photos.length}): ${photos.join(", ")}` : null,
     ]
       .filter(Boolean)

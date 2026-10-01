@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
+type ProductItem = { brand: string; frequency: string };
+
 type FormData = {
   customerType: "RETAIL" | "SALON" | "HAIRDRESSER" | "";
   name: string;
@@ -16,9 +18,34 @@ type FormData = {
   photos: string[];
   desiredResolution: "REPAIR" | "REPLACEMENT" | "DISCOUNT" | "REFUND" | "";
   termsAccepted: boolean;
+  appliedBy: string;
+  processedBy: string;
+  productsShampoo: ProductItem;
+  productsConditioner: ProductItem;
+  productsMask: ProductItem;
+  productsOilSerum: ProductItem;
+  productsAmpoule: ProductItem;
+  productsThermoprotection: ProductItem;
+  usesFlatiron: "yes" | "no" | "";
+  flatironTemp: string;
+  thermoprotectionFreq: "always" | "sometimes" | "never" | "";
+  usesDye: "yes" | "no" | "";
+  dyeDetails: string;
+  poolSea: "yes" | "no" | "";
+  sleepsLoose: "yes" | "no" | "";
 };
 
-const STEPS = ["terms", "customerType", "contact", "details", "photos", "summary"] as const;
+const PRODUCT_KEYS = ["Shampoo", "Conditioner", "Mask", "OilSerum", "Ampoule", "Thermoprotection"] as const;
+const PRODUCT_I18N: Record<string, string> = {
+  Shampoo: "shampoo", Conditioner: "conditioner", Mask: "mask",
+  OilSerum: "oilSerum", Ampoule: "ampoule", Thermoprotection: "thermoprotection",
+};
+const FREQ_I18N: Record<string, string> = {
+  daily: "freqDaily", "2-3week": "freq2_3Week", weekly: "freqWeekly",
+  "2-3month": "freq2_3Month", rarely: "freqRarely", never: "freqNever",
+};
+
+const STEPS = ["terms", "customerType", "contact", "details", "products", "heatChemical", "photos", "summary"] as const;
 
 export function ComplaintForm() {
   const t = useTranslations("public.complaintForm");
@@ -37,6 +64,21 @@ export function ComplaintForm() {
     photos: [],
     desiredResolution: "",
     termsAccepted: false,
+    appliedBy: "",
+    processedBy: "",
+    productsShampoo: { brand: "", frequency: "" },
+    productsConditioner: { brand: "", frequency: "" },
+    productsMask: { brand: "", frequency: "" },
+    productsOilSerum: { brand: "", frequency: "" },
+    productsAmpoule: { brand: "", frequency: "" },
+    productsThermoprotection: { brand: "", frequency: "" },
+    usesFlatiron: "",
+    flatironTemp: "",
+    thermoprotectionFreq: "",
+    usesDye: "",
+    dyeDetails: "",
+    poolSea: "",
+    sleepsLoose: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -55,6 +97,10 @@ export function ComplaintForm() {
         return form.name.trim().length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
       case "details":
         return form.complaintType !== "" && form.description.trim().length >= 10;
+      case "products":
+        return form.productsShampoo.brand.trim().length > 0;
+      case "heatChemical":
+        return form.usesFlatiron !== "" && form.thermoprotectionFreq !== "";
       case "photos":
         return true; // optional
       case "summary":
@@ -124,6 +170,25 @@ export function ComplaintForm() {
           photos: form.photos,
           desiredResolution: form.desiredResolution || undefined,
           termsAccepted: true,
+          appliedBy: form.appliedBy.trim() || undefined,
+          processedBy: form.processedBy.trim() || undefined,
+          products: {
+            shampoo: form.productsShampoo.brand ? form.productsShampoo : undefined,
+            conditioner: form.productsConditioner.brand ? form.productsConditioner : undefined,
+            mask: form.productsMask.brand ? form.productsMask : undefined,
+            oilSerum: form.productsOilSerum.brand ? form.productsOilSerum : undefined,
+            ampoule: form.productsAmpoule.brand ? form.productsAmpoule : undefined,
+            thermoprotection: form.productsThermoprotection.brand ? form.productsThermoprotection : undefined,
+          },
+          heatChemical: {
+            usesFlatiron: form.usesFlatiron || undefined,
+            flatironTemp: form.flatironTemp.trim() || undefined,
+            thermoprotectionFreq: form.thermoprotectionFreq || undefined,
+            usesDye: form.usesDye || undefined,
+            dyeDetails: form.dyeDetails.trim() || undefined,
+            poolSea: form.poolSea || undefined,
+            sleepsLoose: form.sleepsLoose || undefined,
+          },
         }),
       });
 
@@ -357,10 +422,223 @@ export function ComplaintForm() {
               <option value="REFUND">{t("details.REFUND")}</option>
             </select>
           </div>
+
+          <div>
+            <label className={labelClass}>{t("details.appliedBy")}</label>
+            <input
+              type="text"
+              maxLength={500}
+              value={form.appliedBy}
+              onChange={(e) => setForm({ ...form, appliedBy: e.target.value })}
+              placeholder={t("details.appliedByPlaceholder")}
+              className={inputClass}
+            />
+            <p className="text-xs text-muted mt-1">{t("details.appliedByHint")}</p>
+          </div>
+
+          <div>
+            <label className={labelClass}>{t("details.processedBy")}</label>
+            <input
+              type="text"
+              maxLength={500}
+              value={form.processedBy}
+              onChange={(e) => setForm({ ...form, processedBy: e.target.value })}
+              placeholder={t("details.processedByPlaceholder")}
+              className={inputClass}
+            />
+            <p className="text-xs text-muted mt-1">{t("details.processedByHint")}</p>
+          </div>
         </div>
       )}
 
-      {/* Step 5: Photos */}
+      {/* Step 5: Products */}
+      {currentStep === "products" && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-ink">{t("products.title")}</h3>
+          <p className="text-sm text-muted">{t("products.description")}</p>
+
+          {PRODUCT_KEYS.map((key) => {
+            const fieldKey = `products${key}` as keyof FormData;
+            const value = form[fieldKey] as ProductItem;
+            const i18nKey = PRODUCT_I18N[key];
+            return (
+              <div key={key} className="bg-nude-50 rounded-xl p-4">
+                <label className="block text-sm font-medium text-espresso mb-2">
+                  {t(`products.${i18nKey}`)}
+                  {key === "Shampoo" && " *"}
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted mb-1">{t("products.brandLabel")}</label>
+                    <input
+                      type="text"
+                      maxLength={200}
+                      value={value.brand}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          [fieldKey]: { ...value, brand: e.target.value },
+                        }))
+                      }
+                      placeholder={t("products.brandPlaceholder")}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted mb-1">{t("products.frequencyLabel")}</label>
+                    <select
+                      value={value.frequency}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          [fieldKey]: { ...value, frequency: e.target.value },
+                        }))
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">{t("products.frequencySelect")}</option>
+                      <option value="daily">{t("products.freqDaily")}</option>
+                      <option value="2-3week">{t("products.freq2_3Week")}</option>
+                      <option value="weekly">{t("products.freqWeekly")}</option>
+                      <option value="2-3month">{t("products.freq2_3Month")}</option>
+                      <option value="rarely">{t("products.freqRarely")}</option>
+                      <option value="never">{t("products.freqNever")}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Step 6: Heat & Chemical */}
+      {currentStep === "heatChemical" && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-ink">{t("heat.title")}</h3>
+          <p className="text-sm text-muted">{t("heat.description")}</p>
+
+          <div>
+            <label className={labelClass}>{t("heat.flatiron")} *</label>
+            <div className="flex gap-3">
+              {(["yes", "no"] as const).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setForm({ ...form, usesFlatiron: val })}
+                  className={`px-4 py-2 rounded-lg border text-sm ${
+                    form.usesFlatiron === val ? "border-rose bg-rose/5 text-ink" : "border-line text-muted"
+                  }`}
+                >
+                  {t(`heat.${val}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {form.usesFlatiron === "yes" && (
+            <div>
+              <label className={labelClass}>{t("heat.flatironTemp")}</label>
+              <input
+                type="text"
+                maxLength={50}
+                value={form.flatironTemp}
+                onChange={(e) => setForm({ ...form, flatironTemp: e.target.value })}
+                placeholder={t("heat.flatironTempPlaceholder")}
+                className={inputClass}
+              />
+            </div>
+          )}
+
+          <div>
+            <label className={labelClass}>{t("heat.thermoprotection")} *</label>
+            <div className="flex gap-2 flex-wrap">
+              {(["always", "sometimes", "never"] as const).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setForm({ ...form, thermoprotectionFreq: val })}
+                  className={`px-4 py-2 rounded-lg border text-sm ${
+                    form.thermoprotectionFreq === val ? "border-rose bg-rose/5 text-ink" : "border-line text-muted"
+                  }`}
+                >
+                  {t(`heat.thermo_${val}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>{t("heat.dyeing")}</label>
+            <div className="flex gap-3">
+              {(["yes", "no"] as const).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setForm({ ...form, usesDye: val })}
+                  className={`px-4 py-2 rounded-lg border text-sm ${
+                    form.usesDye === val ? "border-rose bg-rose/5 text-ink" : "border-line text-muted"
+                  }`}
+                >
+                  {t(`heat.${val}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {form.usesDye === "yes" && (
+            <div>
+              <label className={labelClass}>{t("heat.dyeDetails")}</label>
+              <input
+                type="text"
+                maxLength={500}
+                value={form.dyeDetails}
+                onChange={(e) => setForm({ ...form, dyeDetails: e.target.value })}
+                placeholder={t("heat.dyeDetailsPlaceholder")}
+                className={inputClass}
+              />
+            </div>
+          )}
+
+          <div>
+            <label className={labelClass}>{t("heat.poolSea")}</label>
+            <div className="flex gap-3">
+              {(["yes", "no"] as const).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setForm({ ...form, poolSea: val })}
+                  className={`px-4 py-2 rounded-lg border text-sm ${
+                    form.poolSea === val ? "border-rose bg-rose/5 text-ink" : "border-line text-muted"
+                  }`}
+                >
+                  {t(`heat.${val}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>{t("heat.sleepsLoose")}</label>
+            <div className="flex gap-3">
+              {(["yes", "no"] as const).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setForm({ ...form, sleepsLoose: val })}
+                  className={`px-4 py-2 rounded-lg border text-sm ${
+                    form.sleepsLoose === val ? "border-rose bg-rose/5 text-ink" : "border-line text-muted"
+                  }`}
+                >
+                  {t(`heat.${val}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Step 7: Photos */}
       {currentStep === "photos" && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-ink">{t("photos.title")}</h3>
@@ -420,7 +698,7 @@ export function ComplaintForm() {
         </div>
       )}
 
-      {/* Step 6: Summary */}
+      {/* Step 8: Summary */}
       {currentStep === "summary" && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-ink">{t("summary.title")}</h3>
@@ -471,6 +749,78 @@ export function ComplaintForm() {
             <div>
               <span className="text-muted block mb-1">{t("details.description")}</span>
               <p className="text-ink text-sm whitespace-pre-line">{form.description}</p>
+            </div>
+            {(form.appliedBy || form.processedBy) && (
+              <>
+                <hr className="border-line" />
+                {form.appliedBy && (
+                  <div className="flex justify-between">
+                    <span className="text-muted">{t("details.appliedBy")}</span>
+                    <span className="text-ink font-medium text-right max-w-[60%]">{form.appliedBy}</span>
+                  </div>
+                )}
+                {form.processedBy && (
+                  <div className="flex justify-between">
+                    <span className="text-muted">{t("details.processedBy")}</span>
+                    <span className="text-ink font-medium text-right max-w-[60%]">{form.processedBy}</span>
+                  </div>
+                )}
+              </>
+            )}
+            <hr className="border-line" />
+            <div>
+              <span className="text-muted block mb-1">{t("products.title")}</span>
+              <div className="space-y-1 text-sm">
+                {PRODUCT_KEYS.map((key) => {
+                  const fieldKey = `products${key}` as keyof FormData;
+                  const value = form[fieldKey] as ProductItem;
+                  if (!value.brand) return null;
+                  const i18nKey = PRODUCT_I18N[key];
+                  return (
+                    <div key={key} className="flex justify-between">
+                      <span className="text-muted">{t(`products.${i18nKey}`)}</span>
+                      <span className="text-ink">
+                        {value.brand}
+                        {value.frequency && FREQ_I18N[value.frequency] && ` (${t(`products.${FREQ_I18N[value.frequency]}`)})`}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <hr className="border-line" />
+            <div className="space-y-1 text-sm">
+              <span className="text-muted block mb-1">{t("heat.title")}</span>
+              {form.usesFlatiron && (
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("heat.flatiron")}</span>
+                  <span className="text-ink">{t(`heat.${form.usesFlatiron}`)}{form.flatironTemp ? ` (${form.flatironTemp})` : ""}</span>
+                </div>
+              )}
+              {form.thermoprotectionFreq && (
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("heat.thermoprotection")}</span>
+                  <span className="text-ink">{t(`heat.thermo_${form.thermoprotectionFreq}`)}</span>
+                </div>
+              )}
+              {form.usesDye && (
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("heat.dyeing")}</span>
+                  <span className="text-ink">{t(`heat.${form.usesDye}`)}{form.dyeDetails ? ` — ${form.dyeDetails}` : ""}</span>
+                </div>
+              )}
+              {form.poolSea && (
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("heat.poolSea")}</span>
+                  <span className="text-ink">{t(`heat.${form.poolSea}`)}</span>
+                </div>
+              )}
+              {form.sleepsLoose && (
+                <div className="flex justify-between">
+                  <span className="text-muted">{t("heat.sleepsLoose")}</span>
+                  <span className="text-ink">{t(`heat.${form.sleepsLoose}`)}</span>
+                </div>
+              )}
             </div>
             {form.photos.length > 0 && (
               <div>
