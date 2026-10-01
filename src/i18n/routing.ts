@@ -92,18 +92,6 @@ export const routing = defineRouting({
       uk: "/чубчики",
       en: "/bangs",
     },
-    "/pricesky": {
-      cs: "/pricesky",
-      ru: "/шиньоны",
-      uk: "/шиньйони",
-      en: "/hairpieces",
-    },
-    "/vlasove-pasky": {
-      cs: "/vlasove-pasky",
-      ru: "/волосяные-ленты",
-      uk: "/волосяні-стрічки",
-      en: "/hair-tapes",
-    },
     "/panenske-vlasy": {
       cs: "/panenske-vlasy",
       ru: "/девственные-волосы",
@@ -237,12 +225,6 @@ export const routing = defineRouting({
       ru: "/конфиденциальность",
       uk: "/конфіденційність",
       en: "/privacy",
-    },
-    "/promeny": {
-      cs: "/promeny",
-      ru: "/преображения",
-      uk: "/перетворення",
-      en: "/transformations",
     },
     "/registrace": {
       cs: "/registrace",

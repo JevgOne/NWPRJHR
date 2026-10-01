@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_GROUPS } from "@/lib/hair-colors";
+import { compressPhoto } from "@/lib/compress-photo";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { ORIGIN_OPTIONS, getOriginFlag } from "@/lib/origin-flags";
 import { getSupplierPriceTable, lookupSupplierPrice } from "@/lib/supplier-prices";
@@ -447,8 +448,9 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
 
     // Upload photos in background if any were selected
     if (selectedFiles.length > 0) {
+      const compressed = await Promise.all(selectedFiles.map(compressPhoto));
       const formData = new FormData();
-      for (const file of selectedFiles) {
+      for (const file of compressed) {
         formData.append("files", file);
       }
       fetch(`/api/products/${result.productId}/media`, {
@@ -482,8 +484,9 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     setUploading(true);
     setUploadError("");
 
+    const compressed = await Promise.all(Array.from(files).map(compressPhoto));
     const formData = new FormData();
-    for (const file of Array.from(files)) {
+    for (const file of compressed) {
       formData.append("files", file);
     }
 

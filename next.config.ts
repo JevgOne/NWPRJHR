@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp"],
   devIndicators: false,
   poweredByHeader: false,
+  experimental: {
+    proxyClientMaxBodySize: '20mb',
+  },
   outputFileTracingIncludes: {
     "/**": ["./public/fonts/**", "./public/logo-invoice.png"],
   },
@@ -192,6 +195,21 @@ const nextConfig: NextConfig = {
       {
         source: "/vlasova-pece",
         destination: "/pece-o-vlasy",
+        permanent: true,
+      },
+      {
+        source: "/pricesky",
+        destination: "/ofiny",
+        permanent: true,
+      },
+      {
+        source: "/vlasove-pasky",
+        destination: "/tape-in-vlasy",
+        permanent: true,
+      },
+      {
+        source: "/promeny",
+        destination: "/recenze",
         permanent: true,
       },
     ];

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { put } from "@vercel/blob";
-import { addWatermark } from "@/lib/watermark";
 
 export const maxDuration = 60;
 
 const MAX_PHOTO_SIZE = 15 * 1024 * 1024; // 15MB (HEIC files are larger)
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_PHOTO_WIDTH = 2400;
 const PHOTO_TYPES = [
   "image/jpeg",
   "image/png",
@@ -15,6 +15,14 @@ const PHOTO_TYPES = [
   "image/heif",
 ];
 const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/x-quicktime", "video/webm"];
+
+async function convertToWebP(inputBuffer: Buffer): Promise<Buffer> {
+  const sharp = (await import("sharp")).default;
+  return sharp(inputBuffer)
+    .resize(MAX_PHOTO_WIDTH, undefined, { withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toBuffer();
+}
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -30,8 +38,6 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-
-  const noWatermark = request.nextUrl.searchParams.get("noWatermark") === "true";
 
   const formData = await request.formData();
   const files = formData.getAll("files") as File[];
@@ -68,35 +74,20 @@ export async function POST(request: NextRequest) {
     let contentType = file.type;
     let outputExt = file.name.split(".").pop() ?? "jpg";
 
-    // Process photos: watermark → sharp fallback → raw passthrough
+    // Photos: convert to WebP (handles HEIC, JPEG, PNG, etc.)
     if (isPhoto) {
       const arrayBuffer = await file.arrayBuffer();
       const inputBuffer = Buffer.from(arrayBuffer);
 
-      if (noWatermark) {
-        // Skip all Sharp processing — upload raw file
+      try {
+        uploadBuffer = await convertToWebP(inputBuffer);
+        contentType = "image/webp";
+        outputExt = "webp";
+      } catch (e) {
+        console.error("[upload/photos] WebP conversion failed, uploading raw:", e);
         uploadBuffer = inputBuffer;
         contentType = file.type || "application/octet-stream";
         outputExt = fileExt || "bin";
-      } else {
-        try {
-          uploadBuffer = await addWatermark(inputBuffer);
-          contentType = "image/webp";
-          outputExt = "webp";
-        } catch (e) {
-          console.error("[upload/photos] watermark failed, converting without watermark:", e);
-          try {
-            const sharp = (await import("sharp")).default;
-            uploadBuffer = await sharp(inputBuffer).jpeg({ quality: 85 }).toBuffer();
-            contentType = "image/jpeg";
-            outputExt = "jpg";
-          } catch (e2) {
-            console.error("[upload/photos] sharp conversion also failed, using raw:", e2);
-            uploadBuffer = inputBuffer;
-            contentType = file.type || "application/octet-stream";
-            outputExt = fileExt || "bin";
-          }
-        }
       }
     }
 

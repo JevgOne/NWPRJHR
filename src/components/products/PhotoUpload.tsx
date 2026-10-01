@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { compressPhoto } from "@/lib/compress-photo";
 
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/x-quicktime", "video/webm"];
@@ -41,8 +42,9 @@ export function PhotoUpload({ photos, onChange, onDelete, video, onVideoChange, 
       setUploading(true);
       setUploadError("");
       try {
+        const compressed = await Promise.all(fileArray.map(compressPhoto));
         const formData = new FormData();
-        for (const file of fileArray) {
+        for (const file of compressed) {
           formData.append("files", file);
         }
 

@@ -1,8 +1,44 @@
 # TASK QUEUE — Hairland
 
-**Aktualizováno:** 2026-09-25
+**Aktualizováno:** 2026-10-01
 **Firma:** Altro servis group s.r.o., IČO 23673389
 **Účet:** 6424423004/5500, IBAN CZ5555000000006424423004 — NEMĚNIT!
+
+---
+
+## AKTIVNÍ
+
+### TASK-153: SEO — oprava titulků, meta descriptions, indexace
+Stav: HOTOVO — 2026-10-01
+Priorita: P0 — Google indexuje jen 1 stránku z 400
+Projekt: /Users/zen/NWPRJHR
+
+#### Kompletní zadání:
+Web hairland.cz má extrémně nízkou indexaci v Google (~1 stránka z 400 v sitemapě).
+Uživatel říká: "nejsme primárně Praha, posíláme všude — Praha patří JEN na city landing pages."
+
+**Co je hotovo (edity v messages/*.json):**
+1. ✅ Homepage title: "...pravých vlasů Praha" → "...pravých vlasů | Hairland" (cs/en/uk/ru)
+2. ✅ /vlasy-k-prodlouzeni title: "...skladem Praha" → "...skladem | Hairland" (cs/en/uk/ru)
+3. ✅ Metod pages (clip-in, tape-in, keratin, micro-ring, weft, ofiny): Praha pryč z titles i H1
+4. ✅ 46+ atributových descriptions: "Praha zdarma" → "doručení po celé ČR"
+5. ✅ autoSeoDesc, metaSuffix: Praha → doručení po celé ČR
+6. ✅ Obecný metadata.description: Praha pryč (cs/en/uk/ru)
+7. ✅ JSON validace OK
+
+**Co zbývá:**
+- [ ] Commit + push změn
+- [ ] Ověřit build na Vercelu
+- [ ] Ověřit že titulky jsou správné na produkci
+- [ ] Zkontrolovat zda nejsou další SEO problémy bránící indexaci
+- [ ] Zvážit ruční request o indexaci v GSC
+
+#### Kontext:
+- Konkurence (goldhair.cz) nemá Praha v homepage title — správný přístup
+- muzahair.cz má Praha protože jsou čistě pražský showroom
+- Hairland posílá po celé ČR → Praha patří JEN na /prodlouzeni-vlasu-praha a /prodlouzeni-vlasu/[city]
+- Technické SEO je OK: canonical, robots, SSR, structured data, hreflang
+- /vlasova-pece vrací 404 (správná URL je /pece-o-vlasy) — není v kódu, asi starý Google crawl
 
 ---
 
