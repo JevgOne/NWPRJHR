@@ -721,7 +721,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 <input
                   type="file"
                   multiple
-                  accept="image/*,video/*"
+                  accept=".jpg,.jpeg,.png,.webp,.heic,.heif,.mp4,.mov,.webm,image/*,video/*"
                   className="hidden"
                   onChange={(e) => handleMediaUpload(e.target.files)}
                   disabled={uploading}
@@ -1313,7 +1313,7 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
                 <input
                   type="file"
                   multiple
-                  accept="image/*,video/*"
+                  accept=".jpg,.jpeg,.png,.webp,.heic,.heif,.mp4,.mov,.webm,image/*,video/*"
                   className="hidden"
                   onChange={(e) => { handleFilesSelected(e.target.files); e.target.value = ""; }}
                 />

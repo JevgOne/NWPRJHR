@@ -87,6 +87,8 @@ export function NewSaleWizard({
   const [scannerOpen, setScannerOpen] = useState(false);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [skuSearch, setSkuSearch] = useState("");
+  const [skuNotFound, setSkuNotFound] = useState(false);
   const [paymentType, setPaymentType] = useState<"TRANSFER" | "CASH" | "CARD" | "PROMO" | "WRITEOFF">("TRANSFER");
   const [receiptNumber, setReceiptNumber] = useState("");
   const [reserveMode, setReserveMode] = useState(false);
@@ -664,6 +666,44 @@ export function NewSaleWizard({
             >
               {t("manualSelect")}
             </Button>
+          </div>
+
+          {/* SKU search — last 5 digits */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="SKU (posledních 5 čísel)"
+              value={skuSearch}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 5);
+                setSkuSearch(val);
+                setSkuNotFound(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && skuSearch.length >= 3) {
+                  const match = products.flatMap(p =>
+                    p.variants.filter(v => v.sku?.endsWith(skuSearch)).map(v => ({ product: p, variant: v }))
+                  );
+                  if (match.length === 1) {
+                    addItemFromVariantId(match[0].variant.id, match[0].product);
+                    setSkuSearch("");
+                    setSkuNotFound(false);
+                  } else if (match.length > 1) {
+                    // Multiple matches — show in product picker filtered
+                    setSelectedProductId(match[0].product.id);
+                    setShowProductPicker(true);
+                    setSkuNotFound(false);
+                  } else {
+                    setSkuNotFound(true);
+                  }
+                }
+              }}
+              className="flex-1 border border-line rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-rose"
+            />
+            {skuNotFound && (
+              <span className="text-xs text-red-500 self-center">Nenalezeno</span>
+            )}
           </div>
 
           {showProductPicker && (
