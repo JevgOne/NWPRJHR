@@ -12,6 +12,7 @@ export function serializeVariantForRole(
   const base = {
     id: variant.id,
     productId: variant.productId,
+    sku: variant.sku,
     lengthCm: variant.lengthCm,
     color: variant.color,
     active: variant.active,
