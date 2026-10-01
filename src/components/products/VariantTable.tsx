@@ -417,41 +417,54 @@ export function VariantTable({
                       )
                     )}
 
-                    {/* Prodejní cena BY_PIECE (computed from retailPricePerGram × pieceWeight) */}
-                    {isByPiece && (() => {
-                      const pieces = stock?.availablePieces ?? 0;
-                      const grams = stock?.availableGrams ?? 0;
-                      const pieceWeight = pieces > 0 && grams > 0 ? Math.round(grams / pieces) : 0;
-                      const computedPiecePrice = variant.retailPricePerGram != null && pieceWeight > 0
-                        ? variant.retailPricePerGram * pieceWeight
-                        : 0;
-                      if (computedPiecePrice <= 0) return null;
-                      return (
-                        <div className="flex items-center gap-1">
-                          <span className="text-lg font-bold text-ink block">
-                            {formatCZK(computedPiecePrice * 100)}/ks
-                          </span>
-                          <span className="text-[10px] text-muted">({pieceWeight}g)</span>
-                        </div>
-                      );
-                    })()}
+                    {/* Prodejní cena BY_PIECE: show per-100g (editable) + computed per-piece */}
+                    {isByPiece && variant.retailPricePerGram !== undefined && (
+                      <>
+                        {editingCell === cellKey ? (
+                          <PriceInput
+                            variantId={variant.id}
+                            field="retailPricePerGram"
+                            cellKey={cellKey}
+                            per100g
+                          />
+                        ) : (
+                          <button
+                            className={`text-lg font-bold text-ink block ${
+                              isOwner ? "hover:text-rose transition-colors" : ""
+                            }`}
+                            onClick={() => {
+                              if (!isOwner) return;
+                              setEditingCell(cellKey);
+                              setEditValue(variant.retailPricePerGram!.toString());
+                            }}
+                            disabled={isSaving}
+                          >
+                            {formatCZK(variant.retailPricePerGram * 100)}/100g
+                          </button>
+                        )}
+                        {(() => {
+                          const pieces = stock?.availablePieces ?? 0;
+                          const grams = stock?.availableGrams ?? 0;
+                          const pieceWeight = pieces > 0 && grams > 0 ? Math.round(grams / pieces) : 0;
+                          const computedPiecePrice = variant.retailPricePerGram != null && pieceWeight > 0
+                            ? variant.retailPricePerGram * pieceWeight
+                            : 0;
+                          if (computedPiecePrice <= 0) return null;
+                          return (
+                            <div className="text-[10px] text-muted">
+                              = {formatCZK(computedPiecePrice * 100)}/ks ({pieceWeight}g)
+                            </div>
+                          );
+                        })()}
+                      </>
+                    )}
 
-                    {/* Nákupní cena + marže (owner only) */}
+                    {/* Nákupní cena + marže (owner only) — always per-100g */}
                     {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && (() => {
-                      // For BY_PIECE: compute from per-gram × pieceWeight; for BY_GRAM: show per-100g
-                      const pieces = stock?.availablePieces ?? 0;
-                      const grams = stock?.availableGrams ?? 0;
-                      const pieceWeight = pieces > 0 && grams > 0 ? Math.round(grams / pieces) : 0;
-                      const costDisplay = isByPiece
-                        ? variant.costPricePerGram * pieceWeight
-                        : variant.costPricePerGram * 100;
-                      const sellPrice = isByPiece
-                        ? (variant.retailPricePerGram ?? 0) * pieceWeight
-                        : (variant.retailPricePerGram ?? 0) * 100;
+                      const costDisplay = variant.costPricePerGram * 100;
+                      const sellPrice = (variant.retailPricePerGram ?? 0) * 100;
                       const margin = sellPrice - costDisplay;
                       const marginPct = costDisplay > 0 ? Math.round((margin / costDisplay) * 100) : 0;
-                      const unit = isByPiece ? "/ks" : "/100g";
-                      if (isByPiece && pieceWeight === 0) return null;
                       return (
                         <div className="flex items-center gap-1 mt-1">
                           {editingCell === `cost-${cellKey}` ? (
@@ -459,7 +472,7 @@ export function VariantTable({
                               variantId={variant.id}
                               field="costPricePerGram"
                               cellKey={`cost-${cellKey}`}
-                              per100g={!isByPiece}
+                              per100g
                             />
                           ) : (
                             <button
@@ -469,7 +482,7 @@ export function VariantTable({
                                 setEditValue(variant.costPricePerGram!.toString());
                               }}
                             >
-                              {t("product.costLabel")}: {formatCZK(costDisplay)}{unit}
+                              {t("product.costLabel")}: {formatCZK(costDisplay)}/100g
                             </button>
                           )}
                           <span className={`text-[10px] font-medium ${
