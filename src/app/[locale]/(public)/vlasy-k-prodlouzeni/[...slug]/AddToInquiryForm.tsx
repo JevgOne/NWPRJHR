@@ -16,7 +16,7 @@ interface PickerVariant {
   availableGrams: number;
   sellingMode?: "BY_GRAM" | "BY_PIECE";
   pricePerPiece?: number;
-  retailPricePerPiece?: number;
+
   availablePieces?: number;
   availableToOrder?: boolean;
   orderLeadDays?: number | null;
@@ -117,9 +117,8 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
 
   const handleAdd = () => {
     if (!selectedLength || !selectedColor || !selectedVariant) return;
-    const retailPrice = isByPiece
-      ? (selectedVariant.retailPricePerPiece ?? selectedVariant.pricePerPiece ?? 0)
-      : selectedVariant.retailPricePerGram;
+    // retailPricePerGram holds retail piece price for BY_PIECE, per-gram for BY_GRAM
+    const retailPrice = selectedVariant.retailPricePerGram;
     const pricePerUnit = discountPct > 0
       ? roundHalereUp(retailPrice - (retailPrice * discountPct) / 20000)
       : retailPrice;

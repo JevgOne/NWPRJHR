@@ -500,14 +500,17 @@ async function ProductDetailView({
     .filter((v) => v.retailPricePerGram > 0 || (v.pricePerPiece ?? 0) > 0)
     .map((v) => {
       const isByPiece = v.sellingMode === "BY_PIECE";
+      // BY_PIECE: always calculate piece price from retailPricePerGram × grams per piece
+      // Never use retailPricePerPiece from DB — it can be stale/incorrect
+      const gramsPerPiece = isByPiece && (v.availablePieces ?? 0) > 0
+        ? Math.round(v.availableGrams / v.availablePieces!)
+        : v.availableGrams;
+      const retailPiece = isByPiece && v.retailPricePerGram > 0 && gramsPerPiece > 0
+        ? v.retailPricePerGram * gramsPerPiece
+        : v.pricePerPiece ?? 0;
       let displayPrice: number;
       let pieceDisplayPrice: number | undefined;
       if (isByPiece) {
-        // BY_PIECE: calculate piece price from retailPricePerGram × grams
-        const retailPiece = v.retailPricePerPiece
-          ?? (v.retailPricePerGram > 0 && v.availableGrams > 0
-              ? v.retailPricePerGram * v.availableGrams
-              : v.pricePerPiece ?? 0);
         displayPrice = discountPct > 0
           ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
           : retailPiece;
@@ -524,7 +527,7 @@ async function ProductDetailView({
         lengthCm: v.lengthCm,
         color: v.color,
         pricePerGram: displayPrice,
-        retailPricePerGram: isByPiece ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
+        retailPricePerGram: isByPiece ? retailPiece : v.retailPricePerGram,
         retailPricePerGramForPiece: isByPiece ? v.retailPricePerGram : 0,
         availableGrams: v.availableGrams,
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",

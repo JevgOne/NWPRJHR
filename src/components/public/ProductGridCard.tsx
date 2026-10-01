@@ -88,15 +88,22 @@ export function ProductGridCard({
   const variantColor = v0?.color ?? null;
   const variantLength = v0?.lengthCm ?? null;
   const isByPiece = v0?.sellingMode === "BY_PIECE";
-  const isExclusive = isByPiece && (v0?.exclusivePieces ?? 0) > 0;
-  // Non-exclusive BY_PIECE: show as grams on public web
-  const showAsPiece = isByPiece && isExclusive;
-  const retailPrice = showAsPiece ? (v0?.retailPricePerPiece ?? 0) : (v0?.retailPricePerGram ?? 0);
-  const retailPricePerGramForPiece = isByPiece ? (v0?.retailPricePerGram ?? 0) : 0;
+  const showAsPiece = isByPiece;
   const pieceWeight = showAsPiece && (v0?.availablePieces ?? 0) > 0 && (v0?.availableGrams ?? 0) > 0
     ? Math.round(v0!.availableGrams / v0!.availablePieces!)
     : 0;
-  const wholesalePrice = showAsPiece ? (v0?.wholesalePricePerPiece ?? 0) : (v0?.wholesalePricePerGram ?? 0);
+  // BY_PIECE: calculate piece price from per-gram price × grams per piece (never use stale DB retailPricePerPiece)
+  const retailPrice = showAsPiece
+    ? ((v0?.retailPricePerGram ?? 0) > 0 && pieceWeight > 0
+        ? (v0?.retailPricePerGram ?? 0) * pieceWeight
+        : (v0?.retailPricePerPiece ?? 0))
+    : (v0?.retailPricePerGram ?? 0);
+  const retailPricePerGramForPiece = isByPiece ? (v0?.retailPricePerGram ?? 0) : 0;
+  const wholesalePrice = showAsPiece
+    ? ((v0?.wholesalePricePerGram ?? 0) > 0 && pieceWeight > 0
+        ? (v0?.wholesalePricePerGram ?? 0) * pieceWeight
+        : (v0?.wholesalePricePerPiece ?? 0))
+    : (v0?.wholesalePricePerGram ?? 0);
   const stock = showAsPiece ? (v0?.availablePieces ?? 0) : (v0?.availableGrams ?? 0);
   const inStock = stock > 0 || (!showAsPiece && isByPiece && (v0?.availableGrams ?? 0) > 0);
   const canOrder = !inStock && !!v0?.availableToOrder;
