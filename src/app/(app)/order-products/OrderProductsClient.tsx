@@ -29,7 +29,6 @@ interface OrderProduct {
     lengthCm: number;
     color: string;
     retailPricePerGram: number;
-    retailPricePerPiece: number | null;
     sellingMode: string;
     availableToOrder: boolean;
     orderLeadDays: number | null;
@@ -61,7 +60,6 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
     supplierCode: "",
     photoCode: "",
     retailPricePerGram: "",
-    retailPricePerPiece: "",
     orderLeadDays: "",
     photos: [] as string[],
   });
@@ -278,7 +276,6 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
       supplierCode: p.supplierCode ?? "",
       photoCode: p.photoCode ?? "",
       retailPricePerGram: variant ? String(variant.retailPricePerGram / 100) : "",
-      retailPricePerPiece: variant?.retailPricePerPiece ? String(variant.retailPricePerPiece / 100) : "",
       orderLeadDays: variant?.orderLeadDays ? String(variant.orderLeadDays) : "14",
       photos: (() => { try { return JSON.parse(p.photos); } catch { return []; } })(),
     });
@@ -298,9 +295,6 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
           photoCode: editForm.photoCode.trim() || null,
           photos: editForm.photos,
           retailPricePerGram: Math.round(parseFloat(editForm.retailPricePerGram) * 100) || undefined,
-          retailPricePerPiece: editForm.retailPricePerPiece
-            ? Math.round(parseFloat(editForm.retailPricePerPiece) * 100)
-            : undefined,
           orderLeadDays: parseInt(editForm.orderLeadDays) || undefined,
         }),
       });
@@ -322,9 +316,6 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
               ? [{
                   ...variant,
                   retailPricePerGram: Math.round(parseFloat(editForm.retailPricePerGram) * 100) || variant.retailPricePerGram,
-                  retailPricePerPiece: editForm.retailPricePerPiece
-                    ? Math.round(parseFloat(editForm.retailPricePerPiece) * 100)
-                    : variant.retailPricePerPiece,
                   orderLeadDays: parseInt(editForm.orderLeadDays) || variant.orderLeadDays,
                 }]
               : p.variants,
@@ -666,11 +657,9 @@ export function OrderProductsClient({ products: initialProducts }: { products: O
                   const catLabel = tCat(p.category.toLowerCase() as "virgin");
 
                   const priceDisplay = variant
-                    ? (variant.sellingMode === "BY_PIECE" && (variant.retailPricePerPiece ?? 0) > 0)
-                      ? `${((variant.retailPricePerPiece!) / 100).toLocaleString("cs-CZ")} Kč/ks`
-                      : variant.retailPricePerGram > 0
-                        ? `${(variant.retailPricePerGram / 100).toLocaleString("cs-CZ")} Kč/g`
-                        : "\u2014"
+                    ? variant.retailPricePerGram > 0
+                      ? `${(variant.retailPricePerGram / 100).toLocaleString("cs-CZ")} Kč/g`
+                      : "\u2014"
                     : "\u2014";
 
                   const leadDaysDisplay = variant?.orderLeadDays ? `~${variant.orderLeadDays} d` : "\u2014";

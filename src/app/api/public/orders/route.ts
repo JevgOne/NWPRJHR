@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getStockNumbers, invalidateStockCache } from "@/lib/stock";
+import { getStockNumbers, invalidateStockCache, getPieceWeightGrams } from "@/lib/stock";
 import { upsertCustomerFromContact } from "@/lib/customer-upsert";
 import { getShippingCost } from "@/lib/shipping";
 import { generateOrderNumber } from "@/lib/order-to-sale";
@@ -221,7 +221,9 @@ export async function POST(request: NextRequest) {
     let lineTotal: number;
 
     if (isByPiece) {
-      const retailPrice = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+      // Compute piece price from per-gram × piece weight (never use stale DB pricePerPiece)
+      const pieceWeight = await getPieceWeightGrams(item.variantId);
+      const retailPrice = variant.retailPricePerGram * pieceWeight;
       pricePerUnit = b2bDiscountPct > 0
         ? roundHalereUp(retailPrice - (retailPrice * b2bDiscountPct) / 20000)
         : retailPrice;

@@ -63,8 +63,8 @@ function computeSummary(deliveries: BatchDelivery[]): BatchSummary {
     purchaseTotal += d.purchasePricePerGramCZK * d.initialGrams;
     supplierSet.add(d.supplier.name);
 
-    if (d.variant.sellingMode === "BY_PIECE" && d.variant.retailPricePerPiece) {
-      retailTotal += d.variant.retailPricePerPiece * (d.initialPieces || 1);
+    if (d.variant.sellingMode === "BY_PIECE" && d.pieceWeightGrams) {
+      retailTotal += d.variant.retailPricePerGram * d.pieceWeightGrams * (d.initialPieces || 1);
     } else {
       retailTotal += d.variant.retailPricePerGram * d.initialGrams;
     }

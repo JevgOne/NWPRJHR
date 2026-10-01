@@ -28,8 +28,6 @@ const productSelect = {
       retailPricePerGram: true,
       wholesalePricePerGram: true,
       sellingMode: true,
-      pricePerPiece: true,
-      retailPricePerPiece: true,
       availableToOrder: true,
       orderLeadDays: true,
     },
@@ -69,18 +67,31 @@ export const getCachedAllProducts = unstable_cache(
       photos: JSON.parse(p.photos || "[]"),
       variants: p.variants.map((v) => {
         const stock = stockMap.get(v.id);
+        const isByPiece = (v.sellingMode ?? "BY_GRAM") === "BY_PIECE";
+        const availablePieces = stock?.availablePieces ?? 0;
+        const availableGrams = stock?.availableGrams ?? 0;
+        // Compute piece price from per-gram × pieceWeight
+        const pieceWeight = isByPiece && availablePieces > 0 && availableGrams > 0
+          ? Math.round(availableGrams / availablePieces)
+          : 0;
+        const computedPiecePrice = isByPiece && pieceWeight > 0
+          ? v.retailPricePerGram * pieceWeight
+          : 0;
+        const computedWholesalePiecePrice = isByPiece && pieceWeight > 0
+          ? (v.wholesalePricePerGram ?? 0) * pieceWeight
+          : 0;
         return {
           sku: v.sku,
           lengthCm: v.lengthCm,
           color: v.color,
           retailPricePerGram: v.retailPricePerGram,
           wholesalePricePerGram: v.wholesalePricePerGram,
-          availableGrams: stock?.availableGrams ?? 0,
+          availableGrams,
           sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
-          retailPricePerPiece: v.retailPricePerPiece,
-          pricePerPiece: v.pricePerPiece,
-          wholesalePricePerPiece: v.pricePerPiece,
-          availablePieces: stock?.availablePieces ?? 0,
+          retailPricePerPiece: computedPiecePrice,
+          pricePerPiece: computedWholesalePiecePrice,
+          wholesalePricePerPiece: computedWholesalePiecePrice,
+          availablePieces,
           exclusivePieces: stock?.exclusivePieces ?? 0,
           availableToOrder: v.availableToOrder ?? false,
           orderLeadDays: v.orderLeadDays ?? null,

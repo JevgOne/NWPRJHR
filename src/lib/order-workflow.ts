@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { getAllStockNumbers, invalidateStockCache } from "./stock";
+import { getAllStockNumbers, invalidateStockCache, getPieceWeightGrams } from "./stock";
 import { roundHalereUp } from "./rounding";
 import type { Order } from "@prisma/client";
 
@@ -102,8 +102,9 @@ export async function createOrder(
     let lineTotal: number;
 
     if (isByPiece) {
-      const retailPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
-      // Discount from margin (margin = retail / 2 with 100% markup)
+      // Compute piece price from per-gram × piece weight (never use stale DB pricePerPiece)
+      const pieceWeight = await getPieceWeightGrams(item.variantId);
+      const retailPiece = variant.retailPricePerGram * pieceWeight;
       pricePerUnit = b2bDiscountPct > 0
         ? roundHalereUp(retailPiece - (retailPiece * b2bDiscountPct) / 20000)
         : retailPiece;

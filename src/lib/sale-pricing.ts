@@ -1,6 +1,7 @@
 import type { CustomerType } from "@prisma/client";
 import { prisma } from "./db";
 import { roundHalereUp } from "./rounding";
+import { getPieceWeightGrams } from "./stock";
 export interface SalePriceResult {
   pricePerGram: number;
   pricePerPiece: number | null;
@@ -42,16 +43,13 @@ export async function getSalePrice(
     );
   }
 
-  // Always calculate piece price if variant has one (for exclusive culíky)
-  const retailPerPiece = variant.retailPricePerPiece ?? variant.pricePerPiece ?? 0;
+  // Compute piece price from per-gram price × piece weight (never use stale DB pricePerPiece)
   let piecePrice: number | null = null;
-  if (retailPerPiece > 0) {
-    if (customerType === "RETAIL" || discountPct === 0) {
+  if (sellingMode === "BY_PIECE") {
+    const pieceWeight = await getPieceWeightGrams(variantId);
+    if (pieceWeight > 0) {
+      const retailPerPiece = pricePerGram * pieceWeight;
       piecePrice = retailPerPiece;
-    } else {
-      piecePrice = roundHalereUp(
-        retailPerPiece - (retailPerPiece * discountPct) / 20000
-      );
     }
   }
 

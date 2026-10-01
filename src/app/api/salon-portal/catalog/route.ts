@@ -43,8 +43,6 @@ export async function GET() {
             lengthCm: true,
             color: true,
             retailPricePerGram: true,
-            retailPricePerPiece: true,
-            pricePerPiece: true,
             sellingMode: true,
           },
           orderBy: [{ lengthCm: "asc" }, { color: "asc" }],
@@ -71,7 +69,11 @@ export async function GET() {
         let pricePerPiece: number | undefined;
 
         if (isByPiece) {
-          const retailPiece = v.retailPricePerPiece ?? v.pricePerPiece ?? 0;
+          // Compute piece price from per-gram × piece weight
+          const pieces = stock?.availablePieces ?? 0;
+          const grams = stock?.availableGrams ?? 0;
+          const pieceWeight = pieces > 0 && grams > 0 ? Math.round(grams / pieces) : 0;
+          const retailPiece = v.retailPricePerGram * pieceWeight;
           pricePerPiece = b2bDiscountPct > 0
             ? roundHalereUp(retailPiece - (retailPiece * b2bDiscountPct) / 20000)
             : retailPiece;

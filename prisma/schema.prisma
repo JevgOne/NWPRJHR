@@ -919,6 +919,10 @@ model ComplaintTicket {
   description       String
   photos            String   @default("[]")
   desiredResolution String?
+  appliedBy         String?
+  processedBy       String?
+  products          String?
+  heatChemical      String?
   status            String   @default("NEW")
   assignedTo        String?
   adminNote         String?

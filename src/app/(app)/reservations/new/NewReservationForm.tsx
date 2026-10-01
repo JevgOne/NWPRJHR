@@ -15,8 +15,6 @@ interface VariantOption {
   color: string;
   sellingMode: string;
   retailPricePerGram: number;
-  retailPricePerPiece: number | null;
-  pricePerPiece: number | null;
 }
 
 interface ProductOption {
@@ -117,15 +115,10 @@ export function NewReservationForm({
   );
   const isByPiece = selectedVariant?.sellingMode === "BY_PIECE";
 
-  // Estimate price
+  // Estimate price (for BY_PIECE, uses per-gram × total grams as estimate)
   let estimatedPrice = 0;
   if (selectedVariant) {
-    if (isByPiece) {
-      const price = selectedVariant.retailPricePerPiece ?? selectedVariant.pricePerPiece ?? 0;
-      estimatedPrice = price * pieces;
-    } else {
-      estimatedPrice = selectedVariant.retailPricePerGram * grams;
-    }
+    estimatedPrice = selectedVariant.retailPricePerGram * (isByPiece ? grams || pieces : grams);
     estimatedPrice = Math.ceil(estimatedPrice / 100) * 100; // roundUp
   }
 

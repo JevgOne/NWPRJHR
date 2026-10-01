@@ -28,7 +28,6 @@ export default async function OrderProductsPage() {
           lengthCm: true,
           color: true,
           retailPricePerGram: true,
-          retailPricePerPiece: true,
           sellingMode: true,
           availableToOrder: true,
           orderLeadDays: true,

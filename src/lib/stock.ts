@@ -155,6 +155,31 @@ export async function getAllStockNumbers(): Promise<Map<string, StockNumbers>> {
   return map;
 }
 
+/**
+ * Get the piece weight in grams for a BY_PIECE variant.
+ * Uses the most recent delivery with remaining pieces; falls back to any delivery.
+ */
+export async function getPieceWeightGrams(
+  variantId: string,
+  db: TransactionClient | typeof prisma = prisma
+): Promise<number> {
+  // First try delivery with remaining pieces
+  const active = await db.delivery.findFirst({
+    where: { variantId, remainingPieces: { gt: 0 }, pieceWeightGrams: { not: null } },
+    select: { pieceWeightGrams: true },
+    orderBy: { stockedAt: "desc" },
+  });
+  if (active?.pieceWeightGrams) return active.pieceWeightGrams;
+
+  // Fallback: any delivery with pieceWeightGrams
+  const any = await db.delivery.findFirst({
+    where: { variantId, pieceWeightGrams: { not: null } },
+    select: { pieceWeightGrams: true },
+    orderBy: { stockedAt: "desc" },
+  });
+  return any?.pieceWeightGrams ?? 0;
+}
+
 export function invalidateStockCache() {
   try { revalidateTag("stock", { expire: 0 }); } catch { /* noop outside request context */ }
 }

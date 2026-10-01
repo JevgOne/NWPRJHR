@@ -35,8 +35,6 @@ export default async function NewReservationPage({
       color: v.color,
       sellingMode: v.sellingMode,
       retailPricePerGram: v.retailPricePerGram,
-      retailPricePerPiece: v.retailPricePerPiece,
-      pricePerPiece: v.pricePerPiece,
     })),
   }));
 

@@ -75,8 +75,8 @@ async function getDashboardData(userId: string) {
                 COALESCE(SUM(d.remainingGrams * d.purchasePricePerGramCZK), 0) as purchaseValue,
                 COALESCE(SUM(
                   CASE
-                    WHEN v.sellingMode = 'BY_PIECE' AND v.retailPricePerPiece IS NOT NULL
-                      THEN d.remainingPieces * v.retailPricePerPiece
+                    WHEN v.sellingMode = 'BY_PIECE' AND d.pieceWeightGrams IS NOT NULL
+                      THEN d.remainingPieces * v.retailPricePerGram * d.pieceWeightGrams
                     ELSE d.remainingGrams * v.retailPricePerGram
                   END
                 ), 0) as retailValue
