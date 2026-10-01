@@ -417,49 +417,45 @@ export function VariantTable({
                       )
                     )}
 
-                    {/* Prodejní cena BY_PIECE: show per-100g (editable) + computed per-piece */}
-                    {isByPiece && variant.retailPricePerGram !== undefined && (
-                      <>
-                        {editingCell === cellKey ? (
-                          <PriceInput
-                            variantId={variant.id}
-                            field="retailPricePerGram"
-                            cellKey={cellKey}
-                            per100g
-                          />
-                        ) : (
-                          <button
-                            className={`text-lg font-bold text-ink block ${
-                              isOwner ? "hover:text-rose transition-colors" : ""
-                            }`}
-                            onClick={() => {
-                              if (!isOwner) return;
-                              setEditingCell(cellKey);
-                              setEditValue(variant.retailPricePerGram!.toString());
-                            }}
-                            disabled={isSaving}
-                          >
-                            {formatCZK(variant.retailPricePerGram * 100)}/100g
-                          </button>
-                        )}
-                        {(() => {
-                          const pieces = stock?.availablePieces ?? 0;
-                          const grams = stock?.availableGrams ?? 0;
-                          const pieceWeight = pieces > 0 && grams > 0 ? Math.round(grams / pieces) : 0;
-                          const computedPiecePrice = variant.retailPricePerGram != null && pieceWeight > 0
-                            ? variant.retailPricePerGram * pieceWeight
-                            : 0;
-                          if (computedPiecePrice <= 0) return null;
-                          return (
+                    {/* Prodejní cena BY_PIECE — universal */}
+                    {isByPiece && variant.retailPricePerGram !== undefined && (() => {
+                      const pieces = stock?.availablePieces ?? 0;
+                      const grams = stock?.availableGrams ?? 0;
+                      const pieceWeight = pieces > 0 && grams > 0 ? Math.round(grams / pieces) : 0;
+                      const computedPiecePrice = (variant.retailPricePerGram ?? 0) > 0 && pieceWeight > 0
+                        ? variant.retailPricePerGram! * pieceWeight : 0;
+
+                      return (
+                        <>
+                          {/* Prodej/100g — main editable */}
+                          {editingCell === cellKey ? (
+                            <PriceInput variantId={variant.id} field="retailPricePerGram" cellKey={cellKey} per100g />
+                          ) : (
+                            <button
+                              className={`text-lg font-bold text-ink block ${isOwner ? "hover:text-rose transition-colors" : ""}`}
+                              onClick={() => { if (!isOwner) return; setEditingCell(cellKey); setEditValue(variant.retailPricePerGram!.toString()); }}
+                              disabled={isSaving}
+                            >
+                              {formatCZK(variant.retailPricePerGram * 100)}/100g
+                            </button>
+                          )}
+                          {/* Computed piece retail price */}
+                          {computedPiecePrice > 0 && (
                             <div className="text-[10px] text-muted">
                               = {formatCZK(computedPiecePrice * 100)}/ks ({pieceWeight}g)
                             </div>
-                          );
-                        })()}
-                      </>
-                    )}
+                          )}
+                          {/* Nákupní cena kusu od dodavatele (if pricePerPiece exists) */}
+                          {isOwner && variant.pricePerPiece != null && variant.pricePerPiece > 0 && (
+                            <div className="text-[10px] text-amber-600">
+                              Nákup/ks od dodavatele: {formatCZK(variant.pricePerPiece * 100)}
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
 
-                    {/* Nákupní cena + marže (owner only) — always per-100g */}
+                    {/* Nákupní cena + marže (owner only) — always per 100g */}
                     {isOwner && variant.costPricePerGram !== undefined && variant.costPricePerGram > 0 && (() => {
                       const costDisplay = variant.costPricePerGram * 100;
                       const sellPrice = (variant.retailPricePerGram ?? 0) * 100;
