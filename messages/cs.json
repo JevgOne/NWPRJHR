@@ -42,7 +42,7 @@
   },
   "metadata": {
     "description": "Prodej pravých vlasů k prodloužení — přímý import, zprostředkování zpracování do 7 dnů. Doručení po celé ČR.",
-    "homeTitle": "Vlasy k prodloužení — prodej pravých vlasů | Hairland",
+    "homeTitle": "Vlasy k prodloužení — prodej pravých vlasů",
     "homeDescription": "Pravé vlasy k prodloužení z přímého importu. Clip-in, tape-in, keratin, micro ring. Prodej na gramy, doručení po celé ČR.",
     "blogTitle": "Blog o prodloužení vlasů — rady a tipy",
     "blogDescription": "Jak vybrat správnou metodu prodloužení vlasů? Clip-in, tape-in nebo keratin? Rady od expertů, péče o prodloužené vlasy, srovnání kvality.",
@@ -897,7 +897,7 @@
       "relatedProductsLabel": "Může vás zajímat"
     },
     "landing": {
-      "heroTitle": "Prémiové vlasy k prodloužení | Hairland",
+      "heroTitle": "Prémiové vlasy k prodloužení",
       "heroSubtitle": "100% pravé vlasy z Ukrajiny a Evropy. Panenské, Luxe i Standard vlasy skladem s možností přípravy na keratin, tape-in, clip-in, micro ring nebo weft.",
       "orgSlogan": "Prémiové pravé vlasy k prodloužení",
       "orgKnows1": "vlasy k prodloužení",
@@ -1018,7 +1018,7 @@
       "utilityGrams": "Kolik gramů potřebuji? →"
     },
     "offer": {
-      "metaTitle": "Vlasy k prodloužení — pravé vlasy skladem | Hairland",
+      "metaTitle": "Vlasy k prodloužení — pravé vlasy skladem",
       "metaDescription": "Prodej pravých vlasů k prodloužení — skladem i na objednávku. Panenské, Luxe i Standard. Keratin, tape-in, clip-in, micro ring. Doručení po celé ČR.",
       "seoIntro": "Prodej pravých vlasů k prodloužení — skladem v Praze i na objednávku. Vybírejte z panenských, Luxe a Standard vlasů z Ukrajiny, Ruska, Turecka, Íránu, Indie, Vietnamu a dalších zemí. Každý culík prodáváme podle skutečné gramáže, délky, odstínu a struktury. Vlasy vám můžeme připravit na keratin, tape-in, clip-in, micro ring nebo vlasové tresy.",
       "bannerTitle": "Vlasy z celého světa — vždy s přesným původem",
@@ -1351,7 +1351,7 @@
       "hygienicWarning": "Vlasy jsou dodávány v hygienicky uzavřeném obalu. Porušením pečeti zaniká právo odstoupit od smlouvy do 14 dnů (§ 1837 písm. g občanského zákoníku)."
     },
     "paymentResult": {
-      "pageTitle": "Výsledek platby | Hairland",
+      "pageTitle": "Výsledek platby",
       "paidTitle": "Platba proběhla úspěšně!",
       "paidDesc": "Vaše platba byla přijata. O dalším postupu vás budeme informovat e-mailem.",
       "pendingTitle": "Platba se zpracovává",
@@ -3247,17 +3247,17 @@
       "faq15q": "Lze vyrobit ofinu přesně podle mé fotky?",
       "faq15a": "Ano, vyrábíme ofiny na míru podle vašich požadavků. Pošlete nám fotku požadovaného stylu a vaši aktuální fotku za denního světla — doporučíme přesný odstín, délku a hustotu. Konzultace je zdarma a nezávazná."
     },
-    "clipInTitle": "Clip-in vlasy — 100% pravé vlasy | Hairland",
-    "tapeInTitle": "Tape-in vlasy — pravé vlasové pásky | Hairland",
-    "keratinTitle": "Keratinové vlasy — prodej pravých vlasů | Hairland",
-    "microRingTitle": "Micro ring vlasy — prodej pravých vlasů | Hairland",
-    "weftTitle": "Vlasové tresy — pravé vlasy | Hairland",
+    "clipInTitle": "Clip-in vlasy — 100% pravé vlasy",
+    "tapeInTitle": "Tape-in vlasy — pravé vlasové pásky",
+    "keratinTitle": "Keratinové vlasy — prodej pravých vlasů",
+    "microRingTitle": "Micro ring vlasy — prodej pravých vlasů",
+    "weftTitle": "Vlasové tresy — pravé vlasy",
     "clipInH1": "Clip-in vlasy — prodej pravých vlasů",
     "tapeInH1": "Tape-in vlasy — prodej pravých vlasů",
     "keratinH1": "Vlasy na keratin — prodej pravých vlasů",
     "microRingH1": "Micro ring vlasy — prodej pravých vlasů",
     "weftH1": "Vlasové tresy — prodej pravých vlasů",
-    "ofinyTitle": "Clip-in ofiny z pravých vlasů | Hairland",
+    "ofinyTitle": "Clip-in ofiny z pravých vlasů",
     "ofinyH1": "Clip-in ofiny z pravých vlasů",
     "clipInDesc": "Clip-in prameny se připínají sponkami — snadná aplikace doma za pár minut. Ideální pro příležitostné nošení.",
     "tapeInDesc": "Tape-in pásky se lepí k vlastním vlasům. Plochý spoj, pohodlné celodenní nošení. Vydrží 6–8 týdnů.",
