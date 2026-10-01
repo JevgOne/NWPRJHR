@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getPaymentStatus } from "@/lib/comgate";
+import { getPaymentStatus, cancelPayment } from "@/lib/comgate";
 import { createSaleFromOrder } from "@/lib/order-to-sale";
 import { sendNotificationEmail } from "@/lib/email";
 import { getRetailPaymentReceivedEmail } from "@/lib/email-templates";
+import { invalidateStockCache } from "@/lib/stock";
 
 /**
  * GET /api/admin/orders/check-payments
@@ -171,12 +172,47 @@ async function checkAndProcessPayments() {
           action: "order_cancelled_reservations_released",
         });
       } else {
-        results.push({
-          orderNumber: order.orderNumber ?? order.id,
-          transId,
-          comgateStatus: verified.status ?? "UNKNOWN",
-          action: "no_action",
-        });
+        // Auto-cancel PENDING payments older than 30 minutes
+        const ageMs = Date.now() - new Date(order.createdAt).getTime();
+        const EXPIRE_MS = 30 * 60 * 1000;
+
+        if (ageMs > EXPIRE_MS) {
+          if (transId) {
+            try {
+              const cancelResult = await cancelPayment(transId);
+              if (!cancelResult.success) {
+                console.warn("[check-payments] Comgate cancel failed for", transId, cancelResult.error);
+              }
+            } catch (e) {
+              console.error("[check-payments] Comgate cancel exception:", e);
+            }
+          }
+
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: "CANCELLED" },
+          });
+          await prisma.reservation.updateMany({
+            where: { orderId: order.id, active: true },
+            data: { active: false },
+          });
+
+          invalidateStockCache();
+
+          results.push({
+            orderNumber: order.orderNumber ?? order.id,
+            transId,
+            comgateStatus: verified.status ?? "PENDING",
+            action: "auto_cancelled_expired",
+          });
+        } else {
+          results.push({
+            orderNumber: order.orderNumber ?? order.id,
+            transId,
+            comgateStatus: verified.status ?? "UNKNOWN",
+            action: "no_action",
+          });
+        }
       }
     } catch (e) {
       results.push({

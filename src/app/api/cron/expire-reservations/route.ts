@@ -3,11 +3,17 @@ import { prisma } from "@/lib/db";
 import { expireOverdueReservations } from "@/lib/reservations";
 import { createNotificationForRole, deleteNotificationsForEntity } from "@/lib/notifications";
 import { invalidateStockCache } from "@/lib/stock";
+import { cancelPayment } from "@/lib/comgate";
 import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
-  const secret = request.headers.get("x-cron-secret");
-  if (secret !== process.env.CRON_SECRET) {
+  // Support both Vercel Cron (Authorization: Bearer) and legacy x-cron-secret
+  const cronSecret = (process.env.CRON_SECRET || "").trim();
+  const authHeader = request.headers.get("authorization");
+  const legacySecret = request.headers.get("x-cron-secret");
+  const isAuthorized = (cronSecret && authHeader === `Bearer ${cronSecret}`) ||
+    (cronSecret && legacySecret === cronSecret);
+  if (!isAuthorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -57,8 +63,21 @@ export async function GET(request: NextRequest) {
       });
       expiredOrderCount = result.count;
 
-      // Clean up old notifications for expired orders
+      // Cancel Comgate payments for expired orders
       for (const oid of orderIds) {
+        try {
+          const cancelledOrder = await prisma.order.findUnique({
+            where: { id: oid as string },
+            select: { comgateTransId: true },
+          });
+          if (cancelledOrder?.comgateTransId) {
+            await cancelPayment(cancelledOrder.comgateTransId).catch((e: unknown) => {
+              console.error("[expire-reservations] Comgate cancel failed:", e);
+            });
+          }
+        } catch (e) {
+          console.error("[expire-reservations] Comgate cancel error:", e);
+        }
         deleteNotificationsForEntity("orderId", oid as string).catch(() => {});
       }
     }

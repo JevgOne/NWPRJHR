@@ -16,6 +16,10 @@
     {
       "path": "/api/admin/orders/check-payments",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/expire-reservations",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
