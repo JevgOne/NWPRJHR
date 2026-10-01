@@ -18,7 +18,6 @@ interface PickerVariant {
   pricePerPiece?: number;
   retailPricePerPiece?: number;
   availablePieces?: number;
-  exclusivePieces?: number;
   availableToOrder?: boolean;
   orderLeadDays?: number | null;
 }
@@ -91,27 +90,23 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
     ? variants.find(v => v.color === selectedColor && v.lengthCm === selectedLength)
     : null;
   const isByPiece = selectedVariant?.sellingMode === "BY_PIECE";
-  const isExclusive = isByPiece && (selectedVariant?.exclusivePieces ?? 0) > 0;
-  const showAsPiece = isByPiece && isExclusive;
-  const isCustomOrder = selectedVariant?.availableToOrder && (showAsPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
+  const isCustomOrder = selectedVariant?.availableToOrder && (isByPiece ? (selectedVariant?.availablePieces ?? 0) === 0 : (selectedVariant?.availableGrams ?? 0) === 0);
   const maxQty = isCustomOrder
     ? Infinity
-    : showAsPiece
+    : isByPiece
       ? (selectedVariant?.availablePieces ?? Infinity)
       : (selectedVariant?.availableGrams ?? Infinity);
-  const qtyStep = showAsPiece ? 1 : 50;
-  const minQty = showAsPiece ? 1 : 50;
-  const unitLabel = showAsPiece ? "ks" : "g";
+  const qtyStep = isByPiece ? 1 : 50;
+  const minQty = isByPiece ? 1 : 50;
+  const unitLabel = isByPiece ? "ks" : "g";
 
   // Reset quantity when variant changes
   const prevVariantRef = useRef(selectedVariant);
   useEffect(() => {
     if (selectedVariant && selectedVariant !== prevVariantRef.current) {
       const isBP = selectedVariant.sellingMode === "BY_PIECE";
-      const isExcl = isBP && (selectedVariant.exclusivePieces ?? 0) > 0;
-      const showPiece = isBP && isExcl;
-      setQuantity(showPiece ? 1 : 100);
-      setInquiryUnit(showPiece ? "ks" : "g");
+      setQuantity(isBP ? 1 : 100);
+      setInquiryUnit(isBP ? "ks" : "g");
       prevVariantRef.current = selectedVariant;
     }
   }, [selectedVariant]);
@@ -134,7 +129,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
       lengthCm: selectedLength,
       color: selectedColor,
       quantity,
-      unit: showAsPiece ? "ks" : "g",
+      unit: isByPiece ? "ks" : "g",
       sku: selectedVariant?.sku ?? generateSku(category, texture, selectedColor, selectedLength, { orderOnly, origin }),
       pricePerUnit,
       imageUrl,
@@ -193,9 +188,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
             {availableLengths.map((v) => {
               const isSelected = selectedLength === v.lengthCm;
               const vIsByPiece = v.sellingMode === "BY_PIECE";
-              const vIsExclusive = vIsByPiece && (v.exclusivePieces ?? 0) > 0;
-              const vShowAsPiece = vIsByPiece && vIsExclusive;
-              const inStock = vShowAsPiece ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0;
+              const inStock = vIsByPiece ? (v.availablePieces ?? 0) > 0 : v.availableGrams > 0;
               const canOrder = !inStock && !!v.availableToOrder;
               const isSelectable = inStock || canOrder;
               return (
@@ -214,7 +207,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
                 >
                   <div className="font-medium text-ink">{v.lengthCm > 0 ? `${v.lengthCm} cm` : v.color}</div>
                   <div className="text-xs text-muted">
-                    {vShowAsPiece
+                    {vIsByPiece
                       ? `${formatPrice(v.pricePerPiece ?? 0)} Kč/ks`
                       : `${formatPrice(v.pricePerGram)} Kč/g`}
                   </div>
@@ -224,7 +217,7 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
                     : "text-red-400"
                   }`}>
                     {inStock
-                      ? (vShowAsPiece ? `${v.availablePieces} ks` : `${v.availableGrams}g`)
+                      ? (vIsByPiece ? `${v.availablePieces} ks` : `${v.availableGrams}g`)
                       : canOrder
                         ? (v.orderLeadDays
                           ? t("inquiry.availableToOrder", { days: v.orderLeadDays })
@@ -239,8 +232,6 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
           <p className="text-xs text-muted py-1">{t("inquiry.selectColorFirst")}</p>
         )}
       </div>
-
-      {/* Exclusive pieces are sold only as whole pieces — no gram toggle */}
 
       {/* Step 3: Quantity + add button */}
       <div className="flex flex-col sm:flex-row sm:items-end gap-3">

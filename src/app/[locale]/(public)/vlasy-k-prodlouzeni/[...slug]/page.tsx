@@ -146,7 +146,6 @@ const getCachedProductBySlug = unstable_cache(
         ...v,
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
-        exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
       })),
       photos: JSON.parse(product.photos || "[]") as string[],
     };
@@ -169,7 +168,6 @@ const getCachedProductById = unstable_cache(
         ...v,
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
-        exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
       })),
       photos: JSON.parse(product.photos || "[]") as string[],
     };
@@ -259,7 +257,6 @@ async function RelatedProducts({
       sellingMode: v.sellingMode as "BY_GRAM" | "BY_PIECE" | undefined,
       availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
       availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
-      exclusivePieces: stockMap.get(v.id)?.exclusivePieces ?? 0,
     })),
   }));
 
@@ -503,11 +500,10 @@ async function ProductDetailView({
     .filter((v) => v.retailPricePerGram > 0 || (v.pricePerPiece ?? 0) > 0)
     .map((v) => {
       const isByPiece = v.sellingMode === "BY_PIECE";
-      const vIsExclusive = isByPiece && (v.exclusivePieces ?? 0) > 0;
       let displayPrice: number;
       let pieceDisplayPrice: number | undefined;
-      if (isByPiece && vIsExclusive) {
-        // Piece price: use retailPricePerPiece if set, otherwise calculate from per-gram retail × grams
+      if (isByPiece) {
+        // BY_PIECE: calculate piece price from retailPricePerGram × grams
         const retailPiece = v.retailPricePerPiece
           ?? (v.retailPricePerGram > 0 && v.availableGrams > 0
               ? v.retailPricePerGram * v.availableGrams
@@ -517,19 +513,10 @@ async function ProductDetailView({
           : retailPiece;
         pieceDisplayPrice = displayPrice;
       } else {
-        // BY_GRAM or non-exclusive BY_PIECE — show per-gram price
+        // BY_GRAM: per-gram price
         displayPrice = discountPct > 0
           ? roundHalereUp(v.retailPricePerGram - (v.retailPricePerGram * discountPct) / 20000)
           : v.retailPricePerGram;
-        if (isByPiece) {
-          const retailPiece = v.retailPricePerPiece
-            ?? (v.retailPricePerGram > 0 && v.availableGrams > 0
-                ? v.retailPricePerGram * v.availableGrams
-                : v.pricePerPiece ?? 0);
-          pieceDisplayPrice = discountPct > 0
-            ? roundHalereUp(retailPiece - (retailPiece * discountPct) / 20000)
-            : retailPiece;
-        }
       }
       return {
         id: v.id,
@@ -537,13 +524,12 @@ async function ProductDetailView({
         lengthCm: v.lengthCm,
         color: v.color,
         pricePerGram: displayPrice,
-        retailPricePerGram: (isByPiece && vIsExclusive) ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
+        retailPricePerGram: isByPiece ? (v.retailPricePerPiece ?? v.pricePerPiece ?? 0) : v.retailPricePerGram,
         retailPricePerGramForPiece: isByPiece ? v.retailPricePerGram : 0,
         availableGrams: v.availableGrams,
         sellingMode: (v.sellingMode ?? "BY_GRAM") as "BY_GRAM" | "BY_PIECE",
         pricePerPiece: pieceDisplayPrice,
         availablePieces: v.availablePieces,
-        exclusivePieces: v.exclusivePieces ?? 0,
         availableToOrder: v.availableToOrder,
         orderLeadDays: v.orderLeadDays,
       };
@@ -564,12 +550,8 @@ async function ProductDetailView({
   const isByPiece = focusedVariant
     ? focusedVariant.sellingMode === "BY_PIECE"
     : pickerVariants.some(v => v.sellingMode === "BY_PIECE");
-  const isExclusive = isByPiece && (focusedVariant
-    ? (focusedVariant.exclusivePieces ?? 0) > 0
-    : pickerVariants.some(v => v.sellingMode === "BY_PIECE" && (v.exclusivePieces ?? 0) > 0));
-  // Non-exclusive BY_PIECE: show as grams on public web
-  const showAsPiece = isByPiece && isExclusive;
-  const priceUnit = showAsPiece ? "/ks" : "/g";
+  const showAsPiece = isByPiece;
+  const priceUnit = isByPiece ? "/ks" : "/g";
   const retailPricePerGram = focusedVariant
     ? (tierBadge ? focusedVariant.retailPricePerGram : null)
     : (tierBadge && pickerVariants.length > 0)
@@ -1116,8 +1098,7 @@ async function ProductDetailView({
                         : focusedVariant.availableToOrder ? "text-amber-600" : "text-red-500"
                     }`}>
                       {(() => {
-                        const fvIsExclusive = focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.exclusivePieces ?? 0) > 0;
-                        if (fvIsExclusive && (focusedVariant.availablePieces ?? 0) > 0) {
+                        if (focusedVariant.sellingMode === "BY_PIECE" && (focusedVariant.availablePieces ?? 0) > 0) {
                           const totalG = focusedVariant.availableGrams;
                           return `${focusedVariant.availablePieces} ks ${t("productDetail.inStock").toLowerCase()}${totalG > 0 ? ` (${t("productDetail.totalGrams", { grams: totalG })})` : ""}`;
                         }
@@ -1153,7 +1134,7 @@ async function ProductDetailView({
                 {(() => {
                   const totalStock = product.variants.reduce((sum, v) => sum + v.availableGrams, 0);
                   const totalPieces = product.variants.reduce((sum, v) => sum + (v.availablePieces ?? 0), 0);
-                  const hasExclusivePieces = product.variants.some(v => v.sellingMode === "BY_PIECE" && (v.exclusivePieces ?? 0) > 0);
+                  const hasByPiecePieces = product.variants.some(v => v.sellingMode === "BY_PIECE");
                   const hasAvailableToOrder = product.variants.some(v => v.availableToOrder);
                   return (
                     <div className="flex items-center gap-2.5">
@@ -1166,7 +1147,7 @@ async function ProductDetailView({
                           : "text-red-500"
                         }`}>
                           {(() => {
-                            if (hasExclusivePieces && totalPieces > 0) {
+                            if (hasByPiecePieces && totalPieces > 0) {
                               return `${totalPieces} ks ${t("productDetail.inStock").toLowerCase()}${totalStock > 0 ? ` (${t("productDetail.totalGrams", { grams: totalStock })})` : ""}`;
                             }
                             if (totalStock > 0) return `${totalStock} g ${t("productDetail.inStock").toLowerCase()}`;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getHairColor, COLOR_GROUPS } from "@/lib/hair-colors";
 import { compressPhoto } from "@/lib/compress-photo";
+import { upload } from "@vercel/blob/client";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { ORIGIN_OPTIONS, getOriginFlag } from "@/lib/origin-flags";
 import { getSupplierPriceTable, lookupSupplierPrice } from "@/lib/supplier-prices";
@@ -449,24 +450,29 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     // Upload photos in background if any were selected
     if (selectedFiles.length > 0) {
       const compressed = await Promise.all(selectedFiles.map(compressPhoto));
-      const formData = new FormData();
-      for (const file of compressed) {
-        formData.append("files", file);
-      }
-      fetch(`/api/products/${result.productId}/media`, {
-        method: "POST",
-        body: formData,
-      }).then(async (mediaRes) => {
-        const mediaData = await mediaRes.json();
-        if (mediaRes.ok) {
-          setUploadedPhotos(mediaData.photos ?? []);
-          if (mediaData.video) setUploadedVideo(mediaData.video);
-        } else {
-          setUploadError(mediaData.error || "Upload selhal");
+      try {
+        const urls: string[] = [];
+        for (const file of compressed) {
+          const ext = file.name.split(".").pop()?.toLowerCase() ?? "webp";
+          const pathname = `products/${result.productId}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
+          const blob = await upload(pathname, file, {
+            access: "public",
+            handleUploadUrl: "/api/upload/blob-token",
+          });
+          urls.push(blob.url);
         }
-      }).catch(() => {
+        if (urls.length > 0) {
+          const saveRes = await fetch(`/api/products/${result.productId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ photos: JSON.stringify(urls) }),
+          });
+          if (saveRes.ok) setUploadedPhotos(urls);
+          else setUploadError("Nepodařilo se uložit fotky");
+        }
+      } catch {
         setUploadError("Upload selhal");
-      });
+      }
     }
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -478,27 +484,42 @@ export function StockInForm({ suppliers, openBatches: initialBatches = [] }: { s
     }
   }
 
-  // Handle media upload
+  // Handle media upload — direct to Vercel Blob
   async function handleMediaUpload(files: FileList | null) {
     if (!files || files.length === 0 || !successData) return;
     setUploading(true);
     setUploadError("");
 
-    const compressed = await Promise.all(Array.from(files).map(compressPhoto));
-    const formData = new FormData();
-    for (const file of compressed) {
-      formData.append("files", file);
-    }
-
     try {
-      const res = await fetch(`/api/products/${successData.productId}/media`, {
-        method: "POST",
-        body: formData,
+      const compressed = await Promise.all(Array.from(files).map(compressPhoto));
+      const urls: string[] = [...uploadedPhotos];
+      let vid: string | null = uploadedVideo;
+
+      for (const file of compressed) {
+        const ext = file.name.split(".").pop()?.toLowerCase() ?? "webp";
+        const isVideo = ["mp4", "mov", "webm"].includes(ext) || file.type.startsWith("video/");
+        const folder = isVideo ? "videos" : "products";
+        const pathname = `${folder}/${successData.productId}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
+        const blob = await upload(pathname, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload/blob-token",
+        });
+        if (isVideo) vid = blob.url;
+        else urls.push(blob.url);
+      }
+
+      // Save to product
+      const res = await fetch(`/api/products/${successData.productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photos: JSON.stringify(urls),
+          ...(vid !== uploadedVideo ? { video: vid } : {}),
+        }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload selhal");
-      setUploadedPhotos(data.photos ?? []);
-      if (data.video) setUploadedVideo(data.video);
+      if (!res.ok) throw new Error("Nepodařilo se uložit");
+      setUploadedPhotos(urls);
+      if (vid) setUploadedVideo(vid);
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : "Upload selhal");
     } finally {

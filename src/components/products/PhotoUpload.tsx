@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { upload } from "@vercel/blob/client";
 import { compressPhoto } from "@/lib/compress-photo";
 
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
@@ -42,47 +43,60 @@ export function PhotoUpload({ photos, onChange, onDelete, video, onVideoChange, 
       setUploading(true);
       setUploadError("");
       try {
+        // Compress photos client-side (HEIC → WebP, resize)
         const compressed = await Promise.all(fileArray.map(compressPhoto));
-        const formData = new FormData();
+
+        // Upload each file directly to Vercel Blob (bypasses 4.5MB serverless limit)
+        const newPhotoUrls: string[] = [];
+        let newVideoUrl: string | null = null;
+
         for (const file of compressed) {
-          formData.append("files", file);
-        }
+          const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+          const isVideo = VIDEO_EXTS.includes(ext) || file.type.startsWith("video/");
+          const folder = isVideo ? "videos" : "products";
+          const prefix = productId ? `${folder}/${productId}` : folder;
+          const pathname = `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext || "webp"}`;
 
-        // Use product-specific media endpoint when productId is available
-        // This saves photos directly to the product (single round-trip)
-        const endpoint = productId
-          ? `/api/products/${productId}/media`
-          : "/api/upload/photos";
+          const blob = await upload(pathname, file, {
+            access: "public",
+            handleUploadUrl: "/api/upload/blob-token",
+          });
 
-        const res = await fetch(endpoint, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: "Upload selhal" }));
-          setUploadError(err.error || `Upload selhal (${res.status})`);
-          return;
-        }
-
-        const data = await res.json();
-
-        if (productId) {
-          // Media endpoint returns full photos array already saved to DB
-          const allPhotos: string[] = data.photos ?? [];
-          onChange(allPhotos);
-          if (data.video !== undefined && onVideoChange) {
-            onVideoChange(data.video);
+          if (isVideo) {
+            newVideoUrl = blob.url;
+          } else {
+            newPhotoUrls.push(blob.url);
           }
+        }
+
+        if (productId && newPhotoUrls.length > 0) {
+          // Save photo URLs to product in DB
+          const allPhotos = [...photos, ...newPhotoUrls];
+          const res = await fetch(`/api/products/${productId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              photos: JSON.stringify(allPhotos),
+              ...(newVideoUrl ? { video: newVideoUrl } : {}),
+            }),
+          });
+          if (res.ok) {
+            onChange(allPhotos);
+            if (newVideoUrl && onVideoChange) onVideoChange(newVideoUrl);
+          } else {
+            setUploadError("Nepodařilo se uložit fotky do produktu");
+          }
+        } else if (productId && newVideoUrl) {
+          const res = await fetch(`/api/products/${productId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ video: newVideoUrl }),
+          });
+          if (res.ok && onVideoChange) onVideoChange(newVideoUrl);
         } else {
-          // Generic upload endpoint returns new URLs only
-          const newPhotos = data.photoUrls ?? data.urls ?? [];
-          if (newPhotos.length > 0) {
-            onChange([...photos, ...newPhotos]);
-          }
-          if (data.videoUrl && onVideoChange) {
-            onVideoChange(data.videoUrl);
-          }
+          // No productId — just return URLs
+          if (newPhotoUrls.length > 0) onChange([...photos, ...newPhotoUrls]);
+          if (newVideoUrl && onVideoChange) onVideoChange(newVideoUrl);
         }
       } catch (e) {
         setUploadError(e instanceof Error ? e.message : "Upload selhal");
