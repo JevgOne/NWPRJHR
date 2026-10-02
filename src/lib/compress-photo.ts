@@ -1,10 +1,11 @@
-const MAX_WIDTH = 2400;
+const MAX_WIDTH = 1600;
+const MAX_HEIGHT = 1600;
 const VIDEO_EXTS = ["mp4", "mov", "webm"];
 const HEIC_EXTS = ["heic", "heif"];
 const COMPRESS_TIMEOUT_MS = 15_000; // 15 seconds max
 
 /**
- * Client-side photo compression: resize to max 2400px, convert to WebP.
+ * Client-side photo compression: resize to max 1600px, convert to WebP ~150-300KB.
  * HEIC files are first converted to JPEG via heic2any.
  * Falls through unchanged for videos or on any error.
  * Times out after 15 seconds and uploads original.
@@ -13,7 +14,7 @@ export async function compressPhoto(file: File): Promise<File> {
   try {
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
     if (VIDEO_EXTS.includes(ext) || file.type.startsWith("video/")) return file;
-    if (file.size < 3 * 1024 * 1024 && file.type === "image/webp") return file;
+    if (file.size < 500 * 1024 && file.type === "image/webp") return file;
 
     const compressed = await Promise.race([
       processImage(file),
@@ -39,7 +40,7 @@ async function processImage(file: File): Promise<File> {
       const blob = await heic2any({
         blob: file,
         toType: "image/jpeg",
-        quality: 0.9,
+        quality: 0.8,
       });
       const jpegBlob = Array.isArray(blob) ? blob[0] : blob;
       const name = file.name.replace(/\.[^.]+$/, ".jpg");
@@ -66,7 +67,9 @@ function compressImage(file: File): Promise<File> {
     img.onload = () => {
       URL.revokeObjectURL(url);
       try {
-        const scale = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
+        let scale = 1;
+        if (img.width > MAX_WIDTH) scale = MAX_WIDTH / img.width;
+        if (img.height * scale > MAX_HEIGHT) scale = MAX_HEIGHT / img.height;
         const w = Math.round(img.width * scale);
         const h = Math.round(img.height * scale);
         const canvas = document.createElement("canvas");
@@ -91,12 +94,12 @@ function compressImage(file: File): Promise<File> {
                   }
                 },
                 "image/jpeg",
-                0.85
+                0.80
               );
             }
           },
           "image/webp",
-          0.82
+          0.75
         );
       } catch {
         resolve(file);
