@@ -442,13 +442,13 @@ export function VariantTable({
                           {/* Computed piece retail price */}
                           {computedPiecePrice > 0 && (
                             <div className="text-[10px] text-muted">
-                              = {formatCZK(computedPiecePrice * 100)}/ks ({pieceWeight}g)
+                              = {formatCZK(computedPiecePrice)}/ks ({pieceWeight}g)
                             </div>
                           )}
                           {/* Nákupní cena kusu od dodavatele (if pricePerPiece exists) */}
                           {isOwner && variant.pricePerPiece != null && variant.pricePerPiece > 0 && (
                             <div className="text-[10px] text-amber-600">
-                              Nákup/ks od dodavatele: {formatCZK(variant.pricePerPiece * 100)}
+                              Nákup/ks od dodavatele: {formatCZK(variant.pricePerPiece)}
                             </div>
                           )}
                         </>
