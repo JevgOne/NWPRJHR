@@ -2,22 +2,31 @@ const MAX_WIDTH = 2400;
 const MAX_HEIGHT = 2400;
 const VIDEO_EXTS = ["mp4", "mov", "webm"];
 const HEIC_EXTS = ["heic", "heif"];
-const COMPRESS_TIMEOUT_MS = 15_000; // 15 seconds max
+const COMPRESS_TIMEOUT_MS = 10_000;
 
 /**
- * Client-side photo compression: resize to max 1600px, convert to WebP ~150-300KB.
- * HEIC files are first converted to JPEG via heic2any.
- * Falls through unchanged for videos or on any error.
- * Times out after 15 seconds and uploads original.
+ * Client-side photo compression: resize to max 2400px, convert to WebP.
+ * HEIC files skip client compression entirely (upload as-is, let Next.js optimize on serve).
+ * Times out after 10s and uploads original.
  */
 export async function compressPhoto(file: File): Promise<File> {
   try {
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+
+    // Videos — pass through
     if (VIDEO_EXTS.includes(ext) || file.type.startsWith("video/")) return file;
+
+    // HEIC — skip client compression, upload directly (blob accepts up to 50MB)
+    if (HEIC_EXTS.includes(ext) || file.type === "image/heic" || file.type === "image/heif") {
+      return file;
+    }
+
+    // Small WebP — skip
     if (file.size < 500 * 1024 && file.type === "image/webp") return file;
 
+    // JPEG/PNG/WebP — compress client-side
     const compressed = await Promise.race([
-      processImage(file),
+      compressImage(file),
       new Promise<File>((resolve) =>
         setTimeout(() => resolve(file), COMPRESS_TIMEOUT_MS)
       ),
@@ -26,32 +35,6 @@ export async function compressPhoto(file: File): Promise<File> {
   } catch {
     return file;
   }
-}
-
-async function processImage(file: File): Promise<File> {
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-  const isHeic = HEIC_EXTS.includes(ext) || file.type === "image/heic" || file.type === "image/heif";
-
-  // Convert HEIC → JPEG first (browsers can't decode HEIC in canvas)
-  let processableFile = file;
-  if (isHeic) {
-    try {
-      const heic2any = (await import("heic2any")).default;
-      const blob = await heic2any({
-        blob: file,
-        toType: "image/jpeg",
-        quality: 0.8,
-      });
-      const jpegBlob = Array.isArray(blob) ? blob[0] : blob;
-      const name = file.name.replace(/\.[^.]+$/, ".jpg");
-      processableFile = new File([jpegBlob], name, { type: "image/jpeg" });
-    } catch {
-      // heic2any failed — try uploading original
-      return file;
-    }
-  }
-
-  return compressImage(processableFile);
 }
 
 function compressImage(file: File): Promise<File> {
