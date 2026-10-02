@@ -444,11 +444,11 @@ function CartItemCard({
           <img
             src={item.imageUrl}
             alt={item.productName}
-            className="w-28 h-28 rounded-xl flex-shrink-0 object-cover"
+            className="w-40 h-40 rounded-xl flex-shrink-0 object-cover"
           />
         ) : (
           <div
-            className="w-28 h-28 rounded-xl flex-shrink-0"
+            className="w-40 h-40 rounded-xl flex-shrink-0"
             style={{
               background: `linear-gradient(135deg, ${hairColor.hex} 0%, ${hairColor.hex}dd 60%, ${hairColor.hex}99 100%)`,
             }}
