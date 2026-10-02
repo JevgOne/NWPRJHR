@@ -1,5 +1,5 @@
-const MAX_WIDTH = 1600;
-const MAX_HEIGHT = 1600;
+const MAX_WIDTH = 2400;
+const MAX_HEIGHT = 2400;
 const VIDEO_EXTS = ["mp4", "mov", "webm"];
 const HEIC_EXTS = ["heic", "heif"];
 const COMPRESS_TIMEOUT_MS = 15_000; // 15 seconds max
