@@ -20,6 +20,10 @@
     {
       "path": "/api/cron/expire-reservations",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/submit-indexing",
+      "schedule": "0 4 * * *"
     }
   ]
 }
