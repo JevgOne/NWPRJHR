@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   experimental: {
     proxyClientMaxBodySize: '20mb',
+    staleTimes: { dynamic: 0 },
   },
   outputFileTracingIncludes: {
     "/**": ["./public/fonts/**", "./public/logo-invoice.png"],
