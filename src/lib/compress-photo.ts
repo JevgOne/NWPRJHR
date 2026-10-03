@@ -2,12 +2,12 @@ const MAX_WIDTH = 2400;
 const MAX_HEIGHT = 2400;
 const VIDEO_EXTS = ["mp4", "mov", "webm"];
 const HEIC_EXTS = ["heic", "heif"];
-const COMPRESS_TIMEOUT_MS = 15_000;
+const COMPRESS_TIMEOUT_MS = 10_000;
 
 /**
  * Client-side photo compression: resize to max 2400px, convert to WebP.
- * HEIC files are converted to JPEG via heic2any before compression.
- * Times out after 15s and uploads original (but HEIC timeout converts to blank JPEG fallback).
+ * HEIC files pass through as-is — Next.js Image optimization converts them server-side via Sharp.
+ * Times out after 10s and uploads original.
  */
 export async function compressPhoto(file: File): Promise<File> {
   try {
@@ -16,18 +16,9 @@ export async function compressPhoto(file: File): Promise<File> {
     // Videos — pass through
     if (VIDEO_EXTS.includes(ext) || file.type.startsWith("video/")) return file;
 
-    // HEIC — convert to JPEG first, then compress
+    // HEIC — upload raw, Next.js Image converts server-side (Sharp supports HEIF)
     if (HEIC_EXTS.includes(ext) || file.type === "image/heic" || file.type === "image/heif") {
-      const converted = await Promise.race([
-        convertHeic(file),
-        new Promise<File>((resolve) =>
-          setTimeout(() => resolve(file), COMPRESS_TIMEOUT_MS)
-        ),
-      ]);
-      // If conversion failed (still HEIC), return as-is — better than nothing
-      if (converted === file) return file;
-      // Now compress the converted JPEG through normal pipeline
-      return compressImage(converted);
+      return file;
     }
 
     // Small WebP — skip
@@ -41,18 +32,6 @@ export async function compressPhoto(file: File): Promise<File> {
       ),
     ]);
     return compressed;
-  } catch {
-    return file;
-  }
-}
-
-async function convertHeic(file: File): Promise<File> {
-  try {
-    const heic2any = (await import("heic2any")).default;
-    const blob = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.85 });
-    const result = Array.isArray(blob) ? blob[0] : blob;
-    const name = file.name.replace(/\.[^.]+$/, ".jpg");
-    return new File([result], name, { type: "image/jpeg" });
   } catch {
     return file;
   }

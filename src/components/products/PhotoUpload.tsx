@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { upload } from "@vercel/blob/client";
 import { compressPhoto } from "@/lib/compress-photo";
 
@@ -169,10 +170,13 @@ export function PhotoUpload({ photos, onChange, onDelete, video, onVideoChange, 
                   {t("main")}
                 </span>
               )}
-              <img
+              <Image
                 src={url}
                 alt={`${t("photo")} ${i + 1}`}
+                width={128}
+                height={128}
                 className="w-32 h-32 object-cover rounded-lg border border-line"
+                unoptimized={url.endsWith(".mp4") || url.endsWith(".mov") || url.endsWith(".webm")}
               />
               {!disabled && (
                 <div className="absolute bottom-1 left-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">

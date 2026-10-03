@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
 import { getHairColor } from "@/lib/hair-colors";
@@ -441,9 +442,11 @@ function CartItemCard({
       {/* Top: image + info + remove */}
       <div className="flex gap-4 p-4 pb-0">
         {item.imageUrl ? (
-          <img
+          <Image
             src={item.imageUrl}
             alt={item.productName}
+            width={160}
+            height={160}
             className="w-40 h-40 rounded-xl flex-shrink-0 object-cover"
           />
         ) : (

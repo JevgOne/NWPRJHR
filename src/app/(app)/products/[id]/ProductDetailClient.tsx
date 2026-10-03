@@ -10,6 +10,7 @@ import { PhotoUpload } from "@/components/products/PhotoUpload";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import Image from "next/image";
 import { TextureSwatch } from "@/components/TextureSwatch";
 import { TEXTURE_OPTIONS } from "@/lib/hair-textures";
 import { COLOR_TONE_OPTIONS, getColorToneInfo } from "@/lib/color-tones";
@@ -1001,10 +1002,12 @@ export function ProductDetailClient({
           )}
           <div className="flex flex-wrap gap-2">
             {(localPhotos ?? parsedPhotos).map((url, i) => (
-              <img
+              <Image
                 key={url}
                 src={url}
                 alt={`${t("photos.photo")} ${i + 1}`}
+                width={128}
+                height={128}
                 className="w-32 h-32 object-cover rounded-lg border border-line"
               />
             ))}

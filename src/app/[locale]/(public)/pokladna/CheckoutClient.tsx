@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Fragment } from "react";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 // canvas-confetti is dynamically imported on success
 import { useInquiryCart, type InquiryCartItem } from "@/lib/inquiry-cart";
@@ -1056,9 +1057,11 @@ function SummaryItemRow({ item }: { item: InquiryCartItem }) {
   return (
     <div className="flex items-center gap-3 py-2">
       {item.imageUrl ? (
-        <img
+        <Image
           src={item.imageUrl}
           alt={item.productName}
+          width={32}
+          height={32}
           className="w-8 h-8 rounded-lg border border-line/50 flex-shrink-0 object-cover"
         />
       ) : (
