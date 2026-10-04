@@ -7,9 +7,15 @@ import { prisma } from "@/lib/db";
  * DELETE this route after running it once.
  */
 export async function POST(request: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "OWNER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const cronSecret = (process.env.CRON_SECRET || "").trim();
+  const authHeader = request.headers.get("authorization");
+  const isCron = cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+  if (!isCron) {
+    const session = await auth();
+    if (!session || session.user.role !== "OWNER") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
   const results: string[] = [];
