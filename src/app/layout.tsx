@@ -11,6 +11,8 @@ import "./globals.css";
 const geist = Geist({
   variable: "--font-geist",
   subsets: ["latin", "latin-ext"],
+  preload: true,
+  display: "swap",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
