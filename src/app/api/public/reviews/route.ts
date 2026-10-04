@@ -5,6 +5,9 @@ import { notifyNegativeReview } from "@/lib/telegram";
 import { createNotificationForRole } from "@/lib/notifications";
 import { z } from "zod";
 
+/** Strip HTML/script tags from user input to prevent XSS */
+const stripTags = (s: string) => s.replace(/<[^>]*>/g, "").trim();
+
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 3_600_000; // 1 hour
 const RATE_LIMIT_MAX = 5;
@@ -21,13 +24,13 @@ function isRateLimited(ip: string): boolean {
 }
 
 const submitSchema = z.object({
-  authorName: z.string().min(1).max(200),
-  authorCity: z.string().max(100).optional(),
+  authorName: z.string().min(1).max(200).transform(stripTags),
+  authorCity: z.string().max(100).optional().transform((v) => v ? stripTags(v) : v),
   rating: z.number().int().min(1).max(5),
   ratingQuality: z.number().int().min(1).max(5).optional(),
   ratingCommunication: z.number().int().min(1).max(5).optional(),
   ratingSpeed: z.number().int().min(1).max(5).optional(),
-  text: z.string().max(5000).default(""),
+  text: z.string().max(5000).default("").transform(stripTags),
   productId: z.string().optional(),
   website: z.string().optional(),
 });

@@ -6,17 +6,20 @@ import { getRegistrationConfirmationEmail } from "@/lib/email-templates";
 import { notifySalonRegistration } from "@/lib/telegram";
 import { z } from "zod";
 
+/** Strip HTML/script tags from user input to prevent XSS */
+const stripTags = (s: string) => s.replace(/<[^>]*>/g, "").trim();
+
 const registerSchema = z.object({
   type: z.enum(["SALON", "HAIRDRESSER"]).default("SALON"),
-  salonName: z.string().min(1).max(200),
-  contactPerson: z.string().min(1).max(200),
+  salonName: z.string().min(1).max(200).transform(stripTags),
+  contactPerson: z.string().min(1).max(200).transform(stripTags),
   email: z.string().email().max(200),
-  phone: z.string().min(1).max(30),
-  ico: z.string().max(20).optional().default(""),
-  city: z.string().min(1).max(100),
-  address: z.string().min(1).max(300),
-  website: z.string().max(500).optional().default(""),
-  instagram: z.string().max(200).optional().default(""),
+  phone: z.string().min(1).max(30).transform(stripTags),
+  ico: z.string().max(20).optional().default("").transform((v) => v ? stripTags(v) : v),
+  city: z.string().min(1).max(100).transform(stripTags),
+  address: z.string().min(1).max(300).transform(stripTags),
+  website: z.string().max(500).optional().default("").transform((v) => v ? stripTags(v) : v),
+  instagram: z.string().max(200).optional().default("").transform((v) => v ? stripTags(v) : v),
   password: z.string().min(6).max(100),
   language: z.enum(["cs", "uk", "ru", "en"]).default("cs"),
 });

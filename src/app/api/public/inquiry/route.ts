@@ -7,34 +7,37 @@ import { generateSku } from "@/lib/sku";
 import { upsertCustomerFromContact } from "@/lib/customer-upsert";
 import { z } from "zod";
 
+/** Strip HTML/script tags from user input to prevent XSS */
+const stripTags = (s: string) => s.replace(/<[^>]*>/g, "").trim();
+
 const inquiryItemSchema = z.object({
   productId: z.string().min(1),
-  productName: z.string().min(1).max(500),
+  productName: z.string().min(1).max(500).transform(stripTags),
   lengthCm: z.number().int().positive(),
-  color: z.string().min(1).max(50),
+  color: z.string().min(1).max(50).transform(stripTags),
   quantity: z.number().int().positive(),
   unit: z.enum(["g", "ks"]).default("g"),
 });
 
 const inquirySchema = z.object({
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-  name: z.string().min(1).max(200).optional(),
+  firstName: z.string().min(1).max(100).transform(stripTags),
+  lastName: z.string().min(1).max(100).transform(stripTags),
+  name: z.string().min(1).max(200).optional().transform((v) => v ? stripTags(v) : v),
   email: z.string().email().max(200),
-  phone: z.string().max(30).optional().default(""),
-  city: z.string().max(100).optional().default(""),
-  salonName: z.string().max(200).optional().default(""),
-  message: z.string().max(5000).optional().default(""),
-  promoCode: z.string().max(50).optional().default(""),
-  referralCode: z.string().max(50).optional().default(""),
+  phone: z.string().max(30).optional().default("").transform((v) => v ? stripTags(v) : v),
+  city: z.string().max(100).optional().default("").transform((v) => v ? stripTags(v) : v),
+  salonName: z.string().max(200).optional().default("").transform((v) => v ? stripTags(v) : v),
+  message: z.string().max(5000).optional().default("").transform((v) => v ? stripTags(v) : v),
+  promoCode: z.string().max(50).optional().default("").transform((v) => v ? stripTags(v) : v),
+  referralCode: z.string().max(50).optional().default("").transform((v) => v ? stripTags(v) : v),
   locale: z.enum(["cs", "uk", "ru", "en"]).optional().default("cs"),
   customerPhotos: z.array(z.string().url().or(z.string().startsWith("/uploads/"))).max(3).optional().default([]),
   items: z.array(inquiryItemSchema).max(50).default([]),
   shippingMethod: z.enum(["PERSONAL_DELIVERY", "PACKETA", "PICKUP"]).optional(),
   paymentMethod: z.enum(["TRANSFER", "CASH", "CARD"]).optional(),
   packetaPointId: z.string().max(50).optional(),
-  packetaPointName: z.string().max(200).optional(),
-  packetaPointCity: z.string().max(100).optional(),
+  packetaPointName: z.string().max(200).optional().transform((v) => v ? stripTags(v) : v),
+  packetaPointCity: z.string().max(100).optional().transform((v) => v ? stripTags(v) : v),
 });
 
 // Rate limit: 5 per hour per IP

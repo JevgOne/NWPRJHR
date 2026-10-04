@@ -2,17 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { sendNotificationEmail } from "@/lib/email";
 
+/** Strip HTML/script tags from user input to prevent XSS */
+const stripTags = (s: string) => s.replace(/<[^>]*>/g, "").trim();
+
 const withdrawalSchema = z.object({
-  product: z.string().min(1).max(500),
-  orderNumber: z.string().min(1).max(100),
-  orderDate: z.string().min(1),
-  receiveDate: z.string().min(1),
-  name: z.string().min(1).max(200),
-  address: z.string().min(1).max(500),
+  product: z.string().min(1).max(500).transform(stripTags),
+  orderNumber: z.string().min(1).max(100).transform(stripTags),
+  orderDate: z.string().min(1).transform(stripTags),
+  receiveDate: z.string().min(1).transform(stripTags),
+  name: z.string().min(1).max(200).transform(stripTags),
+  address: z.string().min(1).max(500).transform(stripTags),
   email: z.string().email(),
-  phone: z.string().max(20).optional().default(""),
-  bankAccount: z.string().min(1).max(50),
-  note: z.string().max(1000).optional().default(""),
+  phone: z.string().max(20).optional().default("").transform((v) => v ? stripTags(v) : v),
+  bankAccount: z.string().min(1).max(50).transform(stripTags),
+  note: z.string().max(1000).optional().default("").transform((v) => v ? stripTags(v) : v),
 });
 
 const rateLimitMap = new Map<string, number[]>();
