@@ -82,6 +82,25 @@ export default async function CenikVlasyPage() {
     "Bělorusko": "originBelarus", "Moldavsko": "originMoldova",
   };
 
+  // Static price list for Indie (Indian) hair — mírně vlnité, Kč per 100g
+  const INDIE_PRICES: { natural: [number, number][]; blond: [number, number][] } = {
+    natural: [[40,1978],[45,2726],[50,3341],[55,4022],[60,5658],[65,6067],[70,6477],[75,7158],[80,7974]],
+    blond:   [[45,4634],[50,5386],[55,5795],[60,7430],[65,8723],[70,9203],[75,9680]],
+  };
+
+  // Ensure Indie entry exists in originMap with static prices
+  if (!originMap.has("Indie")) {
+    originMap.set("Indie", { texture: "Mírně vlnité", hasBlond: true, cols: { natural: new Map(), colored: new Map() } });
+  }
+  const indieEntry = originMap.get("Indie")!;
+  indieEntry.hasBlond = true;
+  for (const [len, price] of INDIE_PRICES.natural) {
+    indieEntry.cols.natural.set(len, [price]);
+  }
+  for (const [len, price] of INDIE_PRICES.blond) {
+    indieEntry.cols.colored.set(len, [price]);
+  }
+
   const originData: OriginData[] = [...originMap.entries()]
     .map(([origin, { texture, hasBlond, cols }]) => {
       const allLengths = [...new Set([...cols.natural.keys(), ...cols.colored.keys()])].sort((a, b) => a - b);
