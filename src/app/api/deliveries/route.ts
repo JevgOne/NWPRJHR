@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     const clr = colorLabel(data.color);
     const productName = isAccessory
       ? catNames.cs
-      : `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm${isByPiece && data.exclusive ? " (Exkluziv)" : ""}`;
+      : `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm`;
     const slugBase = buildProductSlug({
       category: data.category,
       origin: isAccessory ? null : data.origin,
@@ -154,8 +154,8 @@ export async function POST(request: NextRequest) {
       : await prisma.product.create({
           data: {
             name: productName,
-            nameUk: `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm${isByPiece && data.exclusive ? " (Ексклюзив)" : ""}`,
-            nameRu: `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm${isByPiece && data.exclusive ? " (Эксклюзив)" : ""}`,
+            nameUk: `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm`,
+            nameRu: `${data.origin} ${data.texture} ${clr} ${data.lengthCm} cm`,
             category: data.category,
             processingType: "OTHER",
             origin: data.origin,
