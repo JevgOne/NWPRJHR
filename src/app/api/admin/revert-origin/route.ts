@@ -48,5 +48,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ reverted: result.count });
   }
 
+  if (action === "fix") {
+    // Fix specific product: set origin + strip name
+    const { id, origin, stripExkluziv } = body as { id: string; origin?: string; stripExkluziv?: boolean };
+    if (!id) return NextResponse.json({ error: "Provide id" }, { status: 400 });
+    const product = await prisma.product.findUnique({ where: { id }, select: { name: true, nameUk: true, nameRu: true } });
+    if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    const data: Record<string, string> = {};
+    if (origin) data.origin = origin;
+    if (stripExkluziv) {
+      data.name = product.name.replace(" (Exkluziv)", "");
+      if (product.nameUk) data.nameUk = product.nameUk.replace(" (Ексклюзив)", "");
+      if (product.nameRu) data.nameRu = product.nameRu.replace(" (Эксклюзив)", "");
+    }
+
+    await prisma.product.update({ where: { id }, data });
+    return NextResponse.json({ fixed: true, data });
+  }
+
   return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }

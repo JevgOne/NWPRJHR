@@ -11,12 +11,17 @@ import { auth } from "@/lib/auth";
 import { getCachedB2BSettings } from "@/lib/b2b-pricing";
 import { roundHalereUp } from "@/lib/rounding";
 
+/** Strip HTML/script tags from user input to prevent XSS */
+const stripTags = (s: string) => s.replace(/<[^>]*>/g, "").trim();
+const safeStr = (max: number) => z.string().max(max).transform(stripTags);
+const safeStrOpt = (max: number) => z.string().max(max).optional().transform((v) => v ? stripTags(v) : v);
+
 const publicOrderSchema = z
   .object({
-    firstName: z.string().min(1).max(100),
-    lastName: z.string().min(1).max(100),
+    firstName: safeStr(100).pipe(z.string().min(1)),
+    lastName: safeStr(100).pipe(z.string().min(1)),
     email: z.string().email().max(200),
-    phone: z.string().max(30).optional(),
+    phone: safeStrOpt(30),
 
     items: z
       .array(
@@ -33,28 +38,28 @@ const publicOrderSchema = z
       "PACKETA",
       "PERSONAL_DELIVERY",
     ]),
-    shippingStreet: z.string().max(200).optional(),
-    shippingCity: z.string().max(100).optional(),
-    shippingZip: z.string().max(20).optional(),
+    shippingStreet: safeStrOpt(200),
+    shippingCity: safeStrOpt(100),
+    shippingZip: safeStrOpt(20),
     packetaPointId: z.string().max(50).optional(),
-    packetaPointName: z.string().max(200).optional(),
-    packetaPointCity: z.string().max(100).optional(),
+    packetaPointName: safeStrOpt(200),
+    packetaPointCity: safeStrOpt(100),
 
     paymentMethod: z.enum(["CARD"]),
 
     promoCode: z.string().max(50).optional(),
     referralCode: z.string().max(50).optional(),
-    note: z.string().max(2000).optional(),
+    note: safeStrOpt(2000),
     locale: z.enum(["cs", "uk", "ru", "en"]).optional().default("cs"),
     salonId: z.string().optional(),
 
     wantsBilling: z.boolean().optional().default(false),
-    billingName: z.string().max(200).optional(),
-    billingIco: z.string().max(20).optional(),
-    billingDic: z.string().max(20).optional(),
-    billingStreet: z.string().max(200).optional(),
-    billingCity: z.string().max(100).optional(),
-    billingZip: z.string().max(20).optional(),
+    billingName: safeStrOpt(200),
+    billingIco: safeStrOpt(20),
+    billingDic: safeStrOpt(20),
+    billingStreet: safeStrOpt(200),
+    billingCity: safeStrOpt(100),
+    billingZip: safeStrOpt(20),
     noSurvey: z.boolean().optional().default(false),
     noNewsletter: z.boolean().optional().default(false),
     heurekaSurvey: z.boolean().optional().default(true),
