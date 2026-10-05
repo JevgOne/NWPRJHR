@@ -390,9 +390,17 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          {/* Hero image */}
+          {/* Hero image — served directly, bypasses /_next/image optimizer */}
           <div className="relative aspect-[4/3] sm:aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-8 sm:mb-10 max-w-4xl mx-auto">
-            <Image src="/hero-vzornik.webp" alt={t("landing.heroImageAlt")} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 896px" quality={70} priority fetchPriority="high" placeholder="empty" />
+            <img
+              src="/hero-vzornik.webp"
+              alt={t("landing.heroImageAlt")}
+              fetchPriority="high"
+              decoding="async"
+              width={1000}
+              height={564}
+              className="object-cover w-full h-full"
+            />
           </div>
 
           {/* Trust badges — H2 + H3 */}

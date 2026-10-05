@@ -101,6 +101,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <head>
+        <link rel="preload" href="/hero-vzornik.webp" as="image" type="image/webp" />
         <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
         <link rel="dns-prefetch" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
       </head>
@@ -115,48 +116,38 @@ export default async function RootLayout({
           <CookieBanner />
           <GoogleAnalytics />
         </NextIntlClientProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                function loadMerchantWidget() {
-                  if (document.getElementById('merchantWidgetScript')) return;
-                  var s = document.createElement('script');
-                  s.id = 'merchantWidgetScript';
-                  s.src = 'https://www.gstatic.com/shopping/merchant/merchantwidget.js';
-                  s.defer = true;
-                  s.onload = function() {
-                    merchantwidget.start({
-                      merchant_id: 5837040724,
-                      position: 'BOTTOM_RIGHT',
-                      region: 'CZ',
-                    });
-                  };
-                  document.body.appendChild(s);
-                }
-                if (localStorage.getItem('hairland_cookie_consent') === 'all') {
-                  loadMerchantWidget();
-                }
-                window.addEventListener('cookie-consent-change', function() {
-                  if (localStorage.getItem('hairland_cookie_consent') === 'all') {
-                    loadMerchantWidget();
-                  }
+        <Script id="merchant-widget" strategy="lazyOnload">
+          {`(function() {
+            function loadMerchantWidget() {
+              if (document.getElementById('merchantWidgetScript')) return;
+              var s = document.createElement('script');
+              s.id = 'merchantWidgetScript';
+              s.src = 'https://www.gstatic.com/shopping/merchant/merchantwidget.js';
+              s.defer = true;
+              s.onload = function() {
+                merchantwidget.start({
+                  merchant_id: 5837040724,
+                  position: 'BOTTOM_RIGHT',
+                  region: 'CZ',
                 });
-              })();
-            `,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js');
-                });
+              };
+              document.body.appendChild(s);
+            }
+            if (localStorage.getItem('hairland_cookie_consent') === 'all') {
+              loadMerchantWidget();
+            }
+            window.addEventListener('cookie-consent-change', function() {
+              if (localStorage.getItem('hairland_cookie_consent') === 'all') {
+                loadMerchantWidget();
               }
-            `,
-          }}
-        />
+            });
+          })();`}
+        </Script>
+        <Script id="sw-register" strategy="lazyOnload">
+          {`if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+          }`}
+        </Script>
       </body>
     </html>
   );

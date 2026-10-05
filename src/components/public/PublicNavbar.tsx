@@ -9,7 +9,7 @@ import type { Locale } from "@/i18n/config";
 import { getLocalizedPath } from "@/lib/localized-path";
 import { useInquiryCart } from "@/lib/inquiry-cart";
 import { useWishlist } from "@/lib/wishlist";
-import { signOut } from "next-auth/react";
+const handleSignOut = () => import("next-auth/react").then(({ signOut }) => signOut({ callbackUrl: "/" }));
 import { SearchOverlay } from "@/components/public/SearchOverlay";
 
 interface NavSession {
@@ -341,7 +341,7 @@ export function PublicNavbar() {
                   </svg>
                 </Link>
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => handleSignOut()}
                   className="px-3 py-2 text-sm text-muted bg-nude-100 rounded-r-lg hover:bg-red-50 hover:text-red-600 transition-colors border-l border-line"
                   title={tAuth("logout")}
                   aria-label={tAuth("logout")}
@@ -491,7 +491,7 @@ export function PublicNavbar() {
                     {session.user?.name ?? tAuth("loginButton")}
                   </Link>
                   <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
+                    onClick={() => handleSignOut()}
                     className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
                   >
                     {tAuth("logout")}
