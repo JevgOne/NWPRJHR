@@ -54,7 +54,7 @@ function SourceBadge({ source }: { source: string }) {
   if (source === "INSTAGRAM") {
     return <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-pink-50 text-pink-600">Instagram</span>;
   }
-  return <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600">Hairland</span>;
+  return <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">Hairland</span>;
 }
 
 export async function ProductReviews({ productId }: { productId: string }) {

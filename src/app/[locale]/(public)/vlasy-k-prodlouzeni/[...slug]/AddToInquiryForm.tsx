@@ -211,8 +211,8 @@ export function AddToInquiryForm({ productId, productName, category, texture, or
                       : `${formatPrice(v.pricePerGram)} Kč/g`}
                   </div>
                   <div className={`text-[11px] ${
-                    inStock ? "text-emerald-600"
-                    : canOrder ? "text-amber-600"
+                    inStock ? "text-emerald-700"
+                    : canOrder ? "text-amber-700"
                     : "text-red-400"
                   }`}>
                     {inStock

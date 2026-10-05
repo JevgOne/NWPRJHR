@@ -308,8 +308,8 @@ export function PublicNavbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <Link href="/oblibene" className="relative p-1.5 text-muted hover:text-rose transition-colors">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <Link href="/oblibene" className="relative p-1.5 text-muted hover:text-rose transition-colors" aria-label={t("nav.wishlist")}>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
               {wishlistCount > 0 && (
@@ -318,8 +318,8 @@ export function PublicNavbar() {
                 </span>
               )}
             </Link>
-            <Link href="/kosik" className="relative p-1.5 text-muted hover:text-rose transition-colors">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <Link href="/kosik" className="relative p-1.5 text-muted hover:text-rose transition-colors" aria-label={t("nav.cart")}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {itemCount > 0 && (
@@ -344,6 +344,7 @@ export function PublicNavbar() {
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="px-3 py-2 text-sm text-muted bg-nude-100 rounded-r-lg hover:bg-red-50 hover:text-red-600 transition-colors border-l border-line"
                   title={tAuth("logout")}
+                  aria-label={tAuth("logout")}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -365,21 +366,22 @@ export function PublicNavbar() {
             <button
               onClick={() => setSearchOpen(true)}
               className="p-2 text-muted hover:text-rose transition-colors"
+              aria-label={t("offer.searchPlaceholder")}
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <Link href="/oblibene" className="relative p-2 text-muted hover:text-rose transition-colors">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <Link href="/oblibene" className="relative p-2 text-muted hover:text-rose transition-colors" aria-label={t("nav.wishlist")}>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
               {wishlistCount > 0 && (
                 <span className="absolute top-0.5 right-0.5 bg-rose text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{wishlistCount}</span>
               )}
             </Link>
-            <Link href="/kosik" className="relative p-2 text-muted hover:text-rose transition-colors">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <Link href="/kosik" className="relative p-2 text-muted hover:text-rose transition-colors" aria-label={t("nav.cart")}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {itemCount > 0 && (
@@ -387,8 +389,8 @@ export function PublicNavbar() {
               )}
             </Link>
             {!isLoggedIn && (
-              <Link href="/registrace" className="p-2 text-muted hover:text-rose transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <Link href="/registrace" className="p-2 text-muted hover:text-rose transition-colors" aria-label={t("navbar.register")}>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
               </Link>
@@ -396,6 +398,8 @@ export function PublicNavbar() {
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="p-2 text-muted hover:text-ink"
+              aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
+              aria-expanded={menuOpen}
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {menuOpen ? (

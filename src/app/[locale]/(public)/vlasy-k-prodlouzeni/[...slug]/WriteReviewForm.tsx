@@ -96,7 +96,7 @@ export function WriteReviewForm({ productId }: { productId?: string }) {
     return (
       <div className="bg-emerald-50 rounded-xl p-4 text-center">
         <div className="text-emerald-700 font-semibold text-sm">{t("thankYou")}</div>
-        <div className="text-xs text-emerald-600 mt-1">{t("pendingApproval")}</div>
+        <div className="text-xs text-emerald-700 mt-1">{t("pendingApproval")}</div>
       </div>
     );
   }

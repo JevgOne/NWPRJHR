@@ -680,7 +680,11 @@
       "contact": "Contact",
       "login": "Log in",
       "privacy": "Privacy policy",
-      "accessories": "Accessories"
+      "accessories": "Accessories",
+      "wishlist": "Wishlist",
+      "cart": "Cart",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
     },
     "hero": {
       "title": "Premium hair from around the world",

@@ -286,7 +286,7 @@ export function ProductGridCard({
         })()}
         <div className="flex flex-col items-end flex-shrink-0">
           <span className={`text-[10px] font-medium ${
-            inStock ? "text-emerald-600" : canOrder ? "text-amber-600" : "text-red-400"
+            inStock ? "text-emerald-700" : canOrder ? "text-amber-700" : "text-red-400"
           }`}>
             {inStock
               ? `${stock} ${showAsPiece ? "ks" : "g"}`

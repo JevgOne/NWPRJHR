@@ -680,7 +680,11 @@
       "contact": "Kontakt",
       "login": "Přihlásit se",
       "privacy": "Ochrana osobních údajů",
-      "accessories": "Příslušenství"
+      "accessories": "Příslušenství",
+      "wishlist": "Oblíbené",
+      "cart": "Košík",
+      "openMenu": "Otevřít menu",
+      "closeMenu": "Zavřít menu"
     },
     "hero": {
       "title": "Prémiové vlasy z celého světa",
