@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -187,14 +188,150 @@ function buildOrganizationJsonLd(t: (key: string) => string) {
   };
 }
 
+/* ---------- Async sub-sections (streamed via Suspense) ---------- */
+
+async function ProductSliderSection() {
+  const [t, allProducts] = await Promise.all([
+    getTranslations("public"),
+    getCachedAllProducts(),
+  ]);
+  return (
+    <div className="border-t border-line pt-6 sm:pt-8 mt-6 sm:mt-8 px-4">
+      <HeroProductSlider products={selectHeroProducts(allProducts)} />
+    </div>
+  );
+}
+
+async function StylistsSection() {
+  const [t, stylists] = await Promise.all([
+    getTranslations("public"),
+    getCachedStylists(),
+  ]);
+  if (stylists.length === 0) return null;
+  return (
+    <ScrollReveal>
+    <section className="py-10 sm:py-14 bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3 tracking-tight">
+            {t("landing.stylistsTitle")}
+          </h2>
+          <p className="text-muted max-w-xl mx-auto font-light">
+            {t("landing.stylistsSubtitle")}
+          </p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {stylists.map((s) => {
+            const specs: string[] = JSON.parse(s.specializations || "[]");
+            return (
+              <Link
+                key={s.id}
+                href={{ pathname: '/kadernice/[slug]' as any, params: { slug: s.slug } }}
+                className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-lg hover:border-blush-300 hover:-translate-y-1 transition-all duration-300 p-3"
+              >
+                <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2 relative">
+                  {s.photo ? (
+                    <Image src={s.photo} alt={s.name} fill loading="lazy" sizes="64px" quality={60} className="object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-blush-100 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-rose/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                    </div>
+                  )}
+                </div>
+                <h3 className="text-xs font-semibold text-ink group-hover:text-rose transition-colors text-center">
+                  {s.name}
+                </h3>
+                <p className="text-[10px] text-muted mt-0.5">{s.city}</p>
+                {s.salon && (
+                  <p className="text-[10px] text-rose mt-0.5">{s.salon.name}</p>
+                )}
+                {specs.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-0.5 mt-1.5">
+                    {specs.slice(0, 2).map((sp) => (
+                      <span key={sp} className="text-[9px] bg-blush-100 text-rose-deep px-1.5 py-0.5 rounded-full">
+                        {sp}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="flex gap-3 justify-center mt-6">
+          <Link
+            href="/kadernice"
+            className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            {t("landing.allStylists")}
+          </Link>
+          <Link
+            href="/registrace"
+            className="px-5 py-2.5 bg-white text-rose border border-blush-200 hover:bg-blush-100 text-sm font-medium rounded-lg transition-colors"
+          >
+            {t("landing.registerSalon")}
+          </Link>
+        </div>
+      </div>
+    </section>
+    </ScrollReveal>
+  );
+}
+
+async function InstagramSection() {
+  const [t, igPhotos] = await Promise.all([
+    getTranslations("public"),
+    getCachedIgPhotos(),
+  ]);
+  return (
+    <ScrollReveal>
+    <section className="py-12 sm:py-16 bg-nude-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <svg className="w-5 h-5 text-rose" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              <h2 className="text-xl sm:text-2xl font-bold text-ink tracking-tight">{t("landing.igTitle")}</h2>
+            </div>
+            <p className="text-sm text-muted">{t("landing.igDesc")}</p>
+          </div>
+          <a
+            href="https://www.instagram.com/hairland.cz/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-espresso hover:bg-ink text-white text-sm font-medium rounded-lg transition-colors shrink-0"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            {t("landing.igFollow")}
+          </a>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          {igPhotos.map((src, i) => (
+            <a
+              key={i}
+              href="https://www.instagram.com/hairland.cz/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative aspect-square rounded-xl overflow-hidden"
+            >
+              <Image src={src} alt={`Hairland — prodloužení vlasů, ukázka ${i + 1}`} fill loading="lazy" sizes="(max-width: 640px) 50vw, 25vw" quality={60} className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/30 transition-colors duration-300 flex items-center justify-center">
+                <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+    </ScrollReveal>
+  );
+}
+
 export default async function LandingPage() {
-  const [t, tCategory, tPt, stylists, allProducts, igPhotos] = await Promise.all([
+  const [t, tCategory, tPt] = await Promise.all([
     getTranslations("public"),
     getTranslations("category"),
     getTranslations("processingType"),
-    getCachedStylists(),
-    getCachedAllProducts(),
-    getCachedIgPhotos(),
   ]);
 
   return (
@@ -334,10 +471,10 @@ export default async function LandingPage() {
             <MethodComparisonTable />
           </div>
 
-          {/* Product slider */}
-          <div className="border-t border-line pt-6 sm:pt-8 mt-6 sm:mt-8 px-4">
-            <HeroProductSlider products={selectHeroProducts(allProducts)} />
-          </div>
+          {/* Product slider — streamed */}
+          <Suspense fallback={<div className="border-t border-line pt-6 sm:pt-8 mt-6 sm:mt-8 px-4 h-48" />}>
+            <ProductSliderSection />
+          </Suspense>
 
           <div className="flex gap-3 justify-center mt-4 sm:mt-6">
             <Link
@@ -577,127 +714,25 @@ export default async function LandingPage() {
       </section>
       </ScrollReveal>
 
-      {/* Reviews */}
-      <ReviewsSection />
+      {/* Reviews — streamed */}
+      <Suspense>
+        <ReviewsSection />
+      </Suspense>
 
-      {/* Partner stylists */}
-      {stylists.length > 0 && (
-        <ScrollReveal>
-        <section className="py-10 sm:py-14 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-xl sm:text-2xl font-bold text-ink mb-3 tracking-tight">
-                {t("landing.stylistsTitle")}
-              </h2>
-              <p className="text-muted max-w-xl mx-auto font-light">
-                {t("landing.stylistsSubtitle")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {stylists.map((s) => {
-                const specs: string[] = JSON.parse(s.specializations || "[]");
-                return (
-                  <Link
-                    key={s.id}
-                    href={{ pathname: '/kadernice/[slug]' as any, params: { slug: s.slug } }}
-                    className="group flex flex-col items-center bg-nude-50 rounded-xl border border-line hover:shadow-lg hover:border-blush-300 hover:-translate-y-1 transition-all duration-300 p-3"
-                  >
-                    <div className="w-16 h-16 rounded-full bg-nude-100 overflow-hidden ring-2 ring-line mb-2 relative">
-                      {s.photo ? (
-                        <Image src={s.photo} alt={s.name} fill loading="lazy" sizes="64px" quality={60} className="object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-blush-100 flex items-center justify-center">
-                          <svg className="w-8 h-8 text-rose/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-xs font-semibold text-ink group-hover:text-rose transition-colors text-center">
-                      {s.name}
-                    </h3>
-                    <p className="text-[10px] text-muted mt-0.5">{s.city}</p>
-                    {s.salon && (
-                      <p className="text-[10px] text-rose mt-0.5">{s.salon.name}</p>
-                    )}
-                    {specs.length > 0 && (
-                      <div className="flex flex-wrap justify-center gap-0.5 mt-1.5">
-                        {specs.slice(0, 2).map((sp) => (
-                          <span key={sp} className="text-[9px] bg-blush-100 text-rose-deep px-1.5 py-0.5 rounded-full">
-                            {sp}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="flex gap-3 justify-center mt-6">
-              <Link
-                href="/kadernice"
-                className="px-5 py-2.5 bg-rose hover:bg-rose-deep text-white text-sm font-medium rounded-lg transition-colors"
-              >
-                {t("landing.allStylists")}
-              </Link>
-              <Link
-                href="/registrace"
-                className="px-5 py-2.5 bg-white text-rose border border-blush-200 hover:bg-blush-100 text-sm font-medium rounded-lg transition-colors"
-              >
-                {t("landing.registerSalon")}
-              </Link>
-            </div>
-          </div>
-        </section>
-        </ScrollReveal>
-      )}
+      {/* Partner stylists — streamed */}
+      <Suspense>
+        <StylistsSection />
+      </Suspense>
 
       {/* Trilingual banner */}
       <div className="bg-nude-50 py-3 text-center text-sm text-muted">
         {t("landing.langBanner")}
       </div>
 
-      {/* Instagram section */}
-      <ScrollReveal>
-      <section className="py-12 sm:py-16 bg-nude-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <svg className="w-5 h-5 text-rose" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                <h2 className="text-xl sm:text-2xl font-bold text-ink tracking-tight">{t("landing.igTitle")}</h2>
-              </div>
-              <p className="text-sm text-muted">{t("landing.igDesc")}</p>
-            </div>
-            <a
-              href="https://www.instagram.com/hairland.cz/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-espresso hover:bg-ink text-white text-sm font-medium rounded-lg transition-colors shrink-0"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-              {t("landing.igFollow")}
-            </a>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-            {igPhotos.map((src, i) => (
-              <a
-                key={i}
-                href="https://www.instagram.com/hairland.cz/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative aspect-square rounded-xl overflow-hidden"
-              >
-                <Image src={src} alt={`Hairland — prodloužení vlasů, ukázka ${i + 1}`} fill loading="lazy" sizes="(max-width: 640px) 50vw, 25vw" quality={60} className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/30 transition-colors duration-300 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-      </ScrollReveal>
+      {/* Instagram section — streamed */}
+      <Suspense>
+        <InstagramSection />
+      </Suspense>
 
       {/* FAQ section */}
       <ScrollReveal>
