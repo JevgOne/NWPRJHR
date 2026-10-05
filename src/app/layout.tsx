@@ -100,7 +100,10 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
-      <head />
+      <head>
+        <link rel="preconnect" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
+        <link rel="dns-prefetch" href="https://usxv0mh0wvr3gzdk.public.blob.vercel-storage.com" />
+      </head>
       <body className="min-h-full flex flex-col bg-nude-50 font-[family-name:var(--font-geist)] overflow-x-hidden">
         <Script
           src="https://analytics.ahrefs.com/analytics.js"
