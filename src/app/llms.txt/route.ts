@@ -39,7 +39,7 @@ Odborné články a průvodci pro výběr a péči o prodloužené vlasy:
 
 - Osobní ukázka a konzultace v Praze zdarma
 - Expresní zpracování na míru do 7 dní
-- Doprava zdarma po Praze (Zásilkovna, Česká pošta, osobní odběr)
+- Doprava: Zásilkovna (výdejní místa i na adresu) a osobní vyzvednutí v Praze zdarma
 - [B2B program pro kadeřnice a salony](https://www.hairland.cz/pro): Velkoobchodní slevy 15–30 %
 
 ## Další informace

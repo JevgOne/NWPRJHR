@@ -95,8 +95,26 @@ const getCachedIgPhotos = unstable_cache(
   { revalidate: 60, tags: ["site-settings"] }
 );
 
-function buildStoreJsonLd(description: string) {
-  return {
+const getCachedReviewStats = unstable_cache(
+  async () => {
+    try {
+      const reviews = await prisma.review.findMany({
+        where: { active: true },
+        select: { rating: true },
+      });
+      if (reviews.length === 0) return null;
+      const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+      return { avg: Math.round(avg * 10) / 10, count: reviews.length };
+    } catch {
+      return null;
+    }
+  },
+  ["homepage-review-stats"],
+  { revalidate: 300, tags: ["reviews"] }
+);
+
+function buildStoreJsonLd(description: string, reviewStats: { avg: number; count: number } | null) {
+  const base: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": ["Store", "HairSalon"],
     name: "Hairland",
@@ -133,6 +151,15 @@ function buildStoreJsonLd(description: string) {
     email: "info@hairland.cz",
     sameAs: ["https://www.instagram.com/hairland.cz"],
   };
+  if (reviewStats) {
+    base.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: reviewStats.avg,
+      bestRating: 5,
+      ratingCount: reviewStats.count,
+    };
+  }
+  return base;
 }
 
 const webSiteJsonLd = {
@@ -328,17 +355,18 @@ async function InstagramSection() {
 }
 
 export default async function LandingPage() {
-  const [t, tCategory, tPt] = await Promise.all([
+  const [t, tCategory, tPt, reviewStats] = await Promise.all([
     getTranslations("public"),
     getTranslations("category"),
     getTranslations("processingType"),
+    getCachedReviewStats(),
   ]);
 
   return (
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStoreJsonLd(t("landing.heroSubtitle"))) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStoreJsonLd(t("landing.heroSubtitle"), reviewStats)) }}
       />
       <script
         type="application/ld+json"
