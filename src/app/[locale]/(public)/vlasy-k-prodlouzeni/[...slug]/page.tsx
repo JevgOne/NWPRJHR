@@ -147,7 +147,7 @@ const getCachedProductBySlug = unstable_cache(
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
       })),
-      photos: JSON.parse(product.photos || "[]") as string[],
+      photos: (() => { try { return JSON.parse(product.photos || "[]"); } catch { return []; } })() as string[],
     };
   },
   ["product-by-slug"],
@@ -169,7 +169,7 @@ const getCachedProductById = unstable_cache(
         availableGrams: stockMap.get(v.id)?.availableGrams ?? 0,
         availablePieces: stockMap.get(v.id)?.availablePieces ?? 0,
       })),
-      photos: JSON.parse(product.photos || "[]") as string[],
+      photos: (() => { try { return JSON.parse(product.photos || "[]"); } catch { return []; } })() as string[],
     };
   },
   ["product-by-id"],
@@ -251,7 +251,7 @@ async function RelatedProducts({
   const stockMap = await getAllStockNumbers();
   const cards = related.map((rp) => ({
     ...rp,
-    photos: JSON.parse(rp.photos || "[]") as string[],
+    photos: (() => { try { return JSON.parse(rp.photos || "[]"); } catch { return []; } })() as string[],
     variants: rp.variants.map((v) => ({
       ...v,
       sellingMode: v.sellingMode as "BY_GRAM" | "BY_PIECE" | undefined,
@@ -374,8 +374,9 @@ async function generateProductMetadataFromProduct(
   // Title: use manual metaTitle if set, otherwise auto-generate
   const title = product.metaTitle || buildSeoTitle(product.texture, lengths, colorNames, product.category, locale);
 
-  // Description: use manual metaDescription if set, otherwise auto-generate
-  const description = product.metaDescription || buildAutoDescription(product, colorNames, lengths, product.variants, locale);
+  // Description: use manual metaDescription if long enough, otherwise auto-generate
+  const autoDescription = buildAutoDescription(product, colorNames, lengths, product.variants, locale);
+  const description = (product.metaDescription && product.metaDescription.length >= 120) ? product.metaDescription : autoDescription;
 
   // OG title: {Struktura} vlasy {délka} cm, {barva} – {gramáž} g
   const totalGrams = getTotalGrams(product.variants);
@@ -1328,6 +1329,26 @@ async function ProductDetailView({
           </div>
         </section>
       )}
+      {/* Cross-links to methods & guides */}
+      <section className="mt-14 pt-10 border-t border-line/50">
+        <h2 className="text-base font-semibold text-ink mb-3">{t("productDetail.exploreTitle")}</h2>
+        <div className="flex flex-wrap gap-2">
+          {([
+            { href: "/clip-in-vlasy" as const, label: "Clip-in" },
+            { href: "/tape-in-vlasy" as const, label: "Tape-in" },
+            { href: "/keratinove-vlasy" as const, label: "Keratin" },
+            { href: "/micro-ring-vlasy" as const, label: "Micro ring" },
+            { href: "/tresove-vlasy" as const, label: t("productDetail.exploreWeft") },
+            { href: "/pruvodce-gramazi" as const, label: t("productDetail.exploreWeight") },
+            { href: "/pece-o-vlasy" as const, label: t("productDetail.exploreCare") },
+            { href: "/cenik-vlasy" as const, label: t("productDetail.explorePrices") },
+          ] as const).map((link) => (
+            <Link key={link.href} href={link.href} className="text-xs text-blush-700 hover:text-rose px-3 py-1.5 bg-nude-50 rounded-full border border-line hover:border-blush-300 transition-colors">
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

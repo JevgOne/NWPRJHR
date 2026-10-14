@@ -78,6 +78,15 @@ function hasSessionToken(request: NextRequest): boolean {
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get("host") ?? "";
+
+  // Canonical host: www.hairland.cz → hairland.cz (301)
+  if (host.startsWith("www.")) {
+    const url = request.nextUrl.clone();
+    url.host = host.replace(/^www\./, "");
+    url.port = "";
+    return NextResponse.redirect(url, 301);
+  }
 
   // Auth guard for admin/app routes
   if (isProtectedPath(pathname)) {

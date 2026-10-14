@@ -789,7 +789,7 @@
     "register": {
       "title": "B2B Registrace",
       "pageTitle": "Registrace pro salony a kadeřnice — B2B ceny vlasů",
-      "pageDescription": "Zaregistrujte se pro partnerský nákup prémiových vlasů. Zvýhodněné B2B ceny pro salony a kadeřnice.",
+      "pageDescription": "Zaregistrujte se pro partnerský nákup prémiových vlasů. Zvýhodněné B2B ceny pro salony a kadeřnice. Osobní konzultace, dovoz vzorků po Praze zdarma.",
       "subtitle": "B2B účet pro zvýhodněný nákup vlasů. Po ověření aktivujeme přístup — obvykle do 24 hodin.",
       "typeSection": "Typ účtu",
       "typeSalon": "Salon / Studio",
@@ -881,7 +881,7 @@
       "languages": "Jazyky",
       "experience": "{years} let zkušeností",
       "metaTitle": "Kadeřnice a partnerské salony",
-      "metaDescription": "Spolupracující kadeřnice Hairland — ověřené specialistky na prodloužení vlasů. Profily, rozhovory a kontakty."
+      "metaDescription": "Spolupracující kadeřnice Hairland — ověřené specialistky na prodloužení vlasů. Profily, rozhovory a kontakty. Najděte kadeřnici ve vašem okolí."
     },
     "blog": {
       "title": "Blog",
@@ -1194,7 +1194,12 @@
       "saleExplanationTitle": "Proč je tento produkt ve výprodeji?",
       "saleExplanationText": "Výprodejové vlasy jsou buď kusy, které nesplnily naše nejvyšší kvalitativní standardy, nebo vlasy vrácené klientkami po sundání. Každý culík jsme pečlivě zastříhli, vyčesali a umyli — jsou v plně použitelném stavu za výhodnou cenu.",
       "saleNoWarrantyTitle": "Bez záruky",
-      "saleNoWarrantyText": "Na výprodejové vlasy neposkytujeme záruku. Nemůžeme ověřit původ vlasů, způsob předchozího zacházení ani stav před tím, než k nám přišly. Kupujete za zvýhodněnou cenu s vědomím tohoto omezení."
+      "saleNoWarrantyText": "Na výprodejové vlasy neposkytujeme záruku. Nemůžeme ověřit původ vlasů, způsob předchozího zacházení ani stav před tím, než k nám přišly. Kupujete za zvýhodněnou cenu s vědomím tohoto omezení.",
+      "exploreTitle": "Prozkoumejte metody a průvodce",
+      "exploreWeft": "Třesové vlasy",
+      "exploreWeight": "Kalkulačka gramáže",
+      "exploreCare": "Péče o vlasy",
+      "explorePrices": "Ceník vlasů"
     },
     "accessories": {
       "title": "Příslušenství",
@@ -2650,21 +2655,21 @@
       "quality": "Kvalita vlasů"
     },
     "typesTitle": "Typy prodloužení vlasů",
-    "typesDesc": "Přehled metod prodloužení — clip-in, tape-in, keratin, micro ring. Výhody a nevýhody každé z nich.",
+    "typesDesc": "Přehled metod prodloužení vlasů — clip-in, tape-in, keratin, micro ring. Výhody a nevýhody každé z nich. Rady od specialistů pro správný výběr.",
     "clipVsTapeTitle": "Clip-in vs. tape-in: Jak si vybrat?",
-    "clipVsTapeDesc": "Porovnání dvou nejoblíbenějších metod prodloužení vlasů. Která je lepší pro vás?",
+    "clipVsTapeDesc": "Porovnání clip-in a tape-in — dvou nejoblíbenějších metod prodloužení vlasů. Výhody, nevýhody a která je lepší pro váš typ vlasů. Rady od specialistů.",
     "colorGuideTitle": "Jak vybrat správnou barvu vlasů",
-    "colorGuideDesc": "Tipy pro výběr odstínu, který bude vypadat přirozeně a sladěně s vašimi vlastními vlasy.",
+    "colorGuideDesc": "Tipy pro výběr odstínu vlasů k prodloužení — jak sladit barvu přirozeně s vlastními vlasy. Blond, hnědá, černá, ombre. Poradíme s výběrem.",
     "lengthGuideTitle": "Jak vybrat správnou délku",
-    "lengthGuideDesc": "Od 40 do 80 cm — jak zvolit délku prodloužení podle vašeho stylu a typu vlasů.",
+    "lengthGuideDesc": "Průvodce délkami vlasů k prodloužení — od 30 do 70 cm. Jak zvolit správnou délku podle vašeho stylu, typu vlasů a požadovaného výsledku.",
     "careTitle": "Péče o prodloužené vlasy",
-    "careDesc": "Jak správně pečovat o prodloužené vlasy, aby vydržely co nejdéle a vypadaly skvěle.",
+    "careDesc": "Jak správně pečovat o prodloužené vlasy — mytí, rozčesávání, noční rutina, tepelná ochrana. Tipy pro delší životnost a krásný vzhled vlasů.",
     "originTitle": "Původ vlasů: proč záleží odkud jsou",
-    "originDesc": "Rozdíly mezi vlasy z Ukrajiny, Ruska, Kazachstánu a dalších zemí. Co určuje kvalitu.",
+    "originDesc": "Rozdíly mezi vlasy z Ukrajiny, Ruska, Kazachstánu, Turecka a dalších zemí. Co určuje kvalitu vlasů a jak se liší podle původu. Průvodce výběrem.",
     "virginVsRemyTitle": "Virgin vs. Remy: jaký je rozdíl?",
-    "virginVsRemyDesc": "Vysvětlení rozdílu mezi virgin a remy vlasy a proč je to důležité pro výsledek.",
+    "virginVsRemyDesc": "Virgin vs. remy vlasy — vysvětlení rozdílu mezi panenskými a remy vlasy. Kvalita, životnost, cena a proč je to důležité pro výsledek prodloužení.",
     "durabilityTitle": "Jak dlouho vydrží prodloužené vlasy?",
-    "durabilityDesc": "Životnost podle metody prodloužení a kvality vlasů. Co ovlivňuje, jak dlouho vám vydrží.",
+    "durabilityDesc": "Životnost prodloužených vlasů podle metody a kvality — clip-in, tape-in, keratin, micro ring. Co ovlivňuje výdrž a jak ji prodloužit.",
     "typy_prodlouzeni_content": "<p>Hlavní metody prodloužení: clip-in (sponky, příležitostné), tape-in (pásky, 6–8 týdnů), keratin (nejtrvanlivější, 3–5 měsíců) a micro ring (kroužky, bez lepidla). Každá se hodí pro jiný typ vlasů a životní styl.</p><p>Podrobná srovnání metod najdete na blogu: <a href=\"/blog/clip-in-vs-tape-in-vs-keratinove-prodlouzeni\">clip-in vs tape-in vs keratin</a> a <a href=\"/blog/keratin-vs-micro-ring-srovnani\">keratin vs micro ring</a>.</p>",
     "clip_in_vs_tape_in_content": "<p>Clip-in prameny si připnete samy za pár minut — ideální na příležitostné nošení. Tape-in pásky aplikuje kadeřnice a vydrží 6–8 týdnů — pohodlné pro každodenní nošení. Obě metody jsou šetrné k vlastním vlasům.</p><p>Podrobné srovnání všech metod včetně keratinového prodloužení najdete v našem <a href=\"/blog/clip-in-vs-tape-in-vs-keratinove-prodlouzeni\">blogovém článku</a>.</p>",
     "jak_vybrat_barvu_content": "<p>Při výběru barvy se řiďte odstínem u kořínků, ne vybledlými konečky. Porovnávejte při denním světle a pokud váháte mezi dvěma odstíny, zvolte tmavší. Nejste si jistí? Domluvte si osobní ukázku — přijedeme s vlasy přímo za vámi.</p><p>Přečtěte si také <a href=\"/blog/nejcastejsi-chyby-pri-vyberu-barvy-vlasu\">nejčastější chyby při výběru barvy</a>, kterým se vyhnout.</p>",
@@ -2676,7 +2681,7 @@
   },
   "b2b": {
     "pageTitle": "Vlasy pro kadeřnice — partnerský prodej prémiových vlasů",
-    "pageDescription": "Dodáváme prémiové vlasy k prodloužení pro kadeřnické salony. Slovanské a evropské vlasy, B2B spolupráce, partnerské ceny.",
+    "pageDescription": "Dodáváme prémiové vlasy k prodloužení pro kadeřnické salony. Slovanské a evropské vlasy, B2B spolupráce, partnerské ceny. Registrace a konzultace zdarma.",
     "heroTitle": "Spolupracujte s Hairland",
     "heroSubtitle": "Získejte zvýhodněné ceny na prémiové vlasy. Program pro salony a samostatné kadeřnice.",
     "salonCard": {
@@ -2901,7 +2906,7 @@
   },
   "prahaLanding": {
     "metaTitle": "Prodloužení vlasů Praha — výběr a dovoz vzorků",
-    "metaDesc": "Vlasy k prodloužení a prodlužování v Praze — skladem i na objednávku. Clip-in, tape-in, keratin, micro ring. Konzultace zdarma.",
+    "metaDesc": "Vlasy k prodloužení v Praze — skladem i na objednávku. Clip-in, tape-in, keratin, micro ring. Osobní konzultace a dovoz vzorků po Praze zdarma.",
     "home": "Domů",
     "breadcrumb": "Prodloužení vlasů Praha",
     "h1": "Prodloužení vlasů Praha",
@@ -3313,7 +3318,7 @@
     "microRingDesc": "Micro ring prameny uchycené kroužky bez lepidla a tepla. Šetrné k vlasům, vydrží 2–4 měsíce.",
     "weftDesc": "Tresové vlasy našité na pásek — rychlá aplikace, velký objem. Vhodné pro husté vlasy.",
     "ofinyDesc": "Přírodní clip-in ofiny z pravých lidských vlasů. Snadné připevnění, individuální výroba na objednávku.",
-    "clipInMeta": "Clip-in vlasy k prodloužení — prémiová kvalita, snadná aplikace doma. Široký výběr délek a barev. Skladem, doručení po celé ČR.",
+    "clipInMeta": "Clip-in vlasy k prodloužení — prémiová kvalita, snadná aplikace doma. Široký výběr délek a barev, prodej na gramy. Skladem v Praze, dovoz vzorků zdarma.",
     "tapeInMeta": "Tape-in vlasy k prodloužení — plochý spoj, pohodlné nošení. Přelepení každých 6–8 týdnů. Pravé vlasy skladem i na objednávku.",
     "keratinMeta": "Keratinové vlasy k prodloužení — nejtrvanlivější metoda, přirozený vzhled. Vydrží 3–5 měsíců. Skladem i na objednávku, doručení po celé ČR.",
     "microRingMeta": "Micro ring vlasy k prodloužení — bez lepidla a tepla, šetrné k vlasům. Vydrží 2–4 měsíce. Prodej pravých vlasů skladem i na objednávku, doručení po celé ČR.",
@@ -4125,7 +4130,7 @@
   },
   "slavicLP": {
     "metaTitle": "Slovanské vlasy — přímý dovoz z Ukrajiny",
-    "metaDesc": "Slovanské vlasy z Ukrajiny a východní Evropy. Nebarvené, z jedné hlavy. Clip-in, tape-in, keratin — zpracování do 7 dnů.",
+    "metaDesc": "Slovanské vlasy z Ukrajiny a východní Evropy. Nebarvené, z jedné hlavy. Clip-in, tape-in, keratin — zpracování do 7 dnů, osobní konzultace Praha zdarma.",
     "home": "Domů",
     "breadcrumb": "Slovanské vlasy",
     "h1": "Slovanské vlasy k prodloužení",
@@ -4187,7 +4192,7 @@
   },
   "ukrainianLP": {
     "metaTitle": "Ukrajinské vlasy k prodloužení — přímý dovoz",
-    "metaDesc": "Pravé ukrajinské vlasy z přímého dovozu. 100% lidské vlasy s neporušenou kutikulou. Clip-in, tape-in, keratin — do 7 dnů.",
+    "metaDesc": "Pravé ukrajinské vlasy z přímého dovozu. 100% lidské vlasy s neporušenou kutikulou. Clip-in, tape-in, keratin — zpracování do 7 dnů, Praha zdarma.",
     "home": "Domů",
     "breadcrumb": "Ukrajinské vlasy",
     "h1": "Ukrajinské vlasy k prodloužení",
@@ -4255,7 +4260,7 @@
   },
   "virginLP": {
     "metaTitle": "Panenské vlasy (Virgin) — nejvyšší kvalita",
-    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců. Zpracování do 7 dnů, doručení po celé ČR.",
+    "metaDesc": "Panenské (virgin) vlasy — nikdy chemicky neošetřené, z jedné hlavy. Životnost 18–36 měsíců. Zpracování do 7 dnů, osobní konzultace Praha zdarma.",
     "home": "Domů",
     "breadcrumb": "Panenské vlasy",
     "h1": "Panenské vlasy k prodloužení",
@@ -4369,8 +4374,17 @@
     "pageH1": "Prodloužení vlasů {city}",
     "metaTitle": "Prodloužení vlasů {city}",
     "metaTitlePrice": "Prodloužení vlasů {city} od {price} Kč/g",
-    "metaDesc": "Prodloužení vlasů {city} — clip-in, tape-in, keratin. 100% pravé přírodní vlasy. Rychlé doručení. Osobní konzultace zdarma.",
-    "metaDescPrice": "Prodloužení vlasů {city} — clip-in, tape-in, keratin od {price} Kč/g. 100% pravé přírodní vlasy. Rychlé doručení. Osobní konzultace zdarma."
+    "metaDesc": "Prodloužení vlasů {city} — clip-in, tape-in, keratin. 100% pravé přírodní vlasy z přímého importu. Rychlé doručení, osobní konzultace a dovoz vzorků zdarma.",
+    "metaDescPrice": "Prodloužení vlasů {city} — clip-in, tape-in, keratin od {price} Kč/g. 100% pravé přírodní vlasy. Rychlé doručení. Osobní konzultace zdarma.",
+    "relatedTitle": "Průvodce metodami a péčí",
+    "relClipIn": "Clip-in vlasy",
+    "relTapeIn": "Tape-in vlasy",
+    "relKeratin": "Keratinové vlasy",
+    "relMicroRing": "Micro ring vlasy",
+    "relVirgin": "Panenské vlasy",
+    "relSlavic": "Slovanské vlasy",
+    "relWeightGuide": "Kalkulačka gramáže",
+    "relCare": "Péče o vlasy"
   },
   "methodComparison": {
     "property": "Vlastnost",
@@ -4559,7 +4573,7 @@
   },
   "promeny": {
     "metaTitle": "Proměny — prodloužení vlasů před a po",
-    "metaDesc": "Galerie proměn našich zákaznic. Podívejte se na výsledky prodloužení vlasů metodami clip-in, tape-in, keratin a micro ring.",
+    "metaDesc": "Galerie proměn našich zákaznic — výsledky prodloužení vlasů metodami clip-in, tape-in, keratin a micro ring. Fotky před a po, reálné proměny.",
     "heroTitle": "Proměny našich zákaznic",
     "heroSubtitle": "Podívejte se, jak prodloužení vlasů mění vzhled. Galerie reálných výsledků od našich klientek.",
     "filterAll": "Všechny metody",

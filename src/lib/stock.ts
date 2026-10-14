@@ -85,6 +85,7 @@ interface RawReservationRow {
  * No caching — pages using this already have force-dynamic.
  */
 export async function getAllStockNumbers(): Promise<Map<string, StockNumbers>> {
+  try {
   const physicalRows = await prisma.$queryRawUnsafe<RawStockRow[]>(
     `SELECT variantId,
             COALESCE(SUM(remainingGrams), 0) as physicalGrams,
@@ -153,6 +154,10 @@ export async function getAllStockNumbers(): Promise<Map<string, StockNumbers>> {
   }
 
   return map;
+  } catch (error) {
+    console.error("[stock] getAllStockNumbers failed:", error);
+    return new Map();
+  }
 }
 
 /**

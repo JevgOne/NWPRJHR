@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Přihlášení",
+  description: "Přihlášení do administrace a salonového portálu Hairland. Správa objednávek, produktů a B2B partnerského účtu.",
   robots: { index: false, follow: false },
   openGraph: {
     type: "website",

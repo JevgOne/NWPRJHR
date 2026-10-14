@@ -249,7 +249,7 @@ async function StylistsSection() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {stylists.map((s) => {
-            const specs: string[] = JSON.parse(s.specializations || "[]");
+            let specs: string[] = []; try { specs = JSON.parse(s.specializations || "[]"); } catch {}
             return (
               <Link
                 key={s.id}

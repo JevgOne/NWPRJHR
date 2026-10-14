@@ -39,24 +39,46 @@ function stripMarkdown(md: string): string {
     .trim();
 }
 
+const SEO_SUFFIX: Record<string, string> = {
+  cs: " Rady a tipy od specialistů na prodloužení vlasů. Blog Hairland — prémiové vlasy z přímého importu.",
+  uk: " Поради від спеціалістів з нарощування волосся. Блог Hairland — преміальне волосся з прямого імпорту.",
+  ru: " Советы от специалистов по наращиванию волос. Блог Hairland — премиальные волосы прямого импорта.",
+};
+
 function generateSeoDescription(post: Record<string, unknown>, locale: string): string {
+  let desc = "";
+
   // metaDescription is Czech-only — for other locales skip it
-  if (locale === "cs" && post.metaDescription) return post.metaDescription as string;
-
-  const excerpt = localized(post, "excerpt", locale);
-  if (excerpt) {
-    if (excerpt.length <= 155) return excerpt;
-    return excerpt.slice(0, 152).replace(/\s+\S*$/, "") + "...";
+  if (locale === "cs" && post.metaDescription) {
+    desc = post.metaDescription as string;
   }
 
-  const content = localized(post, "content", locale);
-  if (content) {
-    const plain = stripMarkdown(content);
-    if (plain.length <= 155) return plain;
-    return plain.slice(0, 152).replace(/\s+\S*$/, "") + "...";
+  if (!desc) {
+    const excerpt = localized(post, "excerpt", locale);
+    if (excerpt) {
+      desc = excerpt.length <= 155 ? excerpt : excerpt.slice(0, 152).replace(/\s+\S*$/, "") + "...";
+    }
   }
 
-  return localized(post, "title", locale);
+  if (!desc) {
+    const content = localized(post, "content", locale);
+    if (content) {
+      const plain = stripMarkdown(content);
+      desc = plain.length <= 155 ? plain : plain.slice(0, 152).replace(/\s+\S*$/, "") + "...";
+    }
+  }
+
+  if (!desc) {
+    desc = localized(post, "title", locale);
+  }
+
+  // Ensure minimum SEO length
+  if (desc.length < 120) {
+    const suffix = SEO_SUFFIX[locale] ?? SEO_SUFFIX.cs;
+    desc = (desc.replace(/\.?\s*$/, ".") + suffix).slice(0, 155);
+  }
+
+  return desc;
 }
 
 const getCachedBlogPost = unstable_cache(
@@ -249,7 +271,7 @@ export default async function BlogPostPage({ params }: Props) {
   // Interview profile data
   const isInterview = post.category === "interview" && post.profileName;
   const profileName = isInterview ? localized(post, "profileName", locale) : "";
-  const profileLangs: string[] = post.profileLanguages ? JSON.parse(post.profileLanguages) : [];
+  let profileLangs: string[] = []; try { profileLangs = post.profileLanguages ? JSON.parse(post.profileLanguages) : []; } catch {}
   const LANG_FLAGS: Record<string, { flag: string; label: Record<string, string> }> = {
     cs: { flag: "\u{1F1E8}\u{1F1FF}", label: { cs: "Čeština", uk: "Чеська", ru: "Чешский" } },
     uk: { flag: "\u{1F1FA}\u{1F1E6}", label: { cs: "Ukrajinština", uk: "Українська", ru: "Украинский" } },

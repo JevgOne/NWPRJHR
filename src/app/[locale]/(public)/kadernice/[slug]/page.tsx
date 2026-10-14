@@ -21,9 +21,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!stylist || !stylist.active) notFound();
   return {
     title: `${stylist.name} — ${t("landing.stylistMetaLabel")}`,
-    description:
-      stylist.bio?.slice(0, 155) ||
-      `${stylist.name} — ${t("landing.stylistMetaFallback")}`,
+    description: (() => {
+      const bio = stylist.bio?.slice(0, 155);
+      if (bio && bio.length >= 120) return bio;
+      const base = bio || `${stylist.name} — ${t("landing.stylistMetaFallback")}`;
+      return `${base}. Specialistka na prodloužení vlasů — clip-in, tape-in, keratin. Osobní konzultace a dovoz vzorků po Praze zdarma.`.slice(0, 155);
+    })(),
     alternates: getAlternates(`/kadernice/${slug}`, locale),
     openGraph: {
       url: getOgUrl(`/kadernice/${slug}`, locale),
@@ -53,9 +56,10 @@ export default async function StylistProfilePage({ params }: { params: Promise<{
 
   if (!stylist || !stylist.active) notFound();
 
-  const specs: string[] = JSON.parse(stylist.specializations || "[]");
-  const langs: string[] = JSON.parse(stylist.languages || "[]");
-  const certs: string[] = JSON.parse(stylist.certifications || "[]");
+  const safeParse = (val: string | null): string[] => { try { return JSON.parse(val || "[]"); } catch { return []; } };
+  const specs: string[] = safeParse(stylist.specializations);
+  const langs: string[] = safeParse(stylist.languages);
+  const certs: string[] = safeParse(stylist.certifications);
 
   const jsonLd = {
     "@context": "https://schema.org",

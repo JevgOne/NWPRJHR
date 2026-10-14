@@ -444,7 +444,22 @@ export default async function CityLandingPage({ params }: Props) {
         </div>
       </section>
 
-      {/* 10. Final CTA */}
+      {/* 10. Related links */}
+      <section className="mb-14">
+        <h2 className="text-xl font-semibold text-ink mb-4">{t("relatedTitle")}</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          <Link href="/clip-in-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relClipIn")}</Link>
+          <Link href="/tape-in-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relTapeIn")}</Link>
+          <Link href="/keratinove-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relKeratin")}</Link>
+          <Link href="/micro-ring-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relMicroRing")}</Link>
+          <Link href="/panenske-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relVirgin")}</Link>
+          <Link href="/slovanske-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relSlavic")}</Link>
+          <Link href="/pruvodce-gramazi" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relWeightGuide")}</Link>
+          <Link href="/pece-o-vlasy" className="text-sm text-blush-700 hover:text-rose py-2 px-3 bg-nude-50 rounded-lg border border-line hover:border-blush-300 transition-colors">{t("relCare")}</Link>
+        </div>
+      </section>
+
+      {/* 11. Final CTA */}
       <div className="text-center bg-nude-50 rounded-xl border border-line p-8">
         <p className="text-muted text-sm mb-5 max-w-lg mx-auto">{t("ctaText")}</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

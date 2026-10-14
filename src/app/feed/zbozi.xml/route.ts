@@ -9,7 +9,13 @@ function escapeXml(s: string): string {
 }
 
 export async function GET() {
-  const products = await getCachedAllProducts();
+  let products;
+  try {
+    products = await getCachedAllProducts();
+  } catch (error) {
+    console.error("[feed/zbozi] Failed to load products:", error);
+    return new NextResponse("Service temporarily unavailable", { status: 503, headers: { "Retry-After": "300" } });
+  }
 
   const shopItems: string[] = [];
 

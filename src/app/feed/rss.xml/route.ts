@@ -12,7 +12,9 @@ function esc(s: string): string {
 }
 
 export async function GET() {
-  const blogPosts = await prisma.blogPost.findMany({
+  let blogPosts;
+  try {
+    blogPosts = await prisma.blogPost.findMany({
     where: { published: true },
     orderBy: { publishedAt: "desc" },
     select: {
@@ -27,6 +29,10 @@ export async function GET() {
     },
     take: 50,
   });
+  } catch (error) {
+    console.error("[feed/rss] Failed to load blog posts:", error);
+    return new Response("Service temporarily unavailable", { status: 503, headers: { "Retry-After": "300" } });
+  }
 
   const BASE = "https://www.hairland.cz";
 

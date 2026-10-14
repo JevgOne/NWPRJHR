@@ -113,8 +113,9 @@ export default async function StylistsPublicPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {stylists.map((s) => {
-          const specs: string[] = JSON.parse(s.specializations || "[]");
-          const langs: string[] = JSON.parse(s.languages || "[]");
+          const safeParse = (val: string | null): string[] => { try { return JSON.parse(val || "[]"); } catch { return []; } };
+          const specs: string[] = safeParse(s.specializations);
+          const langs: string[] = safeParse(s.languages);
 
           return (
             <Link
