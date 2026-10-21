@@ -166,6 +166,13 @@ export function proxy(request: NextRequest) {
     }
   }
 
+  // Prevent duplicate indexing: public URLs with query params get noindex
+  if (request.nextUrl.search && !isProtectedPath(pathname)) {
+    const response = intlMiddleware(request);
+    response.headers.set("X-Robots-Tag", "noindex, follow");
+    return response;
+  }
+
   // 308 permanent redirect: Czech pathname on non-cs locale → localized (cyrillic) pathname
   // next-intl does this as 307 (temporary); we override with 308 for SEO
   const localePrefixMatch = pathname.match(/^\/(ua|rus)/);

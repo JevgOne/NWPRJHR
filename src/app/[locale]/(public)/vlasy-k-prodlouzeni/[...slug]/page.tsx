@@ -188,6 +188,18 @@ const getProduct = cache(async function getProduct(slugOrId: string) {
   return byId;
 });
 
+/**
+ * When a product slug/ID doesn't exist (archived or never existed),
+ * redirect to the listing page instead of 404.
+ * This handles old /offer/{product} → /vlasy-k-prodlouzeni/{product} chains
+ * where the product was since archived.
+ */
+function redirectToListingIfNotFound(product: Awaited<ReturnType<typeof getProduct>>): asserts product {
+  if (!product) {
+    permanentRedirect("/vlasy-k-prodlouzeni");
+  }
+}
+
 const getCachedRelatedCandidates = unstable_cache(
   async (excludeId: string) => {
     return prisma.product.findMany({
@@ -280,9 +292,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Single segment: product detail (categories redirect via middleware to standalone URLs)
   if (slug.length === 1) {
     const [product, t, locale] = await Promise.all([getProduct(slug[0]), getTranslations("public"), getLocale()]);
-    if (!product) {
-      notFound();
-    }
+    redirectToListingIfNotFound(product);
 
     return generateProductMetadataFromProduct(product, t, locale);
   }
@@ -478,9 +488,7 @@ async function ProductDetailView({
     getLocale(),
   ]);
 
-  if (!product) {
-    notFound();
-  }
+  redirectToListingIfNotFound(product);
 
   // Calculate per-variant prices based on B2B discount (from margin)
   const role = session?.user?.role;
