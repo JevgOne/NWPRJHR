@@ -13,7 +13,7 @@ export const routing = defineRouting({
   },
   localeCookie: false,
   localeDetection: false,
-  alternateLinks: true,
+  alternateLinks: false, // HTML <link rel="alternate"> from getAlternates() in metadata is more precise
   pathnames: {
     "/": "/",
 

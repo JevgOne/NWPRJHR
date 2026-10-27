@@ -104,7 +104,7 @@ export function proxy(request: NextRequest) {
 
   // Strip locale prefix for matching (e.g. /ua/vlasy-k-prodlouzeni → /vlasy-k-prodlouzeni)
   // Locale prefixes from routing: cs = none (default), uk = /ua, ru = /rus
-  const stripped = pathname.replace(/^\/(ua|rus)/, "");
+  const stripped = pathname.replace(/^\/(ua|rus|en)/, "");
 
   // 301 redirects: old English folder names → new Czech names (for locale-prefixed URLs;
   // non-prefixed redirects are handled by next.config.ts redirects).
@@ -121,7 +121,7 @@ export function proxy(request: NextRequest) {
   };
   const renamedTarget = RENAMED_PATHS[stripped];
   if (renamedTarget) {
-    const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
+    const localePrefix = pathname.match(/^\/(ua|rus|en)/)?.[0] ?? "";
     if (localePrefix) {
       const url = request.nextUrl.clone();
       // Resolve directly to cyrillic path if available (avoid redirect chain)
@@ -135,7 +135,7 @@ export function proxy(request: NextRequest) {
   // 301 redirect: old /offer URLs → /vlasy-k-prodlouzeni (strip query strings)
   if (stripped.startsWith("/offer")) {
     const newPath = stripped.replace("/offer", "/vlasy-k-prodlouzeni");
-    const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
+    const localePrefix = pathname.match(/^\/(ua|rus|en)/)?.[0] ?? "";
     return NextResponse.redirect(
       new URL(`${localePrefix}${newPath}`, request.url),
       301,
@@ -148,7 +148,7 @@ export function proxy(request: NextRequest) {
     const newPath = CATEGORY_REDIRECTS[categoryMatch[1]];
     if (newPath) {
       const url = request.nextUrl.clone();
-      const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
+      const localePrefix = pathname.match(/^\/(ua|rus|en)/)?.[0] ?? "";
       url.pathname = localePrefix + newPath;
       return NextResponse.redirect(url, 308);
     }
@@ -160,7 +160,7 @@ export function proxy(request: NextRequest) {
     const newPath = CATEGORY_REDIRECTS[katMatch[1]];
     if (newPath) {
       const url = request.nextUrl.clone();
-      const localePrefix = pathname.match(/^\/(ua|rus)/)?.[0] ?? "";
+      const localePrefix = pathname.match(/^\/(ua|rus|en)/)?.[0] ?? "";
       url.pathname = localePrefix + newPath;
       return NextResponse.redirect(url, 308);
     }
@@ -175,7 +175,7 @@ export function proxy(request: NextRequest) {
 
   // 308 permanent redirect: Czech pathname on non-cs locale → localized (cyrillic) pathname
   // next-intl does this as 307 (temporary); we override with 308 for SEO
-  const localePrefixMatch = pathname.match(/^\/(ua|rus)/);
+  const localePrefixMatch = pathname.match(/^\/(ua|rus|en)/);
   if (localePrefixMatch) {
     const localePrefix = "/" + localePrefixMatch[1];
     const pathAfterPrefix = pathname.slice(localePrefix.length) || "/";

@@ -126,6 +126,11 @@ const nextConfig: NextConfig = {
         destination: "/micro-ring-vlasy",
         permanent: true,
       },
+      {
+        source: "/weft",
+        destination: "/tresove-vlasy",
+        permanent: true,
+      },
       // 301: /offer → /vlasy-k-prodlouzeni (catch-all for old URLs)
       {
         source: "/offer",
@@ -166,7 +171,7 @@ const nextConfig: NextConfig = {
       {
         source: "/vlasy/:slug",
         destination: "/vlasy-k-prodlouzeni",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/vlasy",
