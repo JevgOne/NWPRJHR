@@ -1,4 +1,4 @@
-import type { PrismaClient, Delivery } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 
 type TransactionClient = Parameters<
   Parameters<PrismaClient["$transaction"]>[0]
@@ -36,15 +36,17 @@ export async function fifoDeduct(
   userId: string,
   tx: TransactionClient
 ): Promise<FifoResult[]> {
-  // Lock and fetch deliveries with remaining stock, oldest first
-  const deliveries = await tx.$queryRaw<Delivery[]>`
-    SELECT * FROM "deliveries"
-    WHERE "variantId" = ${variantId}
-      AND ("remainingGrams" > 0 OR "remainingPieces" > 0)
-    ORDER BY "stockedAt" ASC
-  `;
-
-  const eligibleDeliveries = deliveries;
+  // Fetch deliveries with remaining stock, oldest first (FIFO)
+  const eligibleDeliveries = await tx.delivery.findMany({
+    where: {
+      variantId,
+      OR: [
+        { remainingGrams: { gt: 0 } },
+        { remainingPieces: { gt: 0 } },
+      ],
+    },
+    orderBy: { stockedAt: "asc" },
+  });
 
   const totalAvailableGrams = eligibleDeliveries.reduce(
     (sum, d) => sum + d.remainingGrams,

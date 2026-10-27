@@ -32,9 +32,37 @@ export interface CompleteSaleInput {
 
 /**
  * Complete a sale: calculate prices, apply discounts, FIFO deduct, record margin.
- * Everything runs in a single DB transaction.
+ * Everything runs in a single DB transaction with retry for transient errors.
  */
 export async function completeSale(
+  input: CompleteSaleInput,
+  userId: string
+): Promise<Sale> {
+  const MAX_RETRIES = 3;
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await completeSaleInner(input, userId);
+    } catch (e) {
+      lastError = e;
+      const msg = e instanceof Error ? e.message : String(e);
+      const isTransient = msg.includes("SQLITE_CONSTRAINT") ||
+        msg.includes("SQLITE_BUSY") ||
+        msg.includes("interactive transaction") ||
+        msg.includes("expired");
+      if (!isTransient || attempt === MAX_RETRIES) {
+        console.error(`[completeSale] Failed after ${attempt} attempt(s):`, e);
+        throw e;
+      }
+      console.warn(`[completeSale] Transient error on attempt ${attempt}/${MAX_RETRIES}, retrying...`, msg);
+      await new Promise(r => setTimeout(r, 200 * attempt));
+    }
+  }
+  throw lastError;
+}
+
+async function completeSaleInner(
   input: CompleteSaleInput,
   userId: string
 ): Promise<Sale> {
