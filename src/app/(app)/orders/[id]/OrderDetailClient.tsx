@@ -48,8 +48,19 @@ interface OrderDetail {
       id: string;
       lengthCm: number;
       color: string;
-      product: { name: string };
+      product: { id: string; name: string; photos: string };
     };
+    deliveries?: {
+      id: string;
+      barcode: string | null;
+      initialGrams: number;
+      initialPieces: number;
+      remainingGrams: number;
+      remainingPieces: number;
+      exclusive: boolean;
+      pieceWeightGrams: number | null;
+      stockedAt: string;
+    }[];
   }[];
   sale?: { id: string; saleNumber?: string };
 }
@@ -252,15 +263,47 @@ export function OrderDetailClient({
             </tr>
           </thead>
           <tbody>
-            {order.items.map((item, i) => (
+            {order.items.map((item, i) => {
+              const photos: string[] = (() => { try { return JSON.parse(item.variant.product.photos || "[]"); } catch { return []; } })();
+              const thumb = photos[0] || null;
+              return (
               <tr key={item.id} className={i < order.items.length - 1 ? "border-b border-line/50" : ""}>
                 <td className="py-3 px-4">
-                  <div className="font-medium text-ink">
-                    {item.variant.product.name}{" "}
-                    <span className="text-muted font-normal">
-                      {item.variant.color} {item.variant.lengthCm}cm
-                    </span>
+                  <div className="flex items-start gap-3">
+                    {thumb && (
+                      <Link href={`/products/${item.variant.product.id}`}>
+                        <img
+                          src={thumb}
+                          alt={item.variant.product.name}
+                          className="w-14 h-14 object-cover rounded-lg border border-line flex-shrink-0 hover:opacity-80 transition-opacity"
+                        />
+                      </Link>
+                    )}
+                    <div>
+                      <Link href={`/products/${item.variant.product.id}`} className="font-medium text-ink hover:text-rose transition-colors">
+                        {item.variant.product.name}
+                      </Link>{" "}
+                      <span className="text-muted font-normal">
+                        {item.variant.color} {item.variant.lengthCm}cm
+                      </span>
+                    </div>
                   </div>
+                  {/* Delivery info — which physical piece to send */}
+                  {isStaff && item.deliveries && item.deliveries.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {item.deliveries.map((d) => (
+                        <div key={d.id} className={`flex items-center gap-2 text-[11px] px-2 py-1 rounded ${d.remainingGrams > 0 || d.remainingPieces > 0 ? "bg-emerald-50 text-emerald-700" : "bg-gray-50 text-gray-400"}`}>
+                          <span className="font-mono font-semibold">{d.barcode || "—"}</span>
+                          <span>{d.initialGrams}g{d.exclusive ? " · exclusive" : ""}</span>
+                          <span className={d.remainingGrams > 0 || d.remainingPieces > 0 ? "font-semibold" : ""}>
+                            {d.remainingGrams > 0 || d.remainingPieces > 0
+                              ? `✓ skladem (${d.remainingGrams}g / ${d.remainingPieces}ks)`
+                              : "vyprodáno"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {/* Edit variant inline */}
                   {isOwner && !isFinal && editingItemId === item.id && (
                     <div className="mt-2 space-y-2">
@@ -315,7 +358,8 @@ export function OrderDetailClient({
                   {formatCZK(item.lineTotal)}
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
         <div className="px-4 py-3 bg-nude-50 border-t border-line">

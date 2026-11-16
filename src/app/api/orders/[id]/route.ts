@@ -46,7 +46,7 @@ export async function GET(
               id: true,
               lengthCm: true,
               color: true,
-              product: { select: { name: true, nameUk: true, nameRu: true } },
+              product: { select: { id: true, name: true, nameUk: true, nameRu: true, photos: true } },
             },
           },
         },
@@ -60,6 +60,38 @@ export async function GET(
 
   if ((session.user.role === "SALON" || session.user.role === "HAIRDRESSER") && order.salonId !== session.user.salonId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  // Enrich items with matching deliveries (for staff to identify physical pieces)
+  if (["OWNER", "EMPLOYEE"].includes(session.user.role)) {
+    const variantIds = [...new Set(order.items.map((i) => i.variantId))];
+    const deliveries = await prisma.delivery.findMany({
+      where: { variantId: { in: variantIds } },
+      select: {
+        id: true,
+        variantId: true,
+        barcode: true,
+        initialGrams: true,
+        initialPieces: true,
+        remainingGrams: true,
+        remainingPieces: true,
+        exclusive: true,
+        pieceWeightGrams: true,
+        stockedAt: true,
+      },
+      orderBy: { stockedAt: "desc" },
+    });
+    const deliveriesByVariant = new Map<string, typeof deliveries>();
+    for (const d of deliveries) {
+      const arr = deliveriesByVariant.get(d.variantId) ?? [];
+      arr.push(d);
+      deliveriesByVariant.set(d.variantId, arr);
+    }
+    const enrichedItems = order.items.map((item) => ({
+      ...item,
+      deliveries: deliveriesByVariant.get(item.variantId) ?? [],
+    }));
+    return NextResponse.json({ ...order, items: enrichedItems });
+  }
 
   return NextResponse.json(order);
 }
